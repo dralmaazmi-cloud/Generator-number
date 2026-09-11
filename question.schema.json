@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.almaazmi/question.schema.json",
+  "title": "Generated Numerical Question",
+  "type": "object",
+  "required": ["id","generator_id","seed","family","family_ar","category","subskill","difficulty","question","options","correct_option","correct_value","explanation","metadata"],
+  "properties": {
+    "id": {"type":"string"},
+    "generator_id": {"type":"string"},
+    "seed": {"type":"string"},
+    "family": {"type":"string"},
+    "family_ar": {"type":"string"},
+    "category": {"type":"string"},
+    "subskill": {"type":"string"},
+    "difficulty": {"enum":["easy","medium","hard"]},
+    "question": {"type":"string","minLength":1},
+    "display_expression": {"type":["string","null"]},
+    "options": {
+      "type":"object",
+      "required":["A","B","C","D","E","F"],
+      "properties": {"A":{"type":"string"},"B":{"type":"string"},"C":{"type":"string"},"D":{"type":"string"},"E":{"type":"string"},"F":{"type":"string"}},
+      "additionalProperties": false
+    },
+    "correct_option": {"enum":["A","B","C","D","E","F"]},
+    "correct_value": {"type":"string"},
+    "explanation": {
+      "type":"object",
+      "required":["how_to_start","steps","answer","remember","distractor_analysis"],
+      "properties": {
+        "how_to_start":{"type":"string"},
+        "steps":{"type":"array","minItems":1,"items":{"type":"string"}},
+        "answer":{"type":"string"},
+        "fast_method":{"type":["string","null"]},
+        "remember":{"type":"string"},
+        "distractor_analysis":{"type":"object"}
+      }
+    },
+    "metadata":{"type":"object"}
+  }
+}

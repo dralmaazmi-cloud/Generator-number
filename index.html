@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f6f8fc" />
+  <title>التدريب العددي المتجدد</title>
+  <style>.hidden{display:none!important}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif}</style>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="bootStatus" class="boot-status">جاري تحميل محرك الأسئلة…</div>
+
+  <main id="app" class="app-shell">
+    <section id="viewSetup" class="view setup-view">
+      <header class="setup-header">
+        <div class="brand-mark" aria-hidden="true">N</div>
+        <div>
+          <div class="eyebrow">Numerical Generated Practice</div>
+          <h1>التدريب العددي المتجدد</h1>
+          <p>أنشئ تمارين عددية متجددة بلا حدود، مخصصة حسب المهارة ومستوى الصعوبة وعدد الأسئلة، مع شرح خطوة بخطوة لكل إجابة.</p>
+        </div>
+        <div class="version-pill" id="engineVersion">v1.2.0</div>
+      </header>
+
+      <section id="favoriteCard" class="resume-card favorite-card hidden">
+        <div>
+          <strong>الأسئلة المفضلة</strong>
+          <span id="favoriteMeta"></span>
+        </div>
+        <div class="resume-actions">
+          <button id="practiceFavorites" class="primary compact" type="button">تدرب عليها</button>
+          <button id="clearFavorites" class="ghost compact danger-text" type="button">مسح</button>
+        </div>
+      </section>
+
+      <section id="resumeCard" class="resume-card hidden">
+        <div>
+          <strong>لديك جلسة محفوظة</strong>
+          <span id="resumeMeta"></span>
+        </div>
+        <div class="resume-actions">
+          <button id="resumeSession" class="primary compact" type="button">استكمال</button>
+          <button id="deleteSaved" class="ghost compact danger-text" type="button">حذف</button>
+        </div>
+      </section>
+
+      <section class="card config-card">
+        <div class="config-heading">
+          <div>
+            <span class="section-kicker">إعداد الجلسة</span>
+            <h2>اختر طريقة الجلسة</h2>
+          </div>
+          <span class="offline-pill">يعمل دون إنترنت</span>
+        </div>
+
+        <div class="mode-switch" role="group" aria-label="وضع الجلسة">
+          <button id="modeTraining" class="mode-card active" type="button" data-mode="training">
+            <strong>تدريب</strong>
+            <span>تصحيح فوري + شرح + طريقة سريعة</span>
+          </button>
+          <button id="modeExam" class="mode-card" type="button" data-mode="exam">
+            <strong>امتحان</strong>
+            <span>لا تظهر الإجابات حتى إنهاء الجلسة</span>
+          </button>
+        </div>
+
+        <div class="config-grid">
+          <label class="field">
+            <span>الصعوبة</span>
+            <select id="difficulty">
+              <option value="mixed">مختلط</option>
+              <option value="easy">سهل</option>
+              <option value="medium">متوسط</option>
+              <option value="hard">صعب</option>
+              <option value="adaptive">تكيفي</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>عدد الأسئلة</span>
+            <select id="count">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="14">14 — محاكاة عددية</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
+              <option value="custom">مخصص</option>
+            </select>
+          </label>
+
+          <label id="customCountWrap" class="field hidden">
+            <span>عدد مخصص <small>1–50</small></span>
+            <input id="customCount" type="number" inputmode="numeric" min="1" max="50" value="15" />
+          </label>
+
+          <label class="field">
+            <span>الوقت</span>
+            <select id="timeMode">
+              <option value="none" selected>بدون حد زمني</option>
+              <option value="5">5 دقائق</option>
+              <option value="10">10 دقائق</option>
+              <option value="15">15 دقيقة</option>
+              <option value="20">20 دقيقة</option>
+              <option value="custom">وقت مخصص</option>
+            </select>
+          </label>
+
+          <label id="customTimeWrap" class="field hidden">
+            <span>الوقت بالدقائق <small>1–120</small></span>
+            <input id="customTime" type="number" inputmode="numeric" min="1" max="120" value="10" />
+          </label>
+
+          <label class="field family-compact-field">
+            <span>العائلة</span>
+            <select id="familySelect" aria-label="اختيار عائلة الأسئلة">
+              <option value="mixed" selected>مختلط</option>
+            </select>
+            <small id="familyCompactNote" class="field-help">توزيع متوازن بين جميع عائلات الأسئلة.</small>
+          </label>
+        </div>
+
+        <div id="adaptiveHint" class="info-strip hidden">
+          <strong>الوضع التكيفي:</strong> يبدأ من المستوى المتوسط ثم يرفع أو يخفض الصعوبة حسب دقة إجاباتك وزمن الحل. متاح في وضع التدريب فقط.
+        </div>
+        <div id="examHint" class="info-strip hidden">
+          <strong>وضع الامتحان:</strong> لن تظهر الإجابة الصحيحة أو الشرح أثناء الجلسة. تستطيع مراجعة الحلول كاملة بعد الإنهاء.
+        </div>
+        <div id="weakHint" class="info-strip hidden"></div>
+
+        <button id="generate" class="primary start-button" type="button" disabled>
+          <span>ابدأ الجلسة</span><span class="button-arrow" aria-hidden="true">←</span>
+        </button>
+      </section>
+
+      <section class="feature-row" aria-label="مزايا الجلسة">
+        <div><strong>∞</strong><span>أسئلة متجددة بلا حدود</span></div>
+        <div><strong>2</strong><span>تدريب أو امتحان</span></div>
+        <div><strong>PDF</strong><span>تقرير قابل للطباعة</span></div>
+        <div><strong>✓</strong><span>شرح وحل ديناميكي</span></div>
+      </section>
+    </section>
+
+    <section id="viewSession" class="view session-view hidden">
+      <header class="session-appbar">
+        <button id="sessionBack" class="nav-button" type="button" aria-label="رجوع"><span class="nav-icon">→</span><span>رجوع</span></button>
+        <div class="session-title">
+          <strong id="sessionTitle">التدريب العددي المتجدد</strong>
+          <span id="sessionSubtitle"></span>
+        </div>
+        <button id="sessionHome" class="nav-button home-button" type="button" aria-label="الرئيسية"><span class="home-symbol">⌂</span><span>الرئيسية</span></button>
+      </header>
+
+      <div class="session-progress-wrap">
+        <div class="progress-meta">
+          <span id="progressText">1 / 10</span>
+          <span id="sessionTimer">00:00</span>
+        </div>
+        <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
+      </div>
+
+      <article class="card exam-card">
+        <div class="question-meta">
+          <div class="chips">
+            <span id="familyChip" class="chip"></span>
+            <span id="difficultyChip" class="chip subtle"></span>
+            <span id="modeChip" class="chip mode-chip"></span>
+          </div>
+          <button id="favoriteQuestion" class="favorite-button" type="button" aria-label="إضافة إلى المفضلة" title="إضافة إلى المفضلة">☆</button>
+        </div>
+
+        <div class="question-number" id="questionNumber">السؤال 1</div>
+        <h2 id="questionText" class="question-text"></h2>
+        <div id="expression" class="expression hidden"></div>
+        <form id="options" class="options-grid"></form>
+
+        <div id="feedback" class="feedback hidden" role="status"></div>
+        <section id="explanation" class="explanation-card hidden"></section>
+
+        <div class="exam-actions">
+          <button id="previousQuestion" class="secondary" type="button">السؤال السابق</button>
+          <button id="submit" class="primary" type="button">تحقق من الإجابة</button>
+          <button id="next" class="primary hidden" type="button">السؤال التالي</button>
+        </div>
+      </article>
+
+      <div class="session-bottom-note" id="sessionBottomNote">يتم حفظ تقدمك محليًا فقط عندما تختار «حفظ والخروج».</div>
+    </section>
+
+    <section id="viewResult" class="view result-view hidden">
+      <header class="result-appbar">
+        <button id="resultHome" class="nav-button" type="button"><span class="home-symbol">⌂</span><span>الرئيسية</span></button>
+        <div class="session-title"><strong id="resultTitle">نتيجة الجلسة</strong><span>جلسة مولدة محليًا</span></div>
+        <span class="appbar-spacer"></span>
+      </header>
+
+      <section class="result-hero card">
+        <div id="scoreRing" class="score-ring"><div><strong id="scorePct">0%</strong><span>النتيجة</span></div></div>
+        <div class="result-summary-text">
+          <span class="section-kicker">Session complete</span>
+          <h1>انتهت الجلسة</h1>
+          <p id="scoreLine"></p>
+          <div id="resultStats" class="result-stats"></div>
+        </div>
+      </section>
+
+      <section class="card analytics-card">
+        <div class="analytics-head"><div><span class="section-kicker">تحليل الأداء</span><h2>أين كنت أقوى؟ وأين تحتاج تدريبًا أكثر؟</h2></div></div>
+        <div id="familyAnalytics" class="analytics-grid"></div>
+        <div id="difficultyAnalytics" class="analytics-grid compact-grid"></div>
+      </section>
+
+      <div class="result-actions-grid">
+        <button id="reviewAnswers" class="secondary" type="button">مراجعة الإجابات</button>
+        <button id="exportPdf" class="primary" type="button">تصدير PDF</button>
+        <button id="sameSettings" class="secondary" type="button">جلسة جديدة بنفس الإعدادات</button>
+        <button id="practiceMistakes" class="secondary" type="button">تدرب على أخطائي</button>
+        <button id="harderSession" class="secondary" type="button">جلسة أصعب</button>
+        <button id="easierSession" class="secondary" type="button">جلسة أسهل</button>
+        <button id="newSession" class="secondary" type="button">إعداد جلسة جديدة</button>
+        <details class="advanced-export">
+          <summary>خيارات متقدمة</summary>
+          <button id="exportJson" class="ghost" type="button">تصدير بيانات JSON</button>
+        </details>
+      </div>
+
+      <section id="reviewPanel" class="review-panel hidden"></section>
+    </section>
+  </main>
+
+  <div id="familyModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="familyModalTitle">
+    <div class="modal-card family-modal-card">
+      <div class="modal-icon">∑</div>
+      <h2 id="familyModalTitle">تخصيص العائلات</h2>
+      <p>اختر عائلة واحدة أو أكثر. سيُوزَّع التوليد بينها بصورة متوازنة.</p>
+      <div class="family-modal-toolbar">
+        <button id="selectAllFamilies" class="ghost compact" type="button">تحديد الكل</button>
+        <button id="selectWeakFamilies" class="ghost compact" type="button">نقاط ضعفي</button>
+        <button id="clearFamilies" class="ghost compact" type="button">مسح</button>
+      </div>
+      <div id="familyGrid" class="family-grid family-modal-grid" aria-label="عائلات الأسئلة"></div>
+      <div id="familySelectionNote" class="selection-note"></div>
+      <div class="modal-actions family-modal-actions">
+        <button id="applyFamilies" class="primary" type="button">اعتماد الاختيار</button>
+        <button id="cancelFamilies" class="secondary" type="button">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="exitModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="exitTitle">
+    <div class="modal-card">
+      <div class="modal-icon">↩</div>
+      <h2 id="exitTitle">الخروج من الجلسة؟</h2>
+      <p>يمكنك حفظ الجلسة واستكمالها لاحقًا، أو الخروج دون حفظ.</p>
+      <div class="modal-actions">
+        <button id="saveExit" class="primary" type="button">حفظ والخروج</button>
+        <button id="discardExit" class="danger" type="button">الخروج دون حفظ</button>
+        <button id="cancelExit" class="secondary" type="button">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="finishModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="finishTitle">
+    <div class="modal-card">
+      <div class="modal-icon">✓</div>
+      <h2 id="finishTitle">إنهاء الجلسة؟</h2>
+      <p id="finishMessage">سيتم تصحيح الإجابات وإظهار النتيجة.</p>
+      <div class="modal-actions">
+        <button id="confirmFinish" class="primary" type="button">إنهاء وإظهار النتيجة</button>
+        <button id="cancelFinish" class="secondary" type="button">العودة للجلسة</button>
+      </div>
+    </div>
+  </div>
+
+  <noscript>يحتاج محرك التوليد إلى JavaScript للعمل.</noscript>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

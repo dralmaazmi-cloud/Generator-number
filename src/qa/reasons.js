@@ -1,0 +1,54 @@
+// Section 5: validators return reason codes, never a bare boolean.
+
+export const REASON = Object.freeze({
+  ORACLE_DISAGREEMENT: 'ORACLE_DISAGREEMENT',
+  ORACLE_NON_UNIQUE: 'ORACLE_NON_UNIQUE',
+  ORACLE_NO_SOLUTION: 'ORACLE_NO_SOLUTION',
+  NO_CORRECT_OPTION: 'NO_CORRECT_OPTION',
+  MULTIPLE_CORRECT_OPTIONS: 'MULTIPLE_CORRECT_OPTIONS',
+  TEXT_PARAM_MISMATCH: 'TEXT_PARAM_MISMATCH',
+  AMBIGUOUS_ODD_ONE_OUT: 'AMBIGUOUS_ODD_ONE_OUT',
+  DEGENERATE_WRONG_METHOD_EQUALS_KEY: 'DEGENERATE_WRONG_METHOD_EQUALS_KEY',
+  DEGENERATE_PARAMETERS: 'DEGENERATE_PARAMETERS',
+  REDUCIBLE_RATIO: 'REDUCIBLE_RATIO',
+  EQUAL_RATIO_SIDES: 'EQUAL_RATIO_SIDES',
+  UNREALISTIC_AGE: 'UNREALISTIC_AGE',
+  EXPLANATION_EQUATION_FAILURE: 'EXPLANATION_EQUATION_FAILURE',
+  EXPLANATION_UNSOURCED_VALUE: 'EXPLANATION_UNSOURCED_VALUE',
+  INTERMEDIATE_ROUNDING: 'INTERMEDIATE_ROUNDING',
+  DISTRACTOR_NO_MISCONCEPTION: 'DISTRACTOR_NO_MISCONCEPTION',
+  DISTRACTOR_IMPOSSIBLE: 'DISTRACTOR_IMPOSSIBLE',
+  DUPLICATE_FINGERPRINT: 'DUPLICATE_FINGERPRINT',
+  TEMPLATE_OVERUSE: 'TEMPLATE_OVERUSE',
+  INVALID_ARABIC_NUMBER_UNIT: 'INVALID_ARABIC_NUMBER_UNIT',
+  RETRY_EXHAUSTED: 'RETRY_EXHAUSTED',
+  // Structural checks inherited from v1.2.0's validateQuestion.
+  OPTIONS_MUST_HAVE_A_TO_F: 'OPTIONS_MUST_HAVE_A_TO_F',
+  OPTIONS_MUST_BE_UNIQUE: 'OPTIONS_MUST_BE_UNIQUE',
+  INVALID_CORRECT_OPTION: 'INVALID_CORRECT_OPTION',
+  CORRECT_VALUE_MISMATCH: 'CORRECT_VALUE_MISMATCH',
+  MISSING_QUESTION: 'MISSING_QUESTION',
+  MISSING_HOW_TO_START: 'MISSING_HOW_TO_START',
+  MISSING_STEPS: 'MISSING_STEPS',
+  MISSING_REMEMBER: 'MISSING_REMEMBER',
+  INVALID_DIFFICULTY: 'INVALID_DIFFICULTY'
+});
+
+export const ALL_REASONS = Object.freeze(Object.values(REASON));
+
+/** A validator verdict. `reasons` carries codes; `details` is diagnostic only. */
+export function verdict(reasons = [], details = {}) {
+  const list = Array.isArray(reasons) ? reasons.filter(Boolean) : [reasons].filter(Boolean);
+  return {valid: list.length === 0, reasons: list, details};
+}
+
+export function mergeVerdicts(...verdicts) {
+  const reasons = [];
+  const details = {};
+  for (const v of verdicts) {
+    if (!v) continue;
+    for (const r of v.reasons || []) if (!reasons.includes(r)) reasons.push(r);
+    Object.assign(details, v.details || {});
+  }
+  return {valid: reasons.length === 0, reasons, details};
+}
