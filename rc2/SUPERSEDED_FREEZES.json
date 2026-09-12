@@ -35,6 +35,15 @@
    "reason": "archived, not invalidated: holdout AUDIT-2026-09-12-D was generated from exactly this production state, and its independent review — 250 correct keys, one ambiguous item, 44 of 82 hard items not hard — is the diagnosis RC2.3 remediates. Production necessarily moves past it.",
    "archivedRecord": "rc2/FREEZE_RC2_2.json",
    "holdoutGeneratedFromIt": "AUDIT-2026-09-12-D"
+  },
+  {
+   "RC2_COMMIT": "337cff336558b8cf254b754f5b5c10c4f7f7b6cc",
+   "treeHash": "eebff6d88f614a6f11b11d3b76d9ebcd87d0ab60",
+   "frozenAt": "2026-09-12T19:15:56.390Z",
+   "productionBundleSha256": "56a6d34171136b7c3cbefbf519383bafb117c4d42d7402c560cb290c85c65abf",
+   "reason": "archived, not invalidated: RC2.3 was frozen with no holdout generated, because its own validation reported that 19 hard structures across 5 of 16 families could not fill repeated ALL_HARD sessions. RC2.4 answers exactly that finding by adding structures, so production necessarily moves past it.",
+   "archivedRecord": "rc2/FREEZE_RC2_3.json",
+   "holdoutGeneratedFromIt": null
   }
  ]
 }

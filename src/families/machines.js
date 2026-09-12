@@ -487,6 +487,11 @@ function twoConfigurations(ctx) {
       constraints: [eq(mul(X, det), sub(mul(out1, d), mul(out2, b)))]
     },
     askedUnknown: 'firstTypeRate', stageCount: 3,
+    // RC2.3-4 demotes a fractional option where the answer counts indivisible
+    // things. This answer is a RATE whose numerator happens to be a count —
+    // 22.5 pieces an hour is a perfectly real rate — so the rule does not apply
+    // and the template says so rather than being quietly exempted.
+    answerIsCount: false,
     pedagogy: {
       targetSkill: 'ELIMINATE_ONE_UNKNOWN', targetMisconception: 'SOLVED_ONE_CONDITION_ONLY',
       wrongMethodValue: out1 / (a + b)

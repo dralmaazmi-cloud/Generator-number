@@ -160,8 +160,8 @@ test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs ou
   // A one-attempt budget on a seed whose single candidate cannot be finalised:
   // the distractor pool falls below five. The failure is real, not injected.
   //
-  // Repinned again for RC2.3: the structural adjudication changes which
-  // templates a hard draw can land on, so it changes which seeds reach an
+  // Repinned again for RC2.4: eighteen new hard structures change which
+  // templates a hard draw can land on, so they change which seeds reach an
   // unfinalisable candidate. The fixture pins the CONDITION — a budget that
   // genuinely runs out — not the draw, and is re-found each time the corpus
   // moves rather than being preserved by loosening the assertion.
@@ -172,7 +172,7 @@ test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs ou
   // its job, not failing.
   const engine = new Engine({maxGenerationAttempts: 1});
   assert.throws(
-    () => engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-7'}),
+    () => engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-29'}),
     err => err.code === 'QUESTION_GENERATION_EXHAUSTED'
   );
   const s = engine.getTelemetry();
@@ -186,7 +186,7 @@ test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs ou
 
 test('RC2-003 meta: a budget that does not run out emits no exhaustion', () => {
   const engine = new Engine();
-  engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-7'});
+  engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-29'});
   assert.equal(engine.getTelemetry().exhaustions, 0);
 });
 

@@ -480,7 +480,7 @@ function overlappingSubsets(ctx) {
     templateId: 'AVG_H_OVERLAP',
     subskill: 'قيمة مشتركة بين مجموعتين متداخلتين',
     difficulty: 'hard',
-    question: `متوسط ${count} قيم مرتبة هو ${whole}. ومتوسط أول ${head} منها هو ${headAvg}، ومتوسط آخر ${head} منها هو ${tailAvg}. فما القيمة التي تقع في المنتصف؟`,
+    question: `متوسط ${count} قيم مرتبة هو ${whole}. ومتوسط أول ${head} قيم هو ${headAvg}، ومتوسط آخر ${head} قيم هو ${tailAvg}. فما القيمة التي تقع في المنتصف؟`,
     correct, distractors, format: v => num(v),
     steps: [
       `مجموع القيم كلها = ${count} × ${whole} = ${wholeSum}.`,
@@ -558,7 +558,7 @@ function splitGroupSize(ctx) {
     templateId: 'AVG_H_SPLIT_SIZE',
     subskill: 'حجم إحدى المجموعتين من ثلاثة متوسطات',
     difficulty: 'hard',
-    question: `متوسط ${count} قيمة هو ${whole}. قُسمت القيم إلى مجموعتين: متوسط الأولى ${highAvg} ومتوسط الثانية ${lowAvg}. كم قيمة في المجموعة الأولى؟`,
+    question: `متوسط ${count} قيمة هو ${whole}. قُسمت القيم إلى مجموعتين: متوسط الأولى ${highAvg}، ومتوسط الثانية ${lowAvg}. كم قيمة في المجموعة الأولى؟`,
     correct, distractors, format: v => num(v),
     steps: [
       `مجموع القيم كلها = ${count} × ${whole} = ${wholeSum}.`,

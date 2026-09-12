@@ -466,7 +466,7 @@ function jointThenSoloTime(ctx) {
     steps: [
       `نعمل بالمعدلات لا بالأزمنة: ما ينجزه الاثنان معًا في اليوم = 1 ÷ ${joint}.`,
       `ما ينجزه الأول وحده في اليوم = 1 ÷ ${solo}.`,
-      `معدل الثاني = 1 ÷ ${joint} − 1 ÷ ${solo}، وبتوحيد المقامات على ${solo} × ${joint} = ${solo * joint} يصبح البسط ${solo} − ${joint} = ${solo - joint}.`,
+      `معدل الثاني = 1 ÷ ${joint} − 1 ÷ ${solo}، وبتوحيد المقامات على ${solo} × ${joint} = ${solo * joint}، يصبح البسط ${solo} − ${joint} = ${solo - joint}.`,
       `زمن الثاني وحده = ${solo * joint} ÷ ${solo - joint} = ${correct}.`
     ],
     howToStart: 'حوّل كل زمن إلى معدل يومي، واطرح هناك، ثم اعكس الناتج للعودة إلى الزمن.',
@@ -510,6 +510,11 @@ function extraWorkersSaveDays(ctx) {
     // The slip is dividing the saved days into the crew; where that coincides
     // with the answer the item stops separating the two (Section 10).
     if (extra === saved) continue;
+    // RC2.4: the answer is a count of workers, so the modelled slips have to be
+    // counts of workers too, or the count-unit rule demotes them and a fraction
+    // of a worker fills the gap.
+    if ((workers * saved) % days !== 0) continue;
+    if (workers % saved !== 0) continue;
     found = {workers, days, saved, totalWork, newDays, extra};
     break;
   }
@@ -528,7 +533,9 @@ function extraWorkersSaveDays(ctx) {
     mk(workers + saved, 'ADDED_INSTEAD_OF_SCALING', `${workers} + ${saved}`),
     mk(totalWork / days + saved, 'ADDED_INSTEAD_OF_SCALING', `${totalWork} ÷ ${days} + ${saved}`),
     mk(2 * extra, 'APPLIED_STEP_TWICE', `${extra} × 2`),
-    mk(workers / saved, 'REVERSED_INVERSE_PROPORTION', `${workers} ÷ ${saved}`)
+    mk(workers / saved, 'REVERSED_INVERSE_PROPORTION', `${workers} ÷ ${saved}`),
+    mk(newCrew - saved, 'MISREAD_THE_STEP', `${newCrew} − ${saved}`, 2),
+    mk(extra + saved, 'ADDED_INSTEAD_OF_SCALING', `${extra} + ${saved}`)
   ]);
 
   return buildBase(ctx, {

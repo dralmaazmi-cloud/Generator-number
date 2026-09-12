@@ -450,6 +450,7 @@ function teamSizeFromTotal(ctx) {
     if (total % (rate * firstH) !== 0) continue;
     const remainingWork = total - rate * secondH;
     if (remainingWork % (rate * secondH) !== 0) continue;
+    if (remainingWork % (rate * firstH) !== 0) continue;
     found = {rate, firstH, secondH, team, total};
     break;
   }
@@ -462,20 +463,27 @@ function teamSizeFromTotal(ctx) {
   const params = {ratePerWorker: rate, firstHours: firstH, secondHours: secondH, totalOutput: total};
 
   const distractors = usable(ctx, [
-    // RC2.4: the answer is a count of people, so every candidate here is one a
-    // learner could actually write down as a team size. The unfinished totals —
-    // the remaining work, the newcomer's output, the per-worker output — are
-    // real intermediates but they are output quantities in the hundreds beside
-    // an answer of seven, and an option nobody would mistake for a team is an
-    // option that removes itself.
+    // RC2.4: the answer is a count of people, so every candidate is one a learner
+    // could write down as a team size. Two things follow.
+    //
+    // The unfinished totals — the remaining work, the newcomer's output, the
+    // per-worker output — are real intermediates but they are output quantities
+    // in the hundreds beside an answer of six, and an option nobody would mistake
+    // for a team removes itself from the page.
+    //
+    // And «treated the team as unchanged» divides the total by one member's
+    // output over both stages, a quotient that is never whole here because the
+    // newcomer's share is not a multiple of it. The slip is real; its value is
+    // not an answer. What stands in its place is the team as it ENDED, which is
+    // whole, is the same confusion about which team the total belongs to, and is
+    // what this item is targeted on.
     mk(team + 1, 'USED_NEW_TOTAL', `عدد أفراد الفريق بعد الانضمام ${team + 1}`, 3),
-    mk(total / perWorker, 'IGNORED_THE_TEAM_CHANGE', `${total} ÷ ${perWorker}`),
     mk(total / (rate * firstH), 'SOLVED_ONE_CONDITION_ONLY', `${total} ÷ (${rate} × ${firstH})`),
     mk(remaining / (rate * secondH), 'SOLVED_ONE_CONDITION_ONLY', `${remaining} ÷ (${rate} × ${secondH})`),
     mk(remaining / (rate * firstH), 'SOLVED_ONE_CONDITION_ONLY', `${remaining} ÷ (${rate} × ${firstH})`),
-    mk((total + newcomer) / perWorker, 'ADDED_INSTEAD_OF_SUBTRACTED', `(${total} + ${newcomer}) ÷ ${perWorker}`),
     mk(team - 1, 'OFF_BY_ONE_STEP', `${remaining} ÷ ${perWorker} − 1`),
-    mk(team + 2, 'OFF_BY_ONE_STEP', `${remaining} ÷ ${perWorker} + 2`)
+    mk(team + 2, 'OFF_BY_ONE_STEP', `${remaining} ÷ ${perWorker} + 2`),
+    mk(team * 2, 'APPLIED_STEP_TWICE', `${remaining} ÷ ${perWorker} × 2`)
   ]);
 
   return buildBase(ctx, {
@@ -503,8 +511,8 @@ function teamSizeFromTotal(ctx) {
     // team could not be larger than this, whatever the answer turns out to be.
     answerBounds: {between: [1, total / (rate * secondH)]},
     pedagogy: {
-      targetSkill: 'TEAM_SIZE_FROM_TWO_STAGES', targetMisconception: 'IGNORED_THE_TEAM_CHANGE',
-      wrongMethodValue: total / perWorker
+      targetSkill: 'TEAM_SIZE_FROM_TWO_STAGES', targetMisconception: 'USED_NEW_TOTAL',
+      wrongMethodValue: team + 1
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, reverseReasoning: 1, equationSolving: 1, stageCount: 3, arithmeticBurden: 5},
     textParams: {essentialParams: ['ratePerWorker', 'firstHours', 'secondHours', 'totalOutput']}

@@ -248,7 +248,7 @@ test('RC2-005: every template in the engine is classified, and every classificat
   // Nothing reported that, because the count was pinned at what was left. The
   // structural adjudication gives every template exactly one band, so a template
   // can no longer be orphaned by a pool it fails to qualify for.
-  assert.equal(report.totals.templates, 107, 'every declared template is reachable');
+  assert.equal(report.totals.templates, 125, 'every declared template is reachable');
   assert.deepEqual(report.totals.unclassified, []);
   assert.deepEqual(report.totals.declaredButAbsentFromEngine, []);
   assert.equal(report.totals.rc1TemplatesWithNoModel, 23, 'the RC1 gap was 23 templates');

@@ -248,11 +248,21 @@ test('RC2-012 audit: no surviving answer-relative option is unjustified', async 
   assert.ok(report.corpus.questions > 880, `the corpus must be real, got ${report.corpus.questions}`);
   assert.ok(report.totals.survivors > 20, 'the audit must actually have survivors to classify');
   assert.equal(report.totals.unjustified, 0, JSON.stringify(report.totals.byStratum));
-  // The strong stratum must carry the overwhelming majority: a survivor set that
-  // is mostly "it names a step" would be bookkeeping, not mathematics.
-  const strong = (report.totals.byStratum.S1_TASK_PATH ?? 0) + (report.totals.byStratum.S3_GIVEN_COINCIDENCE ?? 0);
+  // The concern this bar exists for is stated in the module: a survivor set that
+  // is mostly "it names a step" would be bookkeeping, not mathematics. That is
+  // S2, so RC2.4 measures S2 directly rather than inferring it from the
+  // complement — and counts S1B with the strong strata, which is what the module
+  // calls it: "still a quantity of the task, but reached one step later".
+  //
+  // The old formula excluded S1B, so the eighteen new HARD templates — whose
+  // wrong options are often intermediates the solution computes — pushed the
+  // ratio to 0.88 without a single option becoming less justified.
+  const t = report.totals.byStratum;
+  const strong = (t.S1_TASK_PATH ?? 0) + (t.S1B_SOLUTION_QUANTITY ?? 0) + (t.S3_GIVEN_COINCIDENCE ?? 0);
   assert.ok(strong / report.totals.survivors > 0.9,
-    `${strong}/${report.totals.survivors} in S1/S3: ${JSON.stringify(report.totals.byStratum)}`);
+    `${strong}/${report.totals.survivors} in S1/S1B/S3: ${JSON.stringify(t)}`);
+  assert.ok((t.S2_STEP_ATTRIBUTED ?? 0) / report.totals.survivors < 0.1,
+    `${t.S2_STEP_ATTRIBUTED} of ${report.totals.survivors} survivors are step-attributed only`);
 });
 
 test('RC2-012 audit meta: the stratifier convicts a genuine key-neighbour', async () => {

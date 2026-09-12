@@ -23,7 +23,10 @@ import {
   classification as structuralClassification, coverage as bandCoverage,
   freshSample as freshStructuralSample, holdoutDRegression
 } from './rc23-structure.mjs';
-import {isHardCapable, structuralBandOf, TEMPLATE_STRUCTURE, ADJUDICATED_TEMPLATE_IDS} from '../../src/qa/structure.js';
+import {
+  RC23_HARD, newHardTemplates, allHardSessions, newTemplateOptions, coverageTable
+} from './rc24-hard-coverage.mjs';
+import {isHardCapable, structuralBandOf, TEMPLATE_STRUCTURE, ADJUDICATED_TEMPLATE_IDS, HARD_CRITERIA} from '../../src/qa/structure.js';
 
 export const HOLDOUT_SEED = 'AUDIT-2026-09-12-B';
 export {RC23_SIGNOFF_SEED} from './rc2-development-corpus.mjs';
@@ -442,6 +445,70 @@ function conditions() {
       }
     }
     return {pass: big > 40 && ambiguous === 0, detail: {sampled: seen, stemsWithARiseOf100OrMore: big, ambiguous}};
+  });
+
+  // --- RC2.4 conditions ------------------------------------------------------
+
+  add('HARD_COVERAGE_EXPANDED', 'RC2.4-1 — hard coverage is materially broader than RC2.3, and the two families at their ceiling stay there', () => {
+    const c = coverageTable();
+    return {
+      pass: c.hardTemplatesAfter >= 37 && c.hardFamiliesAfter >= 14
+        && c.familiesWithoutHard.length === 2
+        && c.familiesWithoutHard.includes('fractions') && c.familiesWithoutHard.includes('odd_one_out'),
+      detail: {
+        hardTemplates: `${c.hardTemplatesBefore} -> ${c.hardTemplatesAfter}`,
+        hardFamilies: `${c.hardFamiliesBefore} -> ${c.hardFamiliesAfter}`,
+        familiesWithoutHard: c.familiesWithoutHard,
+        addedByFamily: c.addedByFamily
+      }
+    };
+  });
+
+  add('NOTHING_RECLASSIFIED', 'RC2.4-1 — coverage was raised by adding structures, never by promoting a routine one', () => {
+    const lost = RC23_HARD.filter(id => !isHardCapable(id));
+    const promoted = ['PROP_H_COST_PLUS', 'PCT_M_SUCCESSIVE', 'PCT_H_CHAIN_VALUE', 'RATE_H_TWO_PHASE',
+      'PL_H_CHAIN', 'RAT_E_SPLIT', 'PCT_E_REVERSE_ONE', 'PL_H_REVERSE', 'AVG_M_COMBINE',
+      'WORK_H_TWO_STAGE', 'MACH_H_STAGE_UP', 'COMB_H_STAGED', 'WORK_M_CHANGE', 'MACH_M_NEW_FAST',
+      'PCT_H_REVERSE_CHAIN', 'AVG_H_TARGET', 'SEQ_H_RECURRENCE'].filter(isHardCapable);
+    const criteria = Object.keys(HARD_CRITERIA).sort().join(',');
+    const expected = 'COMPOSED_INVERSION,CROSS_PART_INTEGRATION,PARTIAL_ORDER_BRANCHING,RULE_DISCOVERY,SIMULTANEOUS_CONSTRAINTS,STRATEGY_SELECTION';
+    return {pass: lost.length === 0 && promoted.length === 0 && criteria === expected,
+      detail: {lostHardBand: lost, promotedRoutine: promoted, criteriaUnchanged: criteria === expected}};
+  });
+
+  add('ALL_HARD_BATCH_ACCEPTS', 'RC2.4-2 — five ALL_HARD sessions of fifty carry no filler, no duplicates and no dominance', () => {
+    const r = allHardSessions({sessions: 5, count: 50, seedTag: 'GATE-RC24-BATCH', mode: 'BATCH'});
+    const cap = new Engine().config.maxTemplateIdRepeatsPerSession;
+    const worstShare = Math.max(0, ...r.perSession.map(s => s.templates.max));
+    return {
+      pass: r.failedSessions === 0 && r.totalQuestions === 250 && r.filler === 0
+        && r.wrongKeys === 0 && r.ambiguous === 0 && r.invalidQuestions === 0
+        && r.exactDuplicates === 0 && r.semanticDuplicates === 0
+        && worstShare <= cap
+        && r.acrossAllSessions.families.distinct >= 13
+        && r.acrossAllSessions.reasoning.distinct >= 40,
+      detail: {
+        total: r.totalQuestions, filler: r.filler, wrongKeys: r.wrongKeys, ambiguous: r.ambiguous,
+        exactDuplicates: r.exactDuplicates, semanticDuplicates: r.semanticDuplicates,
+        worstTemplateShareOf50: worstShare, cap,
+        acrossAllSessions: r.acrossAllSessions
+      }
+    };
+  });
+
+  add('NEW_TEMPLATE_OPTIONS_SOUND', 'RC2.4-3 — the added templates carry varied misconception-linked options, not magnitude fillers', () => {
+    const r = newTemplateOptions({perTemplate: 25, seedTag: 'GATE-RC24-OPT'});
+    const thin = r.perTemplate.filter(t => t.slips < 4).map(t => t.templateId);
+    return {
+      pass: r.templatesMeasured >= newHardTemplates().length
+        && r.repeatedDiagnosis.share < 0.1 && r.outOfScaleAt25x.share < 0.05
+        && r.fractionalCountOptions === 0 && thin.length === 0,
+      detail: {
+        templatesMeasured: r.templatesMeasured, options: r.options,
+        repeatedDiagnosis: r.repeatedDiagnosis, outOfScaleAt25x: r.outOfScaleAt25x,
+        fractionalCountOptions: r.fractionalCountOptions, thinSlipPools: thin
+      }
+    };
   });
 
   add('TREE_CLEAN', '§23 — the candidate is not still moving', () => {

@@ -269,7 +269,24 @@ export function computeComplexity(f = {}) {
  * produce, rather than being anchored to numbers inherited from a model that no
  * longer exists.
  */
-export const BAND_BOUNDARIES = Object.freeze({easyMedium: 9.4, mediumHard: 13.4});
+/**
+ * RC2.4. The rule is unchanged; the population it is applied to moved.
+ *
+ * RC2.4 added eighteen HARD structures across eleven families, so the template
+ * population the tertiles partition is a different population — 125 templates
+ * rather than 107, weighted toward heavier reasoning at the top. Recomputed on
+ * it, the tertiles land at 9.8 and 14.8.
+ *
+ * What this does NOT do is move any published band. Since RC2.3 a question is
+ * released at its STRUCTURAL band and the complexity score decides nothing; these
+ * boundaries now govern one reported evidence field, `complexity_band`, and the
+ * `score_agrees_with_structure` flag derived from it. Leaving the old constants
+ * would mean a stated rule that the code knowingly violates, which is the drift
+ * tools/audit/rc22-difficulty.mjs exists to surface — so they are updated, and
+ * the agreement figure is re-reported afterwards so the effect on the evidence
+ * is visible rather than absorbed.
+ */
+export const BAND_BOUNDARIES = Object.freeze({easyMedium: 9.8, mediumHard: 14.8});
 
 export function bandFor(score) {
   if (score <= BAND_BOUNDARIES.easyMedium) return 'easy';

@@ -53,7 +53,9 @@ test('RC2.3-1: every template is adjudicated, and every adjudication is reachabl
   const adjudicated = [...ADJUDICATED_TEMPLATE_IDS].sort();
   assert.deepEqual(reachable, adjudicated,
     `unreachable: ${adjudicated.filter(t => !seen.has(t))}; unadjudicated: ${reachable.filter(t => !TEMPLATE_STRUCTURE[t])}`);
-  assert.equal(adjudicated.length, 107, 'the engine holds 107 templates');
+  // RC2.4 added eighteen HARD templates across eleven families; the count is
+  // pinned so a silent loss is still caught.
+  assert.equal(adjudicated.length, 125, 'the engine holds 125 templates');
 });
 
 test('RC2.3-1: a hard template names a structural criterion, and nothing else may', () => {
@@ -99,10 +101,13 @@ test('RC2.3-1: family capability is derived, never asserted twice', () => {
     assert.deepEqual(f.difficulties, implied, f.id);
   }
   // And it is allowed to be narrow. Forcing every family to serve every band is
-  // what produced the routine "hard" items in the first place.
+  // what produced the routine "hard" items in the first place, and RC2.4 widened
+  // hard coverage by ADDING structures rather than by relaxing the criteria —
+  // so the two families that genuinely cannot reach hard still do not.
   assert.deepEqual(FAMILY_MAP.fractions.difficulties, ['easy']);
-  assert.deepEqual(FAMILY_MAP.machines.difficulties, ['medium']);
-  assert.ok(!FAMILY_MAP.percentages.difficulties.includes('hard'));
+  assert.ok(!FAMILY_MAP.odd_one_out.difficulties.includes('hard'));
+  assert.ok(FAMILY_MAP.machines.difficulties.includes('hard'), 'RC2.4 gave machines two hard structures');
+  assert.ok(FAMILY_MAP.percentages.difficulties.includes('hard'), 'RC2.4 gave percentages two hard structures');
 });
 
 // --- what gets published ----------------------------------------------------
@@ -201,7 +206,8 @@ test('RC2.3-2: a family that cannot reach a band refuses rather than substitutin
       assert.ok(threw, `${f.id}/${band} neither produced nor refused`);
     }
   }
-  assert.ok(checked > 10, 'this test is only meaningful while some band is unreachable');
+  // Two families still cannot reach hard, and fractions cannot reach medium.
+  assert.ok(checked >= 3, 'this test is only meaningful while some band is unreachable');
 });
 
 // --- repetition -------------------------------------------------------------

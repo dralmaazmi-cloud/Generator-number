@@ -43,7 +43,7 @@ whenFrozen('§24: the freeze records everything the scope asks it to', () => {
   // Each release freezes against its OWN unused sign-off holdout; every earlier
   // one is recorded as spent and explicitly not reused. A holdout an engine has
   // already been remediated against cannot test it.
-  const EXPECTED = {'RC2.3': 'AUDIT-2026-09-12-E', 'RC2.2': 'AUDIT-2026-09-12-D', 'RC2.1': 'AUDIT-2026-09-12-C'};
+  const EXPECTED = {'RC2.4': 'AUDIT-2026-09-12-E', 'RC2.3': 'AUDIT-2026-09-12-E', 'RC2.2': 'AUDIT-2026-09-12-D', 'RC2.1': 'AUDIT-2026-09-12-C'};
   assert.equal(f.holdoutSeed, EXPECTED[f.release] ?? 'AUDIT-2026-09-12-B');
   if (f.release === 'RC2.1') {
     assert.equal(f.previousHoldouts.length, 1);
@@ -53,7 +53,7 @@ whenFrozen('§24: the freeze records everything the scope asks it to', () => {
     assert.deepEqual(f.previousHoldouts.map(h => h.seed), ['AUDIT-2026-09-12-B', 'AUDIT-2026-09-12-C']);
     for (const h of f.previousHoldouts) assert.equal(h.reused, false);
   }
-  if (f.release === 'RC2.3') {
+  if (f.release === 'RC2.3' || f.release === 'RC2.4') {
     assert.deepEqual(f.previousHoldouts.map(h => h.seed),
       ['AUDIT-2026-09-12-B', 'AUDIT-2026-09-12-C', 'AUDIT-2026-09-12-D']);
     for (const h of f.previousHoldouts) assert.equal(h.reused, false);

@@ -536,9 +536,15 @@ export class NumericalQuestionGeneratorEngine {
           .filter(t => t === variant).length;
         // Keep the best fallback seen so far: one that still respects the hard
         // ceiling is preferred over one that does not.
-        if (!relaxed || (relaxed.used >= this.config.maxTemplateRepeatsPerSession && used < this.config.maxTemplateRepeatsPerSession)) {
-          relaxed = {q, fingerprint, used, variant, discardEvent: null};
-        }
+        // RC2.3-5 / RC2.4. The fallback prefers a candidate that respects the
+        // ceilings, and the share cap is one of them: without this the fallback
+        // bypassed it exactly as it once bypassed the reasoning cap, and the
+        // fifth session of an all-hard batch put one template in five slots
+        // against a cap of four.
+        const within = c => c.used < this.config.maxTemplateRepeatsPerSession
+          && c.usedTemplate < this.config.maxTemplateIdRepeatsPerSession;
+        const candidate = {q, fingerprint, used, usedTemplate, variant, discardEvent: null};
+        if (!relaxed || (!within(relaxed) && within(candidate))) relaxed = candidate;
         // RC2.2-4. A CAP, not a ban. Before RC2.2 a reasoning signature existed
         // only where a template declared one — sequences alone, 15 of Holdout
         // C's 250 items — so the rule governed almost nothing and the same
@@ -627,6 +633,14 @@ export class NumericalQuestionGeneratorEngine {
               note: 'reasoning-path allowance exceeded by the fallback: no candidate within the cap was available'
             });
           }
+        }
+        if ((relaxed.usedTemplate ?? 0) >= this.config.maxTemplateIdRepeatsPerSession) {
+          diversityWarnings.push({
+            index: i + 1,
+            template_id: relaxed.q.generator_id,
+            reason: REASON.SESSION_TEMPLATE_SHARE_CAP,
+            note: 'template share cap exceeded by the fallback: no candidate within the cap was available'
+          });
         }
         diversityWarnings.push({
           index: i + 1,

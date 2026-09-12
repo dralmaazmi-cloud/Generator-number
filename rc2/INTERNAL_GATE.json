@@ -1,14 +1,18 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-12T19:14:57.163Z",
+  "evaluatedAt": "2026-09-12T19:58:55.890Z",
   "engineVersion": "1.4.0",
-  "headCommit": "fede1994bd9cf3ac486c12b32233694639354cf5",
+  "headCommit": "546fbafaa54b8b87dbe3c7a76834474c41d0bf1a",
   "branch": "claude/rc2-implementation",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "PASS",
-  "conditions": 35,
-  "failedConditions": [],
+  "verdict": "FAIL",
+  "conditions": 39,
+  "failedConditions": [
+    "SUITE_GREEN",
+    "STRUCTURE_ADJUDICATION_COMPLETE",
+    "TREE_CLEAN"
+  ],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -37,17 +41,17 @@
     {
       "id": "SUITE_GREEN",
       "requirement": "The whole test suite passes",
-      "pass": true,
+      "pass": false,
       "detail": {
-        "passed": 379,
-        "failed": 0
+        "passed": 394,
+        "failed": 3
       }
     },
     {
       "id": "STRESS_GREEN",
       "requirement": "The stress suite passes",
       "pass": true,
-      "detail": "PASS: 3300 single questions + 120 mixed sessions + 100 adaptive questions + PDF HTML smoke."
+      "detail": "PASS: 4200 single questions + 120 mixed sessions + 100 adaptive questions + PDF HTML smoke."
     },
     {
       "id": "RC1_GAINS_PRESERVED",
@@ -80,6 +84,7 @@
         "offenders": [],
         "filesMentioningIt": [
           "rc2/DEVELOPMENT_CORPUS.json",
+          "rc2/FREEZE.json",
           "rc2/FREEZE_RC2.json",
           "rc2/FREEZE_RC2_1.json",
           "rc2/FREEZE_RC2_2.json",
@@ -203,18 +208,16 @@
       "requirement": "RC2.1-1 — every published candidate a session sees is delivered or dispositioned",
       "pass": true,
       "detail": {
-        "publishedToSessions": 557,
+        "publishedToSessions": 351,
         "delivered": 250,
-        "sessionDiscards": 307,
-        "accountedFor": 557,
+        "sessionDiscards": 101,
+        "accountedFor": 351,
         "balanced": true,
         "difference": 0,
         "byReason": {
-          "SESSION_WINDOW_CAP": 184,
-          "SESSION_TEMPLATE_CAP": 79,
-          "REPEATED_REASONING_PATTERN": 22,
-          "DUPLICATE_FINGERPRINT": 19,
-          "SESSION_TEMPLATE_SHARE_CAP": 3
+          "SESSION_WINDOW_CAP": 60,
+          "SESSION_TEMPLATE_CAP": 39,
+          "DUPLICATE_FINGERPRINT": 2
         },
         "anonymous": 0,
         "note": "published candidates offered to sessions = delivered + every recorded session-level discard"
@@ -283,7 +286,7 @@
       "detail": {
         "exactRepeats": 0,
         "semanticRepeats": 0,
-        "reasoningPaths": 115,
+        "reasoningPaths": 126,
         "maxRepetition": 5,
         "cap": 5
       }
@@ -294,21 +297,21 @@
       "pass": true,
       "detail": {
         "wrong": 4500,
-        "linked": 2295,
-        "share": 0.51,
+        "linked": 2172,
+        "share": 0.483,
         "outOfRange": 0
       }
     },
     {
       "id": "STRUCTURE_ADJUDICATION_COMPLETE",
       "requirement": "RC2.3-1 — every template is adjudicated and every adjudication is reachable",
-      "pass": true,
+      "pass": false,
       "detail": {
-        "templates": 107,
+        "templates": 125,
         "byBand": {
           "easy": 37,
           "medium": 51,
-          "hard": 19
+          "hard": 37
         },
         "orphans": []
       }
@@ -336,8 +339,8 @@
         "total": 300,
         "filler": 0,
         "failedSessions": 0,
-        "families": 5,
-        "templates": 19
+        "families": 14,
+        "templates": 37
       }
     },
     {
@@ -345,22 +348,13 @@
       "requirement": "RC2.3-2 — the coverage a band can be built from is measured, and a band that cannot fill a session refuses",
       "pass": true,
       "detail": {
-        "hardTemplates": 19,
-        "hardFamilies": 5,
+        "hardTemplates": 37,
+        "hardFamilies": 14,
         "familiesWithoutHard": [
-          "percentages",
-          "averages",
-          "work_time",
-          "machines",
-          "direct_proportion",
           "fractions",
-          "unit_rate",
-          "combined_rate",
-          "calendar",
-          "odd_one_out",
-          "profit_loss"
+          "odd_one_out"
         ],
-        "meanUsesPerStructureInA250Batch": 4.32,
+        "meanUsesPerStructureInA250Batch": 2.22,
         "refusesWhenShort": true,
         "refusalNames": []
       }
@@ -411,9 +405,9 @@
       "requirement": "RC2.3-4 — a count of indivisible things is not offered as a fraction",
       "pass": true,
       "detail": {
-        "published": 1075,
+        "published": 1745,
         "fractional": 7,
-        "share": 0.0065
+        "share": 0.004
       }
     },
     {
@@ -421,16 +415,140 @@
       "requirement": "RC2.3-6 — a rise of 100% or more says BY how much, never «بنسبة»",
       "pass": true,
       "detail": {
-        "sampled": 3500,
+        "sampled": 5600,
         "stemsWithARiseOf100OrMore": 83,
         "ambiguous": 0
       }
     },
     {
+      "id": "HARD_COVERAGE_EXPANDED",
+      "requirement": "RC2.4-1 — hard coverage is materially broader than RC2.3, and the two families at their ceiling stay there",
+      "pass": true,
+      "detail": {
+        "hardTemplates": "19 -> 37",
+        "hardFamilies": "5 -> 14",
+        "familiesWithoutHard": [
+          "fractions",
+          "odd_one_out"
+        ],
+        "addedByFamily": {
+          "sequences": [
+            "SEQ_H_DIGIT_SUM",
+            "SEQ_H_INDEX_MULT"
+          ],
+          "percentages": [
+            "PCT_H_MIXTURE",
+            "PCT_H_TWO_GROUP_CHANGE"
+          ],
+          "averages": [
+            "AVG_H_OVERLAP",
+            "AVG_H_SPLIT_SIZE"
+          ],
+          "ages": [
+            "AGE_H_THREE_SIBLINGS"
+          ],
+          "work_time": [
+            "WORK_H_JOINT_SOLO",
+            "WORK_H_EXTRA_WORKERS"
+          ],
+          "machines": [
+            "MACH_H_TWO_CONFIG",
+            "MACH_H_STOPPAGE_TIME"
+          ],
+          "direct_proportion": [
+            "PROP_H_TWO_ITEM_SYSTEM"
+          ],
+          "unit_rate": [
+            "RATE_H_RATE_FROM_GAP"
+          ],
+          "combined_rate": [
+            "COMB_H_TWO_PUMPS",
+            "COMB_H_TEAM_SIZE"
+          ],
+          "calendar": [
+            "CAL_H_CYCLE_MEET"
+          ],
+          "profit_loss": [
+            "PL_H_TWO_OUTCOMES",
+            "PL_H_MARKUP_DISCOUNT"
+          ]
+        }
+      }
+    },
+    {
+      "id": "NOTHING_RECLASSIFIED",
+      "requirement": "RC2.4-1 — coverage was raised by adding structures, never by promoting a routine one",
+      "pass": true,
+      "detail": {
+        "lostHardBand": [],
+        "promotedRoutine": [],
+        "criteriaUnchanged": true
+      }
+    },
+    {
+      "id": "ALL_HARD_BATCH_ACCEPTS",
+      "requirement": "RC2.4-2 — five ALL_HARD sessions of fifty carry no filler, no duplicates and no dominance",
+      "pass": true,
+      "detail": {
+        "total": 250,
+        "filler": 0,
+        "wrongKeys": 0,
+        "ambiguous": 0,
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "worstTemplateShareOf50": 4,
+        "cap": 4,
+        "acrossAllSessions": {
+          "templates": {
+            "distinct": 37,
+            "max": 11
+          },
+          "families": {
+            "distinct": 14,
+            "max": 37
+          },
+          "reasoning": {
+            "distinct": 49,
+            "max": 8
+          }
+        }
+      }
+    },
+    {
+      "id": "NEW_TEMPLATE_OPTIONS_SOUND",
+      "requirement": "RC2.4-3 — the added templates carry varied misconception-linked options, not magnitude fillers",
+      "pass": true,
+      "detail": {
+        "templatesMeasured": 18,
+        "options": 2250,
+        "repeatedDiagnosis": {
+          "count": 119,
+          "share": 0.0529
+        },
+        "outOfScaleAt25x": {
+          "count": 14,
+          "share": 0.0062
+        },
+        "fractionalCountOptions": 0,
+        "thinSlipPools": []
+      }
+    },
+    {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": true,
-      "detail": "clean"
+      "pass": false,
+      "detail": [
+        "M package.json",
+        " M src/families/averages.js",
+        " M src/families/combined_rate.js",
+        " M src/families/machines.js",
+        " M src/families/profit_loss.js",
+        " M src/families/work_time.js",
+        " M src/index.js",
+        " M src/qa/complexity.js",
+        " M tests/rc2-degeneracy.test.mjs",
+        " M tests/rc2-distractor-provenance.test.mjs"
+      ]
     }
   ]
 }

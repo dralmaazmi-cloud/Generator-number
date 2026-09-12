@@ -63,13 +63,16 @@ export function freeze() {
   // RC2.1 froze against its own corpus, drawn on seeds the RC2 corpus never
   // used, and against its own unused sign-off holdout. Recording RC2's would
   // attribute this engine to evidence it was not measured on.
-  const rc23 = existsSync('rc2/RC23_DEVELOPMENT_CORPUS.json');
-  const rc22 = !rc23 && existsSync('rc2/RC22_DEVELOPMENT_CORPUS.json');
-  const rc21 = !rc23 && !rc22 && existsSync('rc2/RC21_DEVELOPMENT_CORPUS.json');
-  const corpusPath = rc23 ? 'rc2/RC23_DEVELOPMENT_CORPUS.json'
+  const rc24 = existsSync('rc2/RC24_DEVELOPMENT_CORPUS.json');
+  const rc23 = !rc24 && existsSync('rc2/RC23_DEVELOPMENT_CORPUS.json');
+  const rc22 = !rc24 && !rc23 && existsSync('rc2/RC22_DEVELOPMENT_CORPUS.json');
+  const rc21 = !rc24 && !rc23 && !rc22 && existsSync('rc2/RC21_DEVELOPMENT_CORPUS.json');
+  const corpusPath = rc24 ? 'rc2/RC24_DEVELOPMENT_CORPUS.json'
+    : rc23 ? 'rc2/RC23_DEVELOPMENT_CORPUS.json'
     : rc22 ? 'rc2/RC22_DEVELOPMENT_CORPUS.json'
     : rc21 ? 'rc2/RC21_DEVELOPMENT_CORPUS.json' : 'rc2/DEVELOPMENT_CORPUS.json';
-  const corpusGzPath = rc23 ? 'rc2/rc23-development-corpus.jsonl.gz'
+  const corpusGzPath = rc24 ? 'rc2/rc24-development-corpus.jsonl.gz'
+    : rc23 ? 'rc2/rc23-development-corpus.jsonl.gz'
     : rc22 ? 'rc2/rc22-development-corpus.jsonl.gz'
     : rc21 ? 'rc2/rc21-development-corpus.jsonl.gz' : 'rc2/development-corpus.jsonl.gz';
   const corpus = JSON.parse(readFileSync(corpusPath, 'utf8'));
@@ -107,14 +110,14 @@ export function freeze() {
     frozenRC1Baseline: matrix.frozenRC1Baseline,
     scopeCommit: matrix.scopeCommit,
     scopeSchema: matrix.scopeSchema,
-    release: rc23 ? 'RC2.3' : rc22 ? 'RC2.2' : rc21 ? 'RC2.1' : 'RC2',
-    developmentSeeds: [...(rc23 ? RC23_DEVELOPMENT_SEEDS : rc22 ? RC22_DEVELOPMENT_SEEDS : rc21 ? RC21_DEVELOPMENT_SEEDS : DEVELOPMENT_SEEDS)],
+    release: rc24 ? 'RC2.4' : rc23 ? 'RC2.3' : rc22 ? 'RC2.2' : rc21 ? 'RC2.1' : 'RC2',
+    developmentSeeds: [...(rc24 ? RC24_DEVELOPMENT_SEEDS : rc23 ? RC23_DEVELOPMENT_SEEDS : rc22 ? RC22_DEVELOPMENT_SEEDS : rc21 ? RC21_DEVELOPMENT_SEEDS : DEVELOPMENT_SEEDS)],
     // RC2.3 names its sign-off holdout and does not generate it: the brief
     // withholds the next holdout until the validation report is approved. The
     // freeze is still the state that holdout would be sealed against, and
     // `holdoutGenerated` below says plainly that it has not been.
-    holdoutSeed: rc23 ? RC23_SIGNOFF_SEED : rc22 ? RC22_HOLDOUT_SEED : rc21 ? RC21_HOLDOUT_SEED : HOLDOUT_SEED,
-    previousHoldouts: rc23
+    holdoutSeed: (rc24 || rc23) ? RC23_SIGNOFF_SEED : rc22 ? RC22_HOLDOUT_SEED : rc21 ? RC21_HOLDOUT_SEED : HOLDOUT_SEED,
+    previousHoldouts: (rc24 || rc23)
       ? [{seed: HOLDOUT_SEED, status: 'FAILED_DIAGNOSTIC_HOLDOUT', reused: false},
          {seed: RC21_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
          {seed: RC22_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false}]
