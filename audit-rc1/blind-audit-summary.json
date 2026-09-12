@@ -1,0 +1,10 @@
+{
+  "total": 250,
+  "arabicFlagged": 13,
+  "arabicFlaggedInStem": 13,
+  "oraclePass": 250,
+  "oracleFail": 0,
+  "paramsMatchedRebuild": 250,
+  "paramsDiverged": [],
+  "rebuildFailures": []
+}
