@@ -7,7 +7,7 @@
 // genuine rule must pass.
 
 import {mk, usable, buildBase} from './_shared.js';
-import {checkOddOneOutAmbiguity} from '../qa/ambiguity.js';
+import {checkOddOneOutAmbiguity, DISCOVERABILITY_CEILING} from '../qa/ambiguity.js';
 import {canonicalNumberSet} from '../qa/fingerprint.js';
 
 const PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
@@ -16,7 +16,7 @@ export function generateOddOneOut({difficulty, rng, seed, engineVersion}) {
   const ctx = {difficulty, rng, seed, engineVersion, family: 'odd_one_out', family_ar: 'العدد الذي لا ينتمي', category: 'العدد الذي لا ينتمي إلى المجموعة'};
   const list = difficulty === 'easy' ? [multiples, squares]
     : difficulty === 'medium' ? [cubes, pronic, primeDoubles]
-    : [squareMinusOne, primePlusPattern];
+    : [squareMinusOne, triangularPattern];
   return rng.pick(list)(ctx);
 }
 
@@ -55,8 +55,17 @@ function build(ctx, spec) {
 
   // Section 9: reject here rather than shipping an item with two defensible
   // answers. The check runs before anything else is built.
+  // RC2-007/008/009. AMBIGUOUS and UNDISCOVERABLE are never published.
+  // BORDERLINE may be, under the declared policy, and stays visible in metrics.
   const ambiguity = checkOddOneOutAmbiguity(group, outlier);
-  if (!ambiguity.supportsIntended || ambiguity.ambiguous) return null;
+  if (!ambiguity.supportsIntended) return null;
+  if (ambiguity.ambiguous || ambiguity.undiscoverable) return null;
+  // RC2-009. The template's *declared* rule must itself be discoverable. A rule
+  // the library treats as beyond a candidate's reach must not certify a
+  // question merely because it is the one the author had in mind, and it is not
+  // enough that some unrelated simpler rule happens to agree with the key —
+  // that was the S5/22 case, a Hard item solvable by "which one is even".
+  if (!declaredRuleIsDiscoverable(ruleId)) return null;
 
   const distractors = usable(valid.map(v => mk(v, 'SATISFIES_SHARED_PROPERTY', `${v} يحقق الخاصية: ${propertyText}`)));
   return buildBase(ctx, {
@@ -96,9 +105,35 @@ function build(ctx, spec) {
       conditionCount: 6,
       arithmeticBurden: ctx.difficulty === 'hard' ? 3 : 2
     },
-    metadata: {outlier_display_position: group.indexOf(outlier) + 1, property: propertyText},
+    metadata: {
+      outlier_display_position: group.indexOf(outlier) + 1,
+      property: propertyText,
+      // RC2-007/008/009: the publication verdict, kept for corpus metrics.
+      ambiguity_verdict: ambiguity.verdict,
+      ambiguity_intended_salience: ambiguity.intendedSalience,
+      ambiguity_surface_competing: ambiguity.surfaceCompeting.map(r => `${r.ruleId}->${r.outlier}`)
+    },
     textParams: false
   });
+}
+
+/**
+ * RC2-009. The salience the rule library assigns to each template's declared
+ * rule. A declared rule above DISCOVERABILITY_CEILING cannot be published.
+ */
+const DECLARED_RULE_SALIENCE = {
+  MULTIPLE: 1,
+  SQUARE: 1,
+  CUBE: 2,
+  PRONIC: 2,
+  PRIME_DOUBLE: 2,
+  SQUARE_MINUS_ONE: 2,
+  TRIANGULAR: 2
+};
+
+function declaredRuleIsDiscoverable(ruleId) {
+  const salience = DECLARED_RULE_SALIENCE[ruleId];
+  return Number.isFinite(salience) && salience <= DISCOVERABILITY_CEILING;
 }
 
 /** Retries the same shape with fresh numbers when the ambiguity sweep rejects one. */
@@ -151,7 +186,13 @@ function cubes(ctx) {
   return attempt(ctx, ({rng}) => {
     const start = rng.int(2, 4);
     const valid = Array.from({length: 5}, (_, i) => (start + i) ** 3);
-    const outlier = placeOutlier(rng, valid, n => !isCube(n));
+    // RC2-008. A run of consecutive cubes always contains exactly one perfect
+    // square (64 = 8², 729 = 27²), and "the only perfect square" competes with
+    // the cube rule at a lower salience. When the run carries such a number the
+    // intruder must be a square too, so that no single member is the only one.
+    const squaresInRun = valid.filter(isSquare).length;
+    const outlier = placeOutlier(rng, valid,
+      n => !isCube(n) && (squaresInRun !== 1 || isSquare(n)));
     if (outlier === null) return null;
     return build(ctx, {
       templateId: 'ODD_M_CUBES', ruleId: 'CUBE', ruleParams: {baseStart: start},
@@ -219,20 +260,31 @@ function squareMinusOne(ctx) {
   });
 }
 
-function primePlusPattern(ctx) {
+/**
+ * RC2-009. This template used to publish "prime + k" sets. That rule sits above
+ * the discoverability ceiling: in the frozen RC1 sample, S5/46 ran prime + 10
+ * over six consecutive odd numbers, where primality — the reading any candidate
+ * tries first — singles out two numbers, neither of them the key. S5/22 was the
+ * mirror image, a Hard item whose only findable route was "which one is even".
+ *
+ * The template is not retired, which would shrink the inventory. It is rebuilt
+ * on triangular numbers: a genuinely hard property to spot inside a run, and one
+ * a candidate can actually reach.
+ */
+function triangularPattern(ctx) {
   return attempt(ctx, ({rng}) => {
-    const primes = PRIMES.slice(1, 6);
-    const offset = rng.pick([4, 6, 10]);
-    const valid = primes.map(p => p + offset);
-    const outlier = placeOutlier(rng, valid, n => n > offset && !PRIMES.includes(n - offset));
+    const start = rng.int(3, 7);
+    const tri = n => (n * (n + 1)) / 2;
+    const valid = Array.from({length: 5}, (_, i) => tri(start + i));
+    const outlier = placeOutlier(rng, valid, n => !isTriangular(n));
     if (outlier === null) return null;
     return build(ctx, {
-      templateId: 'ODD_H_PRIME_OFFSET', ruleId: 'PRIME_PLUS_OFFSET', ruleParams: {offset, primes},
-      subskill: 'عدد أولي مع إزاحة ثابتة',
+      templateId: 'ODD_H_TRIANGULAR', ruleId: 'TRIANGULAR', ruleParams: {baseStart: start},
+      subskill: 'أعداد مثلثية',
       valid, outlier,
-      propertyText: `عدد أولي + ${offset}`,
-      proofs: valid.map(v => `${v} − ${offset} = ${v - offset}، وهو عدد أولي.`),
-      remember: 'إذا لم تظهر خاصية مباشرة، جرّب إزالة إزاحة ثابتة من الأعداد.'
+      propertyText: 'عدد مثلثي',
+      proofs: valid.map((v, i) => `${v} = (${start + i} × ${start + i + 1}) ÷ 2.`),
+      remember: 'العدد المثلثي هو مجموع الأعداد من 1 حتى n، مثل 6 و10 و15 و21.'
     });
   });
 }
@@ -240,3 +292,4 @@ function primePlusPattern(ctx) {
 function isSquare(n) { return n >= 0 && Number.isInteger(Math.sqrt(n)); }
 function isCube(n) { if (n < 0) return false; const r = Math.round(Math.cbrt(n)); return r ** 3 === n; }
 function isPronic(n) { for (let k = 1; k * (k + 1) <= n; k++) if (k * (k + 1) === n) return true; return false; }
+function isTriangular(n) { return n > 0 && isSquare(8 * n + 1); }

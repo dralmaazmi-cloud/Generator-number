@@ -238,11 +238,15 @@ test('MUST_ACCEPT: siblings of 24 and 16 — a wide gap is a preference, not an 
 
 // --- odd one out ambiguity (Section 9) --------------------------------------
 
-test('MUST_REJECT: {30,42,56,72,84,90} has two competing simple rules', () => {
+test('MUST_REJECT: {30,42,56,72,84,90} has a competing simple rule', () => {
+  // Historical case, kept. Under the RC2 policy `competing` holds only the
+  // rules pointing at a number *other* than the key, which is the defect
+  // itself: the key is 84, and multiples of three single out 56.
   const r = checkOddOneOutAmbiguity([30, 42, 56, 72, 84, 90], 84);
   assert.equal(r.ambiguous, true);
   const outliers = new Set(r.competing.flat().map(x => x.outlier));
-  assert.ok(outliers.has(84) && outliers.has(56));
+  assert.ok(outliers.has(56), 'a simple rule must be shown pointing away from the key');
+  assert.ok(!outliers.has(84), 'the key itself is not a competing outlier');
 });
 
 test('MUST_ACCEPT: perfect squares with one intruder', () => {
@@ -251,16 +255,32 @@ test('MUST_ACCEPT: perfect squares with one intruder', () => {
   assert.equal(r.supportsIntended, true);
 });
 
-test('MUST_ACCEPT: perfect cubes with one intruder', () => {
+test('MUST_REJECT: a cube run whose only perfect square is a lone member', () => {
+  // RC2-008. Every run of consecutive cubes carries exactly one perfect square
+  // (64 = 8²). With a non-square intruder, "the only perfect square" singles out
+  // 64 at salience 1 against the cube rule at 2.
   const r = checkOddOneOutAmbiguity([8, 27, 64, 125, 216, 200], 200);
+  assert.equal(r.ambiguous, true);
+});
+
+test('MUST_ACCEPT: the same cube run with a square intruder is publishable', () => {
+  // The sampler fix: when the run carries a lone square, the intruder is chosen
+  // to be a square too, so no single member is "the only one".
+  const r = checkOddOneOutAmbiguity([8, 27, 64, 125, 216, 100], 100);
   assert.equal(r.ambiguous, false);
+  assert.equal(r.undiscoverable, false);
   assert.equal(r.supportsIntended, true);
 });
 
-test('MUST_ACCEPT: "prime + 10" with one intruder', () => {
+test('MUST_REJECT: "prime + 10" is not a discoverable rule', () => {
+  // This was a MUST_ACCEPT in RC1 and that was the mistake: the frozen sample
+  // published it as S5/46, where primality — the reading a candidate tries
+  // first — singles out 21 and 15, neither of them the key.
   const r = checkOddOneOutAmbiguity([13, 15, 17, 19, 21, 23], 19);
-  assert.equal(r.ambiguous, false);
-  assert.equal(r.supportsIntended, true);
+  assert.equal(r.undiscoverable, true);
+  assert.equal(r.verdict, 'UNDISCOVERABLE');
+  assert.equal(r.ambiguous, false,
+    'undiscoverable is its own verdict, distinct from ambiguity');
 });
 
 // --- duplicates and fingerprints (Section 13) -------------------------------

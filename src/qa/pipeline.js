@@ -51,6 +51,9 @@ export function runOracle(base, q) {
     const reasons = [];
     if (!amb.supportsIntended) reasons.push(REASON.ORACLE_DISAGREEMENT);
     if (amb.ambiguous) reasons.push(REASON.AMBIGUOUS_ODD_ONE_OUT);
+    // RC2-009: a key only reachable by a rule above the discoverability ceiling
+    // is not a publishable question, however correct the arithmetic is.
+    if (amb.undiscoverable) reasons.push(REASON.UNDISCOVERABLE_INTENDED_RULE);
     return {ran: true, reasons, answer: claimed, detail: {outliers: sweep.outliers, competing: amb.competing.length}};
   }
 
