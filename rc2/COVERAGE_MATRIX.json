@@ -771,8 +771,8 @@
       "evidenceArtifacts": []
     }
   ],
-  "generatedAt": "2026-09-12T11:10:12.517Z",
-  "headCommit": "9e862d043cfae7a931eb0f8546f1d0ddaab5e7f2",
+  "generatedAt": "2026-09-12T11:13:33.599Z",
+  "headCommit": "c667edb84c0fe7067d9ad392bc579b9ca907f4d2",
   "totals": {
     "items": 23,
     "byStatus": {

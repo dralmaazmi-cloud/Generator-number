@@ -1,0 +1,187 @@
+{
+  "schema": "rc2-internal-gate-v1",
+  "section": "§23",
+  "evaluatedAt": "2026-09-12T11:12:24.799Z",
+  "engineVersion": "1.4.0",
+  "headCommit": "c667edb84c0fe7067d9ad392bc579b9ca907f4d2",
+  "branch": "claude/rc2-implementation",
+  "holdoutSeed": "AUDIT-2026-09-12-B",
+  "verdict": "FAIL",
+  "conditions": 15,
+  "failedConditions": [
+    "TREE_CLEAN"
+  ],
+  "checks": [
+    {
+      "id": "SCOPE_COMPLETE",
+      "requirement": "All 23 frozen scope items at a terminal status, none forbidden, none PLANNED",
+      "pass": true,
+      "detail": {
+        "items": 23,
+        "byStatus": {
+          "FIXED": 19,
+          "RISK_REMEDIATED_AND_MEASURED": 2,
+          "MEASUREMENT_CORRECTED": 2
+        },
+        "notTerminal": [],
+        "problems": []
+      }
+    },
+    {
+      "id": "EVERY_ITEM_PROVED",
+      "requirement": "Every scope item is proved by tests that exist in the suite",
+      "pass": true,
+      "detail": {
+        "totalProofs": 174,
+        "withoutProof": []
+      }
+    },
+    {
+      "id": "SUITE_GREEN",
+      "requirement": "The whole test suite passes",
+      "pass": true,
+      "detail": {
+        "passed": 291,
+        "failed": 0
+      }
+    },
+    {
+      "id": "STRESS_GREEN",
+      "requirement": "The stress suite passes",
+      "pass": true,
+      "detail": "PASS: 4800 single questions + 120 mixed sessions + 100 adaptive questions + PDF HTML smoke."
+    },
+    {
+      "id": "RC1_GAINS_PRESERVED",
+      "requirement": "§20 — every RC1 gain still reads zero on the development corpus",
+      "pass": true,
+      "detail": {
+        "ORACLE_DISAGREEMENT": 0,
+        "postShuffleKeyMismatch": 0,
+        "zeroCorrectOption": 0,
+        "multipleCorrectOptions": 0,
+        "correctValueMismatch": 0,
+        "metaKeyMismatch": 0
+      }
+    },
+    {
+      "id": "CORPUS_SIZE",
+      "requirement": "§22 — at least 10,000 questions on development seeds",
+      "pass": true,
+      "detail": {
+        "published": 10000,
+        "exhausted": 0,
+        "templates": 107
+      }
+    },
+    {
+      "id": "HOLDOUT_UNTOUCHED",
+      "requirement": "§22 — the holdout seed appears nowhere in development evidence",
+      "pass": true,
+      "detail": {
+        "offenders": [],
+        "filesMentioningIt": [
+          "rc2/DEVELOPMENT_CORPUS.json"
+        ]
+      }
+    },
+    {
+      "id": "NO_ANSWER_TARGETING",
+      "requirement": "OBSERVE_NEVER_TARGET — no generation path consults a statistical property of answers",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "id": "NO_UNJUSTIFIED_DISTRACTORS",
+      "requirement": "RC2-012 — no surviving answer-relative option is unjustified",
+      "pass": true,
+      "detail": {
+        "auditStrata": {
+          "S1_TASK_PATH": 272,
+          "S3_GIVEN_COINCIDENCE": 50,
+          "S1B_SOLUTION_QUANTITY": 2,
+          "S2_STEP_ATTRIBUTED": 1
+        },
+        "corpusUnattributed": 0
+      }
+    },
+    {
+      "id": "FEEDBACK_TRUTHFUL",
+      "requirement": "RC2-014 — no wrong option makes a false arithmetic claim",
+      "pass": true,
+      "detail": {
+        "M1": 1,
+        "corpusMismatches": 0
+      }
+    },
+    {
+      "id": "LANGUAGE_CLEAN",
+      "requirement": "RC2-002/016/017 — no invalid or unclassified Arabic construction is published",
+      "pass": true,
+      "detail": {
+        "constructionsClassified": 90271,
+        "valid": 71616,
+        "exempt": 18655,
+        "invalid": 0,
+        "unclassified": 0,
+        "invalidSamples": []
+      }
+    },
+    {
+      "id": "AMBIGUITY_CLEAN",
+      "requirement": "RC2-007/008/009 — nothing ambiguous or undiscoverable is published",
+      "pass": true,
+      "detail": {
+        "oddOneOutPublished": 702,
+        "verdicts": {
+          "CLEAN": 567,
+          "BORDERLINE": 135
+        },
+        "publishedAmbiguous": 0,
+        "publishedUndiscoverable": 0
+      }
+    },
+    {
+      "id": "TELEMETRY_RECONCILES",
+      "requirement": "RC2-003 — every proposal is accounted for exactly once",
+      "pass": true,
+      "detail": {
+        "proposals": 10289,
+        "accountedFor": 10289,
+        "balanced": true,
+        "difference": 0,
+        "breakdown": {
+          "published": 10000,
+          "samplerFailures": 6,
+          "finalizationFailures": 203,
+          "pipelineRejectedCandidates": 80
+        }
+      }
+    },
+    {
+      "id": "EVIDENCE_PRESENT",
+      "requirement": "Every evidence artifact the matrix names exists and parses",
+      "pass": true,
+      "detail": {
+        "named": [
+          "rc2/RC2_003_REJECTION_COST.json",
+          "rc2/DEGENERACY_COVERAGE.json",
+          "rc2/RC2_006_PDF_ACCESSIBILITY.json",
+          "rc2/RC2_011_ANSWER_SPACE.json",
+          "rc2/RC2_012_SURVIVOR_AUDIT.json",
+          "rc2/RC2_014_FEEDBACK_METRICS.json",
+          "rc2/RC2_015_DIFFICULTY_CALIBRATION.json"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "id": "TREE_CLEAN",
+      "requirement": "§23 — the candidate is not still moving",
+      "pass": false,
+      "detail": [
+        "?? tools/audit/rc2-internal-gate.mjs"
+      ]
+    }
+  ]
+}
