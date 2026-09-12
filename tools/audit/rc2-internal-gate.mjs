@@ -15,6 +15,8 @@ import {execFileSync} from 'node:child_process';
 
 import Engine, {ENGINE_VERSION} from '../../src/index.js';
 import {measure as measureDistractors} from './rc21-distractors.mjs';
+import {gated as gatedDifficulty, allHard as allHardEvidence, capabilityCheck} from './rc22-difficulty.mjs';
+import {build as repetitionBuild} from './rc22-repetition.mjs';
 
 export const HOLDOUT_SEED = 'AUDIT-2026-09-12-B';
 
@@ -34,8 +36,9 @@ function conditions() {
 
   // RC2.1 re-measures on seeds the RC2 corpus never used, so the gate reads the
   // RC2.1 corpus where one exists and falls back to the RC2 one otherwise.
-  const CORPUS = existsSync('rc2/RC21_DEVELOPMENT_CORPUS.json')
-    ? 'rc2/RC21_DEVELOPMENT_CORPUS.json' : 'rc2/DEVELOPMENT_CORPUS.json';
+  const CORPUS = existsSync('rc2/RC22_DEVELOPMENT_CORPUS.json') ? 'rc2/RC22_DEVELOPMENT_CORPUS.json'
+    : existsSync('rc2/RC21_DEVELOPMENT_CORPUS.json') ? 'rc2/RC21_DEVELOPMENT_CORPUS.json'
+    : 'rc2/DEVELOPMENT_CORPUS.json';
 
   add('SCOPE_COMPLETE', 'All 23 frozen scope items at a terminal status, none forbidden, none PLANNED', () => {
     const m = read('rc2/COVERAGE_MATRIX.json');
@@ -231,19 +234,68 @@ function conditions() {
     return {pass: same, detail: {singleQuestion: q1.question === q2.question, batch: JSON.stringify(b1) === JSON.stringify(b2)}};
   });
 
-  add('HOLDOUT_C_UNTOUCHED', 'RC2.1 — the sign-off holdout seed appears in no development evidence', () => {
+  add('SIGNOFF_HOLDOUT_UNTOUCHED', 'the CURRENT sign-off holdout seed appears in no development evidence', () => {
+    // RC2.2: B and C are spent — reviewed, and their findings are the diagnosis
+    // this release answers, so reports naturally name them. What must stay
+    // untouched is the holdout that has NOT been reviewed yet.
+    const CURRENT = 'AUDIT-2026-09-12-D';
     const offenders = [];
     for (const f of readdirSync('rc2')) {
-      if (f.startsWith('HOLDOUT_C') || f.startsWith('holdout-c')) continue;
+      if (f.startsWith('HOLDOUT_D') || f.startsWith('holdout-d')) continue;
       const p = `rc2/${f}`;
       if (!statSync(p).isFile()) continue;
       let text;
       try { text = readFileSync(p, 'utf8'); } catch { continue; }
-      if (text.includes('AUDIT-2026-09-12-C') && !f.includes('GATE') && !f.includes('FREEZE')) {
-        offenders.push(f);
-      }
+      if (text.includes(CURRENT) && !f.includes('GATE') && !f.includes('FREEZE')) offenders.push(f);
     }
     return {pass: offenders.length === 0, detail: {offenders}};
+  });
+
+  // --- RC2.2 conditions ------------------------------------------------------
+
+  add('DIFFICULTY_GATE_HOLDS', 'RC2.2-1 — nothing is released at a band it does not compute', () => {
+    const r = gatedDifficulty({perBand: 700, seedTag: 'GATE-RC22'});
+    return {pass: r.violationCount === 0 && r.exhausted === 0, detail: {violations: r.violationCount, exhausted: r.exhausted, meanAttempts: r.meanAttempts}};
+  });
+
+  add('ALL_HARD_IS_HARD', 'RC2.2-1 — an ALL_HARD session contains only genuinely hard questions', () => {
+    const a = allHardEvidence({sessions: 6, seedTag: 'GATE-RC22-AH'});
+    return {pass: a.notHard === 0 && a.failedSessions === 0 && a.perFamily.length >= 8,
+      detail: {total: a.total, notHard: a.notHard, failedSessions: a.failedSessions, families: a.perFamily.length}};
+  });
+
+  add('FAMILY_CAPABILITY_TRUE', 'RC2.2-1 — the registry says what the engine can actually produce', () => {
+    const c = capabilityCheck({attempts: 40});
+    return {pass: c.allMatch, detail: c.mismatches};
+  });
+
+  add('REASONING_REPETITION_CAPPED', 'RC2.2-4 — no reasoning path exceeds its batch allowance', () => {
+    const r = repetitionBuild({seeds: ['GATE-RC22-REP']});
+    const b = r.batches[0];
+    return {
+      pass: b.exact.repeats === 0 && b.semantic.repeats === 0 && b.reasoning.max <= r.caps.perBatch,
+      detail: {exactRepeats: b.exact.repeats, semanticRepeats: b.semantic.repeats,
+        reasoningPaths: b.reasoning.distinct, maxRepetition: b.reasoning.max, cap: r.caps.perBatch}
+    };
+  });
+
+  add('DISTRACTOR_DIAGNOSTICS_LINKED', 'RC2.2-5 — wrong options point at the step they diverge at', () => {
+    const e = new Engine();
+    let wrong = 0, linked = 0, outOfRange = 0;
+    for (let i = 0; i < 900; i++) {
+      let q;
+      try { q = e.generateQuestion({family: 'random', difficulty: ['easy', 'medium', 'hard'][i % 3], seed: `GATE-LINK-${i}`}); }
+      catch { continue; }
+      const n = q.explanation.steps.length;
+      for (const m of Object.values(q.metadata.options_meta)) {
+        if (m.correct) continue;
+        wrong++;
+        const at = m.reasoningStepAffected;
+        if (Number.isInteger(at)) { linked++; if (at < 0 || at >= n) outOfRange++; }
+      }
+    }
+    return {pass: outOfRange === 0 && linked / wrong > 0.40,
+      detail: {wrong, linked, share: Number((linked / wrong).toFixed(3)), outOfRange}};
   });
 
   add('TREE_CLEAN', '§23 — the candidate is not still moving', () => {

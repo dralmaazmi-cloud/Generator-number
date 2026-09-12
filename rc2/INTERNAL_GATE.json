@@ -1,14 +1,18 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-12T14:01:48.656Z",
+  "evaluatedAt": "2026-09-12T16:45:16.218Z",
   "engineVersion": "1.4.0",
-  "headCommit": "4687fc84c99e8a2c22b21c46c920b89e5a8b9efa",
+  "headCommit": "0121d4c8f94c33524fdf16cac54b63b145a5ff8e",
   "branch": "claude/rc2-implementation",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "PASS",
-  "conditions": 22,
-  "failedConditions": [],
+  "verdict": "FAIL",
+  "conditions": 27,
+  "failedConditions": [
+    "STRESS_GREEN",
+    "HOLDOUT_C_UNTOUCHED",
+    "TREE_CLEAN"
+  ],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -39,15 +43,15 @@
       "requirement": "The whole test suite passes",
       "pass": true,
       "detail": {
-        "passed": 341,
+        "passed": 354,
         "failed": 0
       }
     },
     {
       "id": "STRESS_GREEN",
       "requirement": "The stress suite passes",
-      "pass": true,
-      "detail": "PASS: 4800 single questions + 120 mixed sessions + 100 adaptive questions + PDF HTML smoke."
+      "pass": false,
+      "detail": "no PASS line"
     },
     {
       "id": "RC1_GAINS_PRESERVED",
@@ -69,7 +73,7 @@
       "detail": {
         "published": 10000,
         "exhausted": 0,
-        "templates": 107
+        "templates": 105
       }
     },
     {
@@ -81,12 +85,16 @@
         "filesMentioningIt": [
           "rc2/DEVELOPMENT_CORPUS.json",
           "rc2/FREEZE_RC2.json",
+          "rc2/FREEZE_RC2_1.json",
           "rc2/HOLDOUT.json",
+          "rc2/HOLDOUT_C.json",
           "rc2/HOLDOUT_FINDINGS.json",
           "rc2/INTERNAL_GATE.json",
           "rc2/RC21_DEVELOPMENT_CORPUS.json",
+          "rc2/RC21_REMEDIATION_REPORT.md",
           "rc2/RC2_IMPLEMENTATION_REPORT.md",
           "rc2/SUPERSEDED_FREEZES.json",
+          "rc2/holdout-c-package/MANIFEST.json",
           "rc2/holdout-package/MANIFEST.json",
           "rc2/holdout-package/README.md",
           "rc2/holdout-package/blind/blind-questions.txt",
@@ -134,9 +142,9 @@
       "requirement": "RC2-002/016/017 — no invalid or unclassified Arabic construction is published",
       "pass": true,
       "detail": {
-        "constructionsClassified": 90761,
-        "valid": 72124,
-        "exempt": 18637,
+        "constructionsClassified": 90541,
+        "valid": 77141,
+        "exempt": 13400,
         "invalid": 0,
         "unclassified": 0,
         "invalidSamples": []
@@ -147,10 +155,10 @@
       "requirement": "RC2-007/008/009 — nothing ambiguous or undiscoverable is published",
       "pass": true,
       "detail": {
-        "oddOneOutPublished": 634,
+        "oddOneOutPublished": 219,
         "verdicts": {
-          "BORDERLINE": 142,
-          "CLEAN": 492
+          "BORDERLINE": 28,
+          "CLEAN": 191
         },
         "publishedAmbiguous": 0,
         "publishedUndiscoverable": 0
@@ -161,15 +169,15 @@
       "requirement": "RC2-003 — every proposal is accounted for exactly once",
       "pass": true,
       "detail": {
-        "proposals": 10306,
-        "accountedFor": 10306,
+        "proposals": 10679,
+        "accountedFor": 10679,
         "balanced": true,
         "difference": 0,
         "breakdown": {
           "published": 10000,
-          "samplerFailures": 3,
-          "finalizationFailures": 218,
-          "pipelineRejectedCandidates": 85
+          "samplerFailures": 2,
+          "finalizationFailures": 268,
+          "pipelineRejectedCandidates": 409
         }
       }
     },
@@ -195,10 +203,10 @@
       "requirement": "RC2.1-1 — every published candidate a session sees is delivered or dispositioned",
       "pass": true,
       "detail": {
-        "publishedToSessions": 325,
+        "publishedToSessions": 320,
         "delivered": 250,
-        "sessionDiscards": 75,
-        "accountedFor": 325,
+        "sessionDiscards": 70,
+        "accountedFor": 320,
         "balanced": true,
         "difference": 0,
         "note": "published candidates offered to sessions = delivered + every recorded session-level discard",
@@ -225,7 +233,7 @@
       "requirement": "RC2.1-2 — declared/computed agreement improved on the RC2 baseline",
       "pass": true,
       "detail": {
-        "agreement": 0.7288,
+        "agreement": 1,
         "rc2Baseline": 0.6495
       }
     },
@@ -250,16 +258,74 @@
     {
       "id": "HOLDOUT_C_UNTOUCHED",
       "requirement": "RC2.1 — the sign-off holdout seed appears in no development evidence",
+      "pass": false,
+      "detail": {
+        "offenders": [
+          "RC21_REMEDIATION_REPORT.md"
+        ]
+      }
+    },
+    {
+      "id": "DIFFICULTY_GATE_HOLDS",
+      "requirement": "RC2.2-1 — nothing is released at a band it does not compute",
       "pass": true,
       "detail": {
-        "offenders": []
+        "violations": 0,
+        "exhausted": 0,
+        "meanAttempts": 1.0614
+      }
+    },
+    {
+      "id": "ALL_HARD_IS_HARD",
+      "requirement": "RC2.2-1 — an ALL_HARD session contains only genuinely hard questions",
+      "pass": true,
+      "detail": {
+        "total": 300,
+        "notHard": 0,
+        "failedSessions": 0,
+        "families": 12
+      }
+    },
+    {
+      "id": "FAMILY_CAPABILITY_TRUE",
+      "requirement": "RC2.2-1 — the registry says what the engine can actually produce",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "id": "REASONING_REPETITION_CAPPED",
+      "requirement": "RC2.2-4 — no reasoning path exceeds its batch allowance",
+      "pass": true,
+      "detail": {
+        "exactRepeats": 0,
+        "semanticRepeats": 0,
+        "reasoningPaths": 109,
+        "maxRepetition": 5,
+        "cap": 5
+      }
+    },
+    {
+      "id": "DISTRACTOR_DIAGNOSTICS_LINKED",
+      "requirement": "RC2.2-5 — wrong options point at the step they diverge at",
+      "pass": true,
+      "detail": {
+        "wrong": 4500,
+        "linked": 2258,
+        "share": 0.502,
+        "outOfRange": 0
       }
     },
     {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": true,
-      "detail": "clean"
+      "pass": false,
+      "detail": [
+        "M rc2/INTERNAL_GATE.json",
+        " M tools/audit/rc2-development-corpus.mjs",
+        " M tools/audit/rc2-internal-gate.mjs",
+        "?? rc2/RC22_DEVELOPMENT_CORPUS.json",
+        "?? rc2/rc22-development-corpus.jsonl.gz"
+      ]
     }
   ]
 }

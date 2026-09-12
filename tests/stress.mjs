@@ -4,7 +4,9 @@ import {buildPrintReportHtml} from '../report.js';
 const engine=new Engine();
 let generated=0;
 for(const family of engine.listFamilies()){
-  for(const difficulty of ['easy','medium','hard']){
+  // RC2.2-1: a family answers only at bands it can actually compute; asking for
+  // another is an explicit refusal, not a defect to stress against.
+  for(const difficulty of family.difficulties){
     for(let i=0;i<100;i++){
       const q=engine.generateQuestion({family:family.id,difficulty,seed:`stress-${family.id}-${difficulty}-${i}`});
       const result=engine.validateQuestion(q);

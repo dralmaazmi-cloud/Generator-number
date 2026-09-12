@@ -1,0 +1,267 @@
+{
+  "schema": "rc2-development-corpus-v1",
+  "section": "§22",
+  "generatedAt": "2026-09-12T16:41:37.937Z",
+  "engineVersion": "1.4.0",
+  "seeds": [
+    "RC22-DEV-LAMBDA",
+    "RC22-DEV-MU",
+    "RC22-DEV-NU",
+    "RC22-DEV-XI",
+    "RC22-DEV-OMICRON"
+  ],
+  "holdoutSeedUsed": false,
+  "holdoutSeed": "AUDIT-2026-09-12-B",
+  "corpus": {
+    "requested": 10000,
+    "published": 10000,
+    "exhausted": 0,
+    "families": 16,
+    "templates": 105,
+    "byBand": {
+      "easy": 3335,
+      "medium": 3335,
+      "hard": 3330
+    },
+    "byFamily": {
+      "calendar": 472,
+      "ages": 831,
+      "unit_rate": 755,
+      "speed": 638,
+      "sequences": 728,
+      "averages": 508,
+      "combined_rate": 470,
+      "direct_proportion": 796,
+      "odd_one_out": 219,
+      "work_time": 748,
+      "percentages": 829,
+      "machines": 558,
+      "fractions": 226,
+      "profit_loss": 806,
+      "ratios": 786,
+      "relational": 630
+    },
+    "sha256": "787eda796b8b27c547294369ad996b959d398bbdef822108145290a211164671",
+    "gzipBytes": 1330750
+  },
+  "mathematics": {
+    "note": "§20 — the RC1 gains. Any non-zero figure here is an RC2 blocker.",
+    "ORACLE_DISAGREEMENT": 0,
+    "oracleDisagreementSamples": [],
+    "oracleComparedThroughALabelMap": 75,
+    "postShuffleKeyMismatch": 0,
+    "zeroCorrectOption": 0,
+    "multipleCorrectOptions": 0,
+    "correctValueMismatch": 0,
+    "metaKeyMismatch": 0
+  },
+  "ambiguity": {
+    "oddOneOutPublished": 219,
+    "verdicts": {
+      "BORDERLINE": 28,
+      "CLEAN": 191
+    },
+    "publishedAmbiguous": 0,
+    "publishedUndiscoverable": 0
+  },
+  "language": {
+    "constructionsClassified": 90541,
+    "valid": 77141,
+    "exempt": 13400,
+    "invalid": 0,
+    "unclassified": 0,
+    "invalidSamples": []
+  },
+  "distractors": {
+    "wrongOptions": 50000,
+    "answerDerived": 1102,
+    "answerDerivedShare": 0.02204,
+    "unattributedAnswerDerived": 0,
+    "perQuestionDistribution": {
+      "0": 9400,
+      "1": 194,
+      "2": 310,
+      "3": 96
+    },
+    "rc1Baseline": {
+      "answerDerivedShare": 0.249,
+      "questionsWithThreeOrMoreShare": 0.156
+    }
+  },
+  "feedback": {
+    "verdicts": {
+      "NON_NUMERIC": 5885,
+      "EXACT": 36445,
+      "PROSE": 6738,
+      "ROUNDS_TO_VALUE": 932
+    },
+    "derivationMismatches": 0,
+    "questionsWithInapplicableMisconception": 0,
+    "questionsWithDuplicateDerivation": 0
+  },
+  "statisticalLeakage": {
+    "note": "A 10,000-question corpus spread over ~105 templates gives ~95 draws each, so few clear the sample this statistic needs. The authoritative leakage measurement is tools/audit/rc2-011-answer-space.mjs at 30,000 questions; this is a cross-check.",
+    "distinctAnswersAcrossCorpus": 1142,
+    "corpusModalShare": 0.0103,
+    "templatesMeasured": 11,
+    "templatesAbove20Points": 0,
+    "templatesAbove20PointsOnPointEstimate": 0,
+    "templatesAbove15Points": 0,
+    "medianAdvantagePoints": -9.1,
+    "worst": [
+      {
+        "templateId": "PL_H_CHAIN",
+        "n": 297,
+        "space": 7,
+        "modal": 0.222,
+        "entropyBits": 2.73,
+        "advantagePoints": 5.6,
+        "advantageLowerBoundPoints": 0.7
+      },
+      {
+        "templateId": "CAL_H_NESTED",
+        "n": 260,
+        "space": 7,
+        "modal": 0.173,
+        "entropyBits": 2.8,
+        "advantagePoints": 0.6,
+        "advantageLowerBoundPoints": -4.1
+      },
+      {
+        "templateId": "WORK_M_TARGET",
+        "n": 255,
+        "space": 30,
+        "modal": 0.114,
+        "entropyBits": 4.42,
+        "advantagePoints": -5.3,
+        "advantageLowerBoundPoints": -9.3
+      },
+      {
+        "templateId": "SEQ_H_ALT_DIV",
+        "n": 153,
+        "space": 16,
+        "modal": 0.092,
+        "entropyBits": 3.95,
+        "advantagePoints": -7.5,
+        "advantageLowerBoundPoints": -12.2
+      },
+      {
+        "templateId": "REL_E_CHAIN",
+        "n": 228,
+        "space": 16,
+        "modal": 0.088,
+        "entropyBits": 3.97,
+        "advantagePoints": -7.9,
+        "advantageLowerBoundPoints": -11.6
+      },
+      {
+        "templateId": "PCT_E_OF",
+        "n": 239,
+        "space": 27,
+        "modal": 0.075,
+        "entropyBits": 4.54,
+        "advantagePoints": -9.1,
+        "advantageLowerBoundPoints": -12.5
+      },
+      {
+        "templateId": "PROP_H_COST_PLUS",
+        "n": 304,
+        "space": 35,
+        "modal": 0.066,
+        "entropyBits": 4.89,
+        "advantagePoints": -10.1,
+        "advantageLowerBoundPoints": -12.9
+      },
+      {
+        "templateId": "RAT_E_SPLIT",
+        "n": 277,
+        "space": 42,
+        "modal": 0.065,
+        "entropyBits": 5.13,
+        "advantagePoints": -10.2,
+        "advantageLowerBoundPoints": -13.1
+      },
+      {
+        "templateId": "AVG_H_TARGET",
+        "n": 219,
+        "space": 42,
+        "modal": 0.064,
+        "entropyBits": 5.1,
+        "advantagePoints": -10.3,
+        "advantageLowerBoundPoints": -13.6
+      },
+      {
+        "templateId": "RAT_E_KNOWN",
+        "n": 232,
+        "space": 39,
+        "modal": 0.056,
+        "entropyBits": 5.08,
+        "advantagePoints": -11.1,
+        "advantageLowerBoundPoints": -14.1
+      }
+    ]
+  },
+  "difficulty": {
+    "declaredVsComputed": {
+      "easy->easy": 3335,
+      "medium->medium": 3335,
+      "hard->hard": 3330
+    },
+    "agreement": 1,
+    "rc1Agreement": 0.528
+  },
+  "rejectionTelemetry": {
+    "reconciliation": {
+      "proposals": 10679,
+      "accountedFor": 10679,
+      "balanced": true,
+      "difference": 0,
+      "breakdown": {
+        "published": 10000,
+        "samplerFailures": 2,
+        "finalizationFailures": 268,
+        "pipelineRejectedCandidates": 409
+      }
+    },
+    "byStage": {
+      "proposal": 10679,
+      "pipeline": 409,
+      "published": 10000,
+      "family_sampler": 8064,
+      "distractor_plausibility": 745,
+      "distractor_filter": 5398,
+      "finalization": 268,
+      "sampler_failure": 2
+    },
+    "byReason": {
+      "DIFFICULTY_BAND_MISMATCH": 334,
+      "SAMPLER_CONSTRAINT": 7693,
+      "IMPLAUSIBLE_DISTRACTOR_DEMOTED": 745,
+      "DISTRACTOR_IMPOSSIBLE": 5398,
+      "DISTRACTOR_NO_MISCONCEPTION": 268,
+      "AMBIGUOUS_ODD_ONE_OUT": 373,
+      "DEGENERATE_WRONG_METHOD_EQUALS_KEY": 61,
+      "EXPLANATION_UNSOURCED_VALUE": 5,
+      "DEGENERATE_PARAMETERS": 9
+    },
+    "internalResamplesPerProposal": 0.755,
+    "exhaustions": 0
+  },
+  "diversity": {
+    "exactFingerprints": 5377,
+    "semanticFingerprints": 5235,
+    "structuralReasoningSignatures": 194,
+    "exactPerPublished": 0.5377,
+    "semanticCollapseRatio": 0.9736
+  },
+  "performance": {
+    "meanAttemptsPerPublished": 1.0679,
+    "p95Attempts": 2,
+    "maxAttempts": 4,
+    "latencyP50Ms": 0.79,
+    "latencyP95Ms": 1.4,
+    "latencyP99Ms": 1.96,
+    "wallClockSeconds": 10.7,
+    "questionsPerSecond": 934.5
+  }
+}
