@@ -1,17 +1,14 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-12T23:47:24.112Z",
+  "evaluatedAt": "2026-09-12T23:49:21.436Z",
   "engineVersion": "1.4.0",
-  "headCommit": "30902b054f6c2e109d6fdb7a6f0194dddae50043",
+  "headCommit": "fb1e1ba6a29d2f829c339649ba349759d4bf1556",
   "branch": "claude/rc2-implementation",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "FAIL",
+  "verdict": "PASS",
   "conditions": 39,
-  "failedConditions": [
-    "SUITE_GREEN",
-    "STRUCTURE_ADJUDICATION_COMPLETE"
-  ],
+  "failedConditions": [],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -40,10 +37,10 @@
     {
       "id": "SUITE_GREEN",
       "requirement": "The whole test suite passes",
-      "pass": false,
+      "pass": true,
       "detail": {
-        "passed": 418,
-        "failed": 1
+        "passed": 419,
+        "failed": 0
       }
     },
     {
@@ -311,7 +308,7 @@
     {
       "id": "STRUCTURE_ADJUDICATION_COMPLETE",
       "requirement": "RC2.3-1 — every template is adjudicated and every adjudication is reachable",
-      "pass": false,
+      "pass": true,
       "detail": {
         "templates": 137,
         "byBand": {
