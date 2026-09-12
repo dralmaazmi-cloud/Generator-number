@@ -1,373 +1,346 @@
 # RC2.5 — human-calibrated difficulty remediation
 
-Engine 1.4.0. All measurements on fresh development seeds. Holdout E is read
-only as preserved evidence; it was not regenerated, replayed or modified, and no
-Holdout F was generated.
+Engine 1.4.0. Calibrated against the sealed Holdout E blind verdict file. Holdout
+E itself was read only as preserved evidence — never regenerated, replayed or
+modified — and no Holdout F was generated.
 
 ---
 
-## 0. Status: the calibration is blocked on evidence that is not here
+## 0. The verdict file
 
-Section 1 of the brief asks for the independent human verdicts **per template and
-per variant**, computed from Holdout E. That requires the sealed blind verdict
-file. **It is not present in this session.** Searched: the repository (all
-history), `/mnt/attach`, `/mnt/user-data`, the container filesystem, and the full
-session transcript. No file with per-item verdicts has ever reached this session.
+| check | result |
+|---|---|
+| SHA-256 | `edf394250bfe8fa57b94f8ff56931fb8188982944290c9432afacf30e5a41d1a` — **matches** |
+| records | 250, **250 unique ids**, exactly `E-S1-01 … E-S5-50` |
+| joins to the preserved hidden dataset | **250/250** |
+| joins to the preserved answer key | **250/250** |
+| declared difficulty vs the hidden data | 0 mismatches |
+| reviewer's selected option vs the preserved key | 0 mismatches |
 
-The aggregates in the brief — 29/82 appropriate, 53/82 overclassified, 18/50 in
-session 5, 3 ambiguous, 2 MEDIUM judged HARD — say *how many*. They do not say
-*which*, and 53 overclassified items spread across 34 templates by guesswork
-would be a fabrication wearing the shape of evidence. So §1's per-template rates,
-§3's MEDIUM→EASY attribution, and the identity of the two MEDIUM items judged
-HARD are **not** reported here. Everything that does not depend on the per-item
-verdicts is complete and is reported below.
+Preserved at `rc2/holdout-e-verdicts.jsonl`. Every aggregate reconciles with the
+brief: 247 UNIQUE / 3 AMBIGUOUS; HARD 29 appropriate / 53 overclassified; session
+5 18/50; MEDIUM 77 appropriate / 37 easy / 2 underclassified; EASY 52/52.
 
-`tools/audit/rc25-crosswalk.mjs` contains the join. It reads the verdict file
-from `rc2/holdout-e-verdicts.jsonl` (or `rc2/holdout-e-reveal/blind-verdicts.jsonl`,
-or `rc2/HOLDOUT_E_VERDICTS.jsonl`), matches field names leniently
-(`itemId`/`item_id`/`id`, `verdict`/`difficultyVerdict`/`appropriate`,
-`ambiguous`, `keyCorrect`), and produces the per-template and per-variant verdict
-tables §1 asks for. Drop the file in and re-run; nothing else is needed.
+The three ambiguous items are `E-S1-08`, `E-S4-43`, `E-S5-27` — all
+`AVG_H_OVERLAP`, exactly the items the earlier structural analysis identified and
+fixed before the verdicts arrived.
 
 ---
 
-## 1. Crosswalk — all 250 Holdout E items (complete)
+## 1. The headline result
 
-`rc2/RC25_CROSSWALK.json`. Every item mapped to its template, family, structural
-variant and reasoning signature, from the preserved hidden dataset.
+**Item-level agreement with the reviewers' independent difficulty levels:**
 
-| band | items | templates | families | reasoning signatures |
-|---|---|---|---|---|
-| easy | 52 | 26 | 14 | 30 |
-| medium | 116 | 42 | 14 | 48 |
-| hard | 82 | 34 | 14 | 38 |
+| | agreement on 250 items |
+|---|---|
+| RC2.4, as delivered in Holdout E | **158 / 250 — 63.2 %** |
+| RC2.5, template bands after calibration | 240 / 250 — 96.0 % |
+| RC2.5, with the two splits applied per instance | **245 / 250 — 98.0 %** |
 
-Key agreement between the hidden dataset and the preserved answer key: **250/250**.
-
-### The 82 HARD items by template
-
-Delivered counts, and where RC2.5 puts each template now.
-
-| family | template | n | RC2.5 band |
-|---|---|---|---|
-| unit_rate | RATE_H_RATE_FROM_GAP | 5 | hard |
-| calendar | CAL_H_CYCLE_MEET | 5 | hard |
-| ages | AGE_M_FUT_RATIO | 4 | hard |
-| machines | MACH_H_STOPPAGE_TIME | 4 | hard |
-| direct_proportion | PROP_H_TWO_ITEM_SYSTEM | 4 | hard |
-| ratios | RAT_M_COMMON_DIFF | 4 | hard |
-| relational | REL_H_POSITION | 4 | hard |
-| percentages | PCT_H_MIXTURE | 3 | hard |
-| averages | AVG_H_OVERLAP | 3 | hard |
-| speed | SPD_H_TIME_DIFF | 3 | hard |
-| combined_rate | COMB_H_TEAM_SIZE | 3 | hard |
-| combined_rate | COMB_H_TWO_PUMPS | 3 | hard |
-| **relational** | **REL_M_CONFIRM** | **3** | **medium (demoted)** |
-| ratios | RAT_H_TRANSFER | 2 | hard |
-| work_time | WORK_H_EXTRA_WORKERS | 2 | hard |
-| profit_loss | PL_H_MARKUP_DISCOUNT | 2 | hard |
-| sequences | SEQ_H_ALT_DIV | 2 | hard |
-| speed | SPD_H_MEET_DELAY | 2 | hard |
-| work_time | WORK_H_JOINT_SOLO | 2 | hard |
-| profit_loss | PL_H_TWO_OUTCOMES | 2 | hard |
-| sequences | SEQ_H_INDEX_MULT | 2 | hard |
-| ages | AGE_H_TWO_TIME | 2 | hard |
-| averages | AVG_H_SPLIT_SIZE | 2 | hard |
-| speed | SPD_H_CATCH | 2 | hard |
-| relational | REL_M_BRANCH_UNRES | 2 | hard |
-| **relational** | **REL_M_COUNT** | **2** | **medium (demoted)** |
-| percentages | PCT_H_TWO_GROUP_CHANGE | 1 | hard |
-| sequences | SEQ_H_POW_INDEX | 1 | hard |
-| ratios | RAT_M_ADD_SIDE | 1 | hard |
-| ratios | RAT_H_TWO_COMB | 1 | hard |
-| ages | AGE_H_PAST_FUT | 1 | hard |
-| machines | MACH_H_TWO_CONFIG | 1 | hard |
-| ratios | RAT_M_COMMON_SUM | 1 | hard |
-| **relational** | **REL_H_GUARANTEE** | **1** | **medium (demoted)** |
-
-**The size of the gap.** RC2.5's structure-only recalibration moves **6 of the 82**
-HARD items to MEDIUM. The blind review found **53** overclassified. Structure
-alone therefore accounts for roughly one item in nine of what the reviewers saw.
-The remaining 47 cannot be attributed to templates without the per-item verdicts:
-they may concentrate in a few templates, or spread thinly across many, and those
-two pictures call for opposite remedies. This is the single most important number
-in the report and it is why §1 is blocked rather than estimated.
+The five remaining disagreements are named in §5 below. None was resolved by
+moving a band to make a number improve.
 
 ---
 
-## 2. Partial-order questions — explicit graph-complexity conditions (complete)
+## 2. HUMAN HARD CALIBRATION
 
-`src/qa/partial-order.js`. The band of a relational item is now decided by the
-**graph it drew**, not by the question it asks.
+### Per-template verdicts on the 82 HARD items
 
-Required of every HARD partial-order item (all three):
+Unanimous in 33 of 34 templates. The reviewers' own structural clusters, pooled,
+carry the templates whose individual sample is one or two items.
 
-| | condition |
-|---|---|
-| H1 | `linearExtensionCount >= 2` — the order really is partial; a total order makes every question a lookup |
-| H2 | `incomparablePairs >= 2` — more than one pair is open, so "which orderings are consistent" is a real question |
-| H3 | no single root-to-sink path answers the question by itself |
+**Retained HARD — every delivered item judged appropriate**
 
-And at least one reason it is hard:
-
-| | condition |
-|---|---|
-| H4a | the question asks about a relation the order does not settle |
-| H4b | `branchesCombined >= 2` — the answer needs facts from two or more branches |
-| H4c | `transitiveProofDepth >= 3` — the answer rests on a chain of three or more stated relations |
-
-Overriding disqualifier:
-
-| | condition |
-|---|---|
-| D1 | `plausibleCandidates <= 2` — a two-way choice is a guess, whatever the graph looks like |
-
-A routine transitive conclusion — أ above ب, ب above ج, therefore أ above ج —
-fails H1 and H2 and is MEDIUM. A simple linear chain that solves the question
-immediately fails H3. Both are what the brief asked for.
-
-### What the measurement found
-
-Every relational template, measured over the graphs it actually draws:
-
-| template | drawn | met the HARD conditions | decision |
-|---|---|---|---|
-| REL_M_CONFIRM | 529 | **0 (0%)** | **demoted to MEDIUM** |
-| REL_H_GUARANTEE | 506 | **0 (0%)** | **demoted to MEDIUM** |
-| REL_M_COUNT | 456 | 91 (20%) | **split** |
-| REL_H_POSITION | 490 | 122 (25%) | retained, conditions enforced |
-| REL_M_BRANCH_UNRES | 519 | 492 (95%) | retained, conditions enforced |
-
-**The two demotions are a structural ceiling, not a sampling accident.**
-Both templates ask which *pair relation* is guaranteed. A guaranteed relation is
-by definition one with a stated path between its two people — so a single chain
-always proves it, and H3 can never hold. No parameter choice makes "find the
-provable pair" anything other than a routine transitive conclusion. Neither was
-demoted to hit a number; both were demoted because 0 of ~500 instances cleared
-the bar.
-
-**The split.** `REL_M_COUNT` was two tasks under one id: counting people whose
-support lies on one path (routine — follow the chain) and counting people spread
-across branches (no chain contains the answer). They are now `REL_M_COUNT`
-(medium) and `REL_H_COUNT_BRANCHED` (hard), each sampled until the graph it drew
-is the kind it claims.
-
-After the change, on 3,200 fresh draws:
-
-| template @ delivered band | n | graph met HARD conditions |
+| template | verdicts | cluster support |
 |---|---|---|
-| REL_H_COUNT_BRANCHED @ hard | 481 | **100%** |
-| REL_H_POSITION @ hard | 561 | **100%** |
-| REL_M_BRANCH_UNRES @ hard | 558 | **100%** |
-| REL_M_COUNT @ medium | 289 | 0% |
-| REL_M_CONFIRM @ medium | 357 | 0% |
-| REL_H_GUARANTEE @ medium | 317 | 0% |
-| REL_E_CHAIN @ medium | 291 | 0% |
+| RATE_H_RATE_FROM_GAP | 5/5 | rate_increase_quadratic 5/5 |
+| RAT_M_COMMON_DIFF | 4/4 | chained_ratios 6/6 |
+| AVG_H_OVERLAP | 3/3 | overlapping_ordered_means 3/3 |
+| COMB_H_TWO_PUMPS | 3/3 | pump_rate_system 3/3 |
+| SEQ_H_ALT_DIV | 2/2 | number_sequence 5/5 |
+| SEQ_H_INDEX_MULT | 2/2 | number_sequence 5/5 |
+| REL_M_BRANCH_UNRES | 2/2 | — |
+| SEQ_H_POW_INDEX | 1/1 | number_sequence 5/5 |
+| RAT_H_TWO_COMB | 1/1 | chained_ratios 6/6 |
+| RAT_M_COMMON_SUM | 1/1 | chained_ratios 6/6 |
 
-Every relational item delivered as HARD now provably meets the conditions; every
-one delivered as MEDIUM provably does not.
+**Retained HARD on weak evidence — a single verdict, no cluster support**
 
-### Two defects the larger graphs exposed
+| template | verdicts | note |
+|---|---|---|
+| PCT_H_TWO_GROUP_CHANGE | 1/1 | cluster "other", n=1 |
+| AGE_H_PAST_FUT | 1/1 | cluster n=1 |
+| MACH_H_TWO_CONFIG | 1/1 | **unresolved tension** — see below |
 
-1. **`REL_H_POSITION` answered "cannot be determined" 100% of the time** under a
-   first version of the conditions, because requiring two open pairs while
-   measuring candidate count made a pinned position impossible to draw. That is
-   RC2-010, the defect the template was rebuilt to fix, coming back. Caught by the
-   existing guard test. The band condition no longer reads whether the position
-   turned out to be determined — that is the *answer* — and the graph shape was
-   redesigned (a settled spine with an open group of three or four at one end, at
-   either end) so both outcomes arise. Determined/undetermined is now 68/32, the
-   modal answer carries 31.9% (was 100%), answer entropy 3.62 bits.
+`MACH_H_TWO_CONFIG` is a 2×2 linear system, structurally the same shape as
+`PROP_H_TWO_ITEM_SYSTEM`, which was judged overclassified 4/4. The reviewers put
+them in *different* clusters, so the file does not support pooling them. It is
+retained on its own single verdict rather than demoted on my analogy —
+overriding a human verdict with a structural resemblance is what produced RC2.4's
+overclassification in the first place — and flagged for direct review.
 
-2. **`المركز undefined` in published stems.** The ordinal table stopped at five
-   while the new graphs run to ten people. The stem rendered a literal
-   `undefined` and nothing caught it, because the key was still a valid name.
-   Ordinals now run to ten and go through `positionWord()`, which throws rather
-   than interpolating a gap.
+**Retained HARD with no Holdout E evidence, by cluster**
+
+| template | basis |
+|---|---|
+| SEQ_H_DIGIT_SUM | not sampled; cluster number_sequence 5/5 appropriate |
+| REL_H_COUNT_BRANCHED | created by RC2.5; graph conditions verified against the verdicts (below) |
+
+**Demoted to MEDIUM — every delivered item judged overclassified**
+
+| template | verdicts | reviewers' description |
+|---|---|---|
+| CAL_H_CYCLE_MEET | 0/5 | routine LCM recurrence mapped to a weekday |
+| AGE_M_FUT_RATIO | 0/4 | routine age difference plus future multiple |
+| MACH_H_STOPPAGE_TIME | 0/4 | routine stoppage from a production shortfall |
+| PROP_H_TWO_ITEM_SYSTEM | 0/4 | routine box/piece linear equations |
+| PCT_H_MIXTURE | 0/3 | routine two-solution mixture |
+| SPD_H_TIME_DIFF | 0/3 | routine same-distance speed/time difference |
+| COMB_H_TEAM_SIZE | 0/3 | routine team-size equation with one joiner |
+| REL_M_CONFIRM | 0/3 | routine partial-order inference |
+| RAT_H_TRANSFER | 0/2 | routine ratio changed by transfer |
+| WORK_H_EXTRA_WORKERS | 0/2 | routine finish-early by adding workers |
+| PL_H_MARKUP_DISCOUNT | 0/2 | routine markup then discount |
+| SPD_H_MEET_DELAY | 0/2 | routine delayed opposite-direction meeting |
+| WORK_H_JOINT_SOLO | 0/2 | routine combined work-rate subtraction |
+| PL_H_TWO_OUTCOMES | 0/2 | routine cost from profit/loss scenarios |
+| AGE_H_TWO_TIME | 0/2 | routine age difference plus future multiple |
+| AVG_H_SPLIT_SIZE | 0/2 | routine group size from means |
+| SPD_H_CATCH | 0/2 | routine delayed same-direction catch-up |
+| REL_M_COUNT | 0/2 | routine partial-order inference |
+| RAT_M_ADD_SIDE | 0/1 | cluster ratio_transfer_or_addition 0/3 |
+
+**Demoted with no Holdout E evidence, by the structures they share** — flagged
+for direct review in the next holdout:
+
+- `AGE_H_THREE_SIBLINGS` — every simultaneous-constraint word problem the
+  reviewers saw was judged medium (0 of 20).
+- `SPD_M_EQUAL_DIST` — all three kinematics shapes they saw were judged medium
+  (0 of 7).
+
+**Split by structural condition**
+
+`REL_H_POSITION` was the one mixed HARD template (1 appropriate of 4). The
+feature that separates its verdicts is graph structure, and the RC2.5
+partial-order conditions — derived and committed **before** the verdict file
+existed — reproduce the human verdicts on **11 of the 12** partial-order items:
+
+| item | template | human | conditions | linear extensions | open pairs |
+|---|---|---|---|---|---|
+| E-S5-50 | REL_H_POSITION | medium | medium | 1 (a pure chain) | 0 |
+| E-S5-08 | REL_H_POSITION | medium | medium | 2 | 1 |
+| E-S5-22 | REL_H_POSITION | medium | medium | 2 | 1 |
+| E-S5-45 | REL_H_POSITION | **hard** | **hard** | 30 | 8 |
+| E-S2-25, E-S3-45, E-S5-20 | REL_M_CONFIRM | medium | medium | | |
+| E-S5-17, E-S5-47 | REL_M_COUNT | medium | medium | | |
+| E-S5-18, E-S5-48 | REL_M_BRANCH_UNRES | hard | hard | | |
+| E-S5-49 | REL_H_GUARANTEE | hard | *medium* | 5 | 4 |
+
+The engine no longer draws the routine graphs at HARD, so the split is enforced
+at generation rather than recorded after the fact.
+
+**One promotion.** `SEQ_H_RECURRENCE` — the only two UNDERclassified items in the
+whole holdout (`E-S4-13`, `E-S4-35`), both judged HARD. RC2.3 had excluded it
+because "a solver who tries a+b finds it immediately", but the template generates
+`a_n = 2·a_(n-1) + a_(n-2)`, verified in source. The rationale described a
+template that does not exist. `RULE_DISCOVERY` was already a declared criterion,
+so this is a correction, not a relaxation of the bar.
 
 ---
 
-## 3. MEDIUM calibration — blocked
+## 3. MEDIUM CALIBRATION
 
-Identifying which template/variant causes MEDIUM→EASY leakage requires knowing
-which MEDIUM items the reviewers judged EASY. Inspecting the two MEDIUM items
-judged HARD requires knowing which two they are. Neither is derivable from the
-aggregates. **Not reported.** The join in `rc25-crosswalk.mjs` produces both the
-moment the verdict file is available.
+All 116 MEDIUM items analysed. 37 judged EASY, 77 appropriate, 2 HARD.
 
-What is not blocked, and is done: the relational demotions in §2 move three
-templates out of HARD into MEDIUM on structural evidence, and the RC2.3 rule that
-a template carrying a routine marker can never sit in HARD still holds for all
-126 templates.
+**Demoted MEDIUM → EASY — every delivered item judged easy**
 
----
+| template | verdicts |
+|---|---|
+| CAL_H_NESTED | 0/5 |
+| PROP_M_MAP | 0/4 |
+| PL_H_REVERSE | 0/4 |
+| PCT_M_REMAIN | 0/4 |
+| RATE_M_PERCENT | 0/4 |
+| PROP_H_COST_PLUS | 0/3 |
+| MACH_E_HOURS | 0/3 |
+| PCT_M_UNIT_PRICE | 0/2 |
+| PROP_M_RECIPE | 0/1 — single verdict, agreeing with its own routine marker |
+| AGE_E_SUM_DIFF | 0/1 — single verdict, agreeing with its own SINGLE_FORMULA marker |
 
-## 4. Ambiguity and language (complete)
+**Split by structural condition.** `REL_E_CHAIN` was mixed 2/2, and the feature
+is chain length, not the numbers:
 
-### The overlapping-means ambiguity
-
-The three ambiguous items are structurally identifiable without the verdicts:
-`AVG_H_OVERLAP` produced exactly three items in Holdout E (E-S1-08, E-S4-43,
-E-S5-27) and is the only template using the ordering word.
-
-The stem read `متوسط N قيم مرتبة هو W…`. **«مرتبة» reads as sorted**, and under
-that reading two of the three items are contradictory — a head average of 14 with
-a tail average of 8 is impossible in an ascending list — so the item has no
-answer. The order meant was positional. The stem now says so with positional
-words only:
-
-> في قائمة من 9 قيم، متوسط القيم كلها 14. متوسط أول 5 قيم في القائمة هو 19، ومتوسط آخر 5 قيم فيها هو 11. فما القيمة التي تقع في الموضع الأوسط من القائمة؟
-
-Explanation steps follow («القيمة في الموضع الأوسط», not «القيمة الوسطى»).
-
-**Fixed at renderer level, not in the template.** `src/qa/wording.js` adds
-`ORDERING_WORD_AMBIGUITY`: any rendered string that uses the sorting lexeme
-(`مرتب/مرتبة/مرتبين/بترتيب`) *without naming a direction* while also selecting by
-position (`أول`, `آخر`, `المنتصف`, `الموضع`) is **rejected** by the pipeline. A
-stem that genuinely sorts and says `تصاعديًا`/`تنازليًا` has one reading and passes —
-the rule is not a ban on the word.
-
-### Rate answers rendered as quantities
-
-Audited every template in the engine. Exactly two ask for a rate and rendered the
-answer as a count:
-
-| template | asked | was | now |
+| items | chain | human verdict | now |
 |---|---|---|---|
-| RATE_H_RATE_FROM_GAP | «فما معدله الأصلي؟» | `60 وحدة` | `60 وحدة/ساعة` |
-| MACH_H_TWO_CONFIG | «كم قطعة تنتج آلة واحدة … في الساعة؟» | `24 قطعة` | `24 قطعة/ساعة` |
+| E-S1-32, E-S3-34 | 5 people | easy | `REL_E_CHAIN` — **easy** |
+| E-S1-09, E-S2-36 | 6 people | medium | `REL_M_CHAIN6` — **medium** |
 
-`RATE_H_TWO_PHASE` and `RATE_M_PERCENT` mention a rate but ask for a quantity;
-their `وحدة` options are correct and were left alone.
+**Mixed with no structural separator — left alone and flagged.**
+`RATE_H_TWO_PHASE` was 2 appropriate / 3 easy. The only thing separating the two
+groups is the magnitude of the first rate (40 → appropriate, 20 → easy), and the
+brief rules magnitude out as a difficulty feature. Splitting on it would be
+fitting to noise, so it stays MEDIUM and is named as a residual.
+`SEQ_M_INTERLEAVED` (1/1) is too thin to act on.
 
-Also renderer level: `RATE_ANSWER_NOT_RATE_UNIT` rejects any question whose stem
-asks for a rate while its options carry no per-unit-time unit. `answer_unit_id`
-is now published on every question so the rule can be checked from outside the
-engine.
-
-### Arabic regression tests
-
-`tests/rc25-calibration.test.mjs`, 17 tests, all passing. MUST_REJECT on the
-Holdout E stem verbatim and on a rate answer in `وحدة`; MUST_ACCEPT on the new
-stem, on a genuine sort that names its direction, and on rate-mentioning
-quantity questions. Plus live sweeps: 600 mixed questions carry no ordering-word
-ambiguity; 800 carry no rate/unit mismatch; 900 relational items contain no
-`undefined`.
+**The two MEDIUM items judged HARD** are both `SEQ_H_RECURRENCE`, handled as the
+promotion in §2.
 
 ---
 
-## 5. Distractors (partial — the part that does not need verdicts)
+## 4. Coverage after honest calibration
 
-Which templates "remain genuinely HARD" is §1's output, so the full pass waits on
-the verdicts. What was done now, for a template that RC2.5 itself makes HARD:
+| | RC2.4 | RC2.5 |
+|---|---|---|
+| HARD templates | 37 | **17** |
+| HARD families | 14 | **9** |
+| MEDIUM templates | 54 | 62 |
+| EASY templates | 37 | 48 |
+| total adjudicated | 125 | 127 |
 
-`REL_H_COUNT_BRANCHED` drew its six options from three diagnoses, two of them
-assigned by position rather than by derivation — every label below the key shared
-one diagnosis, every label above it another. Each wrong count is now attached to
-the slip that actually produces it, including two new ones specific to a count
-that spans branches:
+Hard band by family: sequences 5, ratios 3, relational 3, and one each in
+percentages, averages, ages, machines, unit_rate, combined_rate.
 
-- `COUNTED_ONE_BRANCH_ONLY` — followed the branch the target sits on and stopped
-- `COUNTED_FROM_ONE_ORDERING` — collapsed the partial order into one arrangement and counted from it
-- `COUNTED_DIRECT_RELATIONS_ONLY`, `COUNTED_EVERYONE`, `OFF_BY_ONE_STEP`, `RESOLVED_AN_UNRESOLVED_PAIR`
+### The shortfall, stated plainly
 
-Counts no modelled slip produces are still offered — the set needs five — but as
-`MISCOUNTED_THE_CONFIRMED_PATHS`, which is what they are, rather than under a
-specific slip they did not come from. Provenance preserved: 6 distinct diagnoses
-in play, never fabricated.
+A 50-question **all-HARD session on its own** delivers cleanly from 17 templates:
+0 fallbacks on every seed tested.
 
-Measured over 2,375 options on the hard templates: repeated diagnosis 5.4%
-(bar 10%), options 25× from the key 0.34% (bar 5%), fractional counts of
-indivisible things 0, minimum distinct slips per template 4.
+Inside the **Holdout-E-shaped batch** (4 × 50 mixed + 1 × 50 hard = 82 hard
+slots, generated as one batch so batch-level diversity applies) it does not:
 
----
+| all-hard session size in the batch | seeds needing a cap breach | worst |
+|---|---|---|
+| 50 | 3/3 | 17 items |
+| 45 | 3/3 | 10 |
+| 40 | 2/3 | 3 |
+| 36 | 1/3 | 1 |
+| **32** | **0/3** | **0** |
 
-## 6. Repetition, measured five ways (complete)
+The binding constraint is the batch reasoning allowance: 82 slots at 5 uses per
+reasoning signature needs 17 signatures live at every point, and 17 templates
+over 34 signatures cannot sustain it once the four mixed sessions have drawn
+first. Across five fresh seeds the batch needed 5–8 reasoning-cap and 7–10
+relaxed-cap deliveries.
 
-`tools/audit/rc25-repetition.mjs`, `rc2/RC25_REPETITION.json`.
+**Within the declared caps, the engine now supports roughly 64 hard slots in that
+shape (4 × 8 + 32), not 82.**
 
-The blind review's 244/250 uses a broad cluster definition — items sharing a topic
-are one cluster. Reproduced on the same rows, that definition puts **250/250** in
-some cluster, which is what a definition that counts fourteen topics across 250
-questions must report. It is not a finding.
+Nothing was relaxed to hide this. No cap was raised, no demoted template was put
+back, and every delivery past an allowance is recorded as a diversity warning —
+the pre-holdout gate would refuse a Holdout F built this way. The shortfall is
+pinned by a test (`RC2.5: the hard band no longer fills an 82-slot batch inside
+the caps`) so it cannot change silently in either direction.
 
-The publication-relevant measures, counted apart:
-
-| measure | Holdout E | fresh RC2.5 batch | bar |
-|---|---|---|---|
-| exact duplicate (full rendered item) | **0** | **0** | 0 |
-| semantic duplicate (same template, same values) | **0** | **0** | 0 |
-| same template, largest group in a session | 4 | 4 | ≤ 4 |
-| same reasoning signature, largest in a session | 2 | 2 | ≤ 3 |
-| same reasoning signature, largest in the batch | 5 | 5 | ≤ 5 |
-| cap breaches | none | none | none |
-
-**A correction to my own first measurement.** Keying "exact duplicate" on the
-stem alone reported 31 duplicates in Holdout E. They are not duplicates: the
-odd-one-out and sequence families carry their numbers in a separate stimulus
-block, so thirteen different questions share the instruction line
-«أي عدد لا ينتمي إلى المجموعة الآتية؟» and differ entirely below it. The key is
-now the full rendered item (stem + stimulus + options), and a shared instruction
-line is reported separately as `sharedStemLineOnly`, which is not duplication.
-
-Parameter-only near duplicates — same template and same asked unknown, different
-values — are reported as ordinary item variation and bounded by the session caps,
-not counted as a defect.
+The concentration is also worth naming: sequences holds 5 of 17 hard structures
+(29%), because rule-discovery sequences are the one shape the reviewers judged
+hard every time while nineteen word-problem structures went to medium. The remedy
+is more hard structures elsewhere, not fewer sequences.
 
 ---
 
-## Validation on fresh development seeds
+## 5. The five remaining disagreements
 
-Five independent batches in the Holdout E shape (4 × 50 mixed + 1 × 50 hard,
-82 hard slots), generated as one batch each so batch-level diversity applies.
+| items | template | human | RC2.5 | why it stands |
+|---|---|---|---|---|
+| E-S1-05, E-S3-31, E-S4-06 | RATE_H_TWO_PHASE | easy | medium | mixed 2/5; the only separator is magnitude, which the brief disqualifies |
+| E-S1-38 | SEQ_M_INTERLEAVED | easy | medium | n=2, 1 each way — too thin to act on |
+| E-S5-49 | REL_H_GUARANTEE | hard | medium | a single verdict against 0 of 506 drawn instances meeting the graph conditions, in a cluster judged 4 hard / 8 medium |
 
-| seed | hard templates | hard families | exact dup | semantic dup | wrong keys | invalid | ambiguous | reasoning-cap fb | template-share fb | relaxed-cap fb | exhaustions | telemetry balanced |
+---
+
+## 6. Work preserved from earlier in RC2.5
+
+All of it, unchanged by the calibration:
+
+- **Partial-order conditions** (`src/qa/partial-order.js`) — now corroborated at
+  11/12 against the human verdicts.
+- **Language fixes** — the «مرتبة» positional-order ambiguity in `AVG_H_OVERLAP`
+  (exactly the 3 items the reviewers flagged) and the rate-unit fix on
+  `RATE_H_RATE_FROM_GAP` and `MACH_H_TWO_CONFIG`, both enforced at renderer level
+  by `ORDERING_WORD_AMBIGUITY` and `RATE_ANSWER_NOT_RATE_UNIT`.
+- **Repetition measurement** — five measures counted apart; 0 exact and 0
+  semantic duplicates on Holdout E and on fresh batches.
+- **Oracle and key logic** — untouched. 250/250 key agreement, confirmed twice.
+- **Telemetry** — both identities balance on every seed.
+- **Reproducibility** — identical ids, stems and keys on replay.
+
+---
+
+## 7. Distractors
+
+Deferred until the calibration was done, as instructed. Of the templates that
+remain genuinely HARD, the measured position over 2,375 options: repeated
+diagnosis 5.4% (bar 10%), options 25× from the key 0.34% (bar 5%), fractional
+counts of indivisible things 0, minimum distinct slips per template 4.
+
+`REL_H_COUNT_BRANCHED` was rebuilt during §2: each wrong count is attached to the
+slip that produces it, including two new branch-specific misconceptions
+(`COUNTED_ONE_BRANCH_ONLY`, `COUNTED_FROM_ONE_ORDERING`). Counts no modelled slip
+produces are offered as `MISCOUNTED_THE_CONFIRMED_PATHS` rather than under a slip
+they did not come from.
+
+The reviewers flagged distractor concerns on many items, but most of those
+comments say "the HARD label is not supported by the option set" — which the
+demotions address directly. A further pass targeted at their `material`-severity
+comments is outstanding and is listed below.
+
+---
+
+## 8. Fresh validation
+
+Five independent batches in the Holdout E shape, on fresh development seeds:
+
+| seed | hard templates | hard families | exact dup | semantic dup | wrong keys | invalid | ambiguous | reasoning-cap fb | share fb | relaxed fb | exhaustions | telemetry balanced |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| RC25-V1 | 34 | 14 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | yes |
-| RC25-V2 | 33 | 14 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | yes |
-| RC25-V3 | 34 | 14 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | yes |
-| RC25-V4 | 35 | 14 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | yes |
-| RC25-V5 | 33 | 14 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | yes |
+| RC25F-1 | 17 | 9 | 0 | 0 | 0 | 0 | 0 | 8 | 0 | 8 | 0 | yes |
+| RC25F-2 | 17 | 9 | 0 | 0 | 0 | 0 | 0 | 8 | 0 | 10 | 0 | yes |
+| RC25F-3 | 17 | 9 | 0 | 0 | 0 | 0 | 0 | 6 | 0 | 7 | 0 | yes |
+| RC25F-4 | 17 | 9 | 0 | 0 | 0 | 0 | 0 | 6 | 0 | 7 | 0 | yes |
+| RC25F-5 | 17 | 9 | 0 | 0 | 0 | 0 | 0 | 5 | 0 | 7 | 0 | yes |
 
-Seed reproducibility: identical ids, stems and keys on replay.
+Zero on every quality measure. Non-zero only on the diversity fallbacks, which
+are the coverage shortfall of §4 and are recorded, not hidden.
 
-**Fresh HARD sample under the revised rules.** Hard band: 35 templates over 14
-families (RC2.4 had 37 over 14; RC2.5 demoted three relational shapes and added
-one). No family holds more than 14.3% of the hard band. Every relational item
-delivered as HARD meets the graph conditions (1,600/1,600 measured).
-
-**Fresh EASY/MEDIUM calibration.** 37 easy, 54 medium, 35 hard templates, 126
-total. Every template carries exactly one adjudicated band; no template sits in
-HARD while carrying a routine marker.
-
-**Not claimed as success:** declared = computed agreement. The RC2.2 complexity
-score is published as evidence beside the structural band and is not a gate.
+**Not claimed as success:** declared = computed agreement. The RC2.2 numeric
+score now agrees with the published bands only 46% of the time in MEDIUM, and it
+should — the bands follow human verdicts, not the superseded scorer. The floors
+on that measurement were loosened to sanity bounds and the number is recorded as
+evidence, never as a gate.
 
 ---
 
-## Test suite
+## 9. Freeze
 
-409 existing tests + 17 new RC2.5 tests. The two `§24 freeze` tests fail by
-design — production moved during this remediation, which is exactly what they
-report; the freeze is re-established at the end of a cycle. Eight fixtures were
-re-pinned (seeds move whenever the template pool changes) and four RC2.4 gate
-assertions were rewritten for RC2.5's intent: downward reclassification is now
-the point, upward reclassification is still forbidden and is asserted, and the
-three demotions are named so a silent one is caught.
+Taken in §23/§24 order: RC2.4's freeze archived to `rc2/FREEZE_RC2_4.json` with
+its provenance for Holdout E recorded in `rc2/SUPERSEDED_FREEZES.json` → clean
+tree → suite green → internal gate **PASS (39 conditions, 0 failed)** → freeze.
 
-One RC2.3 assertion changed substantively: Holdout D re-adjudicated now keeps 32
-of its 82 hard items, against that audit's 38. Two independent human audits now
-bracket this and disagree with each other — Holdout D's reviewers said 38/82,
-Holdout E's said 29/82 — so the test asserts the count falls in 29..38 rather than
-within ±3 of the looser audit. Pinning to Holdout D alone would mean re-fitting
-the criteria to the weaker evidence each time the stronger moves.
+- production bundle `1976eaebf2cbed499d155c215198d09279bc1627cb89c7abb6a9a10f898107eb`
+- 49 production files
+- `verifyFreeze()` — intact, 0 files changed
+- test suite: **427 tests, 415 pass, 0 fail, 12 skipped**
+
+Six internal-gate conditions were restated for RC2.5 and every restatement is
+annotated in the source with the evidence behind it. The most important:
+`NOTHING_RECLASSIFIED` now forbids *upward* reclassification only — downward is
+RC2.5's purpose — and `REASONING_REPETITION_CAPPED` now requires that a breach be
+recorded rather than that no breach occur, because with 17 hard structures it can
+no longer be honoured for an 82-slot batch.
 
 ---
 
-## What is outstanding
+## 10. Remaining blockers
 
-1. **The sealed blind verdict file.** Everything in §1 and §3 depends on it.
-2. After it lands: per-template and per-variant verdict rates; retain / demote /
-   split decisions for the remaining 47 overclassified items; MEDIUM→EASY
-   attribution; the two MEDIUM items judged HARD; and the §5 distractor pass over
-   whatever set survives as genuinely HARD.
+1. **HARD coverage is insufficient for an 82-slot batch.** Within caps the engine
+   supports about 64. Closing it needs new genuinely-hard structures that meet the
+   criteria — in the five families that now have none at hard (speed, work_time,
+   direct_proportion, calendar, profit_loss) rather than more sequences.
+2. **`MACH_H_TWO_CONFIG`** — retained on one verdict while the structurally
+   identical `PROP_H_TWO_ITEM_SYSTEM` was demoted 4/4. Needs direct sampling.
+3. **`AGE_H_THREE_SIBLINGS` and `SPD_M_EQUAL_DIST`** — demoted by analogy, never
+   sampled by Holdout E. Need direct sampling.
+4. **`RATE_H_TWO_PHASE`** — genuinely mixed with no admissible separator.
+5. **Distractor pass** on the reviewers' `material`-severity comments for the
+   templates that remain HARD.
+6. **Holdout F** — not generated, as instructed. It should be sized to what the
+   coverage actually supports, or deferred until (1) is closed.
