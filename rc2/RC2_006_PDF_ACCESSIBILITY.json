@@ -1,0 +1,146 @@
+{
+  "schema": "rc2-006-pdf-accessibility-v1",
+  "scopeItem": "RC2-006",
+  "generatedAt": "2026-09-12T10:26:46.291Z",
+  "renderer": {
+    "engine": "Chromium print-to-PDF",
+    "path": "/opt/pw-browsers/chromium-1194/chrome-linux/chrome"
+  },
+  "corpus": {
+    "questions": 8,
+    "seed": "RC2-006-ACCESSIBILITY"
+  },
+  "rc1Measured": {
+    "arabicStoredAsPresentationForms": 0.775,
+    "unmappedCharacters": 0,
+    "literalStemSearchHitsAcrossAllFiveReports": 0,
+    "affects": [
+      "text search",
+      "copy-paste",
+      "screen readers"
+    ]
+  },
+  "artifacts": {
+    "pdfUntagged": {
+      "bytes": 345838,
+      "sha256OfContent": "052e16698e0dd9740537d8f3dd6d7a4580dae498b40e2a672415970518e97e5b",
+      "structure": {
+        "structTreeRoot": true,
+        "markInfo": true,
+        "lang": true
+      },
+      "visibleTextLayer": {
+        "chars": 2356,
+        "arabicBase": 328,
+        "arabicPresentationForms": 1182,
+        "latin": 85,
+        "unmapped": 0,
+        "presentationShare": 0.783,
+        "sample": "NUMERICAL GENERATED PRACTICEدﺪﺠﺘﻣ يدﺪﻋ ﺐﻳرﺪﺗ ﺮﻳﺮﻘﺗص 10:26:44 ،2026/ 9/ 12 :ﺦﻳرﺎﺘﻟا8 :ﺔﻠﺌﺳﻷا دﺪﻋ · ﻂﻠﺘﺨﻣ :ﺔﺑﻮﻌﺼﻟا · ﺐﻳرﺪﺗ"
+      },
+      "actualTextSpans": 2546,
+      "actualTextSpansUndecodable": 0,
+      "actualTextArabic": {
+        "base": 2627,
+        "presentation": 0,
+        "presentationShare": 0
+      },
+      "actualTextSample": [
+        "د",
+        "ج",
+        "ت",
+        "م",
+        "د",
+        "ع",
+        "ب",
+        "ي"
+      ],
+      "stemsFoundInVisibleLayer": 0,
+      "stemsFoundInActualText": 0
+    },
+    "pdfTagged": {
+      "bytes": 345838,
+      "sha256OfContent": "052e16698e0dd9740537d8f3dd6d7a4580dae498b40e2a672415970518e97e5b",
+      "structure": {
+        "structTreeRoot": true,
+        "markInfo": true,
+        "lang": true
+      },
+      "visibleTextLayer": {
+        "chars": 2356,
+        "arabicBase": 328,
+        "arabicPresentationForms": 1182,
+        "latin": 85,
+        "unmapped": 0,
+        "presentationShare": 0.783,
+        "sample": "NUMERICAL GENERATED PRACTICEدﺪﺠﺘﻣ يدﺪﻋ ﺐﻳرﺪﺗ ﺮﻳﺮﻘﺗص 10:26:44 ،2026/ 9/ 12 :ﺦﻳرﺎﺘﻟا8 :ﺔﻠﺌﺳﻷا دﺪﻋ · ﻂﻠﺘﺨﻣ :ﺔﺑﻮﻌﺼﻟا · ﺐﻳرﺪﺗ"
+      },
+      "actualTextSpans": 2546,
+      "actualTextSpansUndecodable": 0,
+      "actualTextArabic": {
+        "base": 2627,
+        "presentation": 0,
+        "presentationShare": 0
+      },
+      "actualTextSample": [
+        "د",
+        "ج",
+        "ت",
+        "م",
+        "د",
+        "ع",
+        "ب",
+        "ي"
+      ],
+      "stemsFoundInVisibleLayer": 0,
+      "stemsFoundInActualText": 0
+    },
+    "html": {
+      "bytes": 17030,
+      "arabic": {
+        "base": 6281,
+        "presentation": 0,
+        "presentationShare": 0
+      },
+      "stemsFound": 8,
+      "carriesLogicalTextBlock": true
+    },
+    "logicalTextLayer": {
+      "chars": 5029,
+      "arabic": {
+        "base": 3099,
+        "presentation": 0,
+        "presentationShare": 0
+      },
+      "stemsFound": 8,
+      "allStems": 8
+    }
+  },
+  "consumers": {
+    "textSearch": {
+      "pdfVisibleLayer": "FAILS — shaped and reordered before it reaches the layer",
+      "pdfActualText": "FAILS — base letters, but one glyph per span and in visual order",
+      "html": "WORKS",
+      "logicalTextLayer": "WORKS"
+    },
+    "copyPaste": {
+      "pdfVisibleLayer": "presentation forms in visual order",
+      "html": "logical order",
+      "logicalTextLayer": "logical order"
+    },
+    "screenReader": {
+      "pdfActualText": "base letters via /ActualText with a structure tree present — better than the RC1 note implies, but glyph-by-glyph",
+      "html": "correct (lang=\"ar\" dir=\"rtl\", logical order)",
+      "logicalTextLayer": "correct"
+    }
+  },
+  "correctionsToTheExpectedPicture": [
+    "The RC1 \"77.5% presentation forms\" describes the VISIBLE text layer reached through the ToUnicode CMaps — what search and copy-paste read. The same PDFs carry /ActualText in which the Arabic is 100% base letters, so assistive technology was not seeing presentation forms. Search still fails there because the spans are one glyph each and in visual order.",
+    "--export-tagged-pdf was expected to be the remedy and is not: in this Chromium build the tagged and untagged exports of the same report are identical once the creation timestamp and file id are set aside, and both already carry /StructTreeRoot, /MarkInfo, /Lang and per-glyph /ActualText."
+  ],
+  "remediation": {
+    "inEnginesPower": "report.js produces the report content as logical-order Unicode (buildReportTextLayer), embeds it in the HTML in a machine-readable block, and it is written beside the PDF by this tool.",
+    "notInEnginesPower": "The shaping and reordering happen inside the browser print pipeline, before any text reaches the PDF text layer. Changing that would mean writing the PDF ourselves with an embedded font and our own text layer — a new dependency and a rebuild of a shipped artifact, both of which are out of scope.",
+    "status": "RISK_REMEDIATED_AND_MEASURED"
+  }
+}
