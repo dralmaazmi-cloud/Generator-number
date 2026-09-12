@@ -31,21 +31,51 @@ blind review in procedure, not an independent second party.
 
 ---
 
-## A. KEY INTEGRITY (the 158 reviewed this round)
+## A. KEY INTEGRITY — two metrics, kept apart
 
-| Verdict | Count |
-|---|---|
-| PASS — correct unique key | **158 / 158** |
-| WRONG_KEY | 0 |
-| NO_VALID_KEY | 0 |
-| MULTIPLE_VALID_KEYS | 0 |
+The earlier draft of this report said "158/158 PASS — correct unique key" while
+also classifying four odd-one-out questions as AMBIGUOUS. Those two statements
+cannot both hold under one definition. They are separated here, and the word
+"unique" is no longer applied to any question classified AMBIGUOUS.
 
-Every published key matched my independent answer. Per family: odd_one_out 16/16,
-relational 16/16, sequences 16/16, speed 17/17, work_time 16/16, machines 16/16,
-combined_rate 15/15, unit_rate 16/16, direct_proportion 15/15, profit_loss 15/15.
+### A-1. Intended-rule key match
+*Does the published key match the generator's intended mathematical rule?*
 
-**This is the good news and it is real.** Every defect below is about something
-other than the arithmetic.
+| Verdict | 158 this round | 250 consolidated |
+|---|---|---|
+| PASS | **158 / 158** | 158 assessed by me, all PASS |
+| WRONG_KEY | 0 | 0 in my scope |
+| NO_VALID_KEY | 0 | 0 in my scope |
+| MULTIPLE_VALID_KEYS | 0 | 0 in my scope |
+
+Per family: odd_one_out 16/16, relational 16/16, sequences 16/16, speed 17/17,
+work_time 16/16, machines 16/16, combined_rate 15/15, unit_rate 16/16,
+direct_proportion 15/15, profit_loss 15/15.
+
+For the other 92 I hold no per-question verdicts of my own. They are recorded as
+reviewed by the earlier round and are **not** counted here as assessed by me.
+
+### A-2. Question-level uniqueness
+*Does the published question have only one defensible answer under the approved
+exam-level ambiguity policy?*
+
+| Verdict | 158 this round | 250 consolidated |
+|---|---|---|
+| UNIQUE | **148** | 148 assessed, 92 not assessed by me |
+| BORDERLINE — a competing pattern exists, its salience debatable | **6** | 6 |
+| **NOT_UNIQUE (AMBIGUOUS)** | **4** | **4** |
+| **Total** | **158** | 158 assessed of 250 |
+
+All 10 non-UNIQUE questions (4 AMBIGUOUS + 6 BORDERLINE) are in `odd_one_out`.
+The 148 UNIQUE are the 142 questions of the other nine families, plus the 5 CLEAN
+and 1 UNDISCOVERABLE odd-one-out questions: 142 + 5 + 1 = 148.
+
+A question counted UNIQUE may still be defective on another axis: **S5/46 is
+UNIQUE but UNDISCOVERABLE** (D-3), and is flagged there rather than here.
+
+**The honest summary is therefore: the arithmetic is sound — every intended rule
+produces the published key — but four published questions admit a second
+defensible answer, and they must not be described as having a unique key.**
 
 ## B. BY SESSION
 
@@ -154,24 +184,49 @@ My independent enumerator confirms the key is *correct* every time — the parti
 order genuinely never determines that position. The defect is that the template
 can never generate a determinate case, so the question carries no information.
 
-### D-5. Narrow answer-value spaces — **NEW_RC1_SIGNOFF_DEFECT**
+### D-5. Narrow answer-value spaces — **STATISTICAL_LEAKAGE_RISK**
 
-AUTOMATED, over the frozen 10k corpus:
+AUTOMATED, over the frozen 10k corpus. **No universal "≤4 distinct answers is
+invalid" rule is proposed or implied.** Answer-space size alone is not a defect:
+a counting question has six possible answers by construction and that is fine.
+What matters is the conditional guessing advantage a candidate gains from
+recognising the template.
 
-| Template | Declared | n | Distinct answers | The whole answer set |
-|---|---|---|---|---|
-| REL_H_POSITION_UNCERTAIN | hard | 91 | 1 | `لا يمكن تحديده` (100%) |
-| PL_E_LOSS | easy | 104 | 3 | 20% (40%), 10% (36%), 25% (24%) |
-| PL_M_TOTAL_COST | medium | 114 | 3 | 20% (44%), 10% (37%), 25% (19%) |
-| **COMB_H_STAGED** | **hard** | 89 | **3** | 5h (36%), 3h (34%), 4h (30%) |
-| **SPD_H_TIME_DIFF** | **hard** | 73 | **4** | 300 (37%), 240 (25%), 360 (25%), 180 (14%) |
-| SPD_M_EQUAL_DIST | medium | 81 | 4 | 720 (44%), 480 (27%), 360 (19%), 240 (10%) |
-| MACH_E_REQUIRED | easy | 113 | 4 | 8 (35%), 12 (27%), 10 (22%), 6 (17%) |
-| COMB_M_SOLO_THEN | medium | 122 | 4 | 4h (34%), 6h (30%), 5h (24%), 3h (13%) |
+| Template | Declared | n | Answer-space size | Modal frequency | Entropy (bits, max 2.58) | Advantage over the 1/6 baseline |
+|---|---|---|---|---|---|---|
+| **REL_H_POSITION_UNCERTAIN** | hard | 91 | **1** | **100.0%** | **0.00** | **+83.3 pts** |
+| SPD_M_EQUAL_DIST | medium | 81 | 4 | 44.4% | 1.81 | +27.8 pts |
+| PL_M_TOTAL_COST | medium | 114 | 3 | 43.9% | 1.51 | +27.2 pts |
+| PL_E_LOSS | easy | 104 | 3 | 40.4% | 1.55 | +23.7 pts |
+| SPD_H_TIME_DIFF | hard | 73 | 4 | 37.0% | 1.92 | +20.3 pts |
+| COMB_H_STAGED | hard | 89 | 3 | 36.0% | 1.58 | +19.3 pts |
+| REL_M_COUNT | medium | 78 | 6 | 35.9% | 2.22 | +19.2 pts |
+| MACH_E_REQUIRED | easy | 113 | 4 | 34.5% | 1.95 | +17.8 pts |
+| WORK_M_EFF | medium | 90 | 5 | 34.4% | 2.16 | +17.8 pts |
+| COMB_M_SOLO_THEN | medium | 122 | 4 | 33.6% | 1.93 | +16.9 pts |
+| PL_E_PROFIT | easy | 92 | 5 | 32.6% | 2.24 | +15.9 pts |
+| ODD_M_PRIME2 | medium | 90 | 5 | 31.1% | 2.26 | +14.4 pts |
+| COMB_E_TIME | easy | 86 | 4 | 29.1% | 1.99 | +12.4 pts |
+| RATE_E_TIME | easy | 120 | 4 | 27.5% | 1.99 | +10.8 pts |
+| COMB_M_TOGETHER_SOLO | medium | 129 | 4 | 27.1% | 1.99 | +10.5 pts |
+| AGE_H_TWO_TIME | hard | 75 | 6 | 26.7% | 2.46 | +10.0 pts |
+| SPD_E_TIME | easy | 97 | 5 | 22.7% | 2.30 | +6.0 pts |
 
-Always picking the modal value beats the 16.7% guessing baseline by a wide margin
-— 44% on `PL_M_TOTAL_COST`, 36% on a **Hard** template. This is independent of the
-rank-calibration blocker: it needs no rank reasoning, only template recognition.
+**`REL_H_POSITION_UNCERTAIN` is an unequivocal blocker**: entropy 0.00, one
+possible answer, +83.3 points over chance. It is treated separately in D-4.
+
+The rest are **leakage risks to be remediated where materially exploitable**, not
+automatic rejections. `REL_M_COUNT` is the clearest illustration of why a
+threshold would be wrong: its space is 6, the largest in the table, yet its modal
+frequency is 35.9% — the count is rarely large. Size and exploitability are
+different quantities.
+
+**Constraint on any remediation**, by the same principle already agreed for
+numeric rank: *the answer value may be observed and analysed; it must never
+become a runtime target.* No runtime answer-frequency balancing, and no selecting
+parameters because they produce a desired answer. The fix belongs in the
+parameter space each template can draw from, not in a chooser that watches what
+the answer came out as.
 
 ### D-6. Key-neighbour distractors carrying a registered misconception id — **NEW_RC1_SIGNOFF_DEFECT**
 
@@ -226,20 +281,37 @@ S5/24 (no chase in the stem) shows both halves of the problem:
 > **F** `50 × 100 × 3 ÷ (50 + 100)` → the same sentence, though that derivation is
 > a harmonic-mean form, not a sum of speeds.
 
-### D-8. Option-specific feedback is not as specific as reported — **NEW_RC1_SIGNOFF_DEFECT**
+### D-8. The "100% option-specific feedback" metric was invalid — **QA_METRIC_DEFECT**
 
 AUTOMATED, over the frozen 10k corpus, stripping the mechanical
 `اخترت X، وهي ناتج Y` prefix and comparing the explanatory sentence that follows:
 
 | Measure | Value |
 |---|---|
-| Questions where two or more wrong options carry the **identical** explanatory sentence | **6,117 / 10,000 (61.2%)** |
-| Wrong options carrying a non-unique explanatory sentence | **11,276 / 50,000 (22.6%)** |
+| Questions where two or more wrong options carry the identical explanatory sentence | 6,117 / 10,000 (61.2%) |
+| Wrong options carrying a non-unique explanatory sentence | 11,276 / 50,000 (22.6%) |
 
-The "100% option-specific feedback" figure in the development report counted the
-derivation prefix, which differs trivially because the numbers differ. The
-*pedagogical content* is duplicated on nearly a quarter of all wrong options. On
-S5/32 the same sentence appears four times.
+The development report's "option-specific feedback 0% → 100%" counted the
+derivation prefix, which differs trivially because the numbers differ. The metric
+therefore measured nothing about pedagogical content and should not have been
+reported as evidence of feedback quality.
+
+**This is a defect in the measurement, not automatically in the content.** Two
+options may legitimately share the same explanation when the same real
+misconception produces both — that is correct behaviour, not duplication. The
+requirement for RC2 is therefore *not* "every wrong option must have a unique
+sentence". It is:
+
+- the feedback must correctly describe **that option's** derivation;
+- the misconception must be applicable to **that stem**;
+- generic or vacuous feedback is not sufficient;
+- misattributed feedback is a defect;
+- **identical wording alone is not a defect.**
+
+Where identical wording *is* accompanied by a real failure it is counted under
+D-6 (vacuous: the same sentence on four `key ± n` options in S5/32) or D-7
+(misattributed: the chase sentence on a non-chase stem). Those two remain
+production content defects. D-8 on its own is a metric defect.
 
 ### D-9. The difficulty band model is miscalibrated in one direction — **NEW_RC1_SIGNOFF_DEFECT**
 
@@ -259,42 +331,81 @@ See section E.
 the audit sample, all flagged in `audit.arabicFlag`; 548 / 10,000 in the corpus;
 6 of 7 `averages` templates. Recorded in `SIGNOFF_RC1.md` §8.
 
-### New, found this round — **MANUAL REVIEW FINDING**
+### Correction to my own earlier statement
 
-Both are **case (إعراب) errors on the dual**, a category the validator does not
-examine at all.
+The previous draft of this report said: *"I found no further Arabic defect in the
+158 beyond these two classes."* **That was wrong.** A third defect class is
+present in the 158, in `profit_loss`, which was inside my scope. It is recorded
+below as a separate class; it is not merged into the dual-case defect.
 
-| # | Defect | Exact phrase | Recommended form | Template | Corpus scope | In sample |
+### New, found this round — **MANUAL REVIEW FINDING** — three classes
+
+| # | Class | Exact phrase | Recommended form | Template | Corpus scope | In sample |
 |---|---|---|---|---|---|---|
-| 1 | مضاف إليه in the nominative instead of the genitive | `يستطيع 6 عمال إنجاز **مهمتان** خلال 4 أيام` | `إنجاز **مهمتين**` | `WORK_E_VOLUME` | 37 / 10,000 (0.37%) | **S2/24** |
-| 2 | dual after `كل` in the nominative, plus verb non-agreement | `كل **سنتيمتران تمثل** 10 كيلومترات` | `كل **سنتيمترين يمثلان**` (or `كل سنتيمتر يمثل 5 كيلومترات`) | `PROP_M_MAP` | 23 / 10,000 (0.23%) | **S2/19** |
+| 1 | `AR_DUAL_WRONG_CASE` — مضاف إليه in the nominative instead of the genitive | `يستطيع 6 عمال إنجاز **مهمتان** خلال 4 أيام` | `إنجاز **مهمتين**` | `WORK_E_VOLUME` | 37 / 10,000 (0.37%) | **S2/24** |
+| 2 | `AR_DUAL_WRONG_CASE` — dual after `كل` in the nominative, with verb non-agreement | `كل **سنتيمتران تمثل** 10 كيلومترات` | `كل **سنتيمترين يمثلان**` (or `كل سنتيمتر يمثل 5 كيلومترات`) | `PROP_M_MAP` | 23 / 10,000 (0.23%) | **S2/19** |
+| 3 | **`AR_DEFINITENESS_RENDERING`** — a definite adjective modifying an indefinite إضافة | `**سعر سلعة المعلن** 200 درهمًا` | `**سعر السلعة المعلن**` | `PL_M_DISC_MARK` | **134 / 10,000 (1.34%)** | **S3/37** |
 
-Defect class: `AR_DUAL_WRONG_CASE`. Both survive because
-`checkArabicNumberUnits` matches only *numeral → lexicon-unit* pairs across 21
-words; `مهمة` and `سنتيمتر` in the dual are outside both the direction and the
-lexicon.
+On class 3: `سعر سلعة` is an إضافة whose مضاف إليه is indefinite, so the whole
+phrase is indefinite and cannot take the definite adjective `المعلن`. It is the
+most frequent of the three new classes and affects every `PL_M_DISC_MARK`
+instance in the corpus.
 
-**Totals:** known 13 in-sample / 548 corpus; new 2 in-sample / 60 corpus;
-**15 affected questions in the 250**.
+**Why all three survived:** `checkArabicNumberUnits` matches only
+*numeral → lexicon-unit* pairs across 21 words. It examines no case (إعراب), no
+definiteness, and no verb agreement, and `مهمة`, `سنتيمتر` and `سلعة` are outside
+its lexicon in any event.
+
+### Totals
+
+| | Classes | Corpus questions | Audit-sample questions |
+|---|---|---|---|
+| Known (averages) | 1 | 548 | 13 |
+| **New this round** | **3** | **194** (37 + 23 + 134) | **3** (S2/24, S2/19, S3/37) |
+| **Total affected** | **4** | **742** | **16** |
 
 Correctly-formed duals elsewhere (`توقفت آلتان`, `عملا معًا`, `ينجزان`) are
-nominative in subject position and are right. I found no further Arabic defect in
-the 158 beyond these two classes.
+nominative in subject position and are right.
 
----
+I make no claim that this is exhaustive. Three classes surfaced from reading 158
+stems; a native reviewer working through the full 250 should be expected to find
+more, and my earlier "no further defect" sentence is exactly the kind of claim
+this review should not make.
 
 ## F. EXPLANATION / PEDAGOGY DEFECTS
 
 | Check | Result |
 |---|---|
 | Explanation reaches the published key | **0 real failures.** An automated pass flagged 397/8,495, but every one inspected was my matcher's artifact — `-10` rendered as `انخفاض 10%`, or an odd-one-out step ending on the rule constant. Reported as clean. |
-| Quick method general, not fitted to the sampled numbers | No failures found in the 158. Spot-checked the staged templates: `المتبقي ÷ (العمال الباقون × معامل الكفاءة)` and `حل س × (1 ÷ 50 − 1 ÷ 100) = 3` are both general statements. |
+| Quick method general, not fitted to the sampled numbers | **0 failures in the 158.** Spot-checked the staged templates: `المتبقي ÷ (العمال الباقون × معامل الكفاءة)` and `حل س × (1 ÷ 50 − 1 ÷ 100) = 3` are general statements. **But see the `fractions` finding below, observed during this reconciliation pass.** |
 | Explanation consistent with the stem | **Fails on the "chase" family — D-7**, 154 corpus occurrences. |
-| Feedback consistent with its own derivation | **Fails on D-7** (a harmonic-mean derivation described as a sum of speeds) and is vacuous on the 193 key-neighbour options of D-6. |
-| Incorrect general rule or reminder | None found in the 158. |
-| Hidden-fraction semantic reversal (`previous ÷ next` vs `next ÷ previous`) | Carried forward from the first 92. Not re-counted; `fractions` was not in my scope. |
+| Feedback consistent with its own derivation | **Fails on D-7**, and is vacuous on the 193 key-neighbour options of D-6. |
+| Incorrect general rule or reminder | **Fails on `fractions` — see below.** None found in the 158. |
 
----
+### Observed during reconciliation, in a family outside my 158
+
+`fractions` was reviewed in the first 92, not by me. While verifying the
+carried-forward hidden-fraction finding I confirmed two distinct problems in the
+same template and record both so they are not lost:
+
+**F-1. `HIDDEN_FRACTION_SEMANTIC_REVERSAL`** — the reminder, identical on all 197
+corpus instances, reads:
+
+> `الكسر المجهول هو نسبة الناتج قبله إلى الناتج بعده.`
+> *"the unknown fraction is the ratio of the result before it to the result after it."*
+
+That is `previous ÷ next`, which gives the **denominator**. The fraction itself is
+`next ÷ previous`. The worked steps get the right answer — *"30 ÷ 15 = 2، إذن
+الكسر المجهول هو النصف"* — by computing 2 and then naming ½, but the rule the
+learner is told to remember is reversed. The published keys are correct; the
+generalisation taught alongside them is not.
+
+**F-2. `QUICK_METHOD_NOT_GENERAL`** — for the same direction, `fast_method` holds
+an instance computation rather than a method: `"30 ÷ 15 = 2."`, `"72 ÷ 12 = 6."`,
+`"144 ÷ 24 = 6."` — 67 distinct such strings across the corpus. Every other family
+states a general rule in that field. A learner is given no transferable method.
+
+Both are `PEDAGOGICAL_BLOCKER`. Neither changes any key.
 
 ## G. DISTRACTOR QUALITY
 
@@ -324,37 +435,66 @@ pedagogical reality.
 
 No ambiguity was found outside `odd_one_out`. Sequences: 16/16
 `UNAMBIGUOUS_RULE` (S1/45, S3/22 and S2/05 admit a second rule that yields the
-*same* answer — `ALTERNATIVE_RULE_SAME_ANSWER`, which is not a defect). Relational:
-16/16 uniquely determined, with no `RELATIONAL_NON_UNIQUE`,
+*same* answer — `ALTERNATIVE_RULE_SAME_ANSWER`, which is not a defect).
+Relational: 16/16 uniquely determined, with no `RELATIONAL_NON_UNIQUE`,
 `RELATIONAL_FALSE_CERTAINTY`, `RELATIONAL_MISSED_TRANSITIVITY` or
 `RELATIONAL_UNSTATED_ASSUMPTION`. The seven numeric families: no ambiguity.
 
-`odd_one_out` — 10 of 16 affected:
+### odd_one_out — four exclusive categories summing to 16
 
-| Question | Set | Key | Competing rule | Its outlier | Verdict |
-|---|---|---|---|---|---|
-| **S1/27** | {24,35,75,48,63,15} | 75 (n²−1) | **multiples of 3** (complexity 1) | **35** | **AMBIGUOUS** |
-| **S5/08** | {24,63,15,30,48,35} | 30 (n²−1) | **multiples of 3** (complexity 1) | **35** | **AMBIGUOUS** |
-| **S3/27** | {16,18,32,20,24,28} | 18 (mult. of 4) | **only perfect square** | **16** | **AMBIGUOUS** |
-| **S5/22** | {12,11,19,13,9,17} | 12 (prime+6) | **only square / only single-digit** | **9** | **AMBIGUOUS** |
-| S1/08 | {512,343,216,624,125,64} | 624 (cubes) | all three-digit except one | 64 | BORDERLINE |
-| S2/07 | {14,12,26,6,10,22} | 12 (2×prime) | all two-digit except one | 6 | BORDERLINE |
-| S2/39 | {12,10,26,22,14,6} | 12 (2×prime) | all two-digit except one | 6 | BORDERLINE |
-| S3/13 | {10,24,6,14,26,22} | 24 (2×prime) | all two-digit except one | 6 | BORDERLINE |
-| S4/10 | {73,81,64,36,100,49} | 73 (squares) | all two-digit except one | 100 | BORDERLINE |
-| S4/21 | {64,27,8,268,125,216} | 268 (cubes) | only single-digit | 8 | BORDERLINE |
-| S5/46 | {21,23,15,13,19,17} | 19 (prime+10) | — no competing *unique* rule, but the intended rule is above the engine's own simplicity ceiling and primality yields two candidates, neither the key | — | **UNAMBIGUOUS but undiscoverable (D-3)** |
-| S1/40, S2/28, S2/50, S3/42, S4/35 | — | — | alternatives agree with the key | — | UNAMBIGUOUS |
+| Category | Count | Definition |
+|---|---|---|
+| **AMBIGUOUS** | **4** | a comparably simple, exam-plausible competing rule yields a different unique answer |
+| **BORDERLINE** | **6** | a competing pattern exists but its psychometric salience is debatable |
+| **UNDISCOVERABLE** | **1** | the intended rule is not reasonably recoverable under the engine's own simplicity model |
+| **CLEAN** | **5** | no competing rule, or the alternatives agree with the key |
+| **Total** | **16** | |
 
-**4 AMBIGUOUS + 6 BORDERLINE + 1 undiscoverable = 11 of 16 odd-one-out questions
-carry an ambiguity or discoverability defect (68.75%).** None was caught by the
-production checker; all eleven were published with `ambiguous=false`.
+**11 of 16 carry a defect** (4 + 6 + 1); 5 are clean. The earlier draft said
+"10 of 16", which omitted the UNDISCOVERABLE case; that is corrected here.
+
+#### AMBIGUOUS — 4
+
+| Question | Set | Key | Competing rule | Its outlier |
+|---|---|---|---|---|
+| **S1/27** | {24,35,75,48,63,15} | 75 (n²−1) | **multiples of 3** (complexity 1) | **35** |
+| **S5/08** | {24,63,15,30,48,35} | 30 (n²−1) | **multiples of 3** (complexity 1) | **35** |
+| **S3/27** | {16,18,32,20,24,28} | 18 (multiples of 4) | **only perfect square** | **16** |
+| **S5/22** | {12,11,19,13,9,17} | 12 (prime+6) | **only square / only single-digit** | **9** |
+
+#### BORDERLINE — 6
+
+Every one rests on a digit-magnitude class. Per §8 of the reconciliation
+instruction these are **measured and exposed, not automatically converted into a
+MUST_REJECT rule**; whether a candidate treats "all three-digit except one" as
+the organising principle is a genuine psychometric question, not a settled one.
+
+| Question | Set | Key | Competing pattern | Its outlier |
+|---|---|---|---|---|
+| S1/08 | {512,343,216,624,125,64} | 624 (cubes) | all three-digit except one | 64 |
+| S2/07 | {14,12,26,6,10,22} | 12 (2×prime) | all two-digit except one | 6 |
+| S2/39 | {12,10,26,22,14,6} | 12 (2×prime) | all two-digit except one | 6 |
+| S3/13 | {10,24,6,14,26,22} | 24 (2×prime) | all two-digit except one | 6 |
+| S4/10 | {73,81,64,36,100,49} | 73 (squares) | all two-digit except one | 100 |
+| S4/21 | {64,27,8,268,125,216} | 268 (cubes) | only single-digit | 8 |
+
+#### UNDISCOVERABLE — 1
+
+| Question | Set | Key | Why |
+|---|---|---|---|
+| **S5/46** | {21,23,15,13,19,17} | 19 (prime+10) | the production checker reports **no** rule of complexity ≤ 3 fits this set; primality, the natural reading, singles out **two** numbers (21 and 15), neither the key. The set is also six consecutive odd numbers. |
+
+#### CLEAN — 5
+
+S1/40, S2/28, S2/50, S3/42, S4/35 — alternatives either do not form a coherent
+class or agree with the published key.
+
+None of the 11 was caught by the production checker; all were published with
+`ambiguous=false`.
 
 Method note: my acceptance test for a competing rule is that the five
 non-outliers form a class a candidate would recognise. Artifacts such as
 "divisible by 7 → 343 in a set of cubes" were discarded.
-
----
 
 ## I. DIFFICULTY MATRIX — declared vs computed, all 250
 
@@ -374,77 +514,114 @@ Hard             0       12     70     82    12 (14.6%)
 | Medium → Hard | 60 |
 | Hard → Medium | 12 |
 | Hard → Easy | **0** |
-| **Total mismatch** | **118 / 250 = 47.2%** |
+| **Total** | **118 / 250 = 47.2%** |
 
-### Manual assessment
+### Manual assessment — exact, mutually exclusive, no approximations
 
-The errors are **one-directional**: the computed band is never *lower* than
-declared for Easy or Medium, and `Medium → Easy` and `Hard → Easy` are both zero.
-That is a signature of a miscalibrated threshold, not of miscategorised questions.
+The earlier draft said "~103 justified, using all 46 Easy mismatches + 57
+Medium→Hard". That was wrong twice over: it lumped the 3 Easy→Hard cases into the
+justified column and it used 57 where the matrix says 60. Corrected below by
+assessing every transition group, and the 12 Hard→Medium questions individually.
 
-`bandFor` (`src/qa/complexity.js:36`) uses `score ≤ 4.5 → easy`, `≤ 9.5 → medium`.
-Take S1/01 `WORK_E_INVERSE`: *"8 workers finish a job in 18 days; how long for
-12?"* — one inverse-proportion insight and `8 × 18 ÷ 12`. Declared **Easy**;
-computed score 5.3 → **Medium**. The declared label is the defensible one; the
-model over-scores. 43 of the 52 declared-Easy questions are this case.
+| Transition | n | Assessment | Reason |
+|---|---|---|---|
+| Easy → Medium | 43 | `JUSTIFIED_MISMATCH` | the declared label is right and the model over-scores. S1/01 `WORK_E_INVERSE` — *"8 workers finish a job in 18 days; how long for 12?"* — is one inverse-proportion insight and `8 × 18 ÷ 12`. Declared Easy, scored 5.3 → Medium. |
+| Medium → Hard | 60 | `JUSTIFIED_MISMATCH` | two-stage arithmetic scored past the 9.5 boundary; the declared Medium is defensible. |
+| Easy → Hard | 3 | `UNCERTAIN` | all three are `MACH_E_REQUIRED`, scored **10.9**. A two-step unit-rate problem is not Hard, but it is not Easy either. Both the label and the band look wrong; I will not call either defensible. |
+| Hard → Medium | 12 | **split — see below** | assessed one by one |
 
-| Assessment | Count | Basis |
-|---|---|---|
-| `JUSTIFIED_MISMATCH` — the declared label is right and the model over-scores | ~103 (all 46 Easy mismatches, and the 57 Medium→Hard cases that are two-step arithmetic) | the Easy band is effectively unreachable at these thresholds |
-| `MISCLASSIFIED_DIFFICULTY` | **12** — the `Hard → Medium` cases | these are genuinely not hard; see below |
-| `UNCERTAIN` | 3 (Easy → Hard) | too few to generalise |
+#### The 12 Hard → Medium questions, individually
 
-The 12 `Hard → Medium` cases are the ones where the *declared* label is
-indefensible, and they overlap exactly with D-3 and D-4: a Hard item solvable by
-"which one is even" (S5/22), and a Hard item whose answer is always "cannot be
-determined" (the five `REL_H_POSITION_UNCERTAIN`). For those, no reasoning burden
-justifies the Hard label — I looked for one and there is none.
+| Question | Template | Score | Assessment | Reason |
+|---|---|---|---|---|
+| S1/27 | `ODD_H_SQ_MINUS` | 8.9 | `MISCLASSIFIED_DIFFICULTY` | its "hardness" is the ambiguity of D-1, not reasoning load |
+| S5/08 | `ODD_H_SQ_MINUS` | 8.9 | `MISCLASSIFIED_DIFFICULTY` | same |
+| S5/22 | `ODD_H_PRIME_OFFSET` | 8.9 | `MISCLASSIFIED_DIFFICULTY` | solvable in one second by "which one is even" |
+| S5/46 | `ODD_H_PRIME_OFFSET` | 8.9 | `MISCLASSIFIED_DIFFICULTY` | hardness is undiscoverability (D-3), not difficulty |
+| S5/28 | `COMB_H_THREE` | 5.8 | `MISCLASSIFIED_DIFFICULTY` | `(20 + 18 + 12) × 5` — one addition and one multiplication |
+| S2/50 | `ODD_H_SQ_MINUS` | 8.9 | `JUSTIFIED_MISMATCH` | no competing rule here; spotting n²−1 is a genuine hard step |
+| S3/26 | `PCT_H_CHAIN_VALUE` | 9.1 | `JUSTIFIED_MISMATCH` | genuinely multi-step; clipped by the 9.5 boundary |
+| S5/04 | `PCT_H_CHAIN_VALUE` | 9.1 | `JUSTIFIED_MISMATCH` | same |
+| S5/34 | `PCT_H_CHAIN_VALUE` | 9.1 | `JUSTIFIED_MISMATCH` | same |
+| S5/02 | `SPD_H_CATCH` | 9.1 | `JUSTIFIED_MISMATCH` | head-start catch-up, three stages |
+| S5/06 | `CAL_H_LONG` | 7.6 | `JUSTIFIED_MISMATCH` | long day-shift with a modular step |
+| S5/33 | `CAL_H_LONG` | 7.6 | `JUSTIFIED_MISMATCH` | same |
 
-**Conclusion: `complexity_band` cannot currently be used as a QA signal.** With an
-88.5% disagreement rate on Easy it carries no information about the declared
-label, and the two are not measuring the same thing.
+#### Exact totals
 
----
+| Assessment | Count |
+|---|---|
+| `JUSTIFIED_MISMATCH` | 43 + 60 + 7 = **110** |
+| `UNCERTAIN` | **3** |
+| `MISCLASSIFIED_DIFFICULTY` | **5** |
+| **Total** | **118** |
+
+This differs from the candidate classification put to me (103 / 3 / 12). Seven of
+the twelve Hard→Medium questions have a defensible Hard label and are counted
+justified; only five do not.
+
+### A caveat that keeps the matrix from being over-read
+
+**Matrix agreement does not mean the difficulty is right.** The five
+`REL_H_POSITION_UNCERTAIN` questions are declared Hard *and* computed Hard, so
+they appear nowhere in the 118 — yet their answer is constant across all 91
+corpus instances (D-4), which makes the Hard label substantively wrong. An
+earlier draft claimed the 12 Hard→Medium cases "overlap exactly with D-3 and
+D-4"; they do not. Five of them relate to D-1/D-3, and none is a
+`REL_H_POSITION_UNCERTAIN` question.
+
+**Conclusion: `complexity_band` cannot currently be used as a QA signal.** At an
+88.5% disagreement rate on declared Easy it carries no information about the
+label, and it is blind to the two defects that most damage the Hard band.
 
 ## J. RC2 SCOPE ADDITIONS
 
-Defect **classes** to add. No implementation is proposed here.
+The complete, numbered inventory now lives in `RC2_SCOPE_CANDIDATES.md` — 21
+items, each with an explicit classification, none relying on a cross-reference to
+narrative. The items this review *added* to that inventory are 7–21. No
+implementation is proposed here.
 
-| # | Class | Where |
+| # | Class | Classification |
 |---|---|---|
-| 7 | `AMBIGUITY_LONE_SIMPLE_RULE_NEVER_COMPETES` — a single simple rule disagreeing with the key cannot trigger rejection, and `supportsIntended` is satisfied from the unfiltered list | `src/qa/ambiguity.js:103-113` |
-| 8 | `AMBIGUITY_INVERSE_FRAMING_AND_MAGNITUDE_BLIND_SPOT` — only "all but one fails" is tested; no digit-magnitude class in the grammar | `src/qa/ambiguity.js:84-92` |
-| 9 | `UNDISCOVERABLE_INTENDED_RULE` — a template may publish a rule above the engine's own simplicity ceiling | `ODD_H_PRIME_OFFSET`, `ODD_H_SQ_MINUS` |
-| 10 | `CONSTANT_ANSWER_TEMPLATE` — 91/91 identical answers | `REL_H_POSITION_UNCERTAIN` |
-| 11 | `NARROW_ANSWER_VALUE_SPACE` — ≤4 distinct answers over ~100 instances, including Hard templates | 8 templates listed in D-5 |
-| 12 | `GENERIC_KEY_NEIGHBOR_DISTRACTOR` — `key ± n` accepted because it carries a registered misconception id; 15.4% of all wrong options | `src/qa/misconceptions.js` + every family using `OFF_BY_ONE_STEP` |
-| 13 | `MISATTRIBUTED_MISCONCEPTION_FEEDBACK` — feedback describing an error the stem cannot elicit; 154 occurrences | `SPD_M_EQUAL_DIST`, `SPD_H_TIME_DIFF` |
-| 14 | `FEEDBACK_SPECIFICITY_OVERSTATED` — 22.6% of wrong options share an explanatory sentence; the reported 100% counted the derivation prefix | measurement + `src/qa/misconceptions.js` |
-| 15 | `DIFFICULTY_BAND_MISCALIBRATION` — 47.2% one-directional mismatch; `complexity_band` unusable as a signal | `src/qa/complexity.js:36` |
-| 16 | `AR_DUAL_WRONG_CASE` — `إنجاز مهمتان`, `كل سنتيمتران تمثل`; the validator checks no case at all | `WORK_E_VOLUME`, `PROP_M_MAP`, `src/arabic/units.js` |
-
----
+| 7 | `AMBIGUITY_LONE_SIMPLE_RULE_NEVER_COMPETES` | PRODUCTION_BLOCKER · PEDAGOGICAL_BLOCKER |
+| 8 | `AMBIGUITY_INVERSE_FRAMING_AND_MAGNITUDE_BLIND_SPOT` | PRODUCTION_BLOCKER |
+| 9 | `UNDISCOVERABLE_INTENDED_RULE` | PEDAGOGICAL_BLOCKER |
+| 10 | `CONSTANT_ANSWER_TEMPLATE` | PRODUCTION_BLOCKER · STATISTICAL_LEAKAGE_RISK |
+| 11 | `NARROW_ANSWER_VALUE_SPACE` | STATISTICAL_LEAKAGE_RISK |
+| 12 | `GENERIC_KEY_NEIGHBOR_DISTRACTOR` | PEDAGOGICAL_BLOCKER · STATISTICAL_LEAKAGE_RISK |
+| 13 | `MISATTRIBUTED_MISCONCEPTION_FEEDBACK` | PRODUCTION_BLOCKER · PEDAGOGICAL_BLOCKER |
+| 14 | `FEEDBACK_SPECIFICITY_METRIC_INVALID` | QA_METRIC_DEFECT |
+| 15 | `DIFFICULTY_BAND_MISCALIBRATION` | QA_METRIC_DEFECT |
+| 16 | `AR_DUAL_WRONG_CASE` | LANGUAGE_BLOCKER |
+| 17 | `AR_DEFINITENESS_RENDERING` | LANGUAGE_BLOCKER |
+| 18 | `HIDDEN_FRACTION_SEMANTIC_REVERSAL` | PEDAGOGICAL_BLOCKER |
+| 19 | `QUICK_METHOD_NOT_GENERAL` | PEDAGOGICAL_BLOCKER |
+| 20 | `RATIO_INVARIANT_ENFORCEMENT_ESCAPE` | PRODUCTION_BLOCKER |
+| 21 | `VERSION_TRACEABILITY_MISMATCH` | QA_OBSERVABILITY_BLOCKER |
 
 ## 11. FINDINGS PRESERVED FROM EARLIER ROUNDS
 
-Recorded as previously established. Items marked *(first 92)* were found by the
-earlier review and are carried forward unchanged; I did not re-derive them.
+Every item below now has its own numbered entry in `RC2_SCOPE_CANDIDATES.md`.
+None is left as narrative only.
 
-| # | Finding | Source |
-|---|---|---|
-| 1 | Rank-driven distractor selection | `SIGNOFF_RC1.md` §5 |
-| 2 | Arabic averages agreement defect — 13 in sample, 548 in corpus | `SIGNOFF_RC1.md` §8 |
-| 3 | Incomplete rejection telemetry; 2 dead reason codes | `SIGNOFF_RC1.md` §2 |
-| 4 | Seeded reproducibility qualification (fresh engine only) | `SIGNOFF_RC1.md` §7 |
-| 5 | Incomplete degeneracy-model coverage — 79.3% | `SIGNOFF_RC1.md` §6-B |
-| 6 | PDF visual-order / presentation-form text layer | `RC2_SCOPE_CANDIDATES.md` #6 |
-| 7 | Hidden-fraction semantic reversal (`previous ÷ next` vs `next ÷ previous`) | *(first 92)* |
-| 8 | Ratio-invariant escape cases | *(first 92)* |
-| 9 | Odd-one-out ambiguity identified in the first round | *(first 92)* — now substantially extended by section H |
-| 10 | Version traceability mismatch | *(first 92)* |
-| 11 | Distractor-quality concern | *(first 92)* — now quantified in section G |
+| # in scope log | Finding | Source | Status in this pass |
+|---|---|---|---|
+| 1 | Rank-driven distractor selection | `SIGNOFF_RC1.md` §5 | preserved unchanged |
+| 2 | Arabic averages agreement defect — 13 in sample, 548 in corpus | `SIGNOFF_RC1.md` §8 | preserved unchanged |
+| 3 | Incomplete rejection telemetry; 2 dead reason codes | `SIGNOFF_RC1.md` §2 | preserved unchanged |
+| 4 | Seeded reproducibility qualification (fresh engine only) | `SIGNOFF_RC1.md` §7 | preserved unchanged |
+| 5 | Incomplete degeneracy-model coverage — 79.3% | `SIGNOFF_RC1.md` §6-B | preserved unchanged |
+| 6 | PDF visual-order / presentation-form text layer | delivery pass | preserved unchanged |
+| 18 | Hidden-fraction semantic reversal | *(first 92)* | **now verified independently** — reminder text and 197 instances confirmed, §F-1 |
+| 19 | Quick method not general (same template) | *(this pass)* | **new** — 67 instance-specific `fast_method` strings, §F-2 |
+| 20 | Ratio-invariant enforcement escape | *(first 92)* | **now verified independently** — 93 reducible and 85 equal-sided parameter pairs published in 625 `ratios` questions |
+| 21 | Version traceability mismatch | *(first 92)* | **now verified independently** — `ENGINE_VERSION = '1.3.0'` in `src/index.js:25`, but `report.js:34` prints `v1.2.0` and `index.html:23` shows `v1.2.0` |
+| 7–17 | found by this review | §D, §E, §H, §I | new |
 
----
+Item 9 of the earlier narrative — "odd-one-out ambiguity identified in the first
+round" — referred to the historical `{30,42,56,72,84,90}` case, which is a
+regression fixture, not a question in this RC1 sample. The odd-one-out ambiguity
+in *this* sample is the separate and larger finding in §H.
 
 ## 14. EVIDENCE INDEX
 
@@ -460,10 +637,23 @@ earlier review and are carried forward unchanged; I did not re-derive them.
 | difficulty matrix | **AUTOMATED** counts, **MANUAL** assessment | `audit-rc1/blind-audit-250.jsonl` |
 | Arabic dual-case defects | **MANUAL** reading, scope **AUTOMATED** | S2/19, S2/24 + corpus scan |
 
-One correction to my own work, recorded: my first relational parser treated the
-question clause `أنهم أسرع من` as a relation and produced three false
-disagreements. That was my tool's defect, not the engine's; fixed, and the
-corrected run is 16/16.
+### Corrections to my own work, recorded
+
+1. My first relational parser treated the question clause `أنهم أسرع من` as a
+   relation and produced three false disagreements. My tool's defect, not the
+   engine's; fixed, corrected run 16/16.
+2. I wrote *"158/158 PASS — correct unique key"* while also classifying four
+   questions AMBIGUOUS. Contradictory. Split into two metrics in §A.
+3. I wrote *"10 of 16 affected"* for odd-one-out when my own categories summed to
+   11. Corrected in §H, with four exclusive categories summing to 16.
+4. I wrote *"~103 justified, all 46 Easy mismatches + 57 Medium→Hard"*, which
+   double-counted the 3 Easy→Hard cases and used 57 where the matrix says 60.
+   Recomputed exactly in §I: 110 / 3 / 5 = 118.
+5. I claimed the 12 Hard→Medium cases *"overlap exactly with D-3 and D-4"*. They
+   do not; none is a `REL_H_POSITION_UNCERTAIN` question. Corrected in §I.
+6. I wrote *"I found no further Arabic defect in the 158 beyond these two
+   classes."* Wrong — `AR_DEFINITENESS_RENDERING` was present in `profit_loss`,
+   inside my scope, at 134/10,000. Corrected in §E.
 
 ---
 
