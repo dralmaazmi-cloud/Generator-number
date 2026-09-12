@@ -1,0 +1,257 @@
+{
+  "schema": "rc2-development-corpus-v1",
+  "section": "§22",
+  "generatedAt": "2026-09-12T11:10:12.263Z",
+  "engineVersion": "1.4.0",
+  "seeds": [
+    "RC2-DEV-ALPHA",
+    "RC2-DEV-BETA",
+    "RC2-DEV-GAMMA",
+    "RC2-DEV-DELTA",
+    "RC2-DEV-EPSILON"
+  ],
+  "holdoutSeedUsed": false,
+  "holdoutSeed": "AUDIT-2026-09-12-B",
+  "corpus": {
+    "requested": 10000,
+    "published": 10000,
+    "exhausted": 0,
+    "families": 16,
+    "templates": 107,
+    "byBand": {
+      "easy": 3335,
+      "medium": 3335,
+      "hard": 3330
+    },
+    "byFamily": {
+      "profit_loss": 640,
+      "percentages": 617,
+      "relational": 612,
+      "speed": 583,
+      "ages": 660,
+      "fractions": 616,
+      "ratios": 630,
+      "odd_one_out": 702,
+      "averages": 633,
+      "combined_rate": 612,
+      "work_time": 585,
+      "machines": 649,
+      "sequences": 632,
+      "calendar": 597,
+      "direct_proportion": 633,
+      "unit_rate": 599
+    },
+    "sha256": "1b75313247a21444e1805840a938c51adc0b6039434c237f89e44ec09ab01a57",
+    "gzipBytes": 1198125
+  },
+  "mathematics": {
+    "note": "§20 — the RC1 gains. Any non-zero figure here is an RC2 blocker.",
+    "ORACLE_DISAGREEMENT": 0,
+    "oracleDisagreementSamples": [],
+    "oracleComparedThroughALabelMap": 208,
+    "postShuffleKeyMismatch": 0,
+    "zeroCorrectOption": 0,
+    "multipleCorrectOptions": 0,
+    "correctValueMismatch": 0,
+    "metaKeyMismatch": 0
+  },
+  "ambiguity": {
+    "oddOneOutPublished": 702,
+    "verdicts": {
+      "CLEAN": 567,
+      "BORDERLINE": 135
+    },
+    "publishedAmbiguous": 0,
+    "publishedUndiscoverable": 0
+  },
+  "language": {
+    "constructionsClassified": 90271,
+    "valid": 71616,
+    "exempt": 18655,
+    "invalid": 0,
+    "unclassified": 0,
+    "invalidSamples": []
+  },
+  "distractors": {
+    "wrongOptions": 50000,
+    "answerDerived": 1011,
+    "answerDerivedShare": 0.02022,
+    "unattributedAnswerDerived": 0,
+    "perQuestionDistribution": {
+      "0": 9467,
+      "1": 159,
+      "2": 270,
+      "3": 104
+    },
+    "rc1Baseline": {
+      "answerDerivedShare": 0.249,
+      "questionsWithThreeOrMoreShare": 0.156
+    }
+  },
+  "feedback": {
+    "verdicts": {
+      "EXACT": 33526,
+      "ROUNDS_TO_VALUE": 811,
+      "PROSE": 8578,
+      "NON_NUMERIC": 7085
+    },
+    "derivationMismatches": 0,
+    "questionsWithInapplicableMisconception": 0,
+    "questionsWithDuplicateDerivation": 0
+  },
+  "statisticalLeakage": {
+    "distinctAnswersAcrossCorpus": 1182,
+    "corpusModalShare": 0.0118,
+    "templatesMeasured": 107,
+    "templatesAbove20Points": 0,
+    "templatesAbove15Points": 2,
+    "medianAdvantagePoints": -3.6,
+    "worst": [
+      {
+        "templateId": "REL_H_POSITION",
+        "n": 114,
+        "space": 16,
+        "modal": 0.351,
+        "entropyBits": 3.42,
+        "advantagePoints": 18.4
+      },
+      {
+        "templateId": "REL_M_COUNT",
+        "n": 59,
+        "space": 6,
+        "modal": 0.339,
+        "entropyBits": 2.19,
+        "advantagePoints": 17.2
+      },
+      {
+        "templateId": "SPD_H_MEET_DELAY",
+        "n": 54,
+        "space": 15,
+        "modal": 0.296,
+        "entropyBits": 3.31,
+        "advantagePoints": 13
+      },
+      {
+        "templateId": "PL_H_CHAIN",
+        "n": 103,
+        "space": 7,
+        "modal": 0.272,
+        "entropyBits": 2.64,
+        "advantagePoints": 10.5
+      },
+      {
+        "templateId": "AGE_H_TWO_TIME",
+        "n": 120,
+        "space": 6,
+        "modal": 0.258,
+        "entropyBits": 2.48,
+        "advantagePoints": 9.2
+      },
+      {
+        "templateId": "SPD_M_EQUAL_DIST",
+        "n": 72,
+        "space": 12,
+        "modal": 0.25,
+        "entropyBits": 3.19,
+        "advantagePoints": 8.3
+      },
+      {
+        "templateId": "SPD_M_TWO_TIME",
+        "n": 56,
+        "space": 7,
+        "modal": 0.25,
+        "entropyBits": 2.51,
+        "advantagePoints": 8.3
+      },
+      {
+        "templateId": "ODD_M_PRONIC",
+        "n": 71,
+        "space": 9,
+        "modal": 0.239,
+        "entropyBits": 3.01,
+        "advantagePoints": 7.3
+      },
+      {
+        "templateId": "ODD_M_CUBES",
+        "n": 79,
+        "space": 9,
+        "modal": 0.228,
+        "entropyBits": 2.99,
+        "advantagePoints": 6.1
+      },
+      {
+        "templateId": "COMB_E_TIME",
+        "n": 76,
+        "space": 10,
+        "modal": 0.224,
+        "entropyBits": 3.2,
+        "advantagePoints": 5.7
+      }
+    ]
+  },
+  "difficulty": {
+    "declaredVsComputed": {
+      "easy->easy": 2745,
+      "medium->medium": 1735,
+      "hard->hard": 2018,
+      "medium->easy": 700,
+      "medium->hard": 900,
+      "hard->medium": 1017,
+      "hard->easy": 295,
+      "easy->medium": 590
+    },
+    "agreement": 0.6498,
+    "rc1Agreement": 0.528
+  },
+  "rejectionTelemetry": {
+    "reconciliation": {
+      "proposals": 10289,
+      "accountedFor": 10289,
+      "balanced": true,
+      "difference": 0,
+      "breakdown": {
+        "published": 10000,
+        "samplerFailures": 6,
+        "finalizationFailures": 203,
+        "pipelineRejectedCandidates": 80
+      }
+    },
+    "byStage": {
+      "proposal": 10289,
+      "published": 10000,
+      "family_sampler": 10486,
+      "distractor_filter": 6116,
+      "finalization": 203,
+      "pipeline": 80,
+      "sampler_failure": 6
+    },
+    "byReason": {
+      "SAMPLER_CONSTRAINT": 9255,
+      "DISTRACTOR_IMPOSSIBLE": 6116,
+      "DISTRACTOR_NO_MISCONCEPTION": 203,
+      "AMBIGUOUS_ODD_ONE_OUT": 1237,
+      "DEGENERATE_WRONG_METHOD_EQUALS_KEY": 60,
+      "DEGENERATE_PARAMETERS": 16,
+      "EXPLANATION_UNSOURCED_VALUE": 4
+    },
+    "internalResamplesPerProposal": 1.019,
+    "exhaustions": 0
+  },
+  "diversity": {
+    "exactFingerprints": 6352,
+    "semanticFingerprints": 5685,
+    "structuralReasoningSignatures": 89,
+    "exactPerPublished": 0.6352,
+    "semanticCollapseRatio": 0.895
+  },
+  "performance": {
+    "meanAttemptsPerPublished": 1.0289,
+    "p95Attempts": 1,
+    "maxAttempts": 3,
+    "latencyP50Ms": 0.58,
+    "latencyP95Ms": 1.11,
+    "latencyP99Ms": 1.66,
+    "wallClockSeconds": 8,
+    "questionsPerSecond": 1244.2
+  }
+}

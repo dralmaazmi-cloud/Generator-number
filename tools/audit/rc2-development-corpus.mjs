@@ -1,0 +1,344 @@
+// RC2 §22 — the development corpus.
+//
+// At least ten thousand questions on DEVELOPMENT seeds. The final holdout seed
+// AUDIT-2026-09-12-B is not used here and is refused if passed: a corpus that
+// has touched the holdout is no longer a holdout.
+//
+// Everything the scope asks to see is measured on one coherent run, so the
+// figures describe the same engine at the same commit rather than ten separate
+// samples that happen to agree.
+
+import {writeFileSync, mkdirSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {gzipSync} from 'node:zlib';
+
+import Engine, {ENGINE_VERSION} from '../../src/index.js';
+import {validateCandidate} from '../../src/qa/pipeline.js';
+import {classifyQuestionConstructions, STATUS as AR_STATUS} from '../../src/arabic/constructions.js';
+import {allRenderedText} from '../../src/qa/pipeline.js';
+import {checkOddOneOutAmbiguity} from '../../src/qa/ambiguity.js';
+import {isAnswerDerived} from '../../src/qa/distractor-provenance.js';
+import {classifyOptionFeedback, FEEDBACK_VERDICT} from '../../src/qa/feedback-metrics.js';
+import {validateMisconceptionContext} from '../../src/qa/misconception-context.js';
+
+export const HOLDOUT_SEED = 'AUDIT-2026-09-12-B';
+export const DEVELOPMENT_SEEDS = Object.freeze([
+  'RC2-DEV-ALPHA', 'RC2-DEV-BETA', 'RC2-DEV-GAMMA', 'RC2-DEV-DELTA', 'RC2-DEV-EPSILON'
+]);
+
+const BANDS = ['easy', 'medium', 'hard'];
+const CHANCE = 1 / 6;
+
+const mean = xs => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
+function pct(xs, p) {
+  if (!xs.length) return 0;
+  const s = [...xs].sort((a, b) => a - b);
+  return s[Math.min(s.length - 1, Math.max(0, Math.ceil((p / 100) * s.length) - 1))];
+}
+const entropyOf = counts => {
+  const total = counts.reduce((a, b) => a + b, 0);
+  return total ? -counts.reduce((a, c) => a + (c / total) * Math.log2(c / total), 0) : 0;
+};
+
+export async function build({questions = 10000, seeds = DEVELOPMENT_SEEDS} = {}) {
+  for (const s of seeds) {
+    if (String(s).includes(HOLDOUT_SEED)) {
+      throw new Error(`§22 forbids the holdout seed in development: ${HOLDOUT_SEED}`);
+    }
+  }
+
+  const engine = new Engine();
+  const started = Date.now();
+
+  // --- accumulators ---------------------------------------------------------
+  const attempts = [], latencies = [];
+  let published = 0, exhausted = 0;
+  const byFamily = {}, byTemplate = {}, byBand = {easy: 0, medium: 0, hard: 0};
+
+  let oracleDisagreement = 0, oracleLabelMapped = 0;
+  const oracleSamples = [];
+  let postShuffleKeyMismatch = 0, zeroCorrectOption = 0,
+    multipleCorrectOptions = 0, correctValueMismatch = 0, metaKeyMismatch = 0;
+
+  const ambiguityVerdicts = {};
+  let oddOneOutSeen = 0, oddAmbiguous = 0, oddUndiscoverable = 0;
+
+  let arValid = 0, arExempt = 0, arInvalid = 0, arUnclassified = 0;
+  const arInvalidSamples = [];
+
+  let wrongOptions = 0, answerDerived = 0, unattributed = 0;
+  const answerDerivedPerQuestion = {};
+
+  const feedbackVerdicts = {};
+  let feedbackMismatch = 0, misconceptionInapplicable = 0, duplicateDerivation = 0;
+
+  const answerCounts = {};
+  const declaredVsComputed = {};
+  let bandAgreement = 0;
+
+  const exactFingerprints = new Set(), semanticFingerprints = new Set(), structuralSignatures = new Set();
+  const corpusLines = [];
+
+  const perSeedCount = Math.ceil(questions / seeds.length);
+
+  for (const seed of seeds) {
+    for (let i = 0; i < perSeedCount && published + exhausted < questions; i++) {
+      const band = BANDS[i % 3];
+      const qSeed = `${seed}-${band}-${i}`;
+      const t0 = performance.now();
+      let q;
+      try { q = engine.generateQuestion({family: 'random', difficulty: band, seed: qSeed}); }
+      catch { exhausted++; continue; }
+      const ms = performance.now() - t0;
+      published++;
+      attempts.push(q.metadata.validation_meta.attempts);
+      latencies.push(ms);
+      byFamily[q.family] = (byFamily[q.family] || 0) + 1;
+      byBand[q.difficulty]++;
+      const t = byTemplate[q.generator_id] ??= {n: 0, answers: {}};
+      t.n++;
+      const answer = String(q.correct_value);
+      t.answers[answer] = (t.answers[answer] || 0) + 1;
+      answerCounts[answer] = (answerCounts[answer] || 0) + 1;
+
+      // --- mathematics: the RC1 gains, re-checked on every question ----------
+      const meta = q.metadata.options_meta;
+      const correctEntries = Object.entries(meta).filter(([, m]) => m.correct);
+      if (correctEntries.length === 0) zeroCorrectOption++;
+      if (correctEntries.length > 1) multipleCorrectOptions++;
+      const [correctLetter, correctMeta] = correctEntries[0] ?? [null, null];
+      if (correctLetter !== q.correct_option) postShuffleKeyMismatch++;
+      if (correctMeta && q.options[correctLetter] !== q.correct_value) correctValueMismatch++;
+      if (q.metadata.target_misconception === undefined) metaKeyMismatch++;
+      // The oracle figure is re-derived from the published artifact. A template
+      // whose answer is a LABEL declares a mapping from the searched value to
+      // the label, and the pipeline compares through it — so the metadata's
+      // `claimed` («الربع») and `oracle` («4») legitimately differ there and are
+      // not a disagreement. Comparing them blind reported 208 of these; the
+      // comparison is made only where both sides are the same kind of value.
+      const om = q.metadata.validation_meta.oracle;
+      if (om && om.claimed !== undefined && om.oracle !== undefined) {
+        const claimedNumeric = Number.isFinite(Number(om.claimed));
+        const oracleNumeric = Number.isFinite(Number(om.oracle));
+        if (claimedNumeric === oracleNumeric && String(om.claimed) !== String(om.oracle)) {
+          oracleDisagreement++;
+          if (oracleSamples.length < 10) oracleSamples.push({seed: qSeed, templateId: q.generator_id, ...om});
+        } else if (claimedNumeric !== oracleNumeric) {
+          oracleLabelMapped++;
+        }
+      }
+
+      // --- ambiguity ---------------------------------------------------------
+      if (q.family === 'odd_one_out') {
+        oddOneOutSeen++;
+        const verdict = q.metadata.ambiguity_verdict ?? 'UNRECORDED';
+        ambiguityVerdicts[verdict] = (ambiguityVerdicts[verdict] || 0) + 1;
+        const nums = q.metadata.parameters?.numbers;
+        if (Array.isArray(nums)) {
+          const a = checkOddOneOutAmbiguity(nums, Number(q.correct_value));
+          if (a.ambiguous) oddAmbiguous++;
+          if (a.undiscoverable) oddUndiscoverable++;
+        }
+      }
+
+      // --- language ----------------------------------------------------------
+      const ar = classifyQuestionConstructions(allRenderedText(q)).constructions;
+      for (const c of ar) {
+        if (c.status === AR_STATUS.VALID) arValid++;
+        else if (c.status === AR_STATUS.EXEMPT) arExempt++;
+        else if (c.status === AR_STATUS.INVALID) {
+          arInvalid++;
+          if (arInvalidSamples.length < 20) arInvalidSamples.push({seed: qSeed, templateId: q.generator_id, ...c});
+        } else arUnclassified++;
+      }
+
+      // --- distractors -------------------------------------------------------
+      // The givens: a derivation starting from a number the learner was given is
+      // a starting point, not the answer, even when the two coincide for this
+      // draw. Without this the count reports those coincidences as unattributed
+      // key-neighbours — 160 of them, none of which is one.
+      const givens = new Set();
+      const walkGivens = v => {
+        if (typeof v === 'number') givens.add(String(v));
+        else if (Array.isArray(v)) v.forEach(walkGivens);
+        else if (v && typeof v === 'object') Object.values(v).forEach(walkGivens);
+      };
+      walkGivens(q.metadata.parameters || {});
+      for (const g of String(q.question).matchAll(/\d+(?:\.\d+)?/g)) givens.add(g[0]);
+
+      let adHere = 0;
+      for (const [letter, m] of Object.entries(meta)) {
+        if (m.correct) continue;
+        wrongOptions++;
+        if (isAnswerDerived(m.derivation, correctMeta?.value, givens)) {
+          answerDerived++; adHere++;
+          if (m.reasoningStepAffected === null || m.reasoningStepAffected === undefined) unattributed++;
+        }
+        // --- feedback --------------------------------------------------------
+        const f = classifyOptionFeedback({value: m.value, derivation: m.derivation});
+        feedbackVerdicts[f.verdict] = (feedbackVerdicts[f.verdict] || 0) + 1;
+        if (f.verdict === FEEDBACK_VERDICT.MISMATCH) feedbackMismatch++;
+        void letter;
+      }
+      answerDerivedPerQuestion[adHere] = (answerDerivedPerQuestion[adHere] || 0) + 1;
+      const derivations = Object.values(meta).filter(m => !m.correct).map(m => m.derivation);
+      if (new Set(derivations).size !== derivations.length) duplicateDerivation++;
+      if (!validateMisconceptionContext({
+        question: q.question,
+        distractors: Object.values(meta).filter(m => !m.correct)
+          .map(m => ({value: m.value, misconceptionId: m.misconceptionId}))
+      }).valid) misconceptionInapplicable++;
+
+      // --- difficulty --------------------------------------------------------
+      const key = `${q.difficulty}->${q.metadata.complexity_band}`;
+      declaredVsComputed[key] = (declaredVsComputed[key] || 0) + 1;
+      if (q.difficulty === q.metadata.complexity_band) bandAgreement++;
+
+      // --- diversity ---------------------------------------------------------
+      exactFingerprints.add(q.metadata.fingerprint);
+      semanticFingerprints.add(q.metadata.semantic_fingerprint ?? q.metadata.fingerprint);
+      if (q.metadata.structural_reasoning_signature) structuralSignatures.add(q.metadata.structural_reasoning_signature);
+
+      corpusLines.push(JSON.stringify({
+        seed: qSeed, templateId: q.generator_id, family: q.family, difficulty: q.difficulty,
+        question: q.question, options: q.options, correct: q.correct_option, value: q.correct_value,
+        fingerprint: q.metadata.fingerprint, semantic: q.metadata.semantic_fingerprint,
+        structural: q.metadata.structural_reasoning_signature,
+        complexityScore: q.metadata.complexity_score, complexityBand: q.metadata.complexity_band
+      }));
+    }
+  }
+
+  const wallMs = Date.now() - started;
+  const telemetry = engine.getTelemetry();
+
+  // --- leakage, per template -------------------------------------------------
+  const leakage = Object.entries(byTemplate)
+    .filter(([, t]) => t.n >= 40)
+    .map(([id, t]) => {
+      const counts = Object.values(t.answers);
+      const modal = Math.max(...counts) / t.n;
+      return {
+        templateId: id, n: t.n, space: counts.length,
+        modal: Number(modal.toFixed(3)),
+        entropyBits: Number(entropyOf(counts).toFixed(2)),
+        advantagePoints: Number(((modal - CHANCE) * 100).toFixed(1))
+      };
+    })
+    .sort((a, b) => b.advantagePoints - a.advantagePoints);
+
+  const corpus = corpusLines.join('\n') + '\n';
+  const gz = gzipSync(Buffer.from(corpus, 'utf8'));
+
+  return {
+    report: {
+      schema: 'rc2-development-corpus-v1',
+      section: '§22',
+      generatedAt: new Date().toISOString(),
+      engineVersion: ENGINE_VERSION,
+      seeds,
+      holdoutSeedUsed: false,
+      holdoutSeed: HOLDOUT_SEED,
+      corpus: {
+        requested: questions, published, exhausted,
+        families: Object.keys(byFamily).length,
+        templates: Object.keys(byTemplate).length,
+        byBand, byFamily,
+        sha256: createHash('sha256').update(corpus).digest('hex'),
+        gzipBytes: gz.length
+      },
+      mathematics: {
+        note: '§20 — the RC1 gains. Any non-zero figure here is an RC2 blocker.',
+        ORACLE_DISAGREEMENT: oracleDisagreement,
+        oracleDisagreementSamples: oracleSamples,
+        oracleComparedThroughALabelMap: oracleLabelMapped,
+        postShuffleKeyMismatch, zeroCorrectOption, multipleCorrectOptions,
+        correctValueMismatch, metaKeyMismatch
+      },
+      ambiguity: {
+        oddOneOutPublished: oddOneOutSeen,
+        verdicts: ambiguityVerdicts,
+        publishedAmbiguous: oddAmbiguous,
+        publishedUndiscoverable: oddUndiscoverable
+      },
+      language: {
+        constructionsClassified: arValid + arExempt + arInvalid + arUnclassified,
+        valid: arValid, exempt: arExempt, invalid: arInvalid, unclassified: arUnclassified,
+        invalidSamples: arInvalidSamples
+      },
+      distractors: {
+        wrongOptions,
+        answerDerived,
+        answerDerivedShare: Number((answerDerived / (wrongOptions || 1)).toFixed(5)),
+        unattributedAnswerDerived: unattributed,
+        perQuestionDistribution: answerDerivedPerQuestion,
+        rc1Baseline: {answerDerivedShare: 0.249, questionsWithThreeOrMoreShare: 0.156}
+      },
+      feedback: {
+        verdicts: feedbackVerdicts,
+        derivationMismatches: feedbackMismatch,
+        questionsWithInapplicableMisconception: misconceptionInapplicable,
+        questionsWithDuplicateDerivation: duplicateDerivation
+      },
+      statisticalLeakage: {
+        distinctAnswersAcrossCorpus: Object.keys(answerCounts).length,
+        corpusModalShare: Number((Math.max(...Object.values(answerCounts)) / (published || 1)).toFixed(5)),
+        templatesMeasured: leakage.length,
+        templatesAbove20Points: leakage.filter(t => t.advantagePoints > 20).length,
+        templatesAbove15Points: leakage.filter(t => t.advantagePoints > 15).length,
+        medianAdvantagePoints: leakage.length ? leakage[Math.floor(leakage.length / 2)].advantagePoints : null,
+        worst: leakage.slice(0, 10)
+      },
+      difficulty: {
+        declaredVsComputed,
+        agreement: Number((bandAgreement / (published || 1)).toFixed(4)),
+        rc1Agreement: 0.528
+      },
+      rejectionTelemetry: {
+        reconciliation: telemetry.reconciliation,
+        byStage: telemetry.byStage,
+        byReason: telemetry.byReason,
+        internalResamplesPerProposal: telemetry.internalResamplesPerProposal,
+        exhaustions: telemetry.exhaustions
+      },
+      diversity: {
+        exactFingerprints: exactFingerprints.size,
+        semanticFingerprints: semanticFingerprints.size,
+        structuralReasoningSignatures: structuralSignatures.size,
+        exactPerPublished: Number((exactFingerprints.size / (published || 1)).toFixed(4)),
+        semanticCollapseRatio: Number((semanticFingerprints.size / (exactFingerprints.size || 1)).toFixed(4))
+      },
+      performance: {
+        meanAttemptsPerPublished: Number(mean(attempts).toFixed(4)),
+        p95Attempts: pct(attempts, 95),
+        maxAttempts: attempts.length ? Math.max(...attempts) : 0,
+        latencyP50Ms: Number(pct(latencies, 50).toFixed(2)),
+        latencyP95Ms: Number(pct(latencies, 95).toFixed(2)),
+        latencyP99Ms: Number(pct(latencies, 99).toFixed(2)),
+        wallClockSeconds: Number((wallMs / 1000).toFixed(1)),
+        questionsPerSecond: Number((published / (wallMs / 1000)).toFixed(1))
+      }
+    },
+    corpusGz: gz
+  };
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const {report, corpusGz} = await build({questions: Number(process.argv[2] ?? 10000)});
+  mkdirSync('rc2', {recursive: true});
+  writeFileSync('rc2/DEVELOPMENT_CORPUS.json', JSON.stringify(report, null, 2) + '\n');
+  writeFileSync('rc2/development-corpus.jsonl.gz', corpusGz);
+  console.log(JSON.stringify({
+    corpus: {...report.corpus, byFamily: undefined},
+    mathematics: report.mathematics,
+    ambiguity: report.ambiguity,
+    language: {...report.language, invalidSamples: report.language.invalidSamples.length},
+    distractors: report.distractors,
+    feedback: report.feedback,
+    statisticalLeakage: {...report.statisticalLeakage, worst: report.statisticalLeakage.worst.slice(0, 3)},
+    difficulty: report.difficulty,
+    rejectionTelemetry: report.rejectionTelemetry,
+    diversity: report.diversity,
+    performance: report.performance
+  }, null, 2));
+}

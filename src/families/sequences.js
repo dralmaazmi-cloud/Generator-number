@@ -730,7 +730,11 @@ function powersPlusIndex(ctx) {
     remember: 'قد يكون رقم ترتيب الحد جزءًا من القاعدة.',
     fastMethod: `احسب ${basePow} مرفوعًا للقوة التالية ثم أضف رقم الموضع.`,
     estimatedSteps: 4, conceptTags: ['sequence', 'powers'],
-    parameters: {powerBase: basePow, startIndex, shownTerms: seq},
+    // RC2-011 widened startIndex, which pushed the next position index past the
+    // allowed-constant list and made the final step unsourced. The index is a
+    // real quantity of the task — the position of the term being asked for — so
+    // it is declared rather than permitted as a bare constant.
+    parameters: {powerBase: basePow, startIndex, nextIndex: n + 1, shownTerms: seq},
     // RC2-023: the reasoning pattern, free of incidental start values.
     reasoningPattern: [`POW_BASE(${basePow})`, 'PLUS_TERM_INDEX'],
     oracle: {

@@ -29,6 +29,18 @@ import Engine from '../src/index.js';
 import {buildPrintReportHtml, buildReportTextLayer} from '../report.js';
 import {countArabic} from '../tools/audit/rc2-006-pdf-accessibility.mjs';
 
+// Printing a PDF spawns Chromium, and two tests each spawning one can contend
+// under the runner's parallelism — a flaky sign-off suite is worse than a slow
+// one. The measurement is taken once and shared by the tests that need it.
+let measurementPromise = null;
+async function measureOnce() {
+  if (!measurementPromise) {
+    const {measure} = await import('../tools/audit/rc2-006-pdf-accessibility.mjs');
+    measurementPromise = measure({questions: 5, seed: 'rc2-006-measure'});
+  }
+  return measurementPromise;
+}
+
 function session(count = 6, seed = 'rc2-006-test') {
   const engine = new Engine();
   const s = engine.generatePractice({count, difficulty: 'mixed', seed});
@@ -96,8 +108,7 @@ test('RC2-006 meta: the block cannot break out of the script element', () => {
 // --- the measurement --------------------------------------------------------
 
 test('RC2-006: the defect is reproduced and the remediation measured', async () => {
-  const {measure} = await import('../tools/audit/rc2-006-pdf-accessibility.mjs');
-  const report = await measure({questions: 5, seed: 'rc2-006-measure'});
+  const report = await measureOnce();
   if (report.renderer.engine === 'unavailable in this environment') {
     // The logical layer is still checkable without a renderer, and is.
     assert.equal(report.artifacts.logicalTextLayer.arabic.presentation, 0);
@@ -126,8 +137,7 @@ test('RC2-006: the defect is reproduced and the remediation measured', async () 
 });
 
 test('RC2-006: the tagged export is recorded as the no-op it measured as', async () => {
-  const {measure} = await import('../tools/audit/rc2-006-pdf-accessibility.mjs');
-  const report = await measure({questions: 4, seed: 'rc2-006-tagged'});
+  const report = await measureOnce();
   if (!report.artifacts.pdfTagged || !report.artifacts.pdfUntagged) return;
   assert.equal(
     report.artifacts.pdfTagged.sha256OfContent,
