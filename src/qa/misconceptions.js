@@ -20,6 +20,8 @@ export const MISCONCEPTIONS = Object.freeze({
   USED_PART_VALUE_AS_ANSWER: 'توقفت عند قيمة الجزء الواحد ولم تضربها في عدد الأجزاء.',
   USED_SUM_OF_PARTS: 'استخدمت مجموع الأجزاء بدل الطرف المطلوب وحده.',
   USED_POST_TRANSFER_VALUE: 'استخدمت القيمة بعد النقل بدل القيمة قبله.',
+  // RC2-013: an addition is not a transfer, and a stoppage is not an upgrade.
+  USED_POST_ADDITION_VALUE: 'استخدمت القيمة بعد الإضافة بدل القيمة قبلها.',
   USED_PRE_TRANSFER_VALUE: 'استخدمت القيمة قبل النقل بدل القيمة بعده.',
   FAILED_TO_UPDATE_COUNT: 'نسيت تحديث عدد العناصر بعد الإضافة أو الحذف.',
   USED_TOTAL_INSTEAD_OF_REMAINDER: 'استخدمت العمل الكامل بدل الجزء المتبقي.',
@@ -32,11 +34,23 @@ export const MISCONCEPTIONS = Object.freeze({
   USED_ARITHMETIC_MEAN_OF_SPEEDS: 'أخذت المتوسط الحسابي للسرعتين، وهو لا يصح إلا إذا تساوى الزمنان.',
   USED_ARITHMETIC_MEAN_OF_AVERAGES: 'أخذت متوسط المتوسطين مباشرة رغم اختلاف أحجام المجموعتين.',
   USED_SUM_OF_SPEEDS_IN_CHASE: 'جمعت السرعتين في مسألة لحاق، والصحيح أن تطرحهما.',
+  // RC2-013. The three below replace uses of the two situation-named entries
+  // above on stems that contain neither a chase nor a meeting. The values are
+  // unchanged; what changes is that the sentence now describes the slip the
+  // learner actually made in the problem in front of them.
+  SUMMED_SPEEDS_OVER_WHOLE_JOURNEY: 'جمعت السرعتين وضربت المجموع في الزمن الكلي، وكل سرعة تخص جزءها من الرحلة وحده.',
+  USED_SUM_WHERE_DIFFERENCE_BELONGS: 'استعملت مجموع السرعتين في موضع فرقهما؛ عند ثبات المسافة يرتبط فرق الزمن بفرق السرعتين.',
+  USED_ONE_SPEED_WITH_TIME_GAP: 'ضربت إحدى السرعتين في فرق الزمن، وفرق الزمن لا يخص سرعة واحدة بل العلاقة بين السرعتين.',
+  USED_SPEED_DIFFERENCE_WITH_TIME_GAP: 'ضربت فرق السرعتين في فرق الزمن، والصحيح قسمة حاصل ضرب السرعتين في فرق الزمن على فرق السرعتين.',
   USED_DIFFERENCE_OF_SPEEDS_IN_MEETING: 'طرحت السرعتين في مسألة التقاء، والصحيح أن تجمعهما.',
   RATE_APPLIED_TO_WRONG_COUNT: 'ضربت المعدل في عدد وحدات غير الذي يخصه.',
   SWAPPED_RATE_AND_COUNT: 'بدّلت بين المعدل وعدد الوحدات في الضرب أو القسمة.',
   UPGRADED_ALL_INSTEAD_OF_SOME: 'طبّقت التحسين على كل الوحدات رغم أن بعضها فقط تغيّر.',
   IGNORED_UPGRADE: 'تجاهلت التحسين وأبقيت المعدل القديم للجميع.',
+  IGNORED_STOPPAGE: 'تجاهلت توقف بعض الآلات وحسبت كأن الجميع عمل طوال الوقت.',
+  USED_RATE_BEFORE_CHANGE: 'حسبت بالمعدل قبل تغيّره رغم أن السؤال ينص على تغيّره.',
+  USED_COUNT_BEFORE_CHANGE: 'حسبت بعدد العمال أو الآلات قبل تغيّره رغم أن السؤال ينص على تغيّره.',
+  USED_ORIGINAL_SCHEDULE: 'حسبت وفق المدة الأصلية رغم أن السؤال يطلب إنهاء ما تبقى في مدة أقصر.',
 
   // --- percentages ---
   ADDED_PERCENTAGES: 'جمعت النسبتين مباشرة، والنسب المتتابعة لا تُجمع.',

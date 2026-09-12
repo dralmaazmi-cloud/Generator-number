@@ -234,7 +234,7 @@ function unitPriceChange(ctx) {
   const correct = answer.toNumber();
   const params = {baseCount: qty1, baseAmount: total1, percent: pct, targetCount: qty2};
   const distractors = usable(ctx, [
-    mk(unitPrice * qty2, 'IGNORED_UPGRADE', `${unitPrice} × ${qty2}`),
+    mk(unitPrice * qty2, 'USED_RATE_BEFORE_CHANGE', `${unitPrice} × ${qty2}`),
     mk(Fraction.from(total1).mul(factor).toNumber(), 'APPLIED_PERCENT_TO_WRONG_TOTAL', `${total1} × ${factor.toDecimalString()}`),
     mk(newUnit.toNumber(), 'STOPPED_AT_UNIT_RATE', `${unitPrice} × ${factor.toDecimalString()}`),
     mk(qty2 * (unitPrice + pct), 'TREATED_PERCENT_AS_AMOUNT', `${qty2} × (${unitPrice} + ${pct})`),

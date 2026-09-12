@@ -279,7 +279,7 @@ function addToOneSide(ctx) {
   const params = {partA: p, partB: q, newPartB: r, addedUnits: addUnits};
   const distractors = usable(ctx, [
     mk(A, 'USED_WRONG_SIDE_OF_RATIO', `${p} × ${k}`),
-    mk(newB, 'USED_POST_TRANSFER_VALUE', `${r} × ${k}`),
+    mk(newB, 'USED_POST_ADDITION_VALUE', `${r} × ${k}`),
     mk(A + newB, 'USED_NEW_TOTAL', `${A} + ${newB}`),
     mk(correct + addUnits, 'ADDED_INSTEAD_OF_SUBTRACTED', `${correct} + ${addUnits}`),
     mk(correct - addUnits, 'SUBTRACTED_INSTEAD_OF_ADDED', `${correct} − ${addUnits}`),

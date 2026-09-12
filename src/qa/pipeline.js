@@ -10,6 +10,7 @@ import {checkOddOneOutAmbiguity, oracleOddOneOut} from './ambiguity.js';
 import {buildOrderOracle} from './relational-oracle.js';
 import {validateTextMatchesParams} from './text-params.js';
 import {validatePedagogy} from './pedagogy.js';
+import {validateMisconceptionContext} from './misconception-context.js';
 import {validateDisplayedEquations, validateExplanationSourcing, numbersIn} from './equations.js';
 import {checkArabicNumberUnitsDeep} from '../arabic/units.js';
 import {classifyQuestionConstructions, STATUS as AR_STATUS} from '../arabic/constructions.js';
@@ -316,6 +317,9 @@ export function validateCandidate(base, q) {
   const languageVerdict = validateLanguage(q);
   const explanationVerdict = validateExplanation(base, q);
   const distractorVerdict = validateDistractors(q);
+  // RC2-013: a misconception that names a situation must be attached to a stem
+  // that has that situation in it.
+  const contextVerdict = validateMisconceptionContext(base);
 
   return mergeVerdicts(
     structuralVerdict,
@@ -325,6 +329,7 @@ export function validateCandidate(base, q) {
     pedagogyVerdict,
     languageVerdict,
     explanationVerdict,
-    distractorVerdict
+    distractorVerdict,
+    contextVerdict
   );
 }

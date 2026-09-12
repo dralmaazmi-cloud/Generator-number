@@ -120,9 +120,9 @@ function changeWorkers(ctx) {
   if (correct === totalDays - initialDays) return resample(ctx, changeWorkers);
   const params = {workers: w1, totalDays, workedDays: initialDays, crewChange: change};
   const distractors = usable(ctx, [
-    mk(totalDays - initialDays, 'IGNORED_UPGRADE', `${totalDays} − ${initialDays}`),
+    mk(totalDays - initialDays, 'USED_COUNT_BEFORE_CHANGE', `${totalDays} − ${initialDays}`),
     mk(totalDays, 'USED_GIVEN_VALUE_AS_ANSWER', `المدة الأصلية ${totalDays}`),
-    mk(remain / w1, 'IGNORED_UPGRADE', `${remain} ÷ ${w1}`),
+    mk(remain / w1, 'USED_COUNT_BEFORE_CHANGE', `${remain} ÷ ${w1}`),
     mk(totalWork / w2, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${totalWork} ÷ ${w2}`),
     mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
     mk(correct - 2, 'OFF_BY_ONE_STEP', `${correct} − 2`),
@@ -152,7 +152,7 @@ function changeWorkers(ctx) {
     },
     askedUnknown: 'extraDaysAfterCrewChange', stageCount: 2,
     pedagogy: {
-      targetSkill: 'REMAINING_WORK', targetMisconception: 'IGNORED_UPGRADE',
+      targetSkill: 'REMAINING_WORK', targetMisconception: 'USED_COUNT_BEFORE_CHANGE',
       wrongMethodValue: totalDays - initialDays,
       degenerateWhen: [{when: change === 0, note: 'crew unchanged'}]
     },
@@ -226,7 +226,7 @@ function targetDeadline(ctx) {
   const distractors = usable(ctx, [
     mk(w, 'USED_GIVEN_VALUE_AS_ANSWER', `عدد العمال الأصلي ${w}`),
     mk(total / finishDays, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${total} ÷ ${finishDays}`),
-    mk(remain / (totalDays - initialDays), 'IGNORED_UPGRADE', `${remain} ÷ (${totalDays} − ${initialDays})`),
+    mk(remain / (totalDays - initialDays), 'USED_ORIGINAL_SCHEDULE', `${remain} ÷ (${totalDays} − ${initialDays})`),
     mk(correct - w, 'SUBTRACTED_INSTEAD_OF_ADDED', `${correct} − ${w}`),
     mk(correct + w, 'ADDED_INSTEAD_OF_SUBTRACTED', `${correct} + ${w}`),
     mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
@@ -281,9 +281,9 @@ function twoStageWorkers(ctx) {
   const correct = remain / w2;
   const params = {workers: w1, totalDays, firstDays, workersLeft: left, secondDays};
   const distractors = usable(ctx, [
-    mk(totalDays - firstDays - secondDays, 'IGNORED_UPGRADE', `${totalDays} − ${firstDays} − ${secondDays}`),
+    mk(totalDays - firstDays - secondDays, 'USED_COUNT_BEFORE_CHANGE', `${totalDays} − ${firstDays} − ${secondDays}`),
     mk((total - done) / w2, 'MISSED_ONE_STAGE', `(${total} − ${done}) ÷ ${w2}`),
-    mk(remain / w1, 'IGNORED_UPGRADE', `${remain} ÷ ${w1}`),
+    mk(remain / w1, 'USED_COUNT_BEFORE_CHANGE', `${remain} ÷ ${w1}`),
     mk(secondDays + correct, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${secondDays} + ${correct}`),
     mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
     mk(correct - 2, 'OFF_BY_ONE_STEP', `${correct} − 2`),
@@ -341,8 +341,8 @@ function workersAndEfficiency(ctx) {
   const correct = answer.toNumber();
   const params = {workers: w, totalDays, workedDays: initial, workersLeft: left, efficiencyPercent: pct};
   const distractors = usable(ctx, [
-    mk(remain / newW, 'IGNORED_UPGRADE', `${remain} ÷ ${newW}`),
-    mk(totalDays - initial, 'IGNORED_UPGRADE', `${totalDays} − ${initial}`),
+    mk(remain / newW, 'USED_RATE_BEFORE_CHANGE', `${remain} ÷ ${newW}`),
+    mk(totalDays - initial, 'USED_COUNT_BEFORE_CHANGE', `${totalDays} − ${initial}`),
     mk(Fraction.from(remain).div(Fraction.from(w).mul(factor)).toNumber(), 'FAILED_TO_UPDATE_COUNT', `${remain} ÷ (${w} × ${factor.toDecimalString()})`),
     mk(Fraction.from(total).div(effective).toNumber(), 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${total} ÷ ${effective.toDecimalString()}`),
     mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
@@ -379,7 +379,7 @@ function workersAndEfficiency(ctx) {
     },
     askedUnknown: 'extraDaysAfterCrewAndEfficiency', stageCount: 3,
     pedagogy: {
-      targetSkill: 'CREW_AND_EFFICIENCY', targetMisconception: 'IGNORED_UPGRADE',
+      targetSkill: 'CREW_AND_EFFICIENCY', targetMisconception: 'USED_RATE_BEFORE_CHANGE',
       wrongMethodValue: remain / newW,
       degenerateWhen: [{when: pct === 0 || left === 0, note: 'only one of the two factors changed'}]
     },

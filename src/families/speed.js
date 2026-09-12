@@ -230,7 +230,9 @@ function equalDistanceTotalTime(ctx) {
     mk(half, 'HALF_DISTANCE_AS_ANSWER', `نصف المسافة ${half}`),
     mk(correct + 60, 'OFF_BY_ONE_STEP', `${correct} + 60`),
     mk(correct - 60, 'OFF_BY_ONE_STEP', `${correct} − 60`),
-    mk((s1 + s2) * total, 'USED_SUM_OF_SPEEDS_IN_CHASE', `(${s1} + ${s2}) × ${num(total)}`)
+    // RC2-013: this stem is one car over two halves of a journey. There is no
+    // chase in it, so the chase sentence cannot be the explanation.
+    mk((s1 + s2) * total, 'SUMMED_SPEEDS_OVER_WHOLE_JOURNEY', `(${s1} + ${s2}) × ${num(total)}`)
   ]);
   return buildBase(ctx, {
     templateId: 'SPD_M_EQUAL_DIST',
@@ -390,17 +392,20 @@ function sameDistanceTimeDifference(ctx) {
   const correct = distance;
   const params = {speedA: s1, speedB: s2, timeDifference: diff};
   const distractors = usable(ctx, [
-    mk(s1 * diff, 'DIVIDED_BY_ONE_SPEED', `${s1} × ${num(diff)}`),
-    mk(s2 * diff, 'DIVIDED_BY_ONE_SPEED', `${s2} × ${num(diff)}`),
-    mk((s1 + s2) * diff, 'USED_SUM_OF_SPEEDS_IN_CHASE', `(${s1} + ${s2}) × ${num(diff)}`),
+    // RC2-013. Every label in this block used to name something absent from the
+    // stem: two chase sentences and one meeting sentence on a question with
+    // neither, and two "you divided" sentences over derivations that multiply.
+    mk(s1 * diff, 'USED_ONE_SPEED_WITH_TIME_GAP', `${s1} × ${num(diff)}`),
+    mk(s2 * diff, 'USED_ONE_SPEED_WITH_TIME_GAP', `${s2} × ${num(diff)}`),
+    mk((s1 + s2) * diff, 'USED_SUM_WHERE_DIFFERENCE_BELONGS', `(${s1} + ${s2}) × ${num(diff)}`),
     mk(correct + 60, 'OFF_BY_ONE_STEP', `${correct} + 60`),
     mk(correct - 60, 'OFF_BY_ONE_STEP', `${correct} − 60`),
     mk(correct / 2, 'HALF_DISTANCE_AS_ANSWER', `${correct} ÷ 2`),
-    mk((s2 - s1) * diff, 'USED_DIFFERENCE_OF_SPEEDS_IN_MEETING', `(${s2} − ${s1}) × ${num(diff)}`),
+    mk((s2 - s1) * diff, 'USED_SPEED_DIFFERENCE_WITH_TIME_GAP', `(${s2} − ${s1}) × ${num(diff)}`),
     mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
     mk(correct + 120, 'OFF_BY_ONE_STEP', `${correct} + 120`),
     mk(Math.max(30, correct - 120), 'OFF_BY_ONE_STEP', `${correct} − 120`),
-    mk(s1 * s2 * diff / (s1 + s2), 'USED_SUM_OF_SPEEDS_IN_CHASE', `${s1} × ${s2} × ${num(diff)} ÷ (${s1} + ${s2})`)
+    mk(s1 * s2 * diff / (s1 + s2), 'USED_SUM_WHERE_DIFFERENCE_BELONGS', `${s1} × ${s2} × ${num(diff)} ÷ (${s1} + ${s2})`)
   ]);
   return buildBase(ctx, {
     templateId: 'SPD_H_TIME_DIFF',
@@ -426,7 +431,7 @@ function sameDistanceTimeDifference(ctx) {
     },
     askedUnknown: 'distanceFromTimeGap', stageCount: 3,
     pedagogy: {
-      targetSkill: 'DISTANCE_FROM_TIME_GAP', targetMisconception: 'DIVIDED_BY_ONE_SPEED',
+      targetSkill: 'DISTANCE_FROM_TIME_GAP', targetMisconception: 'USED_ONE_SPEED_WITH_TIME_GAP',
       wrongMethodValue: s1 * diff,
       degenerateWhen: [{when: s1 === s2, note: 'equal speeds leave no time gap'}]
     },

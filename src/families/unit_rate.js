@@ -114,7 +114,7 @@ function rateThenPercent(ctx) {
   const correct = answer.toNumber();
   const params = {baseAmount: total, baseMinutes: minutes, increasePct: pct, targetMinutes: targetMin};
   const distractors = usable(ctx, [
-    mk(rate * targetMin, 'IGNORED_UPGRADE', `${rate} × ${targetMin}`),
+    mk(rate * targetMin, 'USED_RATE_BEFORE_CHANGE', `${rate} × ${targetMin}`),
     mk(Fraction.from(total).mul(factor).toNumber(), 'APPLIED_PERCENT_TO_WRONG_TOTAL', `${total} × ${factor.toDecimalString()}`),
     mk(newRate.toNumber(), 'STOPPED_AT_UNIT_RATE', `${rate} × ${factor.toDecimalString()}`),
     mk(rate, 'STOPPED_AT_UNIT_RATE', `${total} ÷ ${minutes}`),
@@ -216,7 +216,7 @@ function rateChangeTarget(ctx) {
   const params = {baseAmount: initial, baseMinutes: oldMinutes, increasePct: pct, targetAmount: target};
   const newRateNum = newRate.toNumber();
   const distractors = usable(ctx, [
-    mk(target / oldRate, 'IGNORED_UPGRADE', `${target} ÷ ${oldRate}`),
+    mk(target / oldRate, 'USED_RATE_BEFORE_CHANGE', `${target} ÷ ${oldRate}`),
     mk(oldMinutes, 'USED_GIVEN_VALUE_AS_ANSWER', `الزمن المعطى ${oldMinutes}`),
     mk(newRateNum, 'STOPPED_AT_UNIT_RATE', `${oldRate} × ${factor.toDecimalString()}`),
     mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
@@ -246,7 +246,7 @@ function rateChangeTarget(ctx) {
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, initial, add(100, pct)), mul(target, oldMinutes, 100))]},
     askedUnknown: 'requiredTimeAfterIncrease', stageCount: 3,
     pedagogy: {
-      targetSkill: 'ADJUST_RATE_THEN_TIME', targetMisconception: 'IGNORED_UPGRADE',
+      targetSkill: 'ADJUST_RATE_THEN_TIME', targetMisconception: 'USED_RATE_BEFORE_CHANGE',
       wrongMethodValue: target / oldRate,
       degenerateWhen: [{when: pct === 0, note: 'no rate change to reason about'}]
     },

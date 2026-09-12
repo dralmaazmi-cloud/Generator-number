@@ -180,7 +180,7 @@ function oneStops(ctx) {
   const correct = machines * rate * h1 + (machines - stopped) * rate * h2;
   const params = {machines, hourlyRate: rate, firstHours: h1, secondHours: h2, stoppedMachines: stopped};
   const distractors = usable(ctx, [
-    mk(machines * rate * (h1 + h2), 'IGNORED_UPGRADE', `${machines} × ${rate} × (${h1} + ${h2})`),
+    mk(machines * rate * (h1 + h2), 'IGNORED_STOPPAGE', `${machines} × ${rate} × (${h1} + ${h2})`),
     mk((machines - stopped) * rate * (h1 + h2), 'FAILED_TO_UPDATE_COUNT', `${machines - stopped} × ${rate} × (${h1} + ${h2})`),
     mk(machines * rate * h1, 'STOPPED_AFTER_FIRST_STAGE', `${machines} × ${rate} × ${h1}`),
     mk((machines - stopped) * rate * h2, 'USED_ONLY_LAST_STAGE', `${machines - stopped} × ${rate} × ${h2}`),
@@ -210,7 +210,7 @@ function oneStops(ctx) {
     },
     askedUnknown: 'totalAcrossStages', stageCount: 2,
     pedagogy: {
-      targetSkill: 'STAGED_MACHINE_COUNT', targetMisconception: 'IGNORED_UPGRADE',
+      targetSkill: 'STAGED_MACHINE_COUNT', targetMisconception: 'IGNORED_STOPPAGE',
       wrongMethodValue: machines * rate * (h1 + h2),
       degenerateWhen: [{when: stopped === 0, note: 'no machine actually stops'}]
     },
