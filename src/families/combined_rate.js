@@ -1,4 +1,4 @@
-import {mk, usable, u, unitFormat, buildBase, eq, X, add, mul, resample, bandPool} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool, unitWordKam} from './_shared.js';
 
 export function generateCombinedRate({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'combined_rate', family_ar: 'المعدل المشترك', category: 'المعدل المشترك'};
@@ -17,7 +17,9 @@ export function generateCombinedRate({difficulty, rng, seed, engineVersion, tele
     ['COMB_E_TIME', togetherTime],
     ['COMB_M_TOGETHER_SOLO', togetherThenSolo],
     ['COMB_M_SOLO_THEN', soloThenTogether],
-    ['COMB_H_STAGED', stagedTarget]
+    ['COMB_H_STAGED', stagedTarget],
+    ['COMB_H_TWO_PUMPS', twoPumpsFromStages],
+    ['COMB_H_TEAM_SIZE', teamSizeFromTotal]
   ])(ctx);
 }
 
@@ -332,5 +334,179 @@ function threeRates(ctx) {
     },
     complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 1, arithmeticBurden: 3},
     textParams: {essentialParams: ['rateA', 'rateB', 'rateC', 'hours']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.4 — genuinely hard structures for this family.
+//
+// The three RC2.3 combined-rate templates all run the same accounting forward:
+// a joint stage, a solo stage, a remainder, a division. Neither of the two below
+// can be started that way.
+// ---------------------------------------------------------------------------
+
+/**
+ * SIMULTANEOUS_CONSTRAINTS + COMPOSED_INVERSION.
+ *
+ * Two facts about two unknown rates: they sum to the joint rate, and a stated
+ * pair of solo spans fills the tank between them. Neither can be evaluated on
+ * its own, and the answer is a time, so the equation has to be formed in rates
+ * and inverted back.
+ */
+function twoPumpsFromStages(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 250; t++) {
+    const joint = rng.pick([4, 6, 8, 10, 12]);
+    const first = rng.pick([10, 12, 15, 18, 20, 24, 30, 36]);
+    if (first <= joint) continue;
+    // The second pump's solo time is a consequence of the first two, never a
+    // third pick, so the three numbers cannot contradict each other.
+    const secondNum = joint * first;
+    const secondDen = first - joint;
+    if (secondNum % secondDen !== 0) continue;
+    const second = secondNum / secondDen;
+    if (second === first) continue;
+    const a = rng.int(1, first - 1);
+    // b is what remains for the second pump once the first has done a hours.
+    const bNum = second * (first - a);
+    if (bNum % first !== 0) continue;
+    const b = bNum / first;
+    if (b <= 0 || b === a || b >= joint) continue;
+    found = {joint, first, second, a, b};
+    break;
+  }
+  if (!found) return resample(ctx, twoPumpsFromStages);
+  const {joint, first, second, a, b} = found;
+  const correct = first;
+  const params = {jointHours: joint, firstAloneHours: a, secondAloneHours: b};
+
+  const distractors = usable(ctx, [
+    mk(second, 'SWAPPED_THE_TWO_UNKNOWNS', `زمن المضخة الثانية وحدها ${second}`, 3),
+    mk(a + b, 'ADDED_TIMES_INSTEAD_OF_RATES', `${a} + ${b}`),
+    mk(joint, 'USED_JOINT_TIME_AS_SOLO', `الزمن المشترك ${joint}`),
+    mk(a, 'USED_GIVEN_VALUE_AS_ANSWER', `المدة المذكورة للأولى ${a}`),
+    mk(2 * joint, 'APPLIED_STEP_TWICE', `${joint} × 2`),
+    mk(joint + a, 'ADDED_TIMES_INSTEAD_OF_RATES', `${joint} + ${a}`),
+    mk(a + b - joint, 'SUBTRACTED_TIMES_INSTEAD_OF_RATES', `${a} + ${b} − ${joint}`),
+    mk(joint * (a - b), 'SOLVED_ONE_CONDITION_ONLY', `${joint} × (${a} − ${b})`),
+    mk(a * b / joint, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${a} × ${b} ÷ ${joint}`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'COMB_H_TWO_PUMPS',
+    subskill: 'زمن مضخة وحدها من زمن مشترك ومرحلتين منفردتين',
+    difficulty: 'hard',
+    question: `تملأ مضختان خزانًا معًا في ${u(joint, 'hour', 'oblique')}. ولو عملت الأولى وحدها ${u(a, 'hour', 'oblique')} ثم أكملت الثانية وحدها ${u(b, 'hour', 'oblique')} لامتلأ الخزان أيضًا. كم ${unitWordKam('hour')} تحتاج الأولى وحدها لملئه؟`,
+    correct, distractors, format: unitFormat('hour'),
+    steps: [
+      `لو عملت المضختان معًا ${u(b, 'hour', 'oblique')} لملأتا ${b} ÷ ${joint} من الخزان.`,
+      `في الحالة المذكورة عملت الثانية ${u(b, 'hour', 'oblique')} أيضًا، فالفرق بين الحالتين يخص الأولى وحدها: ${a} − ${b} = ${a - b}.`,
+      `وهذا الفرق يقابل ما تبقى من الخزان في الحالة الأولى = 1 − ${b} ÷ ${joint}، أي ${joint} − ${b} = ${joint - b} من ${joint}.`,
+      `إذن الأولى تملأ ${joint - b} من ${joint} في ${u(a - b, 'hour', 'oblique')}، فزمنها الكامل = ${a - b} × ${joint} ÷ ${joint - b} = ${correct}.`
+    ],
+    howToStart: 'قارن الحالتين: الفرق بينهما يخص طرفًا واحدًا فقط.',
+    remember: 'عند وجود معدلين مجهولين، كل حالة وحدها لا تكفي؛ الحالتان معًا هما ما يحدد المعدلين.',
+    fastMethod: 'اطرح الحالتين ليختفي أحد الطرفين، ثم اقرأ الجزء المتبقي من الخزان.',
+    estimatedSteps: 4, conceptTags: ['combined-rate', 'two-unknowns', 'reciprocal'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, sub(joint, b)), mul(joint, sub(a, b)))]
+    },
+    askedUnknown: 'firstPumpSoloHours', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'TWO_RATES_FROM_TWO_CASES', targetMisconception: 'ADDED_TIMES_INSTEAD_OF_RATES',
+      wrongMethodValue: a + b
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, reverseReasoning: 1, stageCount: 3, arithmeticBurden: 5},
+    textParams: {essentialParams: ['jointHours', 'firstAloneHours', 'secondAloneHours']}
+  });
+}
+
+/**
+ * COMPOSED_INVERSION + CROSS_PART_INTEGRATION.
+ *
+ * The team size is never stated and appears inside two different products that
+ * have to be summed before it can be recovered — one over the first span with
+ * the original team, one over the second with a team that grew.
+ */
+function teamSizeFromTotal(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 150; t++) {
+    const rate = rng.pick([8, 10, 12, 14, 15, 18, 20]);
+    const firstH = rng.pick([2, 3, 4, 5]);
+    const secondH = rng.pick([2, 3, 4, 6]);
+    if (firstH === secondH) continue;
+    const team = rng.int(3, 9);
+    const total = team * rate * firstH + (team + 1) * rate * secondH;
+    // The slip is ignoring the newcomer; where that lands on the key the item
+    // stops separating the two teams (Section 10).
+    if (total === team * rate * (firstH + secondH)) continue;
+    // RC2.4: the answer is a count of people, so the wrong options have to be
+    // counts of people too. Drawn so that the two single-stage slips come out
+    // whole — otherwise the count-unit rule demotes them, the set falls below
+    // five plausible candidates and a fractional person fills the gap.
+    if (total % (rate * firstH) !== 0) continue;
+    const remainingWork = total - rate * secondH;
+    if (remainingWork % (rate * secondH) !== 0) continue;
+    found = {rate, firstH, secondH, team, total};
+    break;
+  }
+  if (!found) return resample(ctx, teamSizeFromTotal);
+  const {rate, firstH, secondH, team, total} = found;
+  const perWorker = rate * (firstH + secondH);
+  const newcomer = rate * secondH;
+  const remaining = total - newcomer;
+  const correct = team;
+  const params = {ratePerWorker: rate, firstHours: firstH, secondHours: secondH, totalOutput: total};
+
+  const distractors = usable(ctx, [
+    // RC2.4: the answer is a count of people, so every candidate here is one a
+    // learner could actually write down as a team size. The unfinished totals —
+    // the remaining work, the newcomer's output, the per-worker output — are
+    // real intermediates but they are output quantities in the hundreds beside
+    // an answer of seven, and an option nobody would mistake for a team is an
+    // option that removes itself.
+    mk(team + 1, 'USED_NEW_TOTAL', `عدد أفراد الفريق بعد الانضمام ${team + 1}`, 3),
+    mk(total / perWorker, 'IGNORED_THE_TEAM_CHANGE', `${total} ÷ ${perWorker}`),
+    mk(total / (rate * firstH), 'SOLVED_ONE_CONDITION_ONLY', `${total} ÷ (${rate} × ${firstH})`),
+    mk(remaining / (rate * secondH), 'SOLVED_ONE_CONDITION_ONLY', `${remaining} ÷ (${rate} × ${secondH})`),
+    mk(remaining / (rate * firstH), 'SOLVED_ONE_CONDITION_ONLY', `${remaining} ÷ (${rate} × ${firstH})`),
+    mk((total + newcomer) / perWorker, 'ADDED_INSTEAD_OF_SUBTRACTED', `(${total} + ${newcomer}) ÷ ${perWorker}`),
+    mk(team - 1, 'OFF_BY_ONE_STEP', `${remaining} ÷ ${perWorker} − 1`),
+    mk(team + 2, 'OFF_BY_ONE_STEP', `${remaining} ÷ ${perWorker} + 2`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'COMB_H_TEAM_SIZE',
+    subskill: 'عدد أفراد الفريق من إنجاز مرحلتين',
+    difficulty: 'hard',
+    question: `فريق أفراده متساوون في المعدل، ينجز كل فرد ${rate} وحدة/ساعة. عمل الفريق ${u(firstH, 'hour', 'oblique')}، ثم انضم إليه فرد واحد فعمل الجميع ${u(secondH, 'hour', 'oblique')} أخرى، فبلغ الإنجاز الكلي ${u(total, 'unit')}. كم فردًا كان في الفريق أولًا؟`,
+    correct, distractors, format: unitFormat('person'),
+    steps: [
+      `إنجاز الفرد الواحد في المرحلتين معًا = ${rate} × (${firstH} + ${secondH}) = ${perWorker}.`,
+      `الفرد الذي انضم عمل في المرحلة الثانية وحدها، فأنجز ${rate} × ${secondH} = ${newcomer}.`,
+      `المتبقي على الفريق الأصلي = ${total} − ${newcomer} = ${remaining}.`,
+      `عدد أفراد الفريق أولًا = ${remaining} ÷ ${perWorker} = ${correct}.`
+    ],
+    howToStart: 'اعزل إنجاز الفرد الذي انضم متأخرًا أولًا، فما بقي يخص الفريق الأصلي كله.',
+    remember: 'عندما يتغير حجم الفريق في أثناء العمل لا يصح قسمة الإنجاز الكلي على معدل فرد واحد.',
+    fastMethod: 'اطرح إنجاز المنضم الجديد من الإجمالي ثم اقسم على إنجاز الفرد في المرحلتين.',
+    estimatedSteps: 4, conceptTags: ['combined-rate', 'team-change', 'reverse'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(add(mul(X, rate, firstH), mul(add(X, 1), rate, secondH)), total)]
+    },
+    askedUnknown: 'initialTeamSize', stageCount: 3,
+    // Givens-derived: even if every member had worked only the second stage the
+    // team could not be larger than this, whatever the answer turns out to be.
+    answerBounds: {between: [1, total / (rate * secondH)]},
+    pedagogy: {
+      targetSkill: 'TEAM_SIZE_FROM_TWO_STAGES', targetMisconception: 'IGNORED_THE_TEAM_CHANGE',
+      wrongMethodValue: total / perWorker
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, reverseReasoning: 1, equationSolving: 1, stageCount: 3, arithmeticBurden: 5},
+    textParams: {essentialParams: ['ratePerWorker', 'firstHours', 'secondHours', 'totalOutput']}
   });
 }

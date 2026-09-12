@@ -13,7 +13,8 @@ export function generateCalendar({difficulty, rng, seed, engineVersion, telemetr
     ['CAL_M_COMPOUND', compoundForward],
     ['CAL_M_TWO_SHIFT', forwardThenBack],
     ['CAL_H_LONG', longOffset],
-    ['CAL_H_NESTED', nestedOffset]
+    ['CAL_H_NESTED', nestedOffset],
+    ['CAL_H_CYCLE_MEET', twoCyclesMeet]
   ])(ctx);
 }
 
@@ -354,6 +355,91 @@ function longOffset(ctx) {
     },
     allowedConstants: [0, 1, 2, 7, 100],
     complexityFactors: {reasoningTransformations: 2, conceptCount: 2, stageCount: 2, arithmeticBurden: 2},
+    textParams: false
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.4 — a genuinely hard structure for this family.
+//
+// Every other calendar template is one offset, applied or reversed. This one is
+// two independent cycles that have to be brought onto one footing before the
+// weekday question can even be asked — and neither the common multiple nor the
+// modulo is signalled by the sentence.
+// ---------------------------------------------------------------------------
+
+const gcdOf = (a, b) => (b === 0 ? a : gcdOf(b, a % b));
+
+/** CROSS_PART_INTEGRATION + STRATEGY_SELECTION. */
+function twoCyclesMeet(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 150; t++) {
+    const first = rng.pick([4, 6, 8, 9, 10, 12]);
+    const second = rng.pick([6, 8, 9, 10, 14, 15, 16]);
+    if (first === second) continue;
+    const lcm = first * second / gcdOf(first, second);
+    if (lcm > 120 || lcm === first || lcm === second) continue;
+    const rem = lcm % 7;
+    // A meeting that falls on the same weekday makes "answer the stated day"
+    // correct, and the item stops measuring the modulo (Section 10).
+    if (rem === 0) continue;
+    // Each modelled slip must land somewhere other than the key, or the option
+    // is silently dropped and the misconception is never shown (Section 10).
+    if ((first + second) % 7 === rem) continue;
+    if (first % 7 === rem || second % 7 === rem) continue;
+    const today = rng.int(0, 6);
+    found = {first, second, lcm, rem, today};
+    break;
+  }
+  if (!found) return resample(ctx, twoCyclesMeet);
+  const {first, second, lcm, rem, today} = found;
+  const weeks = (lcm - rem) / 7;
+  const target = dayShift(today, lcm);
+  const correct = DAYS_AR[target];
+
+  const distractors = dayDistractors(ctx, target, lcm, [
+    {index: today, misconceptionId: 'USED_LCM_AS_THE_ANSWER', derivation: `البقاء على اليوم المذكور ${DAYS_AR[today]}`},
+    {index: today + (first + second) % 7, misconceptionId: 'USED_SUM_OF_CYCLES', derivation: `التحرك بمقدار ${first} + ${second} بدل المضاعف المشترك`},
+    {index: today + first % 7, misconceptionId: 'USED_ONE_CYCLE_ONLY', derivation: `التحرك بمقدار ${first} وحدها`},
+    {index: today + second % 7, misconceptionId: 'USED_ONE_CYCLE_ONLY', derivation: `التحرك بمقدار ${second} وحدها`},
+    {index: today + weeks, misconceptionId: 'IGNORED_NET_OFFSET', derivation: 'التحرك بعدد الأسابيع الكاملة بدل الباقي'}
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'CAL_H_CYCLE_MEET',
+    subskill: 'لقاء دورتين مختلفتين ويوم الأسبوع',
+    difficulty: 'hard',
+    question: `يزور أحدهما المكتبة كل ${u(first, 'day', 'oblique')} ويزورها الآخر كل ${u(second, 'day', 'oblique')}. التقيا فيها اليوم، وكان يوم ${DAYS_AR[today]}. في أي يوم من أيام الأسبوع يلتقيان فيها مرة أخرى؟`,
+    correct, distractors, format: v => String(v),
+    steps: [
+      `لا يلتقيان إلا حين تكتمل الدورتان معًا، أي بعد عدد من الأيام يقبل القسمة على كلٍّ من الدورتين.`,
+      `أصغر عدد كذلك = ${first} × ${lcm / first} = ${lcm}، وهو نفسه ${second} × ${lcm / second} = ${lcm}.`,
+      `كل ${u(7, 'day')} تعيد اسم اليوم نفسه، فنطرح الأسابيع الكاملة: ${weeks} × 7 = ${weeks * 7}، ثم ${lcm} − ${weeks * 7} = ${rem}.`,
+      `نتحرك ${u(rem, 'day', 'oblique')} من ${DAYS_AR[today]} فنصل إلى ${correct}.`
+    ],
+    howToStart: 'ابحث أولًا عن عدد الأيام حتى اللقاء التالي، ثم حوّله إلى يوم من أيام الأسبوع.',
+    remember: 'اللقاء يتطلب اكتمال الدورتين معًا، لا إحداهما.',
+    fastMethod: 'احسب المضاعف المشترك الأصغر ثم خذ باقي قسمته على 7.',
+    estimatedSteps: 4, conceptTags: ['calendar', 'lcm', 'modulo'],
+    // The two multiples and the whole-week count are quantities of the task, so
+    // they are declared rather than announced: the sourcing check licenses a
+    // step only from what the stem and the parameters already give.
+    parameters: {
+      firstCycle: first, secondCycle: second, todayIndex: today,
+      firstMultiple: lcm / first, secondMultiple: lcm / second, wholeWeeks: weeks
+    },
+    oracle: {
+      kind: 'search', answerKind: 'dayIndex', domain: grid(0, 6),
+      constraints: [eq(mod(add(today, lcm), 7), X)]
+    },
+    askedUnknown: 'meetingWeekday', stageCount: 3,
+    allowedConstants: [0, 1, 2, 7, 100],
+    pedagogy: {
+      targetSkill: 'CYCLE_MEETING_WEEKDAY', targetMisconception: 'USED_SUM_OF_CYCLES',
+      wrongMethodValue: dayName(today + (first + second) % 7)
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, conditionCount: 2, stageCount: 3, arithmeticBurden: 4},
     textParams: false
   });
 }

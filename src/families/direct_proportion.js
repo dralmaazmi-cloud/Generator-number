@@ -24,7 +24,8 @@ export function generateDirectProportion({difficulty, rng, seed, engineVersion, 
     ['PROP_M_RECIPE', recipeScale],
     ['PROP_M_MAP', mapScale],
     ['PROP_H_COMPOUND', compoundScale],
-    ['PROP_H_COST_PLUS', multiUnitCost]
+    ['PROP_H_COST_PLUS', multiUnitCost],
+    ['PROP_H_TWO_ITEM_SYSTEM', twoItemPrices]
   ])(ctx);
 }
 
@@ -706,5 +707,85 @@ function multiUnitCost(ctx) {
     },
     complexityFactors: s.pathComplexity,
     textParams: {essentialParams: ['baseCount', 'baseAmount', 'targetCount', 'flatFee']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.4 — a genuinely hard structure for this family.
+//
+// Every other template here states a rate, or states a total from which one rate
+// follows. This one states neither: two totals over two different mixes, and
+// both unit prices unknown.
+// ---------------------------------------------------------------------------
+
+/**
+ * SIMULTANEOUS_CONSTRAINTS + CROSS_PART_INTEGRATION.
+ */
+function twoItemPrices(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 200; t++) {
+    const boxPrice = rng.pick([6, 8, 9, 12, 15, 18, 20]);
+    const piecePrice = rng.pick([3, 4, 5, 7, 10, 11]);
+    if (boxPrice === piecePrice) continue;
+    const a = rng.int(2, 5), b = rng.int(1, 4);
+    const c = rng.int(1, 5), d = rng.int(2, 5);
+    if (b === d) continue;
+    const det = a * d - c * b;
+    if (det <= 0) continue;
+    const t1 = a * boxPrice + b * piecePrice;
+    const t2 = c * boxPrice + d * piecePrice;
+    if (t1 === t2) continue;
+    found = {boxPrice, piecePrice, a, b, c, d, t1, t2, det};
+    break;
+  }
+  if (!found) return resample(ctx, twoItemPrices);
+  const {boxPrice, piecePrice, a, b, c, d, t1, t2, det} = found;
+  const lhs = t1 * d - t2 * b;
+  const correct = boxPrice;
+  const params = {boxesA: a, piecesA: b, totalA: t1, boxesB: c, piecesB: d, totalB: t2};
+
+  const distractors = usable(ctx, [
+    mk(piecePrice, 'SWAPPED_THE_TWO_UNKNOWNS', `سعر القطعة ${piecePrice}`, 3),
+    mk(t1 / (a + b), 'SOLVED_ONE_CONDITION_ONLY', `${t1} ÷ (${a} + ${b})`),
+    mk(t2 / (c + d), 'SOLVED_ONE_CONDITION_ONLY', `${t2} ÷ (${c} + ${d})`),
+    mk(t1 / a, 'SOLVED_ONE_CONDITION_ONLY', `${t1} ÷ ${a}`),
+    mk(t2 / c, 'SOLVED_ONE_CONDITION_ONLY', `${t2} ÷ ${c}`),
+    mk(Math.abs(t2 - t1), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(t1, t2)} − ${Math.min(t1, t2)}`),
+    mk(boxPrice + piecePrice, 'ADDED_INSTEAD_OF_SCALING', `${boxPrice} + ${piecePrice}`),
+    mk(det, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${a} × ${d} − ${c} × ${b}`, 2),
+    mk(lhs / a, 'MISREAD_THE_STEP', `${lhs} ÷ ${a}`),
+    mk(t1 / d, 'SOLVED_ONE_CONDITION_ONLY', `${t1} ÷ ${d}`),
+    mk(t2 / b, 'SOLVED_ONE_CONDITION_ONLY', `${t2} ÷ ${b}`),
+    mk(lhs, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${t1} × ${d} − ${t2} × ${b}`, 1)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'PROP_H_TWO_ITEM_SYSTEM',
+    subskill: 'سعر الوحدة من خليطين مختلفين',
+    difficulty: 'hard',
+    question: `ثمن ${u(a, 'box')} و${u(b, 'piece')} معًا ${u(t1, 'dirham')}. وثمن ${u(c, 'box')} و${u(d, 'piece')} معًا ${u(t2, 'dirham')}. فما ثمن الصندوق الواحد؟`,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `نضرب العبارة الأولى في ${d} والثانية في ${b} ليتساوى عدد القطع فيهما: ${t1} × ${d} = ${t1 * d}، و${t2} × ${b} = ${t2 * b}.`,
+      `بالطرح تختفي القطع ويبقى الفرق في الثمن = ${t1 * d} − ${t2 * b} = ${lhs}.`,
+      `وعدد الصناديق المقابل = ${a} × ${d} − ${c} × ${b} = ${det}.`,
+      `ثمن الصندوق الواحد = ${lhs} ÷ ${det} = ${correct}.`
+    ],
+    howToStart: 'وحّد عدد القطع في العبارتين ثم اطرحهما ليختفي سعر القطعة.',
+    remember: 'مع مجهولين لا تكفي عبارة واحدة مهما بدت بسيطة.',
+    fastMethod: 'اضرب كل عبارة في عدد القطع من العبارة الأخرى ثم اطرح.',
+    estimatedSteps: 4, conceptTags: ['direct-proportion', 'elimination', 'two-unknowns'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, det), sub(mul(t1, d), mul(t2, b)))]
+    },
+    askedUnknown: 'boxUnitPrice', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'ELIMINATE_ONE_UNKNOWN', targetMisconception: 'SOLVED_ONE_CONDITION_ONLY',
+      wrongMethodValue: t1 / (a + b)
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, stageCount: 3, arithmeticBurden: 5},
+    textParams: {essentialParams: ['boxesA', 'piecesA', 'totalA', 'boxesB', 'piecesB', 'totalB']}
   });
 }

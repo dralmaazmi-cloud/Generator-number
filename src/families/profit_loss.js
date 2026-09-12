@@ -12,7 +12,9 @@ export function generateProfitLoss({difficulty, rng, seed, engineVersion, teleme
     ['PL_H_REVERSE', reverseSellingPrice],
     ['PL_M_TOTAL_COST', totalCostProfit],
     ['PL_M_DISC_MARK', discountThenSale],
-    ['PL_H_CHAIN', discountMarkupChain]
+    ['PL_H_CHAIN', discountMarkupChain],
+    ['PL_H_TWO_OUTCOMES', costFromTwoOutcomes],
+    ['PL_H_MARKUP_DISCOUNT', costFromMarkupThenDiscount]
   ])(ctx);
 }
 
@@ -321,5 +323,155 @@ function discountMarkupChain(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 2, stageCount: 2, arithmeticBurden: 4},
     textParams: {essentialParams: ['listPrice', 'discountPercent', 'markupPercent']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.4 — genuinely hard structures for this family.
+//
+// The RC2.3 profit_loss templates apply or invert one percentage against a
+// stated price. Neither of the two below has a stated price to work from.
+// ---------------------------------------------------------------------------
+
+/**
+ * SIMULTANEOUS_CONSTRAINTS + COMPOSED_INVERSION.
+ *
+ * No price is given at all. Two hypothetical outcomes are, and the cost follows
+ * only from the fact that the same unknown cost underlies both — the gap between
+ * the two prices is the two percentages of it, added.
+ */
+function costFromTwoOutcomes(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 150; t++) {
+    const gain = rng.pick([10, 15, 20, 25, 30, 40]);
+    const loss = rng.pick([5, 10, 15, 20, 25]);
+    const cost = rng.pick([120, 150, 180, 200, 240, 300, 360, 400, 500]);
+    const gapNum = cost * (gain + loss);
+    if (gapNum % 100 !== 0) continue;
+    const gap = gapNum / 100;
+    if ((cost * gain) % 100 !== 0 || (cost * loss) % 100 !== 0) continue;
+    if (gap === cost) continue;
+    found = {gain, loss, cost, gap};
+    break;
+  }
+  if (!found) return resample(ctx, costFromTwoOutcomes);
+  const {gain, loss, cost, gap} = found;
+  const sum = gain + loss;
+  const correct = cost;
+  const params = {profitPercent: gain, lossPercent: loss, priceGap: gap};
+
+  const distractors = usable(ctx, [
+    mk(gap, 'USED_THE_GAP_AS_COST', `الفرق بين السعرين ${gap}`),
+    mk(gap * 100 / gain, 'SOLVED_ONE_CONDITION_ONLY', `${gap} × 100 ÷ ${gain}`),
+    mk(gap * 100 / loss, 'SOLVED_ONE_CONDITION_ONLY', `${gap} × 100 ÷ ${loss}`),
+    mk(cost * (100 + gain) / 100, 'USED_NEW_TOTAL', `${cost} × (100 + ${gain}) ÷ 100`, 3),
+    mk(cost * (100 - loss) / 100, 'USED_NEW_TOTAL', `${cost} × (100 − ${loss}) ÷ 100`, 3),
+    mk(gap * 100 / Math.abs(gain - loss), 'SUBTRACTED_PERCENTAGES', `${gap} × 100 ÷ (${Math.max(gain, loss)} − ${Math.min(gain, loss)})`),
+    mk(gap * sum / 100, 'APPLIED_OPERATION_IN_REVERSE', `${gap} × ${sum} ÷ 100`),
+    mk(cost + gap, 'ADDED_INSTEAD_OF_SUBTRACTED', `${cost} + ${gap}`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'PL_H_TWO_OUTCOMES',
+    subskill: 'التكلفة من حالتي ربح وخسارة',
+    difficulty: 'hard',
+    question: `لو بيعت سلعة بسعر معين لتحقق ربح قدره ${gain}% من تكلفتها. ولو بيعت بسعر أقل من ذلك بـ${u(gap, 'dirham', 'oblique')} لكانت الخسارة ${loss}% من التكلفة. فما تكلفة السلعة؟`,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `سعر الحالة الأولى يزيد على التكلفة بمقدار ${gain}% منها، وسعر الحالة الثانية يقل عنها بمقدار ${loss}% منها.`,
+      `إذن الفرق بين السعرين يمثل مجموع النسبتين من التكلفة، ومجموعهما = ${gain} + ${loss} = ${sum}.`,
+      `التكلفة = ${gap} × 100 ÷ ${sum} = ${correct}.`
+    ],
+    howToStart: 'لا تبحث عن سعر؛ عبّر عن الحالتين بالنسبة إلى التكلفة نفسها.',
+    remember: 'الربح والخسارة يقاسان من التكلفة، فالفرق بين السعرين هو مجموع النسبتين من التكلفة.',
+    fastMethod: `اقسم الفرق بين السعرين على مجموع النسبتين ثم اضرب في 100.`,
+    estimatedSteps: 4, conceptTags: ['profit-loss', 'two-cases', 'reverse'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, sum), mul(gap, 100))]
+    },
+    askedUnknown: 'costFromTwoCases', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'COST_FROM_TWO_OUTCOMES', targetMisconception: 'USED_THE_GAP_AS_COST',
+      wrongMethodValue: gap
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, conditionCount: 2, equationSolving: 1, reverseReasoning: 1, stageCount: 3, arithmeticBurden: 4},
+    textParams: {essentialParams: ['profitPercent', 'lossPercent', 'priceGap']}
+  });
+}
+
+/**
+ * COMPOSED_INVERSION + STRATEGY_SELECTION.
+ *
+ * A markup and a discount compose into a single net factor, and the cost is
+ * behind that composition. The profit is stated as an amount, not a percentage,
+ * so the two percentages have to be combined before anything can be divided.
+ */
+function costFromMarkupThenDiscount(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 200; t++) {
+    const markup = rng.pick([25, 30, 40, 50, 60, 75]);
+    const discount = rng.pick([10, 20, 25, 30, 40]);
+    const netNum = (100 + markup) * (100 - discount) - 10000;
+    if (netNum <= 0) continue;
+    const cost = rng.pick([200, 240, 300, 400, 500, 600, 800]);
+    if ((cost * netNum) % 10000 !== 0) continue;
+    const profit = cost * netNum / 10000;
+    if (profit <= 0) continue;
+    if ((cost * (100 + markup)) % 100 !== 0) continue;
+    if (profit === cost) continue;
+    found = {markup, discount, cost, profit, netNum};
+    break;
+  }
+  if (!found) return resample(ctx, costFromMarkupThenDiscount);
+  const {markup, discount, cost, profit, netNum} = found;
+  const listed = cost * (100 + markup) / 100;
+  const sold = cost + profit;
+  const correct = cost;
+  const params = {markupPercent: markup, discountPercent: discount, profit};
+
+  const distractors = usable(ctx, [
+    mk(profit * 100 / (markup - discount), 'ADDED_MARKUP_AND_DISCOUNT', `${profit} × 100 ÷ (${markup} − ${discount})`),
+    mk(profit * 100 / markup, 'SOLVED_ONE_CONDITION_ONLY', `${profit} × 100 ÷ ${markup}`),
+    mk(profit * 100 / discount, 'SOLVED_ONE_CONDITION_ONLY', `${profit} × 100 ÷ ${discount}`),
+    mk(listed, 'USED_NEW_TOTAL', `${cost} × (100 + ${markup}) ÷ 100`, 0),
+    mk(sold, 'USED_NEW_TOTAL', `${cost} + ${profit}`, 2),
+    mk(profit, 'USED_GIVEN_VALUE_AS_ANSWER', `الربح المعطى ${profit}`),
+    mk(cost + profit * 2, 'APPLIED_STEP_TWICE', `${cost} + ${profit} × 2`),
+    mk(profit * 100 / (markup + discount), 'ADDED_MARKUP_AND_DISCOUNT', `${profit} × 100 ÷ (${markup} + ${discount})`),
+    mk(listed - profit, 'MISREAD_THE_STEP', `${listed} − ${profit}`, 0),
+    mk(sold - profit * 2, 'APPLIED_STEP_TWICE', `${sold} − ${profit} × 2`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'PL_H_MARKUP_DISCOUNT',
+    subskill: 'التكلفة من زيادة ثم خصم وربح معلوم',
+    difficulty: 'hard',
+    question: `وضع متجر سعرًا معلنًا أعلى من تكلفة السلعة بنسبة ${markup}%، ثم باعها بخصم ${discount}% من السعر المعلن، فحقق ربحًا قدره ${u(profit, 'dirham')}. فما تكلفة السلعة؟`,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `معامل الزيادة = 100 + ${markup} = ${100 + markup}، ومعامل الخصم = 100 − ${discount} = ${100 - discount}.`,
+      `سعر البيع يساوي التكلفة مضروبة في المعاملين معًا، وحاصل ضربهما = ${100 + markup} × ${100 - discount} = ${(100 + markup) * (100 - discount)}.`,
+      `سعر البيع إذن هو التكلفة مضروبة في ${(100 + markup) * (100 - discount)} ومقسومة على 10000، فما زاد على التكلفة = ${(100 + markup) * (100 - discount)} − 10000 = ${netNum} لكل 10000 من التكلفة.`,
+      `التكلفة = ${profit} × 10000 ÷ ${netNum} = ${correct}.`
+    ],
+    howToStart: 'اضرب معاملي الزيادة والخصم للحصول على معامل واحد، ثم قارنه بـ1.',
+    remember: 'الزيادة ثم الخصم لا تُجمع نسبتاهما؛ معاملاهما يُضربان.',
+    fastMethod: 'احسب صافي نسبة الربح من ضرب المعاملين، ثم اقسم الربح عليها.',
+    estimatedSteps: 4, conceptTags: ['profit-loss', 'composed-factors', 'reverse'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, netNum), mul(profit, 10000))]
+    },
+    askedUnknown: 'costFromNetFactor', stageCount: 3,
+    allowedConstants: [0, 1, 2, 100, 10000],
+    pedagogy: {
+      targetSkill: 'COMPOSE_MARKUP_AND_DISCOUNT', targetMisconception: 'ADDED_MARKUP_AND_DISCOUNT',
+      wrongMethodValue: profit * 100 / (markup - discount)
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, reverseReasoning: 1, stageCount: 3, arithmeticBurden: 5},
+    textParams: {essentialParams: ['markupPercent', 'discountPercent', 'profit']}
   });
 }

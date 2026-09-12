@@ -12,7 +12,8 @@ export function generateAges({difficulty, rng, seed, engineVersion, telemetry}) 
     ['AGE_M_RATIO_FUT_SUM', currentRatioFutureSum],
     ['AGE_M_FUT_RATIO', futureRatio],
     ['AGE_H_PAST_FUT', pastRatioFutureSum],
-    ['AGE_H_TWO_TIME', twoTimeRatio]
+    ['AGE_H_TWO_TIME', twoTimeRatio],
+    ['AGE_H_THREE_SIBLINGS', threeSiblingsFuture]
   ])(ctx);
 }
 
@@ -417,5 +418,91 @@ function twoTimeRatio(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 2, equationSolving: 1, stageCount: 3, arithmeticBurden: 4},
     textParams: {essentialParams: ['ageDifference', 'yearsAhead']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.4 — a third hard structure for this family.
+//
+// The existing hard age templates hold two people across two time points. This
+// one holds three people linked in a chain, with only their total given, and
+// then moves the result forward — so the chain has to be resolved before the
+// shift can be applied to anyone.
+// ---------------------------------------------------------------------------
+
+/** SIMULTANEOUS_CONSTRAINTS + CROSS_PART_INTEGRATION. */
+function threeSiblingsFuture(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 150; t++) {
+    const youngest = rng.int(6, 18);
+    // «بـ» glues to what follows, so a gap of one or two years would render as
+    // «بـسنتين» — a dash before a letter, which reads as a stray hyphen. The
+    // gaps start at three so the numeral is always written out.
+    const midGap = rng.pick([3, 4, 5, 6]);
+    const eldGap = rng.pick([3, 4, 5, 7]);
+    const years = rng.pick([2, 3, 4, 5, 6, 8]);
+    const total = 3 * youngest + 2 * midGap + eldGap;
+    if (total > 90) continue;
+    // Equal gaps make the middle sibling the plain average of the three, which
+    // is a shorter route the item is not testing (Section 10).
+    if (midGap === eldGap) continue;
+    found = {youngest, midGap, eldGap, years, total};
+    break;
+  }
+  if (!found) return resample(ctx, threeSiblingsFuture);
+  const {youngest, midGap, eldGap, years, total} = found;
+  const constants = 2 * midGap + eldGap;
+  const tripled = total - constants;
+  const middle = youngest + midGap;
+  const eldestNow = middle + eldGap;
+  const correct = eldestNow + years;
+  // The number of siblings is a quantity of the task — the stem says «ثلاثة» in
+  // words, so it never reaches the stem as a numeral, but the solution divides
+  // by it and the sourcing check licenses a step only from declared quantities.
+  const params = {totalAge: total, eldestGap: eldGap, middleGap: midGap, years, siblingCount: 3};
+
+  const distractors = usable(ctx, [
+    mk(eldestNow, 'ANSWERED_PAST_AGE', `عمر الأكبر الآن ${eldestNow}`, 4),
+    mk(middle + years, 'USED_THE_MIDDLE_MEMBER', `${middle} + ${years}`, 4),
+    mk(youngest + years, 'ANSWERED_OTHER_PERSON', `${youngest} + ${years}`, 4),
+    mk(total / 3 + years, 'DIVIDED_TOTAL_BY_PERSON_COUNT', `${total} ÷ 3 + ${years}`),
+    mk(eldestNow + 3 * years, 'FORGOT_BOTH_AGES_GROW', `${eldestNow} + ${years} × 3`, 5),
+    mk(tripled / 3 + years, 'MISSED_ONE_STAGE', `${tripled} ÷ 3 + ${years}`, 3),
+    mk(eldestNow - years, 'APPLIED_OPERATION_IN_REVERSE', `${eldestNow} − ${years}`, 5),
+    mk(total - eldestNow, 'USED_AGE_DIFFERENCE_AS_ANSWER', `${total} − ${eldestNow}`),
+    mk(youngest + midGap + years, 'USED_THE_MIDDLE_MEMBER', `${youngest} + ${midGap} + ${years}`, 4),
+    mk(eldestNow + years + 1, 'OFF_BY_ONE_STEP', `${eldestNow} + ${years} + 1`, 5)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'AGE_H_THREE_SIBLINGS',
+    subskill: 'ثلاثة إخوة مرتبطون بفروق ومجموع',
+    difficulty: 'hard',
+    question: `مجموع أعمار ثلاثة إخوة الآن ${u(total, 'year')}. الأكبر أكبر من الأوسط بـ${u(eldGap, 'year', 'oblique')}، والأوسط أكبر من الأصغر بـ${u(midGap, 'year', 'oblique')}. كم سيكون عمر الأكبر بعد ${u(years, 'year', 'oblique')}؟`,
+    correct, distractors, format: unitFormat('year'),
+    steps: [
+      `نفرض عمر الأصغر = س، فالأوسط = س + ${midGap}، والأكبر = س + ${midGap} + ${eldGap}.`,
+      `مجموع الثوابت الثلاثة = ${midGap} + ${midGap} + ${eldGap} = ${constants}، فالمجموع = س × 3 + ${constants}.`,
+      `إذن ثلاثة أمثال عمر الأصغر = ${total} − ${constants} = ${tripled}.`,
+      `ومنه عمر الأصغر = ${tripled} ÷ 3 = ${youngest}.`,
+      `عمر الأكبر الآن = ${youngest} + ${midGap} + ${eldGap} = ${eldestNow}.`,
+      `بعد ${u(years, 'year', 'oblique')} يصبح = ${eldestNow} + ${years} = ${correct}.`
+    ],
+    howToStart: 'اربط الثلاثة بمجهول واحد هو عمر الأصغر، ثم اجمع.',
+    remember: 'الفروق بين الأعمار ثابتة مع الزمن، لكن كل عمر يزيد بالمقدار نفسه.',
+    fastMethod: 'اطرح مجموع الفروق من المجموع، اقسم على 3، ثم ارجع إلى الأكبر.',
+    estimatedSteps: 6, conceptTags: ['ages', 'three-way', 'equation'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(sub(mul(3, sub(X, years)), 2 * eldGap + midGap), total)]
+    },
+    askedUnknown: 'eldestAfterYears', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'THREE_LINKED_AGES', targetMisconception: 'ANSWERED_PAST_AGE',
+      wrongMethodValue: eldestNow
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, conditionCount: 2, equationSolving: 1, stageCount: 3, arithmeticBurden: 5},
+    textParams: {essentialParams: ['totalAge', 'eldestGap', 'middleGap', 'years']}
   });
 }

@@ -115,6 +115,10 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Nothing works until the solver subtracts each term’s POSITION, which no difference or ratio check suggests; only then do the powers appear.'},
   SEQ_H_ALT_DIV: {band: 'hard', criteria: ['RULE_DISCOVERY', 'STRATEGY_SELECTION'],
     why: 'Two alternating operations where one operand advances between applications — neither the alternation nor the advancing divisor is visible from differences or ratios alone.'},
+  SEQ_H_DIGIT_SUM: {band: 'hard', criteria: ['RULE_DISCOVERY', 'STRATEGY_SELECTION'], routine: [],
+    why: 'Differences, ratios and second differences all fail; nothing works until the solver stops looking between terms and looks inside one.'},
+  SEQ_H_INDEX_MULT: {band: 'hard', criteria: ['RULE_DISCOVERY', 'STRATEGY_SELECTION'], routine: [],
+    why: 'The multiplier itself advances by one each step with a constant added, so neither a fixed ratio nor a fixed difference is ever found and the two parts must be identified together.'},
 
   // ------------------------------------------------------------------- ratios
   RAT_E_KNOWN: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -147,6 +151,10 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Chained percentages then one comparison against the original. Four operations, one idea.'},
   PCT_H_REVERSE_CHAIN: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
     why: 'Two factors multiplied, then one division. The composition is inverted in a single move that the sentence signposts, so it does not reach COMPOSED_INVERSION.'},
+  PCT_H_MIXTURE: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'CROSS_PART_INTEGRATION'], routine: [],
+    why: 'Two unknown volumes are pinned jointly by two conditions — the volumes sum to the total and the dissolved amounts sum to the mixture — and neither given can be evaluated before they are combined.'},
+  PCT_H_TWO_GROUP_CHANGE: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'CROSS_PART_INTEGRATION'], routine: [],
+    why: 'A rise in one group and a fall in the other are known only through two totals; neither percentage can be applied until the split is found, and the split follows only from both conditions at once.'},
 
   // ----------------------------------------------------------------- averages
   AVG_E_ADD: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -163,6 +171,10 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Three totals pooled. One more addition than AVG_M_COMBINE and nothing else.'},
   AVG_H_TARGET: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
     why: 'Required total minus current total. Works backwards through ONE relationship, which is not COMPOSED_INVERSION.'},
+  AVG_H_OVERLAP: {band: 'hard', criteria: ['CROSS_PART_INTEGRATION', 'STRATEGY_SELECTION'], routine: [],
+    why: 'Two subsets cover the whole set and share one member; the route to that member is the double count their totals create, which no clause in the stem points at.'},
+  AVG_H_SPLIT_SIZE: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'STRATEGY_SELECTION'], routine: [],
+    why: 'The two group sizes are the unknowns and are linked by the count, so neither average can be used until the pair is solved together.'},
 
   // --------------------------------------------------------------------- ages
   AGE_E_SUM_DIFF: {band: 'medium', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -182,6 +194,8 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
   // future sum is walked back to the past and only then is the ratio applied —
   // so SIMULTANEOUS_CONSTRAINTS does not hold. The other two do, and the template
   // stays hard on them.
+  AGE_H_THREE_SIBLINGS: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'CROSS_PART_INTEGRATION'], routine: [],
+    why: 'Three ages linked in a chain with only their total given: the chain has to be resolved as one system before the forward shift can be applied to any of them.'},
   AGE_H_PAST_FUT: {band: 'hard', criteria: ['COMPOSED_INVERSION', 'CROSS_PART_INTEGRATION'],
     why: 'Three time points: a future sum must be carried back through the present to a past ratio before either condition can be used.'},
 
@@ -218,6 +232,10 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Three stages of the same worker-day accounting. More arithmetic, no new idea.'},
   WORK_H_WORKERS_EFF: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
     why: 'Worker-day accounting with one efficiency factor inserted. The factor is stated where it applies.'},
+  WORK_H_JOINT_SOLO: {band: 'hard', criteria: ['COMPOSED_INVERSION', 'SIMULTANEOUS_CONSTRAINTS'], routine: [],
+    why: 'The asked time exists only as a reciprocal: both given times must be converted to rates, combined there, and inverted back, and nothing in the sentence signals leaving the units it states.'},
+  WORK_H_EXTRA_WORKERS: {band: 'hard', criteria: ['COMPOSED_INVERSION', 'STRATEGY_SELECTION'], routine: [],
+    why: 'How many workers were added is stated nowhere and is recovered only by holding the worker-day product constant across a span that changed; the conservation is the whole insight.'},
 
   // ----------------------------------------------------------------- machines
   MACH_H_TWO_TYPES: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
@@ -234,6 +252,10 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'The group splits into upgraded and not, but the split is stated; the rates then add.'},
   MACH_H_STAGE_UP: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
     why: 'MACH_M_SUBSET_UP with a second stage appended. Six operations, still one idea per clause.'},
+  MACH_H_TWO_CONFIG: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'CROSS_PART_INTEGRATION'], routine: [],
+    why: 'Two mixed groups and two totals with neither rate stated: no sentence yields a rate on its own, so the two must be brought onto one footing and an unknown eliminated before anything is computable.'},
+  MACH_H_STOPPAGE_TIME: {band: 'hard', criteria: ['COMPOSED_INVERSION', 'STRATEGY_SELECTION'], routine: [],
+    why: 'The stoppage hour is reported nowhere; it is reached by comparing planned with actual output, reading the shortfall as one machine over the hours it did not work, and inverting back to a clock time.'},
 
   // -------------------------------------------------------- direct_proportion
   PROP_E_ITEMS: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -250,6 +272,8 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Unit value, scale, then one reserve factor. Announced in that order.'},
   PROP_H_COST_PLUS: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
     why: 'Simple fixed-fee unit cost — named by the brief as not hard. Unit price, scale, add the fee once.'},
+  PROP_H_TWO_ITEM_SYSTEM: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'CROSS_PART_INTEGRATION'], routine: [],
+    why: 'Two totals over two different mixes with both unit prices unknown: no clause yields a price on its own, so the two must be combined and one unknown eliminated.'},
 
   // ---------------------------------------------------------------- fractions
   FRAC_E_2: {band: 'easy', criteria: [], routine: ['REPEATED_OPERATION'],
@@ -272,6 +296,8 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Rate, percentage, then a division. Same pipeline as RATE_M_PERCENT, asked the other way.'},
   RATE_H_TWO_PHASE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
     why: 'Rate-after-percentage with a second phase appended and the two outputs added.'},
+  RATE_H_RATE_FROM_GAP: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'STRATEGY_SELECTION'], routine: [],
+    why: 'The unknown rate appears in two different times whose difference is what is given, so nothing divides out; the solver must recognise a product of two numbers a known distance apart and search the factor pairs.'},
 
   // ------------------------------------------------------------ combined_rate
   COMB_E_OUTPUT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -286,6 +312,10 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'As COMB_M_TOGETHER_SOLO, reversed order of stages.'},
   COMB_H_STAGED: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
     why: 'Three stages of the same accounting. The third stage adds one subtraction.'},
+  COMB_H_TWO_PUMPS: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'COMPOSED_INVERSION'], routine: [],
+    why: 'Two unknown rates are pinned by two facts at once — they sum to the joint rate, and a stated pair of solo spans fills the tank — and the answer is a time, so the equation must be formed in rates and inverted back.'},
+  COMB_H_TEAM_SIZE: {band: 'hard', criteria: ['COMPOSED_INVERSION', 'CROSS_PART_INTEGRATION'], routine: [],
+    why: 'The team size is stated nowhere and sits inside two different products, over two spans with different team sizes, which must be brought onto one footing before it can be recovered.'},
 
   // --------------------------------------------------------------- relational
   REL_E_BETWEEN: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -316,6 +346,8 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Remainder modulo 7. One idea, whatever the size of the number.'},
   CAL_H_NESTED: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
     why: 'Offsets combine with signs and the result is read backwards; two ideas, both signposted.'},
+  CAL_H_CYCLE_MEET: {band: 'hard', criteria: ['CROSS_PART_INTEGRATION', 'STRATEGY_SELECTION'], routine: [],
+    why: 'Two independent cycles must be brought onto one footing before the weekday question can be asked, and neither the common multiple nor the modulo is signalled by the sentence.'},
 
   // -------------------------------------------------------------- odd_one_out
   ODD_E_MULT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -345,7 +377,11 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
   PL_M_DISC_MARK: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
     why: 'One discount then one markup, in the order stated.'},
   PL_H_CHAIN: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
-    why: 'Direct chained percentages then a comparison — named by the brief as not hard.'}
+    why: 'Direct chained percentages then a comparison — named by the brief as not hard.'},
+  PL_H_TWO_OUTCOMES: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'COMPOSED_INVERSION'], routine: [],
+    why: 'No price is stated at all; two hypothetical outcomes hold at once over the same unknown cost, and only together do they pin it.'},
+  PL_H_MARKUP_DISCOUNT: {band: 'hard', criteria: ['COMPOSED_INVERSION', 'STRATEGY_SELECTION'], routine: [],
+    why: 'A markup and a discount compose into one net factor and the cost sits behind that composition; the profit is given as an amount, so the factors must be combined before anything can be divided.'},
 });
 
 const BANDS = ['easy', 'medium', 'hard'];

@@ -12,7 +12,9 @@ export function generateAverages({difficulty, rng, seed, engineVersion, telemetr
     ['AVG_M_ADD_PAIR', addPairKnownAverage],
     ['AVG_M_REPLACE', replaceOne],
     ['AVG_H_COMB_ADD', combineThenAdd],
-    ['AVG_H_TARGET', missingValueForTarget]
+    ['AVG_H_TARGET', missingValueForTarget],
+    ['AVG_H_OVERLAP', overlappingSubsets],
+    ['AVG_H_SPLIT_SIZE', splitGroupSize]
   ])(ctx);
 }
 
@@ -418,5 +420,167 @@ function missingValueForTarget(ctx) {
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, reverseReasoning: 1, stageCount: 2, arithmeticBurden: 3},
     textParams: {derivedFromParams: [n + 1], essentialParams: ['count', 'currentAverage', 'targetAverage']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.4 — genuinely hard structures for this family.
+//
+// Routine averaging is what the brief rules out of hard, and all seven RC2.3
+// templates are that: reconstruct a total, adjust it, divide again. Neither of
+// the two below can be solved that way — in the first the subsets overlap, in
+// the second the group sizes are the unknowns.
+// ---------------------------------------------------------------------------
+
+/**
+ * CROSS_PART_INTEGRATION + STRATEGY_SELECTION.
+ *
+ * Two subsets that between them cover the whole set and share exactly one
+ * member. Adding their totals counts that member twice, and that double count IS
+ * the route to it — a move the sentence does not suggest.
+ */
+function overlappingSubsets(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 150; t++) {
+    // An odd count so the two halves of (count+1)/2 overlap in exactly one value.
+    const count = rng.pick([5, 7, 9, 11]);
+    const head = (count + 1) / 2;
+    const whole = rng.int(12, 30);
+    const headAvg = rng.int(8, 28);
+    const tailAvg = rng.int(8, 28);
+    const middle = head * headAvg + head * tailAvg - count * whole;
+    if (middle <= 0 || middle > 60) continue;
+    if (headAvg === tailAvg) continue;
+    // The shared value being the overall average makes "just answer the average"
+    // correct and the item stops measuring the overlap (Section 10).
+    if (middle === whole) continue;
+    found = {count, head, whole, headAvg, tailAvg, middle};
+    break;
+  }
+  if (!found) return resample(ctx, overlappingSubsets);
+  const {count, head, whole, headAvg, tailAvg, middle} = found;
+  const headSum = head * headAvg, tailSum = head * tailAvg, wholeSum = count * whole;
+  const correct = middle;
+  const params = {count, average: whole, subsetCount: head, headAverage: headAvg, tailAverage: tailAvg};
+
+  const distractors = usable(ctx, [
+    mk(whole, 'IGNORED_THE_OVERLAP', `المتوسط العام ${whole}`),
+    mk(headSum + tailSum - wholeSum + whole, 'COUNTED_THE_OVERLAP_TWICE', `${headSum} + ${tailSum} − ${wholeSum} + ${whole}`, 2),
+    mk((headAvg + tailAvg) / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${headAvg} + ${tailAvg}) ÷ 2`),
+    mk(Math.abs(headAvg - tailAvg), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(headAvg, tailAvg)} − ${Math.min(headAvg, tailAvg)}`),
+    mk(headSum + tailSum - wholeSum - whole, 'OFF_BY_ONE_STEP', `${headSum} + ${tailSum} − ${wholeSum} − ${whole}`, 2),
+    mk(headAvg, 'USED_GIVEN_VALUE_AS_ANSWER', `متوسط المجموعة الأولى ${headAvg}`),
+    mk(tailAvg, 'USED_GIVEN_VALUE_AS_ANSWER', `متوسط المجموعة الثانية ${tailAvg}`),
+    mk(wholeSum - headSum, 'IGNORED_THE_OVERLAP', `${wholeSum} − ${headSum}`, 0),
+    mk(wholeSum - tailSum, 'IGNORED_THE_OVERLAP', `${wholeSum} − ${tailSum}`, 0)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'AVG_H_OVERLAP',
+    subskill: 'قيمة مشتركة بين مجموعتين متداخلتين',
+    difficulty: 'hard',
+    question: `متوسط ${count} قيم مرتبة هو ${whole}. ومتوسط أول ${head} منها هو ${headAvg}، ومتوسط آخر ${head} منها هو ${tailAvg}. فما القيمة التي تقع في المنتصف؟`,
+    correct, distractors, format: v => num(v),
+    steps: [
+      `مجموع القيم كلها = ${count} × ${whole} = ${wholeSum}.`,
+      `مجموع المجموعة الأولى = ${head} × ${headAvg} = ${headSum}، ومجموع الثانية = ${head} × ${tailAvg} = ${tailSum}.`,
+      `المجموعتان تغطيان القيم كلها، لكن القيمة الوسطى تقع في كلتيهما فتُحسب مرتين: ${headSum} + ${tailSum} = ${headSum + tailSum}.`,
+      `إذن القيمة الوسطى = ${headSum + tailSum} − ${wholeSum} = ${correct}.`
+    ],
+    howToStart: 'اجمع مجموعي المجموعتين ولاحظ أي قيمة دخلت في الجمع مرتين.',
+    remember: 'عند تداخل مجموعتين، الفرق بين مجموعهما ومجموع الكل هو القيمة المشتركة.',
+    fastMethod: 'مجموع المجموعتين ناقص مجموع الكل يعطي القيمة المكررة مباشرة.',
+    estimatedSteps: 4, conceptTags: ['average', 'overlap', 'inclusion'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(add(mul(count, whole), X), add(mul(head, headAvg), mul(head, tailAvg)))]
+    },
+    askedUnknown: 'overlappingValue', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'OVERLAPPING_SUBSET_TOTALS', targetMisconception: 'IGNORED_THE_OVERLAP',
+      wrongMethodValue: whole
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, conditionCount: 2, equationSolving: 1, stageCount: 3, arithmeticBurden: 5},
+    textParams: {essentialParams: ['count', 'average', 'subsetCount', 'headAverage', 'tailAverage']}
+  });
+}
+
+/**
+ * SIMULTANEOUS_CONSTRAINTS + STRATEGY_SELECTION.
+ *
+ * Three averages and one count. The two group SIZES are the unknowns, and they
+ * are linked — knowing either gives the other — so neither average can be used
+ * until the pair is solved together.
+ */
+function splitGroupSize(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 150; t++) {
+    const count = rng.pick([10, 12, 15, 18, 20, 24]);
+    const lowAvg = rng.int(8, 18);
+    const highAvg = lowAvg + rng.pick([4, 5, 6, 8, 10]);
+    const first = rng.int(2, count - 2);
+    const totalNum = first * highAvg + (count - first) * lowAvg;
+    if (totalNum % count !== 0) continue;
+    const whole = totalNum / count;
+    if (whole === highAvg || whole === lowAvg) continue;
+    // At half the group the plain average of the two averages is correct, and
+    // the item stops measuring the weighting (Section 10).
+    if (2 * first === count) continue;
+    found = {count, lowAvg, highAvg, first, whole};
+    break;
+  }
+  if (!found) return resample(ctx, splitGroupSize);
+  const {count, lowAvg, highAvg, first, whole} = found;
+  const second = count - first;
+  const allLow = count * lowAvg;
+  const wholeSum = count * whole;
+  const gap = wholeSum - allLow;
+  const perMember = highAvg - lowAvg;
+  const correct = first;
+  const params = {count, average: whole, firstAverage: highAvg, secondAverage: lowAvg};
+
+  const distractors = usable(ctx, [
+    mk(second, 'ANSWERED_THE_OTHER_COMPONENT', `${count} − ${first}`, 3),
+    mk(count / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `${count} ÷ 2`),
+    mk(perMember, 'USED_DIFFERENCE_AS_ANSWER', `${highAvg} − ${lowAvg}`, 2),
+    mk(whole - lowAvg, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${whole} − ${lowAvg}`),
+    mk(count * (whole - lowAvg) / highAvg, 'WEIGHTED_BY_WRONG_QUANTITY', `${count} × (${whole} − ${lowAvg}) ÷ ${highAvg}`),
+    mk(count * (highAvg - whole) / perMember, 'SWAPPED_THE_TWO_UNKNOWNS', `${count} × (${highAvg} − ${whole}) ÷ ${perMember}`),
+    mk(first + 1, 'OFF_BY_ONE_STEP', `${gap} ÷ ${perMember} + 1`),
+    mk(first - 1, 'OFF_BY_ONE_STEP', `${gap} ÷ ${perMember} − 1`),
+    mk(gap / whole, 'WEIGHTED_BY_WRONG_QUANTITY', `${gap} ÷ ${whole}`),
+    mk(count * (whole - lowAvg) / whole, 'WEIGHTED_BY_WRONG_QUANTITY', `${count} × (${whole} − ${lowAvg}) ÷ ${whole}`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'AVG_H_SPLIT_SIZE',
+    subskill: 'حجم إحدى المجموعتين من ثلاثة متوسطات',
+    difficulty: 'hard',
+    question: `متوسط ${count} قيمة هو ${whole}. قُسمت القيم إلى مجموعتين: متوسط الأولى ${highAvg} ومتوسط الثانية ${lowAvg}. كم قيمة في المجموعة الأولى؟`,
+    correct, distractors, format: v => num(v),
+    steps: [
+      `مجموع القيم كلها = ${count} × ${whole} = ${wholeSum}.`,
+      `لو كانت القيم كلها في المجموعة الثانية لكان المجموع = ${count} × ${lowAvg} = ${allLow}.`,
+      `الفارق = ${wholeSum} − ${allLow} = ${gap}، وكل قيمة تنتقل إلى المجموعة الأولى تزيد المجموع بمقدار ${highAvg} − ${lowAvg} = ${perMember}.`,
+      `عدد قيم المجموعة الأولى = ${gap} ÷ ${perMember} = ${correct}.`
+    ],
+    howToStart: 'افترض أن القيم كلها في المجموعة ذات المتوسط الأقل ثم انقلها واحدة واحدة.',
+    remember: 'المتوسط العام يقع بين المتوسطين، وموضعه بينهما يحدد حجم كل مجموعة.',
+    fastMethod: 'الفارق عن الحالة الافتراضية مقسومًا على الفرق بين المتوسطين يعطي حجم المجموعة الأعلى.',
+    estimatedSteps: 4, conceptTags: ['average', 'weighted-mean', 'two-unknowns'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(add(mul(X, highAvg), mul(sub(count, X), lowAvg)), mul(count, whole))]
+    },
+    askedUnknown: 'firstGroupCount', stageCount: 3,
+    answerBounds: {between: [0, count]},
+    pedagogy: {
+      targetSkill: 'WEIGHTED_MEAN_INVERTED', targetMisconception: 'USED_ARITHMETIC_MEAN_OF_AVERAGES',
+      wrongMethodValue: count / 2
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, conditionCount: 2, equationSolving: 1, stageCount: 3, arithmeticBurden: 5},
+    textParams: {essentialParams: ['count', 'average', 'firstAverage', 'secondAverage']}
   });
 }

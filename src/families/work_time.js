@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool, unitWordKam} from './_shared.js';
 
 export function generateWorkTime({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'work_time', family_ar: 'العمال والزمن', category: 'العمال والزمن'};
@@ -13,7 +13,9 @@ export function generateWorkTime({difficulty, rng, seed, engineVersion, telemetr
     ['WORK_M_TARGET', targetDeadline],
     ['WORK_M_CHANGE', changeWorkers],
     ['WORK_H_TWO_STAGE', twoStageWorkers],
-    ['WORK_H_WORKERS_EFF', workersAndEfficiency]
+    ['WORK_H_WORKERS_EFF', workersAndEfficiency],
+    ['WORK_H_JOINT_SOLO', jointThenSoloTime],
+    ['WORK_H_EXTRA_WORKERS', extraWorkersSaveDays]
   ])(ctx);
 }
 
@@ -399,5 +401,162 @@ function workersAndEfficiency(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, stageCount: 3, arithmeticBurden: 4, dependencyDepth: 2},
     textParams: {essentialParams: ['workers', 'totalDays', 'workedDays', 'workersLeft', 'efficiencyPercent']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.4 — genuinely hard structures for this family.
+//
+// Every RC2.3 work_time template is worker-day accounting run forward: total,
+// done, remaining, divide. The two below are not. In the first the asked
+// quantity exists only as a reciprocal; in the second it sits inside a product
+// that has to be conserved across a changed span.
+// ---------------------------------------------------------------------------
+
+/**
+ * COMPOSED_INVERSION + SIMULTANEOUS_CONSTRAINTS.
+ *
+ * Times do not add and do not subtract — rates do. The joint time and one solo
+ * time are given, and the other solo time is reachable only by converting both
+ * into rates, subtracting there, and inverting back. Nothing in the sentence
+ * signals that the arithmetic has to leave the units it is stated in.
+ */
+function jointThenSoloTime(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 150; t++) {
+    const solo = rng.pick([10, 12, 15, 18, 20, 24, 30]);
+    const other = rng.pick([12, 15, 20, 24, 30, 36, 40, 45, 60]).valueOf();
+    if (other === solo) continue;
+    // The joint time is a consequence of the two solo rates, never a third pick.
+    const jointNum = solo * other;
+    const jointDen = solo + other;
+    if (jointNum % jointDen !== 0) continue;
+    const joint = jointNum / jointDen;
+    if (joint >= solo || joint >= other) continue;
+    // The slip this item teaches against is subtracting the times. Where that
+    // lands on the key the item measures nothing (Section 10).
+    if (solo - joint === other) continue;
+    found = {solo, other, joint};
+    break;
+  }
+  if (!found) return resample(ctx, jointThenSoloTime);
+  const {solo, other, joint} = found;
+  const correct = other;
+  const params = {jointDays: joint, firstSoloDays: solo};
+
+  const distractors = usable(ctx, [
+    mk(solo - joint, 'SUBTRACTED_TIMES_INSTEAD_OF_RATES', `${solo} − ${joint}`, 2),
+    mk(solo + joint, 'ADDED_TIMES_INSTEAD_OF_RATES', `${solo} + ${joint}`),
+    mk(joint, 'USED_JOINT_TIME_AS_SOLO', `زمن العمل المشترك ${joint}`),
+    mk(solo, 'USED_GIVEN_VALUE_AS_ANSWER', `زمن الأول وحده ${solo}`),
+    mk(2 * joint, 'APPLIED_STEP_TWICE', `${joint} × 2`),
+    mk(solo * joint, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${solo} × ${joint}`, 2),
+    mk(solo / 2, 'MISREAD_THE_STEP', `${solo} ÷ 2`),
+    mk(solo + other - joint, 'ADDED_TIMES_INSTEAD_OF_RATES', `${solo} + ${other} − ${joint}`),
+    mk(joint * 2 + solo, 'APPLIED_STEP_TWICE', `${joint} × 2 + ${solo}`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'WORK_H_JOINT_SOLO',
+    subskill: 'زمن الطرف الثاني من الزمن المشترك وزمن الأول',
+    difficulty: 'hard',
+    question: `ينجز عاملان العمل نفسه معًا في ${u(joint, 'day', 'oblique')}. ولو عمل الأول وحده لأنجزه في ${u(solo, 'day', 'oblique')}. كم ${unitWordKam('day')} يحتاج الثاني وحده لإنجاز العمل نفسه؟`,
+    correct, distractors, format: unitFormat('day'),
+    steps: [
+      `نعمل بالمعدلات لا بالأزمنة: ما ينجزه الاثنان معًا في اليوم = 1 ÷ ${joint}.`,
+      `ما ينجزه الأول وحده في اليوم = 1 ÷ ${solo}.`,
+      `معدل الثاني = 1 ÷ ${joint} − 1 ÷ ${solo}، وبتوحيد المقامات على ${solo} × ${joint} = ${solo * joint} يصبح البسط ${solo} − ${joint} = ${solo - joint}.`,
+      `زمن الثاني وحده = ${solo * joint} ÷ ${solo - joint} = ${correct}.`
+    ],
+    howToStart: 'حوّل كل زمن إلى معدل يومي، واطرح هناك، ثم اعكس الناتج للعودة إلى الزمن.',
+    remember: 'الأزمنة لا تُطرح ولا تُجمع؛ المعدلات هي التي تفعل.',
+    fastMethod: `اضرب الزمنين المعلومين واقسم على فرقهما: ${solo} × ${joint} ÷ (${solo} − ${joint}).`,
+    estimatedSteps: 4, conceptTags: ['work-rate', 'reciprocal', 'inverse'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, sub(solo, joint)), mul(solo, joint))]
+    },
+    askedUnknown: 'secondSoloDays', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'RATES_ADD_TIMES_DO_NOT', targetMisconception: 'SUBTRACTED_TIMES_INSTEAD_OF_RATES',
+      wrongMethodValue: solo - joint
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, reverseReasoning: 1, equationSolving: 1, stageCount: 3, arithmeticBurden: 4},
+    textParams: {essentialParams: ['jointDays', 'firstSoloDays']}
+  });
+}
+
+/**
+ * COMPOSED_INVERSION + STRATEGY_SELECTION.
+ *
+ * How many workers were added is never stated and cannot be read off anything;
+ * it is recovered by holding the worker-day product constant across a span that
+ * changed. The sentence offers no route — the conservation is the insight.
+ */
+function extraWorkersSaveDays(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 150; t++) {
+    const workers = rng.pick([8, 10, 12, 15, 16, 18, 20]);
+    const days = rng.pick([12, 15, 16, 18, 20, 24, 30]);
+    const saved = rng.pick([2, 3, 4, 5, 6]);
+    if (saved >= days) continue;
+    const totalWork = workers * days;
+    const newDays = days - saved;
+    if (totalWork % newDays !== 0) continue;
+    const extra = totalWork / newDays - workers;
+    if (extra <= 0 || extra > workers) continue;
+    // The slip is dividing the saved days into the crew; where that coincides
+    // with the answer the item stops separating the two (Section 10).
+    if (extra === saved) continue;
+    found = {workers, days, saved, totalWork, newDays, extra};
+    break;
+  }
+  if (!found) return resample(ctx, extraWorkersSaveDays);
+  const {workers, days, saved, totalWork, newDays, extra} = found;
+  const newCrew = workers + extra;
+  const correct = extra;
+  const params = {workers, plannedDays: days, daysSaved: saved};
+
+  const distractors = usable(ctx, [
+    mk(newCrew, 'USED_NEW_TOTAL', `عدد العمال بعد الزيادة ${newCrew}`, 3),
+    mk(saved, 'USED_GIVEN_VALUE_AS_ANSWER', `عدد الأيام الموفَّرة ${saved}`),
+    mk(newDays, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${days} − ${saved}`, 1),
+    mk(workers, 'USED_ORIGINAL_TOTAL', `عدد العمال قبل الزيادة ${workers}`),
+    mk(workers * saved / days, 'REVERSED_INVERSE_PROPORTION', `${workers} × ${saved} ÷ ${days}`),
+    mk(workers + saved, 'ADDED_INSTEAD_OF_SCALING', `${workers} + ${saved}`),
+    mk(totalWork / days + saved, 'ADDED_INSTEAD_OF_SCALING', `${totalWork} ÷ ${days} + ${saved}`),
+    mk(2 * extra, 'APPLIED_STEP_TWICE', `${extra} × 2`),
+    mk(workers / saved, 'REVERSED_INVERSE_PROPORTION', `${workers} ÷ ${saved}`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'WORK_H_EXTRA_WORKERS',
+    subskill: 'عدد العمال الإضافيين من توفير في المدة',
+    difficulty: 'hard',
+    question: `يستطيع ${u(workers, 'worker')} إنجاز عمل في ${u(days, 'day', 'oblique')}. وللانتهاء قبل الموعد بـ${u(saved, 'day', 'oblique')} أُضيف عدد من العمال بالكفاءة نفسها. كم عاملًا أُضيف؟`,
+    correct, distractors, format: unitFormat('worker'),
+    steps: [
+      `العمل الكامل بوحدة عامل-يوم = ${workers} × ${days} = ${totalWork}.`,
+      `المدة الجديدة = ${days} − ${saved} = ${newDays}.`,
+      `العمل نفسه لم يتغير، فعدد العمال المطلوب = ${totalWork} ÷ ${newDays} = ${newCrew}.`,
+      `عدد العمال المضافين = ${newCrew} − ${workers} = ${correct}.`
+    ],
+    howToStart: 'احسب العمل الكامل بوحدة عامل-يوم، فهو الشيء الوحيد الذي لم يتغير.',
+    remember: 'عدد العمال والزمن يتناسبان عكسيًا ما دام العمل نفسه.',
+    fastMethod: `اقسم العمل الكامل على المدة الجديدة ثم اطرح العدد الأصلي.`,
+    estimatedSteps: 4, conceptTags: ['work-rate', 'inverse', 'conservation'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(add(X, workers), sub(days, saved)), mul(workers, days))]
+    },
+    askedUnknown: 'extraWorkers', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'CONSERVED_WORKER_DAYS', targetMisconception: 'USED_NEW_TOTAL',
+      wrongMethodValue: newCrew
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, reverseReasoning: 1, equationSolving: 1, stageCount: 3, arithmeticBurden: 4},
+    textParams: {essentialParams: ['workers', 'plannedDays', 'daysSaved']}
   });
 }

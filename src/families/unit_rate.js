@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine, resample, riseByPercentPhrase, bandPool} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool} from './_shared.js';
 
 export function generateUnitRate({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'unit_rate', family_ar: 'المعدل الوحدوي', category: 'المعدل الوحدوي'};
@@ -12,7 +12,8 @@ export function generateUnitRate({difficulty, rng, seed, engineVersion, telemetr
     ['RATE_M_SCALE', rateThenNewQuantity],
     ['RATE_M_PERCENT', rateThenPercent],
     ['RATE_H_TARGET', rateChangeTarget],
-    ['RATE_H_TWO_PHASE', twoPhaseRate]
+    ['RATE_H_TWO_PHASE', twoPhaseRate],
+    ['RATE_H_RATE_FROM_GAP', rateFromTimeSaved]
   ])(ctx);
 }
 
@@ -317,5 +318,86 @@ function twoPhaseRate(ctx) {
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 4},
     textParams: {essentialParams: ['firstRate', 'firstHours', 'increasePct', 'secondHours']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.4 — a genuinely hard structure for this family.
+//
+// The other unit_rate templates state a rate or hand one over after a division.
+// Here the rate is the unknown and it appears in two different times whose
+// DIFFERENCE is what is given, so it cannot be isolated by any single division.
+// ---------------------------------------------------------------------------
+
+/**
+ * SIMULTANEOUS_CONSTRAINTS + STRATEGY_SELECTION.
+ *
+ * The relation is r(r + g) = T·g / k. Nothing divides out; the solver has to
+ * recognise a product of two numbers a known distance apart and search the
+ * factor pairs. That search is the item.
+ */
+function rateFromTimeSaved(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 200; t++) {
+    const rate = rng.pick([10, 12, 15, 20, 24, 25, 30, 40]);
+    const bump = rng.pick([2, 4, 5, 6, 10, 15, 20]);
+    const saved = rng.pick([1, 2, 3, 4]);
+    const product = rate * (rate + bump);
+    const totalNum = product * saved;
+    if (totalNum % bump !== 0) continue;
+    const total = totalNum / bump;
+    if (total % rate !== 0 || total % (rate + bump) !== 0) continue;
+    const oldTime = total / rate, newTime = total / (rate + bump);
+    if (oldTime - newTime !== saved) continue;
+    if (oldTime > 40 || total > 4000) continue;
+    found = {rate, bump, saved, total, product, oldTime, newTime};
+    break;
+  }
+  if (!found) return resample(ctx, rateFromTimeSaved);
+  const {rate, bump, saved, total, product, oldTime, newTime} = found;
+  const correct = rate;
+  const params = {totalUnits: total, rateIncrease: bump, hoursSaved: saved};
+
+  const distractors = usable(ctx, [
+    mk(rate + bump, 'USED_THE_LARGER_FACTOR', `${rate} + ${bump}`, 3),
+    mk(total / saved, 'SOLVED_ONE_CONDITION_ONLY', `${total} ÷ ${saved}`),
+    mk(total / oldTime + bump / 2, 'MISREAD_THE_STEP', `${total} ÷ ${oldTime} + ${bump} ÷ 2`),
+    mk(2 * rate + bump, 'USED_SUM_OF_FACTOR_PAIR', `${rate} + ${rate + bump}`, 3),
+    mk(bump, 'USED_GIVEN_VALUE_AS_ANSWER', `الزيادة المعطاة ${bump}`),
+    mk(oldTime, 'MISREAD_THE_STEP', `${total} ÷ ${rate}`),
+    mk(product / bump, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${product} ÷ ${bump}`, 2),
+    mk(rate - bump, 'APPLIED_OPERATION_IN_REVERSE', `${rate} − ${bump}`),
+    mk(rate + 2 * bump, 'APPLIED_STEP_TWICE', `${rate} + ${bump} × 2`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'RATE_H_RATE_FROM_GAP',
+    subskill: 'المعدل الأصلي من توفير في الزمن',
+    difficulty: 'hard',
+    question: `ينجز جهاز ${u(total, 'unit')} بمعدل ثابت. ولو زاد معدله بمقدار ${bump} وحدة/ساعة لأنجز العمل نفسه في ${u(saved, 'hour', 'oblique')} أقل. فما معدله الأصلي؟`,
+    correct, distractors, format: unitFormat('unit'),
+    steps: [
+      `نفرض المعدل الأصلي = س، فالزمن الأول = ${total} ÷ س، والزمن بعد الزيادة = ${total} ÷ (س + ${bump})، والفرق بينهما ${saved}.`,
+      `بضرب طرفي المعادلة في س وفي (س + ${bump}) تصبح: س × (س + ${bump}) = ${total} × ${bump} ÷ ${saved}.`,
+      `نحسب الطرف الأيمن: ${total} × ${bump} = ${total * bump}، ثم ${total * bump} ÷ ${saved} = ${product}.`,
+      `نبحث عن عددين فرقهما ${bump}، وحاصل ضربهما ${product}؛ وهما ${rate} و${rate + bump}، لأن ${rate} × ${rate + bump} = ${product}.`,
+      `إذن المعدل الأصلي = ${correct}.`
+    ],
+    howToStart: 'اكتب الزمنين بدلالة المعدل المجهول، ثم وحّد المقامات للتخلص من القسمة.',
+    remember: 'عندما يظهر المجهول في مقامين، اضرب طرفي المعادلة فيهما معًا.',
+    fastMethod: 'حاصل الضرب معلوم والفرق معلوم، فابحث عن زوج العوامل مباشرة.',
+    estimatedSteps: 5, conceptTags: ['unit-rate', 'inverse', 'factor-pair'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, add(X, bump), saved), mul(total, bump))]
+    },
+    askedUnknown: 'originalRate', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'RATE_FROM_TIME_DIFFERENCE', targetMisconception: 'USED_THE_LARGER_FACTOR',
+      wrongMethodValue: rate + bump
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, reverseReasoning: 1, stageCount: 3, arithmeticBurden: 5},
+    textParams: {essentialParams: ['totalUnits', 'rateIncrease', 'hoursSaved']}
   });
 }

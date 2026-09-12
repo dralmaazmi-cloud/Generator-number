@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool, unitWordKam} from './_shared.js';
 
 export function generatePercentages({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'percentages', family_ar: 'النسب المئوية', category: 'النسب المئوية'};
@@ -13,7 +13,9 @@ export function generatePercentages({difficulty, rng, seed, engineVersion, telem
     ['PCT_M_REMAIN', remainingChain],
     ['PCT_H_CHAIN_VALUE', successiveWithTarget],
     ['PCT_M_SUCCESSIVE', successiveChange],
-    ['PCT_H_REVERSE_CHAIN', reverseSuccessive]
+    ['PCT_H_REVERSE_CHAIN', reverseSuccessive],
+    ['PCT_H_MIXTURE', mixtureConcentration],
+    ['PCT_H_TWO_GROUP_CHANGE', twoGroupOppositeChange]
   ])(ctx);
 }
 
@@ -402,5 +404,191 @@ function successiveWithTarget(ctx) {
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 3},
     textParams: {essentialParams: ['originalValue', 'discountPercent', 'increasePercent']}
+  });
+}
+
+
+// ---------------------------------------------------------------------------
+// RC2.4 — genuinely hard structures for this family.
+//
+// RC2.3 left percentages with no hard template at all, and correctly: every
+// structure it held was a percentage applied, chained or inverted once, in the
+// direction the sentence states. The two below are not that. Neither can be
+// started by evaluating any given on its own.
+// ---------------------------------------------------------------------------
+
+/**
+ * SIMULTANEOUS_CONSTRAINTS + CROSS_PART_INTEGRATION.
+ *
+ * Two solutions of different strength make a third of a stated strength. The
+ * amount of each is unknown, and the two conditions — the volumes sum to the
+ * total, and the dissolved amounts sum to the mixture's — hold at once. Nothing
+ * can be computed until they are combined.
+ */
+function mixtureConcentration(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 150; t++) {
+    const p1 = rng.pick([10, 15, 20, 25, 30]);
+    const p2 = rng.pick([40, 45, 50, 60, 75]);
+    const total = rng.pick([20, 24, 30, 40, 50, 60]);
+    const x = rng.int(2, total - 2);
+    // The mixture strength is a consequence of the draw, never a separate pick,
+    // so the three amounts cannot contradict each other.
+    const pmNum = x * p1 + (total - x) * p2;
+    if (pmNum % total !== 0) continue;
+    const pm = pmNum / total;
+    if (pm === p1 || pm === p2) continue;
+    // Section 10: at exactly half the volume the mixture strength IS the plain
+    // average, so «halve the total» — the very slip this item exists to catch —
+    // lands on the key and the item measures nothing. Refused at the draw
+    // rather than at validation, where it cost a fifth of this template's
+    // attempts. The rejection is on the wrong method's value, never the key's.
+    if (2 * x === total) continue;
+    // Every amount the explanation states has to be writable as an exact
+    // quantity, or the steps announce a number no learner would produce.
+    if ((total * pm) % 100 !== 0 || (total * p2) % 100 !== 0 || (total * p1) % 100 !== 0) continue;
+    found = {p1, p2, total, x, pm};
+    break;
+  }
+  if (!found) return resample(ctx, mixtureConcentration);
+  const {p1, p2, total, x, pm} = found;
+
+  const mixAmount = total * pm / 100;
+  const allSecond = total * p2 / 100;
+  const allFirst = total * p1 / 100;
+  const gap = allSecond - mixAmount;
+  const perLitre = (p2 - p1) / 100;
+  const correct = x;
+  const params = {firstPercent: p1, secondPercent: p2, totalVolume: total, mixturePercent: pm};
+
+  const distractors = usable(ctx, [
+    mk(total - x, 'ANSWERED_THE_OTHER_COMPONENT', `${total} − ${x}`, 5),
+    mk(total / 2, 'AVERAGED_THE_TWO_CONCENTRATIONS', `${total} ÷ 2`),
+    mk(mixAmount, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} × ${pm} ÷ 100`, 0),
+    mk(allFirst, 'APPLIED_PERCENT_TO_WRONG_TOTAL', `${total} × ${p1} ÷ 100`),
+    mk(total - mixAmount, 'MISREAD_THE_STEP', `${total} − ${total} × ${pm} ÷ 100`),
+    mk(total * (p2 - pm) / p2, 'SOLVED_ONE_CONDITION_ONLY', `${total} × (${p2} − ${pm}) ÷ ${p2}`),
+    mk(gap, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${allSecond} − ${mixAmount}`, 2),
+    mk(mixAmount / (p1 / 100), 'SOLVED_ONE_CONDITION_ONLY', `${mixAmount} ÷ (${p1} ÷ 100)`),
+    mk(total * (pm - p1) / p2, 'SWAPPED_THE_TWO_UNKNOWNS', `${total} × (${pm} − ${p1}) ÷ ${p2}`),
+    mk(total - gap, 'MISREAD_THE_STEP', `${total} − ${num(gap)}`, 2),
+    mk(allFirst + gap, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${num(allFirst)} + ${num(gap)}`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'PCT_H_MIXTURE',
+    subskill: 'خلط محلولين بتركيزين مختلفين',
+    difficulty: 'hard',
+    question: `خُلط محلول تركيزه ${p1}% مع محلول آخر تركيزه ${p2}%، فنتج ${u(total, 'liter')} من مزيج تركيزه ${pm}%. كم ${unitWordKam('liter')} من المحلول الأول استُخدم؟`,
+    correct, distractors, format: unitFormat('liter'),
+    steps: [
+      `كمية المادة الذائبة في المزيج = ${total} × ${pm} ÷ 100 = ${num(mixAmount)}.`,
+      `لو كان المحلولان كلاهما بتركيز ${p2}% لبلغت المادة = ${total} × ${p2} ÷ 100 = ${num(allSecond)}.`,
+      `الفارق بين الحالتين = ${num(allSecond)} − ${num(mixAmount)} = ${num(gap)}.`,
+      `كل لتر من المحلول الأول بدل الثاني يقلل المادة بمقدار (${p2} − ${p1}) ÷ 100 = ${num(perLitre)}.`,
+      `كمية المحلول الأول = ${num(gap)} ÷ ${num(perLitre)} = ${correct}.`
+    ],
+    howToStart: 'ابدأ من افتراض أن الكمية كلها من المحلول الأقوى، ثم استبدل لترًا بلتر حتى يصل التركيز إلى المطلوب.',
+    remember: 'تركيز المزيج ليس متوسط التركيزين إلا إذا تساوت الكميتان.',
+    fastMethod: 'الفارق في المادة مقسومًا على الفرق بين التركيزين يعطي كمية المحلول الأضعف مباشرة.',
+    estimatedSteps: 5, conceptTags: ['percentage', 'mixture', 'weighted-mean'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(add(mul(X, p1), mul(sub(total, X), p2)), mul(total, pm))]
+    },
+    askedUnknown: 'firstComponentVolume', stageCount: 3,
+    // Givens-derived: a part of the mixture cannot exceed the mixture.
+    answerBounds: {between: [0, total]},
+    pedagogy: {
+      targetSkill: 'MIXTURE_WEIGHTED_MEAN', targetMisconception: 'AVERAGED_THE_TWO_CONCENTRATIONS',
+      wrongMethodValue: total / 2,
+      degenerateWhen: [{when: pm * 2 === p1 + p2, note: 'the mixture strength is the plain average, so halving the volume is correct'}]
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, stageCount: 3, arithmeticBurden: 5},
+    textParams: {essentialParams: ['firstPercent', 'secondPercent', 'totalVolume', 'mixturePercent']}
+  });
+}
+
+/**
+ * SIMULTANEOUS_CONSTRAINTS + CROSS_PART_INTEGRATION.
+ *
+ * One group rises and the other falls, and only the two totals are given. The
+ * split is what is asked for, and neither percentage can be applied until it is
+ * known — so the two conditions have to be carried together.
+ */
+function twoGroupOppositeChange(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 150; t++) {
+    const rise = rng.pick([10, 15, 20, 25, 40, 50]);
+    const fall = rng.pick([5, 10, 20, 25, 30]);
+    const total = rng.pick([200, 240, 300, 360, 400, 500]);
+    const first = rng.int(2, Math.floor(total / 20) - 1) * 10;
+    const second = total - first;
+    if (second <= 0) continue;
+    if ((first * rise) % 100 !== 0 || (second * fall) % 100 !== 0) continue;
+    const newTotal = total + first * rise / 100 - second * fall / 100;
+    if (!Number.isInteger(newTotal) || newTotal === total || newTotal <= 0) continue;
+    // Section 10: at half the total, "just halve it" lands on the key and the
+    // item stops measuring the two-condition reasoning it exists for. Refused at
+    // the draw, on the wrong method's value rather than the key's.
+    if (2 * first === total) continue;
+    if (total - total * fall / 100 === first) continue;
+    found = {rise, fall, total, first, second, newTotal};
+    break;
+  }
+  if (!found) return resample(ctx, twoGroupOppositeChange);
+  const {rise, fall, total, first, second, newTotal} = found;
+
+  const ifAllFell = total - total * fall / 100;
+  const gap = newTotal - ifAllFell;
+  const perUnit = (rise + fall) / 100;
+  const correct = first;
+  const params = {total, risePercent: rise, fallPercent: fall, newTotal};
+
+  const distractors = usable(ctx, [
+    mk(second, 'ANSWERED_THE_OTHER_COMPONENT', `${total} − ${first}`, 4),
+    mk(total / 2, 'SOLVED_ONE_CONDITION_ONLY', `${total} ÷ 2`),
+    mk(newTotal - total, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${newTotal} − ${total}`),
+    mk(ifAllFell, 'APPLIED_ONE_CHANGE_TO_THE_WHOLE', `${total} − ${total} × ${fall} ÷ 100`, 0),
+    mk(total + total * rise / 100, 'APPLIED_ONE_CHANGE_TO_THE_WHOLE', `${total} + ${total} × ${rise} ÷ 100`),
+    mk(gap, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${newTotal} − ${num(ifAllFell)}`, 1),
+    mk(first + first * rise / 100, 'USED_NEW_TOTAL', `${first} + ${first} × ${rise} ÷ 100`, 4),
+    mk(total * rise / (rise + fall), 'SOLVED_ONE_CONDITION_ONLY', `${total} × ${rise} ÷ (${rise} + ${fall})`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'PCT_H_TWO_GROUP_CHANGE',
+    subskill: 'مجموعتان تتغيران في اتجاهين متضادين',
+    difficulty: 'hard',
+    question: `في مؤسسة قسمان، مجموع أفرادهما ${u(total, 'person')}. ارتفع عدد أفراد القسم الأول بنسبة ${rise}% وانخفض عدد أفراد القسم الثاني بنسبة ${fall}%، فأصبح المجموع ${u(newTotal, 'person')}. كم كان عدد أفراد القسم الأول؟`,
+    correct, distractors, format: unitFormat('person'),
+    steps: [
+      `لو انخفض العدد كله بنسبة ${fall}% لأصبح المجموع = ${total} − ${total} × ${fall} ÷ 100 = ${num(ifAllFell)}.`,
+      `المجموع الفعلي أكبر من ذلك بمقدار ${newTotal} − ${num(ifAllFell)} = ${num(gap)}.`,
+      `كل فرد في القسم الأول بدل الثاني يزيد المجموع بمقدار (${rise} + ${fall}) ÷ 100 = ${num(perUnit)}.`,
+      `عدد أفراد القسم الأول = ${num(gap)} ÷ ${num(perUnit)} = ${correct}.`,
+      `وللتأكد: القسم الثاني = ${total} − ${correct} = ${second}.`
+    ],
+    howToStart: 'افترض أن التغير كله كان في اتجاه واحد، ثم احسب الفارق الذي يحدثه نقل فرد من قسم إلى آخر.',
+    remember: 'عند تغيرين متضادين لا يكفي أي قسم وحده؛ الشرطان يحددان التقسيم معًا.',
+    fastMethod: 'الفارق عن الحالة الافتراضية مقسومًا على مجموع النسبتين يعطي حجم القسم المرتفع.',
+    estimatedSteps: 4, conceptTags: ['percentage', 'two-group', 'weighted-mean'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(
+        add(mul(X, 100 + rise), mul(sub(total, X), 100 - fall)),
+        mul(newTotal, 100)
+      )]
+    },
+    askedUnknown: 'firstGroupSize', stageCount: 3,
+    answerBounds: {between: [0, total]},
+    pedagogy: {
+      targetSkill: 'TWO_GROUP_OPPOSITE_CHANGE', targetMisconception: 'APPLIED_ONE_CHANGE_TO_THE_WHOLE',
+      wrongMethodValue: ifAllFell
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, stageCount: 3, arithmeticBurden: 5},
+    textParams: {essentialParams: ['total', 'risePercent', 'fallPercent', 'newTotal']}
   });
 }

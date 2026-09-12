@@ -136,7 +136,37 @@ export const MISCONCEPTIONS = Object.freeze({
   SUBTRACTED_INSTEAD_OF_ADDED: 'طرحت حيث يقتضي الحل الجمع.',
   OFF_BY_ONE_STEP: 'زدت أو نقصت خطوة واحدة عن العدد الصحيح من الخطوات.',
   SHIFTED_WRONG_DIRECTION: 'تحركت في الاتجاه المعاكس على محور الزمن.',
-  IGNORED_NET_OFFSET: 'استخدمت إحدى الإزاحتين فقط ولم تجمعهما في إزاحة صافية.'
+  IGNORED_NET_OFFSET: 'استخدمت إحدى الإزاحتين فقط ولم تجمعهما في إزاحة صافية.',
+
+  // --- RC2.4: slips on the reasoning paths the new HARD templates open ---
+  //
+  // Each of these is a mistake a learner actually makes on a structure that did
+  // not exist before this release, so none of them could have been reused from
+  // above. They are named for what the learner did, not for the value produced.
+  AVERAGED_THE_TWO_CONCENTRATIONS: 'أخذت متوسط التركيزين مباشرة، وهو لا يصح إلا إذا تساوت الكميتان.',
+  ANSWERED_THE_OTHER_COMPONENT: 'حسبت كمية المكوّن الآخر بدل المكوّن المطلوب.',
+  APPLIED_ONE_CHANGE_TO_THE_WHOLE: 'طبّقت تغير إحدى المجموعتين على المجموع كله.',
+  SUBTRACTED_TIMES_INSTEAD_OF_RATES: 'طرحت الزمنين مباشرة، والصحيح أن تطرح المعدلين ثم تعكس الناتج.',
+  ADDED_TIMES_INSTEAD_OF_RATES: 'جمعت الزمنين مباشرة، والصحيح أن تجمع المعدلين ثم تعكس الناتج.',
+  USED_JOINT_TIME_AS_SOLO: 'استخدمت زمن العمل المشترك على أنه زمن أحد الطرفين وحده.',
+  SOLVED_ONE_CONDITION_ONLY: 'استخدمت إحدى الحالتين وأهملت الأخرى، والحالتان معًا هما ما يحدد القيمة.',
+  SWAPPED_THE_TWO_UNKNOWNS: 'أوجدت قيمة المجهول الآخر بدل المجهول المطلوب.',
+  COUNTED_THE_OVERLAP_TWICE: 'جمعت المجموعتين دون طرح القيمة المشتركة بينهما، فحُسبت مرتين.',
+  IGNORED_THE_OVERLAP: 'تعاملت مع المجموعتين كأنهما منفصلتان رغم وجود قيمة مشتركة.',
+  USED_THE_GAP_AS_COST: 'استخدمت الفرق بين السعرين على أنه التكلفة نفسها.',
+  ADDED_MARKUP_AND_DISCOUNT: 'جمعت نسبة الزيادة ونسبة الخصم بدل ضرب معامليهما.',
+  USED_LCM_AS_THE_ANSWER: 'توقفت عند عدد الأيام بين اللقاءين ولم تحوّله إلى يوم من أيام الأسبوع.',
+  USED_SUM_OF_CYCLES: 'جمعت طولَي الدورتين بدل إيجاد المضاعف المشترك الأصغر.',
+  USED_ONE_CYCLE_ONLY: 'استخدمت إحدى الدورتين وحدها، واللقاء يحتاج أن تكتمل الدورتان معًا.',
+  IGNORED_THE_TEAM_CHANGE: 'حسبت المدة كلها بعدد الأفراد الأول وأهملت انضمام فرد جديد.',
+  USED_PLANNED_OUTPUT: 'استخدمت الإنتاج المخطط بدل الإنتاج الفعلي.',
+  USED_THE_SHORTFALL_AS_TIME: 'استخدمت مقدار النقص في الإنتاج على أنه زمن.',
+  USED_SUM_OF_FACTOR_PAIR: 'جمعت عاملَي الحاصل بدل اختيار العامل الذي يمثل المعدل المطلوب.',
+  USED_THE_LARGER_FACTOR: 'أخذت المعدل بعد الزيادة بدل المعدل الأصلي.',
+  USED_DIGITS_AS_THE_STEP: 'استخدمت أرقام الحد نفسه بدل مجموعها.',
+  USED_POSITION_AS_THE_STEP: 'أضفت رقم الموضع بدل الضرب فيه.',
+  DIVIDED_TOTAL_BY_PERSON_COUNT: 'قسمت المجموع على عدد الأشخاص وتعاملت مع الناتج كأنه عمر أحدهم.',
+  USED_THE_MIDDLE_MEMBER: 'أجبت بعمر الفرد الأوسط بدل الفرد المطلوب.'
 });
 
 export const MISCONCEPTION_IDS = Object.freeze(Object.keys(MISCONCEPTIONS));

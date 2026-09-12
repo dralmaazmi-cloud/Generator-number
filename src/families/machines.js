@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool} from './_shared.js';
 
 export function generateMachines({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'machines', family_ar: 'الآلات والإنتاج', category: 'الآلات والإنتاج'};
@@ -13,7 +13,9 @@ export function generateMachines({difficulty, rng, seed, engineVersion, telemetr
     ['MACH_M_NEW_FAST', newMachineFaster],
     ['MACH_M_SUBSET_UP', subsetUpgrade],
     ['MACH_H_TWO_TYPES', twoTypesCombined],
-    ['MACH_H_STAGE_UP', stageChange]
+    ['MACH_H_STAGE_UP', stageChange],
+    ['MACH_H_TWO_CONFIG', twoConfigurations],
+    ['MACH_H_STOPPAGE_TIME', stoppageTime]
   ])(ctx);
 }
 
@@ -392,5 +394,179 @@ function stageChange(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, stageCount: 3, arithmeticBurden: 5, dependencyDepth: 2},
     textParams: {essentialParams: ['machines', 'hourlyRate', 'firstHours', 'upgradePercent', 'secondHours']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.4 — genuinely hard structures for this family.
+//
+// RC2.3 left machines with nothing above medium, correctly: machine-hour
+// accounting forward is what all seven of its templates did. Neither of the two
+// below can be started by evaluating a given.
+// ---------------------------------------------------------------------------
+
+/**
+ * SIMULTANEOUS_CONSTRAINTS + CROSS_PART_INTEGRATION.
+ *
+ * Two mixed groups, two totals, and neither machine's rate stated. No single
+ * sentence yields a rate; the two have to be brought onto one footing and one
+ * unknown eliminated before anything is computable.
+ */
+function twoConfigurations(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 200; t++) {
+    const rateA = rng.pick([12, 15, 18, 20, 24, 25, 30]);
+    const rateB = rng.pick([10, 14, 16, 20, 22, 28, 35]);
+    if (rateA === rateB) continue;
+    const a = rng.int(2, 5), b = rng.int(1, 4);
+    const c = rng.int(1, 5), d = rng.int(2, 5);
+    // The determinant is kept positive so the elimination step and the option
+    // derived from it both read as plain subtractions. A negative one is
+    // arithmetically fine and presentationally poor, and it made the
+    // determinant option state «2 × 2 − 5 × 3» beside the value 11.
+    const det = a * d - c * b;
+    if (det <= 0) continue;
+    // A configuration that is a multiple of the other states one fact twice.
+    if (a * d === c * b) continue;
+    if (a === c && b === d) continue;
+    // Equal second-type counts make the elimination multiply both sides by the
+    // same number, which is a step that does no work.
+    if (b === d) continue;
+    const out1 = a * rateA + b * rateB;
+    const out2 = c * rateA + d * rateB;
+    if (out1 === out2) continue;
+    if ((out1 * d - out2 * b) % det !== 0) continue;
+    found = {rateA, rateB, a, b, c, d, out1, out2, det};
+    break;
+  }
+  if (!found) return resample(ctx, twoConfigurations);
+  const {rateA, rateB, a, b, c, d, out1, out2, det} = found;
+  const correct = rateA;
+  const params = {countFirstA: a, countSecondA: b, outputA: out1, countFirstB: c, countSecondB: d, outputB: out2};
+
+  const lhs = out1 * d - out2 * b;
+  const distractors = usable(ctx, [
+    // Every derivation states the arithmetic that produces the value exactly.
+    // Rounding one to make it land on a tidy number would make the feedback say
+    // «you got 18, which is 88 ÷ 5» — a false sentence about the learner's own
+    // work. `usable` drops any value that needs more precision than the answer
+    // format shows.
+    mk(rateB, 'SWAPPED_THE_TWO_UNKNOWNS', `معدل النوع الثاني ${rateB}`, 3),
+    mk(out1 / (a + b), 'SOLVED_ONE_CONDITION_ONLY', `${out1} ÷ (${a} + ${b})`),
+    mk(out2 / (c + d), 'SOLVED_ONE_CONDITION_ONLY', `${out2} ÷ (${c} + ${d})`),
+    mk(out1 / a, 'SOLVED_ONE_CONDITION_ONLY', `${out1} ÷ ${a}`),
+    mk(out2 / d, 'SOLVED_ONE_CONDITION_ONLY', `${out2} ÷ ${d}`),
+    mk(Math.abs(out2 - out1), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(out1, out2)} − ${Math.min(out1, out2)}`),
+    mk(out1 / d, 'SOLVED_ONE_CONDITION_ONLY', `${out1} ÷ ${d}`),
+    mk(rateA + rateB, 'ADDED_INSTEAD_OF_SCALING', `${rateA} + ${rateB}`),
+    mk((out1 + out2) / (a + b + c + d), 'SOLVED_ONE_CONDITION_ONLY', `(${out1} + ${out2}) ÷ (${a} + ${b} + ${c} + ${d})`),
+    mk(lhs, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${out1} × ${d} − ${out2} × ${b}`, 1),
+    mk(lhs / a, 'MISREAD_THE_STEP', `${lhs} ÷ ${a}`),
+    mk(det, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${a} × ${d} − ${c} × ${b}`, 2)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'MACH_H_TWO_CONFIG',
+    subskill: 'معدل آلة من مجموعتين مختلطتين',
+    difficulty: 'hard',
+    question: `تنتج ${u(a, 'machine')} من النوع الأول و${u(b, 'machine')} من النوع الثاني معًا ${u(out1, 'piece')} في الساعة. وتنتج ${u(c, 'machine')} من النوع الأول و${u(d, 'machine')} من النوع الثاني معًا ${u(out2, 'piece')} في الساعة. كم قطعة تنتج آلة واحدة من النوع الأول في الساعة؟`,
+    correct, distractors, format: unitFormat('piece'),
+    steps: [
+      `نضرب العبارة الأولى في ${d} والثانية في ${b} ليتساوى عدد آلات النوع الثاني: ${out1} × ${d} = ${out1 * d}، و${out2} × ${b} = ${out2 * b}.`,
+      `بالطرح يختفي النوع الثاني ويبقى الفرق في الإنتاج = ${out1 * d} − ${out2 * b} = ${lhs}.`,
+      `وعدد آلات النوع الأول المقابل = ${a} × ${d} − ${c} × ${b} = ${det}.`,
+      `معدل آلة من النوع الأول = ${lhs} ÷ ${det} = ${correct}.`
+    ],
+    howToStart: 'وحّد عدد آلات أحد النوعين في العبارتين ثم اطرحهما ليختفي ذلك النوع.',
+    remember: 'عند وجود مجهولين لا تكفي عبارة واحدة؛ العبارتان معًا هما ما يحدد القيمة.',
+    fastMethod: 'اضرب كل عبارة في عدد آلات النوع الآخر من العبارة المقابلة ثم اطرح.',
+    estimatedSteps: 4, conceptTags: ['machine-rate', 'elimination', 'two-unknowns'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, det), sub(mul(out1, d), mul(out2, b)))]
+    },
+    askedUnknown: 'firstTypeRate', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'ELIMINATE_ONE_UNKNOWN', targetMisconception: 'SOLVED_ONE_CONDITION_ONLY',
+      wrongMethodValue: out1 / (a + b)
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, stageCount: 3, arithmeticBurden: 5},
+    textParams: {essentialParams: ['countFirstA', 'countSecondA', 'outputA', 'countFirstB', 'countSecondB', 'outputB']}
+  });
+}
+
+/**
+ * COMPOSED_INVERSION + STRATEGY_SELECTION.
+ *
+ * The stoppage time is not a quantity anything in the stem reports. It is
+ * reached by comparing the planned output with the actual one, reading the
+ * shortfall as the missing machine's output over the hours it did not work, and
+ * inverting back to a clock time. Each of those three moves is a choice.
+ */
+function stoppageTime(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 150; t++) {
+    const machines = rng.pick([4, 5, 6, 8, 10]);
+    const rate = rng.pick([12, 15, 18, 20, 24, 25]);
+    const hours = rng.pick([6, 8, 9, 10, 12]);
+    const stopAt = rng.int(1, hours - 1);
+    const planned = machines * rate * hours;
+    const lost = rate * (hours - stopAt);
+    const actual = planned - lost;
+    if (actual <= 0) continue;
+    // Where the stoppage hour coincides with the lost hours the two readings of
+    // the shortfall cannot be told apart (Section 10).
+    if (stopAt === hours - stopAt) continue;
+    found = {machines, rate, hours, stopAt, planned, lost, actual};
+    break;
+  }
+  if (!found) return resample(ctx, stoppageTime);
+  const {machines, rate, hours, stopAt, planned, lost, actual} = found;
+  const idleHours = hours - stopAt;
+  const correct = stopAt;
+  const params = {machines, ratePerMachine: rate, hours, actualOutput: actual};
+
+  const distractors = usable(ctx, [
+    mk(idleHours, 'MISREAD_THE_STEP', `${lost} ÷ ${rate}`, 2),
+    mk(hours, 'IGNORED_STOPPAGE', `المدة كاملة ${hours}`),
+    mk(actual / (machines * rate), 'USED_PLANNED_OUTPUT', `${actual} ÷ (${machines} × ${rate})`),
+    mk(lost / machines, 'USED_THE_SHORTFALL_AS_TIME', `${lost} ÷ ${machines}`),
+    mk(hours / 2, 'MISREAD_THE_STEP', `${hours} ÷ 2`),
+    mk(planned / (machines * rate), 'USED_PLANNED_OUTPUT', `${planned} ÷ (${machines} × ${rate})`),
+    mk(hours - lost / (rate * machines), 'USED_THE_SHORTFALL_AS_TIME', `${hours} − ${lost} ÷ (${rate} × ${machines})`),
+    mk(idleHours - 1, 'OFF_BY_ONE_STEP', `${lost} ÷ ${rate} − 1`),
+    mk(stopAt + 1, 'OFF_BY_ONE_STEP', `${hours} − ${idleHours} + 1`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'MACH_H_STOPPAGE_TIME',
+    subskill: 'زمن توقف آلة من نقص الإنتاج',
+    difficulty: 'hard',
+    question: `تعمل ${u(machines, 'machine')} بمعدل ${rate} قطعة/ساعة لكل آلة لمدة ${u(hours, 'hour', 'oblique')}. توقفت آلة واحدة في أثناء العمل ولم تعد، فبلغ الإنتاج الفعلي ${u(actual, 'piece')}. بعد كم ساعة من بدء العمل توقفت تلك الآلة؟`,
+    correct, distractors, format: unitFormat('hour'),
+    steps: [
+      `الإنتاج المخطط لو عملت الآلات كلها المدة كاملة = ${machines} × ${rate} × ${hours} = ${planned}.`,
+      `النقص عن المخطط = ${planned} − ${actual} = ${lost}.`,
+      `هذا النقص هو ما كانت تنتجه الآلة المتوقفة وحدها، فعدد الساعات التي لم تعمل فيها = ${lost} ÷ ${rate} = ${idleHours}.`,
+      `زمن التوقف من البداية = ${hours} − ${idleHours} = ${correct}.`
+    ],
+    howToStart: 'قارن الإنتاج المخطط بالفعلي؛ الفرق كله يخص الآلة المتوقفة وحدها.',
+    remember: 'النقص في الإنتاج يقاس بمعدل الآلة الواحدة، لا بمعدل المجموعة.',
+    fastMethod: 'اقسم النقص على معدل الآلة الواحدة لتحصل على ساعات التوقف، ثم اطرحها من المدة.',
+    estimatedSteps: 4, conceptTags: ['machine-rate', 'shortfall', 'reverse'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(sub(mul(machines, rate, hours), mul(rate, sub(hours, X))), actual)]
+    },
+    askedUnknown: 'stoppageHour', stageCount: 3,
+    answerBounds: {between: [0, hours]},
+    pedagogy: {
+      targetSkill: 'SHORTFALL_TO_TIME', targetMisconception: 'MISREAD_THE_STEP',
+      wrongMethodValue: idleHours
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, reverseReasoning: 1, stageCount: 3, arithmeticBurden: 5},
+    textParams: {essentialParams: ['machines', 'ratePerMachine', 'hours', 'actualOutput']}
   });
 }

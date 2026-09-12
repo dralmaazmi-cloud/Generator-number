@@ -24,7 +24,9 @@ export function generateSequences({difficulty, rng, seed, engineVersion, telemet
     ['SEQ_M_DOUBLE_DIFF', doublingDifferences],
     ['SEQ_H_RECURRENCE', recurrence],
     ['SEQ_H_POW_INDEX', powersPlusIndex],
-    ['SEQ_H_ALT_DIV', alternateDivide]
+    ['SEQ_H_ALT_DIV', alternateDivide],
+    ['SEQ_H_DIGIT_SUM', digitSumStep],
+    ['SEQ_H_INDEX_MULT', growingMultiplier]
   ])(ctx);
 }
 
@@ -784,6 +786,169 @@ function powersPlusIndex(ctx) {
       wrongMethodValue: p
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, stageCount: 2, arithmeticBurden: 4},
+    textParams: false
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.4 — two further hard structures for this family.
+//
+// RC2.3 left sequences with only two hard templates, and an ALL_HARD session
+// leans on them. Both of these are rule discovery of a kind neither existing one
+// covers: in the first the step depends on the term's own digits, in the second
+// the multiplier itself advances.
+// ---------------------------------------------------------------------------
+
+const digitSum = n => String(n).split('').reduce((a, c) => a + Number(c), 0);
+
+/**
+ * RULE_DISCOVERY + STRATEGY_SELECTION.
+ *
+ * The differences are 5, 10, 11, 13, 8 — no constant, no ratio, no second
+ * difference. Nothing works until the solver looks INSIDE each term.
+ */
+function digitSumStep(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 200; t++) {
+    const start = rng.int(14, 68);
+    const seq = [start];
+    for (let i = 0; i < 4; i++) seq.push(seq.at(-1) + digitSum(seq.at(-1)));
+    const next = seq.at(-1) + digitSum(seq.at(-1));
+    const diffs = seq.slice(1).map((v, i) => v - seq[i]);
+    // A run whose differences are constant or evenly stepped is a run the
+    // standard checks already solve, so it is not this template's question.
+    if (new Set(diffs).size <= 2) continue;
+    const second = diffs.slice(1).map((v, i) => v - diffs[i]);
+    if (new Set(second).size === 1) continue;
+    found = {seq, next};
+    break;
+  }
+  if (!found) return resample(ctx, digitSumStep);
+  const {seq, next} = found;
+  const last = seq.at(-1);
+  const correct = next;
+  const ds = digitSum(last);
+
+  const distractors = usable(ctx, [
+    mk(last + (last - seq.at(-2)), 'TREATED_PATTERN_AS_CONSTANT', `${last} + (${last} − ${seq.at(-2)})`, 1),
+    mk(last + digitSum(seq.at(-2)), 'APPLIED_PREVIOUS_STEP', `${last} + ${digitSum(seq.at(-2))} بمجموع أرقام الحد السابق`, 2),
+    mk(last + Number(String(last)[0]), 'USED_DIGITS_AS_THE_STEP', `${last} + ${Number(String(last)[0])} برقم واحد من الحد`, 2),
+    mk(last + ds + 1, 'OFF_BY_ONE_STEP', `${last} + ${ds} + 1`, 2),
+    mk(last + ds - 1, 'OFF_BY_ONE_STEP', `${last} + ${ds} − 1`, 2),
+    mk(last * 2 - seq.at(-2), 'TREATED_AS_ARITHMETIC', `${last} × 2 − ${seq.at(-2)}`, 1),
+    mk(last + 2 * ds, 'APPLIED_STEP_TWICE', `${last} + ${ds} × 2`, 2),
+    mk(ds, 'USED_DIFFERENCE_AS_ANSWER', `مجموع أرقام الحد الأخير ${ds}`, 2)
+  ]);
+
+  const line = seq.slice(0, -1).map((v, i) => `${v} + ${digitSum(v)} = ${seq[i + 1]}`).join('، ');
+  return buildBase(ctx, {
+    templateId: 'SEQ_H_DIGIT_SUM',
+    subskill: 'خطوة تعتمد على أرقام الحد نفسه',
+    difficulty: 'hard',
+    question: 'ما العدد التالي في المتتالية؟',
+    displayExpression: `${seq.join('، ')}، ؟`,
+    correct, distractors, format: v => num(v),
+    steps: [
+      `الفروق بين الحدود غير ثابتة ولا تتبع نمطًا في ذاتها، فننظر داخل كل حد.`,
+      `كل حد يزيد عن سابقه بمجموع أرقام ذلك الحد: ${line}.`,
+      `مجموع أرقام الحد الأخير = ${String(last).split('').join(' + ')} = ${ds}، فالحد التالي = ${last} + ${ds} = ${correct}.`
+    ],
+    howToStart: 'إذا لم تنفع الفروق ولا النسب، جرّب قاعدة تعتمد على أرقام الحد نفسه.',
+    remember: 'قد تكون القاعدة داخل الحد لا بين الحدود.',
+    fastMethod: 'اجمع أرقام الحد الأخير وأضفها إليه.',
+    estimatedSteps: 3, conceptTags: ['sequence', 'digits'],
+    parameters: {shownTerms: seq, lastDigitSum: ds},
+    reasoningPattern: ['DIGIT_SUM_STEP'],
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [
+        ...seq.slice(0, -1).map((v, i) => eq(sub(seq[i + 1], v), digitSum(v))),
+        eq(sub(X, last), ds)
+      ]
+    },
+    askedUnknown: 'nextTerm', stageCount: 2,
+    allowedConstants: [0, 1, 2, 100],
+    pedagogy: {
+      targetSkill: 'DIGIT_SUM_RULE', targetMisconception: 'TREATED_PATTERN_AS_CONSTANT',
+      wrongMethodValue: last + (last - seq.at(-2))
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 3, ruleSearchDepth: 4, stageCount: 2, arithmeticBurden: 4},
+    textParams: false
+  });
+}
+
+/**
+ * RULE_DISCOVERY + STRATEGY_SELECTION.
+ *
+ * Ratios drift upward and differences explode, so neither standard check
+ * settles it. The rule is a multiplier that advances by one each step with a
+ * constant added, and the two parts have to be found together.
+ */
+function growingMultiplier(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 150; t++) {
+    const start = rng.int(2, 6);
+    const add = rng.pick([1, 2, 3]);
+    const firstMul = rng.pick([2, 3]);
+    const seq = [start];
+    for (let i = 0; i < 4; i++) seq.push(seq.at(-1) * (firstMul + i) + add);
+    const next = seq.at(-1) * (firstMul + 4) + add;
+    if (next > 20000) continue;
+    if (new Set(seq).size !== seq.length) continue;
+    found = {seq, next, start, add, firstMul};
+    break;
+  }
+  if (!found) return resample(ctx, growingMultiplier);
+  const {seq, next, add, firstMul} = found;
+  const last = seq.at(-1);
+  const lastMul = firstMul + 4;
+  const correct = next;
+
+  const distractors = usable(ctx, [
+    mk(last * (lastMul - 1) + add, 'APPLIED_PREVIOUS_STEP', `${last} × ${lastMul - 1} + ${add}`, 1),
+    mk(last * lastMul, 'MISSED_ONE_STAGE', `${last} × ${lastMul} دون إضافة ${add}`, 2),
+    mk(last * lastMul + add + 1, 'OFF_BY_ONE_STEP', `${last} × ${lastMul} + ${add} + 1`, 2),
+    mk(last * (lastMul + 1) + add, 'MISREAD_THE_STEP', `${last} × ${lastMul + 1} + ${add}`, 2),
+    mk(last + (last - seq.at(-2)), 'TREATED_AS_ARITHMETIC', `${last} + (${last} − ${seq.at(-2)})`, 0),
+    mk(last * lastMul - add, 'APPLIED_OPERATION_IN_REVERSE', `${last} × ${lastMul} − ${add}`, 2),
+    mk(last * 2 + add, 'TREATED_PATTERN_AS_CONSTANT', `${last} × 2 + ${add}`, 1)
+  ]);
+
+  const line = seq.slice(0, -1).map((v, i) => `${v} × ${firstMul + i} + ${add} = ${seq[i + 1]}`).join('، ');
+  return buildBase(ctx, {
+    templateId: 'SEQ_H_INDEX_MULT',
+    subskill: 'مضروب متزايد مع ثابت مضاف',
+    difficulty: 'hard',
+    question: 'ما العدد التالي في المتتالية؟',
+    displayExpression: `${seq.join('، ')}، ؟`,
+    correct, distractors, format: v => num(v),
+    steps: [
+      `الفروق تتضخم بسرعة والنسب بين الحدود تتزايد، فلا الفروق ولا النسب ثابتة.`,
+      `المضروب نفسه يتزايد بمقدار 1 في كل خطوة ويُضاف ${add}: ${line}.`,
+      `المضروب التالي = ${lastMul - 1} + 1 = ${lastMul}، فالحد التالي = ${last} × ${lastMul} + ${add} = ${correct}.`
+    ],
+    howToStart: 'إذا تزايدت النسب بانتظام، فجرّب مضروبًا يكبر خطوة بخطوة.',
+    remember: 'قد يكون المعامل نفسه متغيرًا وليس ثابتًا.',
+    fastMethod: 'اضرب الحد الأخير في المضروب التالي ثم أضف الثابت.',
+    estimatedSteps: 3, conceptTags: ['sequence', 'growing-factor'],
+    parameters: {shownTerms: seq, addedConstant: add, firstMultiplier: firstMul, nextMultiplier: lastMul},
+    reasoningPattern: ['GROWING_MULTIPLIER', `PLUS_CONST(${add})`],
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [
+        ...seq.slice(0, -1).map((v, i) => eq(seq[i + 1], v * (firstMul + i) + add)),
+        eq(X, last * lastMul + add)
+      ]
+    },
+    askedUnknown: 'nextTerm', stageCount: 2,
+    allowedConstants: [0, 1, 2, 3, 4, 5, 6, 7, 100],
+    pedagogy: {
+      targetSkill: 'GROWING_MULTIPLIER_RULE', targetMisconception: 'APPLIED_PREVIOUS_STEP',
+      wrongMethodValue: last * (lastMul - 1) + add
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 3, ruleSearchDepth: 4, stageCount: 2, arithmeticBurden: 4},
     textParams: false
   });
 }
