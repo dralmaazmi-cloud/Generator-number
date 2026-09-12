@@ -13,8 +13,8 @@ export function generateSequences({difficulty, rng, seed, engineVersion, telemet
     family: 'sequences', family_ar: 'المتتاليات العددية', category: 'المتتاليات العددية'
   };
   const templates = difficulty === 'easy' ? [arithmetic, geometric]
-    : difficulty === 'medium' ? [increasingDifferences, alternatingOps, interleaved, doublingDifferences]
-    : [alternateDivide, recurrence, powersPlusIndex];
+    : difficulty === 'medium' ? [increasingDifferences, alternatingOps, interleaved, doublingDifferences, recurrence]
+    : [alternateDivide, powersPlusIndex];
   return rng.pick(templates)(ctx);
 }
 
@@ -640,7 +640,7 @@ function recurrence(ctx) {
   return buildBase(ctx, {
     templateId: 'SEQ_H_RECURRENCE',
     subskill: askMiddle ? 'اعتماد كل حد على الحدين السابقين مع حد مفقود' : 'اعتماد كل حد على الحدين السابقين',
-    difficulty: 'hard',
+    difficulty: 'medium',
     question: askMiddle ? 'ما العدد المفقود في المتتالية؟' : 'ما العدد التالي في المتتالية؟',
     displayExpression: shown,
     correct, distractors, format: v => num(v),

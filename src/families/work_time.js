@@ -4,8 +4,8 @@ import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorL
 export function generateWorkTime({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'work_time', family_ar: 'العمال والزمن', category: 'العمال والزمن'};
   const list = difficulty === 'easy' ? [inverseDirect, workVolume]
-    : difficulty === 'medium' ? [changeWorkers, efficiencyChange, targetDeadline]
-    : [twoStageWorkers, workersAndEfficiency];
+    : difficulty === 'medium' ? [changeWorkers, efficiencyChange]
+    : [twoStageWorkers, workersAndEfficiency, targetDeadline];
   return rng.pick(list)(ctx);
 }
 
@@ -247,7 +247,7 @@ function targetDeadline(ctx) {
   return buildBase(ctx, {
     templateId: 'WORK_M_TARGET',
     subskill: 'حساب العمل المتبقي ثم عدد العمال المطلوب',
-    difficulty: 'medium',
+    difficulty: 'hard',
     question: `يستطيع ${u(w, 'worker')} إنجاز عمل كامل في ${u(totalDays, 'day', 'oblique')}. عملوا ${u(initialDays, 'day', 'oblique')}، ثم تقرر إنهاء ما تبقى خلال ${u(finishDays, 'day', 'oblique')} فقط. كم عاملًا يجب أن يعمل خلال المدة الأخيرة؟`,
     correct, distractors, format: unitFormat('worker'),
     steps: [

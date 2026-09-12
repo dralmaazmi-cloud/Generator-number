@@ -7,6 +7,7 @@
 //     delegate to the central lexicon (Section 12).
 
 import {agreeingAdjective, singularOf, accusativeSingularOf, definitePlural, theSingleUnit, formatNumberWithUnit, unitWordFor, displayNumber} from '../arabic/units.js';
+import {deriveDependencyDepth} from '../qa/complexity.js';
 import {Fraction} from '../qa/fraction.js';
 import {isKnownMisconception} from '../qa/misconceptions.js';
 import {REASON} from '../qa/reasons.js';
@@ -208,7 +209,15 @@ export function buildBase(ctx, spec) {
     pedagogy,
     ratio,
     realism,
-    complexityFactors,
+    // RC2.1-2. Derived uniformly from the published solution rather than taken
+    // from whatever each template happened to declare. The declared value
+    // stands only where nothing parses.
+    complexityFactors: (() => {
+      const derived = deriveDependencyDepth(steps);
+      return derived === null
+        ? complexityFactors
+        : {...complexityFactors, dependencyDepth: derived};
+    })(),
     textParams,
     allowedConstants,
     commutative,

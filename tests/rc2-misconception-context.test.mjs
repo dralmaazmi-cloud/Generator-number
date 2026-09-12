@@ -108,11 +108,13 @@ test('RC2-013: the two templates the audit named no longer carry the chase sente
 });
 
 test('RC2-013: the chase sentence still appears where a chase actually is', () => {
+  // RC2.1-2 reclassified this template, so the band it is reached at moved.
+  // The template and what this test checks are unchanged. SPD_H_CATCH measured 9.9 against a hard boundary of 12.2 and is now medium.
   let found = 0;
   for (let i = 0; i < 400 && found < 5; i++) {
     const rng = new SeededRNG(`chase-${i}`);
     let base;
-    try { base = generateSpeed({difficulty: 'hard', rng: rng.fork('c'), seed: `s${i}`, engineVersion: 'test'}); } catch { continue; }
+    try { base = generateSpeed({difficulty: 'medium', rng: rng.fork('c'), seed: `s${i}`, engineVersion: 'test'}); } catch { continue; }
     if (base.template_id !== 'SPD_H_CATCH') continue;
     assert.ok(
       base.distractors.some(d => d.misconceptionId === 'USED_SUM_OF_SPEEDS_IN_CHASE'),

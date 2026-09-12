@@ -14,8 +14,8 @@ const PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
 
 export function generateOddOneOut({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'odd_one_out', family_ar: 'العدد الذي لا ينتمي', category: 'العدد الذي لا ينتمي إلى المجموعة'};
-  const list = difficulty === 'easy' ? [multiples, squares]
-    : difficulty === 'medium' ? [cubes, pronic, primeDoubles]
+  const list = difficulty === 'easy' ? [multiples, squares, pronic]
+    : difficulty === 'medium' ? [cubes, primeDoubles]
     : [squareMinusOne, triangularPattern];
   return rng.pick(list)(ctx);
 }

@@ -4,8 +4,8 @@ import {mk, usable, u, num, buildBase, eq, X, add, sub, mul, mod, resample} from
 export function generateRatios({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'ratios', family_ar: 'النسب وتقسيم الكميات', category: 'النسب وتقسيم الكميات'};
   const list = difficulty === 'easy' ? [splitTotal, scaleKnown]
-    : difficulty === 'medium' ? [commonTermSum, commonTermDifference, addToOneSide]
-    : [transferBetweenSides, twoRatiosExternalSum];
+    : difficulty === 'medium' ? [commonTermDifference, addToOneSide]
+    : [transferBetweenSides, twoRatiosExternalSum, commonTermSum];
   return rng.pick(list)(ctx);
 }
 
@@ -185,7 +185,7 @@ function commonTermSum(ctx) {
   return buildBase(ctx, {
     templateId: 'RAT_M_COMMON_SUM',
     subskill: 'نسبتان بحد مشترك مع مجموع الطرفين الخارجيين',
-    difficulty: 'medium',
+    difficulty: 'hard',
     question: `النسبة أ : ب = ${a} : ${b}، والنسبة ب : ج = ${c} : ${d}. إذا كان أ + ج = ${given}، فما قيمة ب؟`,
     correct, distractors, format: plain,
     steps: [

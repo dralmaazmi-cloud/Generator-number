@@ -4,8 +4,8 @@ import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resampl
 export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'speed', family_ar: 'السرعة والمسافة والزمن', category: 'السرعة والمسافة والزمن'};
   const list = difficulty === 'easy' ? [simpleTime, simpleDistance]
-    : difficulty === 'medium' ? [twoStageTime, averageSpeedUnequalTime, equalDistanceTotalTime]
-    : [meetingDelayed, catchupDelayed, sameDistanceTimeDifference];
+    : difficulty === 'medium' ? [twoStageTime, averageSpeedUnequalTime, catchupDelayed]
+    : [meetingDelayed, sameDistanceTimeDifference, equalDistanceTotalTime];
   return rng.pick(list)(ctx);
 }
 
@@ -241,7 +241,7 @@ function equalDistanceTotalTime(ctx) {
   return buildBase(ctx, {
     templateId: 'SPD_M_EQUAL_DIST',
     subskill: 'نصفا مسافة متساويان بسرعتين مختلفتين',
-    difficulty: 'medium',
+    difficulty: 'hard',
     question: `قطعت سيارة نصف المسافة بسرعة ${s1} كم/ساعة، والنصف الآخر بسرعة ${s2} كم/ساعة. إذا استغرقت الرحلة كاملة ${u(total, 'hour', 'oblique')}، فما المسافة الكلية؟`,
     correct, distractors, format: unitFormat('km'),
     steps: [
@@ -362,7 +362,7 @@ function catchupDelayed(ctx) {
   return buildBase(ctx, {
     templateId: 'SPD_H_CATCH',
     subskill: 'لحاق مع انطلاق متأخر',
-    difficulty: 'hard',
+    difficulty: 'medium',
     question: `انطلقت سيارة أ بسرعة ${sA} كم/ساعة. بعد ${u(delay, 'hour', 'oblique')} انطلقت سيارة ب من المكان نفسه وفي الاتجاه نفسه بسرعة ${sB} كم/ساعة. بعد كم ساعة من انطلاق ب تلحق بسيارة أ؟`,
     correct, distractors, format: unitFormat('hour'),
     steps: [

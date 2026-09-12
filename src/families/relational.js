@@ -23,8 +23,8 @@ const POSITION_WORDS = {1: 'الأول', 2: 'الثاني', 3: 'الثالث', 4
 export function generateRelational({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'relational', family_ar: 'المقارنة والترتيب العلاقاتي', category: 'المقارنة والترتيب العلاقاتي'};
   const list = difficulty === 'easy' ? [fullChainPosition, betweenRelation]
-    : difficulty === 'medium' ? [branchUnresolved, countAbove, confirmedStatement]
-    : [branchGuaranteed, partialOrderPosition];
+    : difficulty === 'medium' ? [branchUnresolved, countAbove]
+    : [branchGuaranteed, partialOrderPosition, confirmedStatement];
   return rng.pick(list)(ctx);
 }
 
@@ -377,7 +377,7 @@ function confirmedStatement(ctx) {
   return buildBase(ctx, {
     templateId: 'REL_M_CONFIRM',
     subskill: 'اختيار عبارة مؤكدة',
-    difficulty: 'medium',
+    difficulty: 'hard',
     question: `${sentences(rng, edges)} أي عبارة مؤكدة؟`,
     correct, distractors, format: v => String(v),
     steps: [

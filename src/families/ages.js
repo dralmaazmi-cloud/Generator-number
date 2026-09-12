@@ -3,8 +3,8 @@ import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resampl
 export function generateAges({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'ages', family_ar: 'مسائل الأعمار', category: 'مسائل الأعمار'};
   const list = difficulty === 'easy' ? [sumDifference, multipleDifference]
-    : difficulty === 'medium' ? [futureSumDifference, futureRatio, currentRatioFutureSum]
-    : [pastRatioFutureSum, twoTimeRatio];
+    : difficulty === 'medium' ? [futureSumDifference, currentRatioFutureSum]
+    : [pastRatioFutureSum, twoTimeRatio, futureRatio];
   return rng.pick(list)(ctx);
 }
 
@@ -207,7 +207,7 @@ function futureRatio(ctx) {
   return buildBase(ctx, {
     templateId: 'AGE_M_FUT_RATIO',
     subskill: 'علاقة عمرية في المستقبل',
-    difficulty: 'medium',
+    difficulty: 'hard',
     question: `عمر الأم أكبر من عمر ابنتها بـ${u(diff, 'year', 'oblique')}. بعد ${u(yrs, 'year', 'oblique')} سيكون عمر الأم ${ratioWord} عمر ابنتها. كم عمر الابنة الآن؟`,
     correct, distractors, format: years,
     steps: [

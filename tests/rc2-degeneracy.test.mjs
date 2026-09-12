@@ -136,9 +136,10 @@ test('RC2-005 MUST_ACCEPT: an off-centre position in the same template passes', 
 });
 
 test('RC2-005 MUST_REJECT: a count question where neither modelled error differs from the key', () => {
-  // The seed moved when RC2-011 widened the graph-size draw; the fixture pins
-  // the CONDITION (neither modelled error differs from the key), not the draw.
-  const {base, verdict} = draw(generateRelational, 'medium', 'fx-relm-3');
+  // The seed moved again when RC2.1-2 reclassified REL_M_CONFIRM out of the
+  // medium list, which changes what the draw lands on. The fixture pins the
+  // CONDITION (neither modelled error differs from the key), not the draw.
+  const {base, verdict} = draw(generateRelational, 'medium', 'fx-relm-23');
   assert.equal(base.template_id, 'REL_M_COUNT');
   assert.equal(base.metadata.transitive_step_required, false);
   assert.equal(base.metadata.undetermined_step_required, false);
@@ -183,10 +184,12 @@ test('RC2-005 meta: the "statement copied from the stem" rule is not decorative'
   assert.deepEqual(fired.details.degenerate, ['the guaranteed statement is a sentence of the stem']);
 
   // ...and in ordinary generation it stays silent, because the sampler holds.
+  // RC2.1-2 reclassified REL_M_CONFIRM to hard (median 14.7 against a medium
+  // ceiling of 12.2), so the sweep looks for it there now.
   let seen = 0;
   for (let i = 0; i < 500 && seen < 40; i++) {
     let d;
-    try { d = draw(generateRelational, 'medium', `rel-conf-${i}`); } catch { continue; }
+    try { d = draw(generateRelational, 'hard', `rel-conf-${i}`); } catch { continue; }
     if (d.base.template_id !== 'REL_M_CONFIRM') continue;
     seen++;
     assert.ok(!d.verdict.reasons.includes(REASON.DEGENERATE_PARAMETERS), 'the sampler already prevents it');

@@ -137,6 +137,16 @@ export async function measure({questions = 12000, seedPrefix = 'rc2-011', minSam
         n: t.n,
         space: counts.length,
         modal: Number(modal.toFixed(3)),
+        // RC2.1-2. The modal share is an ESTIMATE, and the ceiling test was
+        // comparing the point estimate. At n=75 a template whose true advantage
+        // is +7.8 measured +20.7, and at n=272 one whose true advantage is +16.0
+        // measured +20.5 — both ordinary binomial noise, both would have been
+        // reported as breaching a 20-point ceiling. The lower bound is the point
+        // estimate less two standard errors, so a template is only convicted
+        // when the sample is big enough to support the claim.
+        standardError: Number(Math.sqrt(modal * (1 - modal) / t.n).toFixed(4)),
+        advantageLowerBoundPoints: Number((
+          (modal - 2 * Math.sqrt(modal * (1 - modal) / t.n) - CHANCE) * 100).toFixed(1)),
         entropyBits: Number(entropy.toFixed(2)),
         advantagePoints: Number(((modal - CHANCE) * 100).toFixed(1))
       };

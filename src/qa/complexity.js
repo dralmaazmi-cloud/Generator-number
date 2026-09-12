@@ -40,6 +40,61 @@ export const COMPLEXITY_WEIGHTS = Object.freeze({
 const FACTORS = Object.keys(COMPLEXITY_WEIGHTS);
 
 /**
+ * RC2.1-2. `dependencyDepth` was a real factor filled in by hand, and only 22 of
+ * 107 templates filled it in. Templates whose author happened to declare it
+ * scored higher than equally chained templates whose author left it at zero, and
+ * that unevenness — not the band boundaries — is what produced misclassification
+ * in BOTH directions: PL_H_CHAIN and PCT_H_CHAIN_VALUE are chains of dependent
+ * steps that declared 0 and computed as medium while declared hard, and the
+ * relational templates that did declare it computed hard while declared medium.
+ *
+ * So it is derived instead of declared, uniformly, from the solution the
+ * template itself publishes. A step depends on an earlier one when it consumes
+ * that step's result as an operand; the depth is the longest such chain. That is
+ * a property of the reasoning, it is the same measurement for every family, and
+ * it cannot drift out of step with the steps a learner is actually shown.
+ *
+ * Steps are rendered Arabic prose containing arithmetic, so the parse is
+ * deliberately conservative: a step contributes only when it states a result
+ * after a final `=`, and a dependency counts only on an exact numeric match.
+ * Where nothing parses, the derivation returns null and the declared value
+ * stands, so a template that reasons without arithmetic is not silently zeroed.
+ */
+const NUM = /-?\d+(?:\.\d+)?/g;
+
+export function deriveDependencyDepth(steps) {
+  if (!Array.isArray(steps) || !steps.length) return null;
+  const parsed = [];
+  for (const raw of steps) {
+    const text = String(raw ?? '');
+    const at = text.lastIndexOf('=');
+    if (at < 0) { parsed.push(null); continue; }
+    const result = (text.slice(at + 1).match(NUM) ?? [])[0];
+    const operands = text.slice(0, at).match(NUM) ?? [];
+    if (result === undefined) { parsed.push(null); continue; }
+    parsed.push({result, operands: new Set(operands)});
+  }
+  if (!parsed.some(Boolean)) return null;
+
+  // Longest chain of "this step consumes an earlier step's result".
+  const depth = parsed.map(() => 0);
+  let best = 0;
+  for (let j = 0; j < parsed.length; j++) {
+    const step = parsed[j];
+    if (!step) continue;
+    for (let i = 0; i < j; i++) {
+      const earlier = parsed[i];
+      if (!earlier) continue;
+      // A step that merely restates a given is not a dependency; it has to
+      // consume the earlier RESULT.
+      if (step.operands.has(earlier.result)) depth[j] = Math.max(depth[j], depth[i] + 1);
+    }
+    best = Math.max(best, depth[j]);
+  }
+  return best;
+}
+
+/**
  * @param {object} f factor counts; missing factors count as zero
  * @returns {{score:number, band:'easy'|'medium'|'hard', factors:object}}
  */
@@ -76,7 +131,26 @@ export function computeComplexity(f = {}) {
  * boundaries the rule implies, so a later change to the model that moves them
  * shows up instead of being absorbed.
  */
-export const BAND_BOUNDARIES = Object.freeze({easyMedium: 8.1, mediumHard: 11.3});
+/**
+ * RC2.1-2. The rule is unchanged; the model it is applied to moved.
+ * `dependencyDepth` is now derived from the published solution for every
+ * template instead of being declared by 22 of 107, which raised scores wherever
+ * a template reasons in a chain. Reapplying the same rule to the new medians:
+ *
+ * The rule is a fixed point: reclassifying templates moves the band medians,
+ * which moves the boundaries, which is why the audit recomputes and reports
+ * DRIFTED rather than trusting a constant. After the RC2.1-2 reclassifications
+ * settled:
+ *
+ *   easy   median  7.2      easy/medium boundary = (7.2 + 10.7) / 2 = 8.9
+ *   medium median 10.7      medium/hard boundary = (10.7 + 13.3) / 2 = 12.0
+ *   hard   median 13.3
+ *
+ * Keeping 8.1 / 11.3 here would have been fitting the old numbers to a new
+ * model. tools/audit/rc21-difficulty.mjs recomputes the medians on every run and
+ * says DRIFTED when the constants below stop matching what the rule implies.
+ */
+export const BAND_BOUNDARIES = Object.freeze({easyMedium: 8.9, mediumHard: 12.0});
 
 export function bandFor(score) {
   if (score <= BAND_BOUNDARIES.easyMedium) return 'easy';

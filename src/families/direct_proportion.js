@@ -14,8 +14,8 @@ export function generateDirectProportion({difficulty, rng, seed, engineVersion, 
     difficulty, rng, seed, engineVersion,
     family: 'direct_proportion', family_ar: 'التناسب المباشر', category: 'التناسب المباشر البسيط'
   };
-  const list = difficulty === 'easy' ? [unitItems, unitCost]
-    : difficulty === 'medium' ? [recipeScale, mapScale, fractionalUnit]
+  const list = difficulty === 'easy' ? [unitItems, unitCost, fractionalUnit]
+    : difficulty === 'medium' ? [recipeScale, mapScale]
     : [compoundScale, multiUnitCost];
   return rng.pick(list)(ctx);
 }
@@ -430,7 +430,10 @@ function recipeScaleReverse(ctx, pieces, cups, factor) {
     ],
     howToStart: 'احسب كم مرة كبرت كمية الدقيق.',
     remember: 'في التناسب المباشر، الكمية المقابلة تتغير بعامل التكبير نفسه.',
-    fastMethod: `${pieces} × (${availableCups} ÷ ${cups}).`,
+    // RC2.1-2. This was this instance's arithmetic, not a method. It only
+    // surfaced once reclassification brought the template into the sweep that
+    // checks RC2-019 — the defect predates RC2.1.
+    fastMethod: `اقسم المتاح على ما تتطلبه الوصفة الواحدة ثم اضرب في ناتج الوصفة — هنا ${pieces} × (${availableCups} ÷ ${cups}).`,
     estimatedSteps: 2,
     conceptTags: ['direct-proportion', 'scaling', 'reverse'],
     parameters: params,
@@ -543,7 +546,7 @@ function fractionalUnit(ctx) {
   return buildBase(ctx, {
     templateId: 'PROP_M_FRAC_UNIT',
     subskill: 'قيمة وحدة كسرية ثم التوسع',
-    difficulty: 'medium',
+    difficulty: 'easy',
     question: `تتساوى العناصر في الوزن. إذا كان وزن ${u(n, 'item')} هو ${u(totalKg, 'kg')}، فما وزن ${u(targetCount, 'item')} من النوع نفسه؟`,
     correct,
     distractors,

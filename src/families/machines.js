@@ -4,8 +4,8 @@ import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine, 
 export function generateMachines({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'machines', family_ar: 'الآلات والإنتاج', category: 'الآلات والإنتاج'};
   const list = difficulty === 'easy' ? [machineHours, requiredMachines]
-    : difficulty === 'medium' ? [newMachineFaster, oneStops, subsetUpgrade]
-    : [twoTypesCombined, stageChange];
+    : difficulty === 'medium' ? [newMachineFaster, oneStops, twoTypesCombined]
+    : [stageChange, subsetUpgrade];
   return rng.pick(list)(ctx);
 }
 
@@ -247,7 +247,7 @@ function subsetUpgrade(ctx) {
   return buildBase(ctx, {
     templateId: 'MACH_M_SUBSET_UP',
     subskill: 'زيادة إنتاجية بعض الآلات فقط',
-    difficulty: 'medium',
+    difficulty: 'hard',
     question: `تعمل ${u(machines, 'machine')} بمعدل ${rate} قطعة/ساعة لكل آلة. طُورت ${u(upgraded, 'machine')} منها فزادت إنتاجيتها ${risePercentPhrase(pct)} وبقيت البقية كما هي. كم قطعة تنتج المجموعة خلال ${u(hours, 'hour', 'oblique')}؟`,
     correct, distractors, format: unitFormat('piece'),
     steps: [
@@ -299,7 +299,7 @@ function twoTypesCombined(ctx) {
   return buildBase(ctx, {
     templateId: 'MACH_H_TWO_TYPES',
     subskill: 'نوعان من الآلات بمعدلين مختلفين',
-    difficulty: 'hard',
+    difficulty: 'medium',
     question: `تنتج آلة من النوع أ ${rA} قطعة/ساعة، وآلة من النوع ب ${rB} قطعة/ساعة. إذا عملت ${u(nA, 'machine')} من أ و${u(nB, 'machine')} من ب معًا لمدة ${u(hours, 'hour', 'oblique')}، فكم قطعة تنتج؟`,
     correct, distractors, format: unitFormat('piece'),
     steps: [
