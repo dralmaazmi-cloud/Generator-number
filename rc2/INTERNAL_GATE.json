@@ -1,17 +1,14 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-12T13:54:13.964Z",
+  "evaluatedAt": "2026-09-12T13:58:25.781Z",
   "engineVersion": "1.4.0",
-  "headCommit": "970a8f34dffcb61b20a23723e7c6a0525ed5960d",
+  "headCommit": "f3657b27183f47180ec6a07956944ccfcc1a9ea5",
   "branch": "claude/rc2-implementation",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "FAIL",
+  "verdict": "PASS",
   "conditions": 22,
-  "failedConditions": [
-    "SUITE_GREEN",
-    "TREE_CLEAN"
-  ],
+  "failedConditions": [],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -40,10 +37,10 @@
     {
       "id": "SUITE_GREEN",
       "requirement": "The whole test suite passes",
-      "pass": false,
+      "pass": true,
       "detail": {
-        "passed": 331,
-        "failed": 1
+        "passed": 341,
+        "failed": 0
       }
     },
     {
@@ -87,6 +84,7 @@
           "rc2/HOLDOUT.json",
           "rc2/HOLDOUT_FINDINGS.json",
           "rc2/INTERNAL_GATE.json",
+          "rc2/RC21_DEVELOPMENT_CORPUS.json",
           "rc2/RC2_IMPLEMENTATION_REPORT.md",
           "rc2/SUPERSEDED_FREEZES.json",
           "rc2/holdout-package/MANIFEST.json",
@@ -260,15 +258,8 @@
     {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": false,
-      "detail": [
-        "M tools/audit/rc2-development-corpus.mjs",
-        " M tools/audit/rc2-internal-gate.mjs",
-        "?? rc2/RC21_DEVELOPMENT_CORPUS.json",
-        "?? rc2/rc21-development-corpus.jsonl.gz",
-        "?? tests/rc21-holdout-capture.test.mjs",
-        "?? tools/audit/rc21-holdout.mjs"
-      ]
+      "pass": true,
+      "detail": "clean"
     }
   ]
 }
