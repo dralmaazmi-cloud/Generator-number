@@ -1,16 +1,14 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-12T11:12:24.799Z",
+  "evaluatedAt": "2026-09-12T11:14:08.716Z",
   "engineVersion": "1.4.0",
-  "headCommit": "c667edb84c0fe7067d9ad392bc579b9ca907f4d2",
+  "headCommit": "8264f80cbd6244d1f2661b53105c425ade8fff33",
   "branch": "claude/rc2-implementation",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "FAIL",
+  "verdict": "PASS",
   "conditions": 15,
-  "failedConditions": [
-    "TREE_CLEAN"
-  ],
+  "failedConditions": [],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -41,7 +39,7 @@
       "requirement": "The whole test suite passes",
       "pass": true,
       "detail": {
-        "passed": 291,
+        "passed": 297,
         "failed": 0
       }
     },
@@ -81,7 +79,8 @@
       "detail": {
         "offenders": [],
         "filesMentioningIt": [
-          "rc2/DEVELOPMENT_CORPUS.json"
+          "rc2/DEVELOPMENT_CORPUS.json",
+          "rc2/INTERNAL_GATE.json"
         ]
       }
     },
@@ -178,10 +177,8 @@
     {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": false,
-      "detail": [
-        "?? tools/audit/rc2-internal-gate.mjs"
-      ]
+      "pass": true,
+      "detail": "clean"
     }
   ]
 }
