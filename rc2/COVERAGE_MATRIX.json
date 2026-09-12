@@ -23,13 +23,31 @@
         "PRODUCTION_BLOCKER",
         "STATISTICAL_LEAKAGE_RISK"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/utils.js makeOptionSet",
+        "src/qa/rank-calibration.js (removed)"
+      ],
+      "rootCause": "Distractor selection consulted the key's numeric rank: pickBalancedDistractors, drawRankPosition and hasLoneRoundNumber chose among pedagogically valid distractors by where the answer would sit among them.",
+      "plannedRemediation": "The rank machinery is deleted, not disabled — module, tool, guard test, inventory and its artifact. makeOptionSet draws five distractors from the provenance-carrying pool with rng.sample and no reference to any property of the answer. observedFeasibleRankRange replaces it as observation only.",
+      "automatedProof": [
+        "tests/rc2-rank-invariance.test.mjs :: RC2-001/A: no production module defines or reads rank-target state",
+        "tests/rc2-rank-invariance.test.mjs :: RC2-001/A meta: the scan would catch a reintroduced chooser",
+        "tests/rc2-rank-invariance.test.mjs :: RC2-001/B: generation reads no ambient rank-target state",
+        "tests/rc2-rank-invariance.test.mjs :: RC2-001/B meta: the trap fires when something does read it",
+        "tests/rc2-rank-invariance.test.mjs :: RC2-001/C: the distractor set is identical across every injected rank target",
+        "tests/rc2-rank-invariance.test.mjs :: RC2-001/C: the same holds through the whole engine, for every family",
+        "tests/rc2-rank-invariance.test.mjs :: RC2-001/C meta: a chooser that reads the target would be caught",
+        "tests/rc2-rank-invariance.test.mjs :: RC2-001: rank is still recorded, after the fact, for measurement"
+      ],
+      "regressionFixture": [
+        "tests/rc2-rank-invariance.test.mjs :: RC2-001/A meta: the scan would catch a reintroduced chooser",
+        "tests/rc2-rank-invariance.test.mjs :: RC2-001/B meta: the trap fires when something does read it",
+        "tests/rc2-rank-invariance.test.mjs :: RC2-001/C meta: a chooser that reads the target would be caught"
+      ],
+      "developmentCorpusMetric": "three-angle proof: static call-site analysis, runtime instrumentation, counterfactual rank invariance",
+      "status": "FIXED",
+      "automatedProofCount": 8,
+      "evidenceArtifacts": []
     },
     {
       "id": "RC2-002",
@@ -37,13 +55,31 @@
       "classification": [
         "LANGUAGE_BLOCKER"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/families/averages.js",
+        "src/arabic/constructions.js"
+      ],
+      "rootCause": "A bare numeral before a definite plural — «3 القيم» — reached publication because no check classified Arabic number-noun constructions at all.",
+      "plannedRemediation": "A tokenizer-based construction classifier; the pipeline refuses INVALID_ARABIC_NUMBER_UNIT. Six averages stems de-numeralised, with resultingCount declared as a real parameter so explanation sourcing still holds.",
+      "automatedProof": [
+        "tests/rc2-arabic.test.mjs :: RC2-002 MUST_REJECT: فما متوسط القيم 9؟",
+        "tests/rc2-arabic.test.mjs :: RC2-002 MUST_ACCEPT: the corrected stem",
+        "tests/rc2-arabic.test.mjs :: RC2-002 MUST_ACCEPT: apposition naming a number is not a count",
+        "tests/rc2-arabic.test.mjs :: RC2-002: MUST_REJECT a definite noun directly after a numeral",
+        "tests/rc2-arabic.test.mjs :: RC2-002/016/017: an unrecognised construction is reported, never waved through",
+        "tests/rc2-arabic.test.mjs :: RC2-002/016/017: no published question carries an invalid or unclassified construction",
+        "tests/rc2-arabic.test.mjs :: RC2-002/016/017: the pipeline rejects a question carrying an invalid construction"
+      ],
+      "regressionFixture": [
+        "tests/rc2-arabic.test.mjs :: RC2-002 MUST_REJECT: فما متوسط القيم 9؟",
+        "tests/rc2-arabic.test.mjs :: RC2-002 MUST_ACCEPT: the corrected stem",
+        "tests/rc2-arabic.test.mjs :: RC2-002 MUST_ACCEPT: apposition naming a number is not a count",
+        "tests/rc2-arabic.test.mjs :: RC2-002: MUST_REJECT a definite noun directly after a numeral"
+      ],
+      "developmentCorpusMetric": "44,728 valid, 11,448 exempt, 0 invalid, 0 unclassified over 6,240 questions",
+      "status": "FIXED",
+      "automatedProofCount": 7,
+      "evidenceArtifacts": []
     },
     {
       "id": "RC2-003",
@@ -51,13 +87,44 @@
       "classification": [
         "QA_OBSERVABILITY_BLOCKER"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/qa/telemetry.js",
+        "src/index.js",
+        "src/families/_shared.js",
+        "all 16 family files"
+      ],
+      "rootCause": "Analytics recorded two boundaries — a finalisation throw and a pipeline verdict — so the reported 0.19% rejection rate omitted every rejection below them, including 135 of 1,256 odd-one-out sampler draws.",
+      "plannedRemediation": "One telemetry architecture over nine stages, with disposition kept apart from work: every proposal ends exactly once, and internal resampling is reported per proposal. DISTRACTOR_IMPOSSIBLE and RETRY_EXHAUSTED given real emission sites. 95 self-recursion sites routed through resample(). Cost reported at both prices.",
+      "automatedProof": [
+        "tests/rc2-telemetry.test.mjs :: RC2-003: every proposal ends exactly once and the totals reconcile",
+        "tests/rc2-telemetry.test.mjs :: RC2-003 meta: the reconciliation can fail",
+        "tests/rc2-telemetry.test.mjs :: RC2-003: internal resampling is reported as work, outside the disposition",
+        "tests/rc2-telemetry.test.mjs :: RC2-003: one rejected candidate may carry several reasons, and the two are counted apart",
+        "tests/rc2-telemetry.test.mjs :: RC2-003: every recorded event carries the mandated fields",
+        "tests/rc2-telemetry.test.mjs :: RC2-003: every emitted reason code is a declared reason code",
+        "tests/rc2-telemetry.test.mjs :: RC2-003: DISTRACTOR_IMPOSSIBLE is emitted where a distractor is actually dropped",
+        "tests/rc2-telemetry.test.mjs :: RC2-003: DISTRACTOR_IMPOSSIBLE is reached by ordinary generation, not only by the unit test",
+        "tests/rc2-telemetry.test.mjs :: RC2-003 meta: usable() without telemetry still filters, and records nothing",
+        "tests/rc2-telemetry.test.mjs :: RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs out",
+        "tests/rc2-telemetry.test.mjs :: RC2-003 meta: a budget that does not run out emits no exhaustion",
+        "tests/rc2-telemetry.test.mjs :: RC2-003: no family sampler discards a draw by silent self-recursion",
+        "tests/rc2-telemetry.test.mjs :: RC2-003: a session reports telemetry for every question it published",
+        "tests/rc2-telemetry.test.mjs :: RC2-003: reset clears every counter, stage, reason and event",
+        "tests/rc2-telemetry.test.mjs :: RC2-003 cost: the rejection activity is cheap, and the cheapness is measured",
+        "tests/rc2-telemetry.test.mjs :: RC2-003 cost: the unabsorbed per-draw rate is reported, not hidden by retries",
+        "tests/rc2-telemetry.test.mjs :: RC2-003 cost: the published artifact matches the engine"
+      ],
+      "regressionFixture": [
+        "tests/rc2-telemetry.test.mjs :: RC2-003 meta: the reconciliation can fail",
+        "tests/rc2-telemetry.test.mjs :: RC2-003 meta: usable() without telemetry still filters, and records nothing",
+        "tests/rc2-telemetry.test.mjs :: RC2-003 meta: a budget that does not run out emits no exhaustion"
+      ],
+      "developmentCorpusMetric": "rc2/RC2_003_REJECTION_COST.json — reconciliation balances exactly; mean 1.030 attempts, p95 1, 0 exhaustions, latency p95 1.27ms; unabsorbed per-draw rates reported per template",
+      "status": "FIXED",
+      "automatedProofCount": 17,
+      "evidenceArtifacts": [
+        "rc2/RC2_003_REJECTION_COST.json"
+      ]
     },
     {
       "id": "RC2-004",
@@ -65,13 +132,28 @@
       "classification": [
         "QA_OBSERVABILITY_BLOCKER"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
+      "affectedProductionPath": [
+        "src/index.js generatePractice"
+      ],
+      "rootCause": "Cross-session fingerprint memory was on by default, so a session was a function of the seed AND of everything the engine had generated before, while the engine described itself as deterministic.",
+      "plannedRemediation": "Two named modes. DETERMINISTIC_SINGLE_GENERATION is the default and is pure in its declared inputs; STATEFUL_SESSION_GENERATION is opt-in and declared non-reproducible. An unknown mode throws.",
+      "automatedProof": [
+        "tests/rc2-reproducibility.test.mjs :: RC2-004: the default mode is the deterministic one, and it is declared",
+        "tests/rc2-reproducibility.test.mjs :: RC2-004: a fresh engine and a long-lived one replay the same seed identically",
+        "tests/rc2-reproducibility.test.mjs :: RC2-004: replaying the same seed twice on the same engine is identical",
+        "tests/rc2-reproducibility.test.mjs :: RC2-004: an all-hard session replays identically too",
+        "tests/rc2-reproducibility.test.mjs :: RC2-004: the deterministic mode never consults cross-session memory",
+        "tests/rc2-reproducibility.test.mjs :: RC2-004: the stateful mode is available, records history, and says it is stateful",
+        "tests/rc2-reproducibility.test.mjs :: RC2-004: the legacy opt-in flag still selects the stateful mode",
+        "tests/rc2-reproducibility.test.mjs :: RC2-004: an unknown mode is refused, not silently coerced",
+        "tests/rc2-reproducibility.test.mjs :: RC2-004: a stateful session cannot perturb a later deterministic replay",
+        "tests/rc2-reproducibility.test.mjs :: RC2-004: single-question generation is a pure function of its inputs"
+      ],
       "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "developmentCorpusMetric": "a fresh engine and one worn by six sessions and forty questions replay the same seed identically, mixed and all-hard",
+      "status": "FIXED",
+      "automatedProofCount": 10,
+      "evidenceArtifacts": []
     },
     {
       "id": "RC2-005",
@@ -79,13 +161,46 @@
       "classification": [
         "QA_OBSERVABILITY_BLOCKER"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/qa/pedagogy.js",
+        "src/families/calendar.js",
+        "src/families/relational.js"
+      ],
+      "rootCause": "validatePedagogy required a finite NUMBER, so every template answering with a day, a person, a statement or a fraction name was outside the degeneracy model — 23 of 107, and the two families where the degeneracy is easiest to produce.",
+      "plannedRemediation": "Answer equality spans the published types. Eleven templates gained a model; two real defects surfaced (CAL_H_LONG at n=16 and n=24, REL_E_CHAIN five-person chains). REL_M_COUNT models two wrong methods so the fix does not cost the template two answer values.",
+      "automatedProof": [
+        "tests/rc2-degeneracy.test.mjs :: RC2-005: a non-numeric wrong method that lands on the key is caught",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005: numeric answers keep their epsilon comparison",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005: a numeric string and its number are the same answer",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005 meta: a template with no declared target is not accused of anything",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005 MUST_REJECT: CAL_H_LONG where whole weeks and the remainder agree",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005: every CAL_H_LONG offset where weeks equal the remainder is refused",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005 MUST_REJECT: a chain position that reads the same from either end",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005 MUST_ACCEPT: an off-centre position in the same template passes",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005 MUST_REJECT: a count question where neither modelled error differs from the key",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005: the count model does not cost the template its answer space",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005 meta: the \"statement copied from the stem\" rule is not decorative",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005: the hidden-fraction direction cannot reach its key by any modelled error",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005: an undetermined-pair key cannot be produced by resolving a pair",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005: every template in the engine is classified, and every classification exists",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005: the RC1 gap is preserved template by template, not only in aggregate",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005: the published artifact matches the engine",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005: no published question is degenerate"
+      ],
+      "regressionFixture": [
+        "tests/rc2-degeneracy.test.mjs :: RC2-005 meta: a template with no declared target is not accused of anything",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005 MUST_REJECT: CAL_H_LONG where whole weeks and the remainder agree",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005 MUST_REJECT: a chain position that reads the same from either end",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005 MUST_ACCEPT: an off-centre position in the same template passes",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005 MUST_REJECT: a count question where neither modelled error differs from the key",
+        "tests/rc2-degeneracy.test.mjs :: RC2-005 meta: the \"statement copied from the stem\" rule is not decorative"
+      ],
+      "developmentCorpusMetric": "rc2/DEGENERACY_COVERAGE.json — 107 templates typed, 0 unclassified; published coverage 79.3% -> 89.7%; the RC1 gap preserved per template as A/B/C",
+      "status": "FIXED",
+      "automatedProofCount": 17,
+      "evidenceArtifacts": [
+        "rc2/DEGENERACY_COVERAGE.json"
+      ]
     },
     {
       "id": "RC2-006",
@@ -93,13 +208,31 @@
       "classification": [
         "ACCESSIBILITY_BLOCKER"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "report.js buildReportTextLayer",
+        "report.js buildPrintReportHtml"
+      ],
+      "rootCause": "The browser print pipeline shapes and reorders Arabic before it reaches the PDF text layer, so 77.5% of it is stored as presentation forms in visual order and a literal stem search returns nothing.",
+      "plannedRemediation": "The engine produces the report content as logical-order Unicode and embeds it in the HTML in a machine-readable block, written beside the PDF. The renderer limitation is stated, not worked around: making the PDF layer itself logical would mean writing the PDF with an embedded font.",
+      "automatedProof": [
+        "tests/rc2-pdf-accessibility.test.mjs :: RC2-006: the logical text layer contains no presentation forms",
+        "tests/rc2-pdf-accessibility.test.mjs :: RC2-006: every stem, option and explanation is searchable in it",
+        "tests/rc2-pdf-accessibility.test.mjs :: RC2-006: the layer is in logical order, not reversed",
+        "tests/rc2-pdf-accessibility.test.mjs :: RC2-006: the printed HTML carries the layer in a machine-readable block",
+        "tests/rc2-pdf-accessibility.test.mjs :: RC2-006 meta: the block cannot break out of the script element",
+        "tests/rc2-pdf-accessibility.test.mjs :: RC2-006: the defect is reproduced and the remediation measured",
+        "tests/rc2-pdf-accessibility.test.mjs :: RC2-006: the tagged export is recorded as the no-op it measured as",
+        "tests/rc2-pdf-accessibility.test.mjs :: RC2-006: the published artifact states what each consumer gets"
+      ],
+      "regressionFixture": [
+        "tests/rc2-pdf-accessibility.test.mjs :: RC2-006 meta: the block cannot break out of the script element"
+      ],
+      "developmentCorpusMetric": "rc2/RC2_006_PDF_ACCESSIBILITY.json — PDF visible layer 78.3% presentation forms and 0/8 stems findable; /ActualText 0% presentation forms and still 0/8; HTML and logical layer 0% and 8/8",
+      "status": "RISK_REMEDIATED_AND_MEASURED",
+      "automatedProofCount": 8,
+      "evidenceArtifacts": [
+        "rc2/RC2_006_PDF_ACCESSIBILITY.json"
+      ]
     },
     {
       "id": "RC2-007",
@@ -108,13 +241,25 @@
         "PRODUCTION_BLOCKER",
         "PEDAGOGICAL_BLOCKER"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/qa/ambiguity.js"
+      ],
+      "rootCause": "A lone simple rule could never compete in the \"only one satisfies P\" framing, so a run with two defensible outliers was published as though it had one.",
+      "plannedRemediation": "approvedRules() with declared salience and a uniquePositive flag; findSingleOutlierRules tests both framings; four verdicts replace a boolean.",
+      "automatedProof": [
+        "tests/rc2-ambiguity.test.mjs :: RC2-007 MUST_REJECT: a lone simpler rule pointing elsewhere makes it ambiguous",
+        "tests/rc2-ambiguity.test.mjs :: RC2-007 MUST_ACCEPT: the same rule class with no competing rule passes",
+        "tests/rc2-ambiguity.test.mjs :: RC2-007: a single competing rule is sufficient — no pair required",
+        "tests/rc2-ambiguity.test.mjs :: RC2-007/008/009: nothing AMBIGUOUS or UNDISCOVERABLE is ever published"
+      ],
+      "regressionFixture": [
+        "tests/rc2-ambiguity.test.mjs :: RC2-007 MUST_REJECT: a lone simpler rule pointing elsewhere makes it ambiguous",
+        "tests/rc2-ambiguity.test.mjs :: RC2-007 MUST_ACCEPT: the same rule class with no competing rule passes"
+      ],
+      "developmentCorpusMetric": "800 generated odd-one-out questions: 611 CLEAN, 189 BORDERLINE, 0 AMBIGUOUS, 0 UNDISCOVERABLE; all five historical cases caught",
+      "status": "FIXED",
+      "automatedProofCount": 4,
+      "evidenceArtifacts": []
     },
     {
       "id": "RC2-008",
@@ -122,13 +267,26 @@
       "classification": [
         "PRODUCTION_BLOCKER"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/qa/ambiguity.js"
+      ],
+      "rootCause": "The inverse framing was not tested and magnitude-based rules were invisible to the sweep.",
+      "plannedRemediation": "Both framings are tested and rule salience is declared per rule, with the surface-competing set recorded in metadata.",
+      "automatedProof": [
+        "tests/rc2-ambiguity.test.mjs :: RC2-008 MUST_REJECT: \"exactly one satisfies P\" is tested, not only \"one fails\"",
+        "tests/rc2-ambiguity.test.mjs :: RC2-008 MUST_ACCEPT: multiples of four with no lone special number",
+        "tests/rc2-ambiguity.test.mjs :: RC2-008: both framings are reported by the rule sweep",
+        "tests/rc2-ambiguity.test.mjs :: RC2-008: a magnitude pattern is reported as BORDERLINE, never as AMBIGUOUS",
+        "tests/rc2-ambiguity.test.mjs :: RC2-008: arbitrary divisibility cannot compete in the inverse framing"
+      ],
+      "regressionFixture": [
+        "tests/rc2-ambiguity.test.mjs :: RC2-008 MUST_REJECT: \"exactly one satisfies P\" is tested, not only \"one fails\"",
+        "tests/rc2-ambiguity.test.mjs :: RC2-008 MUST_ACCEPT: multiples of four with no lone special number"
+      ],
+      "developmentCorpusMetric": "the RC1 MUST_ACCEPT fixture {8,15,24,35,48,50} is genuinely AMBIGUOUS and the fixture was corrected, not the policy",
+      "status": "FIXED",
+      "automatedProofCount": 5,
+      "evidenceArtifacts": []
     },
     {
       "id": "RC2-009",
@@ -136,13 +294,26 @@
       "classification": [
         "PEDAGOGICAL_BLOCKER"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/qa/ambiguity.js",
+        "src/families/odd_one_out.js"
+      ],
+      "rootCause": "A key reachable only by a rule above any plausible discoverability ceiling was published as a hard question.",
+      "plannedRemediation": "DISCOVERABILITY_CEILING = 2 and UNDISCOVERABLE_INTENDED_RULE as a pipeline reason; ODD_H_PRIME_OFFSET replaced by ODD_H_TRIANGULAR. The \"prime + 10\" fixture was converted from MUST_ACCEPT to MUST_REJECT, because that MUST_ACCEPT was the original error.",
+      "automatedProof": [
+        "tests/rc2-ambiguity.test.mjs :: RC2-009 MUST_REJECT: a key reachable only above the ceiling is undiscoverable",
+        "tests/rc2-ambiguity.test.mjs :: RC2-009 MUST_ACCEPT: a hard but findable rule passes",
+        "tests/rc2-ambiguity.test.mjs :: RC2-009: an above-ceiling rule cannot certify a question it alone supports",
+        "tests/rc2-ambiguity.test.mjs :: RC2-009: the retired prime-offset rule is gone, and the inventory is not smaller"
+      ],
+      "regressionFixture": [
+        "tests/rc2-ambiguity.test.mjs :: RC2-009 MUST_REJECT: a key reachable only above the ceiling is undiscoverable",
+        "tests/rc2-ambiguity.test.mjs :: RC2-009 MUST_ACCEPT: a hard but findable rule passes"
+      ],
+      "developmentCorpusMetric": "0 UNDISCOVERABLE published across 800 odd-one-out questions; all seven templates still publish",
+      "status": "FIXED",
+      "automatedProofCount": 4,
+      "evidenceArtifacts": []
     },
     {
       "id": "RC2-010",
@@ -151,13 +322,23 @@
         "PRODUCTION_BLOCKER",
         "STATISTICAL_LEAKAGE_RISK"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
+      "affectedProductionPath": [
+        "src/families/relational.js partialOrderPosition"
+      ],
+      "rootCause": "The sampler searched the graph for a position the orderings disagreed about and resampled whenever none existed — target-answer sampling, which made the template answer \"cannot be determined\" in 91 of 91 instances.",
+      "plannedRemediation": "The position is chosen blind and the answer is whatever the enumeration gives. positionGraph draws chain, chain-with-tail and branched topologies.",
+      "automatedProof": [
+        "tests/rc2-relational-position.test.mjs :: RC2-010: the template produces more than one genuine outcome",
+        "tests/rc2-relational-position.test.mjs :: RC2-010: no single answer dominates the way it used to",
+        "tests/rc2-relational-position.test.mjs :: RC2-010: every published key is confirmed by independent enumeration",
+        "tests/rc2-relational-position.test.mjs :: RC2-010: the generator does not resample on the strength of the answer",
+        "tests/rc2-relational-position.test.mjs :: RC2-010: when the position is pinned, \"cannot be determined\" is offered as a real misconception"
+      ],
       "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "developmentCorpusMetric": "1 -> 17 distinct answers; modal 100% -> 34.4%; entropy 0.00 -> 3.55 bits; determined share 0.649",
+      "status": "FIXED",
+      "automatedProofCount": 5,
+      "evidenceArtifacts": []
     },
     {
       "id": "RC2-011",
@@ -165,13 +346,37 @@
       "classification": [
         "STATISTICAL_LEAKAGE_RISK"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/families/profit_loss.js",
+        "src/families/combined_rate.js",
+        "src/families/speed.js",
+        "src/families/machines.js",
+        "src/families/unit_rate.js",
+        "src/families/work_time.js",
+        "src/families/odd_one_out.js",
+        "src/families/relational.js",
+        "src/families/sequences.js"
+      ],
+      "rootCause": "The pools the stem draws its stated numbers from were short, and in several templates the stated quantity IS the answer, so the answer space was the length of a three- or four-element list.",
+      "plannedRemediation": "Design-time widening of those pools. No runtime mechanism reads a generated answer; a static scan for the statistical vocabulary such a mechanism would need returns empty, and the two shapes that do read the answer — validity guards and backward construction — are listed rather than hidden behind it.",
+      "automatedProof": [
+        "tests/rc2-answer-space.test.mjs :: RC2-011: no generation path consults a statistical property of answers",
+        "tests/rc2-answer-space.test.mjs :: RC2-011 meta: the scan convicts the vocabulary it exists to catch",
+        "tests/rc2-answer-space.test.mjs :: RC2-011: the answer reads that DO exist are the two expected shapes",
+        "tests/rc2-answer-space.test.mjs :: RC2-011: the five templates the RC1 audit named all leak materially less",
+        "tests/rc2-answer-space.test.mjs :: RC2-011: no template still gives a guesser a twenty-point advantage",
+        "tests/rc2-answer-space.test.mjs :: RC2-011: widening the pools did not cost the engine its ability to publish",
+        "tests/rc2-answer-space.test.mjs :: RC2-011: the published artifact carries the comparison and the empty scan"
+      ],
+      "regressionFixture": [
+        "tests/rc2-answer-space.test.mjs :: RC2-011 meta: the scan convicts the vocabulary it exists to catch"
+      ],
+      "developmentCorpusMetric": "rc2/RC2_011_ANSWER_SPACE.json — the five RC1 templates fall by 16.7 to 26.7 advantage points; 0 templates above +20 (was 5); median template −3.8",
+      "status": "RISK_REMEDIATED_AND_MEASURED",
+      "automatedProofCount": 7,
+      "evidenceArtifacts": [
+        "rc2/RC2_011_ANSWER_SPACE.json"
+      ]
     },
     {
       "id": "RC2-012",
@@ -180,13 +385,46 @@
         "PEDAGOGICAL_BLOCKER",
         "STATISTICAL_LEAKAGE_RISK"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/qa/distractor-provenance.js",
+        "src/families/_shared.js mk",
+        "all 16 family files"
+      ],
+      "rootCause": "A learner has no access to the answer, yet 24.9% of published wrong options had derivations that begin with it. 79 of 107 templates were affected and 15.6% of questions carried three or more.",
+      "plannedRemediation": "Every answer-derived distractor must name the step of the published explanation it corrupts, and no two may carry the same misconception. Pools deepened with slips built from each question's own quantities rather than refilled with nudges.",
+      "automatedProof": [
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012: the key-neighbour shape is recognised",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012: a derivation through an intermediate is not a key-neighbour",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012: a derivation starting from a GIVEN is not answer-derived",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012 MUST_REJECT: an unattributed key-neighbour",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012 MUST_ACCEPT: the same value once it names the step it corrupts",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012 MUST_REJECT: a step the published explanation does not have",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012 MUST_REJECT: the audit\\",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012 MUST_ACCEPT: several distinctly named errors that each sit near the key",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012: the steps come from the published explanation, not only the descriptor",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012: no template in any family produces an unattributed key-neighbour",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012: the rate in published options is a fraction of what it was",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012: the step reaches the published option metadata",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012: a bare key-neighbour is refused by validateCandidate",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012: mk carries the step through to the published option metadata",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012 audit: no surviving answer-relative option is unjustified",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012 audit meta: the stratifier convicts a genuine key-neighbour",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012 audit: the published artifact matches the engine"
+      ],
+      "regressionFixture": [
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012 MUST_REJECT: an unattributed key-neighbour",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012 MUST_ACCEPT: the same value once it names the step it corrupts",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012 MUST_REJECT: a step the published explanation does not have",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012 MUST_REJECT: the audit\\",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012 MUST_ACCEPT: several distinctly named errors that each sit near the key",
+        "tests/rc2-distractor-provenance.test.mjs :: RC2-012 audit meta: the stratifier convicts a genuine key-neighbour"
+      ],
+      "developmentCorpusMetric": "rc2/RC2_012_SURVIVOR_AUDIT.json — 24.9% -> 1.9%; three-or-more 15.6% -> 0.7%; stratified: 274 S1_TASK_PATH, 48 S3_GIVEN_COINCIDENCE, 2 S1B, 1 S2, 0 S4_UNJUSTIFIED",
+      "status": "FIXED",
+      "automatedProofCount": 17,
+      "evidenceArtifacts": [
+        "rc2/RC2_012_SURVIVOR_AUDIT.json"
+      ]
     },
     {
       "id": "RC2-013",
@@ -195,13 +433,38 @@
         "PRODUCTION_BLOCKER",
         "PEDAGOGICAL_BLOCKER"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/qa/misconception-context.js",
+        "src/families/speed.js",
+        "src/families/machines.js",
+        "src/families/work_time.js",
+        "src/families/unit_rate.js",
+        "src/families/percentages.js",
+        "src/families/ratios.js"
+      ],
+      "rootCause": "USED_SUM_OF_SPEEDS_IN_CHASE told the learner they had added the speeds in a CHASE problem, on 154 of its 195 uses under stems with no chase in them.",
+      "plannedRemediation": "A misconception whose text names a situation is declared with the Arabic that must be present for the sentence to be true, and the pipeline refuses the pairing otherwise. The check found six more instances of the same defect that the audit had not reported.",
+      "automatedProof": [
+        "tests/rc2-misconception-context.test.mjs :: RC2-013 MUST_REJECT: the chase sentence on a stem with no chase",
+        "tests/rc2-misconception-context.test.mjs :: RC2-013 MUST_ACCEPT: the same sentence on a stem that has a chase",
+        "tests/rc2-misconception-context.test.mjs :: RC2-013: a declared target misconception is checked too, not only the distractors",
+        "tests/rc2-misconception-context.test.mjs :: RC2-013: a general misconception is never accused of naming a situation",
+        "tests/rc2-misconception-context.test.mjs :: RC2-013 meta: every context-bound id exists in the catalogue, and its markers can fail",
+        "tests/rc2-misconception-context.test.mjs :: RC2-013: the two templates the audit named no longer carry the chase sentence",
+        "tests/rc2-misconception-context.test.mjs :: RC2-013: the chase sentence still appears where a chase actually is",
+        "tests/rc2-misconception-context.test.mjs :: RC2-013: no template in any family attaches a situation to a stem without it",
+        "tests/rc2-misconception-context.test.mjs :: RC2-013: the check is wired into the pipeline, not only exported",
+        "tests/rc2-misconception-context.test.mjs :: RC2-013: no published question carries a misattributed misconception"
+      ],
+      "regressionFixture": [
+        "tests/rc2-misconception-context.test.mjs :: RC2-013 MUST_REJECT: the chase sentence on a stem with no chase",
+        "tests/rc2-misconception-context.test.mjs :: RC2-013 MUST_ACCEPT: the same sentence on a stem that has a chase",
+        "tests/rc2-misconception-context.test.mjs :: RC2-013 meta: every context-bound id exists in the catalogue, and its markers can fail"
+      ],
+      "developmentCorpusMetric": "0 offenders over 11,975 candidates across all sixteen families",
+      "status": "FIXED",
+      "automatedProofCount": 10,
+      "evidenceArtifacts": []
     },
     {
       "id": "RC2-014",
@@ -209,13 +472,43 @@
       "classification": [
         "QA_METRIC_DEFECT"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/qa/feedback-metrics.js",
+        "src/families/combined_rate.js",
+        "src/families/machines.js",
+        "src/families/percentages.js",
+        "src/families/profit_loss.js"
+      ],
+      "rootCause": "The reported 0% -> 100% specificity counted the mechanical head «اخترت {الخيار}، وهي ناتج {الاشتقاق}.», which carries the option's own value and is unique by construction. The metric could not return anything else.",
+      "plannedRemediation": "The metric is retired with its reason recorded and replaced by five falsifiable ones. M1 reads the derivation as arithmetic and checks it produces the number on the paper; it found four classes of false feedback, all fixed at the source, and both failures are now pipeline stages.",
+      "automatedProof": [
+        "tests/rc2-feedback.test.mjs :: RC2-014: an arithmetic derivation is evaluated",
+        "tests/rc2-feedback.test.mjs :: RC2-014: the expression is read out of a derivation that also explains itself",
+        "tests/rc2-feedback.test.mjs :: RC2-014: prose makes no arithmetic claim, so none can be false",
+        "tests/rc2-feedback.test.mjs :: RC2-014: an answer that is not a number is not checked arithmetically",
+        "tests/rc2-feedback.test.mjs :: RC2-014 MUST_ACCEPT: a derivation that produces its option",
+        "tests/rc2-feedback.test.mjs :: RC2-014 MUST_ACCEPT: a derivation whose result is written to the shown precision",
+        "tests/rc2-feedback.test.mjs :: RC2-014 MUST_REJECT: a derivation that produces a different number",
+        "tests/rc2-feedback.test.mjs :: RC2-014 meta: the rounding tolerance is exactly the displayed precision",
+        "tests/rc2-feedback.test.mjs :: RC2-014: a false arithmetic claim is refused, not merely counted",
+        "tests/rc2-feedback.test.mjs :: RC2-014: two wrong options explained by one derivation is refused",
+        "tests/rc2-feedback.test.mjs :: RC2-014: the check is reached through validateCandidate",
+        "tests/rc2-feedback.test.mjs :: RC2-014: no published wrong option makes a false arithmetic claim",
+        "tests/rc2-feedback.test.mjs :: RC2-014: the retired metric is recorded as retired, with the reason",
+        "tests/rc2-feedback.test.mjs :: RC2-014: discrimination is not measured on the rendered sentence"
+      ],
+      "regressionFixture": [
+        "tests/rc2-feedback.test.mjs :: RC2-014 MUST_ACCEPT: a derivation that produces its option",
+        "tests/rc2-feedback.test.mjs :: RC2-014 MUST_ACCEPT: a derivation whose result is written to the shown precision",
+        "tests/rc2-feedback.test.mjs :: RC2-014 MUST_REJECT: a derivation that produces a different number",
+        "tests/rc2-feedback.test.mjs :: RC2-014 meta: the rounding tolerance is exactly the displayed precision"
+      ],
+      "developmentCorpusMetric": "rc2/RC2_014_FEEDBACK_METRICS.json — M1 1.00000 over 13,902 arithmetic claims, M2 1.00000, M3 5.000 distinct derivations per question, M5 0",
+      "status": "MEASUREMENT_CORRECTED",
+      "automatedProofCount": 14,
+      "evidenceArtifacts": [
+        "rc2/RC2_014_FEEDBACK_METRICS.json"
+      ]
     },
     {
       "id": "RC2-015",
@@ -223,13 +516,36 @@
       "classification": [
         "QA_METRIC_DEFECT"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/qa/complexity.js",
+        "src/families/odd_one_out.js",
+        "src/families/combined_rate.js"
+      ],
+      "rootCause": "conditionCount was fed the number of NUMBERS shown in an odd-one-out question — six, always — so it added a flat 4.2 to easy and hard alike. The boundaries 4.5 and 9.5 then put the median easy question in medium and the median medium question in hard.",
+      "plannedRemediation": "ruleSearchDepth replaces the stimulus count; COMB_H_THREE is declared where the model puts it (easy, as COMB_E_THREE); boundaries placed midway between adjacent band medians by a stated rule, recomputed by the tool so drift is visible.",
+      "automatedProof": [
+        "tests/rc2-difficulty.test.mjs :: RC2-015 fixtures: the four odd-one-out misclassifications are no longer publishable",
+        "tests/rc2-difficulty.test.mjs :: RC2-015 fixture: S5/28 was a wrong declaration, not a wrong score",
+        "tests/rc2-difficulty.test.mjs :: RC2-015 meta: the fixtures would have failed before the corrections",
+        "tests/rc2-difficulty.test.mjs :: RC2-015: the boundaries follow the stated rule, within a tenth",
+        "tests/rc2-difficulty.test.mjs :: RC2-015: the RC1 boundaries put the median easy question in medium",
+        "tests/rc2-difficulty.test.mjs :: RC2-015: bandFor is driven by the exported boundaries, not by literals",
+        "tests/rc2-difficulty.test.mjs :: RC2-015: agreement improves, and is not driven to a fitted 100%",
+        "tests/rc2-difficulty.test.mjs :: RC2-015: the RC1 caveat about REL_H_POSITION is answered",
+        "tests/rc2-difficulty.test.mjs :: RC2-015: the published artifact carries the corrections and the fixtures"
+      ],
+      "regressionFixture": [
+        "tests/rc2-difficulty.test.mjs :: RC2-015 fixtures: the four odd-one-out misclassifications are no longer publishable",
+        "tests/rc2-difficulty.test.mjs :: RC2-015 fixture: S5/28 was a wrong declaration, not a wrong score",
+        "tests/rc2-difficulty.test.mjs :: RC2-015 meta: the fixtures would have failed before the corrections",
+        "tests/rc2-difficulty.test.mjs :: RC2-015: the published artifact carries the corrections and the fixtures"
+      ],
+      "developmentCorpusMetric": "rc2/RC2_015_DIFFICULTY_CALIBRATION.json — agreement 52.8% -> 66.0%, deliberately not further; all five RC1 misclassifications met; the REL_H_POSITION caveat answered at determined share 0.649",
+      "status": "MEASUREMENT_CORRECTED",
+      "automatedProofCount": 9,
+      "evidenceArtifacts": [
+        "rc2/RC2_015_DIFFICULTY_CALIBRATION.json"
+      ]
     },
     {
       "id": "RC2-016",
@@ -237,13 +553,30 @@
       "classification": [
         "LANGUAGE_BLOCKER"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/arabic/constructions.js",
+        "src/families/work_time.js"
+      ],
+      "rootCause": "The dual took the wrong case after a governor, so «إنجاز مهمتان» reached publication.",
+      "plannedRemediation": "The classifier reads the governor and the case of the dual; work_time takes the oblique form.",
+      "automatedProof": [
+        "tests/rc2-arabic.test.mjs :: RC2-016 MUST_REJECT: إنجاز مهمتان",
+        "tests/rc2-arabic.test.mjs :: RC2-016 MUST_ACCEPT: إنجاز مهمتين",
+        "tests/rc2-arabic.test.mjs :: RC2-016 MUST_REJECT: كل سنتيمتران تمثل",
+        "tests/rc2-arabic.test.mjs :: RC2-016 MUST_ACCEPT: كل سنتيمترين يمثلان",
+        "tests/rc2-arabic.test.mjs :: RC2-016 MUST_ACCEPT: a nominative dual in subject position is right"
+      ],
+      "regressionFixture": [
+        "tests/rc2-arabic.test.mjs :: RC2-016 MUST_REJECT: إنجاز مهمتان",
+        "tests/rc2-arabic.test.mjs :: RC2-016 MUST_ACCEPT: إنجاز مهمتين",
+        "tests/rc2-arabic.test.mjs :: RC2-016 MUST_REJECT: كل سنتيمتران تمثل",
+        "tests/rc2-arabic.test.mjs :: RC2-016 MUST_ACCEPT: كل سنتيمترين يمثلان",
+        "tests/rc2-arabic.test.mjs :: RC2-016 MUST_ACCEPT: a nominative dual in subject position is right"
+      ],
+      "developmentCorpusMetric": "0 invalid dual constructions over 6,240 questions",
+      "status": "FIXED",
+      "automatedProofCount": 5,
+      "evidenceArtifacts": []
     },
     {
       "id": "RC2-017",
@@ -251,13 +584,25 @@
       "classification": [
         "LANGUAGE_BLOCKER"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/families/profit_loss.js",
+        "src/families/direct_proportion.js",
+        "src/arabic/constructions.js"
+      ],
+      "rootCause": "Definiteness was rendered onto the wrong member of an إضافة, giving «سعر سلعة المعلن».",
+      "plannedRemediation": "The stems are corrected and the classifier requires the head of an إضافة to be a known head, with prefixed-article detection so the rule does not fire on «معدل أ الكلي».",
+      "automatedProof": [
+        "tests/rc2-arabic.test.mjs :: RC2-017 MUST_REJECT: سعر سلعة المعلن",
+        "tests/rc2-arabic.test.mjs :: RC2-017 MUST_ACCEPT: سعر السلعة المعلن"
+      ],
+      "regressionFixture": [
+        "tests/rc2-arabic.test.mjs :: RC2-017 MUST_REJECT: سعر سلعة المعلن",
+        "tests/rc2-arabic.test.mjs :: RC2-017 MUST_ACCEPT: سعر السلعة المعلن"
+      ],
+      "developmentCorpusMetric": "Arabic pipeline rejections 81 -> 0 after the seven false positives were traced to the classifier",
+      "status": "FIXED",
+      "automatedProofCount": 2,
+      "evidenceArtifacts": []
     },
     {
       "id": "RC2-018",
@@ -265,13 +610,20 @@
       "classification": [
         "PEDAGOGICAL_BLOCKER"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
+      "affectedProductionPath": [
+        "src/families/fractions.js"
+      ],
+      "rootCause": "The remember-line taught the reverse of the quantity asked for: previous ÷ next gives the DENOMINATOR, not the fraction.",
+      "plannedRemediation": "The rule is restated and the distinction made explicit in the same sentence.",
+      "automatedProof": [
+        "tests/rc2-ratio-fraction.test.mjs :: RC2-018: the reminder no longer teaches the reversed rule",
+        "tests/rc2-ratio-fraction.test.mjs :: RC2-018: the steps distinguish the fraction from its denominator"
+      ],
       "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "developmentCorpusMetric": "the hidden-fraction direction publishes with the corrected rule across all three fraction templates",
+      "status": "FIXED",
+      "automatedProofCount": 2,
+      "evidenceArtifacts": []
     },
     {
       "id": "RC2-019",
@@ -279,13 +631,24 @@
       "classification": [
         "PEDAGOGICAL_BLOCKER"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/families/fractions.js",
+        "src/families/direct_proportion.js",
+        "src/families/speed.js"
+      ],
+      "rootCause": "fastMethod stated an instance rather than a reusable rule, so it did not generalise.",
+      "plannedRemediation": "A reusable rule first, the instance after it. Five templates beyond the reported fractions family were found to have the same shape.",
+      "automatedProof": [
+        "tests/rc2-ratio-fraction.test.mjs :: RC2-019: every quick method states a reusable rule",
+        "tests/rc2-ratio-fraction.test.mjs :: RC2-019 meta: the check would catch the historical string"
+      ],
+      "regressionFixture": [
+        "tests/rc2-ratio-fraction.test.mjs :: RC2-019 meta: the check would catch the historical string"
+      ],
+      "developmentCorpusMetric": "five affected templates identified and corrected, beyond the one the audit named",
+      "status": "FIXED",
+      "automatedProofCount": 2,
+      "evidenceArtifacts": []
     },
     {
       "id": "RC2-020",
@@ -293,13 +656,26 @@
       "classification": [
         "PRODUCTION_BLOCKER"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/families/ratios.js"
+      ],
+      "rootCause": "Only the first printed ratio carried the template invariants, so the second edge escaped and sets such as ب : ج = 6 : 2 reached publication unreduced.",
+      "plannedRemediation": "Both printed ratios declare the invariant. RC2-003 later found the sampler was drawing pairs the invariant would refuse, at 69% of three templates' draws, and moved the constraint into the draw; the invariant stays as the guard.",
+      "automatedProof": [
+        "tests/rc2-ratio-fraction.test.mjs :: RC2-020 MUST_REJECT: an unreduced secondary ratio is refused",
+        "tests/rc2-ratio-fraction.test.mjs :: RC2-020 MUST_REJECT: an equal-sided secondary ratio is refused",
+        "tests/rc2-ratio-fraction.test.mjs :: RC2-020 MUST_ACCEPT: two reduced, distinct-sided ratios pass",
+        "tests/rc2-ratio-fraction.test.mjs :: RC2-020: no published ratio question prints an unreduced or equal-sided pair"
+      ],
+      "regressionFixture": [
+        "tests/rc2-ratio-fraction.test.mjs :: RC2-020 MUST_REJECT: an unreduced secondary ratio is refused",
+        "tests/rc2-ratio-fraction.test.mjs :: RC2-020 MUST_REJECT: an equal-sided secondary ratio is refused",
+        "tests/rc2-ratio-fraction.test.mjs :: RC2-020 MUST_ACCEPT: two reduced, distinct-sided ratios pass"
+      ],
+      "developmentCorpusMetric": "0 unreduced or equal-sided pairs over 900 questions; ratios pipeline rejection rate 69% -> 0%",
+      "status": "FIXED",
+      "automatedProofCount": 4,
+      "evidenceArtifacts": []
     },
     {
       "id": "RC2-021",
@@ -307,13 +683,31 @@
       "classification": [
         "QA_OBSERVABILITY_BLOCKER"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/index.js",
+        "report.js",
+        "index.html",
+        "app.js",
+        "generator_manifest.json",
+        "package.json"
+      ],
+      "rootCause": "ENGINE_VERSION said 1.3.0 while the PDF footer and the UI pill were hard-coded to 1.2.0.",
+      "plannedRemediation": "One authoritative source; every surface interpolates it, and a test fails if any shipped file hard-codes a different version.",
+      "automatedProof": [
+        "tests/rc2-version-consistency.test.mjs :: RC2-021: the engine instance reports the authoritative version",
+        "tests/rc2-version-consistency.test.mjs :: RC2-021: generated questions carry the authoritative version",
+        "tests/rc2-version-consistency.test.mjs :: RC2-021: the report footer derives from the authoritative version",
+        "tests/rc2-version-consistency.test.mjs :: RC2-021: the generator manifest agrees",
+        "tests/rc2-version-consistency.test.mjs :: RC2-021: no shipped file hard-codes a different version",
+        "tests/rc2-version-consistency.test.mjs :: RC2-021 meta: the scan would catch a stale literal"
+      ],
+      "regressionFixture": [
+        "tests/rc2-version-consistency.test.mjs :: RC2-021 meta: the scan would catch a stale literal"
+      ],
+      "developmentCorpusMetric": "every declared version agrees with ENGINE_VERSION",
+      "status": "FIXED",
+      "automatedProofCount": 6,
+      "evidenceArtifacts": []
     },
     {
       "id": "RC2-022",
@@ -322,13 +716,30 @@
         "PRODUCTION_BLOCKER",
         "STATISTICAL_LEAKAGE_RISK"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/qa/fingerprint.js",
+        "src/utils.js",
+        "src/families/odd_one_out.js",
+        "src/families/fractions.js"
+      ],
+      "rootCause": "The commutative canonicalisation escaped for order-insensitive parameters, so permutations of one number set looked like different questions.",
+      "plannedRemediation": "buildSemanticFingerprint sorts declared order-insensitive arrays rather than dropping them, so content still distinguishes questions while display order does not.",
+      "automatedProof": [
+        "tests/rc2-fingerprint.test.mjs :: RC2-022 MUST_RECOGNISE_AS_SAME: the two historical display orders are one instance",
+        "tests/rc2-fingerprint.test.mjs :: RC2-022 MUST_ACCEPT_AS_DIFFERENT: a genuinely different set stays distinct",
+        "tests/rc2-fingerprint.test.mjs :: RC2-022 property: the semantic fingerprint is invariant under every permutation",
+        "tests/rc2-fingerprint.test.mjs :: RC2-022: order is preserved where order is the mathematics",
+        "tests/rc2-fingerprint.test.mjs :: RC2-022: every declared commutative structure is genuinely order-blind",
+        "tests/rc2-fingerprint.test.mjs :: RC2-022/023: no session repeats a semantic instance or a reasoning pattern",
+        "tests/rc2-fingerprint.test.mjs :: RC2-022/023: the same holds for all-hard sessions"
+      ],
+      "regressionFixture": [
+        "tests/rc2-fingerprint.test.mjs :: RC2-022 MUST_ACCEPT_AS_DIFFERENT: a genuinely different set stays distinct"
+      ],
+      "developmentCorpusMetric": "43 of 44 odd-one-out semantic groups collapse; one group holds nine display orders under one fingerprint; a property test covers all 720 permutations",
+      "status": "FIXED",
+      "automatedProofCount": 7,
+      "evidenceArtifacts": []
     },
     {
       "id": "RC2-023",
@@ -337,13 +748,43 @@
         "PRODUCTION_BLOCKER",
         "STATISTICAL_LEAKAGE_RISK"
       ],
-      "affectedProductionPath": null,
-      "rootCause": null,
-      "plannedRemediation": null,
-      "automatedProof": [],
-      "regressionFixture": [],
-      "developmentCorpusMetric": null,
-      "status": "PLANNED"
+      "affectedProductionPath": [
+        "src/qa/fingerprint.js",
+        "src/families/sequences.js",
+        "src/index.js"
+      ],
+      "rootCause": "Two sequences differing only in their first term were two questions by fingerprint and one reasoning experience in fact.",
+      "plannedRemediation": "A structural reasoning signature independent of incidental values, declared per template and de-duplicated within a session.",
+      "automatedProof": [
+        "tests/rc2-fingerprint.test.mjs :: RC2-023 MUST_REJECT: the same chain with a different start term is one pattern",
+        "tests/rc2-fingerprint.test.mjs :: RC2-023 MUST_ACCEPT: a genuinely different chain is a different pattern",
+        "tests/rc2-fingerprint.test.mjs :: RC2-023: a template with no declared pattern has a null signature",
+        "tests/rc2-fingerprint.test.mjs :: RC2-023: different rules are not collapsed because their answers coincide"
+      ],
+      "regressionFixture": [
+        "tests/rc2-fingerprint.test.mjs :: RC2-023 MUST_REJECT: the same chain with a different start term is one pattern",
+        "tests/rc2-fingerprint.test.mjs :: RC2-023 MUST_ACCEPT: a genuinely different chain is a different pattern"
+      ],
+      "developmentCorpusMetric": "400 exact instances collapse to 90 structural patterns; SEQ_M_ALT_OPS = 6, matching the corpus",
+      "status": "FIXED",
+      "automatedProofCount": 4,
+      "evidenceArtifacts": []
     }
-  ]
+  ],
+  "generatedAt": "2026-09-12T10:30:41.992Z",
+  "headCommit": "85e302ebe94f2d70121d49f67f6ebd475d7fbe09",
+  "totals": {
+    "items": 23,
+    "byStatus": {
+      "FIXED": 19,
+      "RISK_REMEDIATED_AND_MEASURED": 2,
+      "MEASUREMENT_CORRECTED": 2
+    },
+    "withAutomatedProof": 23,
+    "withRegressionFixture": 20,
+    "totalAutomatedProofs": 174,
+    "stillPlanned": 0,
+    "atForbiddenStatus": 0
+  },
+  "problems": []
 }
