@@ -18,7 +18,10 @@ function addOne(ctx) {
   const total = n * avg;
   const correct = (total + newVal) / (n + 1);
   if (!Number.isInteger(correct) || correct === avg) return addOne(ctx);
-  const params = {count: n, average: avg, addedValue: newVal};
+  // RC2-002: the resulting count is a genuine parameter of the question. It
+  // used to be sourced from the stem's bare numeral; now that the stem states
+  // the count in words, the explanation sources it from here.
+  const params = {count: n, average: avg, addedValue: newVal, resultingCount: n + 1};
   const distractors = usable([
     mk(avg, 'USED_OLD_AVERAGE', `المتوسط القديم ${avg}`),
     mk(newVal, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة المضافة ${newVal}`),
@@ -35,7 +38,9 @@ function addOne(ctx) {
     templateId: 'AVG_E_ADD',
     subskill: 'إضافة قيمة جديدة إلى مجموعة',
     difficulty: 'easy',
-    question: `متوسط ${n} قيم هو ${avg}. أضيفت قيمة جديدة مقدارها ${newVal}. فما متوسط القيم ${n + 1}؟`,
+    // RC2-002: a definite plural takes an agreeing numeral adjective, not a
+    // bare numeral. The count is restated in words the sentence can carry.
+    question: `متوسط ${n} قيم هو ${avg}. أضيفت قيمة جديدة مقدارها ${newVal}. فما متوسط القيم بعد الإضافة؟`,
     correct, distractors, format: plain,
     steps: [
       `المجموع الأصلي = ${n} × ${avg} = ${total}.`,
@@ -69,7 +74,10 @@ function removeOne(ctx) {
   if (remain <= 0 || remain % (n - 1) !== 0) return removeOne(ctx);
   const correct = remain / (n - 1);
   if (correct === avg) return removeOne(ctx);
-  const params = {count: n, average: avg, removedValue: removed};
+  // RC2-002: the resulting count is a genuine parameter of the question. It
+  // used to be sourced from the stem's bare numeral; now that the stem states
+  // the count in words, the explanation sources it from here.
+  const params = {count: n, average: avg, removedValue: removed, resultingCount: n - 1};
   const distractors = usable([
     mk(avg, 'USED_OLD_AVERAGE', `المتوسط القديم ${avg}`),
     mk(removed, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة المحذوفة ${removed}`),
@@ -87,7 +95,9 @@ function removeOne(ctx) {
     templateId: 'AVG_E_REMOVE',
     subskill: 'حذف قيمة من مجموعة',
     difficulty: 'easy',
-    question: `متوسط ${n} قيم هو ${avg}. حُذفت قيمة مقدارها ${removed}. فما متوسط القيم ${n - 1} الباقية؟`,
+    // RC2-002: a definite plural takes an agreeing numeral adjective, not a
+    // bare numeral. The count is restated in words the sentence can carry.
+    question: `متوسط ${n} قيم هو ${avg}. حُذفت قيمة مقدارها ${removed}. فما متوسط القيم الباقية؟`,
     correct, distractors, format: plain,
     steps: [
       `المجموع الأصلي = ${n} × ${avg} = ${total}.`,
@@ -175,7 +185,10 @@ function combineGroups(ctx) {
   const total = n1 * a1 + n2 * a2;
   if (total % (n1 + n2) !== 0) return combineGroups(ctx);
   const correct = total / (n1 + n2);
-  const params = {countA: n1, averageA: a1, countB: n2, averageB: a2};
+  // RC2-002: the resulting count is a genuine parameter of the question. It
+  // used to be sourced from the stem's bare numeral; now that the stem states
+  // the count in words, the explanation sources it from here.
+  const params = {countA: n1, averageA: a1, countB: n2, averageB: a2, resultingCount: n1 + n2};
   const distractors = usable([
     mk((a1 + a2) / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${a1} + ${a2}) ÷ 2`),
     mk(a1, 'USED_GIVEN_VALUE_AS_ANSWER', `متوسط المجموعة الأولى ${a1}`),
@@ -189,7 +202,9 @@ function combineGroups(ctx) {
     templateId: 'AVG_M_COMBINE',
     subskill: 'دمج مجموعتين بمتوسطين مختلفين',
     difficulty: 'medium',
-    question: `متوسط ${n1} قيم هو ${a1}، ومتوسط ${n2} قيم أخرى هو ${a2}. فما متوسط القيم ${n1 + n2} مجتمعة؟`,
+    // RC2-002: a definite plural takes an agreeing numeral adjective, not a
+    // bare numeral. The count is restated in words the sentence can carry.
+    question: `متوسط ${n1} قيم هو ${a1}، ومتوسط ${n2} قيم أخرى هو ${a2}. فما متوسط القيم مجتمعة؟`,
     correct, distractors, format: plain,
     steps: [
       `مجموع المجموعة الأولى = ${n1} × ${a1} = ${n1 * a1}.`,
@@ -224,7 +239,10 @@ function addPairKnownAverage(ctx) {
   const total = n * avg + 2 * pairAvg;
   if (total % (n + 2) !== 0) return addPairKnownAverage(ctx);
   const correct = total / (n + 2);
-  const params = {count: n, average: avg, pairAverage: pairAvg};
+  // RC2-002: the resulting count is a genuine parameter of the question. It
+  // used to be sourced from the stem's bare numeral; now that the stem states
+  // the count in words, the explanation sources it from here.
+  const params = {count: n, average: avg, pairAverage: pairAvg, resultingCount: n + 2};
   const distractors = usable([
     mk(avg, 'USED_OLD_AVERAGE', `المتوسط القديم ${avg}`),
     mk(pairAvg, 'USED_GIVEN_VALUE_AS_ANSWER', `متوسط القيمتين ${pairAvg}`),
@@ -238,7 +256,9 @@ function addPairKnownAverage(ctx) {
     templateId: 'AVG_M_ADD_PAIR',
     subskill: 'إضافة قيمتين بمتوسط معلوم',
     difficulty: 'medium',
-    question: `متوسط ${n} قيم هو ${avg}. أضيفت قيمتان متوسطهما ${pairAvg}. فما متوسط القيم ${n + 2}؟`,
+    // RC2-002: a definite plural takes an agreeing numeral adjective, not a
+    // bare numeral. The count is restated in words the sentence can carry.
+    question: `متوسط ${n} قيم هو ${avg}. أضيفت قيمتان متوسطهما ${pairAvg}. فما متوسط القيم بعد الإضافة؟`,
     correct, distractors, format: plain,
     steps: [
       `مجموع القيم الأصلية = ${n} × ${avg} = ${n * avg}.`,
@@ -276,7 +296,10 @@ function combineThenAdd(ctx) {
   const n = n1 + n2 + 1;
   if (total % n !== 0) return combineThenAdd(ctx);
   const correct = total / n;
-  const params = {countA: n1, averageA: a1, countB: n2, averageB: a2, extraValue: extra};
+  // RC2-002: the resulting count is a genuine parameter of the question. It
+  // used to be sourced from the stem's bare numeral; now that the stem states
+  // the count in words, the explanation sources it from here.
+  const params = {countA: n1, averageA: a1, countB: n2, averageB: a2, extraValue: extra, resultingCount: n1 + n2 + 1};
   const distractors = usable([
     mk((a1 + a2) / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${a1} + ${a2}) ÷ 2`),
     mk((n1 * a1 + n2 * a2) / (n1 + n2), 'STOPPED_AFTER_FIRST_STAGE', `${n1 * a1 + n2 * a2} ÷ ${n1 + n2}`),
@@ -293,7 +316,9 @@ function combineThenAdd(ctx) {
     templateId: 'AVG_H_COMB_ADD',
     subskill: 'دمج مجموعتين ثم إضافة قيمة جديدة',
     difficulty: 'hard',
-    question: `متوسط ${n1} قيم هو ${a1}، ومتوسط ${n2} قيم أخرى هو ${a2}. أضيفت بعد ذلك قيمة جديدة مقدارها ${extra}. فما متوسط القيم ${n}؟`,
+    // RC2-002: a definite plural takes an agreeing numeral adjective, not a
+    // bare numeral. The count is restated in words the sentence can carry.
+    question: `متوسط ${n1} قيم هو ${a1}، ومتوسط ${n2} قيم أخرى هو ${a2}. أضيفت بعد ذلك قيمة جديدة مقدارها ${extra}. فما متوسط القيم جميعها؟`,
     correct, distractors, format: plain,
     steps: [
       `مجموع المجموعة الأولى = ${n1} × ${a1} = ${n1 * a1}.`,
@@ -328,7 +353,10 @@ function missingValueForTarget(ctx) {
   const current = n * oldAvg;
   const correct = (n + 1) * target - current;
   if (correct <= 0) return missingValueForTarget(ctx);
-  const params = {count: n, currentAverage: oldAvg, targetAverage: target};
+  // RC2-002: the resulting count is a genuine parameter of the question. It
+  // used to be sourced from the stem's bare numeral; now that the stem states
+  // the count in words, the explanation sources it from here.
+  const params = {count: n, currentAverage: oldAvg, targetAverage: target, resultingCount: n + 1};
   const distractors = usable([
     mk(target, 'USED_TARGET_AS_ANSWER', `المتوسط المستهدف ${target}`),
     mk(oldAvg, 'USED_OLD_AVERAGE', `المتوسط القديم ${oldAvg}`),
@@ -342,7 +370,9 @@ function missingValueForTarget(ctx) {
     templateId: 'AVG_H_TARGET',
     subskill: 'إيجاد قيمة مطلوبة للوصول إلى متوسط مستهدف',
     difficulty: 'hard',
-    question: `متوسط ${n} قيم هو ${oldAvg}. ما القيمة التي يجب إضافتها ليصبح متوسط القيم ${n + 1} هو ${target}؟`,
+    // RC2-002: a definite plural takes an agreeing numeral adjective, not a
+    // bare numeral. The count is restated in words the sentence can carry.
+    question: `متوسط ${n} قيم هو ${oldAvg}. ما القيمة التي يجب إضافتها ليصبح متوسط القيم جميعها هو ${target}؟`,
     correct, distractors, format: plain,
     steps: [
       `المجموع الحالي = ${n} × ${oldAvg} = ${current}.`,

@@ -84,7 +84,9 @@ function arithmetic(ctx) {
     ],
     howToStart: 'ابدأ بالفروق بين الحدود.',
     remember: 'إذا كان الفرق ثابتًا، لا تبحث عن قاعدة أعقد.',
-    fastMethod: `طبّق الفرق الثابت ${step} مرة واحدة.`,
+    // RC2-002: the value and the adverbial were adjacent, so the numeral read
+    // as though it were counting مرة. Stated as a value, then the adverbial.
+    fastMethod: `الفرق الثابت هو ${step}، فطبّقه مرة واحدة.`,
     estimatedSteps: 2, conceptTags: ['sequence', 'arithmetic-progression'],
     parameters: {firstTerm: start, commonDifference: step, shownTerms: seq},
     // RC2-023: the reasoning pattern, free of incidental start values.
@@ -181,7 +183,7 @@ function geometric(ctx) {
       ],
     howToStart: 'افحص الضرب أو القسمة إذا لم يكن الفرق ثابتًا.',
     remember: 'في المتتاليات الهندسية، العملية نفسها تتكرر بين كل حدين.',
-    fastMethod: `${divide ? 'اقسم' : 'اضرب'} في ${factor} مرة واحدة.`,
+    fastMethod: `المعامل الثابت هو ${factor}، ف${divide ? 'اقسم' : 'اضرب'} فيه مرة واحدة.`,
     estimatedSteps: 2, conceptTags: ['sequence', 'geometric-progression'],
     parameters: {firstTerm: seq[0], commonRatio: factor, shownTerms: seq},
     // RC2-023: the reasoning pattern, free of incidental start values.

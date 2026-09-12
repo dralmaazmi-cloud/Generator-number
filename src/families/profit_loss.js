@@ -176,7 +176,9 @@ function discountThenSale(ctx) {
     templateId: 'PL_M_DISC_MARK',
     subskill: 'خصم على سعر ثم إضافة ربح',
     difficulty: 'medium',
-    question: `سعر سلعة المعلن ${u(tag, 'dirham')}. حصل المتجر عليها بخصم ${discount}% من هذا السعر، ثم أراد ربحًا قدره ${markup}% من تكلفة الشراء الفعلية. فما سعر البيع؟`,
+    // RC2-017: سعر سلعة is an indefinite إضافة and cannot carry the definite
+    // adjective المعلن. Definite throughout: سعر السلعة المعلن.
+    question: `سعر السلعة المعلن ${u(tag, 'dirham')}. حصل المتجر عليها بخصم ${discount}% من هذا السعر، ثم أراد ربحًا قدره ${markup}% من تكلفة الشراء الفعلية. فما سعر البيع؟`,
     correct, distractors, format: money,
     steps: [
       `تكلفة الشراء بعد الخصم = ${tag} × (100 − ${discount}) ÷ 100 = ${costN}.`,

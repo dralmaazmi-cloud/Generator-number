@@ -475,7 +475,9 @@ function mapScale(ctx) {
     templateId: 'PROP_M_MAP',
     subskill: 'مقياس خريطة مع جمع مرحلتين',
     difficulty: 'medium',
-    question: `على خريطة، كل ${u(cmBase, 'cm')} تمثل ${u(kmBase, 'km')}. طول مسار على الخريطة ${u(a, 'cm')}، ثم أُضيف إليه طريق جانبي طوله ${u(b, 'cm')} على الخريطة. ما المسافة الحقيقية للمسار كاملًا؟`,
+    // RC2-016: كل governs its noun (genitive), and the verb agrees with it:
+    // كل سنتيمتر يمثل / كل سنتيمترين يمثلان / كل 5 سنتيمترات تمثل.
+    question: `على خريطة، كل ${u(cmBase, 'cm', 'oblique')} ${cmBase === 1 ? 'يمثل' : cmBase === 2 ? 'يمثلان' : 'تمثل'} ${u(kmBase, 'km')}. طول مسار على الخريطة ${u(a, 'cm')}، ثم أُضيف إليه طريق جانبي طوله ${u(b, 'cm')} على الخريطة. ما المسافة الحقيقية للمسار كاملًا؟`,
     correct,
     distractors,
     format: unitFormat('km'),

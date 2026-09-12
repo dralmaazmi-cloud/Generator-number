@@ -12,6 +12,7 @@ import {validateTextMatchesParams} from './text-params.js';
 import {validatePedagogy} from './pedagogy.js';
 import {validateDisplayedEquations, validateExplanationSourcing, numbersIn} from './equations.js';
 import {checkArabicNumberUnitsDeep} from '../arabic/units.js';
+import {classifyQuestionConstructions, STATUS as AR_STATUS} from '../arabic/constructions.js';
 import {isKnownMisconception} from './misconceptions.js';
 import {LETTERS, parseLeadingNumber, validateQuestion, DAYS_AR} from '../utils.js';
 
@@ -222,8 +223,20 @@ export function validateUniqueAnswer(base, q, oracleResult) {
 // --- stage: language (Section 12) ------------------------------------------
 
 export function validateLanguage(q) {
-  const {violations} = checkArabicNumberUnitsDeep(allRenderedText(q));
-  return verdict(violations.length ? [REASON.INVALID_ARABIC_NUMBER_UNIT] : [], {arabicViolations: violations});
+  const texts = allRenderedText(q);
+  const {violations} = checkArabicNumberUnitsDeep(texts);
+  // RC2-002/016/017. Every generator-controlled numeric or count construction is
+  // classified. An unrecognised one is reported, not waved through: it is a gap
+  // in the construction table and must stay visible in the corpus metrics.
+  const classified = classifyQuestionConstructions(texts);
+  const reasons = [];
+  if (violations.length || classified.invalid.length) reasons.push(REASON.INVALID_ARABIC_NUMBER_UNIT);
+  return verdict(reasons, {
+    arabicViolations: violations,
+    arabicInvalidConstructions: classified.invalid,
+    arabicUnclassifiedConstructions: classified.unclassified,
+    arabicConstructionCount: classified.constructions.length
+  });
 }
 
 // --- stage: explanation (Sections 8-B, 8-C) --------------------------------

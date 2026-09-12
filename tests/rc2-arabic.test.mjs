@@ -1,0 +1,117 @@
+// RC2-002 / RC2-016 / RC2-017 — Arabic rendering and construction validation.
+//
+// The historical strings are fixtures for the defect CLASS. Each MUST_REJECT is
+// paired with the corrected form as a MUST_ACCEPT, so a classifier that simply
+// rejected everything would fail here.
+
+import test from 'node:test';
+import assert from 'node:assert/strict';
+
+import Engine from '../src/index.js';
+import {classifyConstructions, classifyQuestionConstructions, STATUS} from '../src/arabic/constructions.js';
+import {allRenderedText} from '../src/qa/pipeline.js';
+
+const invalid = text => classifyConstructions(text).filter(c => c.status === STATUS.INVALID);
+const unclassified = text => classifyConstructions(text).filter(c => c.status === STATUS.UNCLASSIFIED);
+
+// --- RC2-002: a definite count noun may not take a bare numeral -------------
+
+test('RC2-002 MUST_REJECT: فما متوسط القيم 9؟', () => {
+  const bad = invalid('متوسط 7 قيم هو 24. أضيفت قيمتان متوسطهما 33. فما متوسط القيم 9؟');
+  assert.ok(bad.some(c => c.id === 'DEFINITE_COUNT_NOUN_THEN_BARE_NUMERAL'), JSON.stringify(bad));
+});
+
+test('RC2-002 MUST_ACCEPT: the corrected stem', () => {
+  assert.deepEqual(invalid('متوسط 7 قيم هو 24. أضيفت قيمتان متوسطهما 33. فما متوسط القيم بعد الإضافة؟'), []);
+});
+
+test('RC2-002 MUST_ACCEPT: apposition naming a number is not a count', () => {
+  assert.deepEqual(invalid('ما قيمة سُدس ثُمن العدد 960؟'), []);
+});
+
+// --- RC2-016: a governor requires the genitive ------------------------------
+
+test('RC2-016 MUST_REJECT: إنجاز مهمتان', () => {
+  const bad = invalid('يستطيع 6 عمال إنجاز مهمتان خلال 4 أيام.');
+  assert.ok(bad.some(c => c.id === 'GOVERNOR_THEN_NOMINATIVE_DUAL'), JSON.stringify(bad));
+});
+
+test('RC2-016 MUST_ACCEPT: إنجاز مهمتين', () => {
+  assert.deepEqual(invalid('يستطيع 6 عمال إنجاز مهمتين خلال 4 أيام.'), []);
+});
+
+test('RC2-016 MUST_REJECT: كل سنتيمتران تمثل', () => {
+  const bad = invalid('على خريطة، كل سنتيمتران تمثل 10 كيلومترات.');
+  assert.ok(bad.some(c => c.id === 'GOVERNOR_THEN_NOMINATIVE_DUAL'), JSON.stringify(bad));
+});
+
+test('RC2-016 MUST_ACCEPT: كل سنتيمترين يمثلان', () => {
+  assert.deepEqual(invalid('على خريطة، كل سنتيمترين يمثلان 10 كيلومترات.'), []);
+});
+
+test('RC2-016 MUST_ACCEPT: a nominative dual in subject position is right', () => {
+  assert.deepEqual(invalid('عملت الآلات كلها 3 ساعات، ثم توقفت آلتان وعملت البقية 4 ساعات.'), []);
+});
+
+// --- RC2-017: a definite adjective needs a definite noun --------------------
+
+test('RC2-017 MUST_REJECT: سعر سلعة المعلن', () => {
+  const bad = invalid('سعر سلعة المعلن 200 درهمًا.');
+  assert.ok(bad.some(c => c.id === 'INDEFINITE_IDAFA_THEN_DEFINITE_ADJECTIVE'), JSON.stringify(bad));
+});
+
+test('RC2-017 MUST_ACCEPT: سعر السلعة المعلن', () => {
+  assert.deepEqual(invalid('سعر السلعة المعلن 200 درهمًا.'), []);
+});
+
+// --- a numeral may not take a definite noun ---------------------------------
+
+test('RC2-002: MUST_REJECT a definite noun directly after a numeral', () => {
+  const bad = invalid('متوسط 5 القيم هو 24.');
+  assert.ok(bad.some(c => c.id === 'NUMERAL_THEN_DEFINITE_NOUN'), JSON.stringify(bad));
+});
+
+// --- unknown constructions must stay visible --------------------------------
+
+test('RC2-002/016/017: an unrecognised construction is reported, never waved through', () => {
+  const out = unclassified('لدينا 7 زقزقات في الحقل.');
+  assert.equal(out.length, 1, 'a noun outside the declared table must surface as unclassified');
+  assert.equal(out[0].id, 'NUMERAL_THEN_UNKNOWN_NOUN');
+});
+
+// --- the whole corpus -------------------------------------------------------
+
+test('RC2-002/016/017: no published question carries an invalid or unclassified construction', () => {
+  const engine = new Engine();
+  const badItems = [];
+  const unknownWords = new Map();
+  const signatures = new Set();
+  let n = 0;
+  for (const fam of engine.listFamilies().map(f => f.id)) {
+    for (let i = 0; i < 120; i++) {
+      let q;
+      try { q = engine.generateQuestion({family: fam, difficulty: 'mixed', seed: `rc2-ar-${fam}-${i}`}); } catch { continue; }
+      n++;
+      const r = classifyQuestionConstructions(allRenderedText(q));
+      for (const c of r.constructions) signatures.add(c.id);
+      for (const c of r.invalid) badItems.push(`${q.generator_id}: ${c.id} — ${c.text}`);
+      for (const c of r.unclassified) unknownWords.set(c.detail, (unknownWords.get(c.detail) || 0) + 1);
+    }
+  }
+  assert.ok(n > 1500, `expected a wide sample, generated ${n}`);
+  assert.deepEqual(badItems.slice(0, 5), [], `${badItems.length} invalid constructions`);
+  assert.deepEqual([...unknownWords.keys()].slice(0, 5), [],
+    `${unknownWords.size} unclassified constructions: ${[...unknownWords.keys()].slice(0, 8).join(', ')}`);
+  assert.ok(signatures.size >= 10, `expected a range of construction signatures, saw ${signatures.size}`);
+});
+
+test('RC2-002/016/017: the pipeline rejects a question carrying an invalid construction', async () => {
+  const {validateLanguage} = await import('../src/qa/pipeline.js');
+  const engine = new Engine();
+  const q = engine.generateQuestion({family: 'averages', difficulty: 'easy', seed: 'rc2-ar-gate'});
+  assert.equal(validateLanguage(q).valid, true, 'a clean question must pass');
+  const broken = {...q, question: 'متوسط 7 قيم هو 24. فما متوسط القيم 9؟'};
+  const v = validateLanguage(broken);
+  assert.equal(v.valid, false, 'the language stage must reject the historical construction');
+  assert.ok(v.details.arabicInvalidConstructions.length > 0);
+});

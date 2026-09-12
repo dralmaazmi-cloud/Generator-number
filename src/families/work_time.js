@@ -80,7 +80,9 @@ function workVolume(ctx) {
     templateId: 'WORK_E_VOLUME',
     subskill: 'زيادة حجم العمل مع ثبات الزمن',
     difficulty: 'easy',
-    question: `يستطيع ${u(workers, 'worker')} إنجاز ${u(oldUnits, 'task')} خلال ${u(days, 'day', 'oblique')}. كم عاملًا نحتاج لإنجاز ${u(newUnits, 'task')} خلال ${u(days, 'day', 'oblique')} بالكفاءة نفسها؟`,
+    // RC2-016: إنجاز governs its noun, so the count must take the genitive
+    // form — إنجاز مهمتين, never إنجاز مهمتان.
+    question: `يستطيع ${u(workers, 'worker')} إنجاز ${u(oldUnits, 'task', 'oblique')} خلال ${u(days, 'day', 'oblique')}. كم عاملًا نحتاج لإنجاز ${u(newUnits, 'task', 'oblique')} خلال ${u(days, 'day', 'oblique')} بالكفاءة نفسها؟`,
     correct, distractors, format: unitFormat('worker'),
     steps: [
       `العمل يتضاعف بنسبة ${newUnits} إلى ${oldUnits}، والزمن ثابت.`,
