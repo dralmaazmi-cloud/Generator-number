@@ -203,6 +203,8 @@ function combineGroups(ctx) {
   ]);
   return buildBase(ctx, {
     templateId: 'AVG_M_COMBINE',
+    // RC2.1-3. A weighted mean of two group averages lies between them.
+    answerBounds: {between: [a1, a2]},
     subskill: 'دمج مجموعتين بمتوسطين مختلفين',
     difficulty: 'medium',
     // RC2-002: a definite plural takes an agreeing numeral adjective, not a
@@ -323,6 +325,9 @@ function combineThenAdd(ctx) {
   ]);
   return buildBase(ctx, {
     templateId: 'AVG_H_COMB_ADD',
+    // RC2.1-3. The mean of everything lies between the smallest and largest
+    // quantity being averaged, so the running total is not a possible answer.
+    answerBounds: {between: [Math.min(a1, a2, extra), Math.max(a1, a2, extra)]},
     subskill: 'دمج مجموعتين ثم إضافة قيمة جديدة',
     difficulty: 'hard',
     // RC2-002: a definite plural takes an agreeing numeral adjective, not a

@@ -35,6 +35,9 @@ export const REASON = Object.freeze({
   SESSION_TEMPLATE_CAP: 'SESSION_TEMPLATE_CAP',
   SESSION_WINDOW_CAP: 'SESSION_WINDOW_CAP',
   SESSION_BATCH_DUPLICATE: 'SESSION_BATCH_DUPLICATE',
+  // RC2.1-3. Not a rejection: the candidate is still available, it has just been
+  // moved behind the plausible ones.
+  IMPLAUSIBLE_DISTRACTOR_DEMOTED: 'IMPLAUSIBLE_DISTRACTOR_DEMOTED',
   INVALID_ARABIC_NUMBER_UNIT: 'INVALID_ARABIC_NUMBER_UNIT',
   RETRY_EXHAUSTED: 'RETRY_EXHAUSTED',
   // RC2-003. The default reason a family sampler discards its own draw. It is a

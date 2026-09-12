@@ -45,6 +45,13 @@ export const MISCONCEPTIONS = Object.freeze({
   USED_DIFFERENCE_OF_SPEEDS_IN_MEETING: 'طرحت السرعتين في مسألة التقاء، والصحيح أن تجمعهما.',
   RATE_APPLIED_TO_WRONG_COUNT: 'ضربت المعدل في عدد وحدات غير الذي يخصه.',
   SWAPPED_RATE_AND_COUNT: 'بدّلت بين المعدل وعدد الوحدات في الضرب أو القسمة.',
+  // RC2.1-3. Credible near-misses for weighted means. The review found that
+  // several averaging templates offered mostly values outside the interval the
+  // answer must lie in — a candidate could strike them out without solving. A
+  // weight swap lands inside that interval and is a mistake learners actually
+  // make, so it competes with the key instead of decorating it.
+  SWAPPED_WEIGHTS_IN_WEIGHTED_MEAN: 'بدّلت بين الوزنين، فنسبت كل قيمة إلى وزن الأخرى.',
+  WEIGHTED_BY_WRONG_QUANTITY: 'رجّحت المتوسط بالكمية الخطأ: بالمسافة بدل الزمن أو بالعكس.',
   UPGRADED_ALL_INSTEAD_OF_SOME: 'طبّقت التحسين على كل الوحدات رغم أن بعضها فقط تغيّر.',
   IGNORED_UPGRADE: 'تجاهلت التحسين وأبقيت المعدل القديم للجميع.',
   IGNORED_STOPPAGE: 'تجاهلت توقف بعض الآلات وحسبت كأن الجميع عمل طوال الوقت.',

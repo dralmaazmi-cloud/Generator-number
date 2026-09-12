@@ -1,0 +1,371 @@
+{
+  "schema": "rc21-distractors-v1",
+  "section": "RC2.1-3",
+  "generatedAt": "2026-09-12T13:50:17.771Z",
+  "engineVersion": "1.4.0",
+  "note": "scaleRatio reads the key and is used for measurement only; no generation path may call it.",
+  "corpus": {
+    "items": 9000,
+    "wrongOptions": 45000,
+    "templates": 107
+  },
+  "outOfScale": {
+    "threshold": 8,
+    "count": 2904,
+    "share": 0.06453,
+    "excludesOddOneOut": true
+  },
+  "outOfDeclaredBounds": {
+    "count": 0,
+    "note": "templates that declare answerBounds must never ship an option outside them"
+  },
+  "worstTemplates": [
+    {
+      "templateId": "PCT_E_OF",
+      "family": "percentages",
+      "items": 88,
+      "wrong": 440,
+      "outOfScale": 165,
+      "outOfBounds": 0,
+      "outOfScaleShare": 0.375
+    },
+    {
+      "templateId": "COMB_E_TIME",
+      "family": "combined_rate",
+      "items": 68,
+      "wrong": 340,
+      "outOfScale": 121,
+      "outOfBounds": 0,
+      "outOfScaleShare": 0.3559
+    },
+    {
+      "templateId": "FRAC_M_3",
+      "family": "fractions",
+      "items": 184,
+      "wrong": 920,
+      "outOfScale": 280,
+      "outOfBounds": 0,
+      "outOfScaleShare": 0.3043
+    },
+    {
+      "templateId": "SPD_H_CATCH",
+      "family": "speed",
+      "items": 55,
+      "wrong": 275,
+      "outOfScale": 81,
+      "outOfBounds": 0,
+      "outOfScaleShare": 0.2945
+    },
+    {
+      "templateId": "PROP_M_MAP",
+      "family": "direct_proportion",
+      "items": 100,
+      "wrong": 500,
+      "outOfScale": 122,
+      "outOfBounds": 0,
+      "outOfScaleShare": 0.244
+    },
+    {
+      "templateId": "FRAC_H_4",
+      "family": "fractions",
+      "items": 176,
+      "wrong": 880,
+      "outOfScale": 214,
+      "outOfBounds": 0,
+      "outOfScaleShare": 0.2432
+    },
+    {
+      "templateId": "PROP_M_FRAC_UNIT",
+      "family": "direct_proportion",
+      "items": 72,
+      "wrong": 360,
+      "outOfScale": 83,
+      "outOfBounds": 0,
+      "outOfScaleShare": 0.2306
+    },
+    {
+      "templateId": "SEQ_E_GEO",
+      "family": "sequences",
+      "items": 87,
+      "wrong": 435,
+      "outOfScale": 94,
+      "outOfBounds": 0,
+      "outOfScaleShare": 0.2161
+    },
+    {
+      "templateId": "FRAC_E_2",
+      "family": "fractions",
+      "items": 159,
+      "wrong": 795,
+      "outOfScale": 168,
+      "outOfBounds": 0,
+      "outOfScaleShare": 0.2113
+    },
+    {
+      "templateId": "RAT_M_COMMON_DIFF",
+      "family": "ratios",
+      "items": 109,
+      "wrong": 545,
+      "outOfScale": 112,
+      "outOfBounds": 0,
+      "outOfScaleShare": 0.2055
+    },
+    {
+      "templateId": "SPD_E_TIME",
+      "family": "speed",
+      "items": 88,
+      "wrong": 440,
+      "outOfScale": 90,
+      "outOfBounds": 0,
+      "outOfScaleShare": 0.2045
+    },
+    {
+      "templateId": "SPD_H_TIME_DIFF",
+      "family": "speed",
+      "items": 57,
+      "wrong": 285,
+      "outOfScale": 54,
+      "outOfBounds": 0,
+      "outOfScaleShare": 0.1895
+    },
+    {
+      "templateId": "AVG_M_ADD_PAIR",
+      "family": "averages",
+      "items": 64,
+      "wrong": 320,
+      "outOfScale": 54,
+      "outOfBounds": 0,
+      "outOfScaleShare": 0.1688
+    },
+    {
+      "templateId": "MACH_E_HOURS",
+      "family": "machines",
+      "items": 92,
+      "wrong": 460,
+      "outOfScale": 69,
+      "outOfBounds": 0,
+      "outOfScaleShare": 0.15
+    },
+    {
+      "templateId": "PROP_H_COST_PLUS",
+      "family": "direct_proportion",
+      "items": 89,
+      "wrong": 445,
+      "outOfScale": 66,
+      "outOfBounds": 0,
+      "outOfScaleShare": 0.1483
+    }
+  ],
+  "examples": [
+    {
+      "templateId": "SEQ_E_ARITH",
+      "key": 53,
+      "option": 5,
+      "ratio": 10.6,
+      "misconceptionId": "USED_DIFFERENCE_AS_ANSWER"
+    },
+    {
+      "templateId": "AVG_H_TARGET",
+      "key": 32,
+      "option": 2,
+      "ratio": 16,
+      "misconceptionId": "USED_AGE_DIFFERENCE_AS_ANSWER"
+    },
+    {
+      "templateId": "PROP_M_MAP",
+      "key": 300,
+      "option": 30,
+      "ratio": 10,
+      "misconceptionId": "STOPPED_AT_UNIT_RATE"
+    },
+    {
+      "templateId": "SEQ_E_GEO",
+      "key": 24,
+      "option": 2,
+      "ratio": 12,
+      "misconceptionId": "USED_DIFFERENCE_AS_ANSWER"
+    },
+    {
+      "templateId": "RAT_M_COMMON_DIFF",
+      "key": 18,
+      "option": 2,
+      "ratio": 9,
+      "misconceptionId": "USED_GIVEN_VALUE_AS_ANSWER"
+    },
+    {
+      "templateId": "RAT_M_COMMON_DIFF",
+      "key": 18,
+      "option": 1,
+      "ratio": 18,
+      "misconceptionId": "USED_PART_VALUE_AS_ANSWER"
+    },
+    {
+      "templateId": "FRAC_M_3",
+      "key": 12,
+      "option": 360,
+      "ratio": 30,
+      "misconceptionId": "STOPPED_AFTER_FIRST_STAGE"
+    },
+    {
+      "templateId": "FRAC_M_3",
+      "key": 12,
+      "option": 2880,
+      "ratio": 240,
+      "misconceptionId": "USED_ORIGINAL_TOTAL"
+    },
+    {
+      "templateId": "FRAC_M_3",
+      "key": 12,
+      "option": 2640,
+      "ratio": 220,
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED"
+    },
+    {
+      "templateId": "FRAC_M_3",
+      "key": 600,
+      "option": 50,
+      "ratio": 12,
+      "misconceptionId": "STOPPED_AFTER_FIRST_STAGE"
+    },
+    {
+      "templateId": "FRAC_M_3",
+      "key": 600,
+      "option": 70,
+      "ratio": 8.6,
+      "misconceptionId": "ADDED_INSTEAD_OF_SCALING"
+    },
+    {
+      "templateId": "FRAC_M_3",
+      "key": 600,
+      "option": 36000,
+      "ratio": 60,
+      "misconceptionId": "APPLIED_STEP_TWICE"
+    },
+    {
+      "templateId": "RAT_M_COMMON_DIFF",
+      "key": 115,
+      "option": 5,
+      "ratio": 23,
+      "misconceptionId": "USED_GIVEN_VALUE_AS_ANSWER"
+    },
+    {
+      "templateId": "AVG_M_ADD_PAIR",
+      "key": 23,
+      "option": 207,
+      "ratio": 9,
+      "misconceptionId": "STOPPED_AT_INTERMEDIATE_TOTAL"
+    },
+    {
+      "templateId": "SPD_H_MEET_DELAY",
+      "key": 3,
+      "option": 39,
+      "ratio": 13,
+      "misconceptionId": "USED_DIFFERENCE_OF_SPEEDS_IN_MEETING"
+    },
+    {
+      "templateId": "COMB_E_TIME",
+      "key": 3,
+      "option": 86,
+      "ratio": 28.7,
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED"
+    },
+    {
+      "templateId": "COMB_E_TIME",
+      "key": 3,
+      "option": 420,
+      "ratio": 140,
+      "misconceptionId": "MULTIPLIED_COUNTS_INSTEAD_OF_RATE"
+    },
+    {
+      "templateId": "COMB_E_TIME",
+      "key": 3,
+      "option": 43,
+      "ratio": 14.3,
+      "misconceptionId": "STOPPED_AT_UNIT_RATE"
+    },
+    {
+      "templateId": "PROP_M_MAP",
+      "key": 50,
+      "option": 5,
+      "ratio": 10,
+      "misconceptionId": "STOPPED_AT_UNIT_RATE"
+    },
+    {
+      "templateId": "AVG_E_ADD",
+      "key": 14,
+      "option": 1.5,
+      "ratio": 9.3,
+      "misconceptionId": "MISSED_ONE_STAGE"
+    },
+    {
+      "templateId": "PL_E_LOSS",
+      "key": 4,
+      "option": 104.2,
+      "ratio": 26.1,
+      "misconceptionId": "USED_ORIGINAL_TOTAL"
+    },
+    {
+      "templateId": "PL_E_LOSS",
+      "key": 4,
+      "option": 96,
+      "ratio": 24,
+      "misconceptionId": "TOOK_COMPLEMENT_PERCENT"
+    },
+    {
+      "templateId": "FRAC_M_3",
+      "key": 720,
+      "option": 36,
+      "ratio": 20,
+      "misconceptionId": "STOPPED_AFTER_FIRST_STAGE"
+    },
+    {
+      "templateId": "FRAC_M_3",
+      "key": 720,
+      "option": 86400,
+      "ratio": 120,
+      "misconceptionId": "APPLIED_STEP_TWICE"
+    },
+    {
+      "templateId": "SPD_H_MEET_DELAY",
+      "key": 3,
+      "option": 39,
+      "ratio": 13,
+      "misconceptionId": "USED_DIFFERENCE_OF_SPEEDS_IN_MEETING"
+    },
+    {
+      "templateId": "AVG_M_ADD_PAIR",
+      "key": 22,
+      "option": 198,
+      "ratio": 9,
+      "misconceptionId": "STOPPED_AT_INTERMEDIATE_TOTAL"
+    },
+    {
+      "templateId": "FRAC_H_4",
+      "key": 360,
+      "option": 64800,
+      "ratio": 180,
+      "misconceptionId": "APPLIED_STEP_TWICE"
+    },
+    {
+      "templateId": "FRAC_H_4",
+      "key": 360,
+      "option": 6,
+      "ratio": 60,
+      "misconceptionId": "STOPPED_AFTER_FIRST_STAGE"
+    },
+    {
+      "templateId": "RATE_M_SCALE",
+      "key": 480,
+      "option": 12,
+      "ratio": 40,
+      "misconceptionId": "STOPPED_AT_UNIT_RATE"
+    },
+    {
+      "templateId": "RAT_M_COMMON_SUM",
+      "key": 50,
+      "option": 5,
+      "ratio": 10,
+      "misconceptionId": "USED_PART_VALUE_AS_ANSWER"
+    }
+  ]
+}

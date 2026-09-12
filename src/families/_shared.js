@@ -8,6 +8,7 @@
 
 import {agreeingAdjective, singularOf, accusativeSingularOf, definitePlural, theSingleUnit, formatNumberWithUnit, unitWordFor, displayNumber} from '../arabic/units.js';
 import {deriveDependencyDepth} from '../qa/complexity.js';
+import {partitionByPlausibility} from '../qa/distractor-plausibility.js';
 import {Fraction} from '../qa/fraction.js';
 import {isKnownMisconception} from '../qa/misconceptions.js';
 import {REASON} from '../qa/reasons.js';
@@ -173,8 +174,37 @@ export function buildBase(ctx, spec) {
     askedUnknown = 'default', stageCount = null, reasoningGraph = null,
     pedagogy = null, ratio = null, realism = null, complexityFactors = {},
     textParams = null, allowedConstants, commutative = null, answerText = null,
-    orderInsensitive = null, reasoningPattern = null, metadata = null
+    orderInsensitive = null, reasoningPattern = null, metadata = null,
+    // RC2.1-3. Optional, and declared by the template because only the template
+    // knows what its answer is bounded by. `stimulusIsOptions` marks families
+    // whose six options ARE the displayed set, where a wide spread between
+    // options is the question rather than a defect.
+    answerBounds = null, stimulusIsOptions = false
   } = spec;
+
+  // RC2.1-3. Implausible candidates sink to the back of the list; none is
+  // dropped. A template with more candidates than slots stops offering the ones
+  // a candidate could strike out without solving, and a template with exactly
+  // enough is unaffected — so no template is pushed into resampling, which is
+  // what narrows an answer space.
+  const ordered = (() => {
+    const {plausible, implausible} = partitionByPlausibility(distractors, {
+      bounds: answerBounds, stimulusIsOptions
+    });
+    if (implausible.length && ctx?.telemetry) {
+      for (const d of implausible) {
+        ctx.telemetry.record({
+          stage: 'distractor_plausibility', reasonCode: REASON.IMPLAUSIBLE_DISTRACTOR_DEMOTED,
+          family: ctx.family, templateId, seed: ctx.seed,
+          detail: `${d.misconceptionId}=${d.value} outside ${JSON.stringify(answerBounds?.between)}`
+        });
+      }
+    }
+    // Marked, not dropped: makeOptionSet prefers the plausible ones and still
+    // falls back to these, so no template is pushed into resampling.
+    return [...plausible.map(d => ({...d, implausible: false})),
+      ...implausible.map(d => ({...d, implausible: true}))];
+  })();
 
   return {
     id: makeStableId(templateId, ctx.seed),
@@ -189,7 +219,7 @@ export function buildBase(ctx, spec) {
     question,
     display_expression: displayExpression,
     correct,
-    distractors,
+    distractors: ordered,
     format,
     explanation: {
       how_to_start: howToStart,

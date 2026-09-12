@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, approx} from './_shared.js';
 
 export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'speed', family_ar: 'السرعة والمسافة والزمن', category: 'السرعة والمسافة والزمن'};
@@ -181,11 +181,25 @@ function averageSpeedUnequalTime(ctx) {
     mk(s2, 'USED_ONLY_SECOND_RATE', `السرعة الثانية ${s2}`),
     mk((d1 + d2) / t1, 'USED_ONE_STAGE_TIME', `(${d1} + ${d2}) ÷ ${num(t1)}`),
     mk((d1 + d2) / t2, 'USED_ONE_STAGE_TIME', `(${d1} + ${d2}) ÷ ${num(t2)}`),
+    // RC2.1-3. Two near-misses that lie inside [s1, s2], where the answer must
+    // be. Before these the template's only in-bracket options were the naive
+    // mean and the two given speeds, so three of its five wrong options could be
+    // struck out on magnitude alone.
+    mk(approx((s1 * t2 + s2 * t1) / (t1 + t2), 1), 'SWAPPED_WEIGHTS_IN_WEIGHTED_MEAN',
+      `(${s1} × ${num(t2)} + ${s2} × ${num(t1)}) ÷ (${num(t1)} + ${num(t2)})`),
+    // Weighting by distance instead of by time. Always inside [s1, s2], and a
+    // mistake a learner makes precisely because both quantities are on the page.
+    mk(approx((s1 * d1 + s2 * d2) / (d1 + d2), 1), 'WEIGHTED_BY_WRONG_QUANTITY',
+      `(${s1} × ${d1} + ${s2} × ${d2}) ÷ (${d1} + ${d2})`),
     mk(d1 + d2, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${d1} + ${d2}`, 3),
     mk((d1 + d2) / (t1 + t2) / 2, 'HALF_DISTANCE_AS_ANSWER', `(${d1} + ${d2}) ÷ (${num(t1)} + ${num(t2)}) ÷ 2`)
   ]);
   return buildBase(ctx, {
     templateId: 'SPD_M_AVG',
+    // RC2.1-3. An average speed over two stages lies between the two stage
+    // speeds. The review found a total distance offered here wearing a km/h
+    // label; it is outside these bounds and is no longer among the first five.
+    answerBounds: {between: [s1, s2]},
     subskill: 'متوسط السرعة مع مدد زمنية مختلفة',
     difficulty: 'medium',
     question: `سارت سيارة ${u(t1, 'hour', 'oblique')} بسرعة ${s1} كم/ساعة، ثم ${u(t2, 'hour', 'oblique')} بسرعة ${s2} كم/ساعة. ما متوسط سرعتها في الرحلة كلها؟`,

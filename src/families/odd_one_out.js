@@ -73,6 +73,9 @@ function build(ctx, spec) {
     subskill,
     difficulty: ctx.difficulty,
     question: 'أي عدد لا ينتمي إلى المجموعة الآتية؟',
+    // RC2.1-3. The options are the displayed set and the key is one member of
+    // it, so the spread between them is the question, not an out-of-scale option.
+    stimulusIsOptions: true,
     displayExpression: group.join('، '),
     correct: outlier,
     distractors,

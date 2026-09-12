@@ -94,7 +94,8 @@ export function makeOptionSet({
     const formatted = format(value);
     if (formatted === correctFormatted || seenFormatted.has(formatted)) continue;
     seenFormatted.add(formatted);
-    pool.push({value, formatted, misconceptionId, derivation: derivation || null, reasoningStepAffected});
+    pool.push({value, formatted, misconceptionId, derivation: derivation || null, reasoningStepAffected,
+      implausible: d.implausible === true});
   }
 
   if (pool.length < 5) {
@@ -107,7 +108,18 @@ export function makeOptionSet({
   // RC2-001. The five shown distractors are drawn from the provenance-carrying
   // pool without reference to the key's numeric rank, to the shape of the
   // resulting option set, or to any other property of the published answer.
-  const picked = rng.sample(pool, 5);
+  //
+  // RC2.1-3. Candidates a template marked implausible are drawn from last. That
+  // mark is computed from the question's GIVENS — "an average of two speeds lies
+  // between them" — and never from the answer, so this remains a choice made
+  // without consulting any property of the key. Where a template has five or
+  // more plausible candidates the implausible ones simply go unused; where it has
+  // fewer they still fill the set, so no template is starved into resampling.
+  const preferred = pool.filter(d => !d.implausible);
+  const fallback = pool.filter(d => d.implausible);
+  const picked = preferred.length >= 5
+    ? rng.sample(preferred, 5)
+    : [...rng.sample(preferred, preferred.length), ...rng.sample(fallback, 5 - preferred.length)];
 
   const correctLetter = preferredCorrectLetter && LETTERS.includes(preferredCorrectLetter)
     ? preferredCorrectLetter
