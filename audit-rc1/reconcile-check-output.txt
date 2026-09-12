@@ -1,0 +1,41 @@
+PASSED:
+  ok   ambiguity categories sum to 16 — 4+6+1+5=16
+  ok   report asserts 11 of 16 affected, and no longer asserts 10
+  ok   difficulty transitions sum to 118 — 43+3+0+60+12+0 measured as 43+3+0+60+12+0=118
+  ok   transition counts match the report
+  ok   manual assessment sums to 118 — 110+3+5=118
+  ok   the 12 Hard→Medium split 7 justified + 5 misclassified
+  ok   family counts sum to 250 — 250 across 16 families
+  ok   session counts sum to 250 — {"S1":50,"S2":50,"S3":50,"S4":50,"S5":50}
+  ok   uniqueness metric sums to 158 — 148 UNIQUE + 6 BORDERLINE + 4 NOT_UNIQUE = 158
+  ok   158 questions reviewed this round — 158
+  ok   scope log contains RANK_DRIVEN_DISTRACTOR_SELECTION
+  ok   scope log contains AR_DEFINITE_PLURAL_BARE_NUMERAL
+  ok   scope log contains INCOMPLETE_REJECTION_TELEMETRY
+  ok   scope log contains SEED_REPRODUCIBILITY_QUALIFICATION
+  ok   scope log contains DEGENERACY_MODEL_COVERAGE_GAP
+  ok   scope log contains PDF_VISUAL_ORDER_TEXT_LAYER
+  ok   scope log contains HIDDEN_FRACTION_SEMANTIC_REVERSAL
+  ok   scope log contains RATIO_INVARIANT_ENFORCEMENT_ESCAPE
+  ok   scope log contains VERSION_TRACEABILITY_MISMATCH
+  ok   scope log contains AR_DEFINITENESS_RENDERING
+  ok   scope log contains QUICK_METHOD_NOT_GENERAL
+  ok   scope log has 21 numbered items — 21
+  ok   frozen JSON has 21 items — 21
+  ok   Markdown and JSON scope ids agree exactly — same ids in the same order
+  ok   every scope item carries a classification
+  ok   every JSON item is typed with known classifications
+  ok   every JSON item carries id, defectClass, source, evidence, measuredScope, rc2Required
+  ok   the observe-never-target constraint is stated in both artifacts
+  ok   the constraint binds the three answer-distribution items
+  ok   superseded claims are explicitly labelled
+  ok   frozen against the RC1 commit
+  ok   manual review recorded as 250/250
+  ok   no surviving "correct unique key" assertion
+  ok   metric A and metric B are separated
+  ok   the incorrect "no further Arabic defect" sentence is removed
+  ok   AR_DEFINITENESS_RENDERING recorded in the review
+  ok   FEEDBACK metric reclassified as QA_METRIC_DEFECT
+  ok   no universal narrow-answer threshold rule is asserted
+
+38 passed, 0 failed

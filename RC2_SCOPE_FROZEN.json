@@ -1,0 +1,258 @@
+{
+  "schema": "rc2-scope-frozen-v1",
+  "frozenAgainstCommit": "7b5d4617295c98a8ed0f87d204f4745dd5db05dd",
+  "engineVersionUnderReview": "1.3.0",
+  "manualBlindReview": {"reviewed": 250, "of": 250, "thisRound": 158, "earlierRound": 92},
+  "humanReadableAuthority": "RC2_SCOPE_CANDIDATES.md",
+  "architecturalConstraints": [
+    {
+      "id": "OBSERVE_NEVER_TARGET",
+      "appliesTo": ["RC2-001", "RC2-010", "RC2-011"],
+      "rule": "A published answer property may be OBSERVED, measured and analysed. It must never become a runtime target.",
+      "prohibited": [
+        "answer-frequency balancing at runtime",
+        "target-answer sampling",
+        "retry-until-answer-distribution-matches",
+        "regeneration based on current answer-value frequency",
+        "including, excluding, replacing or reordering a pedagogically valid distractor to move the key toward a desired numeric rank"
+      ],
+      "permitted": [
+        "measuring and reporting the distribution",
+        "changing the parameter space a template may draw from, so the natural distribution improves"
+      ]
+    }
+  ],
+  "items": [
+    {
+      "id": "RC2-001",
+      "defectClass": "RANK_DRIVEN_DISTRACTOR_SELECTION",
+      "classification": ["PRODUCTION_BLOCKER", "STATISTICAL_LEAKAGE_RISK"],
+      "source": "SIGNOFF_RC1.md §5",
+      "evidence": ["src/utils.js:152-203 pickBalancedDistractors", "src/qa/rank-calibration.js RANK_DRAW_WEIGHTS", "tools/calibrate-rank.mjs"],
+      "measuredScope": {"mechanism": "draws a target rank, then slices the below-key and above-key pools to land the key there", "statisticIfRemoved": {"numericRankChiSquare": 3627, "guessingStrategiesBeatingChance": "8/10"}},
+      "constraints": ["OBSERVE_NEVER_TARGET"],
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-002",
+      "defectClass": "AR_DEFINITE_PLURAL_BARE_NUMERAL",
+      "classification": ["LANGUAGE_BLOCKER"],
+      "source": "SIGNOFF_RC1.md §8",
+      "evidence": ["src/families/averages.js:38,90,192,241,296,345", "audit-rc1/blind-audit-250.jsonl audit.arabicFlag"],
+      "measuredScope": {"example": "فما متوسط القيم 9؟", "correctedForm": "فما متوسط القيم التسع؟", "corpus": 548, "corpusOf": 10000, "sample": 13, "sampleOf": 250, "templatesAffected": 6, "templatesInFamily": 7},
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-003",
+      "defectClass": "INCOMPLETE_REJECTION_TELEMETRY",
+      "classification": ["QA_OBSERVABILITY_BLOCKER"],
+      "source": "SIGNOFF_RC1.md §2",
+      "evidence": ["src/index.js:202 generator catch does not call analytics.record", "src/qa/reasons.js DISTRACTOR_IMPOSSIBLE and RETRY_EXHAUSTED emitted nowhere", "audit-rc1/instrumented-replay.json"],
+      "measuredScope": {"reportedRejectRate": 0.0019, "hiddenRejections": {"oddOneOutAmbiguityResamples": 135, "ofDraws": 1256}, "deadReasonCodes": 2, "reasonCodesWithNoProductionEvidence": 17, "ofCodes": 30},
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-004",
+      "defectClass": "SEED_REPRODUCIBILITY_QUALIFICATION",
+      "classification": ["QA_OBSERVABILITY_BLOCKER"],
+      "source": "SIGNOFF_RC1.md §7",
+      "evidence": ["src/index.js:87,314,354-356 _recentFingerprints"],
+      "measuredScope": {"freshEngineSameSeed": "500/500 identical", "longLivedEngineSameSeed": "not reproducible", "retentionWindow": 150},
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-005",
+      "defectClass": "DEGENERACY_MODEL_COVERAGE_GAP",
+      "classification": ["QA_OBSERVABILITY_BLOCKER"],
+      "source": "SIGNOFF_RC1.md §6-B",
+      "evidence": ["src/qa/pedagogy.js wrongMethodValue", "audit-rc1/verification.json degenerate.covered"],
+      "measuredScope": {"templatesWithNoWrongMethodValue": 23, "ofTemplates": 107, "publishedQuestionsCovered": 0.793, "degeneratePublished": 0},
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-006",
+      "defectClass": "PDF_VISUAL_ORDER_TEXT_LAYER",
+      "classification": ["ACCESSIBILITY_BLOCKER"],
+      "source": "blind-audit delivery pass",
+      "evidence": ["audit-rc1/DELIVERY-MANIFEST.md", "tools/audit/pdf-text-probe.py"],
+      "measuredScope": {"arabicStoredAsPresentationForms": 0.775, "unmappedCharacters": 0, "literalStemSearchHitsAcrossAllFiveReports": 0, "affects": ["text search", "copy-paste", "screen readers"]},
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-007",
+      "defectClass": "AMBIGUITY_LONE_SIMPLE_RULE_NEVER_COMPETES",
+      "classification": ["PRODUCTION_BLOCKER", "PEDAGOGICAL_BLOCKER"],
+      "source": "MANUAL_REVIEW_RC1.md §D-1",
+      "evidence": ["src/qa/ambiguity.js:103-113 checkOddOneOutAmbiguity requires a pair", "supportsIntended is computed from the unfiltered rule list", "S1/27 key 75 while mult3 (complexity 1) points at 35", "S5/08 key 30 while mult3 points at 35"],
+      "measuredScope": {"affectedInSample": 2, "ofTemplateInstances": 3, "templateId": "ODD_H_SQ_MINUS"},
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-008",
+      "defectClass": "AMBIGUITY_INVERSE_FRAMING_AND_MAGNITUDE_BLIND_SPOT",
+      "classification": ["PRODUCTION_BLOCKER"],
+      "source": "MANUAL_REVIEW_RC1.md §D-2",
+      "evidence": ["src/qa/ambiguity.js:84-92 findSingleOutlierRules tests failing.length === 1 only", "no digit-magnitude class in approvedRules()", "tools/audit/independent-oddoneout.mjs"],
+      "measuredScope": {"affectedInSample": 7, "questions": ["S3/27", "S1/08", "S4/21", "S4/10", "S2/07", "S2/39", "S3/13"]},
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-009",
+      "defectClass": "UNDISCOVERABLE_INTENDED_RULE",
+      "classification": ["PEDAGOGICAL_BLOCKER"],
+      "source": "MANUAL_REVIEW_RC1.md §D-3",
+      "evidence": ["S5/46: the production checker reports no rule of complexity <= 3 fits the set", "S5/22: intended rule primePlus6 (complexity 4) but solvable by parity"],
+      "measuredScope": {"affectedInSample": 1, "templatesAtRisk": ["ODD_H_PRIME_OFFSET", "ODD_H_SQ_MINUS"], "requirement": "RC2 must eliminate AMBIGUOUS and UNDISCOVERABLE publication"},
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-010",
+      "defectClass": "CONSTANT_ANSWER_TEMPLATE",
+      "classification": ["PRODUCTION_BLOCKER", "STATISTICAL_LEAKAGE_RISK"],
+      "source": "MANUAL_REVIEW_RC1.md §D-4",
+      "evidence": ["qa-artifacts/corpus.jsonl.gz", "tools/audit/independent-relational.mjs confirms each key is individually correct"],
+      "measuredScope": {"templateId": "REL_H_POSITION_UNCERTAIN", "declaredDifficulty": "hard", "corpusInstances": 91, "distinctAnswers": 1, "answer": "لا يمكن تحديده", "modalFrequency": 1.0, "entropyBits": 0.0, "advantageOverBaselinePoints": 83.3, "sample": 5},
+      "constraints": ["OBSERVE_NEVER_TARGET"],
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-011",
+      "defectClass": "NARROW_ANSWER_VALUE_SPACE",
+      "classification": ["STATISTICAL_LEAKAGE_RISK"],
+      "source": "MANUAL_REVIEW_RC1.md §D-5",
+      "evidence": ["qa-artifacts/corpus.jsonl.gz"],
+      "measuredScope": {
+        "note": "Answer-space size alone is NOT a defect and no threshold rule is adopted. REL_M_COUNT has the largest space in the table and still leaks +19.2 points. Remediate where materially exploitable, judged by modal frequency and entropy.",
+        "worstTemplates": [
+          {"templateId": "SPD_M_EQUAL_DIST", "difficulty": "medium", "n": 81, "space": 4, "modal": 0.444, "entropyBits": 1.81, "advantagePoints": 27.8},
+          {"templateId": "PL_M_TOTAL_COST", "difficulty": "medium", "n": 114, "space": 3, "modal": 0.439, "entropyBits": 1.51, "advantagePoints": 27.2},
+          {"templateId": "PL_E_LOSS", "difficulty": "easy", "n": 104, "space": 3, "modal": 0.404, "entropyBits": 1.55, "advantagePoints": 23.7},
+          {"templateId": "SPD_H_TIME_DIFF", "difficulty": "hard", "n": 73, "space": 4, "modal": 0.370, "entropyBits": 1.92, "advantagePoints": 20.3},
+          {"templateId": "COMB_H_STAGED", "difficulty": "hard", "n": 89, "space": 3, "modal": 0.360, "entropyBits": 1.58, "advantagePoints": 19.3}
+        ],
+        "templatesListed": 16
+      },
+      "constraints": ["OBSERVE_NEVER_TARGET"],
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-012",
+      "defectClass": "GENERIC_KEY_NEIGHBOR_DISTRACTOR",
+      "classification": ["PEDAGOGICAL_BLOCKER", "STATISTICAL_LEAKAGE_RISK"],
+      "source": "MANUAL_REVIEW_RC1.md §D-6, §G",
+      "evidence": ["audit-rc1/blind-audit-250.jsonl distractorProvenance", "S5/32 WORK_H_WORKERS_EFF has four of five as 9-1, 9+1, 9+2, 9-2", "one derivation reads 8 ± 5"],
+      "measuredScope": {"wrongOptionsReviewed": 1250, "genericKeyNeighbour": 193, "shareOfWrongOptions": 0.154, "offByOneStepTotal": 272, "offByOneStepJustified": 79, "offByOneStepUnjustified": 193, "questionsWithThreeOrMore": 5},
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-013",
+      "defectClass": "MISATTRIBUTED_MISCONCEPTION_FEEDBACK",
+      "classification": ["PRODUCTION_BLOCKER", "PEDAGOGICAL_BLOCKER"],
+      "source": "MANUAL_REVIEW_RC1.md §D-7",
+      "evidence": ["qa-artifacts/corpus.jsonl.gz", "S5/24 attaches the chase sentence to a harmonic-mean derivation"],
+      "measuredScope": {"misconceptionId": "USED_SUM_OF_SPEEDS_IN_CHASE", "totalUses": 195, "onStemsWithNoChase": 154, "share": 0.79, "templates": ["SPD_M_EQUAL_DIST", "SPD_H_TIME_DIFF"]},
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-014",
+      "defectClass": "FEEDBACK_SPECIFICITY_METRIC_INVALID",
+      "classification": ["QA_METRIC_DEFECT"],
+      "source": "MANUAL_REVIEW_RC1.md §D-8",
+      "evidence": ["the reported 0% -> 100% figure counted the mechanical اخترت X، وهي ناتج Y prefix"],
+      "measuredScope": {
+        "questionsWithDuplicateExplanatorySentence": 6117, "ofQuestions": 10000,
+        "wrongOptionsWithNonUniqueSentence": 11276, "ofWrongOptions": 50000,
+        "requirement": [
+          "feedback must correctly describe THAT option's derivation",
+          "the misconception must be applicable to THAT stem",
+          "generic or vacuous feedback is not sufficient",
+          "misattributed feedback is a defect",
+          "identical wording alone is NOT a defect"
+        ],
+        "note": "This is a metric defect, not automatically a content defect. Duplication that coincides with a real failure is counted under RC2-012 (vacuous) or RC2-013 (misattributed)."
+      },
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-015",
+      "defectClass": "DIFFICULTY_BAND_MISCALIBRATION",
+      "classification": ["QA_METRIC_DEFECT"],
+      "source": "MANUAL_REVIEW_RC1.md §I",
+      "evidence": ["src/qa/complexity.js:36 bandFor thresholds 4.5 and 9.5", "audit-rc1/blind-audit-250.jsonl"],
+      "measuredScope": {
+        "totalMismatch": 118, "ofQuestions": 250, "rate": 0.472,
+        "transitions": {"easyToMedium": 43, "easyToHard": 3, "mediumToEasy": 0, "mediumToHard": 60, "hardToMedium": 12, "hardToEasy": 0},
+        "manualAssessment": {"JUSTIFIED_MISMATCH": 110, "UNCERTAIN": 3, "MISCLASSIFIED_DIFFICULTY": 5},
+        "misclassifiedQuestions": [
+          {"question": "S1/27", "templateId": "ODD_H_SQ_MINUS", "score": 8.9, "reason": "hardness is the ambiguity of RC2-007, not reasoning load"},
+          {"question": "S5/08", "templateId": "ODD_H_SQ_MINUS", "score": 8.9, "reason": "same"},
+          {"question": "S5/22", "templateId": "ODD_H_PRIME_OFFSET", "score": 8.9, "reason": "solvable by 'which one is even'"},
+          {"question": "S5/46", "templateId": "ODD_H_PRIME_OFFSET", "score": 8.9, "reason": "hardness is undiscoverability (RC2-009)"},
+          {"question": "S5/28", "templateId": "COMB_H_THREE", "score": 5.8, "reason": "(20 + 18 + 12) x 5 — one addition and one multiplication"}
+        ],
+        "caveat": "Matrix agreement does not mean the difficulty is right: the five REL_H_POSITION_UNCERTAIN questions are declared Hard and computed Hard, so they appear nowhere in the 118, yet RC2-010 makes the Hard label substantively wrong."
+      },
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-016",
+      "defectClass": "AR_DUAL_WRONG_CASE",
+      "classification": ["LANGUAGE_BLOCKER"],
+      "source": "MANUAL_REVIEW_RC1.md §E",
+      "evidence": ["S2/24 WORK_E_VOLUME", "S2/19 PROP_M_MAP"],
+      "measuredScope": {
+        "cases": [
+          {"wrong": "إنجاز مهمتان", "correct": "إنجاز مهمتين", "templateId": "WORK_E_VOLUME", "corpus": 37, "corpusOf": 10000, "sample": 1},
+          {"wrong": "كل سنتيمتران تمثل", "correct": "كل سنتيمترين يمثلان", "templateId": "PROP_M_MAP", "corpus": 23, "corpusOf": 10000, "sample": 1}
+        ],
+        "rootCause": "checkArabicNumberUnits matches only numeral -> lexicon-unit pairs across 21 words; it examines no case, no definiteness and no verb agreement"
+      },
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-017",
+      "defectClass": "AR_DEFINITENESS_RENDERING",
+      "classification": ["LANGUAGE_BLOCKER"],
+      "source": "MANUAL_REVIEW_RC1.md §E",
+      "evidence": ["S3/37 PL_M_DISC_MARK"],
+      "measuredScope": {"wrong": "سعر سلعة المعلن 200 درهمًا", "correct": "سعر السلعة المعلن 200 درهمًا", "templateId": "PL_M_DISC_MARK", "corpus": 134, "corpusOf": 10000, "share": 0.0134, "coversEveryInstanceOfTemplate": true, "sample": 1, "note": "recorded as its own class, not merged into RC2-016"},
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-018",
+      "defectClass": "HIDDEN_FRACTION_SEMANTIC_REVERSAL",
+      "classification": ["PEDAGOGICAL_BLOCKER"],
+      "source": "first-92 review round; verified independently in MANUAL_REVIEW_RC1.md §F-1",
+      "evidence": ["reminder identical on all instances: الكسر المجهول هو نسبة الناتج قبله إلى الناتج بعده", "previous ÷ next yields the denominator; the fraction is next ÷ previous"],
+      "measuredScope": {"corpusInstances": 197, "family": "fractions", "askedUnknown": "hiddenFraction", "keysAffected": 0, "note": "published keys are correct; the generalisation taught alongside them is reversed"},
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-019",
+      "defectClass": "QUICK_METHOD_NOT_GENERAL",
+      "classification": ["PEDAGOGICAL_BLOCKER"],
+      "source": "MANUAL_REVIEW_RC1.md §F-2",
+      "evidence": ["fast_method holds an instance computation: \"30 ÷ 15 = 2.\", \"72 ÷ 12 = 6.\", \"144 ÷ 24 = 6.\""],
+      "measuredScope": {"distinctInstanceSpecificStrings": 67, "corpusInstances": 197, "family": "fractions", "askedUnknown": "hiddenFraction", "note": "every other family states a general rule in that field"},
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-020",
+      "defectClass": "RATIO_INVARIANT_ENFORCEMENT_ESCAPE",
+      "classification": ["PRODUCTION_BLOCKER"],
+      "source": "first-92 review round; verified independently in MANUAL_REVIEW_RC1.md §11",
+      "evidence": ["src/qa/pedagogy.js requireReduced / requireDistinctSides not declared on the second ratio of chained templates", "النسبة ب : ج = 6 : 2 (RAT_M_COMMON_SUM)", "النسبة أ : ب = 2 : 4 (RAT_M_COMMON_DIFF)"],
+      "measuredScope": {"reduciblePairsPublished": 93, "equalSidedPairsPublished": 85, "ofFamilyQuestions": 625, "family": "ratios", "keysAffected": 0, "note": "every key is right; the printed ratio is simply not in lowest terms"},
+      "rc2Required": true
+    },
+    {
+      "id": "RC2-021",
+      "defectClass": "VERSION_TRACEABILITY_MISMATCH",
+      "classification": ["QA_OBSERVABILITY_BLOCKER"],
+      "source": "first-92 review round; verified independently in MANUAL_REVIEW_RC1.md §11",
+      "evidence": ["src/index.js:25 ENGINE_VERSION = '1.3.0'", "report.js:34 prints v1.2.0", "index.html:23 version pill shows v1.2.0"],
+      "measuredScope": {"hardCodedLiterals": 2, "requirement": "the displayed version must derive from one authoritative source"},
+      "rc2Required": true
+    }
+  ]
+}

@@ -11,6 +11,7 @@ const asserted = review
   .replace(/\*"[^"]*"\*/g, ' ')
   .replace(/"[^"\n]*"/g, ' ');
 const scope = readFileSync('RC2_SCOPE_CANDIDATES.md', 'utf8');
+const frozen = JSON.parse(readFileSync('RC2_SCOPE_FROZEN.json', 'utf8'));
 const rows = readFileSync('audit-rc1/blind-audit-250.jsonl', 'utf8').trim().split('\n').map(l => JSON.parse(l));
 
 const fails = [];
@@ -21,7 +22,7 @@ const check = (name, pass, detail) => (pass ? ok : fails).push(`${name}${detail 
 const amb = 4, bor = 6, und = 1, cln = 5;
 check('ambiguity categories sum to 16', amb + bor + und + cln === 16, `${amb}+${bor}+${und}+${cln}=${amb+bor+und+cln}`);
 check('report asserts 11 of 16 affected, and no longer asserts 10',
-  /\*\*11 of 16 carry a defect\*\*/.test(review) && !/10 of 16/.test(asserted));
+  /\*\*11 of 16 carry an ambiguity or discoverability concern\*\*/.test(review) && !/10 of 16/.test(asserted));
 
 // 2. difficulty transitions sum to 118, from the data itself
 const M = {easy:{}, medium:{}, hard:{}};
@@ -58,9 +59,28 @@ for (const id of ['RANK_DRIVEN_DISTRACTOR_SELECTION','AR_DEFINITE_PLURAL_BARE_NU
   'AR_DEFINITENESS_RENDERING','QUICK_METHOD_NOT_GENERAL']) {
   check(`scope log contains ${id}`, scope.includes(id));
 }
-check('scope log has 21 numbered items', (scope.match(/^## \d+\. /gm)||[]).length === 21);
+const mdIds = (scope.match(/^## (RC2-\d{3}) · /gm)||[]).map(x => x.match(/RC2-\d{3}/)[0]);
+const jsonIds = frozen.items.map(i => i.id);
+check('scope log has 21 numbered items', mdIds.length === 21, String(mdIds.length));
+check('frozen JSON has 21 items', jsonIds.length === 21, String(jsonIds.length));
+check('Markdown and JSON scope ids agree exactly',
+  JSON.stringify(mdIds) === JSON.stringify(jsonIds),
+  mdIds.length === jsonIds.length ? 'same ids in the same order' : `md=${mdIds.length} json=${jsonIds.length}`);
 check('every scope item carries a classification',
   (scope.match(/^\*\*(PRODUCTION_BLOCKER|QA_OBSERVABILITY_BLOCKER|PEDAGOGICAL_BLOCKER|LANGUAGE_BLOCKER|ACCESSIBILITY_BLOCKER|STATISTICAL_LEAKAGE_RISK|QA_METRIC_DEFECT)/gm)||[]).length === 21);
+const VALID = ['PRODUCTION_BLOCKER','QA_OBSERVABILITY_BLOCKER','PEDAGOGICAL_BLOCKER','LANGUAGE_BLOCKER','ACCESSIBILITY_BLOCKER','STATISTICAL_LEAKAGE_RISK','QA_METRIC_DEFECT'];
+check('every JSON item is typed with known classifications',
+  frozen.items.every(i => Array.isArray(i.classification) && i.classification.length && i.classification.every(c => VALID.includes(c))));
+check('every JSON item carries id, defectClass, source, evidence, measuredScope, rc2Required',
+  frozen.items.every(i => i.id && i.defectClass && i.source && Array.isArray(i.evidence) && i.evidence.length && i.measuredScope && i.rc2Required === true));
+check('the observe-never-target constraint is stated in both artifacts',
+  /STANDING CONSTRAINT — `OBSERVE_NEVER_TARGET`/.test(scope) &&
+  frozen.architecturalConstraints?.some(c => c.id === 'OBSERVE_NEVER_TARGET'));
+check('the constraint binds the three answer-distribution items',
+  ['RC2-001','RC2-010','RC2-011'].every(id => frozen.architecturalConstraints[0].appliesTo.includes(id)));
+check('superseded claims are explicitly labelled', (review.match(/SUPERSEDED CLAIM — CORRECTION RECORD/g)||[]).length === 4);
+check('frozen against the RC1 commit', frozen.frozenAgainstCommit === '7b5d4617295c98a8ed0f87d204f4745dd5db05dd');
+check('manual review recorded as 250/250', frozen.manualBlindReview.reviewed === 250 && frozen.manualBlindReview.of === 250 && frozen.manualBlindReview.thisRound === 158);
 
 // 8. no statement calls an AMBIGUOUS question's key unique
 check('no surviving "correct unique key" assertion', !/correct unique key/.test(asserted));

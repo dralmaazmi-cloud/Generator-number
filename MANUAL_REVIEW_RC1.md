@@ -33,10 +33,11 @@ blind review in procedure, not an independent second party.
 
 ## A. KEY INTEGRITY — two metrics, kept apart
 
-The earlier draft of this report said "158/158 PASS — correct unique key" while
-also classifying four odd-one-out questions as AMBIGUOUS. Those two statements
-cannot both hold under one definition. They are separated here, and the word
-"unique" is no longer applied to any question classified AMBIGUOUS.
+> **SUPERSEDED CLAIM — CORRECTION RECORD.** The earlier draft of this report said
+> *"158/158 PASS — correct unique key"* while also classifying four odd-one-out
+> questions as AMBIGUOUS. Those two statements cannot both hold under one
+> definition. That combined claim is withdrawn. The metrics are separated below,
+> and the word "unique" is no longer applied to any question classified AMBIGUOUS.
 
 ### A-1. Intended-rule key match
 *Does the published key match the generator's intended mathematical rule?*
@@ -333,10 +334,11 @@ the audit sample, all flagged in `audit.arabicFlag`; 548 / 10,000 in the corpus;
 
 ### Correction to my own earlier statement
 
-The previous draft of this report said: *"I found no further Arabic defect in the
-158 beyond these two classes."* **That was wrong.** A third defect class is
-present in the 158, in `profit_loss`, which was inside my scope. It is recorded
-below as a separate class; it is not merged into the dual-case defect.
+> **SUPERSEDED CLAIM — CORRECTION RECORD.** The previous draft said *"I found no
+> further Arabic defect in the 158 beyond these two classes."* **That was wrong**
+> and is withdrawn. A third defect class is present in the 158, in `profit_loss`,
+> which was inside my scope. It is recorded below as a separate class and is not
+> merged into the dual-case defect.
 
 ### New, found this round — **MANUAL REVIEW FINDING** — three classes
 
@@ -450,8 +452,12 @@ Relational: 16/16 uniquely determined, with no `RELATIONAL_NON_UNIQUE`,
 | **CLEAN** | **5** | no competing rule, or the alternatives agree with the key |
 | **Total** | **16** | |
 
-**11 of 16 carry a defect** (4 + 6 + 1); 5 are clean. The earlier draft said
-"10 of 16", which omitted the UNDISCOVERABLE case; that is corrected here.
+**11 of 16 carry an ambiguity or discoverability concern** (4 + 6 + 1); 5 are
+clean.
+
+> **SUPERSEDED CLAIM — CORRECTION RECORD.** The earlier draft said *"10 of 16
+> affected"*, which omitted the UNDISCOVERABLE case. Withdrawn; the correct
+> figure is 11 of 16.
 
 #### AMBIGUOUS — 4
 
@@ -518,10 +524,17 @@ Hard             0       12     70     82    12 (14.6%)
 
 ### Manual assessment — exact, mutually exclusive, no approximations
 
-The earlier draft said "~103 justified, using all 46 Easy mismatches + 57
-Medium→Hard". That was wrong twice over: it lumped the 3 Easy→Hard cases into the
-justified column and it used 57 where the matrix says 60. Corrected below by
-assessing every transition group, and the 12 Hard→Medium questions individually.
+> **SUPERSEDED CLAIM — CORRECTION RECORD.** The earlier draft said *"~103
+> justified, using all 46 Easy mismatches + 57 Medium→Hard"*. Wrong twice over: it
+> lumped the 3 Easy→Hard cases into the justified column and used 57 where the
+> matrix says 60. Withdrawn. A second superseded claim is withdrawn with it: that
+> **all 12 Hard→Medium mismatches are misclassified**, and that those 12
+> *"overlap exactly with D-3 and D-4"*. Neither holds — 7 of the 12 have a
+> defensible Hard label, and none of the 12 is a `REL_H_POSITION_UNCERTAIN`
+> question.
+
+Corrected below by assessing every transition group, and the 12 Hard→Medium
+questions individually.
 
 | Transition | n | Assessment | Reason |
 |---|---|---|---|
