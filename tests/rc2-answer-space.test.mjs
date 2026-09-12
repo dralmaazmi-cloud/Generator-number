@@ -72,7 +72,12 @@ test('RC2-011: the five templates the RC1 audit named all leak materially less',
   // RC2.1-2 moved templates between bands, so a fixed sample is spread over
   // more templates per band than before and the five named ones are reached
   // less often. The corpus is enlarged rather than the assertion weakened.
-  const report = await measure({questions: 12000, seedPrefix: 'rc2-011-test'});
+  // RC2.5 moved nineteen structures out of hard and ten out of medium, so the
+  // bands hold very different numbers of templates and a fixed corpus reaches
+  // each one less often. The corpus is enlarged again rather than the assertion
+  // weakened — two of the five named templates now sit in a 62-template medium
+  // pool and were not being sampled at all at 12,000.
+  const report = await measure({questions: 24000, seedPrefix: 'rc2-011-test'});
   assert.equal(report.corpus.exhausted, 0);
   for (const c of report.rc1Comparison) {
     assert.ok(c.rc2, `${c.templateId} was not sampled`);

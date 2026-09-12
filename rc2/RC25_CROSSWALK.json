@@ -1,6 +1,6 @@
 {
   "schema": "rc25-crosswalk-v1",
-  "generatedAt": "2026-09-12T21:53:19.854Z",
+  "generatedAt": "2026-09-12T22:29:15.227Z",
   "crosswalk": {
     "items": 250,
     "keyAgreement": 250,
@@ -383,7 +383,7 @@
             "variants": {
               "none": 5
             },
-            "rc25Band": "medium",
+            "rc25Band": "easy",
             "itemIds": [
               "E-S1-10",
               "E-S1-33",
@@ -431,7 +431,7 @@
             "variants": {
               "none": 4
             },
-            "rc25Band": "medium",
+            "rc25Band": "easy",
             "itemIds": [
               "E-S1-01",
               "E-S1-49",
@@ -461,7 +461,7 @@
             "variants": {
               "none": 4
             },
-            "rc25Band": "medium",
+            "rc25Band": "easy",
             "itemIds": [
               "E-S1-09",
               "E-S1-32",
@@ -476,7 +476,7 @@
             "variants": {
               "none": 4
             },
-            "rc25Band": "medium",
+            "rc25Band": "easy",
             "itemIds": [
               "E-S1-12",
               "E-S1-36",
@@ -491,7 +491,7 @@
             "variants": {
               "none": 4
             },
-            "rc25Band": "medium",
+            "rc25Band": "easy",
             "itemIds": [
               "E-S1-14",
               "E-S3-43",
@@ -536,7 +536,7 @@
             "variants": {
               "none": 4
             },
-            "rc25Band": "medium",
+            "rc25Band": "easy",
             "itemIds": [
               "E-S2-09",
               "E-S2-33",
@@ -593,7 +593,7 @@
             "variants": {
               "none": 3
             },
-            "rc25Band": "medium",
+            "rc25Band": "easy",
             "itemIds": [
               "E-S1-28",
               "E-S2-31",
@@ -621,7 +621,7 @@
             "variants": {
               "none": 3
             },
-            "rc25Band": "medium",
+            "rc25Band": "easy",
             "itemIds": [
               "E-S1-43",
               "E-S3-02",
@@ -745,7 +745,7 @@
             "variants": {
               "none": 2
             },
-            "rc25Band": "medium",
+            "rc25Band": "easy",
             "itemIds": [
               "E-S1-39",
               "E-S4-16"
@@ -836,7 +836,7 @@
             "variants": {
               "none": 2
             },
-            "rc25Band": "medium",
+            "rc25Band": "hard",
             "itemIds": [
               "E-S4-13",
               "E-S4-35"
@@ -861,7 +861,7 @@
             "variants": {
               "none": 1
             },
-            "rc25Band": "medium",
+            "rc25Band": "easy",
             "itemIds": [
               "E-S2-08"
             ]
@@ -921,7 +921,7 @@
             "variants": {
               "none": 1
             },
-            "rc25Band": "medium",
+            "rc25Band": "easy",
             "itemIds": [
               "E-S4-22"
             ]
@@ -940,7 +940,9 @@
           }
         ],
         "rc25BandOfDeliveredItems": {
-          "medium": 116
+          "easy": 35,
+          "medium": 79,
+          "hard": 2
         }
       },
       "hard": {
@@ -972,7 +974,7 @@
             "variants": {
               "CROSS_PART_INTEGRATION+STRATEGY_SELECTION": 5
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S2-28",
               "E-S3-46",
@@ -988,7 +990,7 @@
             "variants": {
               "CROSS_PART_INTEGRATION+SIMULTANEOUS_CONSTRAINTS": 4
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S1-20",
               "E-S4-47",
@@ -1003,7 +1005,7 @@
             "variants": {
               "COMPOSED_INVERSION+STRATEGY_SELECTION": 4
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S1-35",
               "E-S3-20",
@@ -1018,7 +1020,7 @@
             "variants": {
               "CROSS_PART_INTEGRATION+SIMULTANEOUS_CONSTRAINTS": 4
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S2-11",
               "E-S3-24",
@@ -1063,7 +1065,7 @@
             "variants": {
               "CROSS_PART_INTEGRATION+SIMULTANEOUS_CONSTRAINTS": 3
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S1-04",
               "E-S5-13",
@@ -1091,7 +1093,7 @@
             "variants": {
               "COMPOSED_INVERSION+SIMULTANEOUS_CONSTRAINTS": 3
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S1-21",
               "E-S5-02",
@@ -1105,7 +1107,7 @@
             "variants": {
               "COMPOSED_INVERSION+CROSS_PART_INTEGRATION": 3
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S2-14",
               "E-S5-19",
@@ -1147,7 +1149,7 @@
             "variants": {
               "COMPOSED_INVERSION+CROSS_PART_INTEGRATION+SIMULTANEOUS_CONSTRAINTS": 2
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S1-02",
               "E-S5-26"
@@ -1160,7 +1162,7 @@
             "variants": {
               "COMPOSED_INVERSION+STRATEGY_SELECTION": 2
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S1-31",
               "E-S5-03"
@@ -1173,7 +1175,7 @@
             "variants": {
               "COMPOSED_INVERSION+STRATEGY_SELECTION": 2
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S2-37",
               "E-S5-10"
@@ -1199,7 +1201,7 @@
             "variants": {
               "CROSS_PART_INTEGRATION+STRATEGY_SELECTION": 2
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S3-05",
               "E-S4-50"
@@ -1212,7 +1214,7 @@
             "variants": {
               "COMPOSED_INVERSION+SIMULTANEOUS_CONSTRAINTS": 2
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S3-16",
               "E-S5-31"
@@ -1225,7 +1227,7 @@
             "variants": {
               "COMPOSED_INVERSION+SIMULTANEOUS_CONSTRAINTS": 2
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S4-10",
               "E-S5-21"
@@ -1251,7 +1253,7 @@
             "variants": {
               "CROSS_PART_INTEGRATION+SIMULTANEOUS_CONSTRAINTS": 2
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S5-01",
               "E-S5-29"
@@ -1264,7 +1266,7 @@
             "variants": {
               "SIMULTANEOUS_CONSTRAINTS+STRATEGY_SELECTION": 2
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S5-14",
               "E-S5-42"
@@ -1277,7 +1279,7 @@
             "variants": {
               "CROSS_PART_INTEGRATION+STRATEGY_SELECTION": 2
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S5-16",
               "E-S5-41"
@@ -1340,7 +1342,7 @@
             "variants": {
               "COMPOSED_INVERSION+SIMULTANEOUS_CONSTRAINTS": 1
             },
-            "rc25Band": "hard",
+            "rc25Band": "medium",
             "itemIds": [
               "E-S5-23"
             ]
@@ -1407,8 +1409,8 @@
           }
         ],
         "rc25BandOfDeliveredItems": {
-          "hard": 76,
-          "medium": 6
+          "medium": 51,
+          "hard": 31
         }
       }
     },
@@ -1428,7 +1430,7 @@
         "targetMisconception": "STOPPED_AFTER_FIRST_STAGE",
         "correctOption": "C",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S1-02",
@@ -1449,7 +1451,7 @@
         "targetMisconception": "USED_POST_TRANSFER_VALUE",
         "correctOption": "A",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S1-03",
@@ -1486,7 +1488,7 @@
         "targetMisconception": "AVERAGED_THE_TWO_CONCENTRATIONS",
         "correctOption": "B",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S1-05",
@@ -1574,7 +1576,7 @@
         "targetMisconception": "COUNTED_DIRECT_RELATIONS_ONLY",
         "correctOption": "D",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S1-10",
@@ -1591,7 +1593,7 @@
         "targetMisconception": "IGNORED_NET_OFFSET",
         "correctOption": "A",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S1-11",
@@ -1625,7 +1627,7 @@
         "targetMisconception": "SUBTRACTED_PERCENTAGE_DIRECTLY",
         "correctOption": "B",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S1-13",
@@ -1659,7 +1661,7 @@
         "targetMisconception": "ADDED_PERCENTAGES",
         "correctOption": "C",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S1-15",
@@ -1764,7 +1766,7 @@
         "targetMisconception": "APPLIED_FUTURE_RATIO_NOW",
         "correctOption": "F",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S1-21",
@@ -1784,7 +1786,7 @@
         "targetMisconception": "USED_ONE_SPEED_WITH_TIME_GAP",
         "correctOption": "B",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S1-22",
@@ -1903,7 +1905,7 @@
         "targetMisconception": "FLAT_FEE_PER_UNIT",
         "correctOption": "F",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S1-29",
@@ -1957,7 +1959,7 @@
         "targetMisconception": "USED_NEW_TOTAL",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S1-32",
@@ -1974,7 +1976,7 @@
         "targetMisconception": "COUNTED_DIRECT_RELATIONS_ONLY",
         "correctOption": "C",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S1-33",
@@ -1991,7 +1993,7 @@
         "targetMisconception": "IGNORED_NET_OFFSET",
         "correctOption": "F",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S1-34",
@@ -2028,7 +2030,7 @@
         "targetMisconception": "MISREAD_THE_STEP",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S1-36",
@@ -2045,7 +2047,7 @@
         "targetMisconception": "SUBTRACTED_PERCENTAGE_DIRECTLY",
         "correctOption": "C",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S1-37",
@@ -2096,7 +2098,7 @@
         "targetMisconception": "APPLIED_PERCENT_TO_WRONG_TOTAL",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S1-40",
@@ -2164,7 +2166,7 @@
         "targetMisconception": "RATE_APPLIED_TO_WRONG_COUNT",
         "correctOption": "F",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S1-44",
@@ -2269,7 +2271,7 @@
         "targetMisconception": "STOPPED_AFTER_FIRST_STAGE",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S1-50",
@@ -2422,7 +2424,7 @@
         "targetMisconception": "ADDED_INSTEAD_OF_SCALING",
         "correctOption": "C",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S2-09",
@@ -2439,7 +2441,7 @@
         "targetMisconception": "APPLIED_PERCENT_TO_WRONG_TOTAL",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S2-10",
@@ -2476,7 +2478,7 @@
         "targetMisconception": "SOLVED_ONE_CONDITION_ONLY",
         "correctOption": "A",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S2-12",
@@ -2533,7 +2535,7 @@
         "targetMisconception": "USED_NEW_TOTAL",
         "correctOption": "C",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S2-15",
@@ -2550,7 +2552,7 @@
         "targetMisconception": "IGNORED_NET_OFFSET",
         "correctOption": "C",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S2-16",
@@ -2777,7 +2779,7 @@
         "targetMisconception": "USED_SUM_OF_CYCLES",
         "correctOption": "F",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S2-29",
@@ -2828,7 +2830,7 @@
         "targetMisconception": "FLAT_FEE_PER_UNIT",
         "correctOption": "D",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S2-32",
@@ -2862,7 +2864,7 @@
         "targetMisconception": "APPLIED_PERCENT_TO_WRONG_TOTAL",
         "correctOption": "A",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S2-34",
@@ -2913,7 +2915,7 @@
         "targetMisconception": "COUNTED_DIRECT_RELATIONS_ONLY",
         "correctOption": "F",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S2-37",
@@ -2933,7 +2935,7 @@
         "targetMisconception": "ADDED_MARKUP_AND_DISCOUNT",
         "correctOption": "F",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S2-38",
@@ -2950,7 +2952,7 @@
         "targetMisconception": "IGNORED_NET_OFFSET",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S2-39",
@@ -3194,7 +3196,7 @@
         "targetMisconception": "RATE_APPLIED_TO_WRONG_COUNT",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S3-03",
@@ -3228,7 +3230,7 @@
         "targetMisconception": "FLAT_FEE_PER_UNIT",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S3-05",
@@ -3248,7 +3250,7 @@
         "targetMisconception": "USED_TOTAL_DISTANCE_WITHOUT_DELAY",
         "correctOption": "C",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S3-06",
@@ -3316,7 +3318,7 @@
         "targetMisconception": "IGNORED_NET_OFFSET",
         "correctOption": "D",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S3-10",
@@ -3367,7 +3369,7 @@
         "targetMisconception": "SUBTRACTED_PERCENTAGE_DIRECTLY",
         "correctOption": "D",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S3-13",
@@ -3438,7 +3440,7 @@
         "targetMisconception": "SUBTRACTED_TIMES_INSTEAD_OF_RATES",
         "correctOption": "C",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S3-17",
@@ -3509,7 +3511,7 @@
         "targetMisconception": "MISREAD_THE_STEP",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S3-21",
@@ -3580,7 +3582,7 @@
         "targetMisconception": "SOLVED_ONE_CONDITION_ONLY",
         "correctOption": "A",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S3-25",
@@ -3682,7 +3684,7 @@
         "targetMisconception": "APPLIED_PERCENT_TO_WRONG_TOTAL",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S3-31",
@@ -3750,7 +3752,7 @@
         "targetMisconception": "COUNTED_DIRECT_RELATIONS_ONLY",
         "correctOption": "A",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S3-35",
@@ -3909,7 +3911,7 @@
         "targetMisconception": "ADDED_PERCENTAGES",
         "correctOption": "B",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S3-44",
@@ -3966,7 +3968,7 @@
         "targetMisconception": "USED_SUM_OF_CYCLES",
         "correctOption": "F",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S3-47",
@@ -4102,7 +4104,7 @@
         "targetMisconception": "RATE_APPLIED_TO_WRONG_COUNT",
         "correctOption": "B",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S4-05",
@@ -4119,7 +4121,7 @@
         "targetMisconception": "STOPPED_AFTER_FIRST_STAGE",
         "correctOption": "B",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S4-06",
@@ -4190,7 +4192,7 @@
         "targetMisconception": "USED_SUM_OF_CYCLES",
         "correctOption": "D",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S4-10",
@@ -4210,7 +4212,7 @@
         "targetMisconception": "USED_THE_GAP_AS_COST",
         "correctOption": "A",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S4-11",
@@ -4261,7 +4263,7 @@
         "targetMisconception": "TREATED_PATTERN_AS_CONSTANT",
         "correctOption": "C",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "hard"
       },
       {
         "itemId": "E-S4-14",
@@ -4315,7 +4317,7 @@
         "targetMisconception": "APPLIED_PERCENT_TO_WRONG_TOTAL",
         "correctOption": "D",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S4-17",
@@ -4349,7 +4351,7 @@
         "targetMisconception": "ADDED_PERCENTAGES",
         "correctOption": "D",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S4-19",
@@ -4420,7 +4422,7 @@
         "targetMisconception": "HALVED_THE_SUM",
         "correctOption": "A",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S4-23",
@@ -4522,7 +4524,7 @@
         "targetMisconception": "STOPPED_AFTER_FIRST_STAGE",
         "correctOption": "A",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S4-29",
@@ -4556,7 +4558,7 @@
         "targetMisconception": "APPLIED_PERCENT_TO_WRONG_TOTAL",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S4-31",
@@ -4624,7 +4626,7 @@
         "targetMisconception": "SUBTRACTED_PERCENTAGE_DIRECTLY",
         "correctOption": "C",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S4-35",
@@ -4641,7 +4643,7 @@
         "targetMisconception": "TREATED_PATTERN_AS_CONSTANT",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "hard"
       },
       {
         "itemId": "E-S4-36",
@@ -4763,7 +4765,7 @@
         "targetMisconception": "ADDED_PERCENTAGES",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "medium"
+        "rc25Band": "easy"
       },
       {
         "itemId": "E-S4-43",
@@ -4854,7 +4856,7 @@
         "targetMisconception": "APPLIED_FUTURE_RATIO_NOW",
         "correctOption": "F",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S4-48",
@@ -4908,7 +4910,7 @@
         "targetMisconception": "USED_TOTAL_DISTANCE_WITHOUT_DELAY",
         "correctOption": "A",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-01",
@@ -4928,7 +4930,7 @@
         "targetMisconception": "APPLIED_FUTURE_RATIO_NOW",
         "correctOption": "B",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-02",
@@ -4948,7 +4950,7 @@
         "targetMisconception": "USED_ONE_SPEED_WITH_TIME_GAP",
         "correctOption": "F",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-03",
@@ -4968,7 +4970,7 @@
         "targetMisconception": "USED_NEW_TOTAL",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-04",
@@ -4988,7 +4990,7 @@
         "targetMisconception": "MISREAD_THE_STEP",
         "correctOption": "C",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-05",
@@ -5008,7 +5010,7 @@
         "targetMisconception": "SOLVED_ONE_CONDITION_ONLY",
         "correctOption": "B",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-06",
@@ -5088,7 +5090,7 @@
         "targetMisconception": "USED_SUM_OF_CYCLES",
         "correctOption": "A",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-10",
@@ -5108,7 +5110,7 @@
         "targetMisconception": "ADDED_MARKUP_AND_DISCOUNT",
         "correctOption": "C",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-11",
@@ -5168,7 +5170,7 @@
         "targetMisconception": "AVERAGED_THE_TWO_CONCENTRATIONS",
         "correctOption": "D",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-14",
@@ -5188,7 +5190,7 @@
         "targetMisconception": "USED_ARITHMETIC_MEAN_OF_AVERAGES",
         "correctOption": "B",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-15",
@@ -5208,7 +5210,7 @@
         "targetMisconception": "APPLIED_FUTURE_RATIO_NOW",
         "correctOption": "D",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-16",
@@ -5228,7 +5230,7 @@
         "targetMisconception": "USED_SUM_OF_SPEEDS_IN_CHASE",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-17",
@@ -5288,7 +5290,7 @@
         "targetMisconception": "USED_NEW_TOTAL",
         "correctOption": "A",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-20",
@@ -5328,7 +5330,7 @@
         "targetMisconception": "USED_THE_GAP_AS_COST",
         "correctOption": "C",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-22",
@@ -5368,7 +5370,7 @@
         "targetMisconception": "USED_NEW_TOTAL",
         "correctOption": "C",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-24",
@@ -5429,7 +5431,7 @@
         "targetMisconception": "USED_POST_TRANSFER_VALUE",
         "correctOption": "D",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-27",
@@ -5489,7 +5491,7 @@
         "targetMisconception": "APPLIED_FUTURE_RATIO_NOW",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-30",
@@ -5529,7 +5531,7 @@
         "targetMisconception": "SUBTRACTED_TIMES_INSTEAD_OF_RATES",
         "correctOption": "F",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-32",
@@ -5549,7 +5551,7 @@
         "targetMisconception": "MISREAD_THE_STEP",
         "correctOption": "F",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-33",
@@ -5569,7 +5571,7 @@
         "targetMisconception": "SOLVED_ONE_CONDITION_ONLY",
         "correctOption": "B",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-34",
@@ -5609,7 +5611,7 @@
         "targetMisconception": "USED_SUM_OF_CYCLES",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-36",
@@ -5689,7 +5691,7 @@
         "targetMisconception": "AVERAGED_THE_TWO_CONCENTRATIONS",
         "correctOption": "A",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-40",
@@ -5709,7 +5711,7 @@
         "targetMisconception": "USED_ONE_SPEED_WITH_TIME_GAP",
         "correctOption": "D",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-41",
@@ -5729,7 +5731,7 @@
         "targetMisconception": "USED_SUM_OF_SPEEDS_IN_CHASE",
         "correctOption": "E",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-42",
@@ -5749,7 +5751,7 @@
         "targetMisconception": "USED_ARITHMETIC_MEAN_OF_AVERAGES",
         "correctOption": "F",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-43",
@@ -5769,7 +5771,7 @@
         "targetMisconception": "APPLIED_FUTURE_RATIO_NOW",
         "correctOption": "A",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-44",
@@ -5789,7 +5791,7 @@
         "targetMisconception": "USED_NEW_TOTAL",
         "correctOption": "D",
         "keyAgrees": true,
-        "rc25Band": "hard"
+        "rc25Band": "medium"
       },
       {
         "itemId": "E-S5-45",
@@ -5914,12 +5916,3084 @@
     ]
   },
   "humanVerdictJoin": {
-    "available": false,
-    "searched": [
-      "rc2/holdout-e-verdicts.jsonl",
-      "rc2/holdout-e-reveal/blind-verdicts.jsonl",
-      "rc2/HOLDOUT_E_VERDICTS.jsonl"
+    "available": true,
+    "path": "rc2/holdout-e-verdicts.jsonl",
+    "itemsJoined": 250,
+    "itemsWithoutAVerdict": [],
+    "unrecognisedVerdictRecords": 0,
+    "ambiguousItems": [
+      {
+        "itemId": "E-S1-08",
+        "templateId": "AVG_H_OVERLAP"
+      },
+      {
+        "itemId": "E-S4-43",
+        "templateId": "AVG_H_OVERLAP"
+      },
+      {
+        "itemId": "E-S5-27",
+        "templateId": "AVG_H_OVERLAP"
+      }
     ],
-    "note": "The sealed blind verdict file is required for the per-template human calibration and is not present. No substitute is used."
+    "perTemplate": [
+      {
+        "templateId": "RATE_H_TWO_PHASE",
+        "family": "unit_rate",
+        "deliveredAt": {
+          "medium": 5
+        },
+        "verdicts": {
+          "overclassified": 3,
+          "appropriate": 2
+        },
+        "byVariant": {
+          "none": {
+            "overclassified": 3,
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 5,
+        "rc25Band": "medium",
+        "clusters": {
+          "staged_rate_increase": 5
+        }
+      },
+      {
+        "templateId": "CAL_H_NESTED",
+        "family": "calendar",
+        "deliveredAt": {
+          "medium": 5
+        },
+        "verdicts": {
+          "overclassified": 5
+        },
+        "byVariant": {
+          "none": {
+            "overclassified": 5
+          }
+        },
+        "ambiguous": 0,
+        "n": 5,
+        "rc25Band": "easy",
+        "clusters": {
+          "weekday_net_shift": 5
+        }
+      },
+      {
+        "templateId": "SPD_M_TWO_TIME",
+        "family": "speed",
+        "deliveredAt": {
+          "medium": 5
+        },
+        "verdicts": {
+          "appropriate": 5
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 5
+          }
+        },
+        "ambiguous": 0,
+        "n": 5,
+        "rc25Band": "medium",
+        "clusters": {
+          "two_leg_travel_time": 5
+        }
+      },
+      {
+        "templateId": "ODD_H_TRIANGULAR",
+        "family": "odd_one_out",
+        "deliveredAt": {
+          "medium": 5
+        },
+        "verdicts": {
+          "appropriate": 5
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 5
+          }
+        },
+        "ambiguous": 0,
+        "n": 5,
+        "rc25Band": "medium",
+        "clusters": {
+          "odd_one_out_number_property": 5
+        }
+      },
+      {
+        "templateId": "RATE_H_RATE_FROM_GAP",
+        "family": "unit_rate",
+        "deliveredAt": {
+          "hard": 5
+        },
+        "verdicts": {
+          "appropriate": 5
+        },
+        "byVariant": {
+          "SIMULTANEOUS_CONSTRAINTS+STRATEGY_SELECTION": {
+            "appropriate": 5
+          }
+        },
+        "ambiguous": 0,
+        "n": 5,
+        "rc25Band": "hard",
+        "clusters": {
+          "rate_increase_quadratic": 5
+        }
+      },
+      {
+        "templateId": "CAL_H_CYCLE_MEET",
+        "family": "calendar",
+        "deliveredAt": {
+          "hard": 5
+        },
+        "verdicts": {
+          "overclassified": 5
+        },
+        "byVariant": {
+          "CROSS_PART_INTEGRATION+STRATEGY_SELECTION": {
+            "overclassified": 5
+          }
+        },
+        "ambiguous": 0,
+        "n": 5,
+        "rc25Band": "medium",
+        "clusters": {
+          "lcm_weekday_meeting": 5
+        }
+      },
+      {
+        "templateId": "PROP_M_MAP",
+        "family": "direct_proportion",
+        "deliveredAt": {
+          "medium": 4
+        },
+        "verdicts": {
+          "overclassified": 4
+        },
+        "byVariant": {
+          "none": {
+            "overclassified": 4
+          }
+        },
+        "ambiguous": 0,
+        "n": 4,
+        "rc25Band": "easy",
+        "clusters": {
+          "map_scale_added_segment": 4
+        }
+      },
+      {
+        "templateId": "COMB_H_STAGED",
+        "family": "combined_rate",
+        "deliveredAt": {
+          "medium": 4
+        },
+        "verdicts": {
+          "appropriate": 4
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 4
+          }
+        },
+        "ambiguous": 0,
+        "n": 4,
+        "rc25Band": "medium",
+        "clusters": {
+          "staged_two_worker_output": 4
+        }
+      },
+      {
+        "templateId": "REL_E_CHAIN",
+        "family": "relational",
+        "deliveredAt": {
+          "medium": 4
+        },
+        "verdicts": {
+          "appropriate": 2,
+          "overclassified": 2
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 2,
+            "overclassified": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 4,
+        "rc25Band": "easy",
+        "clusters": {
+          "partial_order_ranking": 4
+        }
+      },
+      {
+        "templateId": "PL_H_REVERSE",
+        "family": "profit_loss",
+        "deliveredAt": {
+          "medium": 4
+        },
+        "verdicts": {
+          "overclassified": 4
+        },
+        "byVariant": {
+          "none": {
+            "overclassified": 4
+          }
+        },
+        "ambiguous": 0,
+        "n": 4,
+        "rc25Band": "easy",
+        "clusters": {
+          "recover_cost_from_profit": 4
+        }
+      },
+      {
+        "templateId": "PCT_M_REMAIN",
+        "family": "percentages",
+        "deliveredAt": {
+          "medium": 4
+        },
+        "verdicts": {
+          "overclassified": 4
+        },
+        "byVariant": {
+          "none": {
+            "overclassified": 4
+          }
+        },
+        "ambiguous": 0,
+        "n": 4,
+        "rc25Band": "easy",
+        "clusters": {
+          "successive_population_reductions": 4
+        }
+      },
+      {
+        "templateId": "AVG_H_TARGET",
+        "family": "averages",
+        "deliveredAt": {
+          "medium": 4
+        },
+        "verdicts": {
+          "appropriate": 4
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 4
+          }
+        },
+        "ambiguous": 0,
+        "n": 4,
+        "rc25Band": "medium",
+        "clusters": {
+          "mean_target_added_value": 4
+        }
+      },
+      {
+        "templateId": "AGE_M_FUT_RATIO",
+        "family": "ages",
+        "deliveredAt": {
+          "hard": 4
+        },
+        "verdicts": {
+          "overclassified": 4
+        },
+        "byVariant": {
+          "CROSS_PART_INTEGRATION+SIMULTANEOUS_CONSTRAINTS": {
+            "overclassified": 4
+          }
+        },
+        "ambiguous": 0,
+        "n": 4,
+        "rc25Band": "medium",
+        "clusters": {
+          "age_difference_future_multiple": 4
+        }
+      },
+      {
+        "templateId": "RAT_E_KNOWN",
+        "family": "ratios",
+        "deliveredAt": {
+          "easy": 4
+        },
+        "verdicts": {
+          "appropriate": 4
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 4
+          }
+        },
+        "ambiguous": 0,
+        "n": 4,
+        "rc25Band": "easy",
+        "clusters": {
+          "direct_ratio": 4
+        }
+      },
+      {
+        "templateId": "MACH_H_STOPPAGE_TIME",
+        "family": "machines",
+        "deliveredAt": {
+          "hard": 4
+        },
+        "verdicts": {
+          "overclassified": 4
+        },
+        "byVariant": {
+          "COMPOSED_INVERSION+STRATEGY_SELECTION": {
+            "overclassified": 4
+          }
+        },
+        "ambiguous": 0,
+        "n": 4,
+        "rc25Band": "medium",
+        "clusters": {
+          "machine_stoppage_time": 4
+        }
+      },
+      {
+        "templateId": "AVG_E_ADD",
+        "family": "averages",
+        "deliveredAt": {
+          "easy": 4
+        },
+        "verdicts": {
+          "appropriate": 4
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 4
+          }
+        },
+        "ambiguous": 0,
+        "n": 4,
+        "rc25Band": "easy",
+        "clusters": {
+          "mean_after_added_value": 4
+        }
+      },
+      {
+        "templateId": "WORK_H_TWO_STAGE",
+        "family": "work_time",
+        "deliveredAt": {
+          "medium": 4
+        },
+        "verdicts": {
+          "appropriate": 4
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 4
+          }
+        },
+        "ambiguous": 0,
+        "n": 4,
+        "rc25Band": "medium",
+        "clusters": {
+          "worker_departure_multistage": 4
+        }
+      },
+      {
+        "templateId": "RATE_M_PERCENT",
+        "family": "unit_rate",
+        "deliveredAt": {
+          "medium": 4
+        },
+        "verdicts": {
+          "overclassified": 4
+        },
+        "byVariant": {
+          "none": {
+            "overclassified": 4
+          }
+        },
+        "ambiguous": 0,
+        "n": 4,
+        "rc25Band": "easy",
+        "clusters": {
+          "machine_rate_after_maintenance": 4
+        }
+      },
+      {
+        "templateId": "PROP_H_TWO_ITEM_SYSTEM",
+        "family": "direct_proportion",
+        "deliveredAt": {
+          "hard": 4
+        },
+        "verdicts": {
+          "overclassified": 4
+        },
+        "byVariant": {
+          "CROSS_PART_INTEGRATION+SIMULTANEOUS_CONSTRAINTS": {
+            "overclassified": 4
+          }
+        },
+        "ambiguous": 0,
+        "n": 4,
+        "rc25Band": "medium",
+        "clusters": {
+          "box_piece_linear_system": 4
+        }
+      },
+      {
+        "templateId": "RAT_M_COMMON_DIFF",
+        "family": "ratios",
+        "deliveredAt": {
+          "hard": 4
+        },
+        "verdicts": {
+          "appropriate": 4
+        },
+        "byVariant": {
+          "CROSS_PART_INTEGRATION+STRATEGY_SELECTION": {
+            "appropriate": 4
+          }
+        },
+        "ambiguous": 0,
+        "n": 4,
+        "rc25Band": "hard",
+        "clusters": {
+          "chained_ratios": 4
+        }
+      },
+      {
+        "templateId": "REL_H_POSITION",
+        "family": "relational",
+        "deliveredAt": {
+          "hard": 4
+        },
+        "verdicts": {
+          "overclassified": 3,
+          "appropriate": 1
+        },
+        "byVariant": {
+          "PARTIAL_ORDER_BRANCHING+SIMULTANEOUS_CONSTRAINTS": {
+            "overclassified": 3,
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 4,
+        "rc25Band": "hard",
+        "clusters": {
+          "partial_order_ranking": 4
+        }
+      },
+      {
+        "templateId": "PCT_H_MIXTURE",
+        "family": "percentages",
+        "deliveredAt": {
+          "hard": 3
+        },
+        "verdicts": {
+          "overclassified": 3
+        },
+        "byVariant": {
+          "CROSS_PART_INTEGRATION+SIMULTANEOUS_CONSTRAINTS": {
+            "overclassified": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "medium",
+        "clusters": {
+          "mixture_concentration": 3
+        }
+      },
+      {
+        "templateId": "REL_E_BETWEEN",
+        "family": "relational",
+        "deliveredAt": {
+          "easy": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "easy",
+        "clusters": {
+          "partial_order_ranking": 3
+        }
+      },
+      {
+        "templateId": "AVG_H_OVERLAP",
+        "family": "averages",
+        "deliveredAt": {
+          "hard": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "CROSS_PART_INTEGRATION+STRATEGY_SELECTION": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 3,
+        "n": 3,
+        "rc25Band": "hard",
+        "clusters": {
+          "overlapping_ordered_means": 3
+        }
+      },
+      {
+        "templateId": "ODD_M_PRONIC",
+        "family": "odd_one_out",
+        "deliveredAt": {
+          "easy": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "easy",
+        "clusters": {
+          "odd_one_out_number_property": 3
+        }
+      },
+      {
+        "templateId": "PCT_M_SUCCESSIVE",
+        "family": "percentages",
+        "deliveredAt": {
+          "medium": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "medium",
+        "clusters": {
+          "successive_percentage_changes": 3
+        }
+      },
+      {
+        "templateId": "SEQ_E_GEO",
+        "family": "sequences",
+        "deliveredAt": {
+          "easy": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "easy",
+        "clusters": {
+          "number_sequence": 3
+        }
+      },
+      {
+        "templateId": "SPD_H_TIME_DIFF",
+        "family": "speed",
+        "deliveredAt": {
+          "hard": 3
+        },
+        "verdicts": {
+          "overclassified": 3
+        },
+        "byVariant": {
+          "COMPOSED_INVERSION+SIMULTANEOUS_CONSTRAINTS": {
+            "overclassified": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "medium",
+        "clusters": {
+          "same_distance_two_speeds_time_difference": 3
+        }
+      },
+      {
+        "templateId": "PCT_E_OF",
+        "family": "percentages",
+        "deliveredAt": {
+          "easy": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "easy",
+        "clusters": {
+          "percentage_of_value": 3
+        }
+      },
+      {
+        "templateId": "WORK_M_TARGET",
+        "family": "work_time",
+        "deliveredAt": {
+          "medium": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "medium",
+        "clusters": {
+          "worker_replan_finish_deadline": 3
+        }
+      },
+      {
+        "templateId": "MACH_M_SUBSET_UP",
+        "family": "machines",
+        "deliveredAt": {
+          "medium": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "medium",
+        "clusters": {
+          "machine_upgrade_subset": 3
+        }
+      },
+      {
+        "templateId": "PROP_H_COST_PLUS",
+        "family": "direct_proportion",
+        "deliveredAt": {
+          "medium": 3
+        },
+        "verdicts": {
+          "overclassified": 3
+        },
+        "byVariant": {
+          "none": {
+            "overclassified": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "easy",
+        "clusters": {
+          "unit_cost_plus_fixed_fee": 3
+        }
+      },
+      {
+        "templateId": "WORK_M_CHANGE",
+        "family": "work_time",
+        "deliveredAt": {
+          "medium": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "medium",
+        "clusters": {
+          "worker_join_after_progress": 3
+        }
+      },
+      {
+        "templateId": "MACH_E_HOURS",
+        "family": "machines",
+        "deliveredAt": {
+          "medium": 3
+        },
+        "verdicts": {
+          "overclassified": 3
+        },
+        "byVariant": {
+          "none": {
+            "overclassified": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "easy",
+        "clusters": {
+          "identical_machines_proportion": 3
+        }
+      },
+      {
+        "templateId": "WORK_M_EFF",
+        "family": "work_time",
+        "deliveredAt": {
+          "easy": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "easy",
+        "clusters": {
+          "team_efficiency_time_inverse": 3
+        }
+      },
+      {
+        "templateId": "COMB_H_TEAM_SIZE",
+        "family": "combined_rate",
+        "deliveredAt": {
+          "hard": 3
+        },
+        "verdicts": {
+          "overclassified": 3
+        },
+        "byVariant": {
+          "COMPOSED_INVERSION+CROSS_PART_INTEGRATION": {
+            "overclassified": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "medium",
+        "clusters": {
+          "team_member_join_equation": 3
+        }
+      },
+      {
+        "templateId": "ODD_H_SQ_MINUS",
+        "family": "odd_one_out",
+        "deliveredAt": {
+          "medium": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "medium",
+        "clusters": {
+          "odd_one_out_number_property": 3
+        }
+      },
+      {
+        "templateId": "SPD_E_DISTANCE",
+        "family": "speed",
+        "deliveredAt": {
+          "easy": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "easy",
+        "clusters": {
+          "distance_speed_time_direct": 3
+        }
+      },
+      {
+        "templateId": "PL_H_CHAIN",
+        "family": "profit_loss",
+        "deliveredAt": {
+          "medium": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "medium",
+        "clusters": {
+          "successive_percentage_changes": 3
+        }
+      },
+      {
+        "templateId": "REL_M_CONFIRM",
+        "family": "relational",
+        "deliveredAt": {
+          "hard": 3
+        },
+        "verdicts": {
+          "overclassified": 3
+        },
+        "byVariant": {
+          "PARTIAL_ORDER_BRANCHING+SIMULTANEOUS_CONSTRAINTS": {
+            "overclassified": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "medium",
+        "clusters": {
+          "partial_order_ranking": 3
+        }
+      },
+      {
+        "templateId": "AGE_M_FUT_SUM_DIFF",
+        "family": "ages",
+        "deliveredAt": {
+          "medium": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "medium",
+        "clusters": {
+          "age_difference_or_temporal_sum": 3
+        }
+      },
+      {
+        "templateId": "SEQ_M_DOUBLE_DIFF",
+        "family": "sequences",
+        "deliveredAt": {
+          "medium": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "medium",
+        "clusters": {
+          "number_sequence": 3
+        }
+      },
+      {
+        "templateId": "AVG_H_COMB_ADD",
+        "family": "averages",
+        "deliveredAt": {
+          "medium": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "medium",
+        "clusters": {
+          "combined_group_means": 3
+        }
+      },
+      {
+        "templateId": "SPD_M_AVG",
+        "family": "speed",
+        "deliveredAt": {
+          "medium": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "medium",
+        "clusters": {
+          "time_weighted_average_speed": 3
+        }
+      },
+      {
+        "templateId": "RATE_M_SCALE",
+        "family": "unit_rate",
+        "deliveredAt": {
+          "easy": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "easy",
+        "clusters": {
+          "fuel_direct_proportion": 3
+        }
+      },
+      {
+        "templateId": "COMB_H_TWO_PUMPS",
+        "family": "combined_rate",
+        "deliveredAt": {
+          "hard": 3
+        },
+        "verdicts": {
+          "appropriate": 3
+        },
+        "byVariant": {
+          "COMPOSED_INVERSION+SIMULTANEOUS_CONSTRAINTS": {
+            "appropriate": 3
+          }
+        },
+        "ambiguous": 0,
+        "n": 3,
+        "rc25Band": "hard",
+        "clusters": {
+          "pump_rate_system": 3
+        }
+      },
+      {
+        "templateId": "RAT_H_TRANSFER",
+        "family": "ratios",
+        "deliveredAt": {
+          "hard": 2
+        },
+        "verdicts": {
+          "overclassified": 2
+        },
+        "byVariant": {
+          "COMPOSED_INVERSION+CROSS_PART_INTEGRATION+SIMULTANEOUS_CONSTRAINTS": {
+            "overclassified": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "ratio_transfer_or_addition": 2
+        }
+      },
+      {
+        "templateId": "COMB_E_TIME",
+        "family": "combined_rate",
+        "deliveredAt": {
+          "easy": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "easy",
+        "clusters": {
+          "two_machine_combined_rate": 2
+        }
+      },
+      {
+        "templateId": "PL_E_PROFIT",
+        "family": "profit_loss",
+        "deliveredAt": {
+          "easy": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "easy",
+        "clusters": {
+          "profit_loss_percentage": 2
+        }
+      },
+      {
+        "templateId": "AGE_M_RATIO_FUT_SUM",
+        "family": "ages",
+        "deliveredAt": {
+          "medium": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "age_ratio_future_sum": 2
+        }
+      },
+      {
+        "templateId": "WORK_H_EXTRA_WORKERS",
+        "family": "work_time",
+        "deliveredAt": {
+          "hard": 2
+        },
+        "verdicts": {
+          "overclassified": 2
+        },
+        "byVariant": {
+          "COMPOSED_INVERSION+STRATEGY_SELECTION": {
+            "overclassified": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "finish_early_add_workers": 2
+        }
+      },
+      {
+        "templateId": "SEQ_M_INTERLEAVED",
+        "family": "sequences",
+        "deliveredAt": {
+          "medium": 2
+        },
+        "verdicts": {
+          "overclassified": 1,
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "overclassified": 1,
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "number_sequence": 2
+        }
+      },
+      {
+        "templateId": "PCT_M_UNIT_PRICE",
+        "family": "percentages",
+        "deliveredAt": {
+          "medium": 2
+        },
+        "verdicts": {
+          "overclassified": 2
+        },
+        "byVariant": {
+          "none": {
+            "overclassified": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "easy",
+        "clusters": {
+          "unit_price_percentage_increase": 2
+        }
+      },
+      {
+        "templateId": "SPD_E_TIME",
+        "family": "speed",
+        "deliveredAt": {
+          "easy": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "easy",
+        "clusters": {
+          "distance_speed_time_direct": 2
+        }
+      },
+      {
+        "templateId": "PROP_E_ITEMS",
+        "family": "direct_proportion",
+        "deliveredAt": {
+          "easy": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "easy",
+        "clusters": {
+          "boxes_direct_proportion": 2
+        }
+      },
+      {
+        "templateId": "MACH_M_STOP",
+        "family": "machines",
+        "deliveredAt": {
+          "medium": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "machines_then_subset_continue": 2
+        }
+      },
+      {
+        "templateId": "WORK_H_WORKERS_EFF",
+        "family": "work_time",
+        "deliveredAt": {
+          "medium": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "worker_departure_efficiency_change": 2
+        }
+      },
+      {
+        "templateId": "COMB_M_SOLO_THEN",
+        "family": "combined_rate",
+        "deliveredAt": {
+          "medium": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "worker_a_alone_then_together": 2
+        }
+      },
+      {
+        "templateId": "PL_H_MARKUP_DISCOUNT",
+        "family": "profit_loss",
+        "deliveredAt": {
+          "hard": 2
+        },
+        "verdicts": {
+          "overclassified": 2
+        },
+        "byVariant": {
+          "COMPOSED_INVERSION+STRATEGY_SELECTION": {
+            "overclassified": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "markup_then_discount_profit": 2
+        }
+      },
+      {
+        "templateId": "PL_M_TOTAL_COST",
+        "family": "profit_loss",
+        "deliveredAt": {
+          "medium": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "profit_on_total_cost": 2
+        }
+      },
+      {
+        "templateId": "FRAC_H_4",
+        "family": "fractions",
+        "deliveredAt": {
+          "easy": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "easy",
+        "clusters": {
+          "successive_fraction_operations": 2
+        }
+      },
+      {
+        "templateId": "PL_M_DISC_MARK",
+        "family": "profit_loss",
+        "deliveredAt": {
+          "medium": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "discount_cost_then_markup": 2
+        }
+      },
+      {
+        "templateId": "SEQ_H_ALT_DIV",
+        "family": "sequences",
+        "deliveredAt": {
+          "hard": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "RULE_DISCOVERY+STRATEGY_SELECTION": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "hard",
+        "clusters": {
+          "number_sequence": 2
+        }
+      },
+      {
+        "templateId": "SPD_H_MEET_DELAY",
+        "family": "speed",
+        "deliveredAt": {
+          "hard": 2
+        },
+        "verdicts": {
+          "overclassified": 2
+        },
+        "byVariant": {
+          "CROSS_PART_INTEGRATION+STRATEGY_SELECTION": {
+            "overclassified": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "delayed_opposite_direction_meeting": 2
+        }
+      },
+      {
+        "templateId": "CAL_E_AFTER",
+        "family": "calendar",
+        "deliveredAt": {
+          "easy": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "easy",
+        "clusters": {
+          "weekday_direct": 2
+        }
+      },
+      {
+        "templateId": "WORK_H_JOINT_SOLO",
+        "family": "work_time",
+        "deliveredAt": {
+          "hard": 2
+        },
+        "verdicts": {
+          "overclassified": 2
+        },
+        "byVariant": {
+          "COMPOSED_INVERSION+SIMULTANEOUS_CONSTRAINTS": {
+            "overclassified": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "combined_work_rates": 2
+        }
+      },
+      {
+        "templateId": "COMB_M_TOGETHER_SOLO",
+        "family": "combined_rate",
+        "deliveredAt": {
+          "medium": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "staged_two_worker_output": 2
+        }
+      },
+      {
+        "templateId": "PL_H_TWO_OUTCOMES",
+        "family": "profit_loss",
+        "deliveredAt": {
+          "hard": 2
+        },
+        "verdicts": {
+          "overclassified": 2
+        },
+        "byVariant": {
+          "COMPOSED_INVERSION+SIMULTANEOUS_CONSTRAINTS": {
+            "overclassified": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "two_sale_scenarios_cost": 2
+        }
+      },
+      {
+        "templateId": "SEQ_H_RECURRENCE",
+        "family": "sequences",
+        "deliveredAt": {
+          "medium": 2
+        },
+        "verdicts": {
+          "underclassified": 2
+        },
+        "byVariant": {
+          "none": {
+            "underclassified": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "hard",
+        "clusters": {
+          "number_sequence": 2
+        }
+      },
+      {
+        "templateId": "SEQ_H_INDEX_MULT",
+        "family": "sequences",
+        "deliveredAt": {
+          "hard": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "RULE_DISCOVERY+STRATEGY_SELECTION": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "hard",
+        "clusters": {
+          "number_sequence": 2
+        }
+      },
+      {
+        "templateId": "AGE_H_TWO_TIME",
+        "family": "ages",
+        "deliveredAt": {
+          "hard": 2
+        },
+        "verdicts": {
+          "overclassified": 2
+        },
+        "byVariant": {
+          "CROSS_PART_INTEGRATION+SIMULTANEOUS_CONSTRAINTS": {
+            "overclassified": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "age_difference_future_multiple": 2
+        }
+      },
+      {
+        "templateId": "AVG_H_SPLIT_SIZE",
+        "family": "averages",
+        "deliveredAt": {
+          "hard": 2
+        },
+        "verdicts": {
+          "overclassified": 2
+        },
+        "byVariant": {
+          "SIMULTANEOUS_CONSTRAINTS+STRATEGY_SELECTION": {
+            "overclassified": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "split_mean_group_size": 2
+        }
+      },
+      {
+        "templateId": "SPD_H_CATCH",
+        "family": "speed",
+        "deliveredAt": {
+          "hard": 2
+        },
+        "verdicts": {
+          "overclassified": 2
+        },
+        "byVariant": {
+          "CROSS_PART_INTEGRATION+STRATEGY_SELECTION": {
+            "overclassified": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "delayed_catch_up": 2
+        }
+      },
+      {
+        "templateId": "REL_M_COUNT",
+        "family": "relational",
+        "deliveredAt": {
+          "hard": 2
+        },
+        "verdicts": {
+          "overclassified": 2
+        },
+        "byVariant": {
+          "PARTIAL_ORDER_BRANCHING+SIMULTANEOUS_CONSTRAINTS": {
+            "overclassified": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "medium",
+        "clusters": {
+          "partial_order_ranking": 2
+        }
+      },
+      {
+        "templateId": "REL_M_BRANCH_UNRES",
+        "family": "relational",
+        "deliveredAt": {
+          "hard": 2
+        },
+        "verdicts": {
+          "appropriate": 2
+        },
+        "byVariant": {
+          "PARTIAL_ORDER_BRANCHING+SIMULTANEOUS_CONSTRAINTS": {
+            "appropriate": 2
+          }
+        },
+        "ambiguous": 0,
+        "n": 2,
+        "rc25Band": "hard",
+        "clusters": {
+          "partial_order_ranking": 2
+        }
+      },
+      {
+        "templateId": "ODD_E_SQUARES",
+        "family": "odd_one_out",
+        "deliveredAt": {
+          "easy": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "easy",
+        "clusters": {
+          "odd_one_out_number_property": 1
+        }
+      },
+      {
+        "templateId": "SEQ_M_INC_DIFF",
+        "family": "sequences",
+        "deliveredAt": {
+          "medium": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "medium",
+        "clusters": {
+          "number_sequence": 1
+        }
+      },
+      {
+        "templateId": "FRAC_E_2",
+        "family": "fractions",
+        "deliveredAt": {
+          "easy": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "easy",
+        "clusters": {
+          "successive_fraction_operations": 1
+        }
+      },
+      {
+        "templateId": "CAL_E_TOM",
+        "family": "calendar",
+        "deliveredAt": {
+          "easy": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "easy",
+        "clusters": {
+          "weekday_direct": 1
+        }
+      },
+      {
+        "templateId": "ODD_E_MULT",
+        "family": "odd_one_out",
+        "deliveredAt": {
+          "easy": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "easy",
+        "clusters": {
+          "odd_one_out_number_property": 1
+        }
+      },
+      {
+        "templateId": "PROP_M_RECIPE",
+        "family": "direct_proportion",
+        "deliveredAt": {
+          "medium": 1
+        },
+        "verdicts": {
+          "overclassified": 1
+        },
+        "byVariant": {
+          "none": {
+            "overclassified": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "easy",
+        "clusters": {
+          "direct_proportion_recipe": 1
+        }
+      },
+      {
+        "templateId": "AVG_M_ADD_PAIR",
+        "family": "averages",
+        "deliveredAt": {
+          "medium": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "medium",
+        "clusters": {
+          "combined_group_means": 1
+        }
+      },
+      {
+        "templateId": "MACH_M_NEW_FAST",
+        "family": "machines",
+        "deliveredAt": {
+          "medium": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "medium",
+        "clusters": {
+          "identical_machines_proportion": 1
+        }
+      },
+      {
+        "templateId": "CAL_M_TWO_SHIFT",
+        "family": "calendar",
+        "deliveredAt": {
+          "easy": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "easy",
+        "clusters": {
+          "weekday_direct": 1
+        }
+      },
+      {
+        "templateId": "PCT_H_REVERSE_CHAIN",
+        "family": "percentages",
+        "deliveredAt": {
+          "medium": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "medium",
+        "clusters": {
+          "reverse_successive_percentage_changes": 1
+        }
+      },
+      {
+        "templateId": "PL_E_LOSS",
+        "family": "profit_loss",
+        "deliveredAt": {
+          "easy": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "easy",
+        "clusters": {
+          "profit_loss_percentage": 1
+        }
+      },
+      {
+        "templateId": "SEQ_M_ALT_OPS",
+        "family": "sequences",
+        "deliveredAt": {
+          "medium": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "medium",
+        "clusters": {
+          "number_sequence": 1
+        }
+      },
+      {
+        "templateId": "WORK_E_INVERSE",
+        "family": "work_time",
+        "deliveredAt": {
+          "easy": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "easy",
+        "clusters": {
+          "inverse_worker_time": 1
+        }
+      },
+      {
+        "templateId": "PROP_E_COST",
+        "family": "direct_proportion",
+        "deliveredAt": {
+          "easy": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "easy",
+        "clusters": {
+          "unit_price_quantity_proportion": 1
+        }
+      },
+      {
+        "templateId": "SEQ_E_ARITH",
+        "family": "sequences",
+        "deliveredAt": {
+          "easy": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "easy",
+        "clusters": {
+          "number_sequence": 1
+        }
+      },
+      {
+        "templateId": "AGE_E_SUM_DIFF",
+        "family": "ages",
+        "deliveredAt": {
+          "medium": 1
+        },
+        "verdicts": {
+          "overclassified": 1
+        },
+        "byVariant": {
+          "none": {
+            "overclassified": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "easy",
+        "clusters": {
+          "age_sum_difference": 1
+        }
+      },
+      {
+        "templateId": "MACH_H_TWO_TYPES",
+        "family": "machines",
+        "deliveredAt": {
+          "medium": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "medium",
+        "clusters": {
+          "two_machine_types_linear_system": 1
+        }
+      },
+      {
+        "templateId": "FRAC_M_3",
+        "family": "fractions",
+        "deliveredAt": {
+          "easy": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "easy",
+        "clusters": {
+          "successive_fraction_operations": 1
+        }
+      },
+      {
+        "templateId": "PCT_H_TWO_GROUP_CHANGE",
+        "family": "percentages",
+        "deliveredAt": {
+          "hard": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "CROSS_PART_INTEGRATION+SIMULTANEOUS_CONSTRAINTS": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "hard",
+        "clusters": {
+          "other": 1
+        }
+      },
+      {
+        "templateId": "CAL_H_LONG",
+        "family": "calendar",
+        "deliveredAt": {
+          "easy": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "none": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "easy",
+        "clusters": {
+          "weekday_direct": 1
+        }
+      },
+      {
+        "templateId": "SEQ_H_POW_INDEX",
+        "family": "sequences",
+        "deliveredAt": {
+          "hard": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "RULE_DISCOVERY+STRATEGY_SELECTION": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "hard",
+        "clusters": {
+          "number_sequence": 1
+        }
+      },
+      {
+        "templateId": "RAT_M_ADD_SIDE",
+        "family": "ratios",
+        "deliveredAt": {
+          "hard": 1
+        },
+        "verdicts": {
+          "overclassified": 1
+        },
+        "byVariant": {
+          "COMPOSED_INVERSION+SIMULTANEOUS_CONSTRAINTS": {
+            "overclassified": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "medium",
+        "clusters": {
+          "ratio_transfer_or_addition": 1
+        }
+      },
+      {
+        "templateId": "RAT_H_TWO_COMB",
+        "family": "ratios",
+        "deliveredAt": {
+          "hard": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "CROSS_PART_INTEGRATION+STRATEGY_SELECTION": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "hard",
+        "clusters": {
+          "chained_ratios": 1
+        }
+      },
+      {
+        "templateId": "AGE_H_PAST_FUT",
+        "family": "ages",
+        "deliveredAt": {
+          "hard": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "COMPOSED_INVERSION+CROSS_PART_INTEGRATION": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "hard",
+        "clusters": {
+          "age_difference_or_temporal_sum": 1
+        }
+      },
+      {
+        "templateId": "MACH_H_TWO_CONFIG",
+        "family": "machines",
+        "deliveredAt": {
+          "hard": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "CROSS_PART_INTEGRATION+SIMULTANEOUS_CONSTRAINTS": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "hard",
+        "clusters": {
+          "two_machine_types_linear_system": 1
+        }
+      },
+      {
+        "templateId": "RAT_M_COMMON_SUM",
+        "family": "ratios",
+        "deliveredAt": {
+          "hard": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "CROSS_PART_INTEGRATION+STRATEGY_SELECTION": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "hard",
+        "clusters": {
+          "chained_ratios": 1
+        }
+      },
+      {
+        "templateId": "REL_H_GUARANTEE",
+        "family": "relational",
+        "deliveredAt": {
+          "hard": 1
+        },
+        "verdicts": {
+          "appropriate": 1
+        },
+        "byVariant": {
+          "PARTIAL_ORDER_BRANCHING+SIMULTANEOUS_CONSTRAINTS": {
+            "appropriate": 1
+          }
+        },
+        "ambiguous": 0,
+        "n": 1,
+        "rc25Band": "medium",
+        "clusters": {
+          "partial_order_ranking": 1
+        }
+      }
+    ],
+    "perCluster": [
+      {
+        "cluster": "partial_order_ranking",
+        "n": 19,
+        "verdicts": {
+          "appropriate": 9,
+          "overclassified": 10
+        },
+        "templates": {
+          "REL_E_BETWEEN": 3,
+          "REL_E_CHAIN": 4,
+          "REL_M_CONFIRM": 3,
+          "REL_H_POSITION": 4,
+          "REL_M_COUNT": 2,
+          "REL_M_BRANCH_UNRES": 2,
+          "REL_H_GUARANTEE": 1
+        },
+        "bands": {
+          "easy": 3,
+          "medium": 4,
+          "hard": 12
+        }
+      },
+      {
+        "cluster": "number_sequence",
+        "n": 18,
+        "verdicts": {
+          "appropriate": 15,
+          "overclassified": 1,
+          "underclassified": 2
+        },
+        "templates": {
+          "SEQ_M_INC_DIFF": 1,
+          "SEQ_E_GEO": 3,
+          "SEQ_M_INTERLEAVED": 2,
+          "SEQ_M_DOUBLE_DIFF": 3,
+          "SEQ_H_ALT_DIV": 2,
+          "SEQ_M_ALT_OPS": 1,
+          "SEQ_E_ARITH": 1,
+          "SEQ_H_RECURRENCE": 2,
+          "SEQ_H_INDEX_MULT": 2,
+          "SEQ_H_POW_INDEX": 1
+        },
+        "bands": {
+          "medium": 9,
+          "easy": 4,
+          "hard": 5
+        }
+      },
+      {
+        "cluster": "odd_one_out_number_property",
+        "n": 13,
+        "verdicts": {
+          "appropriate": 13
+        },
+        "templates": {
+          "ODD_E_SQUARES": 1,
+          "ODD_M_PRONIC": 3,
+          "ODD_H_TRIANGULAR": 5,
+          "ODD_E_MULT": 1,
+          "ODD_H_SQ_MINUS": 3
+        },
+        "bands": {
+          "easy": 5,
+          "medium": 8
+        }
+      },
+      {
+        "cluster": "staged_two_worker_output",
+        "n": 6,
+        "verdicts": {
+          "appropriate": 6
+        },
+        "templates": {
+          "COMB_H_STAGED": 4,
+          "COMB_M_TOGETHER_SOLO": 2
+        },
+        "bands": {
+          "medium": 6
+        }
+      },
+      {
+        "cluster": "successive_percentage_changes",
+        "n": 6,
+        "verdicts": {
+          "appropriate": 6
+        },
+        "templates": {
+          "PCT_M_SUCCESSIVE": 3,
+          "PL_H_CHAIN": 3
+        },
+        "bands": {
+          "medium": 6
+        }
+      },
+      {
+        "cluster": "age_difference_future_multiple",
+        "n": 6,
+        "verdicts": {
+          "overclassified": 6
+        },
+        "templates": {
+          "AGE_M_FUT_RATIO": 4,
+          "AGE_H_TWO_TIME": 2
+        },
+        "bands": {
+          "hard": 6
+        }
+      },
+      {
+        "cluster": "chained_ratios",
+        "n": 6,
+        "verdicts": {
+          "appropriate": 6
+        },
+        "templates": {
+          "RAT_M_COMMON_DIFF": 4,
+          "RAT_H_TWO_COMB": 1,
+          "RAT_M_COMMON_SUM": 1
+        },
+        "bands": {
+          "hard": 6
+        }
+      },
+      {
+        "cluster": "staged_rate_increase",
+        "n": 5,
+        "verdicts": {
+          "overclassified": 3,
+          "appropriate": 2
+        },
+        "templates": {
+          "RATE_H_TWO_PHASE": 5
+        },
+        "bands": {
+          "medium": 5
+        }
+      },
+      {
+        "cluster": "weekday_net_shift",
+        "n": 5,
+        "verdicts": {
+          "overclassified": 5
+        },
+        "templates": {
+          "CAL_H_NESTED": 5
+        },
+        "bands": {
+          "medium": 5
+        }
+      },
+      {
+        "cluster": "two_leg_travel_time",
+        "n": 5,
+        "verdicts": {
+          "appropriate": 5
+        },
+        "templates": {
+          "SPD_M_TWO_TIME": 5
+        },
+        "bands": {
+          "medium": 5
+        }
+      },
+      {
+        "cluster": "distance_speed_time_direct",
+        "n": 5,
+        "verdicts": {
+          "appropriate": 5
+        },
+        "templates": {
+          "SPD_E_TIME": 2,
+          "SPD_E_DISTANCE": 3
+        },
+        "bands": {
+          "easy": 5
+        }
+      },
+      {
+        "cluster": "rate_increase_quadratic",
+        "n": 5,
+        "verdicts": {
+          "appropriate": 5
+        },
+        "templates": {
+          "RATE_H_RATE_FROM_GAP": 5
+        },
+        "bands": {
+          "hard": 5
+        }
+      },
+      {
+        "cluster": "weekday_direct",
+        "n": 5,
+        "verdicts": {
+          "appropriate": 5
+        },
+        "templates": {
+          "CAL_E_TOM": 1,
+          "CAL_M_TWO_SHIFT": 1,
+          "CAL_E_AFTER": 2,
+          "CAL_H_LONG": 1
+        },
+        "bands": {
+          "easy": 5
+        }
+      },
+      {
+        "cluster": "lcm_weekday_meeting",
+        "n": 5,
+        "verdicts": {
+          "overclassified": 5
+        },
+        "templates": {
+          "CAL_H_CYCLE_MEET": 5
+        },
+        "bands": {
+          "hard": 5
+        }
+      },
+      {
+        "cluster": "map_scale_added_segment",
+        "n": 4,
+        "verdicts": {
+          "overclassified": 4
+        },
+        "templates": {
+          "PROP_M_MAP": 4
+        },
+        "bands": {
+          "medium": 4
+        }
+      },
+      {
+        "cluster": "recover_cost_from_profit",
+        "n": 4,
+        "verdicts": {
+          "overclassified": 4
+        },
+        "templates": {
+          "PL_H_REVERSE": 4
+        },
+        "bands": {
+          "medium": 4
+        }
+      },
+      {
+        "cluster": "successive_population_reductions",
+        "n": 4,
+        "verdicts": {
+          "overclassified": 4
+        },
+        "templates": {
+          "PCT_M_REMAIN": 4
+        },
+        "bands": {
+          "medium": 4
+        }
+      },
+      {
+        "cluster": "mean_target_added_value",
+        "n": 4,
+        "verdicts": {
+          "appropriate": 4
+        },
+        "templates": {
+          "AVG_H_TARGET": 4
+        },
+        "bands": {
+          "medium": 4
+        }
+      },
+      {
+        "cluster": "direct_ratio",
+        "n": 4,
+        "verdicts": {
+          "appropriate": 4
+        },
+        "templates": {
+          "RAT_E_KNOWN": 4
+        },
+        "bands": {
+          "easy": 4
+        }
+      },
+      {
+        "cluster": "machine_stoppage_time",
+        "n": 4,
+        "verdicts": {
+          "overclassified": 4
+        },
+        "templates": {
+          "MACH_H_STOPPAGE_TIME": 4
+        },
+        "bands": {
+          "hard": 4
+        }
+      },
+      {
+        "cluster": "mean_after_added_value",
+        "n": 4,
+        "verdicts": {
+          "appropriate": 4
+        },
+        "templates": {
+          "AVG_E_ADD": 4
+        },
+        "bands": {
+          "easy": 4
+        }
+      },
+      {
+        "cluster": "identical_machines_proportion",
+        "n": 4,
+        "verdicts": {
+          "overclassified": 3,
+          "appropriate": 1
+        },
+        "templates": {
+          "MACH_E_HOURS": 3,
+          "MACH_M_NEW_FAST": 1
+        },
+        "bands": {
+          "medium": 4
+        }
+      },
+      {
+        "cluster": "worker_departure_multistage",
+        "n": 4,
+        "verdicts": {
+          "appropriate": 4
+        },
+        "templates": {
+          "WORK_H_TWO_STAGE": 4
+        },
+        "bands": {
+          "medium": 4
+        }
+      },
+      {
+        "cluster": "successive_fraction_operations",
+        "n": 4,
+        "verdicts": {
+          "appropriate": 4
+        },
+        "templates": {
+          "FRAC_E_2": 1,
+          "FRAC_H_4": 2,
+          "FRAC_M_3": 1
+        },
+        "bands": {
+          "easy": 4
+        }
+      },
+      {
+        "cluster": "machine_rate_after_maintenance",
+        "n": 4,
+        "verdicts": {
+          "overclassified": 4
+        },
+        "templates": {
+          "RATE_M_PERCENT": 4
+        },
+        "bands": {
+          "medium": 4
+        }
+      },
+      {
+        "cluster": "box_piece_linear_system",
+        "n": 4,
+        "verdicts": {
+          "overclassified": 4
+        },
+        "templates": {
+          "PROP_H_TWO_ITEM_SYSTEM": 4
+        },
+        "bands": {
+          "hard": 4
+        }
+      },
+      {
+        "cluster": "combined_group_means",
+        "n": 4,
+        "verdicts": {
+          "appropriate": 4
+        },
+        "templates": {
+          "AVG_M_ADD_PAIR": 1,
+          "AVG_H_COMB_ADD": 3
+        },
+        "bands": {
+          "medium": 4
+        }
+      },
+      {
+        "cluster": "age_difference_or_temporal_sum",
+        "n": 4,
+        "verdicts": {
+          "appropriate": 4
+        },
+        "templates": {
+          "AGE_M_FUT_SUM_DIFF": 3,
+          "AGE_H_PAST_FUT": 1
+        },
+        "bands": {
+          "medium": 3,
+          "hard": 1
+        }
+      },
+      {
+        "cluster": "ratio_transfer_or_addition",
+        "n": 3,
+        "verdicts": {
+          "overclassified": 3
+        },
+        "templates": {
+          "RAT_H_TRANSFER": 2,
+          "RAT_M_ADD_SIDE": 1
+        },
+        "bands": {
+          "hard": 3
+        }
+      },
+      {
+        "cluster": "mixture_concentration",
+        "n": 3,
+        "verdicts": {
+          "overclassified": 3
+        },
+        "templates": {
+          "PCT_H_MIXTURE": 3
+        },
+        "bands": {
+          "hard": 3
+        }
+      },
+      {
+        "cluster": "overlapping_ordered_means",
+        "n": 3,
+        "verdicts": {
+          "appropriate": 3
+        },
+        "templates": {
+          "AVG_H_OVERLAP": 3
+        },
+        "bands": {
+          "hard": 3
+        }
+      },
+      {
+        "cluster": "profit_loss_percentage",
+        "n": 3,
+        "verdicts": {
+          "appropriate": 3
+        },
+        "templates": {
+          "PL_E_PROFIT": 2,
+          "PL_E_LOSS": 1
+        },
+        "bands": {
+          "easy": 3
+        }
+      },
+      {
+        "cluster": "same_distance_two_speeds_time_difference",
+        "n": 3,
+        "verdicts": {
+          "overclassified": 3
+        },
+        "templates": {
+          "SPD_H_TIME_DIFF": 3
+        },
+        "bands": {
+          "hard": 3
+        }
+      },
+      {
+        "cluster": "percentage_of_value",
+        "n": 3,
+        "verdicts": {
+          "appropriate": 3
+        },
+        "templates": {
+          "PCT_E_OF": 3
+        },
+        "bands": {
+          "easy": 3
+        }
+      },
+      {
+        "cluster": "worker_replan_finish_deadline",
+        "n": 3,
+        "verdicts": {
+          "appropriate": 3
+        },
+        "templates": {
+          "WORK_M_TARGET": 3
+        },
+        "bands": {
+          "medium": 3
+        }
+      },
+      {
+        "cluster": "machine_upgrade_subset",
+        "n": 3,
+        "verdicts": {
+          "appropriate": 3
+        },
+        "templates": {
+          "MACH_M_SUBSET_UP": 3
+        },
+        "bands": {
+          "medium": 3
+        }
+      },
+      {
+        "cluster": "unit_cost_plus_fixed_fee",
+        "n": 3,
+        "verdicts": {
+          "overclassified": 3
+        },
+        "templates": {
+          "PROP_H_COST_PLUS": 3
+        },
+        "bands": {
+          "medium": 3
+        }
+      },
+      {
+        "cluster": "worker_join_after_progress",
+        "n": 3,
+        "verdicts": {
+          "appropriate": 3
+        },
+        "templates": {
+          "WORK_M_CHANGE": 3
+        },
+        "bands": {
+          "medium": 3
+        }
+      },
+      {
+        "cluster": "team_efficiency_time_inverse",
+        "n": 3,
+        "verdicts": {
+          "appropriate": 3
+        },
+        "templates": {
+          "WORK_M_EFF": 3
+        },
+        "bands": {
+          "easy": 3
+        }
+      },
+      {
+        "cluster": "team_member_join_equation",
+        "n": 3,
+        "verdicts": {
+          "overclassified": 3
+        },
+        "templates": {
+          "COMB_H_TEAM_SIZE": 3
+        },
+        "bands": {
+          "hard": 3
+        }
+      },
+      {
+        "cluster": "time_weighted_average_speed",
+        "n": 3,
+        "verdicts": {
+          "appropriate": 3
+        },
+        "templates": {
+          "SPD_M_AVG": 3
+        },
+        "bands": {
+          "medium": 3
+        }
+      },
+      {
+        "cluster": "fuel_direct_proportion",
+        "n": 3,
+        "verdicts": {
+          "appropriate": 3
+        },
+        "templates": {
+          "RATE_M_SCALE": 3
+        },
+        "bands": {
+          "easy": 3
+        }
+      },
+      {
+        "cluster": "pump_rate_system",
+        "n": 3,
+        "verdicts": {
+          "appropriate": 3
+        },
+        "templates": {
+          "COMB_H_TWO_PUMPS": 3
+        },
+        "bands": {
+          "hard": 3
+        }
+      },
+      {
+        "cluster": "two_machine_combined_rate",
+        "n": 2,
+        "verdicts": {
+          "appropriate": 2
+        },
+        "templates": {
+          "COMB_E_TIME": 2
+        },
+        "bands": {
+          "easy": 2
+        }
+      },
+      {
+        "cluster": "age_ratio_future_sum",
+        "n": 2,
+        "verdicts": {
+          "appropriate": 2
+        },
+        "templates": {
+          "AGE_M_RATIO_FUT_SUM": 2
+        },
+        "bands": {
+          "medium": 2
+        }
+      },
+      {
+        "cluster": "finish_early_add_workers",
+        "n": 2,
+        "verdicts": {
+          "overclassified": 2
+        },
+        "templates": {
+          "WORK_H_EXTRA_WORKERS": 2
+        },
+        "bands": {
+          "hard": 2
+        }
+      },
+      {
+        "cluster": "unit_price_percentage_increase",
+        "n": 2,
+        "verdicts": {
+          "overclassified": 2
+        },
+        "templates": {
+          "PCT_M_UNIT_PRICE": 2
+        },
+        "bands": {
+          "medium": 2
+        }
+      },
+      {
+        "cluster": "boxes_direct_proportion",
+        "n": 2,
+        "verdicts": {
+          "appropriate": 2
+        },
+        "templates": {
+          "PROP_E_ITEMS": 2
+        },
+        "bands": {
+          "easy": 2
+        }
+      },
+      {
+        "cluster": "machines_then_subset_continue",
+        "n": 2,
+        "verdicts": {
+          "appropriate": 2
+        },
+        "templates": {
+          "MACH_M_STOP": 2
+        },
+        "bands": {
+          "medium": 2
+        }
+      },
+      {
+        "cluster": "worker_departure_efficiency_change",
+        "n": 2,
+        "verdicts": {
+          "appropriate": 2
+        },
+        "templates": {
+          "WORK_H_WORKERS_EFF": 2
+        },
+        "bands": {
+          "medium": 2
+        }
+      },
+      {
+        "cluster": "worker_a_alone_then_together",
+        "n": 2,
+        "verdicts": {
+          "appropriate": 2
+        },
+        "templates": {
+          "COMB_M_SOLO_THEN": 2
+        },
+        "bands": {
+          "medium": 2
+        }
+      },
+      {
+        "cluster": "markup_then_discount_profit",
+        "n": 2,
+        "verdicts": {
+          "overclassified": 2
+        },
+        "templates": {
+          "PL_H_MARKUP_DISCOUNT": 2
+        },
+        "bands": {
+          "hard": 2
+        }
+      },
+      {
+        "cluster": "profit_on_total_cost",
+        "n": 2,
+        "verdicts": {
+          "appropriate": 2
+        },
+        "templates": {
+          "PL_M_TOTAL_COST": 2
+        },
+        "bands": {
+          "medium": 2
+        }
+      },
+      {
+        "cluster": "discount_cost_then_markup",
+        "n": 2,
+        "verdicts": {
+          "appropriate": 2
+        },
+        "templates": {
+          "PL_M_DISC_MARK": 2
+        },
+        "bands": {
+          "medium": 2
+        }
+      },
+      {
+        "cluster": "delayed_opposite_direction_meeting",
+        "n": 2,
+        "verdicts": {
+          "overclassified": 2
+        },
+        "templates": {
+          "SPD_H_MEET_DELAY": 2
+        },
+        "bands": {
+          "hard": 2
+        }
+      },
+      {
+        "cluster": "combined_work_rates",
+        "n": 2,
+        "verdicts": {
+          "overclassified": 2
+        },
+        "templates": {
+          "WORK_H_JOINT_SOLO": 2
+        },
+        "bands": {
+          "hard": 2
+        }
+      },
+      {
+        "cluster": "two_sale_scenarios_cost",
+        "n": 2,
+        "verdicts": {
+          "overclassified": 2
+        },
+        "templates": {
+          "PL_H_TWO_OUTCOMES": 2
+        },
+        "bands": {
+          "hard": 2
+        }
+      },
+      {
+        "cluster": "two_machine_types_linear_system",
+        "n": 2,
+        "verdicts": {
+          "appropriate": 2
+        },
+        "templates": {
+          "MACH_H_TWO_TYPES": 1,
+          "MACH_H_TWO_CONFIG": 1
+        },
+        "bands": {
+          "medium": 1,
+          "hard": 1
+        }
+      },
+      {
+        "cluster": "split_mean_group_size",
+        "n": 2,
+        "verdicts": {
+          "overclassified": 2
+        },
+        "templates": {
+          "AVG_H_SPLIT_SIZE": 2
+        },
+        "bands": {
+          "hard": 2
+        }
+      },
+      {
+        "cluster": "delayed_catch_up",
+        "n": 2,
+        "verdicts": {
+          "overclassified": 2
+        },
+        "templates": {
+          "SPD_H_CATCH": 2
+        },
+        "bands": {
+          "hard": 2
+        }
+      },
+      {
+        "cluster": "direct_proportion_recipe",
+        "n": 1,
+        "verdicts": {
+          "overclassified": 1
+        },
+        "templates": {
+          "PROP_M_RECIPE": 1
+        },
+        "bands": {
+          "medium": 1
+        }
+      },
+      {
+        "cluster": "reverse_successive_percentage_changes",
+        "n": 1,
+        "verdicts": {
+          "appropriate": 1
+        },
+        "templates": {
+          "PCT_H_REVERSE_CHAIN": 1
+        },
+        "bands": {
+          "medium": 1
+        }
+      },
+      {
+        "cluster": "inverse_worker_time",
+        "n": 1,
+        "verdicts": {
+          "appropriate": 1
+        },
+        "templates": {
+          "WORK_E_INVERSE": 1
+        },
+        "bands": {
+          "easy": 1
+        }
+      },
+      {
+        "cluster": "unit_price_quantity_proportion",
+        "n": 1,
+        "verdicts": {
+          "appropriate": 1
+        },
+        "templates": {
+          "PROP_E_COST": 1
+        },
+        "bands": {
+          "easy": 1
+        }
+      },
+      {
+        "cluster": "age_sum_difference",
+        "n": 1,
+        "verdicts": {
+          "overclassified": 1
+        },
+        "templates": {
+          "AGE_E_SUM_DIFF": 1
+        },
+        "bands": {
+          "medium": 1
+        }
+      },
+      {
+        "cluster": "other",
+        "n": 1,
+        "verdicts": {
+          "appropriate": 1
+        },
+        "templates": {
+          "PCT_H_TWO_GROUP_CHANGE": 1
+        },
+        "bands": {
+          "hard": 1
+        }
+      }
+    ]
   }
 }

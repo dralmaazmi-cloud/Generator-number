@@ -120,8 +120,20 @@ export function crosswalk({path = FULL} = {}) {
 
 // --- the join ---------------------------------------------------------------
 
-const pick = (o, names) => { for (const n of names) if (o[n] !== undefined) return o[n]; return undefined; };
+const pick = (o, names) => { for (const n of names) if (o?.[n] !== undefined) return o[n]; return undefined; };
 
+/**
+ * The sealed file's shape, as delivered:
+ *
+ *   verdict                    UNIQUE | AMBIGUOUS   (key uniqueness)
+ *   difficulty.assessment      appropriate | overclassified | underclassified
+ *   difficulty.independent_level  the reviewer's own band
+ *   repetition_or_shortcut.cluster  the reviewer's own structural grouping
+ *
+ * Other spellings are still accepted so a differently-exported file loads, and
+ * anything that carries neither an id nor an assessment is reported rather than
+ * dropped.
+ */
 export function loadVerdicts(paths = VERDICT_PATHS) {
   const found = paths.find(p => existsSync(p));
   if (!found) return {available: false, searched: paths};
@@ -130,14 +142,21 @@ export function loadVerdicts(paths = VERDICT_PATHS) {
   const byItem = {};
   for (const r of rows) {
     const id = pick(r, ['itemId', 'item_id', 'id']);
-    const verdict = pick(r, ['verdict', 'difficultyVerdict', 'difficulty_verdict', 'appropriate', 'judgedDifficulty']);
-    if (id === undefined || verdict === undefined) { unrecognised.push(r); continue; }
+    const assessment = pick(r.difficulty ?? {}, ['assessment', 'verdict'])
+      ?? pick(r, ['difficultyVerdict', 'difficulty_verdict', 'appropriate', 'judgedDifficulty']);
+    if (id === undefined || assessment === undefined) { unrecognised.push(r); continue; }
+    const uniqueness = String(pick(r, ['verdict']) ?? '').toUpperCase();
     byItem[id] = {
       itemId: id,
-      verdict: String(verdict).toLowerCase(),
-      ambiguous: Boolean(pick(r, ['ambiguous', 'isAmbiguous', 'is_ambiguous']) ?? false),
-      keyCorrect: pick(r, ['keyCorrect', 'key_correct']) ?? null,
-      raw: r
+      verdict: String(assessment).toLowerCase(),
+      independentLevel: pick(r.difficulty ?? {}, ['independent_level', 'independentLevel']) ?? null,
+      reason: pick(r.difficulty ?? {}, ['reason']) ?? null,
+      cluster: pick(r.repetition_or_shortcut ?? {}, ['cluster']) ?? null,
+      ambiguous: uniqueness ? uniqueness !== 'UNIQUE'
+        : Boolean(pick(r, ['ambiguous', 'isAmbiguous', 'is_ambiguous']) ?? false),
+      keyOption: pick(r.selected_answer ?? {}, ['option']) ?? null,
+      wordingIssue: Boolean(pick(r.wording_arabic_issue ?? {}, ['issue']) ?? false),
+      distractorConcern: pick(r.option_distractor_quality ?? {}, ['severity']) ?? null
     };
   }
   return {available: true, path: found, count: Object.keys(byItem).length, unrecognised, byItem};
@@ -172,14 +191,32 @@ export function join({verdicts = loadVerdicts(), cross = crosswalk()} = {}) {
     t.verdicts[v.verdict] = (t.verdicts[v.verdict] ?? 0) + 1;
     t.byVariant[i.variant] = t.byVariant[i.variant] ?? {};
     t.byVariant[i.variant][v.verdict] = (t.byVariant[i.variant][v.verdict] ?? 0) + 1;
+    t.clusters = t.clusters ?? {};
+    if (v.cluster) t.clusters[v.cluster] = (t.clusters[v.cluster] ?? 0) + 1;
     if (v.ambiguous) t.ambiguous++;
+  }
+  // The reviewers' own structural grouping, pooled: it is the only per-STRUCTURE
+  // evidence in the file, and it is what carries a template whose own sample is
+  // one or two items.
+  const byCluster = {};
+  for (const i of cross.all) {
+    const v = verdicts.byItem[i.itemId];
+    if (!v?.cluster) continue;
+    const c = byCluster[v.cluster] = byCluster[v.cluster] ?? {cluster: v.cluster, n: 0, verdicts: {}, templates: {}, bands: {}};
+    c.n++;
+    c.verdicts[v.verdict] = (c.verdicts[v.verdict] ?? 0) + 1;
+    c.templates[i.templateId] = (c.templates[i.templateId] ?? 0) + 1;
+    c.bands[i.declaredDifficulty] = (c.bands[i.declaredDifficulty] ?? 0) + 1;
   }
   return {
     available: true, path: verdicts.path,
     itemsJoined: cross.all.length - missing.length,
     itemsWithoutAVerdict: missing,
     unrecognisedVerdictRecords: verdicts.unrecognised.length,
-    perTemplate: Object.values(perTemplate).sort((a, b) => b.n - a.n)
+    ambiguousItems: cross.all.filter(i => verdicts.byItem[i.itemId]?.ambiguous)
+      .map(i => ({itemId: i.itemId, templateId: i.templateId})),
+    perTemplate: Object.values(perTemplate).sort((a, b) => b.n - a.n),
+    perCluster: Object.values(byCluster).sort((a, b) => b.n - a.n)
   };
 }
 

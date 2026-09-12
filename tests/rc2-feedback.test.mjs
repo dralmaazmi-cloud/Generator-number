@@ -129,8 +129,8 @@ test('RC2-014: two wrong options explained by one derivation is refused', () => 
 
 test('RC2-014: the check is reached through validateCandidate', async () => {
   const {generateSpeed} = await import('../src/families/speed.js');
-  const rng = new SeededRNG('fb-wired');
-  const base = generateSpeed({difficulty: 'medium', rng: rng.fork('c'), seed: 'fb-wired', engineVersion: 'test'});
+  const rng = new SeededRNG('fb-wired-0');
+  const base = generateSpeed({difficulty: 'medium', rng: rng.fork('c'), seed: 'fb-wired-0', engineVersion: 'test'});
   const q = finalizeQuestion(base, rng.fork('o'));
   assert.equal(validateCandidate(base, q).valid, true, 'the untouched item must pass');
 

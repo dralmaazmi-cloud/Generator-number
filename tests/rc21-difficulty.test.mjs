@@ -73,14 +73,27 @@ test('RC2.1-2: calibration improved against the RC2 baseline', async () => {
   // Floors are set from the measured spread over four seed tags at this sample
   // size (overall .722-.728, easy .847-.871, hard .719-.743), not from a single
   // run — a threshold fitted to one run is a threshold that fails on the next.
+  // RC2.5. What this measures is how often the RC2.2 NUMERIC complexity score
+  // would band an item where the published band puts it. Since RC2.3 the score
+  // is not what bands anything — the structural adjudication is — and RC2.5 has
+  // now recalibrated that adjudication against human verdicts. So agreement with
+  // the superseded scorer is expected to FALL, and a floor on it would be
+  // asserting that the human calibration must agree with the thing it replaced.
+  //
+  // The floors are therefore loosened to sanity bounds and the number is kept as
+  // a recorded measurement. Per the brief, it is never evidence that difficulty
+  // is correct.
   const r = await build({perBand: 1500, seedTag: 'RC21-AGREE'});
-  assert.ok(r.itemAgreement > 0.70,
-    `agreement ${r.itemAgreement} is not better than the 0.654 RC2 baseline by a useful margin`);
-  assert.ok(r.perDeclared.easy.agreement > 0.82, `easy ${r.perDeclared.easy.agreement}`);
-  assert.ok(r.perDeclared.hard.agreement > 0.68, `hard ${r.perDeclared.hard.agreement}`);
+  assert.ok(r.itemAgreement > 0.50,
+    `agreement ${r.itemAgreement}: the score and the bands have diverged far enough to be worth investigating`);
+  assert.ok(r.perDeclared.easy.agreement > 0.60, `easy ${r.perDeclared.easy.agreement}`);
+  assert.ok(r.perDeclared.hard.agreement > 0.50, `hard ${r.perDeclared.hard.agreement}`);
   // Medium remains the weakest band and is not claimed to be fixed; it is the
-  // residual this report carries forward.
-  assert.ok(r.perDeclared.medium.agreement > 0.50, `medium ${r.perDeclared.medium.agreement}`);
+  // residual this report carries forward. RC2.5 widened the gap further by
+  // design: ten templates the reviewers judged EASY were moved out of medium and
+  // nineteen judged MEDIUM were moved into it, and the numeric score agrees with
+  // neither move. 0.46 is the measured value; it is recorded, not targeted.
+  assert.ok(r.perDeclared.medium.agreement > 0.40, `medium ${r.perDeclared.medium.agreement}`);
 });
 
 test('RC2.1-2: no band was emptied by reclassification', {skip: 'superseded by RC2.2-1: a family band is now deliberately empty where the family holds no template that computes it, and generation fails explicitly there rather than substituting. tests/rc22-difficulty.test.mjs checks that instead.'}, () => {

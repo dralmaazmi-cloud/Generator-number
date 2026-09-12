@@ -134,7 +134,7 @@ test('RC2.3-6: a chain of fractions is said one step at a time', () => {
   assert.equal(fractionChainPhrase(['ثلث', 'نصف', 'ربع'], 'عدد'),
     'ثلث عدد، ثم نصف الناتج، ثم ربع الناتج');
   const frac = CORPUS.filter(q => q.family === 'fractions');
-  assert.ok(frac.length > 100, `only ${frac.length} fraction questions`);
+  assert.ok(frac.length > 80, `only ${frac.length} fraction questions (RC2.5 moved ten templates into the easy band, so a fixed-size corpus reaches fractions a little less often; this is a sample-size guard, not a quality bar)`);
   for (const q of frac) {
     // Two fraction words side by side is the stacked form.
     assert.ok(!/(نصف|ثلث|ربع|خُمس|سُدس|ثُمن)\s+(نصف|ثلث|ربع|خُمس|سُدس|ثُمن)/.test(q.question),
@@ -182,7 +182,10 @@ test('RC2.1-4: the reworded calendar templates still ask the same question', () 
   let checked = 0;
   for (let i = 0; i < 4000 && checked < 60; i++) {
     let q;
-    try { q = e.generateQuestion({family: 'calendar', difficulty: i % 2 ? 'medium' : 'hard', seed: `RC21-CAL-${i}`}); } catch { continue; }
+    // RC2.5 moved CAL_H_NESTED to easy on the Holdout E verdicts, so the sweep
+    // draws from every band rather than from the two it used to sit in.
+    const band = ['easy', 'medium', 'hard'][i % 3];
+    try { q = e.generateQuestion({family: 'calendar', difficulty: band, seed: `RC21-CAL-${i}`}); } catch { continue; }
     if (!['CAL_M_COMPOUND', 'CAL_H_NESTED'].includes(q.generator_id)) continue;
     checked++;
     const p = q.metadata.parameters;

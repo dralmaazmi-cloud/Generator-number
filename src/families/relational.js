@@ -42,7 +42,8 @@ export function generateRelational({difficulty, rng, seed, engineVersion, teleme
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
   return bandPool(rng, 'relational', difficulty, [
     ['REL_E_BETWEEN', betweenRelation],
-    ['REL_E_CHAIN', fullChainPosition],
+    ['REL_E_CHAIN', chainPositionFive],
+    ['REL_M_CHAIN6', chainPositionSix],
     ['REL_M_CONFIRM', confirmedStatement],
     ['REL_M_BRANCH_UNRES', branchUnresolved],
     ['REL_M_COUNT', countAboveOnOneChain],
@@ -229,14 +230,22 @@ function orderOracleSpec(nodes, edges, ask, expected, expectedDisplay, labels) {
 
 // --- templates -------------------------------------------------------------
 
-function fullChainPosition(ctx) {
+/**
+ * RC2.5-3. Chain length is the feature that separated these for the reviewers:
+ * a five-person chain was judged EASY every time, a six-person chain MEDIUM every
+ * time. The template drew either at random under one id and one band, so half its
+ * output sat in the wrong band. It is now two templates, one per length.
+ */
+function chainPositionFive(ctx) { return fullChainPosition(ctx, 5, 'REL_E_CHAIN', 'easy', chainPositionFive); }
+function chainPositionSix(ctx) { return fullChainPosition(ctx, 6, 'REL_M_CHAIN6', 'medium', chainPositionSix); }
+
+function fullChainPosition(ctx, size, templateId, band, self) {
   const {rng} = ctx;
-  const size = rng.pick([5, 6]);
   const {nodes, edges} = chainGraph(rng, size);
   const oracle = buildOrderOracle(nodes, edges);
   const targetPos = rng.int(2, size - 1);
   const correct = oracle.whoAtPosition(targetPos);
-  if (!correct) return resample(ctx, fullChainPosition);
+  if (!correct) return resample(ctx, self);
   const distractors = usable(ctx, [
     ...nodes.filter(n => n !== correct).map(n => {
       const pos = oracle.positionsOf(n)[0];
@@ -246,9 +255,9 @@ function fullChainPosition(ctx) {
   ]);
   const {reasoningGraph, parameters} = graphMeta(nodes, edges);
   return buildBase(ctx, {
-    templateId: 'REL_E_CHAIN',
+    templateId,
     subskill: 'ترتيب كامل وتحديد مركز',
-    difficulty: 'medium',
+    difficulty: band,
     question: `${sentences(rng, edges)} من صاحب المركز ${positionWord(targetPos)} من الأسرع إلى الأبطأ؟`,
     correct, distractors, format: v => String(v),
     steps: [
@@ -409,13 +418,13 @@ function countAboveAt(ctx, requiredBand, templateId, self) {
   // now; the target is still picked blind and the count is still read off the
   // graph, so nothing here consults the answer.
   const {nodes, edges, shape} = branchedGraph(rng, rng.pick([5, 6, 6, 7, 7, 8]));
-  if (nodes.length < 5) return resample(ctx, countAbove);
+  if (nodes.length < 5) return resample(ctx, self);
   const oracle = buildOrderOracle(nodes, edges);
   const target = rng.pick(nodes);
   const above = nodes.filter(n => n !== target && oracle.definitelyAbove(n, target));
   const count = above.length;
   const correct = COUNT_LABELS[count];
-  if (!correct) return resample(ctx, countAbove);
+  if (!correct) return resample(ctx, self);
   // RC2-005: the two modelled wrong methods, measured on the graph as drawn.
   const directlyAbove = edges.filter(([, below]) => below === target).length;
   const couldBeAbove = nodes.filter(n => n !== target && !oracle.definitelyAbove(target, n)).length;

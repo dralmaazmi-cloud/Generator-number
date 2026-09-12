@@ -1,6 +1,6 @@
 {
   "schema": "rc25-repetition-v1",
-  "generatedAt": "2026-09-12T21:53:19.116Z",
+  "generatedAt": "2026-09-12T22:29:52.288Z",
   "holdoutE": {
     "items": 250,
     "exactDuplicate": {
@@ -271,20 +271,20 @@
     },
     "sharedStemLineOnly": {
       "note": "same instruction line, different stimulus. Not duplication; reported so it is not mistaken for it.",
-      "itemsSharingAStemLine": 34,
-      "largestGroup": 17,
+      "itemsSharingAStemLine": 45,
+      "largestGroup": 24,
       "examples": [
         {
           "stem": "ما العدد التالي في المتتالية؟",
-          "n": 17
+          "n": 24
         },
         {
           "stem": "أي عدد لا ينتمي إلى المجموعة الآتية؟",
-          "n": 14
+          "n": 15
         },
         {
           "stem": "ما العدد المفقود في المتتالية؟",
-          "n": 3
+          "n": 6
         }
       ]
     },
@@ -299,163 +299,172 @@
       "note": "same template and asked unknown, different values. Normal item variation, not a defect.",
       "groups": [
         {
-          "key": "PROP_H_TWO_ITEM_SYSTEM|boxUnitPrice",
-          "distinctParameterSets": 5
+          "key": "MACH_H_TWO_CONFIG|firstTypeRate",
+          "distinctParameterSets": 7
+        },
+        {
+          "key": "AGE_H_PAST_FUT|olderAgeNow",
+          "distinctParameterSets": 6
+        },
+        {
+          "key": "PCT_H_TWO_GROUP_CHANGE|firstGroupSize",
+          "distinctParameterSets": 6
         },
         {
           "key": "RATE_H_RATE_FROM_GAP|originalRate",
+          "distinctParameterSets": 6
+        },
+        {
+          "key": "AVG_H_OVERLAP|overlappingValue",
+          "distinctParameterSets": 6
+        },
+        {
+          "key": "RATE_H_TARGET|requiredTimeAfterIncrease",
           "distinctParameterSets": 5
         },
         {
-          "key": "CAL_H_NESTED|todayFromNestedOffset",
-          "distinctParameterSets": 5
-        },
-        {
-          "key": "ODD_H_TRIANGULAR|outlier",
-          "distinctParameterSets": 5
-        },
-        {
-          "key": "PL_M_DISC_MARK|sellPriceAfterDiscountAndMarkup",
+          "key": "COMB_H_TWO_PUMPS|firstPumpSoloHours",
           "distinctParameterSets": 5
         },
         {
           "key": "CAL_H_CYCLE_MEET|meetingWeekday",
           "distinctParameterSets": 5
-        },
-        {
-          "key": "AVG_H_TARGET|valueForTargetAverage",
-          "distinctParameterSets": 4
-        },
-        {
-          "key": "AGE_M_RATIO_FUT_SUM|olderAgeNow",
-          "distinctParameterSets": 4
         }
       ],
-      "itemsSharingATemplateAndAsk": 199
+      "itemsSharingATemplateAndAsk": 203
     },
     "sameInternalTemplate": {
-      "distinctKeys": 109,
-      "keysUsedMoreThanOnce": 77,
-      "itemsInSuchAGroup": 218,
-      "largestGroup": 6,
+      "distinctKeys": 103,
+      "keysUsedMoreThanOnce": 64,
+      "itemsInSuchAGroup": 211,
+      "largestGroup": 7,
       "examples": [
+        {
+          "key": "MACH_H_TWO_CONFIG",
+          "n": 7,
+          "items": [
+            "MACH_H_TWO_CONFIG-RC25-REPS1Q110",
+            "MACH_H_TWO_CONFIG-RC25-REPS2Q10",
+            "MACH_H_TWO_CONFIG-RC25-REPS3Q150",
+            "MACH_H_TWO_CONFIG-RC25-REPS4Q360",
+            "MACH_H_TWO_CONFIG-RC25-REPS5Q60",
+            "MACH_H_TWO_CONFIG-RC25-REPS5Q420"
+          ]
+        },
+        {
+          "key": "AGE_H_PAST_FUT",
+          "n": 6,
+          "items": [
+            "AGE_H_PAST_FUT-RC25-REPS1Q10",
+            "AGE_H_PAST_FUT-RC25-REPS3Q100",
+            "AGE_H_PAST_FUT-RC25-REPS4Q310",
+            "AGE_H_PAST_FUT-RC25-REPS5Q50",
+            "AGE_H_PAST_FUT-RC25-REPS5Q266",
+            "AGE_H_PAST_FUT-RC25-REPS5Q410"
+          ]
+        },
         {
           "key": "REL_H_POSITION",
           "n": 6,
           "items": [
+            "REL_H_POSITION-RC25-REPS1Q320",
             "REL_H_POSITION-RC25-REPS2Q170",
-            "REL_H_POSITION-RC25-REPS3Q470",
-            "REL_H_POSITION-RC25-REPS5Q233",
-            "REL_H_POSITION-RC25-REPS5Q251",
-            "REL_H_POSITION-RC25-REPS5Q260",
-            "REL_H_POSITION-25-REPS5Q400retry1"
+            "REL_H_POSITION-RC25-REPS5Q135",
+            "REL_H_POSITION-RC25-REPS5Q153",
+            "REL_H_POSITION-RC25-REPS5Q171",
+            "REL_H_POSITION-RC25-REPS5Q225"
           ]
         },
         {
-          "key": "PROP_H_TWO_ITEM_SYSTEM",
-          "n": 5,
+          "key": "PCT_H_TWO_GROUP_CHANGE",
+          "n": 6,
           "items": [
-            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS1Q160",
-            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS2Q10",
-            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS3Q160",
-            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS5Q90",
-            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS5Q370"
+            "PCT_H_TWO_GROUP_CHANGE-RC25-REPS1Q420",
+            "PCT_H_TWO_GROUP_CHANGE-RC25-REPS2Q330",
+            "PCT_H_TWO_GROUP_CHANGE-RC25-REPS4Q240",
+            "PCT_H_TWO_GROUP_CHANGE-RC25-REPS5Q30",
+            "PCT_H_TWO_GROUP_CHANGE-RC25-REPS5Q2316",
+            "PCT_H_TWO_GROUP_CHANGE-RC25-REPS5Q471"
           ]
         },
         {
           "key": "RATE_H_RATE_FROM_GAP",
-          "n": 5,
+          "n": 6,
           "items": [
-            "RATE_H_RATE_FROM_GAP-RC25-REPS1Q180",
             "RATE_H_RATE_FROM_GAP-RC25-REPS2Q70",
-            "RATE_H_RATE_FROM_GAP-RC25-REPS3Q190",
-            "RATE_H_RATE_FROM_GAP-RC25-REPS5Q100",
-            "RATE_H_RATE_FROM_GAP-RC25-REPS5Q380"
-          ]
-        },
-        {
-          "key": "CAL_H_NESTED",
-          "n": 5,
-          "items": [
-            "CAL_H_NESTED-RC25-REPS1Q210",
-            "CAL_H_NESTED-RC25-REPS1Q440",
-            "CAL_H_NESTED-RC25-REPS2Q90",
-            "CAL_H_NESTED-RC25-REPS2Q350",
-            "CAL_H_NESTED-RC25-REPS3Q450"
-          ]
-        },
-        {
-          "key": "ODD_H_TRIANGULAR",
-          "n": 5,
-          "items": [
-            "ODD_H_TRIANGULAR-RC25-REPS1Q230",
-            "ODD_H_TRIANGULAR-RC25-REPS1Q450",
-            "ODD_H_TRIANGULAR-RC25-REPS3Q10",
-            "ODD_H_TRIANGULAR-RC25-REPS3Q241",
-            "ODD_H_TRIANGULAR-RC25-REPS4Q71"
+            "RATE_H_RATE_FROM_GAP-RC25-REPS3Q160",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS4Q430",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS5Q70",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS5Q2716",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS5Q502"
           ]
         }
       ]
     },
     "sameReasoningSignature": {
-      "distinctKeys": 125,
-      "keysUsedMoreThanOnce": 70,
-      "itemsInSuchAGroup": 195,
-      "largestGroup": 5,
+      "distinctKeys": 122,
+      "keysUsedMoreThanOnce": 61,
+      "itemsInSuchAGroup": 189,
+      "largestGroup": 7,
       "examples": [
         {
-          "key": "{askedUnknown:boxUnitPrice,derivedFrom:operationKinds,family:direct_proportion,operationKi",
-          "n": 5,
+          "key": "{askedUnknown:firstTypeRate,derivedFrom:operationKinds,family:machines,operationKinds:[mul",
+          "n": 7,
           "items": [
-            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS1Q160",
-            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS2Q10",
-            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS3Q160",
-            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS5Q90",
-            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS5Q370"
+            "MACH_H_TWO_CONFIG-RC25-REPS1Q110",
+            "MACH_H_TWO_CONFIG-RC25-REPS2Q10",
+            "MACH_H_TWO_CONFIG-RC25-REPS3Q150",
+            "MACH_H_TWO_CONFIG-RC25-REPS4Q360",
+            "MACH_H_TWO_CONFIG-RC25-REPS5Q60",
+            "MACH_H_TWO_CONFIG-RC25-REPS5Q420"
+          ]
+        },
+        {
+          "key": "{askedUnknown:olderAgeNow,derivedFrom:operationKinds,family:ages,operationKinds:[multiply,",
+          "n": 6,
+          "items": [
+            "AGE_H_PAST_FUT-RC25-REPS1Q10",
+            "AGE_H_PAST_FUT-RC25-REPS3Q100",
+            "AGE_H_PAST_FUT-RC25-REPS4Q310",
+            "AGE_H_PAST_FUT-RC25-REPS5Q50",
+            "AGE_H_PAST_FUT-RC25-REPS5Q266",
+            "AGE_H_PAST_FUT-RC25-REPS5Q410"
+          ]
+        },
+        {
+          "key": "{askedUnknown:firstGroupSize,derivedFrom:operationKinds,family:percentages,operationKinds:",
+          "n": 6,
+          "items": [
+            "PCT_H_TWO_GROUP_CHANGE-RC25-REPS1Q420",
+            "PCT_H_TWO_GROUP_CHANGE-RC25-REPS2Q330",
+            "PCT_H_TWO_GROUP_CHANGE-RC25-REPS4Q240",
+            "PCT_H_TWO_GROUP_CHANGE-RC25-REPS5Q30",
+            "PCT_H_TWO_GROUP_CHANGE-RC25-REPS5Q2316",
+            "PCT_H_TWO_GROUP_CHANGE-RC25-REPS5Q471"
           ]
         },
         {
           "key": "{askedUnknown:originalRate,derivedFrom:operationKinds,family:unit_rate,operationKinds:[div",
-          "n": 5,
+          "n": 6,
           "items": [
-            "RATE_H_RATE_FROM_GAP-RC25-REPS1Q180",
             "RATE_H_RATE_FROM_GAP-RC25-REPS2Q70",
-            "RATE_H_RATE_FROM_GAP-RC25-REPS3Q190",
-            "RATE_H_RATE_FROM_GAP-RC25-REPS5Q100",
-            "RATE_H_RATE_FROM_GAP-RC25-REPS5Q380"
+            "RATE_H_RATE_FROM_GAP-RC25-REPS3Q160",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS4Q430",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS5Q70",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS5Q2716",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS5Q502"
           ]
         },
         {
-          "key": "{askedUnknown:todayFromNestedOffset,derivedFrom:operationKinds,family:calendar,operationKi",
-          "n": 5,
+          "key": "{askedUnknown:overlappingValue,derivedFrom:operationKinds,family:averages,operationKinds:[",
+          "n": 6,
           "items": [
-            "CAL_H_NESTED-RC25-REPS1Q210",
-            "CAL_H_NESTED-RC25-REPS1Q440",
-            "CAL_H_NESTED-RC25-REPS2Q90",
-            "CAL_H_NESTED-RC25-REPS2Q350",
-            "CAL_H_NESTED-RC25-REPS3Q450"
-          ]
-        },
-        {
-          "key": "{askedUnknown:outlier,derivedFrom:operationKinds,family:odd_one_out,operationKinds:[multip",
-          "n": 5,
-          "items": [
-            "ODD_H_TRIANGULAR-RC25-REPS1Q230",
-            "ODD_H_TRIANGULAR-RC25-REPS1Q450",
-            "ODD_H_TRIANGULAR-RC25-REPS3Q10",
-            "ODD_H_TRIANGULAR-RC25-REPS3Q241",
-            "ODD_H_TRIANGULAR-RC25-REPS4Q71"
-          ]
-        },
-        {
-          "key": "{askedUnknown:sellPriceAfterDiscountAndMarkup,derivedFrom:operationKinds,family:profit_los",
-          "n": 5,
-          "items": [
-            "PL_M_DISC_MARK-RC25-REPS1Q260",
-            "PL_M_DISC_MARK-RC25-REPS2Q121",
-            "PL_M_DISC_MARK-RC25-REPS3Q20",
-            "PL_M_DISC_MARK-RC25-REPS3Q251",
-            "PL_M_DISC_MARK-RC25-REPS4Q502"
+            "AVG_H_OVERLAP-RC25-REPS2Q380",
+            "AVG_H_OVERLAP-RC25-REPS3Q50",
+            "AVG_H_OVERLAP-RC25-REPS4Q260",
+            "AVG_H_OVERLAP-RC25-REPS5Q40",
+            "AVG_H_OVERLAP-RC25-REPS5Q256",
+            "AVG_H_OVERLAP-RC25-REPS5Q481"
           ]
         }
       ]
@@ -466,23 +475,23 @@
         "n": 50,
         "maxSameTemplate": 2,
         "maxSameReasoning": 2,
-        "distinctTemplates": 48,
-        "distinctReasoning": 48
+        "distinctTemplates": 46,
+        "distinctReasoning": 47
       },
       {
         "sessionId": "SESSION-2",
         "n": 50,
         "maxSameTemplate": 2,
         "maxSameReasoning": 2,
-        "distinctTemplates": 44,
-        "distinctReasoning": 44
+        "distinctTemplates": 46,
+        "distinctReasoning": 46
       },
       {
         "sessionId": "SESSION-3",
         "n": 50,
         "maxSameTemplate": 2,
         "maxSameReasoning": 2,
-        "distinctTemplates": 47,
+        "distinctTemplates": 46,
         "distinctReasoning": 47
       },
       {
@@ -490,16 +499,16 @@
         "n": 50,
         "maxSameTemplate": 2,
         "maxSameReasoning": 2,
-        "distinctTemplates": 43,
-        "distinctReasoning": 44
+        "distinctTemplates": 46,
+        "distinctReasoning": 46
       },
       {
         "sessionId": "SESSION-5",
         "n": 50,
         "maxSameTemplate": 4,
-        "maxSameReasoning": 2,
-        "distinctTemplates": 33,
-        "distinctReasoning": 37
+        "maxSameReasoning": 3,
+        "distinctTemplates": 17,
+        "distinctReasoning": 26
       }
     ],
     "caps": {
@@ -511,7 +520,9 @@
     "capBreaches": {
       "sameTemplateIdPerSession": [],
       "sameReasoningPerSession": [],
-      "sameReasoningPerBatch": []
+      "sameReasoningPerBatch": [
+        "batch:7"
+      ]
     },
     "broadClusterComparison": {
       "definition": "items sharing a family/topic count as one cluster",

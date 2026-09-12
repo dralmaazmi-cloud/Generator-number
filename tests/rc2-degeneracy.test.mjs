@@ -87,7 +87,7 @@ test('RC2-005 meta: a template with no declared target is not accused of anythin
 test('RC2-005 MUST_REJECT: CAL_H_LONG where whole weeks and the remainder agree', async () => {
   // n = 24: three whole weeks, remainder three. "Move by the number of weeks"
   // and "move by the remainder" are the same move, so the item measures nothing.
-  const {base, verdict} = draw(generateCalendar, await bandOfTemplate('calendar','CAL_H_LONG'), 'fx-cal-19');
+  const {base, verdict} = draw(generateCalendar, await bandOfTemplate('calendar','CAL_H_LONG'), 'fx-cal-11');
   assert.equal(base.template_id, 'CAL_H_LONG');
   assert.equal(base.parameters.offsetDays, 24);
   assert.equal(base.pedagogy.wrongMethodValue, base.correct);
@@ -119,7 +119,7 @@ test('RC2-005 MUST_REJECT: a chain position that reads the same from either end'
   // the CONDITION — a position that reads the same from either end — not the draw.
   // RC2.5-2 split REL_M_COUNT and re-banded two relational templates, which
   // moves the pool a seed lands in again. Re-found, same condition.
-  for (const [seed, template] of [['fx-rel-60', 'REL_E_CHAIN'], ['fx-rel-8', 'REL_E_BETWEEN']]) {
+  for (const [seed, template] of [['fx-rel-8', 'REL_E_CHAIN'], ['fx-rel-14', 'REL_E_BETWEEN']]) {
     const {base, verdict} = draw(generateRelational, await bandOfTemplate('relational', template), seed);
     assert.equal(base.template_id, template);
     assert.equal(base.parameters.nodeCount, 5);
@@ -252,7 +252,9 @@ test('RC2-005: every template in the engine is classified, and every classificat
   // can no longer be orphaned by a pool it fails to qualify for.
   // RC2.5-2: 126. The relational count question was split into its routine and
   // its branch-combining form, which is one template more than RC2.4 had.
-  assert.equal(report.totals.templates, 126, 'every declared template is reachable');
+  // RC2.5: 127. REL_M_CHAIN6 — the six-person chain, split from REL_E_CHAIN by
+  // the length that separated the reviewers' verdicts.
+  assert.equal(report.totals.templates, 127, 'every declared template is reachable');
   assert.deepEqual(report.totals.unclassified, []);
   assert.deepEqual(report.totals.declaredButAbsentFromEngine, []);
   assert.equal(report.totals.rc1TemplatesWithNoModel, 23, 'the RC1 gap was 23 templates');

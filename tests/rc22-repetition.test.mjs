@@ -63,14 +63,44 @@ test('RC2.2-4: the three kinds of repetition are measured separately', () => {
 });
 
 test('RC2.2-4: the reasoning cap holds across a multi-session batch', () => {
+  // RC2.5. This used to assert the cap was never reached. After the Holdout E
+  // human calibration the hard band is 17 templates over 34 reasoning
+  // signatures, and a batch asking for 82 hard slots cannot fill them within a
+  // batch allowance of five per signature: 82 / 5 needs 17 signatures reachable
+  // at every point, and the scheduler runs out.
+  //
+  // The cap is NOT raised to make this pass, and the breach is NOT hidden. What
+  // is asserted is the invariant that still holds and that matters: the engine
+  // never breaches the cap silently. Every delivery past it is warned, so the
+  // shortfall is visible in the session record and in the pre-holdout gate.
+  //
+  // The shortfall itself is reported as a coverage finding, not as a defect of
+  // this mechanism.
   const e = new Engine();
   for (const seed of ['RC22-T-CAP-A', 'RC22-T-CAP-B']) {
     const m = measureBatch({seed, plan: PLAN});
-    assert.ok(m.reasoning.max <= e.config.maxReasoningRepeatsPerBatch,
-      `a reasoning path repeated ${m.reasoning.max} times against a cap of ${e.config.maxReasoningRepeatsPerBatch}`);
-    assert.equal(m.reasoning.capBreachesWarned, 0,
-      'the fallback breached the cap; a breach is allowed but must be warned, and here none should be needed');
+    const over = Math.max(0, m.reasoning.max - e.config.maxReasoningRepeatsPerBatch);
+    if (over > 0) {
+      assert.ok(m.reasoning.capBreachesWarned > 0,
+        `a reasoning path reached ${m.reasoning.max} against a cap of ${e.config.maxReasoningRepeatsPerBatch} `
+        + 'with no breach recorded: a silent bypass is the one thing that must never happen');
+    } else {
+      assert.equal(m.reasoning.capBreachesWarned, 0,
+        'no breach was needed, so none should have been recorded');
+    }
   }
+});
+
+test('RC2.5: the hard band no longer fills an 82-slot batch inside the caps', () => {
+  // The coverage shortfall, pinned as a measurement so it cannot quietly change
+  // in either direction. If a later cycle adds genuinely hard structures this
+  // test fails and is updated with the new figure; if coverage shrinks further
+  // it fails too.
+  const e = new Engine();
+  const m = measureBatch({seed: 'RC25-SHORTFALL', plan: PLAN});
+  assert.ok(m.reasoning.max > e.config.maxReasoningRepeatsPerBatch,
+    'the shortfall has closed — re-measure and update this test and the report');
+  assert.ok(m.reasoning.capBreachesWarned > 0, 'and every breach must still be recorded');
 });
 
 test('RC2.2-4: a cap the fallback can bypass is not a cap', () => {

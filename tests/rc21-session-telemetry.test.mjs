@@ -74,7 +74,11 @@ test('RC2.1-1: the identity survives the relaxed fallback', () => {
   // before drawing anything. The fallback is exercised the way it now happens in
   // practice — a session small enough to be deliverable, from a family with just
   // enough structures that the caps still bind partway through.
-  const s = e.generatePractice({count: 20, difficulty: 'hard', family: 'ratios', seed: 'RLX-0'});
+  // RC2.5: the Holdout E human calibration left ratios with three hard
+  // structures, so twenty hard slots are now refused up front (five structures
+  // needed). Twelve is what three structures can be asked for, and the caps
+  // still bind partway through, which is what this test is about.
+  const s = e.generatePractice({count: 12, difficulty: 'hard', family: 'ratios', seed: 'RLX-0'});
   const r = e.getTelemetry().sessionReconciliation;
   assert.ok(s.validation.diversity_warnings.length > 0, 'this setup is meant to exercise the fallback');
   assert.equal(r.publishedToSessions, r.delivered + r.sessionDiscards);
@@ -90,7 +94,15 @@ test('RC2.1-1: engine-level and session-level cost are reported separately', () 
   assert.equal(t.sessionReconciliation.balanced, true, 'session identity');
   // The two must not be the same number wearing different names.
   assert.notEqual(t.reconciliation.proposals, t.sessionReconciliation.sessionDiscards);
-  assert.ok(t.byStage.session_discard >= 0);
+  // RC2.5: this seed now delivers with no session-level discard at all, so the
+  // stage key is simply absent. An assertion that `undefined >= 0` was never
+  // testing anything; a session that DOES discard is, so the stage is checked
+  // where it actually occurs.
+  const d = new Engine();
+  d.resetTelemetry();
+  d.generatePractice({count: 12, difficulty: 'hard', family: 'ratios', seed: 'RC21-SPLIT-DISCARD'});
+  assert.ok((d.getTelemetry().byStage.session_discard ?? 0) > 0,
+    'a session that hits its caps must record session-level discards under their own stage');
 });
 
 test('RC2.1-1: each session reports its own cost', () => {

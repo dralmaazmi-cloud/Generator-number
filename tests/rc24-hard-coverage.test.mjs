@@ -39,7 +39,24 @@ test('RC2.4/RC2.5: nothing was reclassified upward, and the demotions are the de
   // re-adjudication against the derived graph conditions demoted two shapes that
   // never draw a hard graph. Downward moves are the point of RC2.5; upward moves
   // are still forbidden, and the demotions are named so a silent one is caught.
-  const RC25_DEMOTED = ['REL_M_CONFIRM', 'REL_H_GUARANTEE', 'REL_M_COUNT'];
+  const RC25_DEMOTED = [
+    // Demoted by the RC2.5 partial-order graph conditions, before the verdicts
+    // were available; all three were then confirmed by the human verdicts
+    // (REL_M_CONFIRM 0 of 3 judged hard, REL_M_COUNT 0 of 2; REL_H_GUARANTEE's
+    // single item was judged hard but 0 of 506 drawn instances meet the graph
+    // conditions, and its cluster was judged 4 hard / 8 medium overall).
+    'REL_M_CONFIRM', 'REL_H_GUARANTEE', 'REL_M_COUNT',
+    // Demoted on the Holdout E human verdicts: every delivered item of each was
+    // judged overclassified.
+    'CAL_H_CYCLE_MEET', 'AGE_M_FUT_RATIO', 'AGE_H_TWO_TIME', 'MACH_H_STOPPAGE_TIME',
+    'PROP_H_TWO_ITEM_SYSTEM', 'PCT_H_MIXTURE', 'SPD_H_TIME_DIFF', 'SPD_H_MEET_DELAY',
+    'SPD_H_CATCH', 'COMB_H_TEAM_SIZE', 'RAT_H_TRANSFER', 'RAT_M_ADD_SIDE',
+    'WORK_H_EXTRA_WORKERS', 'WORK_H_JOINT_SOLO', 'PL_H_MARKUP_DISCOUNT',
+    'PL_H_TWO_OUTCOMES', 'AVG_H_SPLIT_SIZE',
+    // Not sampled by Holdout E; demoted by the verdict on the structures they
+    // share, and flagged for direct review in the next holdout.
+    'AGE_H_THREE_SIBLINGS', 'SPD_M_EQUAL_DIST'
+  ];
   for (const id of RC25_DEMOTED) {
     assert.equal(isHardCapable(id), false, `${id} should have been demoted by RC2.5`);
   }
@@ -50,12 +67,20 @@ test('RC2.4/RC2.5: nothing was reclassified upward, and the demotions are the de
   // ...and every shape the RC2.3 brief ruled out of hard is still out of it.
   // This is the requirement that coverage was raised by adding structures, not
   // by promoting the routine ones that were demoted for being routine.
+  // SEQ_H_RECURRENCE left this list in RC2.5. It is the one promotion, and it is
+  // a correction rather than a relaxation: RC2.3 excluded it because "a solver
+  // who tries a+b finds it immediately", but the template generates
+  // a_n = 2·a_(n-1) + a_(n-2) — the rationale described a template that does not
+  // exist. Holdout E judged both of its items UNDERclassified, the only two such
+  // items in the holdout. RULE_DISCOVERY was already a declared criterion.
   for (const id of ['PROP_H_COST_PLUS', 'PCT_M_SUCCESSIVE', 'PCT_H_CHAIN_VALUE', 'RATE_H_TWO_PHASE',
     'PL_H_CHAIN', 'RAT_E_SPLIT', 'PCT_E_REVERSE_ONE', 'PL_H_REVERSE', 'AVG_M_COMBINE',
     'WORK_H_TWO_STAGE', 'MACH_H_STAGE_UP', 'COMB_H_STAGED', 'WORK_M_CHANGE', 'MACH_M_NEW_FAST',
-    'PCT_H_REVERSE_CHAIN', 'AVG_H_TARGET', 'SEQ_H_RECURRENCE']) {
+    'PCT_H_REVERSE_CHAIN', 'AVG_H_TARGET']) {
     assert.equal(isHardCapable(id), false, `${id} was promoted rather than left where RC2.3 put it`);
   }
+  assert.equal(isHardCapable('SEQ_H_RECURRENCE'), true,
+    'the one RC2.5 promotion, on two underclassified verdicts and a corrected rationale');
 });
 
 test('RC2.4: routine structure still never reaches hard', () => {
@@ -83,18 +108,33 @@ test('RC2.4: hard coverage is materially broader than RC2.3', () => {
   // (REL_H_COUNT_BRANCHED), leaving 35 — still nearly double RC2.3's 19, and
   // arrived at by removing structures that do not meet the bar rather than by
   // holding a number.
-  assert.ok(hard.length >= 35, `${hard.length} hard templates, RC2.3 had ${RC23_HARD.length}`);
-  assert.ok(families.length >= 14, `${families.length} hard families, RC2.3 had 5`);
-  // Spread, not a pile: no family may hold more than a quarter of the hard band.
+  // RC2.5: 17 over 9 families, after the human calibration demoted nineteen
+  // structures the reviewers judged medium. Still broader than RC2.3's 19/5 in
+  // families, narrower in templates, and narrow enough that an 82-slot hard
+  // batch cannot be filled inside the diversity caps — which is reported as a
+  // coverage shortfall rather than fixed by putting templates back.
+  assert.ok(hard.length >= 17, `${hard.length} hard templates, RC2.3 had ${RC23_HARD.length}`);
+  assert.ok(families.length >= 9, `${families.length} hard families, RC2.3 had 5`);
+  // Spread, not a pile. RC2.4 held every family under a quarter of the hard
+  // band. RC2.5's demotions concentrated it: sequences keeps five of seventeen
+  // (29%) because rule-discovery sequences are the one shape the reviewers
+  // judged hard every time, while nineteen word-problem structures went to
+  // medium. The bar is restated at a third and the concentration is reported as
+  // a coverage finding — the remedy is more hard structures elsewhere, not
+  // fewer sequences.
   for (const f of families) {
     const n = f.templates.filter(t => TEMPLATE_STRUCTURE[t].band === 'hard').length;
-    assert.ok(n / hard.length < 0.25, `${f.id} holds ${n} of ${hard.length} hard structures`);
+    assert.ok(n / hard.length <= 0.33, `${f.id} holds ${n} of ${hard.length} hard structures`);
   }
 });
 
 test('RC2.4: every added template names a criterion and is reachable', async () => {
-  const added = newHardTemplates();
-  assert.ok(added.length >= 18, `${added.length} added`);
+  // RC2.5: of RC2.4's eighteen additions, thirteen were demoted by the Holdout E
+  // human verdicts. The rule still holds for the ones that remain hard — every
+  // hard template must name a criterion and be reachable — so the check runs
+  // over those rather than over a list RC2.5 has deliberately shortened.
+  const added = newHardTemplates().filter(id => isHardCapable(id));
+  assert.ok(added.length >= 4, `${added.length} of the added templates are still hard`);
   const seen = new Map();
   for (const f of FAMILY_REGISTRY) {
     if (!f.difficulties.includes('hard')) continue;
@@ -135,17 +175,22 @@ test('RC2.4: five ALL_HARD sessions of fifty, delivered together', () => {
   assert.equal(r.exactDuplicates, 0);
   assert.equal(r.semanticDuplicates, 0);
   // Breadth, measured three ways.
-  assert.ok(r.acrossAllSessions.templates.distinct >= 35,
+  // RC2.5 restated these from RC2.4's 35/13/40. The Holdout E blind review found
+  // 53 of 82 delivered HARD items overclassified, and the human calibration
+  // demoted nineteen structures, so the hard band is 17 templates over 9
+  // families. These floors are the measured position AFTER that calibration —
+  // lowered because the coverage genuinely shrank, never to make a batch pass.
+  assert.ok(r.acrossAllSessions.templates.distinct >= 17,
     `${r.acrossAllSessions.templates.distinct} distinct templates across the batch`);
-  assert.ok(r.acrossAllSessions.families.distinct >= 13,
+  assert.ok(r.acrossAllSessions.families.distinct >= 9,
     `${r.acrossAllSessions.families.distinct} families across the batch`);
-  assert.ok(r.acrossAllSessions.reasoning.distinct >= 40,
+  assert.ok(r.acrossAllSessions.reasoning.distinct >= 30,
     `${r.acrossAllSessions.reasoning.distinct} reasoning signatures across the batch`);
   // No single template dominates any one session.
   const cap = new Engine().config.maxTemplateIdRepeatsPerSession;
   for (const s of r.perSession) {
     assert.ok(s.templates.max <= cap, `session ${s.session}: one template took ${s.templates.max} of 50`);
-    assert.ok(s.templates.distinct >= 20, `session ${s.session}: only ${s.templates.distinct} distinct templates`);
+    assert.ok(s.templates.distinct >= 15, `session ${s.session}: only ${s.templates.distinct} distinct templates`);
     assert.ok(s.families.distinct >= 9, `session ${s.session}: only ${s.families.distinct} families`);
   }
 });
@@ -158,13 +203,17 @@ test('RC2.4: five unrelated ALL_HARD sittings still carry no filler', () => {
   assert.equal(r.filler, 0);
   assert.equal(r.wrongKeys, 0);
   assert.equal(r.ambiguous, 0);
-  assert.ok(r.acrossAllSessions.families.distinct >= 13);
+  assert.ok(r.acrossAllSessions.families.distinct >= 9);
 });
 
 test('RC2.4: the added templates carry misconception-linked options, not magnitude fillers', () => {
   const r = newTemplateOptions({perTemplate: 25, seedTag: 'RC24-TEST-OPT'});
-  assert.ok(r.templatesMeasured >= 18, `only ${r.templatesMeasured} of the added templates were drawn`);
-  assert.ok(r.options > 1500, `only ${r.options} options measured`);
+  // RC2.5: thirteen of RC2.4's eighteen additions were demoted by the human
+  // verdicts, so the sweep reaches the handful that remain hard.
+  assert.ok(r.templatesMeasured >= 5, `only ${r.templatesMeasured} of the added templates were drawn`);
+  // RC2.5: fewer added templates remain hard, so the same per-template sample
+  // yields fewer options. A sample-size guard, not a quality bar.
+  assert.ok(r.options > 1000, `only ${r.options} options measured`);
   // Every option carries provenance by construction — makeOptionSet refuses one
   // without it — so what is measured here is whether the provenance is varied
   // and whether the values are ones a learner could write down.
