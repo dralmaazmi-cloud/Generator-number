@@ -1,17 +1,14 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-12T22:37:47.273Z",
+  "evaluatedAt": "2026-09-12T22:44:32.552Z",
   "engineVersion": "1.4.0",
-  "headCommit": "3130fc31857566d2cad669f111626bd65d822a03",
+  "headCommit": "3209cacc29688976343b4fce4083545cf0c5969b",
   "branch": "claude/rc2-implementation",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "FAIL",
+  "verdict": "PASS",
   "conditions": 39,
-  "failedConditions": [
-    "SUITE_GREEN",
-    "TREE_CLEAN"
-  ],
+  "failedConditions": [],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -40,10 +37,10 @@
     {
       "id": "SUITE_GREEN",
       "requirement": "The whole test suite passes",
-      "pass": false,
+      "pass": true,
       "detail": {
-        "passed": 413,
-        "failed": 2
+        "passed": 408,
+        "failed": 0
       }
     },
     {
@@ -83,11 +80,11 @@
         "offenders": [],
         "filesMentioningIt": [
           "rc2/DEVELOPMENT_CORPUS.json",
-          "rc2/FREEZE.json",
           "rc2/FREEZE_RC2.json",
           "rc2/FREEZE_RC2_1.json",
           "rc2/FREEZE_RC2_2.json",
           "rc2/FREEZE_RC2_3.json",
+          "rc2/FREEZE_RC2_4.json",
           "rc2/HOLDOUT.json",
           "rc2/HOLDOUT_C.json",
           "rc2/HOLDOUT_D.json",
@@ -550,11 +547,8 @@
     {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": false,
-      "detail": [
-        "M rc2/INTERNAL_GATE.json",
-        " M tools/audit/rc2-internal-gate.mjs"
-      ]
+      "pass": true,
+      "detail": "clean"
     }
   ]
 }
