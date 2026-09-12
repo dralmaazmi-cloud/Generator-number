@@ -1,0 +1,212 @@
+{
+  "schema": "rc21-holdout-c-package-v1",
+  "builtAt": "2026-09-12T14:18:27.346Z",
+  "holdout": {
+    "seed": "AUDIT-2026-09-12-C",
+    "questions": 250,
+    "generatedExactlyOnce": true,
+    "previousHoldout": {
+      "seed": "AUDIT-2026-09-12-B",
+      "status": "FAILED_DIAGNOSTIC_HOLDOUT",
+      "reused": false
+    }
+  },
+  "provenance": {
+    "RC2_1_COMMIT": "489a2570a56de32b39ee6c50061dc6a203c3113f",
+    "treeHash": "6656abc3fb98356735a09336a61a028e96a1b40b",
+    "engineVersion": "1.4.0",
+    "productionBundleSha256": "fd0db212b5ef871561e66ac55f92381be3bc59cb7fd8dad67eef1743458f092a",
+    "internalGate": {
+      "verdict": "PASS",
+      "conditions": 22,
+      "evaluatedAt": "2026-09-12T14:01:48.656Z",
+      "headCommit": "4687fc84c99e8a2c22b21c46c920b89e5a8b9efa"
+    }
+  },
+  "integrity": {
+    "note": "Derived from the preserved generation output; neither source was written to.",
+    "sources": {
+      "blind": {
+        "path": "rc2/holdout-c-blind.jsonl.gz",
+        "bytes": 17822,
+        "sha256": "1bbb0369a8c8f4984da7f6c78e2bf2da91c7d9917e01ce38610dbb03ccf4eed1"
+      },
+      "full": {
+        "path": "rc2/holdout-c-full.jsonl.gz",
+        "bytes": 158571,
+        "sha256": "a9e9b424a0f4507b0137adfcb9c867487303ab69328bbab421b65d58f757ab7e"
+      },
+      "report": {
+        "path": "rc2/HOLDOUT_C.json",
+        "bytes": 5395,
+        "sha256": "fda0ffe03542a32c402d210f6d93885f8f777516b1e33caca975083acdd96975"
+      },
+      "freeze": {
+        "path": "rc2/FREEZE.json",
+        "bytes": 16916,
+        "sha256": "d6b8f90588f265c206096dcd5cb85a62af28621b759ab0b7ad2fe2fb6135e3bd"
+      }
+    },
+    "recordedBlindSha256": "4cdce0bd9be54294763ba8ff1ca77bfc48fd2eba10580d314e6893633f930274",
+    "recordedFullSha256": "64d29d18a4d4da98e2f4f32888df6ae133cafd1fcf5acf67d4931a0afa4d4390",
+    "recomputedBlindSha256": "4cdce0bd9be54294763ba8ff1ca77bfc48fd2eba10580d314e6893633f930274",
+    "recomputedFullSha256": "64d29d18a4d4da98e2f4f32888df6ae133cafd1fcf5acf67d4931a0afa4d4390",
+    "unchanged": true
+  },
+  "packages": {
+    "blind": {
+      "folder": "blind",
+      "files": [
+        "blind/blind-questions.txt",
+        "blind/session-1.pdf",
+        "blind/session-2.pdf",
+        "blind/session-3.pdf",
+        "blind/session-4.pdf",
+        "blind/session-5.pdf"
+      ],
+      "contains": [
+        "stem",
+        "stimulus as rendered",
+        "six options in published order",
+        "itemId, template, family, declared difficulty"
+      ],
+      "excludes": [
+        "answer keys",
+        "explanations",
+        "derivations",
+        "misconception ids",
+        "difficulty evidence",
+        "fingerprints",
+        "reasoning signatures",
+        "source code",
+        "telemetry findings",
+        "RC2.1 reports",
+        "prior holdout results",
+        "generator internals"
+      ]
+    },
+    "reveal": {
+      "folder": "reveal",
+      "files": [
+        "reveal/answer-key.jsonl"
+      ]
+    },
+    "postReveal": {
+      "folder": "post-reveal",
+      "files": [
+        "post-reveal/difficulty-evidence.jsonl",
+        "post-reveal/distractor-derivations.jsonl",
+        "post-reveal/explanations.jsonl",
+        "post-reveal/misconception-ids.jsonl",
+        "post-reveal/reasoning-signatures.jsonl",
+        "post-reveal/semantic-fingerprints.jsonl"
+      ]
+    }
+  },
+  "rendering": {
+    "chromium": "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
+    "pdfs": [
+      {
+        "name": "session-1",
+        "sessionId": "SESSION-1",
+        "rendered": true,
+        "bytes": 240228
+      },
+      {
+        "name": "session-2",
+        "sessionId": "SESSION-2",
+        "rendered": true,
+        "bytes": 240865
+      },
+      {
+        "name": "session-3",
+        "sessionId": "SESSION-3",
+        "rendered": true,
+        "bytes": 239131
+      },
+      {
+        "name": "session-4",
+        "sessionId": "SESSION-4",
+        "rendered": true,
+        "bytes": 240172
+      },
+      {
+        "name": "session-5",
+        "sessionId": "SESSION-5",
+        "rendered": true,
+        "bytes": 243098
+      }
+    ]
+  },
+  "leakCheck": {
+    "passed": true,
+    "findings": []
+  },
+  "files": [
+    {
+      "path": "blind/blind-questions.txt",
+      "bytes": 80569,
+      "sha256": "b15275a862bb7a07c11f3f482194042f8ef15d9f71b95a9a0da75a6200cdfc02"
+    },
+    {
+      "path": "blind/session-1.pdf",
+      "bytes": 240228,
+      "sha256": "4c3ad2487aa27df11f56a11326015fa3f4663e85f7e597cefb4b1c2a5c94aa4a"
+    },
+    {
+      "path": "blind/session-2.pdf",
+      "bytes": 240865,
+      "sha256": "90eed2fbcefd2c962c13169b20a5c403ddcfe7df41a6d330d847548d6177858f"
+    },
+    {
+      "path": "blind/session-3.pdf",
+      "bytes": 239131,
+      "sha256": "7dcc760bc9088e25dd6c069c23d7e264aa7dcf15ef2cb62cdd9536a9ace315a3"
+    },
+    {
+      "path": "blind/session-4.pdf",
+      "bytes": 240172,
+      "sha256": "3bcc85aaa02b87612f2c59387a6b66ef7db7ab685f50267d7716b055a01d80d7"
+    },
+    {
+      "path": "blind/session-5.pdf",
+      "bytes": 243098,
+      "sha256": "9fa78163eb0864ffac3811d70186bf12c093bb3f40a3ec337eb5f6b155145141"
+    },
+    {
+      "path": "post-reveal/difficulty-evidence.jsonl",
+      "bytes": 88378,
+      "sha256": "19bb32ce11c340a2ca25e5f75443474a052b16ff1cfed14491c8d86309323239"
+    },
+    {
+      "path": "post-reveal/distractor-derivations.jsonl",
+      "bytes": 232517,
+      "sha256": "dc37c0b3d51288be1e4bfab1226ed6632a3fdebe117fe9ff3c6b94880bbc4ef3"
+    },
+    {
+      "path": "post-reveal/explanations.jsonl",
+      "bytes": 162051,
+      "sha256": "ec968d85148213b1eaf2f0f7b2823268cc8c839cb39fe3b8a115364265f36da7"
+    },
+    {
+      "path": "post-reveal/misconception-ids.jsonl",
+      "bytes": 65997,
+      "sha256": "245801c06d1ce4ebfb3b52b788dc32bcb5bed2fa9e727e60e06e331d5cfda3f1"
+    },
+    {
+      "path": "post-reveal/reasoning-signatures.jsonl",
+      "bytes": 29667,
+      "sha256": "0b19230b8256f65b69bed99fe7f507149f9ee1e6419a00786165e7359b51936f"
+    },
+    {
+      "path": "post-reveal/semantic-fingerprints.jsonl",
+      "bytes": 114984,
+      "sha256": "ef03f1b57d0102e03c9d4e535f3f5c76bccdf522cae27bc7100923ea6e6a3224"
+    },
+    {
+      "path": "reveal/answer-key.jsonl",
+      "bytes": 17035,
+      "sha256": "dba3c0c46c93aac2a3274cb207b9ac4dbc63169edb0b1827aed20f0831d90ffd"
+    }
+  ]
+}
