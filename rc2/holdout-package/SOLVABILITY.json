@@ -1,0 +1,2674 @@
+{
+  "schema": "rc2-holdout-solvability-v1",
+  "section": "§26",
+  "question": "Is every one of the 250 blind questions solvable from the blind package alone?",
+  "method": [
+    "Production emits displayExpression in exactly two family modules: src/families/sequences.js and src/families/odd_one_out.js. Established by grep over src/families/*.js, not assumed.",
+    "For the other fourteen families the stem prose and the six options are therefore the whole of what a candidate ever saw, and nothing can be missing.",
+    "For the two display families, every term production would have rendered must be present in the blind record, and the key must not appear inside the stimulus."
+  ],
+  "totals": {
+    "items": 250,
+    "solvable": 250,
+    "notSolvable": 0,
+    "withReconstructedStimulus": 30
+  },
+  "byFamily": {
+    "relational": {
+      "items": 15,
+      "withStimulus": 0,
+      "pass": 15
+    },
+    "work_time": {
+      "items": 15,
+      "withStimulus": 0,
+      "pass": 15
+    },
+    "ages": {
+      "items": 16,
+      "withStimulus": 0,
+      "pass": 16
+    },
+    "combined_rate": {
+      "items": 16,
+      "withStimulus": 0,
+      "pass": 16
+    },
+    "averages": {
+      "items": 17,
+      "withStimulus": 0,
+      "pass": 17
+    },
+    "unit_rate": {
+      "items": 15,
+      "withStimulus": 0,
+      "pass": 15
+    },
+    "calendar": {
+      "items": 16,
+      "withStimulus": 0,
+      "pass": 16
+    },
+    "profit_loss": {
+      "items": 16,
+      "withStimulus": 0,
+      "pass": 16
+    },
+    "speed": {
+      "items": 15,
+      "withStimulus": 0,
+      "pass": 15
+    },
+    "odd_one_out": {
+      "items": 15,
+      "withStimulus": 15,
+      "pass": 15
+    },
+    "sequences": {
+      "items": 15,
+      "withStimulus": 15,
+      "pass": 15
+    },
+    "fractions": {
+      "items": 15,
+      "withStimulus": 0,
+      "pass": 15
+    },
+    "percentages": {
+      "items": 17,
+      "withStimulus": 0,
+      "pass": 17
+    },
+    "machines": {
+      "items": 16,
+      "withStimulus": 0,
+      "pass": 16
+    },
+    "direct_proportion": {
+      "items": 16,
+      "withStimulus": 0,
+      "pass": 16
+    },
+    "ratios": {
+      "items": 15,
+      "withStimulus": 0,
+      "pass": 15
+    }
+  },
+  "failures": [],
+  "checks": [
+    {
+      "itemId": "H-S1-01",
+      "family": "relational",
+      "templateId": "REL_M_CONFIRM",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-02",
+      "family": "work_time",
+      "templateId": "WORK_E_INVERSE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-03",
+      "family": "ages",
+      "templateId": "AGE_M_FUT_SUM_DIFF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-04",
+      "family": "combined_rate",
+      "templateId": "COMB_M_SOLO_THEN",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-05",
+      "family": "averages",
+      "templateId": "AVG_H_TARGET",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-06",
+      "family": "unit_rate",
+      "templateId": "RATE_H_TWO_PHASE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-07",
+      "family": "calendar",
+      "templateId": "CAL_M_COMPOUND",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-08",
+      "family": "profit_loss",
+      "templateId": "PL_E_PROFIT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-09",
+      "family": "speed",
+      "templateId": "SPD_M_EQUAL_DIST",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-10",
+      "family": "odd_one_out",
+      "templateId": "ODD_M_PRIME2",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:numbers",
+      "required": [
+        "14",
+        "26",
+        "2",
+        "34",
+        "22",
+        "10"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-11",
+      "family": "sequences",
+      "templateId": "SEQ_E_ARITH",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:shownTerms",
+      "required": [
+        "45",
+        "50",
+        "55",
+        "60",
+        "65"
+      ],
+      "blankedTerm": "55",
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-12",
+      "family": "fractions",
+      "templateId": "FRAC_M_3",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-13",
+      "family": "percentages",
+      "templateId": "PCT_M_UNIT_PRICE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-14",
+      "family": "machines",
+      "templateId": "MACH_E_REQUIRED",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-15",
+      "family": "direct_proportion",
+      "templateId": "PROP_H_COST_PLUS",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-16",
+      "family": "ratios",
+      "templateId": "RAT_M_COMMON_SUM",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-17",
+      "family": "odd_one_out",
+      "templateId": "ODD_H_TRIANGULAR",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:numbers",
+      "required": [
+        "45",
+        "36",
+        "78",
+        "25",
+        "66",
+        "55"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-18",
+      "family": "averages",
+      "templateId": "AVG_M_COMBINE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-19",
+      "family": "calendar",
+      "templateId": "CAL_E_TOM",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-20",
+      "family": "work_time",
+      "templateId": "WORK_H_WORKERS_EFF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-21",
+      "family": "unit_rate",
+      "templateId": "RATE_M_PERCENT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-22",
+      "family": "profit_loss",
+      "templateId": "PL_E_LOSS",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-23",
+      "family": "direct_proportion",
+      "templateId": "PROP_M_RECIPE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-24",
+      "family": "percentages",
+      "templateId": "PCT_E_REVERSE_ONE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-25",
+      "family": "ratios",
+      "templateId": "RAT_M_ADD_SIDE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-26",
+      "family": "ages",
+      "templateId": "AGE_M_FUT_SUM_DIFF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-27",
+      "family": "speed",
+      "templateId": "SPD_E_TIME",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-28",
+      "family": "fractions",
+      "templateId": "FRAC_M_3",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-29",
+      "family": "combined_rate",
+      "templateId": "COMB_M_SOLO_THEN",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-30",
+      "family": "sequences",
+      "templateId": "SEQ_M_ALT_OPS",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:shownTerms",
+      "required": [
+        "3",
+        "5",
+        "15",
+        "18",
+        "72",
+        "76",
+        "380"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-31",
+      "family": "relational",
+      "templateId": "REL_M_CONFIRM",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-32",
+      "family": "machines",
+      "templateId": "MACH_M_STOP",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-33",
+      "family": "relational",
+      "templateId": "REL_H_GUARANTEE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-34",
+      "family": "combined_rate",
+      "templateId": "COMB_H_STAGED",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-35",
+      "family": "speed",
+      "templateId": "SPD_M_AVG",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-36",
+      "family": "fractions",
+      "templateId": "FRAC_H_4",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-37",
+      "family": "percentages",
+      "templateId": "PCT_E_OF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-38",
+      "family": "averages",
+      "templateId": "AVG_E_ADD",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-39",
+      "family": "odd_one_out",
+      "templateId": "ODD_M_PRIME2",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:numbers",
+      "required": [
+        "22",
+        "14",
+        "10",
+        "6",
+        "26",
+        "12"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-40",
+      "family": "unit_rate",
+      "templateId": "RATE_E_DIRECT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-41",
+      "family": "sequences",
+      "templateId": "SEQ_M_DOUBLE_DIFF",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:shownTerms",
+      "required": [
+        "4",
+        "7",
+        "13",
+        "25",
+        "49"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-42",
+      "family": "profit_loss",
+      "templateId": "PL_M_DISC_MARK",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-43",
+      "family": "work_time",
+      "templateId": "WORK_M_TARGET",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-44",
+      "family": "machines",
+      "templateId": "MACH_M_SUBSET_UP",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-45",
+      "family": "direct_proportion",
+      "templateId": "PROP_E_ITEMS",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-46",
+      "family": "ages",
+      "templateId": "AGE_M_FUT_RATIO",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-47",
+      "family": "ratios",
+      "templateId": "RAT_M_ADD_SIDE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-48",
+      "family": "calendar",
+      "templateId": "CAL_M_COMPOUND",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-49",
+      "family": "percentages",
+      "templateId": "PCT_E_REVERSE_ONE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S1-50",
+      "family": "combined_rate",
+      "templateId": "COMB_M_TOGETHER_SOLO",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-01",
+      "family": "unit_rate",
+      "templateId": "RATE_E_TIME",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-02",
+      "family": "profit_loss",
+      "templateId": "PL_H_CHAIN",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-03",
+      "family": "work_time",
+      "templateId": "WORK_E_INVERSE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-04",
+      "family": "machines",
+      "templateId": "MACH_M_NEW_FAST",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-05",
+      "family": "calendar",
+      "templateId": "CAL_M_TWO_SHIFT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-06",
+      "family": "averages",
+      "templateId": "AVG_E_ADD",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-07",
+      "family": "ratios",
+      "templateId": "RAT_M_ADD_SIDE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-08",
+      "family": "percentages",
+      "templateId": "PCT_H_CHAIN_VALUE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-09",
+      "family": "combined_rate",
+      "templateId": "COMB_E_TIME",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-10",
+      "family": "sequences",
+      "templateId": "SEQ_E_GEO",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:shownTerms",
+      "required": [
+        "2",
+        "6",
+        "18",
+        "54"
+      ],
+      "blankedTerm": "18",
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-11",
+      "family": "direct_proportion",
+      "templateId": "PROP_M_RECIPE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-12",
+      "family": "relational",
+      "templateId": "REL_M_BRANCH_UNRES",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-13",
+      "family": "speed",
+      "templateId": "SPD_M_AVG",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-14",
+      "family": "fractions",
+      "templateId": "FRAC_H_4",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-15",
+      "family": "ages",
+      "templateId": "AGE_E_MULT_DIFF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-16",
+      "family": "odd_one_out",
+      "templateId": "ODD_H_TRIANGULAR",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:numbers",
+      "required": [
+        "91",
+        "78",
+        "85",
+        "105",
+        "120",
+        "136"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-17",
+      "family": "speed",
+      "templateId": "SPD_M_EQUAL_DIST",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-18",
+      "family": "percentages",
+      "templateId": "PCT_E_REVERSE_ONE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-19",
+      "family": "combined_rate",
+      "templateId": "COMB_M_SOLO_THEN",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-20",
+      "family": "ratios",
+      "templateId": "RAT_M_COMMON_SUM",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-21",
+      "family": "odd_one_out",
+      "templateId": "ODD_E_MULT",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:numbers",
+      "required": [
+        "16",
+        "12",
+        "28",
+        "9",
+        "20",
+        "24"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-22",
+      "family": "ages",
+      "templateId": "AGE_M_FUT_RATIO",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-23",
+      "family": "profit_loss",
+      "templateId": "PL_E_PROFIT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-24",
+      "family": "machines",
+      "templateId": "MACH_M_SUBSET_UP",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-25",
+      "family": "direct_proportion",
+      "templateId": "PROP_M_FRAC_UNIT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-26",
+      "family": "averages",
+      "templateId": "AVG_M_REPLACE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-27",
+      "family": "fractions",
+      "templateId": "FRAC_M_3",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-28",
+      "family": "sequences",
+      "templateId": "SEQ_M_INTERLEAVED",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:shownTerms",
+      "required": [
+        "8",
+        "29",
+        "13",
+        "26",
+        "18",
+        "23",
+        "23"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-29",
+      "family": "unit_rate",
+      "templateId": "RATE_M_SCALE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-30",
+      "family": "relational",
+      "templateId": "REL_M_CONFIRM",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-31",
+      "family": "work_time",
+      "templateId": "WORK_M_TARGET",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-32",
+      "family": "calendar",
+      "templateId": "CAL_E_TOM",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-33",
+      "family": "machines",
+      "templateId": "MACH_H_TWO_TYPES",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-34",
+      "family": "percentages",
+      "templateId": "PCT_M_UNIT_PRICE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-35",
+      "family": "relational",
+      "templateId": "REL_M_COUNT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-36",
+      "family": "averages",
+      "templateId": "AVG_H_TARGET",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-37",
+      "family": "direct_proportion",
+      "templateId": "PROP_M_MAP",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-38",
+      "family": "ratios",
+      "templateId": "RAT_E_KNOWN",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-39",
+      "family": "work_time",
+      "templateId": "WORK_M_EFF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-40",
+      "family": "ages",
+      "templateId": "AGE_E_SUM_DIFF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-41",
+      "family": "calendar",
+      "templateId": "CAL_M_TWO_SHIFT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-42",
+      "family": "fractions",
+      "templateId": "FRAC_E_2",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-43",
+      "family": "speed",
+      "templateId": "SPD_M_AVG",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-44",
+      "family": "unit_rate",
+      "templateId": "RATE_M_PERCENT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-45",
+      "family": "sequences",
+      "templateId": "SEQ_M_ALT_OPS",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:shownTerms",
+      "required": [
+        "6",
+        "10",
+        "30",
+        "35",
+        "140",
+        "146",
+        "730"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-46",
+      "family": "combined_rate",
+      "templateId": "COMB_M_SOLO_THEN",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-47",
+      "family": "profit_loss",
+      "templateId": "PL_M_DISC_MARK",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-48",
+      "family": "odd_one_out",
+      "templateId": "ODD_M_PRONIC",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:numbers",
+      "required": [
+        "56",
+        "12",
+        "20",
+        "16",
+        "42",
+        "30"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-49",
+      "family": "percentages",
+      "templateId": "PCT_H_REVERSE_CHAIN",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S2-50",
+      "family": "calendar",
+      "templateId": "CAL_H_NESTED",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-01",
+      "family": "machines",
+      "templateId": "MACH_H_STAGE_UP",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-02",
+      "family": "profit_loss",
+      "templateId": "PL_M_TOTAL_COST",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-03",
+      "family": "odd_one_out",
+      "templateId": "ODD_H_TRIANGULAR",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:numbers",
+      "required": [
+        "118",
+        "78",
+        "91",
+        "55",
+        "105",
+        "66"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-04",
+      "family": "averages",
+      "templateId": "AVG_M_REPLACE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-05",
+      "family": "direct_proportion",
+      "templateId": "PROP_E_COST",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-06",
+      "family": "speed",
+      "templateId": "SPD_M_TWO_TIME",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-07",
+      "family": "fractions",
+      "templateId": "FRAC_E_2",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-08",
+      "family": "work_time",
+      "templateId": "WORK_M_EFF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-09",
+      "family": "percentages",
+      "templateId": "PCT_M_SUCCESSIVE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-10",
+      "family": "sequences",
+      "templateId": "SEQ_M_DOUBLE_DIFF",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:shownTerms",
+      "required": [
+        "4",
+        "6",
+        "10",
+        "18",
+        "34"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-11",
+      "family": "ages",
+      "templateId": "AGE_E_SUM_DIFF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-12",
+      "family": "ratios",
+      "templateId": "RAT_H_TRANSFER",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-13",
+      "family": "calendar",
+      "templateId": "CAL_M_COMPOUND",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-14",
+      "family": "unit_rate",
+      "templateId": "RATE_M_SCALE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-15",
+      "family": "combined_rate",
+      "templateId": "COMB_M_TOGETHER_SOLO",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-16",
+      "family": "relational",
+      "templateId": "REL_M_BRANCH_UNRES",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-17",
+      "family": "ratios",
+      "templateId": "RAT_M_COMMON_SUM",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-18",
+      "family": "unit_rate",
+      "templateId": "RATE_M_PERCENT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-19",
+      "family": "odd_one_out",
+      "templateId": "ODD_H_SQ_MINUS",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:numbers",
+      "required": [
+        "56",
+        "99",
+        "35",
+        "80",
+        "63",
+        "48"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-20",
+      "family": "fractions",
+      "templateId": "FRAC_E_2",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-21",
+      "family": "speed",
+      "templateId": "SPD_M_AVG",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-22",
+      "family": "direct_proportion",
+      "templateId": "PROP_M_RECIPE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-23",
+      "family": "machines",
+      "templateId": "MACH_H_STAGE_UP",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-24",
+      "family": "calendar",
+      "templateId": "CAL_E_TOM",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-25",
+      "family": "averages",
+      "templateId": "AVG_M_ADD_PAIR",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-26",
+      "family": "ages",
+      "templateId": "AGE_M_FUT_SUM_DIFF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-27",
+      "family": "combined_rate",
+      "templateId": "COMB_E_THREE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-28",
+      "family": "work_time",
+      "templateId": "WORK_E_VOLUME",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-29",
+      "family": "sequences",
+      "templateId": "SEQ_M_ALT_OPS",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:shownTerms",
+      "required": [
+        "4",
+        "8",
+        "16",
+        "21",
+        "63",
+        "69",
+        "276"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-30",
+      "family": "relational",
+      "templateId": "REL_H_POSITION",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-31",
+      "family": "profit_loss",
+      "templateId": "PL_E_LOSS",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-32",
+      "family": "percentages",
+      "templateId": "PCT_M_REMAIN",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-33",
+      "family": "combined_rate",
+      "templateId": "COMB_M_SOLO_THEN",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-34",
+      "family": "unit_rate",
+      "templateId": "RATE_M_PERCENT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-35",
+      "family": "ages",
+      "templateId": "AGE_M_FUT_RATIO",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-36",
+      "family": "relational",
+      "templateId": "REL_E_CHAIN",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-37",
+      "family": "profit_loss",
+      "templateId": "PL_M_TOTAL_COST",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-38",
+      "family": "speed",
+      "templateId": "SPD_M_EQUAL_DIST",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-39",
+      "family": "calendar",
+      "templateId": "CAL_M_COMPOUND",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-40",
+      "family": "fractions",
+      "templateId": "FRAC_M_3",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-41",
+      "family": "percentages",
+      "templateId": "PCT_E_OF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-42",
+      "family": "work_time",
+      "templateId": "WORK_E_INVERSE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-43",
+      "family": "machines",
+      "templateId": "MACH_H_TWO_TYPES",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-44",
+      "family": "averages",
+      "templateId": "AVG_M_COMBINE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-45",
+      "family": "odd_one_out",
+      "templateId": "ODD_M_CUBES",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:numbers",
+      "required": [
+        "8",
+        "64",
+        "125",
+        "27",
+        "216",
+        "49"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-46",
+      "family": "direct_proportion",
+      "templateId": "PROP_M_FRAC_UNIT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-47",
+      "family": "ratios",
+      "templateId": "RAT_M_COMMON_DIFF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-48",
+      "family": "sequences",
+      "templateId": "SEQ_H_POW_INDEX",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:shownTerms",
+      "required": [
+        "11",
+        "20",
+        "37",
+        "70"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-49",
+      "family": "profit_loss",
+      "templateId": "PL_E_PROFIT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S3-50",
+      "family": "direct_proportion",
+      "templateId": "PROP_E_ITEMS",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-01",
+      "family": "sequences",
+      "templateId": "SEQ_M_ALT_OPS",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:shownTerms",
+      "required": [
+        "8",
+        "11",
+        "33",
+        "37",
+        "148",
+        "153",
+        "765"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-02",
+      "family": "machines",
+      "templateId": "MACH_E_HOURS",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-03",
+      "family": "unit_rate",
+      "templateId": "RATE_M_PERCENT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-04",
+      "family": "direct_proportion",
+      "templateId": "PROP_M_MAP",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-05",
+      "family": "averages",
+      "templateId": "AVG_M_ADD_PAIR",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-06",
+      "family": "work_time",
+      "templateId": "WORK_H_WORKERS_EFF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-07",
+      "family": "calendar",
+      "templateId": "CAL_E_TOM",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-08",
+      "family": "fractions",
+      "templateId": "FRAC_M_3",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-09",
+      "family": "profit_loss",
+      "templateId": "PL_E_PROFIT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-10",
+      "family": "ratios",
+      "templateId": "RAT_E_SPLIT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-11",
+      "family": "speed",
+      "templateId": "SPD_H_CATCH",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-12",
+      "family": "percentages",
+      "templateId": "PCT_H_CHAIN_VALUE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-13",
+      "family": "ages",
+      "templateId": "AGE_M_RATIO_FUT_SUM",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-14",
+      "family": "odd_one_out",
+      "templateId": "ODD_M_PRONIC",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:numbers",
+      "required": [
+        "30",
+        "42",
+        "56",
+        "49",
+        "20",
+        "72"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-15",
+      "family": "combined_rate",
+      "templateId": "COMB_E_THREE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-16",
+      "family": "relational",
+      "templateId": "REL_E_CHAIN",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-17",
+      "family": "fractions",
+      "templateId": "FRAC_M_3",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-18",
+      "family": "calendar",
+      "templateId": "CAL_M_TWO_SHIFT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-19",
+      "family": "relational",
+      "templateId": "REL_E_BETWEEN",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-20",
+      "family": "speed",
+      "templateId": "SPD_M_TWO_TIME",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-21",
+      "family": "direct_proportion",
+      "templateId": "PROP_M_FRAC_UNIT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-22",
+      "family": "profit_loss",
+      "templateId": "PL_M_DISC_MARK",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-23",
+      "family": "sequences",
+      "templateId": "SEQ_E_GEO",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:shownTerms",
+      "required": [
+        "192",
+        "96",
+        "48",
+        "24",
+        "12"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-24",
+      "family": "work_time",
+      "templateId": "WORK_M_TARGET",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-25",
+      "family": "ratios",
+      "templateId": "RAT_M_COMMON_SUM",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-26",
+      "family": "machines",
+      "templateId": "MACH_M_SUBSET_UP",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-27",
+      "family": "combined_rate",
+      "templateId": "COMB_M_SOLO_THEN",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-28",
+      "family": "unit_rate",
+      "templateId": "RATE_M_PERCENT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-29",
+      "family": "ages",
+      "templateId": "AGE_H_PAST_FUT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-30",
+      "family": "percentages",
+      "templateId": "PCT_M_SUCCESSIVE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-31",
+      "family": "averages",
+      "templateId": "AVG_M_REPLACE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-32",
+      "family": "odd_one_out",
+      "templateId": "ODD_M_PRIME2",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:numbers",
+      "required": [
+        "2",
+        "26",
+        "14",
+        "10",
+        "34",
+        "22"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-33",
+      "family": "ratios",
+      "templateId": "RAT_M_ADD_SIDE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-34",
+      "family": "relational",
+      "templateId": "REL_M_COUNT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-35",
+      "family": "sequences",
+      "templateId": "SEQ_H_POW_INDEX",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:shownTerms",
+      "required": [
+        "3",
+        "6",
+        "11",
+        "20",
+        "37"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-36",
+      "family": "combined_rate",
+      "templateId": "COMB_H_STAGED",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-37",
+      "family": "fractions",
+      "templateId": "FRAC_M_3",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-38",
+      "family": "percentages",
+      "templateId": "PCT_E_OF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-39",
+      "family": "unit_rate",
+      "templateId": "RATE_H_TARGET",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-40",
+      "family": "odd_one_out",
+      "templateId": "ODD_M_PRONIC",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:numbers",
+      "required": [
+        "12",
+        "42",
+        "56",
+        "30",
+        "1",
+        "20"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-41",
+      "family": "machines",
+      "templateId": "MACH_E_HOURS",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-42",
+      "family": "work_time",
+      "templateId": "WORK_H_TWO_STAGE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-43",
+      "family": "speed",
+      "templateId": "SPD_M_AVG",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-44",
+      "family": "profit_loss",
+      "templateId": "PL_E_PROFIT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-45",
+      "family": "direct_proportion",
+      "templateId": "PROP_M_FRAC_UNIT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-46",
+      "family": "ages",
+      "templateId": "AGE_E_SUM_DIFF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-47",
+      "family": "averages",
+      "templateId": "AVG_M_COMBINE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-48",
+      "family": "calendar",
+      "templateId": "CAL_E_AFTER",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-49",
+      "family": "averages",
+      "templateId": "AVG_M_ADD_PAIR",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S4-50",
+      "family": "machines",
+      "templateId": "MACH_M_SUBSET_UP",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-01",
+      "family": "profit_loss",
+      "templateId": "PL_H_REVERSE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-02",
+      "family": "averages",
+      "templateId": "AVG_H_TARGET",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-03",
+      "family": "unit_rate",
+      "templateId": "RATE_H_TWO_PHASE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-04",
+      "family": "fractions",
+      "templateId": "FRAC_H_4",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-05",
+      "family": "odd_one_out",
+      "templateId": "ODD_H_SQ_MINUS",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:numbers",
+      "required": [
+        "24",
+        "10",
+        "48",
+        "63",
+        "80",
+        "35"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-06",
+      "family": "relational",
+      "templateId": "REL_H_GUARANTEE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-07",
+      "family": "machines",
+      "templateId": "MACH_H_STAGE_UP",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-08",
+      "family": "work_time",
+      "templateId": "WORK_H_TWO_STAGE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-09",
+      "family": "sequences",
+      "templateId": "SEQ_H_RECURRENCE",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:shownTerms",
+      "required": [
+        "3",
+        "2",
+        "7",
+        "16",
+        "39"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-10",
+      "family": "speed",
+      "templateId": "SPD_H_MEET_DELAY",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-11",
+      "family": "ages",
+      "templateId": "AGE_H_TWO_TIME",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-12",
+      "family": "calendar",
+      "templateId": "CAL_H_NESTED",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-13",
+      "family": "ratios",
+      "templateId": "RAT_H_TRANSFER",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-14",
+      "family": "direct_proportion",
+      "templateId": "PROP_H_COST_PLUS",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-15",
+      "family": "percentages",
+      "templateId": "PCT_H_REVERSE_CHAIN",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-16",
+      "family": "combined_rate",
+      "templateId": "COMB_H_STAGED",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-17",
+      "family": "speed",
+      "templateId": "SPD_H_TIME_DIFF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-18",
+      "family": "machines",
+      "templateId": "MACH_H_TWO_TYPES",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-19",
+      "family": "unit_rate",
+      "templateId": "RATE_H_TARGET",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-20",
+      "family": "calendar",
+      "templateId": "CAL_H_LONG",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-21",
+      "family": "averages",
+      "templateId": "AVG_H_COMB_ADD",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-22",
+      "family": "percentages",
+      "templateId": "PCT_H_CHAIN_VALUE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-23",
+      "family": "work_time",
+      "templateId": "WORK_H_WORKERS_EFF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-24",
+      "family": "combined_rate",
+      "templateId": "COMB_H_STAGED",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-25",
+      "family": "relational",
+      "templateId": "REL_H_POSITION",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-26",
+      "family": "fractions",
+      "templateId": "FRAC_H_4",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-27",
+      "family": "sequences",
+      "templateId": "SEQ_H_POW_INDEX",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:shownTerms",
+      "required": [
+        "6",
+        "11",
+        "20",
+        "37",
+        "70"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-28",
+      "family": "odd_one_out",
+      "templateId": "ODD_H_TRIANGULAR",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:numbers",
+      "required": [
+        "153",
+        "91",
+        "136",
+        "105",
+        "169",
+        "120"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-29",
+      "family": "ratios",
+      "templateId": "RAT_H_TWO_COMB",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-30",
+      "family": "direct_proportion",
+      "templateId": "PROP_H_COMPOUND",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-31",
+      "family": "ages",
+      "templateId": "AGE_H_PAST_FUT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-32",
+      "family": "profit_loss",
+      "templateId": "PL_H_REVERSE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-33",
+      "family": "fractions",
+      "templateId": "FRAC_H_4",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-34",
+      "family": "unit_rate",
+      "templateId": "RATE_H_TWO_PHASE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-35",
+      "family": "combined_rate",
+      "templateId": "COMB_H_STAGED",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-36",
+      "family": "machines",
+      "templateId": "MACH_H_STAGE_UP",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-37",
+      "family": "ratios",
+      "templateId": "RAT_H_TRANSFER",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-38",
+      "family": "ages",
+      "templateId": "AGE_H_TWO_TIME",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-39",
+      "family": "sequences",
+      "templateId": "SEQ_H_RECURRENCE",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:shownTerms",
+      "required": [
+        "3",
+        "3",
+        "9",
+        "21",
+        "51"
+      ],
+      "blankedTerm": "21",
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-40",
+      "family": "work_time",
+      "templateId": "WORK_H_TWO_STAGE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-41",
+      "family": "speed",
+      "templateId": "SPD_H_TIME_DIFF",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-42",
+      "family": "relational",
+      "templateId": "REL_H_GUARANTEE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-43",
+      "family": "odd_one_out",
+      "templateId": "ODD_H_SQ_MINUS",
+      "hasStimulus": true,
+      "provenance": "RECONSTRUCTED_FROM_PRESERVED_PARAMETERS",
+      "basis": "DISPLAYED_LIST:numbers",
+      "required": [
+        "48",
+        "15",
+        "35",
+        "24",
+        "8",
+        "1"
+      ],
+      "blankedTerm": null,
+      "unseenTerms": [],
+      "keyLeakedIntoStimulus": false,
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-44",
+      "family": "profit_loss",
+      "templateId": "PL_H_CHAIN",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-45",
+      "family": "averages",
+      "templateId": "AVG_H_TARGET",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-46",
+      "family": "percentages",
+      "templateId": "PCT_H_CHAIN_VALUE",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-47",
+      "family": "calendar",
+      "templateId": "CAL_H_LONG",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-48",
+      "family": "direct_proportion",
+      "templateId": "PROP_H_COST_PLUS",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-49",
+      "family": "averages",
+      "templateId": "AVG_H_COMB_ADD",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    },
+    {
+      "itemId": "H-S5-50",
+      "family": "ages",
+      "templateId": "AGE_H_PAST_FUT",
+      "hasStimulus": false,
+      "provenance": "NOT_APPLICABLE_NO_DISPLAY_EXPRESSION",
+      "basis": "NO_DISPLAY_EXPRESSION_IN_PRODUCTION",
+      "pass": true
+    }
+  ]
+}

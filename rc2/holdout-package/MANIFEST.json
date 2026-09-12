@@ -1,7 +1,7 @@
 {
   "schema": "rc2-holdout-package-v1",
   "section": "§26",
-  "builtAt": "2026-09-12T11:57:59.787Z",
+  "builtAt": "2026-09-12T12:15:35.054Z",
   "holdout": {
     "seed": "AUDIT-2026-09-12-B",
     "status": "FAILED_DIAGNOSTIC_HOLDOUT",
@@ -155,101 +155,118 @@
       {
         "id": "SESSION-1",
         "rendered": true,
-        "bytes": 236255
+        "bytes": 239029
       },
       {
         "id": "SESSION-2",
         "rendered": true,
-        "bytes": 238350
+        "bytes": 241521
       },
       {
         "id": "SESSION-3",
         "rendered": true,
-        "bytes": 237604
+        "bytes": 240233
       },
       {
         "id": "SESSION-4",
         "rendered": true,
-        "bytes": 238675
+        "bytes": 242559
       },
       {
         "id": "SESSION-5",
         "rendered": true,
-        "bytes": 240219
+        "bytes": 244367
       }
     ]
+  },
+  "solvability": {
+    "verified": {
+      "items": 250,
+      "solvable": 250,
+      "notSolvable": 0,
+      "withReconstructedStimulus": 30
+    },
+    "file": "SOLVABILITY.json",
+    "note": "Every one of the 250 blind questions is solvable from the blind package alone."
   },
   "limitations": [
     "The preserved holdout corpus records stems, the six published options, the key and the diversity/complexity metadata. It does NOT record per-question explanations, solution steps, per-option derivations or misconception ids. A blind review of mathematical correctness, option plausibility and Arabic language quality is fully supported by this package; a review of explanation and distractor-feedback quality is not, because those fields were never written to the preserved artifact.",
     "Recovering them would mean replaying the holdout seeds through the engine. Replay is deterministic and would yield byte-identical questions, but it is still a second generation and it has NOT been performed. It requires explicit authorisation.",
     "rc2/HOLDOUT.json records per-question latency percentiles as 0. They are unmeasured, not zero — see HOLDOUT-F2 in rc2/HOLDOUT_FINDINGS.json. The per-session figures in the same file are real.",
+    "The stimulus line for the sequences and odd_one_out families is RECONSTRUCTED from preserved parameters following production's own rendering rule; the holdout corpus never recorded displayExpression. Every blind record states its provenance and the rule applied. No question, option, key or seed was changed. Verified in SOLVABILITY.json: 250 of 250 solvable, 0 failures.",
+    "The PDF visible text layer stores Arabic as presentation forms (64.8% here; production's own export measures 78.3%). That is a Chromium print-to-PDF property, not a defect of this renderer, and it is why RC2-006 closed as RISK_REMEDIATED_AND_MEASURED rather than FIXED. The blind papers carry production's logical-text sidecar; use the .txt or .jsonl for search and copy.",
     "The split of the 104 undispositioned discards between src/index.js:402 and src/index.js:403 was not measured, because separating them requires instrumenting frozen production code."
   ],
   "files": [
     {
       "path": "README.md",
-      "bytes": 5194,
-      "sha256": "3083b98cb3708a541e49bcd1313fd1cc2954851c3b28d0bee4a779a50989606d"
+      "bytes": 8077,
+      "sha256": "8062bd76e446712bd805849d8a85f8e067990cb4a248b971ce0c8a4399383dd2"
+    },
+    {
+      "path": "SOLVABILITY.json",
+      "bytes": 74846,
+      "sha256": "25ec130c4dd4deeca414064a9f74d5a8679fb4a56dc5d8d0a24f61c6cdd3425c"
     },
     {
       "path": "blind/blind-questions.jsonl",
-      "bytes": 111539,
-      "sha256": "d8af82a759bbd4e2a2ac48e9e1a3fb7abc885a6f7fa64f282974df6abee380d7"
+      "bytes": 138685,
+      "sha256": "ed45cc7b7af41613acc8091b89c1bb20b9d48c9e0d02e0a1b8b570d5ca0a2e5c"
     },
     {
       "path": "blind/blind-questions.txt",
-      "bytes": 79027,
-      "sha256": "e99ec0cbd0db86c944ecd513d19ad68feac033254b1f4177b4f522468fe60495"
+      "bytes": 81023,
+      "sha256": "bfd0805304e0db17225587688099cd3ecb5b3d203a1554b4102fcb9552af4e12"
     },
     {
       "path": "blind/session-1.html",
-      "bytes": 32750,
-      "sha256": "8a40327238d2c0833195f4feadeb5cd0eddf556aa5a90b21d63f5575c514f5f0"
+      "bytes": 52468,
+      "sha256": "de236d8c4d42bdcec538f162e965950398358b7ce530d26cc24977ca55f63515"
     },
     {
       "path": "blind/session-1.pdf",
-      "bytes": 236255,
-      "sha256": "32e893d8b43c45a8989a4db0d35fe2ffd52cc22026fc1b032ce83313d6eeff20"
+      "bytes": 239029,
+      "sha256": "4ec8bbd577ae8c755a634ed6ac99ec1b3d0e5f65bce33cd04048b553cbc92eaa"
     },
     {
       "path": "blind/session-2.html",
-      "bytes": 33135,
-      "sha256": "ed8df8670ab36cf7758ee5903ee30d2d9328086074211e3e9867a3be9615b8b1"
+      "bytes": 53286,
+      "sha256": "a433d69f582e1a694a9e1edaecca7cbd6590b72357713cc55ca022f920303749"
     },
     {
       "path": "blind/session-2.pdf",
-      "bytes": 238350,
-      "sha256": "2a876aa52910cd20f1b2e47adfd6526d2a728d0031bf5891d85da4e64d1b5e9b"
+      "bytes": 241521,
+      "sha256": "f0f5baf89d0cf87c7303c0c83d11fc180a0296de5cf49b82ba8e036010aebf8e"
     },
     {
       "path": "blind/session-3.html",
-      "bytes": 32429,
-      "sha256": "bd7573e89869df8b2b283151b733f670e2842f2463984dda22a3f4b7f22e75ba"
+      "bytes": 51835,
+      "sha256": "57745fb52eeeff7d8bb42aee867df4f99a971e0a4a88027f53ea6ded70812b27"
     },
     {
       "path": "blind/session-3.pdf",
-      "bytes": 237604,
-      "sha256": "46679074f45bda4f4607384b424ed077b2147f66f1ac8a9da7a4416825245a9d"
+      "bytes": 240233,
+      "sha256": "a2c19ff32375a16c557cba14e7a41abf7ad8e3680ecc33da2be7354eb22b82ac"
     },
     {
       "path": "blind/session-4.html",
-      "bytes": 32955,
-      "sha256": "d61fec6b5d378c6dcc97a3fd7e5cdf0ac5ff4d31655c8baffc24b31b956d0bc3"
+      "bytes": 52932,
+      "sha256": "aaba632c7bcc2d8dde33a4455e5ac5d8994d4b13838b42c3a8ee0ee5f959aff2"
     },
     {
       "path": "blind/session-4.pdf",
-      "bytes": 238675,
-      "sha256": "424923a7f1dad3a640173dd5178d3821b4b1500ce2d0c95fac242d9867994f74"
+      "bytes": 242559,
+      "sha256": "7c8da225f1130a99790ca93f0ad89a04daa34ccc793f9dda96953fd6b69b6da4"
     },
     {
       "path": "blind/session-5.html",
-      "bytes": 33993,
-      "sha256": "0c1c2d714fffb6728bbcf7590ea5d08c5c38146f3b7fd9548ccfb327711ef350"
+      "bytes": 54977,
+      "sha256": "ab4df5ddbaaee0103b118761a87c8dde7f3d8116acebe87704a35429cbe116fc"
     },
     {
       "path": "blind/session-5.pdf",
-      "bytes": 240219,
-      "sha256": "16dd671a177988d4734c118dff4b21e77da3c7f0321bd1b1e83f7dcbe4241e94"
+      "bytes": 244367,
+      "sha256": "a9f586b331ec21c36e9a0fe1bfc6d50716f8b8a5ca264d7f1151ed0f3c8f4d09"
     },
     {
       "path": "keys/answer-key.jsonl",
@@ -267,5 +284,5 @@
       "sha256": "b4d8e242c5b71a65a4a5d1d84f40efc5737ed58c64c0756815d3dd33b3c5bc77"
     }
   ],
-  "fileCount": 16
+  "fileCount": 17
 }

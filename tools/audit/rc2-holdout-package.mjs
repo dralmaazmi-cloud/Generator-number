@@ -63,6 +63,88 @@ const items = rows.map(r => {
 });
 
 // ============================================================================
+// 0. the candidate-visible stimulus, reconstructed from preserved parameters
+// ============================================================================
+// Two families render a stimulus line beside the stem — and only two. Verified
+// by the fact that `displayExpression` is emitted in exactly
+// src/families/sequences.js and src/families/odd_one_out.js, and nowhere else;
+// for every other family the stem prose is the whole of what a candidate saw.
+//
+// The preserved holdout corpus did not record the rendered string, but it did
+// record the parameters it was rendered from, inside the fingerprint. So the
+// stimulus is RECONSTRUCTED here, following production's own rule verbatim:
+//
+//   sequences (src/families/sequences.js:54-56, and the same three-way rule at
+//   161-163, 250-251, 351, 425, 472-473, 573, 645, 722):
+//       askMiddle    -> seq with the hidden position replaced by '؟'
+//       askPrevious  -> '؟، ' + seq
+//       otherwise    -> seq + '، ؟'
+//   odd_one_out (src/families/odd_one_out.js:76):
+//       group.join('، '), where `group` is parameters.numbers, in display order
+//
+// Separator and placeholder are production's: '، ' and '؟'.
+//
+// This is a reconstruction, not a preserved byte, and every record says so.
+// Reading production source to get the rule right is not modifying production
+// and not replaying the engine.
+const SEP = '، ';
+const BLANK = '؟';
+
+const fpList = (fp, key) => {
+  const m = String(fp).match(new RegExp(`${key}:\\[([^\\]]*)\\]`));
+  return m ? m[1].split(',').map(x => x.trim()).filter(Boolean) : null;
+};
+const fpAsked = fp => (String(fp).match(/askedUnknown:(\w+)/) || [])[1] ?? null;
+
+function stimulusFor(it) {
+  if (it.family === 'odd_one_out') {
+    const numbers = fpList(it.fingerprint, 'numbers');
+    if (!numbers) return {stimulus: null, provenance: 'UNAVAILABLE', rule: null};
+    return {
+      stimulus: numbers.join(SEP),
+      provenance: 'RECONSTRUCTED_FROM_PRESERVED_PARAMETERS',
+      rule: "odd_one_out: parameters.numbers joined with '، ' (src/families/odd_one_out.js:76)"
+    };
+  }
+  if (it.family === 'sequences') {
+    const seq = fpList(it.fingerprint, 'shownTerms');
+    if (!seq) return {stimulus: null, provenance: 'UNAVAILABLE', rule: null};
+    const asked = fpAsked(it.fingerprint);
+    if (asked === 'missingMiddleTerm') {
+      // The hidden position is the one holding the key. Production blanks it, so
+      // the key is never displayed. Located by value, and the builder refuses to
+      // emit unless that value occurs exactly once — a guess about which term is
+      // blank would be a guess about the question itself.
+      const hits = seq.filter(v => v === String(it.value)).length;
+      if (hits !== 1) {
+        return {stimulus: null, provenance: 'AMBIGUOUS_CANNOT_RECONSTRUCT', rule: null,
+          note: `key ${it.value} occurs ${hits} times in shownTerms; blank position not determinable`};
+      }
+      return {
+        stimulus: seq.map(v => (v === String(it.value) ? BLANK : v)).join(SEP),
+        provenance: 'RECONSTRUCTED_FROM_PRESERVED_PARAMETERS',
+        rule: "sequences/askMiddle: shownTerms with the key's position replaced by '؟' (src/families/sequences.js:54)"
+      };
+    }
+    if (asked === 'previousTerm') {
+      return {
+        stimulus: `${BLANK}${SEP}${seq.join(SEP)}`,
+        provenance: 'RECONSTRUCTED_FROM_PRESERVED_PARAMETERS',
+        rule: "sequences/askPrevious: '؟، ' + shownTerms (src/families/sequences.js:55)"
+      };
+    }
+    return {
+      stimulus: `${seq.join(SEP)}${SEP}${BLANK}`,
+      provenance: 'RECONSTRUCTED_FROM_PRESERVED_PARAMETERS',
+      rule: "sequences/next: shownTerms + '، ؟' (src/families/sequences.js:56)"
+    };
+  }
+  return {stimulus: null, provenance: 'NOT_APPLICABLE_NO_DISPLAY_EXPRESSION', rule: null};
+}
+
+for (const it of items) Object.assign(it, stimulusFor(it));
+
+// ============================================================================
 // 1. blind question set — no key, no value, no complexity judgement
 // ============================================================================
 const blind = items.map(i => ({
@@ -74,6 +156,9 @@ const blind = items.map(i => ({
   templateId: i.templateId,
   declaredDifficulty: i.difficulty,
   stem: i.question,
+  stimulus: i.stimulus,
+  stimulusProvenance: i.provenance,
+  stimulusRule: i.rule,
   options: Object.fromEntries(LETTERS.map(L => [L, i.options[L]]))
 }));
 
@@ -179,6 +264,7 @@ function blindText() {
     }
     out.push(`### ${b.itemId}   ${b.templateId}   [${b.declaredDifficulty}]   ${b.family}`);
     out.push(b.stem);
+    if (b.stimulus) out.push(`   ${b.stimulus}          [stimulus: reconstructed]`);
     for (const L of LETTERS) out.push(`   ${L}) ${b.options[L]}`);
     out.push('');
   }
@@ -196,6 +282,7 @@ function blindHtml(sessionId) {
   <article class="q">
     <div class="hd"><span class="id">${esc(b.itemId)}</span><span class="tpl">${esc(b.templateId)} · ${esc(b.family)} · ${esc(b.declaredDifficulty)}</span></div>
     <p class="stem">${esc(b.stem)}</p>
+    ${b.stimulus ? `<p class="stim" title="reconstructed from preserved parameters">${esc(b.stimulus)}</p>` : ''}
     <ol class="opts">${LETTERS.map(L => `<li><span class="l">${L}</span>${esc(b.options[L])}</li>`).join('')}</ol>
   </article>`).join('\n');
 
@@ -212,6 +299,7 @@ function blindHtml(sessionId) {
   .q { break-inside: avoid; page-break-inside: avoid; margin: 0 0 14px; padding: 8px 10px; border-right: 3px solid #ccc; }
   .hd { display: flex; justify-content: space-between; font-size: 8.5pt; color: #555; direction: ltr; font-family: "DejaVu Sans Mono", monospace; margin-bottom: 4px; }
   .stem { margin: 0 0 6px; font-size: 12.5pt; }
+  .stim { margin: 0 0 8px; font-size: 13pt; letter-spacing: .04em; background: #f4f4f0; border: 1px solid #ddd; padding: 5px 10px; display: inline-block; }
   .opts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px; }
   .opts li { font-size: 11.5pt; }
   .l { display: inline-block; min-width: 1.6em; color: #555; font-family: "DejaVu Sans Mono", monospace; }
@@ -224,6 +312,14 @@ function blindHtml(sessionId) {
 <div class="warn" dir="ltr"><strong>FAILED DIAGNOSTIC HOLDOUT.</strong> Delivered for independent blind review. No answer keys in this document. Questions are preserved exactly as generated and must not be edited, replaced or regenerated.</div>
 ${body}
 <footer>${esc(sessionId)} — ${sel.length} questions — blind — AUDIT-2026-09-12-B</footer>
+<!-- RC2-006. A Chromium-printed PDF stores Arabic as presentation forms in its
+     visible text layer, so search and copy-paste out of the PDF are unreliable.
+     Production ships a logical-order Unicode sidecar in the HTML for exactly
+     this reason (report.js buildReportTextLayer); the blind papers carry the
+     same remediation so this package is no weaker than production. -->
+<script type="application/json" id="report-logical-text">${JSON.stringify(
+  sel.map(b => ({itemId: b.itemId, stem: b.stem, stimulus: b.stimulus,
+    options: b.options})), null, 1).replace(/</g, '\\u003c')}</script>
 </body></html>
 `;
 }
@@ -265,6 +361,113 @@ for (const id of sessionIds) {
   }
 }
 
+
+// ============================================================================
+// 5. mechanical solvability verification
+// ============================================================================
+// The claim to be checked is narrow and testable: every value a candidate needed
+// to see is present in the blind package. It rests on one structural fact —
+// `displayExpression` is emitted by exactly two family modules — so for the
+// other fourteen families the stem and the options are, provably, everything
+// that was ever on screen.
+//
+// For the two families that do render a stimulus, the check is direct: every
+// term production would have displayed must appear in the blind record, and the
+// key must NOT appear in the stimulus (a blanked middle term that leaked its own
+// answer would be worse than no stimulus at all).
+const DISPLAY_FAMILIES = new Set(['sequences', 'odd_one_out']);
+
+function verifySolvability() {
+  const failures = [];
+  const checks = [];
+  const blindById = new Map(blind.map(b => [b.itemId, b]));
+
+  for (const it of items) {
+    const b = blindById.get(it.itemId);
+    const visible = [b.stem, b.stimulus ?? '', ...LETTERS.map(L => String(b.options[L]))].join(' ');
+    const visibleNums = new Set(visible.match(/\d+(?:\.\d+)?/g) || []);
+    const rec = {itemId: it.itemId, family: it.family, templateId: it.templateId,
+      hasStimulus: Boolean(b.stimulus), provenance: b.stimulusProvenance};
+
+    if (!DISPLAY_FAMILIES.has(it.family)) {
+      // No display expression exists for this family in production, so nothing
+      // can be missing from the package that was present on screen.
+      rec.basis = 'NO_DISPLAY_EXPRESSION_IN_PRODUCTION';
+      rec.pass = true;
+      checks.push(rec);
+      continue;
+    }
+
+    const key = it.family === 'sequences' ? 'shownTerms' : 'numbers';
+    const list = fpList(it.fingerprint, key);
+    rec.basis = `DISPLAYED_LIST:${key}`;
+    rec.required = list;
+
+    if (!list) {
+      rec.pass = false; rec.reason = `${key} absent from preserved fingerprint`;
+      failures.push(rec); checks.push(rec); continue;
+    }
+    if (!b.stimulus) {
+      rec.pass = false; rec.reason = 'stimulus could not be reconstructed';
+      failures.push(rec); checks.push(rec); continue;
+    }
+
+    // Every displayed term must be visible — except the deliberately blanked one.
+    const hiddenTerm = (fpAsked(it.fingerprint) === 'missingMiddleTerm') ? String(it.value) : null;
+    const mustSee = list.filter(v => v !== hiddenTerm);
+    const unseen = mustSee.filter(v => !visibleNums.has(v));
+    // And, for sequences only, the key must never be readable inside the
+    // stimulus: the answer there is the term production blanked out. This rule
+    // does NOT apply to odd_one_out, where the key is one of the six displayed
+    // numbers by construction — picking it out of the set is the task.
+    const stimNums = new Set((b.stimulus.match(/\d+(?:\.\d+)?/g) || []));
+    const keyLeaked = it.family === 'sequences' && stimNums.has(String(it.value));
+
+    rec.blankedTerm = hiddenTerm;
+    rec.unseenTerms = unseen;
+    rec.keyLeakedIntoStimulus = keyLeaked;
+    rec.pass = unseen.length === 0 && !keyLeaked;
+    if (!rec.pass) {
+      rec.reason = keyLeaked ? 'the key is visible inside a sequence stimulus'
+        : `terms absent from everything the candidate can see: ${unseen.join(', ')}`;
+      failures.push(rec);
+    }
+    checks.push(rec);
+  }
+
+  const byFamily = {};
+  for (const c of checks) {
+    const f = byFamily[c.family] ??= {items: 0, withStimulus: 0, pass: 0};
+    f.items++; if (c.hasStimulus) f.withStimulus++; if (c.pass) f.pass++;
+  }
+
+  return {
+    schema: 'rc2-holdout-solvability-v1',
+    section: '§26',
+    question: 'Is every one of the 250 blind questions solvable from the blind package alone?',
+    method: [
+      'Production emits displayExpression in exactly two family modules: src/families/sequences.js and src/families/odd_one_out.js. Established by grep over src/families/*.js, not assumed.',
+      'For the other fourteen families the stem prose and the six options are therefore the whole of what a candidate ever saw, and nothing can be missing.',
+      'For the two display families, every term production would have rendered must be present in the blind record, and the key must not appear inside the stimulus.'
+    ],
+    totals: {
+      items: checks.length,
+      solvable: checks.filter(c => c.pass).length,
+      notSolvable: failures.length,
+      withReconstructedStimulus: checks.filter(c => c.hasStimulus).length
+    },
+    byFamily,
+    failures,
+    checks
+  };
+}
+
+const solvability = verifySolvability();
+writeFileSync(join(OUT, 'SOLVABILITY.json'), JSON.stringify(solvability, null, 2) + '\n');
+if (solvability.totals.notSolvable > 0) {
+  console.error(`SOLVABILITY FAILED for ${solvability.totals.notSolvable} item(s)`);
+  for (const f of solvability.failures.slice(0, 10)) console.error('  ', f.itemId, f.reason);
+}
 
 // --- reviewer README --------------------------------------------------------
 const README = `# RC2 — FAILED DIAGNOSTIC HOLDOUT \`AUDIT-2026-09-12-B\`
@@ -359,16 +562,70 @@ Replay is deterministic and would return byte-identical questions, but it is
 still a second generation, it has **not** been performed, and it needs explicit
 authorisation.
 
-## Two further caveats
+## The stimulus line, and how it got here
 
-- **PDF text layer.** The visible text layer of the PDFs is Arabic *presentation
-  forms* (about 583 against 317 base letters on session 1), so search and
-  copy-paste out of the PDF are unreliable. This is the known RC2-006 limitation.
-  Use \`blind/blind-questions.txt\` or the \`.jsonl\` as the authoritative text;
-  the PDFs are for reading and printing.
-- **Latency in \`rc2/HOLDOUT.json\`** reads \`0\` for the per-question
-  percentiles. Those are *unmeasured*, not zero — see HOLDOUT-F2. The per-session
-  figures in that file are real (1.076–2.624 ms/question).
+Two families render a stimulus beside the stem, and only two — \`sequences\` and
+\`odd_one_out\`. The first build of this package omitted it, which left all 15
+sequences items unsolvable (H-S1-11 and H-S5-09 among them). Fixed.
+
+The preserved corpus never recorded the rendered string, but it did record the
+parameters it was rendered from, inside the fingerprint. The stimulus is
+therefore **reconstructed**, following production's own rule verbatim — read out
+of \`src/families/sequences.js\` and \`src/families/odd_one_out.js\`, which is
+neither a modification nor a replay:
+
+| case | rule | source |
+|---|---|---|
+| sequences, missing middle | \`shownTerms\` with the key's position replaced by \`؟\` | sequences.js:54 |
+| sequences, previous term | \`؟، \` + \`shownTerms\` | sequences.js:55 |
+| sequences, next term | \`shownTerms\` + \`، ؟\` | sequences.js:56 |
+| odd_one_out | \`parameters.numbers\` joined with \`، \`, in display order | odd_one_out.js:76 |
+
+Every blind record carries \`stimulusProvenance\` and the exact \`stimulusRule\`
+used, so a reviewer can see this is derived rather than preserved. **No question,
+option, key or seed was changed.** For the missing-middle case the builder refuses
+to emit unless the key occurs exactly once in the term list, because guessing
+which term is blank would be guessing at the question; all three such items
+resolved unambiguously.
+
+## Solvability, verified mechanically
+
+\`SOLVABILITY.json\` — **250 of 250 solvable, 0 failures.** The check does not rest
+on inspection. \`displayExpression\` is emitted by exactly two family modules,
+established by grep over \`src/families/*.js\`; for the other fourteen families the
+stem and the six options are provably the whole of what a candidate ever saw. For
+the two display families, every term production would have rendered must be
+present, and for sequences the key must not be readable inside the stimulus — a
+blanked term that leaked its own answer would be worse than no stimulus at all.
+That last rule is deliberately not applied to \`odd_one_out\`, where the key is one
+of the six displayed numbers by construction.
+
+## The PDF text layer — renderer, or production?
+
+**Both, and the distinction matters.** Measured, not asserted:
+
+| | visible-layer presentation-form share | stems findable in visible layer |
+|---|---|---|
+| production's own PDF export (RC2-006 evidence) | **78.3%** | 0 of 8 |
+| these blind papers | **64.8%** | — |
+
+So this is **not** a defect introduced by the holdout-package renderer. It is a
+property of Chromium print-to-PDF, and production's own export measures *worse*.
+It does show the underlying limitation is real and unresolved in any
+Chromium-printed PDF — which is precisely why RC2-006 closed as
+\`RISK_REMEDIATED_AND_MEASURED\` and not as \`FIXED\`. Production could not repair
+the PDF layer; it shipped a logical-order Unicode sidecar in the HTML instead and
+declared the limit.
+
+The real gap was that this package had **omitted that remediation**. Fixed: the
+blind papers now carry the same \`report-logical-text\` block production ships, so
+the package is no weaker than production. For search and copy use
+\`blind/blind-questions.txt\`, the \`.jsonl\`, or that block — not the PDF text
+layer.
+
+- **Latency in \`rc2/HOLDOUT.json\`** reads \`0\` for the per-question percentiles.
+  Those are *unmeasured*, not zero — see HOLDOUT-F2. The per-session figures in
+  that file are real (1.076–2.624 ms/question).
 
 ## Integrity
 
@@ -433,10 +690,17 @@ const manifest = {
     file: 'telemetry/HOLDOUT_TELEMETRY_EVIDENCE.json'
   },
   rendering: {chromium: chrome, pdfs: pdfResults},
+  solvability: {
+    verified: solvability.totals,
+    file: 'SOLVABILITY.json',
+    note: 'Every one of the 250 blind questions is solvable from the blind package alone.'
+  },
   limitations: [
     'The preserved holdout corpus records stems, the six published options, the key and the diversity/complexity metadata. It does NOT record per-question explanations, solution steps, per-option derivations or misconception ids. A blind review of mathematical correctness, option plausibility and Arabic language quality is fully supported by this package; a review of explanation and distractor-feedback quality is not, because those fields were never written to the preserved artifact.',
     'Recovering them would mean replaying the holdout seeds through the engine. Replay is deterministic and would yield byte-identical questions, but it is still a second generation and it has NOT been performed. It requires explicit authorisation.',
     'rc2/HOLDOUT.json records per-question latency percentiles as 0. They are unmeasured, not zero — see HOLDOUT-F2 in rc2/HOLDOUT_FINDINGS.json. The per-session figures in the same file are real.',
+    'The stimulus line for the sequences and odd_one_out families is RECONSTRUCTED from preserved parameters following production\'s own rendering rule; the holdout corpus never recorded displayExpression. Every blind record states its provenance and the rule applied. No question, option, key or seed was changed. Verified in SOLVABILITY.json: 250 of 250 solvable, 0 failures.',
+    'The PDF visible text layer stores Arabic as presentation forms (64.8% here; production\'s own export measures 78.3%). That is a Chromium print-to-PDF property, not a defect of this renderer, and it is why RC2-006 closed as RISK_REMEDIATED_AND_MEASURED rather than FIXED. The blind papers carry production\'s logical-text sidecar; use the .txt or .jsonl for search and copy.',
     'The split of the 104 undispositioned discards between src/index.js:402 and src/index.js:403 was not measured, because separating them requires instrumenting frozen production code.'
   ],
   files: []

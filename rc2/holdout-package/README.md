@@ -90,16 +90,70 @@ Replay is deterministic and would return byte-identical questions, but it is
 still a second generation, it has **not** been performed, and it needs explicit
 authorisation.
 
-## Two further caveats
+## The stimulus line, and how it got here
 
-- **PDF text layer.** The visible text layer of the PDFs is Arabic *presentation
-  forms* (about 583 against 317 base letters on session 1), so search and
-  copy-paste out of the PDF are unreliable. This is the known RC2-006 limitation.
-  Use `blind/blind-questions.txt` or the `.jsonl` as the authoritative text;
-  the PDFs are for reading and printing.
-- **Latency in `rc2/HOLDOUT.json`** reads `0` for the per-question
-  percentiles. Those are *unmeasured*, not zero — see HOLDOUT-F2. The per-session
-  figures in that file are real (1.076–2.624 ms/question).
+Two families render a stimulus beside the stem, and only two — `sequences` and
+`odd_one_out`. The first build of this package omitted it, which left all 15
+sequences items unsolvable (H-S1-11 and H-S5-09 among them). Fixed.
+
+The preserved corpus never recorded the rendered string, but it did record the
+parameters it was rendered from, inside the fingerprint. The stimulus is
+therefore **reconstructed**, following production's own rule verbatim — read out
+of `src/families/sequences.js` and `src/families/odd_one_out.js`, which is
+neither a modification nor a replay:
+
+| case | rule | source |
+|---|---|---|
+| sequences, missing middle | `shownTerms` with the key's position replaced by `؟` | sequences.js:54 |
+| sequences, previous term | `؟، ` + `shownTerms` | sequences.js:55 |
+| sequences, next term | `shownTerms` + `، ؟` | sequences.js:56 |
+| odd_one_out | `parameters.numbers` joined with `، `, in display order | odd_one_out.js:76 |
+
+Every blind record carries `stimulusProvenance` and the exact `stimulusRule`
+used, so a reviewer can see this is derived rather than preserved. **No question,
+option, key or seed was changed.** For the missing-middle case the builder refuses
+to emit unless the key occurs exactly once in the term list, because guessing
+which term is blank would be guessing at the question; all three such items
+resolved unambiguously.
+
+## Solvability, verified mechanically
+
+`SOLVABILITY.json` — **250 of 250 solvable, 0 failures.** The check does not rest
+on inspection. `displayExpression` is emitted by exactly two family modules,
+established by grep over `src/families/*.js`; for the other fourteen families the
+stem and the six options are provably the whole of what a candidate ever saw. For
+the two display families, every term production would have rendered must be
+present, and for sequences the key must not be readable inside the stimulus — a
+blanked term that leaked its own answer would be worse than no stimulus at all.
+That last rule is deliberately not applied to `odd_one_out`, where the key is one
+of the six displayed numbers by construction.
+
+## The PDF text layer — renderer, or production?
+
+**Both, and the distinction matters.** Measured, not asserted:
+
+| | visible-layer presentation-form share | stems findable in visible layer |
+|---|---|---|
+| production's own PDF export (RC2-006 evidence) | **78.3%** | 0 of 8 |
+| these blind papers | **64.8%** | — |
+
+So this is **not** a defect introduced by the holdout-package renderer. It is a
+property of Chromium print-to-PDF, and production's own export measures *worse*.
+It does show the underlying limitation is real and unresolved in any
+Chromium-printed PDF — which is precisely why RC2-006 closed as
+`RISK_REMEDIATED_AND_MEASURED` and not as `FIXED`. Production could not repair
+the PDF layer; it shipped a logical-order Unicode sidecar in the HTML instead and
+declared the limit.
+
+The real gap was that this package had **omitted that remediation**. Fixed: the
+blind papers now carry the same `report-logical-text` block production ships, so
+the package is no weaker than production. For search and copy use
+`blind/blind-questions.txt`, the `.jsonl`, or that block — not the PDF text
+layer.
+
+- **Latency in `rc2/HOLDOUT.json`** reads `0` for the per-question percentiles.
+  Those are *unmeasured*, not zero — see HOLDOUT-F2. The per-session figures in
+  that file are real (1.076–2.624 ms/question).
 
 ## Integrity
 
