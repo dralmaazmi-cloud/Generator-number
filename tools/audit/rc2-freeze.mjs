@@ -14,7 +14,7 @@ import {execFileSync} from 'node:child_process';
 import {join} from 'node:path';
 
 import {ENGINE_VERSION} from '../../src/index.js';
-import {DEVELOPMENT_SEEDS, RC21_DEVELOPMENT_SEEDS, RC22_DEVELOPMENT_SEEDS, RC23_DEVELOPMENT_SEEDS, HOLDOUT_SEED} from './rc2-development-corpus.mjs';
+import {DEVELOPMENT_SEEDS, RC21_DEVELOPMENT_SEEDS, RC22_DEVELOPMENT_SEEDS, RC23_DEVELOPMENT_SEEDS, RC24_DEVELOPMENT_SEEDS, HOLDOUT_SEED} from './rc2-development-corpus.mjs';
 import {HOLDOUT_SEED as RC21_HOLDOUT_SEED} from './rc21-holdout.mjs';
 import {HOLDOUT_SEED as RC22_HOLDOUT_SEED} from './rc22-holdout.mjs';
 import {RC23_SIGNOFF_SEED} from './rc2-internal-gate.mjs';
