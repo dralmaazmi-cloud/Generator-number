@@ -42,7 +42,10 @@ function simplePercent(ctx) {
     ],
     howToStart: 'حوّل النسبة إلى جزء من 100 واضرب في القيمة.',
     remember: 'النسبة المئوية من عدد = العدد × النسبة ÷ 100.',
-    fastMethod: pct === 25 ? `ربع ${baseVal} = ${correct}.` : `${baseVal} × ${pct} ÷ 100.`,
+    // RC2-019: a reusable rule first, then this instance.
+    fastMethod: pct === 25
+      ? `النسبة 25% تعني الربع، فاقسم العدد على 4 — هنا ربع ${baseVal} = ${correct}.`
+      : `اضرب العدد في النسبة ثم اقسم على 100 — هنا ${baseVal} × ${pct} ÷ 100 = ${correct}.`,
     estimatedSteps: 2, conceptTags: ['percentage'], parameters: params,
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, 100), mul(baseVal, pct))]},
     askedUnknown: 'percentOfValue', stageCount: 1,

@@ -1,6 +1,8 @@
 import {buildPrintReportHtml} from './report.js';
 
-const UI_VERSION = '1.2.1';
+// RC2-021. The UI and the engine ship as one bundle, so they carry one version.
+// A second literal here is exactly the duplication the RC1 audit caught: the
+// pill read v1.2.0 while the engine was 1.3.0.
 const STORAGE_KEY = 'numerical_generator_saved_session_v2';
 const STATS_KEY = 'numerical_generator_family_stats_v1';
 const LAST_SETTINGS_KEY = 'numerical_generator_last_settings_v1';
@@ -42,7 +44,7 @@ async function bootstrap(){
     state.engine=new mod.default();
     state.families=state.engine.listFamilies();
     if(!state.families.length) throw new Error('Family registry is empty');
-    $('engineVersion').textContent=`UI v${UI_VERSION} · Engine v${mod.ENGINE_VERSION}`;
+    $('engineVersion').textContent=`v${mod.ENGINE_VERSION}`;
     renderFamilyGrid();
     populateFamilySelect();
     restoreLastSettings();

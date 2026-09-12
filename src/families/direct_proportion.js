@@ -168,7 +168,8 @@ function unitItems(ctx) {
       ],
       howToStart: 'احسب قيمة الوحدة الواحدة أولًا.',
       remember: 'في التناسب المباشر، قيمة الوحدة هي أسرع طريق للحل.',
-      fastMethod: `${total} ÷ ${boxes} ثم × ${targetCount}.`,
+      // RC2-019: a reusable rule first, then this instance.
+      fastMethod: `احسب نصيب الوحدة الواحدة ثم اضربه في العدد المطلوب — هنا ${total} ÷ ${boxes} ثم × ${targetCount}.`,
       estimatedSteps: 2,
       conceptTags: ['direct-proportion', 'unit-value'],
       parameters: params,
@@ -214,7 +215,8 @@ function unitItems(ctx) {
     ],
     howToStart: 'احسب محتوى العلبة الواحدة ثم اقسم الكمية المطلوبة عليه.',
     remember: 'عند ثبات المعدل: عدد الوحدات = الكمية المطلوبة ÷ قيمة الوحدة.',
-    fastMethod: `${targetAmount} ÷ (${total} ÷ ${boxes}).`,
+    // RC2-019: a reusable rule first, then this instance.
+    fastMethod: `اقسم الكمية المطلوبة على نصيب الوحدة الواحدة — هنا ${targetAmount} ÷ (${total} ÷ ${boxes}).`,
     estimatedSteps: 2,
     conceptTags: ['direct-proportion', 'unit-value', 'reverse'],
     parameters: params,
@@ -321,7 +323,8 @@ function unitCostReverse(ctx, n, unitPrice, total, targetCount) {
     ],
     howToStart: 'احسب سعر الوحدة ثم اقسم المبلغ عليه.',
     remember: 'عند ثبات السعر: عدد الوحدات = المبلغ ÷ سعر الوحدة.',
-    fastMethod: `${budget} ÷ (${total} ÷ ${n}).`,
+    // RC2-019: a reusable rule first, then this instance.
+    fastMethod: `اقسم المبلغ المتاح على سعر الوحدة الواحدة — هنا ${budget} ÷ (${total} ÷ ${n}).`,
     estimatedSteps: 2,
     conceptTags: ['direct-proportion', 'unit-value', 'reverse'],
     parameters: params,

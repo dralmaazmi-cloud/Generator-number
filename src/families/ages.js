@@ -41,7 +41,8 @@ function sumDifference(ctx) {
     ],
     howToStart: 'استخدم المجموع والفرق معًا.',
     remember: 'عمر الأكبر = (المجموع + الفرق) ÷ 2.',
-    fastMethod: `(${sum} + ${diff}) ÷ 2 = ${older}.`,
+    // RC2-019: a reusable rule first, then this instance.
+    fastMethod: `العمر الأكبر = (المجموع + الفرق) ÷ 2 — هنا (${sum} + ${diff}) ÷ 2 = ${older}.`,
     estimatedSteps: 2, conceptTags: ['age', 'sum-difference'], parameters: params,
     oracle: {
       kind: 'constraint', answerKind: 'number',

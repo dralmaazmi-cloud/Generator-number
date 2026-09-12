@@ -1,3 +1,5 @@
+import {ENGINE_VERSION} from './src/index.js';
+
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function fmtClock(sec){sec=Math.max(0,Math.floor(sec||0));return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`}
 function diffAr(d){return d==='easy'?'سهل':d==='medium'?'متوسط':d==='hard'?'صعب':d==='adaptive'?'تكيفي':'مختلط'}
@@ -31,5 +33,5 @@ export function buildPrintReportHtml(s){
   <header class="cover"><div class="kicker">NUMERICAL GENERATED PRACTICE</div><h1>تقرير ${modeAr(s.settings?.mode)} عددي متجدد</h1><div class="meta">التاريخ: ${esc(date)}<br>الوضع: ${modeAr(s.settings?.mode)} · الصعوبة: ${diffAr(s.settings?.difficulty)} · عدد الأسئلة: ${Number(s.settings?.count||s.questions?.length||0)}<br>العائلات: ${esc(familyLabel)}${s.settings?.timeLimitSeconds?`<br>الوقت المحدد: ${fmtClock(s.settings.timeLimitSeconds)}`:''}</div><div class="score"><span>النتيجة: <b>${r.percentage||0}%</b></span><span>الصحيح: <b>${r.correct||0}</b></span><span>الخطأ: <b>${r.wrong||0}</b></span><span>غير المجاب: <b>${r.unanswered||0}</b></span><span>الزمن: <b>${fmtClock(s.elapsedSeconds)}</b></span><span>متوسط السؤال: <b>${fmtClock(r.avgTimeSeconds||0)}</b></span></div></header>
   <h2 style="font-size:14px">الأداء حسب العائلة</h2><table class="summary-table"><thead><tr><th>العائلة</th><th>الصحيح</th><th>النسبة</th><th>متوسط الزمن</th></tr></thead><tbody>${familyRows}</tbody></table>
   <h2 style="font-size:14px">الأداء حسب الصعوبة</h2><table class="summary-table"><thead><tr><th>الصعوبة</th><th>الصحيح</th><th>النسبة</th><th>متوسط الزمن</th></tr></thead><tbody>${difficultyRows}</tbody></table>
-  ${questions}<div class="footer">تم إنشاء هذا التقرير محليًا بواسطة Numerical Question Generator Engine v1.2.0.</div></body></html>`;
+  ${questions}<div class="footer">تم إنشاء هذا التقرير محليًا بواسطة Numerical Question Generator Engine v${esc(ENGINE_VERSION)}.</div></body></html>`;
 }

@@ -129,7 +129,8 @@ function buildFractionItem(ctx, count, direction) {
       ],
       howToStart: 'اعكس العمليات: ما قُسم عليه يُضرب فيه عند الرجوع.',
       remember: 'الرجوع من الناتج إلى العدد الأصلي يعني الضرب في حاصل ضرب المقامات.',
-      fastMethod: `${result} × ${denomProduct} = ${correct}.`,
+      // RC2-019: a reusable rule, with the instance after it.
+      fastMethod: `اضرب الناتج النهائي في حاصل ضرب المقامات لتعود إلى العدد الأصلي — هنا ${result} × ${denomProduct} = ${correct}.`,
       parameters: {chainResult: result, denominators: denomList},
       oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, mul(result, denomProduct))]},
       askedUnknown: 'startNumber',
@@ -162,11 +163,17 @@ function buildFractionItem(ctx, count, direction) {
       `حاصل ضرب مقامات الكسور المعلومة = ${knownFracs.map(f => f.d).join(' × ')} = ${knownProduct}.`,
       `${knownNames} من العدد ${total} هو ${total} ÷ ${knownProduct} = ${total / knownProduct}.`,
       `بقي أن ننتقل من ${total / knownProduct} إلى ${result}.`,
-      `${total / knownProduct} ÷ ${result} = ${hidden.d}، إذن الكسر المجهول هو ${hidden.def}.`
+      `الكسر المجهول = الناتج بعده ÷ الناتج قبله = ${result} ÷ ${total / knownProduct}.`,
+      `${total / knownProduct} ÷ ${result} = ${hidden.d}، وهذا مقام الكسر، فالكسر المجهول هو ${hidden.def}.`
     ],
     howToStart: 'طبّق الكسور المعلومة أولًا، ثم قارن الناتج بالقيمة النهائية.',
-    remember: 'الكسر المجهول هو نسبة الناتج قبله إلى الناتج بعده.',
-    fastMethod: `${total / knownProduct} ÷ ${result} = ${hidden.d}.`,
+    // RC2-018. The rule taught here was the reverse of the quantity asked for:
+    // previous ÷ next gives the DENOMINATOR, while the fraction itself is
+    // next ÷ previous. The keys were right; the generalisation was not.
+    remember: 'الكسر المجهول = الناتج بعده ÷ الناتج قبله. أما قسمة الناتج قبله على الناتج بعده فتعطي مقام الكسر لا الكسر نفسه.',
+    // RC2-019. A reusable rule first; the instance may follow it, never stand
+    // in for it.
+    fastMethod: `اقسم الناتج السابق على الناتج النهائي فتحصل على مقام الكسر، ثم الكسر هو واحد على ذلك المقام — هنا ${total / knownProduct} ÷ ${result} = ${hidden.d}، فالكسر ${hidden.def}.`,
     parameters: {startNumber: total, knownDenominators: knownFracs.map(f => f.d), chainResult: result},
     oracle: {
       kind: 'search',

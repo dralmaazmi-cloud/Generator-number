@@ -417,7 +417,8 @@ function sameDistanceTimeDifference(ctx) {
     ],
     howToStart: 'اكتب الزمنين بدلالة المسافة ثم استخدم فرق الزمن.',
     remember: 'عند ثبات المسافة، السرعة الأعلى تعني زمنًا أقل.',
-    fastMethod: `حل س × (1 ÷ ${s1} − 1 ÷ ${s2}) = ${num(diff)}.`,
+    // RC2-019: a reusable rule first, then this instance.
+    fastMethod: `عند ثبات المسافة، حل المعادلة: المسافة × (1 ÷ السرعة الأبطأ − 1 ÷ السرعة الأسرع) = فرق الزمن — هنا س × (1 ÷ ${s1} − 1 ÷ ${s2}) = ${num(diff)}.`,
     estimatedSteps: 5, conceptTags: ['speed', 'equation'], parameters: params,
     oracle: {
       kind: 'constraint', answerKind: 'number',

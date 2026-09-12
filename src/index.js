@@ -22,7 +22,13 @@ import {generateCalendar} from './families/calendar.js';
 import {generateOddOneOut} from './families/odd_one_out.js';
 import {generateProfitLoss} from './families/profit_loss.js';
 
-export const ENGINE_VERSION = '1.3.0';
+/**
+ * RC2-021. The single authoritative engine version. Every other place that
+ * shows a version — the report footer, the UI pill, the generator manifest,
+ * the audit manifests — derives from this constant. Two stale literals
+ * (report.js and index.html) were what the RC1 audit caught.
+ */
+export const ENGINE_VERSION = '1.4.0';
 
 const GENERATORS = {
   sequences: generateSequences,

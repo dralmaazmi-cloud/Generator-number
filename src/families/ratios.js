@@ -181,6 +181,13 @@ function commonTermSum(ctx) {
     estimatedSteps: 4, conceptTags: ['ratio', 'common-term'], parameters: params,
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, A + C), mul(given, B))]},
     askedUnknown: 'commonTerm', stageCount: 3,
+    // RC2-020. Both printed ratios carry the template's invariants. RC1
+    // declared none here at all, so the second edge escaped entirely and sets
+    // such as ب : ج = 6 : 2 reached publication unreduced.
+    ratio: [
+      {a, b, requireReduced: true, requireDistinctSides: true, label: 'first'},
+      {a: c, b: d, requireReduced: true, requireDistinctSides: true, label: 'second'}
+    ],
     pedagogy: {
       targetSkill: 'UNIFY_COMMON_TERM', targetMisconception: 'USED_SUM_OF_PARTS',
       wrongMethodValue: (A + B + C) * k,
@@ -237,6 +244,13 @@ function commonTermDifference(ctx) {
     estimatedSteps: 4, conceptTags: ['ratio', 'common-term'], parameters: params,
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, diffParts), mul(given, A + B + C))]},
     askedUnknown: 'sumOfAllThree', stageCount: 3,
+    // RC2-020. Both printed ratios carry the template's invariants. RC1
+    // declared none here at all, so the second edge escaped entirely and sets
+    // such as ب : ج = 6 : 2 reached publication unreduced.
+    ratio: [
+      {a, b, requireReduced: true, requireDistinctSides: true, label: 'first'},
+      {a: c, b: d, requireReduced: true, requireDistinctSides: true, label: 'second'}
+    ],
     pedagogy: {
       targetSkill: 'UNIFY_COMMON_TERM', targetMisconception: 'MISSED_ONE_STAGE',
       wrongMethodValue: (A + C) * k,
@@ -433,6 +447,13 @@ function twoRatiosExternalSum(ctx) {
     estimatedSteps: 5, conceptTags: ['ratio', 'common-term'], parameters: params,
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, A + B), mul(given, C))]},
     askedUnknown: 'thirdTerm', stageCount: 3,
+    // RC2-020. Both printed ratios carry the template's invariants. RC1
+    // declared none here at all, so the second edge escaped entirely and sets
+    // such as ب : ج = 6 : 2 reached publication unreduced.
+    ratio: [
+      {a, b, requireReduced: true, requireDistinctSides: true, label: 'first'},
+      {a: c, b: d, requireReduced: true, requireDistinctSides: true, label: 'second'}
+    ],
     pedagogy: {
       targetSkill: 'UNIFY_COMMON_TERM', targetMisconception: 'USED_SUM_OF_PARTS',
       wrongMethodValue: (A + B + C) * k,
