@@ -67,11 +67,16 @@ export function freeze() {
     testCount = m ? Number(m[1]) : null;
   } catch { /* the gate already ran it */ }
 
-  const evidence = readdirSync('rc2').sort().map(f => ({
-    path: `rc2/${f}`,
-    bytes: statSync(`rc2/${f}`).size,
-    sha256: createHash('sha256').update(readFileSync(`rc2/${f}`)).digest('hex')
-  }));
+  // RC2.1: rc2/ now holds directories as well as files (the holdout delivery
+  // package), so the evidence scan walks rather than assuming a flat listing.
+  const walkEvidence = dir => readdirSync(dir).sort().flatMap(f => {
+    const p = join(dir, f);
+    return statSync(p).isDirectory() ? walkEvidence(p) : [{
+      path: p, bytes: statSync(p).size,
+      sha256: createHash('sha256').update(readFileSync(p)).digest('hex')
+    }];
+  });
+  const evidence = walkEvidence('rc2');
 
   const prior = priorFreezes();
   return {
