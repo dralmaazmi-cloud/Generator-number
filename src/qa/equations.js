@@ -29,12 +29,22 @@ export function normalizeMath(text) {
 const MATH_RUN_RE = /[0-9.+\-*/()=%\s]+/g;
 
 /** Maximal substrings made only of arithmetic characters that contain '='. */
+const ARABIC_LETTER = /[\u0621-\u064A]/;
+
 export function extractMathRuns(text) {
+  const src = normalizeMath(text);
   const runs = [];
-  for (const m of normalizeMath(text).matchAll(MATH_RUN_RE)) {
+  for (const m of src.matchAll(MATH_RUN_RE)) {
     const run = m[0];
     if (!run.includes('=')) continue;
     if (!/\d/.test(run)) continue;
+    // An algebraic line such as "20ك = 8ك + 48" is chopped by the variable
+    // letter into fragments like " = 8" that are not claims at all. A run whose
+    // last character is a digit glued straight onto an Arabic letter is one of
+    // those fragments; units are always written with a space, so nothing
+    // legitimate is skipped here.
+    const endsAt = m.index + run.length;
+    if (/\d$/.test(run) && ARABIC_LETTER.test(src[endsAt] || '')) continue;
     runs.push(run);
   }
   return runs;

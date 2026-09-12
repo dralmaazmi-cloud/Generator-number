@@ -119,13 +119,25 @@ function dedupeFractions(list) {
   return out;
 }
 
+/**
+ * The raw values behind the six choices. Reading the rendered string is not
+ * enough: "كيلومتر واحد" carries no numeral, and "انخفاض 5%" and "زيادة 5%"
+ * would both parse as 5 while meaning opposite things.
+ */
 function optionNumbers(q) {
+  const meta = q.metadata?.options_meta;
   const out = [];
   for (const l of LETTERS) {
-    const v = parseLeadingNumber(q.options?.[l]);
+    const raw = meta?.[l]?.value;
+    const v = typeof raw === 'number' ? raw : parseLeadingNumber(q.options?.[l]);
     if (v !== null && Number.isFinite(v)) out.push(v);
   }
   return out;
+}
+
+function optionValue(q, letter) {
+  const raw = q.metadata?.options_meta?.[letter]?.value;
+  return typeof raw === 'number' ? raw : parseLeadingNumber(q.options?.[letter]);
 }
 
 // --- stage: exactly one option carries the oracle's answer (Section 3) -------
@@ -152,8 +164,8 @@ export function validateUniqueAnswer(base, q, oracleResult) {
     } else {
       const target = oracleResult.answer.toNumber();
       matches = LETTERS.filter(l => {
-        const v = parseLeadingNumber(q.options[l]);
-        return v !== null && Math.abs(v - target) < EPS;
+        const v = optionValue(q, l);
+        return v !== null && Number.isFinite(v) && Math.abs(v - target) < EPS;
       }).length;
     }
     if (matches === 0) reasons.push(REASON.NO_CORRECT_OPTION);
@@ -220,12 +232,16 @@ export function validateCandidate(base, q) {
   const structural = validateQuestion(q);
   const structuralVerdict = verdict(structural.errors);
 
-  const textVerdict = base.textParams === false ? verdict([]) : validateTextMatchesParams({
+  const textCheck = base.textParams === false ? {reasons: []} : validateTextMatchesParams({
     questionText: q.question,
     displayExpression: q.display_expression,
     parameters: base.parameters || {},
     derivedFromParams: base.textParams?.derivedFromParams || [],
     essentialParams: base.textParams?.essentialParams || []
+  });
+  const textVerdict = verdict(textCheck.reasons, {
+    orphanNumbers: textCheck.orphanNumbers,
+    missingParams: textCheck.missingParams
   });
 
   const oracleResult = runOracle(base, q);

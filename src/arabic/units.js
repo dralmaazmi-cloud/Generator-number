@@ -137,11 +137,17 @@ const NUMBER_UNIT_RE = /(\d+(?:\.\d+)?)\s+([ء-يٰٱً-ْ]+)/g;
 export function checkArabicNumberUnits(text) {
   const violations = [];
   if (!text) return {violations};
-  for (const m of String(text).matchAll(NUMBER_UNIT_RE)) {
+  const src = String(text);
+  for (const m of src.matchAll(NUMBER_UNIT_RE)) {
     const n = Number(m[1]);
     const word = m[2];
     const form = ALL_FORMS.get(word);
     if (!form) continue; // not a lexicon unit: nothing to judge
+    // A compound rate symbol such as `وحدة/ساعة` or `كم/ساعة` is a unit name,
+    // not a counted noun, so number agreement does not apply to it.
+    const after = src[m.index + m[0].length];
+    const beforeWord = src[m.index + m[0].length - word.length - 1];
+    if (after === '/' || beforeWord === '/') continue;
     const expectedWord = expectedFormWord(n, form.id);
     // n===1 and n===2 must not carry a numeral at all.
     if (Number.isInteger(n) && (n === 1 || n === 2)) {

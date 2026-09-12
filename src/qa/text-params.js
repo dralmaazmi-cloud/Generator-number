@@ -43,6 +43,10 @@ export function validateTextMatchesParams({
   const missingParams = essentialParams.filter(name => {
     const v = parameters[name];
     if (typeof v !== 'number' || !Number.isFinite(v)) return false;
+    // Arabic renders counts of one and two as words — "عاملان", "مهمتان" — with
+    // no numeral at all, so their absence from the digits is correct rendering,
+    // not a missing parameter.
+    if (v === 1 || v === 2) return false;
     return !textNumbers.some(n => near(n, v));
   });
 

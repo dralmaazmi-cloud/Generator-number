@@ -1,66 +1,290 @@
-import {makeId, formatNumber} from '../utils.js';
+import {mk, usable, u, unitFormat, buildBase, eq, X, add, mul} from './_shared.js';
 
-export function generateCombinedRate({difficulty,rng,seed,engineVersion}){
-  const ctx={difficulty,rng,seed,engineVersion,family:'combined_rate',family_ar:'المعدل المشترك',category:'المعدل المشترك'};
-  const list=difficulty==='easy'?[togetherOutput,togetherTime]
-    :difficulty==='medium'?[soloThenTogether,togetherThenSolo]
-    :[stagedTarget,threeRates];
+export function generateCombinedRate({difficulty, rng, seed, engineVersion}) {
+  const ctx = {difficulty, rng, seed, engineVersion, family: 'combined_rate', family_ar: 'المعدل المشترك', category: 'المعدل المشترك'};
+  const list = difficulty === 'easy' ? [togetherOutput, togetherTime]
+    : difficulty === 'medium' ? [soloThenTogether, togetherThenSolo]
+    : [stagedTarget, threeRates];
   return rng.pick(list)(ctx);
 }
 
-function togetherOutput(ctx){
-  const {rng}=ctx; const a=rng.pick([6,8,10,12,15]), b=rng.pick([8,10,12,15,20]); const h=rng.pick([3,4,5,6]); const correct=(a+b)*h;
-  return base(ctx,'COMB_E_OUTPUT','جمع معدلين خلال مدة معلومة','easy',`ينجز العامل أ ${a} وحدة في الساعة، وينجز العامل ب ${b} وحدة في الساعة. إذا عملا معًا ${h} ساعات، فكم وحدة ينجزان؟`,correct,[a*h,b*h,(a+b),Math.abs(a-b)*h,correct+a,Math.max(1,correct-b)],v=>`${formatNumber(v)} وحدة`,[
-    `المعدل المشترك = ${a}+${b} = ${a+b} وحدة/ساعة.`,
-    `خلال ${h} ساعات: ${a+b} × ${h} = ${correct}.`
-  ],'اجمع المعدلين لأنهما يعملان في الوقت نفسه.','تأكد أن المعدلين بنفس الوحدة الزمنية قبل جمعهما.','(معدل أ + معدل ب) × الزمن.',2);
+function togetherOutput(ctx) {
+  const {rng} = ctx;
+  const a = rng.pick([6, 8, 10, 12, 15]);
+  const b = rng.pick([8, 10, 12, 15, 20].filter(v => v !== a));
+  const h = rng.pick([3, 4, 5, 6]);
+  const correct = (a + b) * h;
+  const params = {rateA: a, rateB: b, hours: h};
+  const distractors = usable([
+    mk(a * h, 'USED_ONLY_FIRST_RATE', `${a} × ${h}`),
+    mk(b * h, 'USED_ONLY_SECOND_RATE', `${b} × ${h}`),
+    mk(a + b, 'STOPPED_AT_UNIT_RATE', `${a} + ${b}`),
+    mk(Math.abs(a - b) * h, 'SUBTRACTED_INSTEAD_OF_ADDED', `|${a} − ${b}| × ${h}`),
+    mk((a + b) * (h + 1), 'OFF_BY_ONE_STEP', `(${a} + ${b}) × (${h} + 1)`),
+    mk((a + b) * (h - 1), 'OFF_BY_ONE_STEP', `(${a} + ${b}) × (${h} − 1)`),
+    mk(a * b, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${a} × ${b}`),
+    mk((a + b) * h + a + b, 'APPLIED_STEP_TWICE', `(${a} + ${b}) × ${h} + (${a} + ${b})`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'COMB_E_OUTPUT',
+    subskill: 'جمع معدلين خلال مدة معلومة',
+    difficulty: 'easy',
+    question: `ينجز العامل أ ${a} وحدة/ساعة، وينجز العامل ب ${b} وحدة/ساعة. إذا عملا معًا ${u(h, 'hour', 'oblique')}، فكم وحدة ينجزان؟`,
+    correct, distractors, format: unitFormat('unit'),
+    steps: [
+      `المعدل المشترك في الساعة = ${a} + ${b} = ${a + b}.`,
+      `الإنجاز الكلي = ${a + b} × ${h} = ${correct}.`
+    ],
+    howToStart: 'اجمع المعدلين لأنهما يعملان في الوقت نفسه.',
+    remember: 'تأكد أن المعدلين بنفس الوحدة الزمنية قبل جمعهما.',
+    fastMethod: '(معدل أ + معدل ب) × الزمن.',
+    estimatedSteps: 2, conceptTags: ['combined-rate'], parameters: params,
+    // Conservation of quantity: the work each side contributes must add up.
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, add(mul(a, h), mul(b, h)))]},
+    askedUnknown: 'jointOutput', stageCount: 1,
+    pedagogy: {
+      targetSkill: 'ADD_RATES', targetMisconception: 'USED_ONLY_FIRST_RATE',
+      wrongMethodValue: a * h,
+      degenerateWhen: [{when: b === 0, note: 'second worker contributes nothing'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 1, arithmeticBurden: 2},
+    textParams: {essentialParams: ['rateA', 'rateB', 'hours']}
+  });
 }
 
-function togetherTime(ctx){
-  const {rng}=ctx; const a=rng.pick([10,12,15,18]), b=rng.pick([15,18,20,24]); const h=rng.pick([4,5,6,8]); const target=(a+b)*h; const correct=h;
-  return base(ctx,'COMB_E_TIME','جمع معدلين ثم إيجاد الزمن','easy',`تنجز آلة أ ${a} قطعة/ساعة، وآلة ب ${b} قطعة/ساعة. إذا عملتا معًا، فكم ساعة تحتاجان لإنتاج ${target} قطعة؟`,correct,[target/a,target/b,target/(a+b)+1,a+b,correct+2,Math.max(1,correct-2)],v=>`${formatNumber(v)} ساعة`,[
-    `المعدل المشترك = ${a}+${b} = ${a+b} قطعة/ساعة.`,
-    `الزمن = ${target} ÷ ${a+b} = ${correct} ساعات.`
-  ],'اجمع المعدلات ثم اقسم الهدف عليها.','بعد جمع المعدلات، يصبح السؤال كمية ÷ معدل.','الهدف ÷ المعدل المشترك.',2);
+function togetherTime(ctx) {
+  const {rng} = ctx;
+  const a = rng.pick([10, 12, 15, 18]);
+  const b = rng.pick([15, 18, 20, 24].filter(v => v !== a));
+  const correct = rng.pick([4, 5, 6, 8]);
+  const target = (a + b) * correct;
+  const params = {rateA: a, rateB: b, targetAmount: target};
+  const distractors = usable([
+    mk(target / a, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${a}`),
+    mk(target / b, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${b}`),
+    mk(a + b, 'STOPPED_AT_UNIT_RATE', `${a} + ${b}`),
+    mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
+    mk(Math.max(1, correct - 2), 'OFF_BY_ONE_STEP', `${correct} − 2`),
+    mk(target / Math.abs(b - a), 'SUBTRACTED_INSTEAD_OF_ADDED', `${target} ÷ |${b} − ${a}|`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'COMB_E_TIME',
+    subskill: 'جمع معدلين ثم إيجاد الزمن',
+    difficulty: 'easy',
+    question: `تنجز آلة أ ${a} قطعة/ساعة، وآلة ب ${b} قطعة/ساعة. إذا عملتا معًا، فكم ساعة تحتاجان لإنتاج ${u(target, 'piece')}؟`,
+    correct, distractors, format: unitFormat('hour'),
+    steps: [
+      `المعدل المشترك في الساعة = ${a} + ${b} = ${a + b}.`,
+      `الزمن المطلوب بالساعات = ${target} ÷ ${a + b} = ${correct}.`
+    ],
+    howToStart: 'اجمع المعدلات ثم اقسم الهدف عليها.',
+    remember: 'بعد جمع المعدلات يصبح السؤال: كمية ÷ معدل.',
+    fastMethod: 'الهدف ÷ المعدل المشترك.',
+    estimatedSteps: 2, conceptTags: ['combined-rate', 'reverse'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(add(mul(a, X), mul(b, X)), target)]},
+    askedUnknown: 'jointTime', stageCount: 1,
+    pedagogy: {
+      targetSkill: 'ADD_RATES_THEN_TIME', targetMisconception: 'USED_SINGLE_RATE_ON_FULL_TARGET',
+      wrongMethodValue: target / a,
+      degenerateWhen: [{when: b === 0, note: 'no second rate to add'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, reverseReasoning: 1, stageCount: 1, arithmeticBurden: 2},
+    textParams: {essentialParams: ['rateA', 'rateB', 'targetAmount']}
+  });
 }
 
-function soloThenTogether(ctx){
-  const {rng}=ctx; const a=rng.pick([12,15,18,20]), b=rng.pick([8,10,12,15]); const solo=rng.pick([2,3,4]); const together=rng.pick([3,4,5,6]); const target=a*solo+(a+b)*together; const correct=together;
-  return base(ctx,'COMB_M_SOLO_THEN','عمل منفرد أولًا ثم عمل مشترك','medium',`ينجز العامل أ ${a} وحدة/ساعة، والعامل ب ${b} وحدة/ساعة. عمل أ وحده ${solo} ساعات، ثم عملا معًا حتى وصل الإنجاز إلى ${target} وحدة. كم ساعة عملا معًا؟`,correct,[target/(a+b),(target-a*solo)/a,(target-a*solo)/b,solo+together,together+1,Math.max(1,together-1)],v=>`${formatNumber(v)} ساعة`,[
-    `إنجاز أ منفردًا = ${a} × ${solo} = ${a*solo}.`,
-    `المتبقي = ${target}-${a*solo} = ${target-a*solo}.`,
-    `المعدل المشترك = ${a+b}.`,
-    `الزمن المشترك = ${target-a*solo} ÷ ${a+b} = ${together} ساعات.`
-  ],'احسب ما أُنجز في المرحلة المنفردة أولًا.','لا تستخدم المعدل المشترك على كامل الهدف إذا كان أحدهما بدأ وحده.','المتبقي ÷ المعدل المشترك.',4);
+function soloThenTogether(ctx) {
+  const {rng} = ctx;
+  const a = rng.pick([12, 15, 18, 20]);
+  const b = rng.pick([8, 10, 12, 15].filter(v => v !== a));
+  const solo = rng.pick([3, 4, 5]);
+  const correct = rng.pick([3, 4, 5, 6].filter(v => v !== solo));
+  const target = a * solo + (a + b) * correct;
+  const params = {rateA: a, rateB: b, soloHours: solo, targetAmount: target};
+  const distractors = usable([
+    mk(target / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `${target} ÷ ${a + b}`),
+    mk((target - a * solo) / a, 'USED_ONLY_FIRST_RATE', `(${target} − ${a * solo}) ÷ ${a}`),
+    mk((target - a * solo) / b, 'USED_ONLY_SECOND_RATE', `(${target} − ${a * solo}) ÷ ${b}`),
+    mk(solo + correct, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${solo} + ${correct}`),
+    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
+    mk(Math.max(1, correct - 1), 'OFF_BY_ONE_STEP', `${correct} − 1`),
+    mk(target / a, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${a}`),
+    mk(target / b, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${b}`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
+    mk(solo + correct + 1, 'OFF_BY_ONE_STEP', `${solo} + ${correct} + 1`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'COMB_M_SOLO_THEN',
+    subskill: 'عمل منفرد أولًا ثم عمل مشترك',
+    difficulty: 'medium',
+    question: `ينجز العامل أ ${a} وحدة/ساعة، والعامل ب ${b} وحدة/ساعة. عمل أ وحده ${u(solo, 'hour', 'oblique')}، ثم عملا معًا حتى بلغ الإنجاز ${u(target, 'unit')}. كم ساعة عملا معًا؟`,
+    correct, distractors, format: unitFormat('hour'),
+    steps: [
+      `إنجاز أ منفردًا = ${a} × ${solo} = ${a * solo}.`,
+      `المتبقي = ${target} − ${a * solo} = ${target - a * solo}.`,
+      `المعدل المشترك في الساعة = ${a} + ${b} = ${a + b}.`,
+      `الزمن المشترك بالساعات = ${target - a * solo} ÷ ${a + b} = ${correct}.`
+    ],
+    howToStart: 'احسب ما أُنجز في المرحلة المنفردة أولًا.',
+    remember: 'لا تستخدم المعدل المشترك على كامل الهدف إذا كان أحدهما بدأ وحده.',
+    fastMethod: 'المتبقي ÷ المعدل المشترك.',
+    estimatedSteps: 4, conceptTags: ['combined-rate', 'stages'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(add(mul(a, solo), mul(add(a, b), X)), target)]},
+    askedUnknown: 'jointTimeAfterSolo', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'STAGED_COMBINED_RATE', targetMisconception: 'USED_COMBINED_RATE_ON_FULL_TARGET',
+      wrongMethodValue: target / (a + b),
+      degenerateWhen: [{when: solo === 0, note: 'no solo stage to account for'}]
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, reverseReasoning: 1, arithmeticBurden: 3},
+    textParams: {essentialParams: ['rateA', 'rateB', 'soloHours', 'targetAmount']}
+  });
 }
 
-function togetherThenSolo(ctx){
-  const {rng}=ctx; const a=rng.pick([10,12,15]), b=rng.pick([15,18,20]); const bothH=rng.pick([2,3,4]); const soloH=rng.pick([2,3,4,5]); const target=(a+b)*bothH+a*soloH; const correct=soloH;
-  return base(ctx,'COMB_M_TOGETHER_SOLO','عمل مشترك ثم استمرار طرف واحد','medium',`يعمل أ بمعدل ${a} وحدة/ساعة وب بمعدل ${b} وحدة/ساعة. عملا معًا ${bothH} ساعات، ثم توقف ب واستمر أ وحده حتى بلغ الإنجاز ${target} وحدة. كم ساعة عمل أ وحده بعد توقف ب؟`,correct,[target/a,target/(a+b),bothH+soloH,soloH+1,Math.max(1,soloH-1),(target-(a+b)*bothH)/b],v=>`${formatNumber(v)} ساعة`,[
-    `الإنجاز المشترك = ${a+b} × ${bothH} = ${(a+b)*bothH}.`,
-    `المتبقي = ${target}-${(a+b)*bothH} = ${a*soloH}.`,
-    `أ يعمل بمعدل ${a}، إذن الزمن = ${a*soloH} ÷ ${a} = ${soloH} ساعات.`
-  ],'قسّم السؤال إلى فترة مشتركة ثم فترة منفردة.','كل مرحلة لها معدلها الخاص.','اطرح الإنجاز المشترك ثم اقسم المتبقي على معدل أ.',4);
+function togetherThenSolo(ctx) {
+  const {rng} = ctx;
+  const a = rng.pick([10, 12, 15]);
+  const b = rng.pick([15, 18, 20].filter(v => v !== a));
+  const bothH = rng.pick([3, 4, 5]);
+  const correct = rng.pick([3, 4, 5, 6].filter(v => v !== bothH));
+  // Section 10: with these numbers, dividing the whole target by the combined
+  // rate would also land on the key, so the item would stop measuring the
+  // staging skill it exists for.
+  if (bothH * (a + b) === correct * b) return togetherThenSolo(ctx);
+  const target = (a + b) * bothH + a * correct;
+  const params = {rateA: a, rateB: b, jointHours: bothH, targetAmount: target};
+  const distractors = usable([
+    mk(target / a, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${a}`),
+    mk(target / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `${target} ÷ ${a + b}`),
+    mk(bothH + correct, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${bothH} + ${correct}`),
+    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
+    mk(Math.max(1, correct - 1), 'OFF_BY_ONE_STEP', `${correct} − 1`),
+    mk((target - (a + b) * bothH) / b, 'USED_ONLY_SECOND_RATE', `(${target} − ${(a + b) * bothH}) ÷ ${b}`),
+    mk((target - (a + b) * bothH) / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `${a * correct} ÷ ${a + b}`),
+    mk(bothH + correct + 1, 'OFF_BY_ONE_STEP', `${bothH} + ${correct} + 1`),
+    mk(target / b, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${b}`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'COMB_M_TOGETHER_SOLO',
+    subskill: 'عمل مشترك ثم استمرار طرف واحد',
+    difficulty: 'medium',
+    question: `يعمل أ بمعدل ${a} وحدة/ساعة وب بمعدل ${b} وحدة/ساعة. عملا معًا ${u(bothH, 'hour', 'oblique')}، ثم توقف ب واستمر أ وحده حتى بلغ الإنجاز ${u(target, 'unit')}. كم ساعة عمل أ وحده؟`,
+    correct, distractors, format: unitFormat('hour'),
+    steps: [
+      `الإنجاز المشترك = (${a} + ${b}) × ${bothH} = ${(a + b) * bothH}.`,
+      `المتبقي = ${target} − ${(a + b) * bothH} = ${a * correct}.`,
+      `زمن أ منفردًا بالساعات = ${a * correct} ÷ ${a} = ${correct}.`
+    ],
+    howToStart: 'قسّم السؤال إلى فترة مشتركة ثم فترة منفردة.',
+    remember: 'كل مرحلة لها معدلها الخاص.',
+    fastMethod: 'اطرح الإنجاز المشترك ثم اقسم المتبقي على معدل أ.',
+    estimatedSteps: 3, conceptTags: ['combined-rate', 'stages'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(add(mul(add(a, b), bothH), mul(a, X)), target)]},
+    askedUnknown: 'soloTimeAfterJoint', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'STAGED_COMBINED_RATE', targetMisconception: 'USED_COMBINED_RATE_ON_FULL_TARGET',
+      wrongMethodValue: target / (a + b),
+      degenerateWhen: [{when: bothH === 0, note: 'no joint stage'}]
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, reverseReasoning: 1, arithmeticBurden: 3},
+    textParams: {essentialParams: ['rateA', 'rateB', 'jointHours', 'targetAmount']}
+  });
 }
 
-function stagedTarget(ctx){
-  const {rng}=ctx; const a=rng.pick([12,15,18]), b=rng.pick([8,10,12]), soloA=rng.pick([2,3]); const togetherH=rng.pick([2,3,4]); const soloB=rng.pick([2,3,4]); const target=a*soloA+(a+b)*togetherH+b*soloB; const correct=soloB;
-  return base(ctx,'COMB_H_STAGED','ثلاث مراحل بمعدلات مختلفة','hard',`ينجز أ ${a} وحدة/ساعة وب ${b} وحدة/ساعة. عمل أ وحده ${soloA} ساعات، ثم عملا معًا ${togetherH} ساعات، ثم استمر ب وحده حتى وصل الإنجاز إلى ${target} وحدة. كم ساعة عمل ب وحده في المرحلة الأخيرة؟`,correct,[target/b,(target-a*soloA)/(a+b),soloA+togetherH+soloB,soloB+1,Math.max(1,soloB-1),(target-(a+b)*togetherH)/b],v=>`${formatNumber(v)} ساعة`,[
-    `المرحلة الأولى = ${a}×${soloA} = ${a*soloA}.`,
-    `المرحلة الثانية = ${a+b}×${togetherH} = ${(a+b)*togetherH}.`,
-    `المتبقي للمرحلة الأخيرة = ${target}-${a*soloA}-${(a+b)*togetherH} = ${b*soloB}.`,
-    `زمن ب منفردًا = ${b*soloB} ÷ ${b} = ${soloB} ساعات.`
-  ],'احسب إنجاز كل مرحلة بالترتيب.','في ثلاث مراحل، اجعل كل فترة سطرًا مستقلًا ثم اطرح من الهدف.','الهدف - المرحلتين الأولى والثانية، ثم ÷ معدل ب.',5);
+function stagedTarget(ctx) {
+  const {rng} = ctx;
+  const a = rng.pick([12, 15, 18]);
+  const b = rng.pick([8, 10, 12].filter(v => v !== a));
+  const soloA = rng.pick([3, 4]);
+  const togetherH = rng.pick([3, 4, 5]);
+  const correct = rng.pick([3, 4, 5].filter(v => v !== soloA && v !== togetherH));
+  // Same guard as above: keep the combined-rate shortcut genuinely wrong.
+  if ((a + b) * togetherH === correct * a) return stagedTarget(ctx);
+  const target = a * soloA + (a + b) * togetherH + b * correct;
+  const params = {rateA: a, rateB: b, soloAHours: soloA, jointHours: togetherH, targetAmount: target};
+  const distractors = usable([
+    mk(target / b, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${b}`),
+    mk((target - a * soloA) / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `(${target} − ${a * soloA}) ÷ ${a + b}`),
+    mk(soloA + togetherH + correct, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${soloA} + ${togetherH} + ${correct}`),
+    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
+    mk(Math.max(1, correct - 1), 'OFF_BY_ONE_STEP', `${correct} − 1`),
+    mk((target - (a + b) * togetherH) / b, 'MISSED_ONE_STAGE', `(${target} − ${(a + b) * togetherH}) ÷ ${b}`),
+    mk((target - a * soloA - (a + b) * togetherH) / a, 'USED_ONLY_FIRST_RATE', `${b * correct} ÷ ${a}`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'COMB_H_STAGED',
+    subskill: 'ثلاث مراحل بمعدلات مختلفة',
+    difficulty: 'hard',
+    question: `ينجز أ ${a} وحدة/ساعة وب ${b} وحدة/ساعة. عمل أ وحده ${u(soloA, 'hour', 'oblique')}، ثم عملا معًا ${u(togetherH, 'hour', 'oblique')}، ثم استمر ب وحده حتى بلغ الإنجاز ${u(target, 'unit')}. كم ساعة عمل ب وحده في المرحلة الأخيرة؟`,
+    correct, distractors, format: unitFormat('hour'),
+    steps: [
+      `إنجاز المرحلة الأولى = ${a} × ${soloA} = ${a * soloA}.`,
+      `إنجاز المرحلة الثانية = (${a} + ${b}) × ${togetherH} = ${(a + b) * togetherH}.`,
+      `المتبقي للمرحلة الأخيرة = ${target} − ${a * soloA} − ${(a + b) * togetherH} = ${b * correct}.`,
+      `زمن ب منفردًا بالساعات = ${b * correct} ÷ ${b} = ${correct}.`
+    ],
+    howToStart: 'احسب إنجاز كل مرحلة بالترتيب.',
+    remember: 'في ثلاث مراحل، اجعل كل فترة سطرًا مستقلًا ثم اطرح من الهدف.',
+    fastMethod: 'الهدف ناقص المرحلتين الأوليين، ثم ÷ معدل ب.',
+    estimatedSteps: 5, conceptTags: ['combined-rate', 'stages'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(add(mul(a, soloA), mul(add(a, b), togetherH), mul(b, X)), target)]
+    },
+    askedUnknown: 'finalSoloTime', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'THREE_STAGE_RATES', targetMisconception: 'USED_COMBINED_RATE_ON_FULL_TARGET',
+      wrongMethodValue: (target - a * soloA) / (a + b),
+      degenerateWhen: [{when: a === b, note: 'equal rates collapse the staging distinction'}]
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 2, stageCount: 3, reverseReasoning: 1, arithmeticBurden: 4, dependencyDepth: 2},
+    textParams: {essentialParams: ['rateA', 'rateB', 'soloAHours', 'jointHours', 'targetAmount']}
+  });
 }
 
-function threeRates(ctx){
-  const {rng}=ctx; const rates=rng.sample([6,8,10,12,15,18,20],3); const h=rng.pick([3,4,5]); const correct=rates.reduce((a,b)=>a+b,0)*h;
-  return base(ctx,'COMB_H_THREE','ثلاثة معدلات تعمل معًا','hard',`تعمل ثلاث آلات بمعدلات ${rates[0]} و${rates[1]} و${rates[2]} وحدة/ساعة. إذا عملت معًا ${h} ساعات، فكم وحدة تنتج؟`,correct,[rates[0]*h,rates[1]*h,(rates[0]+rates[1])*h,rates.reduce((a,b)=>a+b,0),correct+rates[2],Math.max(1,correct-rates[2])],v=>`${formatNumber(v)} وحدة`,[
-    `المعدل المشترك = ${rates.join(' + ')} = ${rates.reduce((a,b)=>a+b,0)} وحدة/ساعة.`,
-    `خلال ${h} ساعات = ${rates.reduce((a,b)=>a+b,0)} × ${h} = ${correct}.`
-  ],'اجمع المعدلات الثلاثة قبل ضرب الزمن.','يمكن جمع أي عدد من المعدلات إذا كانت الوحدات الزمنية نفسها ويعمل الجميع في الوقت نفسه.','اجمع المعدلات ثم × الزمن.',3);
-}
-
-function base(ctx,template_id,subskill,difficulty,question,correct,distractors,format,steps,how,remember,fast,estimated_steps){
- return {id:makeId(template_id,ctx.seed),generator_id:template_id,template_id,seed:ctx.seed,family:ctx.family,family_ar:ctx.family_ar,category:ctx.category,subskill,difficulty,question,display_expression:null,correct,distractors:distractors.filter(v=>Number.isFinite(v)&&v>0).map(v=>({value:v,rationale:'خطأ في تحديد الفترة التي يعمل فيها كل طرف أو في استخدام المعدل المشترك.'})),format,explanation:{how_to_start:how,steps,answer:`الإجابة الصحيحة: ${format(correct)}.`,fast_method:fast,remember},estimated_steps,concept_tags:['combined-rate','stages'],engine_version:ctx.engineVersion};
+function threeRates(ctx) {
+  const {rng} = ctx;
+  const rates = rng.sample([6, 8, 10, 12, 15, 18, 20], 3);
+  const h = rng.pick([3, 4, 5]);
+  const sum = rates.reduce((x, y) => x + y, 0);
+  const correct = sum * h;
+  const params = {rateA: rates[0], rateB: rates[1], rateC: rates[2], hours: h};
+  const distractors = usable([
+    mk(rates[0] * h, 'USED_ONLY_FIRST_RATE', `${rates[0]} × ${h}`),
+    mk(rates[2] * h, 'USED_ONLY_SECOND_RATE', `${rates[2]} × ${h}`),
+    mk((rates[0] + rates[1]) * h, 'MISSED_ONE_STAGE', `(${rates[0]} + ${rates[1]}) × ${h}`),
+    mk(sum, 'STOPPED_AT_UNIT_RATE', `${rates.join(' + ')}`),
+    mk(sum * (h + 1), 'OFF_BY_ONE_STEP', `${sum} × (${h} + 1)`),
+    mk(sum * (h - 1), 'OFF_BY_ONE_STEP', `${sum} × (${h} − 1)`),
+    mk(sum * h + sum, 'APPLIED_STEP_TWICE', `${sum} × ${h} + ${sum}`),
+    mk(Math.round(sum / 3) * h, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${sum} ÷ 3) × ${h}`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'COMB_H_THREE',
+    subskill: 'ثلاثة معدلات تعمل معًا',
+    difficulty: 'hard',
+    question: `تعمل ثلاث آلات بمعدلات ${rates[0]} و${rates[1]} و${rates[2]} وحدة/ساعة. إذا عملت معًا ${u(h, 'hour', 'oblique')}، فكم وحدة تنتج؟`,
+    correct, distractors, format: unitFormat('unit'),
+    steps: [
+      `المعدل المشترك في الساعة = ${rates.join(' + ')} = ${sum}.`,
+      `الإنتاج الكلي = ${sum} × ${h} = ${correct}.`
+    ],
+    howToStart: 'اجمع المعدلات الثلاثة قبل ضرب الزمن.',
+    remember: 'يمكن جمع أي عدد من المعدلات إذا كانت الوحدة الزمنية نفسها ويعمل الجميع معًا.',
+    fastMethod: 'اجمع المعدلات ثم اضرب في الزمن.',
+    estimatedSteps: 3, conceptTags: ['combined-rate'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(X, add(mul(rates[0], h), mul(rates[1], h), mul(rates[2], h)))]
+    },
+    askedUnknown: 'jointOutput', stageCount: 1,
+    pedagogy: {
+      targetSkill: 'ADD_THREE_RATES', targetMisconception: 'MISSED_ONE_STAGE',
+      wrongMethodValue: (rates[0] + rates[1]) * h,
+      degenerateWhen: [{when: rates[2] === 0, note: 'third machine contributes nothing'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 1, arithmeticBurden: 3},
+    textParams: {essentialParams: ['rateA', 'rateB', 'rateC', 'hours']}
+  });
 }

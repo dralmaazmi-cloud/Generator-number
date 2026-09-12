@@ -118,7 +118,7 @@ export function makeOptionSet({
     if (letter === correctLetter) {
       options[letter] = correctFormatted;
       distractorAnalysis[letter] = CORRECT_FEEDBACK;
-      optionsMeta[letter] = {correct: true, misconceptionId: null, derivation: null};
+      optionsMeta[letter] = {correct: true, value: correct, misconceptionId: null, derivation: null};
     } else {
       const item = shuffledWrong[wi++];
       options[letter] = item.formatted;
@@ -127,7 +127,7 @@ export function makeOptionSet({
         misconceptionId: item.misconceptionId,
         derivation: item.derivation
       });
-      optionsMeta[letter] = {correct: false, misconceptionId: item.misconceptionId, derivation: item.derivation};
+      optionsMeta[letter] = {correct: false, value: item.value, misconceptionId: item.misconceptionId, derivation: item.derivation};
     }
   }
   // Rank is read off the raw values, not the rendered strings: a count of 1
