@@ -7,7 +7,7 @@
 //     delegate to the central lexicon (Section 12).
 
 import {agreeingAdjective, singularOf, accusativeSingularOf, definitePlural, theSingleUnit, formatNumberWithUnit, unitWordFor, displayNumber} from '../arabic/units.js';
-import {deriveDependencyDepth} from '../qa/complexity.js';
+import {deriveDependencyDepth, deriveOperationProfile} from '../qa/complexity.js';
 import {partitionByPlausibility} from '../qa/distractor-plausibility.js';
 import {Fraction} from '../qa/fraction.js';
 import {isKnownMisconception} from '../qa/misconceptions.js';
@@ -77,6 +77,26 @@ export function approx(value, decimals = 1) {
 }
 
 /** `12 يومًا`, `يومان`, `3 أيام` — the only way a count meets a unit. */
+/**
+ * RC2.2-1. Picks a template for a requested band, and fails explicitly when the
+ * family holds none at that band.
+ *
+ * After RC2.2 the pools hold the templates that actually COMPUTE each band, so
+ * some families legitimately have none at some bands: odd-one-out has nothing
+ * that reaches hard, fractions has nothing above easy. The instruction is to
+ * fail rather than quietly hand back an easier item, so that is what happens —
+ * loudly, with the family and band named.
+ */
+export function pickTemplate(rng, list, family, difficulty) {
+  if (!Array.isArray(list) || list.length === 0) {
+    throw Object.assign(
+      new Error(`NO_TEMPLATE_AT_DIFFICULTY: ${family} has no template that computes ${difficulty}`),
+      {code: 'NO_TEMPLATE_AT_DIFFICULTY', family, difficulty}
+    );
+  }
+  return rng.pick(list);
+}
+
 export const u = (n, unitId, ctx = 'nominative') => formatNumberWithUnit(n, unitId, ctx);
 
 export const adj = (n, unitId, stem, ctx = 'oblique') => agreeingAdjective(n, unitId, stem, ctx);
@@ -239,14 +259,37 @@ export function buildBase(ctx, spec) {
     pedagogy,
     ratio,
     realism,
-    // RC2.1-2. Derived uniformly from the published solution rather than taken
-    // from whatever each template happened to declare. The declared value
-    // stands only where nothing parses.
+    // RC2.2-2. The factors the scorer actually consumes, assembled here so no
+    // template has to be edited and none can inflate its own difficulty.
+    //
+    // Templates keep declaring what they know about themselves; what changed is
+    // that the CHAIN is measured once, from the solution, instead of arriving
+    // four times over as reasoningTransformations + stageCount + dependencyDepth
+    // + arithmeticBurden. Those four rose together on the same steps, which is
+    // why Holdout C released 82 items as hard and an independent review found 43
+    // of them were not.
     complexityFactors: (() => {
-      const derived = deriveDependencyDepth(steps);
-      return derived === null
-        ? complexityFactors
-        : {...complexityFactors, dependencyDepth: derived};
+      const declared = complexityFactors ?? {};
+      const depth = deriveDependencyDepth(steps);
+      const ops = deriveOperationProfile(steps);
+      return {
+        // Genuine reasoning burden.
+        dependencyDepth: depth === null ? (declared.dependencyDepth ?? 0) : depth,
+        // Distinct kinds of transformation composed. Working backwards and
+        // converting units are transformations in their own right and are not
+        // visible as operators, so they are added to what the steps show.
+        transformationDepth: (ops ? ops.transformationDepth : (declared.reasoningTransformations ?? 0))
+          + (declared.reverseReasoning ?? 0) + (declared.unitConversion ?? 0),
+        // Conditions that must hold at once rather than in sequence.
+        independentConstraints: (declared.conditionCount ?? 0) + (declared.equationSolving ?? 0),
+        // Separate given information held together at once.
+        informationIntegration: (declared.conceptCount ?? 0) + (declared.graphDepth ?? 0),
+        ruleSearchDepth: declared.ruleSearchDepth ?? 0,
+        // Workload: how many routine operations, regardless of how few ideas.
+        arithmeticWorkload: ops ? ops.arithmeticWorkload : (declared.arithmeticBurden ?? 0),
+        // Kept for evidence and for the audit trail; not scored.
+        declared
+      };
     })(),
     textParams,
     allowedConstants,

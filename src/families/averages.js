@@ -1,11 +1,11 @@
-import {mk, usable, num, buildBase, eq, X, add, sub, mul, resample} from './_shared.js';
+import {mk, usable, num, buildBase, eq, X, add, sub, mul, resample, pickTemplate} from './_shared.js';
 
 export function generateAverages({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'averages', family_ar: 'المتوسط الحسابي', category: 'المتوسط الحسابي'};
-  const list = difficulty === 'easy' ? [addOne, removeOne]
-    : difficulty === 'medium' ? [replaceOne, combineGroups, addPairKnownAverage]
-    : [combineThenAdd, missingValueForTarget];
-  return rng.pick(list)(ctx);
+  const list = difficulty === 'easy' ? [missingValueForTarget]
+    : difficulty === 'medium' ? [combineThenAdd, removeOne, combineGroups, replaceOne, addPairKnownAverage, addOne]
+    : [];
+  return pickTemplate(rng, list, 'averages', difficulty)(ctx);
 }
 
 const plain = v => num(v);
@@ -38,7 +38,7 @@ function addOne(ctx) {
   return buildBase(ctx, {
     templateId: 'AVG_E_ADD',
     subskill: 'إضافة قيمة جديدة إلى مجموعة',
-    difficulty: 'easy',
+    difficulty: 'medium',
     // RC2-002: a definite plural takes an agreeing numeral adjective, not a
     // bare numeral. The count is restated in words the sentence can carry.
     question: `متوسط ${n} قيم هو ${avg}. أضيفت قيمة جديدة مقدارها ${newVal}. فما متوسط القيم بعد الإضافة؟`,
@@ -95,7 +95,7 @@ function removeOne(ctx) {
   return buildBase(ctx, {
     templateId: 'AVG_E_REMOVE',
     subskill: 'حذف قيمة من مجموعة',
-    difficulty: 'easy',
+    difficulty: 'medium',
     // RC2-002: a definite plural takes an agreeing numeral adjective, not a
     // bare numeral. The count is restated in words the sentence can carry.
     question: `متوسط ${n} قيم هو ${avg}. حُذفت قيمة مقدارها ${removed}. فما متوسط القيم الباقية؟`,
@@ -329,7 +329,7 @@ function combineThenAdd(ctx) {
     // quantity being averaged, so the running total is not a possible answer.
     answerBounds: {between: [Math.min(a1, a2, extra), Math.max(a1, a2, extra)]},
     subskill: 'دمج مجموعتين ثم إضافة قيمة جديدة',
-    difficulty: 'hard',
+    difficulty: 'medium',
     // RC2-002: a definite plural takes an agreeing numeral adjective, not a
     // bare numeral. The count is restated in words the sentence can carry.
     question: `متوسط ${n1} قيم هو ${a1}، ومتوسط ${n2} قيم أخرى هو ${a2}. أضيفت بعد ذلك قيمة جديدة مقدارها ${extra}. فما متوسط القيم جميعها؟`,
@@ -384,7 +384,7 @@ function missingValueForTarget(ctx) {
   return buildBase(ctx, {
     templateId: 'AVG_H_TARGET',
     subskill: 'إيجاد قيمة مطلوبة للوصول إلى متوسط مستهدف',
-    difficulty: 'hard',
+    difficulty: 'easy',
     // RC2-002: a definite plural takes an agreeing numeral adjective, not a
     // bare numeral. The count is restated in words the sentence can carry.
     question: `متوسط ${n} قيم هو ${oldAvg}. ما القيمة التي يجب إضافتها ليصبح متوسط القيم جميعها هو ${target}؟`,

@@ -1,12 +1,12 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, approx, unitFormat, buildBase, eq, X, add, sub, mul, resample} from './_shared.js';
+import {mk, usable, u, num, approx, unitFormat, buildBase, eq, X, add, sub, mul, resample, pickTemplate} from './_shared.js';
 
 export function generateProfitLoss({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'profit_loss', family_ar: 'الربح والخسارة والأسعار', category: 'الربح والخسارة والأسعار'};
-  const list = difficulty === 'easy' ? [simpleProfit, simpleLoss]
-    : difficulty === 'medium' ? [totalCostProfit, discountThenSale]
-    : [reverseSellingPrice, discountMarkupChain];
-  return rng.pick(list)(ctx);
+  const list = difficulty === 'easy' ? [simpleLoss, simpleProfit]
+    : difficulty === 'medium' ? [discountThenSale, reverseSellingPrice, totalCostProfit]
+    : [discountMarkupChain];
+  return pickTemplate(rng, list, 'profit_loss', difficulty)(ctx);
 }
 
 const pct = v => `${num(v)}%`;
@@ -236,7 +236,7 @@ function reverseSellingPrice(ctx) {
   return buildBase(ctx, {
     templateId: 'PL_H_REVERSE',
     subskill: 'استرجاع التكلفة من سعر بيع وربح معلوم',
-    difficulty: 'hard',
+    difficulty: 'medium',
     question: `باع متجر سلعة بـ${u(sell, 'dirham', 'oblique')} محققًا ربحًا قدره ${percent}% من تكلفة الشراء. فما تكلفة الشراء؟`,
     correct, distractors, format: money,
     steps: [

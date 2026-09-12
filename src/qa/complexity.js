@@ -21,20 +21,35 @@
 //     was DECLARED hard while being one addition and one multiplication. The
 //     answer there is to declare it correctly, not to inflate its score.
 export const COMPLEXITY_WEIGHTS = Object.freeze({
-  reasoningTransformations: 1.0,
-  conceptCount: 1.2,
-  reverseReasoning: 1.8,
-  equationSolving: 2.2,
-  graphDepth: 0.9,
-  stageCount: 1.1,
-  arithmeticBurden: 0.5,
-  conditionCount: 0.7,
-  unitConversion: 1.0,
-  dependencyDepth: 0.8,
-  // How far the solver must search before the intended rule is isolated. One
-  // obvious rule and nothing competing is the floor; a low-salience rule with
-  // competitors on the surface is the ceiling.
-  ruleSearchDepth: 1.4
+  // --- genuine reasoning burden ------------------------------------------
+  // How deep the chain of dependent results runs. Derived from the published
+  // solution, never declared.
+  dependencyDepth: 2.0,
+  // How many DISTINCT kinds of transformation the solution composes. Derived.
+  // This is the factor that separates reasoning from repetition: taking a
+  // fraction of a fraction of a fraction is one idea applied three times, while
+  // converting a ratio, then reversing a percentage, then solving for a total is
+  // three ideas composed.
+  transformationDepth: 1.6,
+  // Conditions that must hold simultaneously and cannot be solved in sequence.
+  independentConstraints: 1.4,
+  // How much separate given information has to be held together at once.
+  informationIntegration: 1.0,
+  // How far the solver must search before the intended rule is isolated.
+  ruleSearchDepth: 1.4,
+
+  // --- workload, deliberately cheap ---------------------------------------
+  // RC2.2-2. The count of routine operations. Holdout C's independent review
+  // found 43 of 82 items released as HARD were not hard, and the cause was
+  // here: `reasoningTransformations`, `stageCount`, `dependencyDepth` and
+  // `arithmeticBurden` all rose together on the same chain, so one chain of
+  // routine arithmetic was counted four times over. FRAC_H_4 — four divisions
+  // of one kind — scored exactly as high as REL_M_CONFIRM, five simultaneous
+  // relational constraints with no arithmetic at all.
+  //
+  // Workload is real but it is not difficulty, so it is carried at a weight
+  // that cannot by itself lift an item a band.
+  arithmeticWorkload: 0.2
 });
 
 const FACTORS = Object.keys(COMPLEXITY_WEIGHTS);
@@ -61,6 +76,49 @@ const FACTORS = Object.keys(COMPLEXITY_WEIGHTS);
  * stands, so a template that reasons without arithmetic is not silently zeroed.
  */
 const NUM = /-?\d+(?:\.\d+)?/g;
+
+/**
+ * RC2.2-2. The distinct kinds of transformation a solution composes, and the
+ * total count of routine operations, both read off the published steps.
+ *
+ * Repeating one operation is workload; composing different operations is depth.
+ * That single distinction is what the Holdout C review was pointing at, and
+ * deriving both from the same text means neither can be inflated by a template
+ * author's optimism about its own difficulty.
+ */
+const OPERATORS = [
+  ['×', 'multiply'], ['*', 'multiply'],
+  ['÷', 'divide'], ['/', 'divide'],
+  ['+', 'add'],
+  ['−', 'subtract'], ['-', 'subtract'],
+  ['%', 'percent'], ['٪', 'percent'],
+  [':', 'ratio']
+];
+
+export function deriveOperationProfile(steps) {
+  if (!Array.isArray(steps) || !steps.length) return null;
+  const kinds = new Set();
+  let total = 0;
+  for (const raw of steps) {
+    const text = String(raw ?? '');
+    for (const [sym, kind] of OPERATORS) {
+      let from = 0;
+      for (;;) {
+        const at = text.indexOf(sym, from);
+        if (at < 0) break;
+        // A minus sign directly before a digit at the start of a token is a
+        // sign, not an operation.
+        const prev = text[at - 1];
+        if (kind === 'subtract' && (prev === undefined || prev === '(' || prev === '=')) { from = at + 1; continue; }
+        kinds.add(kind);
+        total++;
+        from = at + sym.length;
+      }
+    }
+  }
+  if (!total) return null;
+  return {transformationDepth: kinds.size, arithmeticWorkload: total, kinds: [...kinds]};
+}
 
 export function deriveDependencyDepth(steps) {
   if (!Array.isArray(steps) || !steps.length) return null;
@@ -106,6 +164,11 @@ export function computeComplexity(f = {}) {
     factors[key] = v;
     score += v * COMPLEXITY_WEIGHTS[key];
   }
+  // RC2.2-2. Round FIRST, then band. They used to disagree: the reported score
+  // was rounded and the band was taken from the raw sum, so a template summing
+  // to 13.199999999999999 reported 13.2 — at or above the hard boundary — and
+  // was banded medium. That is exactly the declared/computed inconsistency this
+  // release exists to remove, one level down.
   score = Math.round(score * 100) / 100;
   return {score, band: bandFor(score), factors};
 }
@@ -139,18 +202,44 @@ export function computeComplexity(f = {}) {
  *
  * The rule is a fixed point: reclassifying templates moves the band medians,
  * which moves the boundaries, which is why the audit recomputes and reports
- * DRIFTED rather than trusting a constant. After the RC2.1-2 reclassifications
- * settled:
- *
- *   easy   median  7.2      easy/medium boundary = (7.2 + 10.7) / 2 = 8.9
- *   medium median 10.7      medium/hard boundary = (10.7 + 13.3) / 2 = 12.0
- *   hard   median 13.3
+ * DRIFTED rather than trusting a constant.
  *
  * Keeping 8.1 / 11.3 here would have been fitting the old numbers to a new
  * model. tools/audit/rc21-difficulty.mjs recomputes the medians on every run and
  * says DRIFTED when the constants below stop matching what the rule implies.
  */
-export const BAND_BOUNDARIES = Object.freeze({easyMedium: 8.9, mediumHard: 12.0});
+/**
+ * RC2.2-2. The boundary RULE had to change, and the reason matters.
+ *
+ * RC2-015 placed each boundary midway between the medians of the two bands it
+ * separates. That worked while a question's declared band and its computed band
+ * could disagree — the medians were then a fact about the population, measurable
+ * independently of where the boundaries sat.
+ *
+ * RC2.2-1 removed that gap: a question is released at its computed band and at
+ * no other. The old rule is therefore now circular. The "medium median" is the
+ * median of the items the boundaries themselves selected as medium, so any pair
+ * of boundaries reproduces itself and declared/computed agreement is 100% by
+ * construction. A rule that cannot fail is not a rule.
+ *
+ * The replacement is evaluable and does not depend on where the boundaries
+ * already are:
+ *
+ *   the boundaries are the tertiles of the reasoning-burden distribution
+ *   across the TEMPLATE population, each template weighted once by its own
+ *   median score, sampled by calling every family generator directly rather
+ *   than through the gated engine.
+ *
+ * Measured over all 105 reachable templates: tertiles at 9.4 and 13.4, giving a
+ * population split of 40 easy, 33 medium, 32 hard. tools/audit/rc22-difficulty.mjs
+ * recomputes them and reports DRIFTED when these constants stop matching.
+ *
+ * This is not a claim that a third of questions SHOULD be hard. It is a claim
+ * that the three labels should partition the reasoning the engine can actually
+ * produce, rather than being anchored to numbers inherited from a model that no
+ * longer exists.
+ */
+export const BAND_BOUNDARIES = Object.freeze({easyMedium: 9.4, mediumHard: 13.4});
 
 export function bandFor(score) {
   if (score <= BAND_BOUNDARIES.easyMedium) return 'easy';

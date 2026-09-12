@@ -5,17 +5,17 @@
 // not all obey the stated rule yields no surviving candidate at all, so a
 // malformed run is rejected rather than published with a plausible-looking key.
 
-import {mk, usable, num, buildBase, eq, X, add, sub, mul, div, resample} from './_shared.js';
+import {mk, usable, num, buildBase, eq, X, add, sub, mul, div, resample, pickTemplate} from './_shared.js';
 
 export function generateSequences({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {
     difficulty, rng, seed, engineVersion,
     family: 'sequences', family_ar: 'المتتاليات العددية', category: 'المتتاليات العددية'
   };
-  const templates = difficulty === 'easy' ? [arithmetic, geometric]
-    : difficulty === 'medium' ? [increasingDifferences, alternatingOps, interleaved, doublingDifferences, recurrence]
+  const templates = difficulty === 'easy' ? [arithmetic, geometric, interleaved]
+    : difficulty === 'medium' ? [increasingDifferences, alternatingOps, recurrence, doublingDifferences]
     : [alternateDivide, powersPlusIndex];
-  return rng.pick(templates)(ctx);
+  return pickTemplate(rng, templates, 'sequences', difficulty)(ctx);
 }
 
 /** Differences written as the subtractions that produce them (Section 8-C). */
@@ -420,7 +420,7 @@ function interleaved(ctx) {
   return buildBase(ctx, {
     templateId: 'SEQ_M_INTERLEAVED',
     subskill: 'سلسلتان متداخلتان',
-    difficulty: 'medium',
+    difficulty: 'easy',
     question: 'ما العدد التالي في المتتالية؟',
     displayExpression: `${seq.join('، ')}، ؟`,
     correct, distractors, format: v => num(v),

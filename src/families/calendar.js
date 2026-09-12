@@ -1,13 +1,13 @@
 import {DAYS_AR, dayShift} from '../utils.js';
-import {mk, usable, u, buildBase, eq, X, add, mod, resample, adj} from './_shared.js';
+import {mk, usable, u, buildBase, eq, X, add, mod, resample, adj, pickTemplate} from './_shared.js';
 import {grid} from '../qa/oracle-engine.js';
 
 export function generateCalendar({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'calendar', family_ar: 'الاستدلال الزمني وأيام الأسبوع', category: 'الاستدلال الزمني وأيام الأسبوع'};
-  const list = difficulty === 'easy' ? [tomorrowKnown, afterTomorrow]
-    : difficulty === 'medium' ? [compoundForward, forwardThenBack]
-    : [nestedOffset, longOffset];
-  return rng.pick(list)(ctx);
+  const list = difficulty === 'easy' ? [compoundForward, longOffset, tomorrowKnown, afterTomorrow, forwardThenBack]
+    : difficulty === 'medium' ? [nestedOffset]
+    : [];
+  return pickTemplate(rng, list, 'calendar', difficulty)(ctx);
 }
 
 const dayName = i => DAYS_AR[((i % 7) + 7) % 7];
@@ -150,7 +150,7 @@ function compoundForward(ctx) {
   return buildBase(ctx, {
     templateId: 'CAL_M_COMPOUND',
     subskill: 'إزاحة مركبة أمامية من الغد',
-    difficulty: 'medium',
+    difficulty: 'easy',
     // RC2.1-4. Was «اليوم الذي يأتي بعد X من غد هو Y». The nesting is the point of
     // the item and is kept; only the wording is straightened. «بعد غدٍ بـX» is
     // deliberately NOT used: «بعد غد» is itself an idiom for today+2, so that
@@ -198,7 +198,7 @@ function forwardThenBack(ctx) {
   return buildBase(ctx, {
     templateId: 'CAL_M_TWO_SHIFT',
     subskill: 'تحديد اليوم الحالي ثم الرجوع عدة أيام',
-    difficulty: 'medium',
+    difficulty: 'easy',
     question: `إذا كان بعد غد هو ${DAYS_AR[afterTom]}، فما اليوم الذي كان قبل ${u(back, 'day', 'oblique')} من اليوم؟`,
     correct, distractors, format: v => String(v),
     steps: [
@@ -259,7 +259,7 @@ function nestedOffset(ctx) {
   return buildBase(ctx, {
     templateId: 'CAL_H_NESTED',
     subskill: 'إزاحة زمنية مركبة أمامية وخلفية',
-    difficulty: 'hard',
+    difficulty: 'medium',
     // RC2.1-4. Was a triple-nested relative clause. Same arithmetic —
     // today +1 +ahead −behind = target — stated as the sequence of moves it
     // actually is, rather than as one sentence the reader must unpick.
@@ -316,7 +316,7 @@ function longOffset(ctx) {
   return buildBase(ctx, {
     templateId: 'CAL_H_LONG',
     subskill: 'إزاحة تتجاوز أسبوعًا',
-    difficulty: 'hard',
+    difficulty: 'easy',
     question: `إذا كان اليوم ${DAYS_AR[today]}، فما اليوم بعد ${u(n, 'day', 'oblique')}؟`,
     correct, distractors, format: v => String(v),
     steps: [

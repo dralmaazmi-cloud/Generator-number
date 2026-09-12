@@ -1,12 +1,12 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, risePercentPhrase} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, risePercentPhrase, pickTemplate} from './_shared.js';
 
 export function generatePercentages({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'percentages', family_ar: 'النسب المئوية', category: 'النسب المئوية'};
-  const list = difficulty === 'easy' ? [simplePercent, reverseOneChange]
-    : difficulty === 'medium' ? [successiveChange, remainingChain, unitPriceChange]
-    : [reverseSuccessive, successiveWithTarget];
-  return rng.pick(list)(ctx);
+  const list = difficulty === 'easy' ? [simplePercent]
+    : difficulty === 'medium' ? [reverseOneChange, remainingChain, unitPriceChange, successiveWithTarget]
+    : [successiveChange, reverseSuccessive];
+  return pickTemplate(rng, list, 'percentages', difficulty)(ctx);
 }
 
 const plain = v => num(v);
@@ -88,7 +88,7 @@ function reverseOneChange(ctx) {
   return buildBase(ctx, {
     templateId: 'PCT_E_REVERSE_ONE',
     subskill: 'استرجاع الأصل بعد تغير واحد',
-    difficulty: 'easy',
+    difficulty: 'medium',
     question: `بعد ${inc ? 'زيادة' : 'انخفاض'} قيمة بنسبة ${pct}% أصبحت ${final}. فما القيمة الأصلية؟`,
     correct, distractors, format: plain,
     steps: [
@@ -151,7 +151,7 @@ function successiveChange(ctx) {
   return buildBase(ctx, {
     templateId: 'PCT_M_SUCCESSIVE',
     subskill: 'تغيران مئويان متتاليان',
-    difficulty: 'medium',
+    difficulty: 'hard',
     question: `كانت قيمة ${original}. ${upFirst ? 'زادت' : 'انخفضت'} بنسبة ${p1}%، ثم ${upFirst ? 'انخفضت' : 'زادت'} القيمة الجديدة بنسبة ${p2}%. ما نسبة التغير النهائية مقارنة بالأصل؟`,
     correct, distractors, format,
     steps: [
@@ -371,7 +371,7 @@ function successiveWithTarget(ctx) {
   return buildBase(ctx, {
     templateId: 'PCT_H_CHAIN_VALUE',
     subskill: 'خصم ثم زيادة على القيمة الجديدة',
-    difficulty: 'hard',
+    difficulty: 'medium',
     question: `قيمة أصلية مقدارها ${original}. خُفّضت بنسبة ${p1}%، ثم زيدت القيمة الجديدة بنسبة ${p2}%. ما القيمة النهائية؟`,
     correct, distractors, format: plain,
     steps: [

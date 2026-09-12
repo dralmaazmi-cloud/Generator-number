@@ -65,7 +65,9 @@ test('RC2.1-1: the identity survives the relaxed fallback', () => {
   // family pool forces that path repeatedly.
   const e = new Engine();
   e.resetTelemetry();
-  const s = e.generatePractice({count: 40, difficulty: 'hard', family: 'calendar', seed: 'RC21-RELAXED'});
+  // RC2.2-1: calendar holds no hard template, so a narrow pool that CAN reach
+  // hard is used to force the fallback instead.
+  const s = e.generatePractice({count: 40, difficulty: 'hard', family: 'combined_rate', seed: 'RC21-RELAXED'});
   const r = e.getTelemetry().sessionReconciliation;
   assert.ok(s.validation.diversity_warnings.length > 0, 'this setup is meant to exercise the fallback');
   assert.equal(r.publishedToSessions, r.delivered + r.sessionDiscards);

@@ -1,11 +1,11 @@
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, pickTemplate} from './_shared.js';
 
 export function generateAges({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'ages', family_ar: 'مسائل الأعمار', category: 'مسائل الأعمار'};
-  const list = difficulty === 'easy' ? [sumDifference, multipleDifference]
+  const list = difficulty === 'easy' ? [multipleDifference, sumDifference]
     : difficulty === 'medium' ? [futureSumDifference, currentRatioFutureSum]
-    : [pastRatioFutureSum, twoTimeRatio, futureRatio];
-  return rng.pick(list)(ctx);
+    : [futureRatio, pastRatioFutureSum, twoTimeRatio];
+  return pickTemplate(rng, list, 'ages', difficulty)(ctx);
 }
 
 const years = unitFormat('year');

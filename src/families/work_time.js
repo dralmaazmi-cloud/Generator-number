@@ -1,12 +1,12 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, adj, risePercentPhrase} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, adj, risePercentPhrase, pickTemplate} from './_shared.js';
 
 export function generateWorkTime({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'work_time', family_ar: 'العمال والزمن', category: 'العمال والزمن'};
-  const list = difficulty === 'easy' ? [inverseDirect, workVolume]
-    : difficulty === 'medium' ? [changeWorkers, efficiencyChange]
-    : [twoStageWorkers, workersAndEfficiency, targetDeadline];
-  return rng.pick(list)(ctx);
+  const list = difficulty === 'easy' ? [workVolume, inverseDirect, efficiencyChange]
+    : difficulty === 'medium' ? [targetDeadline]
+    : [workersAndEfficiency, twoStageWorkers, changeWorkers];
+  return pickTemplate(rng, list, 'work_time', difficulty)(ctx);
 }
 
 function inverseDirect(ctx) {
@@ -139,7 +139,7 @@ function changeWorkers(ctx) {
   return buildBase(ctx, {
     templateId: 'WORK_M_CHANGE',
     subskill: 'تغير عدد العمال بعد إنجاز جزء من العمل',
-    difficulty: 'medium',
+    difficulty: 'hard',
     question: `يستطيع ${u(w1, 'worker')} إنجاز عمل كامل في ${u(totalDays, 'day', 'oblique')}. عملوا ${u(initialDays, 'day', 'oblique')}، ثم ${change > 0 ? `انضم إليهم ${u(change, 'worker')}` : `غادر ${u(Math.abs(change), 'worker')}`}. كم يومًا إضافيًا يحتاج العدد الجديد لإكمال العمل؟`,
     correct, distractors, format: unitFormat('day'),
     steps: [
@@ -191,7 +191,7 @@ function efficiencyChange(ctx) {
   return buildBase(ctx, {
     templateId: 'WORK_M_EFF',
     subskill: 'زيادة كفاءة العمال مع ثبات العدد',
-    difficulty: 'medium',
+    difficulty: 'easy',
     question: `فريق ينجز عملًا في ${u(days, 'day', 'oblique')}. بعد تدريب ارتفعت كفاءة الفريق ${risePercentPhrase(pct)} مع بقاء عدد العمال نفسه. كم يومًا يحتاج للعمل نفسه؟`,
     correct, distractors, format: unitFormat('day'),
     steps: [
@@ -247,7 +247,7 @@ function targetDeadline(ctx) {
   return buildBase(ctx, {
     templateId: 'WORK_M_TARGET',
     subskill: 'حساب العمل المتبقي ثم عدد العمال المطلوب',
-    difficulty: 'hard',
+    difficulty: 'medium',
     question: `يستطيع ${u(w, 'worker')} إنجاز عمل كامل في ${u(totalDays, 'day', 'oblique')}. عملوا ${u(initialDays, 'day', 'oblique')}، ثم تقرر إنهاء ما تبقى خلال ${u(finishDays, 'day', 'oblique')} فقط. كم عاملًا يجب أن يعمل خلال المدة الأخيرة؟`,
     correct, distractors, format: unitFormat('worker'),
     steps: [

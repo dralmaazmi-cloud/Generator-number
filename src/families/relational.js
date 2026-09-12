@@ -11,7 +11,7 @@
 // undecidable when they disagree, so nothing here re-derives the generator's
 // reasoning.
 
-import {mk, usable, buildBase, resample} from './_shared.js';
+import {mk, usable, buildBase, resample, pickTemplate} from './_shared.js';
 import {buildOrderOracle} from '../qa/relational-oracle.js';
 import {canonicalGraph} from '../qa/fingerprint.js';
 
@@ -22,10 +22,10 @@ const POSITION_WORDS = {1: 'الأول', 2: 'الثاني', 3: 'الثالث', 4
 
 export function generateRelational({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'relational', family_ar: 'المقارنة والترتيب العلاقاتي', category: 'المقارنة والترتيب العلاقاتي'};
-  const list = difficulty === 'easy' ? [fullChainPosition, betweenRelation]
-    : difficulty === 'medium' ? [branchUnresolved, countAbove]
-    : [branchGuaranteed, partialOrderPosition, confirmedStatement];
-  return rng.pick(list)(ctx);
+  const list = difficulty === 'easy' ? [betweenRelation]
+    : difficulty === 'medium' ? [fullChainPosition]
+    : [branchUnresolved, partialOrderPosition, confirmedStatement, branchGuaranteed, countAbove];
+  return pickTemplate(rng, list, 'relational', difficulty)(ctx);
 }
 
 // --- graph construction ----------------------------------------------------
@@ -142,7 +142,7 @@ function fullChainPosition(ctx) {
   return buildBase(ctx, {
     templateId: 'REL_E_CHAIN',
     subskill: 'ترتيب كامل وتحديد مركز',
-    difficulty: 'easy',
+    difficulty: 'medium',
     question: `${sentences(rng, edges)} من صاحب المركز ${POSITION_WORDS[targetPos]} من الأسرع إلى الأبطأ؟`,
     correct, distractors, format: v => String(v),
     steps: [
@@ -244,7 +244,7 @@ function branchUnresolved(ctx) {
   return buildBase(ctx, {
     templateId: 'REL_M_BRANCH_UNRES',
     subskill: 'فروع وعلاقة غير محسومة',
-    difficulty: 'medium',
+    difficulty: 'hard',
     question: `${sentences(rng, edges)} أي مقارنة لا يمكن حسمها؟`,
     correct, distractors, format: v => String(v),
     steps: [
@@ -294,7 +294,7 @@ function countAbove(ctx) {
   return buildBase(ctx, {
     templateId: 'REL_M_COUNT',
     subskill: 'عدّ الأشخاص المؤكد تفوقهم على شخص محدد',
-    difficulty: 'medium',
+    difficulty: 'hard',
     question: `${sentences(rng, edges)} كم شخصًا نعرف يقينًا أنهم أسرع من ${target}؟`,
     correct, distractors, format: v => String(v),
     steps: [

@@ -52,7 +52,7 @@ test('RC2.1-2: every template gets a dependency depth, not just the ones that de
 
 // --- the boundaries ---------------------------------------------------------
 
-test('RC2.1-2: the boundaries are what the stated rule implies', async () => {
+test('RC2.1-2: the boundaries are what the stated rule implies', {skip: 'superseded by RC2.2-2: the midpoint-of-medians rule became circular once the release gate made declared and computed identical. tests/rc22-difficulty.test.mjs checks the tertile rule that replaced it.'}, async () => {
   // RC2-015 placed them midway between the medians of adjacent bands, and said
   // a later model change must show up rather than be absorbed. RC2.1 changed
   // the model, so the rule is reapplied — this asserts it was, and that the
@@ -83,7 +83,7 @@ test('RC2.1-2: calibration improved against the RC2 baseline', async () => {
   assert.ok(r.perDeclared.medium.agreement > 0.50, `medium ${r.perDeclared.medium.agreement}`);
 });
 
-test('RC2.1-2: no band was emptied by reclassification', () => {
+test('RC2.1-2: no band was emptied by reclassification', {skip: 'superseded by RC2.2-1: a family band is now deliberately empty where the family holds no template that computes it, and generation fails explicitly there rather than substituting. tests/rc22-difficulty.test.mjs checks that instead.'}, () => {
   // Families dispatch from fixed per-band lists. Reclassifying a template out of
   // a band that holds only one would make that band ungenerateable.
   const e = new Engine();
@@ -116,7 +116,7 @@ test('RC2.1-2: the ALL_HARD session is measurably less inflated', () => {
   }
 });
 
-test('RC2.1-2: the three underclassified work-target items are no longer underclassified', () => {
+test('RC2.1-2: the three underclassified work-target items are no longer underclassified', {skip: 'superseded by RC2.2-2: the scorer was reworked, so a template pinned to a band by the RC2.1 model is no longer the right fixture. The RC2.2 gate makes the underlying claim unconditional — nothing is released at a band it does not compute.'}, () => {
   // The review found three WORK_M_TARGET items declared easier than they are.
   // Nothing here was hard-coded for them: the derived dependency depth raised
   // the template to a hard median on its own, and it was reclassified with the

@@ -17,6 +17,15 @@
    "reason": "archived, not invalidated: this freeze was sound and holdout AUDIT-2026-09-12-B was generated from exactly this production state. RC2.1 remediates defects the holdout exposed, so production necessarily moves past it and a new freeze must be taken. The full record is kept at rc2/FREEZE_RC2.json so holdout B's provenance stays checkable.",
    "archivedRecord": "rc2/FREEZE_RC2.json",
    "holdoutGeneratedFromIt": "AUDIT-2026-09-12-B"
+  },
+  {
+   "RC2_COMMIT": "489a2570a56de32b39ee6c50061dc6a203c3113f",
+   "treeHash": "6656abc3fb98356735a09336a61a028e96a1b40b",
+   "frozenAt": "2026-09-12T14:02:30.478Z",
+   "productionBundleSha256": "fd0db212b5ef871561e66ac55f92381be3bc59cb7fd8dad67eef1743458f092a",
+   "reason": "archived, not invalidated: holdout AUDIT-2026-09-12-C was generated from exactly this production state, and its independent review is the diagnosis RC2.2 remediates. Production necessarily moves past it.",
+   "archivedRecord": "rc2/FREEZE_RC2_1.json",
+   "holdoutGeneratedFromIt": "AUDIT-2026-09-12-C"
   }
  ]
 }

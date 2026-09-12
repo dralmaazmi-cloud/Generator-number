@@ -160,6 +160,9 @@ test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs ou
   // A one-attempt budget on a seed whose single candidate cannot be finalised:
   // the distractor pool falls below five. The failure is real, not injected.
   //
+  // Repinned again for RC2.2: the release gate and capability-aware family
+  // selection change which seeds reach an unfinalisable candidate. The fixture
+  // pins the CONDITION — a budget that genuinely runs out — not the draw.
   // This seed replaced an earlier one that exhausted on REDUCIBLE_RATIO. RC2-003's
   // cost measurement found that rejection was 69% of three ratio templates' draws
   // and moved the constraint into the sampler, so that rejection no longer
@@ -167,7 +170,7 @@ test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs ou
   // its job, not failing.
   const engine = new Engine({maxGenerationAttempts: 1});
   assert.throws(
-    () => engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-6'}),
+    () => engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-8'}),
     err => err.code === 'QUESTION_GENERATION_EXHAUSTED'
   );
   const s = engine.getTelemetry();
@@ -181,7 +184,7 @@ test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs ou
 
 test('RC2-003 meta: a budget that does not run out emits no exhaustion', () => {
   const engine = new Engine();
-  engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-6'});
+  engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-8'});
   assert.equal(engine.getTelemetry().exhaustions, 0);
 });
 

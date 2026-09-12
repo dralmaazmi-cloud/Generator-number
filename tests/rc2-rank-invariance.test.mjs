@@ -10,6 +10,7 @@
 // invariant that cannot be violated.
 
 import test from 'node:test';
+import {supportedBand} from './_support/bands.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync, readdirSync, statSync} from 'node:fs';
 import {join} from 'node:path';
@@ -135,7 +136,7 @@ test('RC2-001/C: the same holds through the whole engine, for every family', () 
     const seen = new Set();
     for (const target of [1, 3, 6]) {
       globalThis.__RANK_TARGET__ = target;
-      const q = new Engine().generateQuestion({family, difficulty: 'medium', seed: `rc2-rank-c-${family}`});
+      const q = new Engine().generateQuestion({family, difficulty: supportedBand(family, 'medium'), seed: `rc2-rank-c-${family}`});
       seen.add(LETTERS.filter(l => !q.metadata.options_meta[l].correct)
         .map(l => String(q.metadata.options_meta[l].value)).sort().join(','));
       delete globalThis.__RANK_TARGET__;

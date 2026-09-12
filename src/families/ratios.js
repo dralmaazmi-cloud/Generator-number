@@ -1,12 +1,12 @@
 import {gcd} from '../utils.js';
-import {mk, usable, u, num, buildBase, eq, X, add, sub, mul, mod, resample} from './_shared.js';
+import {mk, usable, u, num, buildBase, eq, X, add, sub, mul, mod, resample, pickTemplate} from './_shared.js';
 
 export function generateRatios({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'ratios', family_ar: 'النسب وتقسيم الكميات', category: 'النسب وتقسيم الكميات'};
-  const list = difficulty === 'easy' ? [splitTotal, scaleKnown]
-    : difficulty === 'medium' ? [commonTermDifference, addToOneSide]
-    : [transferBetweenSides, twoRatiosExternalSum, commonTermSum];
-  return rng.pick(list)(ctx);
+  const list = difficulty === 'easy' ? [scaleKnown]
+    : difficulty === 'medium' ? [splitTotal]
+    : [transferBetweenSides, twoRatiosExternalSum, commonTermSum, commonTermDifference, addToOneSide];
+  return pickTemplate(rng, list, 'ratios', difficulty)(ctx);
 }
 
 const plain = v => num(v);
@@ -50,7 +50,7 @@ function splitTotal(ctx) {
   return buildBase(ctx, {
     templateId: 'RAT_E_SPLIT',
     subskill: 'تقسيم مجموع وفق نسبة',
-    difficulty: 'easy',
+    difficulty: 'medium',
     question: `النسبة بين أ : ب = ${a} : ${b}. إذا كان مجموعهما ${total}، فما قيمة ${askA ? 'أ' : 'ب'}؟`,
     correct, distractors, format: plain,
     steps: [
@@ -245,7 +245,7 @@ function commonTermDifference(ctx) {
   return buildBase(ctx, {
     templateId: 'RAT_M_COMMON_DIFF',
     subskill: 'نسبتان بحد مشترك مع فرق الطرفين',
-    difficulty: 'medium',
+    difficulty: 'hard',
     question: `النسبة أ : ب = ${a} : ${b}، والنسبة ب : ج = ${c} : ${d}. إذا كان الفرق بين أ وج يساوي ${given}، فما مجموع أ + ب + ج؟`,
     correct, distractors, format: plain,
     steps: [
@@ -310,7 +310,7 @@ function addToOneSide(ctx) {
   return buildBase(ctx, {
     templateId: 'RAT_M_ADD_SIDE',
     subskill: 'تغير النسبة بعد إضافة كمية إلى أحد الطرفين',
-    difficulty: 'medium',
+    difficulty: 'hard',
     question: `النسبة بين أ : ب = ${p} : ${q}. أُضيفت ${u(addUnits, 'unit')} إلى ب فأصبحت النسبة أ : ب = ${p} : ${r}. فما مجموع أ + ب قبل الإضافة؟`,
     correct, distractors, format: plain,
     steps: [

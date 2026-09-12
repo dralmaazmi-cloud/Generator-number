@@ -1,19 +1,24 @@
+// RC2.2-1. `difficulties` is now a CAPABILITY, not an aspiration: it lists the
+// bands for which the family actually holds a template that computes that band.
+// The session scheduler reads it, so a hard session is never scheduled into a
+// family that cannot produce a hard question. tests/rc22-difficulty.test.mjs
+// checks every entry against what the engine really does, so this cannot drift.
 export const FAMILY_REGISTRY = [
   {id:'sequences', ar:'المتتاليات العددية', category:'المتتاليات العددية', difficulties:['easy','medium','hard'], description:'فروق، ضرب وقسمة، تناوب، سلاسل متداخلة، أنماط متقدمة.'},
   {id:'ratios', ar:'النسب وتقسيم الكميات', category:'النسب وتقسيم الكميات', difficulties:['easy','medium','hard'], description:'توحيد النسب، مجموع وفرق، تغير النسبة، نقل كميات.'},
   {id:'percentages', ar:'النسب المئوية', category:'النسب المئوية', difficulties:['easy','medium','hard'], description:'زيادة ونقصان، تغيرات متتابعة، استرجاع الأصل.'},
-  {id:'averages', ar:'المتوسط الحسابي', category:'المتوسط الحسابي', difficulties:['easy','medium','hard'], description:'إضافة، حذف، استبدال، دمج مجموعات.'},
+  {id:'averages', ar:'المتوسط الحسابي', category:'المتوسط الحسابي', difficulties:['easy','medium'], description:'إضافة، حذف، استبدال، دمج مجموعات.'},
   {id:'ages', ar:'مسائل الأعمار', category:'مسائل الأعمار', difficulties:['easy','medium','hard'], description:'مجموع وفرق، نسب عمرية، ماضٍ ومستقبل.'},
   {id:'speed', ar:'السرعة والمسافة والزمن', category:'السرعة والمسافة والزمن', difficulties:['easy','medium','hard'], description:'مراحل، متوسط سرعة، التقاء، لحاق، فرق زمن.'},
   {id:'work_time', ar:'العمال والزمن', category:'العمال والزمن', difficulties:['easy','medium','hard'], description:'عامل-يوم، تغير عدد العمال، كفاءة وحجم عمل.'},
-  {id:'machines', ar:'الآلات والإنتاج', category:'الآلات والإنتاج', difficulties:['easy','medium','hard'], description:'آلة-ساعة، توقف آلة، تغير الإنتاجية، عدد الآلات.'},
+  {id:'machines', ar:'الآلات والإنتاج', category:'الآلات والإنتاج', difficulties:['medium','hard'], description:'آلة-ساعة، توقف آلة، تغير الإنتاجية، عدد الآلات.'},
   {id:'direct_proportion', ar:'التناسب المباشر', category:'التناسب المباشر البسيط', difficulties:['easy','medium','hard'], description:'تكلفة، وزن، وصفة، مقياس، عدد وحدات.'},
-  {id:'fractions', ar:'الكسور المتتابعة', category:'الكسور المتتابعة المباشرة', difficulties:['easy','medium','hard'], description:'كسور مباشرة متتابعة من عدد معلوم دون مسائل الباقي.'},
+  {id:'fractions', ar:'الكسور المتتابعة', category:'الكسور المتتابعة المباشرة', difficulties:['easy'], description:'كسور مباشرة متتابعة من عدد معلوم دون مسائل الباقي.'},
   {id:'unit_rate', ar:'المعدل الوحدوي', category:'المعدل الوحدوي', difficulties:['easy','medium','hard'], description:'كمية لكل وحدة ثم توسع أو تغير في المعدل.'},
-  {id:'combined_rate', ar:'المعدل المشترك', category:'المعدل المشترك', difficulties:['easy','medium','hard'], description:'مضخات أو آلات أو أشخاص يعملون معًا أو على مراحل.'},
+  {id:'combined_rate', ar:'المعدل المشترك', category:'المعدل المشترك', difficulties:['easy','hard'], description:'مضخات أو آلات أو أشخاص يعملون معًا أو على مراحل.'},
   {id:'relational', ar:'المقارنة والترتيب العلاقاتي', category:'المقارنة والترتيب العلاقاتي', difficulties:['easy','medium','hard'], description:'ترتيب كامل، فروع، علاقة غير محسومة، عبارة مؤكدة.'},
-  {id:'calendar', ar:'الاستدلال الزمني وأيام الأسبوع', category:'الاستدلال الزمني وأيام الأسبوع', difficulties:['easy','medium','hard'], description:'أمس وغد وبعد غد وتحولات زمنية مركبة.'},
-  {id:'odd_one_out', ar:'العدد الذي لا ينتمي', category:'العدد الذي لا ينتمي إلى المجموعة', difficulties:['easy','medium','hard'], description:'مضاعفات، مربعات، مكعبات، أوليات، خصائص عددية.'},
+  {id:'calendar', ar:'الاستدلال الزمني وأيام الأسبوع', category:'الاستدلال الزمني وأيام الأسبوع', difficulties:['easy','medium'], description:'أمس وغد وبعد غد وتحولات زمنية مركبة.'},
+  {id:'odd_one_out', ar:'العدد الذي لا ينتمي', category:'العدد الذي لا ينتمي إلى المجموعة', difficulties:['easy'], description:'مضاعفات، مربعات، مكعبات، أوليات، خصائص عددية.'},
   {id:'profit_loss', ar:'الربح والخسارة والأسعار', category:'الربح والخسارة والأسعار', difficulties:['easy','medium','hard'], description:'تكلفة، ربح، خسارة، خصم، سعر بيع، تكلفة كلية.'}
 ];
 

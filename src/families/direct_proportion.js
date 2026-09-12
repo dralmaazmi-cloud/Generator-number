@@ -7,17 +7,17 @@
 // satisfy the stated proportion. Nothing is announced without being derived.
 
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, div, factorLine, resample, unitWord, unitWordKam, theSingle, defPlural} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, div, factorLine, resample, unitWord, unitWordKam, theSingle, defPlural, pickTemplate} from './_shared.js';
 
 export function generateDirectProportion({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {
     difficulty, rng, seed, engineVersion,
     family: 'direct_proportion', family_ar: 'التناسب المباشر', category: 'التناسب المباشر البسيط'
   };
-  const list = difficulty === 'easy' ? [unitItems, unitCost, fractionalUnit]
-    : difficulty === 'medium' ? [recipeScale, mapScale]
-    : [compoundScale, multiUnitCost];
-  return rng.pick(list)(ctx);
+  const list = difficulty === 'easy' ? [unitItems, fractionalUnit]
+    : difficulty === 'medium' ? [mapScale, compoundScale]
+    : [multiUnitCost];
+  return pickTemplate(rng, list, 'direct_proportion', difficulty)(ctx);
 }
 
 // ---------------------------------------------------------------------------
@@ -366,7 +366,7 @@ function recipeScale(ctx) {
   return buildBase(ctx, {
     templateId: 'PROP_M_RECIPE',
     subskill: 'تكبير وصفة بعامل ثابت',
-    difficulty: 'medium',
+    difficulty: 'easy',
     question: `تحتاج وصفة إلى ${u(cups, 'cup')} من الدقيق لصنع ${u(pieces, 'piece')}. كم كوبًا تحتاج لصنع ${u(targetPieces, 'piece')} بالمعدل نفسه؟`,
     correct,
     distractors,
@@ -604,7 +604,7 @@ function compoundScale(ctx) {
   return buildBase(ctx, {
     templateId: 'PROP_H_COMPOUND',
     subskill: 'تناسب مباشر ثم زيادة احتياط',
-    difficulty: 'hard',
+    difficulty: 'medium',
     question: `تحتاج ${u(units, 'unit')} إلى ${u(amount, 'kg')} من مادة. نريد تجهيز ${u(targetUnits, 'unit')}، مع إضافة احتياط بنسبة ${reservePct}% فوق الكمية المحسوبة. كم كيلوجرامًا نحتاج؟`,
     correct,
     distractors,

@@ -5,6 +5,7 @@
 // proves that by corrupting the answer and checking the invariant complains.
 
 import test from 'node:test';
+import {supportedBands} from './_support/bands.mjs';
 import assert from 'node:assert/strict';
 
 import Engine from '../src/index.js';
@@ -39,7 +40,7 @@ export function forEachItem(family, difficulties, fn, samples = SAMPLES) {
 const near = (a, b, eps = 1e-9) => Math.abs(a - b) < eps;
 
 test('workers x days is constant when the work and the efficiency are', () => {
-  forEachItem('work_time', ['easy'], (q, answer, p) => {
+  forEachItem('work_time', supportedBands('work_time'), (q, answer, p) => {
     if (q.generator_id !== 'WORK_E_INVERSE') return;
     assert.ok(near(p.workers * p.days, p.newWorkers * answer),
       `${p.workers} x ${p.days} != ${p.newWorkers} x ${answer}`);
@@ -120,7 +121,7 @@ test('averages: adding a constant to every value shifts the mean by that constan
 });
 
 test('transfers conserve the total: A before + B before equals A after + B after', () => {
-  forEachItem('ratios', ['hard'], (q, answer, p) => {
+  forEachItem('ratios', supportedBands('ratios'), (q, answer, p) => {
     if (q.generator_id !== 'RAT_H_TRANSFER') return;
     const scale = q.metadata.asked_unknown === 'sideABeforeTransfer' ? answer / p.partA : answer / p.partB;
     const aBefore = p.partA * scale;
@@ -151,7 +152,7 @@ test('ages: the difference between two ages is constant through time', () => {
 });
 
 test('speed: distance equals speed times time in every stage', () => {
-  forEachItem('speed', ['easy', 'medium', 'hard'], (q, answer, p) => {
+  forEachItem('speed', supportedBands('speed'), (q, answer, p) => {
     if (q.generator_id === 'SPD_E_TIME') {
       assert.ok(near(p.distance, p.speed * answer));
     } else if (q.generator_id === 'SPD_E_DISTANCE') {
@@ -167,7 +168,8 @@ test('speed: distance equals speed times time in every stage', () => {
 });
 
 test('machines: machine-hours times the unit rate returns the stated output', () => {
-  forEachItem('machines', ['easy'], (q, answer, p) => {
+  // RC2.2-1: machines supplies no easy band now; the template computes medium.
+  forEachItem('machines', supportedBands('machines'), (q, answer, p) => {
     if (q.generator_id !== 'MACH_E_HOURS') return;
     assert.ok(near(answer * p.machines * p.hours, p.totalOutput * p.newMachines * p.newHours));
   });
@@ -175,7 +177,7 @@ test('machines: machine-hours times the unit rate returns the stated output', ()
 
 test('calendar: the published day, shifted by the net offset, lands on the stated day', () => {
   // Not "x + k - k = x" — this calls the generator and uses its answer.
-  forEachItem('calendar', ['easy', 'medium', 'hard'], q => {
+  forEachItem('calendar', supportedBands('calendar'), q => {
     const p = q.metadata.parameters;
     if (!Number.isFinite(p.netOffset) || !Number.isFinite(p.targetDayIndex)) return;
     const publishedIndex = DAYS_AR.indexOf(q.correct_value);
@@ -203,7 +205,7 @@ test('sequences: the stated rule holds for every printed term, not only the last
 });
 
 test('fractions: applying the denominators in order returns the published answer', () => {
-  forEachItem('fractions', ['easy', 'medium', 'hard'], (q, answer, p) => {
+  forEachItem('fractions', supportedBands('fractions'), (q, answer, p) => {
     if (q.metadata.asked_unknown !== 'chainResult') return;
     let running = Fraction.from(p.startNumber);
     for (const d of p.denominators) running = running.div(d);

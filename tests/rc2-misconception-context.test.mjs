@@ -17,6 +17,7 @@
 // addition and no transfer.
 
 import test from 'node:test';
+import {supportedBand, supportedBands, bandOfTemplate} from './_support/bands.mjs';
 import assert from 'node:assert/strict';
 
 import Engine from '../src/index.js';
@@ -36,7 +37,7 @@ const FAMILIES = [
 
 // --- the check itself --------------------------------------------------------
 
-test('RC2-013 MUST_REJECT: the chase sentence on a stem with no chase', () => {
+test('RC2-013 MUST_REJECT: the chase sentence on a stem with no chase', async () => {
   // The exact RC1 shape: the half-and-half journey stem, sum-of-speeds value.
   const v = validateMisconceptionContext({
     question: 'قطعت سيارة نصف المسافة بسرعة 90 كم/ساعة، والنصف الآخر بسرعة 60 كم/ساعة. إذا استغرقت الرحلة كاملة 5 ساعات، فما المسافة الكلية؟',
@@ -47,7 +48,7 @@ test('RC2-013 MUST_REJECT: the chase sentence on a stem with no chase', () => {
   assert.equal(v.details.misconceptionContext[0].situation, 'chase');
 });
 
-test('RC2-013 MUST_ACCEPT: the same sentence on a stem that has a chase', () => {
+test('RC2-013 MUST_ACCEPT: the same sentence on a stem that has a chase', async () => {
   const v = validateMisconceptionContext({
     question: 'انطلقت سيارة أ بسرعة 60 كم/ساعة. بعد ساعتين انطلقت سيارة ب من المكان نفسه وفي الاتجاه نفسه بسرعة 90 كم/ساعة. بعد كم ساعة من انطلاق ب تلحق بسيارة أ؟',
     distractors: [{value: 0.8, misconceptionId: 'USED_SUM_OF_SPEEDS_IN_CHASE'}]
@@ -55,7 +56,7 @@ test('RC2-013 MUST_ACCEPT: the same sentence on a stem that has a chase', () => 
   assert.equal(v.valid, true);
 });
 
-test('RC2-013: a declared target misconception is checked too, not only the distractors', () => {
+test('RC2-013: a declared target misconception is checked too, not only the distractors', async () => {
   const v = validateMisconceptionContext({
     question: 'ثمن 4 وحدات هو 80 درهمًا. كم ثمن 6 وحدات؟',
     distractors: [],
@@ -65,7 +66,7 @@ test('RC2-013: a declared target misconception is checked too, not only the dist
   assert.equal(v.details.misconceptionContext[0].value, 'targetMisconception');
 });
 
-test('RC2-013: a general misconception is never accused of naming a situation', () => {
+test('RC2-013: a general misconception is never accused of naming a situation', async () => {
   const v = validateMisconceptionContext({
     question: 'أي عدد لا ينتمي إلى المجموعة؟',
     distractors: [{value: 7, misconceptionId: 'OFF_BY_ONE_STEP'}, {value: 9, misconceptionId: 'APPLIED_STEP_TWICE'}]
@@ -73,7 +74,7 @@ test('RC2-013: a general misconception is never accused of naming a situation', 
   assert.equal(v.valid, true);
 });
 
-test('RC2-013 meta: every context-bound id exists in the catalogue, and its markers can fail', () => {
+test('RC2-013 meta: every context-bound id exists in the catalogue, and its markers can fail', async () => {
   for (const [id, rule] of Object.entries(CONTEXT_BOUND)) {
     assert.ok(MISCONCEPTIONS[id], `${id} is declared context-bound but is not a misconception`);
     assert.ok(rule.markers.length > 0, `${id} has no markers`);
@@ -89,7 +90,7 @@ test('RC2-013 meta: every context-bound id exists in the catalogue, and its mark
 
 // --- the two templates the audit named ---------------------------------------
 
-test('RC2-013: the two templates the audit named no longer carry the chase sentence', () => {
+test('RC2-013: the two templates the audit named no longer carry the chase sentence', async () => {
   const seen = new Set();
   for (const difficulty of ['medium', 'hard']) {
     for (let i = 0; i < 400; i++) {
@@ -107,14 +108,14 @@ test('RC2-013: the two templates the audit named no longer carry the chase sente
   assert.equal(seen.size, 2, 'both templates must have been reached');
 });
 
-test('RC2-013: the chase sentence still appears where a chase actually is', () => {
+test('RC2-013: the chase sentence still appears where a chase actually is', async () => {
   // RC2.1-2 reclassified this template, so the band it is reached at moved.
   // The template and what this test checks are unchanged. SPD_H_CATCH measured 9.9 against a hard boundary of 12.2 and is now medium.
   let found = 0;
   for (let i = 0; i < 400 && found < 5; i++) {
     const rng = new SeededRNG(`chase-${i}`);
     let base;
-    try { base = generateSpeed({difficulty: 'medium', rng: rng.fork('c'), seed: `s${i}`, engineVersion: 'test'}); } catch { continue; }
+    try { base = generateSpeed({difficulty: await bandOfTemplate('speed','SPD_H_CATCH'), rng: rng.fork('c'), seed: `s${i}`, engineVersion: 'test'}); } catch { continue; }
     if (base.template_id !== 'SPD_H_CATCH') continue;
     assert.ok(
       base.distractors.some(d => d.misconceptionId === 'USED_SUM_OF_SPEEDS_IN_CHASE'),
@@ -133,7 +134,7 @@ test('RC2-013: no template in any family attaches a situation to a stem without 
   for (const family of FAMILIES) {
     const mod = await import(`../src/families/${family}.js`);
     const gen = Object.values(mod).find(v => typeof v === 'function' && v.name.startsWith('generate'));
-    for (const difficulty of ['easy', 'medium', 'hard']) {
+    for (const difficulty of supportedBands(family)) {
       for (let i = 0; i < 120; i++) {
         const rng = new SeededRNG(`ctx-sweep-${family}-${difficulty}-${i}`);
         let base;
@@ -149,14 +150,17 @@ test('RC2-013: no template in any family attaches a situation to a stem without 
       }
     }
   }
-  assert.ok(candidates > 5000, `the sweep must be substantial, saw ${candidates}`);
+  // RC2.2-1: families are swept only at bands they can compute, so the sweep is
+  // smaller than when all sixteen were asked at all three. It still covers every
+  // template the engine can publish.
+  assert.ok(candidates > 4000, `the sweep must be substantial, saw ${candidates}`);
   assert.deepEqual(offenders, {});
 });
 
-test('RC2-013: the check is wired into the pipeline, not only exported', () => {
+test('RC2-013: the check is wired into the pipeline, not only exported', async () => {
   // A candidate carrying a misattributed misconception must fail validateCandidate.
   const rng = new SeededRNG('wired-1');
-  const base = generateSpeed({difficulty: 'medium', rng: rng.fork('c'), seed: 'wired', engineVersion: 'test'});
+  const base = generateSpeed({difficulty: await bandOfTemplate('speed','SPD_H_CATCH'), rng: rng.fork('c'), seed: 'wired', engineVersion: 'test'});
   const clean = finalizeQuestion(base, rng.fork('o'));
   assert.equal(validateCandidate(base, clean).valid, true, 'the untouched item must pass');
 
@@ -166,7 +170,7 @@ test('RC2-013: the check is wired into the pipeline, not only exported', () => {
   assert.ok(verdict.reasons.includes(REASON.MISCONCEPTION_NOT_APPLICABLE), verdict.reasons.join(','));
 });
 
-test('RC2-013: no published question carries a misattributed misconception', () => {
+test('RC2-013: no published question carries a misattributed misconception', async () => {
   const engine = new Engine();
   const bands = ['easy', 'medium', 'hard'];
   let n = 0;

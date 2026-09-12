@@ -258,8 +258,13 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
     family_ar: base.family_ar,
     category: base.category,
     subskill: base.subskill,
-    difficulty: base.difficulty,
-    difficulty_ar: DIFFICULTY_LABELS[base.difficulty],
+    // RC2.2-1. The published difficulty IS the computed one. Holdout C released
+    // 82 items as hard and an independent review found 43 were not; the cause
+    // was two labels for one property, free to disagree. There is now one label.
+    // What the template declared is kept in metadata as evidence, never as the
+    // released value.
+    difficulty: complexity.band,
+    difficulty_ar: DIFFICULTY_LABELS[complexity.band],
     question: base.question,
     display_expression: base.display_expression ?? null,
     options: optionSet.options,
@@ -292,6 +297,8 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
       reasoning_graph: base.reasoningGraph ?? null,
       complexity_score: complexity.score,
       complexity_band: complexity.band,
+      declared_difficulty: base.difficulty,
+      difficulty_is_computed: true,
       complexity_factors: complexity.factors,
       empirical_difficulty: null,
       correct_numeric_rank: optionSet.numeric_rank,

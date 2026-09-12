@@ -1,12 +1,12 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, approx} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, approx, pickTemplate} from './_shared.js';
 
 export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'speed', family_ar: 'السرعة والمسافة والزمن', category: 'السرعة والمسافة والزمن'};
-  const list = difficulty === 'easy' ? [simpleTime, simpleDistance]
-    : difficulty === 'medium' ? [twoStageTime, averageSpeedUnequalTime, catchupDelayed]
-    : [meetingDelayed, sameDistanceTimeDifference, equalDistanceTotalTime];
-  return rng.pick(list)(ctx);
+  const list = difficulty === 'easy' ? [simpleTime, simpleDistance, catchupDelayed]
+    : difficulty === 'medium' ? [averageSpeedUnequalTime, twoStageTime]
+    : [sameDistanceTimeDifference, meetingDelayed, equalDistanceTotalTime];
+  return pickTemplate(rng, list, 'speed', difficulty)(ctx);
 }
 
 const kmh = v => `${num(v)} كم/ساعة`;
@@ -376,7 +376,7 @@ function catchupDelayed(ctx) {
   return buildBase(ctx, {
     templateId: 'SPD_H_CATCH',
     subskill: 'لحاق مع انطلاق متأخر',
-    difficulty: 'medium',
+    difficulty: 'easy',
     question: `انطلقت سيارة أ بسرعة ${sA} كم/ساعة. بعد ${u(delay, 'hour', 'oblique')} انطلقت سيارة ب من المكان نفسه وفي الاتجاه نفسه بسرعة ${sB} كم/ساعة. بعد كم ساعة من انطلاق ب تلحق بسيارة أ؟`,
     correct, distractors, format: unitFormat('hour'),
     steps: [

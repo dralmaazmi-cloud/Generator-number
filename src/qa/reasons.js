@@ -38,6 +38,14 @@ export const REASON = Object.freeze({
   // RC2.1-3. Not a rejection: the candidate is still available, it has just been
   // moved behind the plausible ones.
   IMPLAUSIBLE_DISTRACTOR_DEMOTED: 'IMPLAUSIBLE_DISTRACTOR_DEMOTED',
+  // RC2.2-1. The draw produced a question at a different band from the one
+  // asked for. Never released; always resampled.
+  DIFFICULTY_BAND_MISMATCH: 'DIFFICULTY_BAND_MISMATCH',
+  // RC2.2-1. The family holds no template that computes the requested band.
+  // Declared vocabulary: a thrown generator error used to be turned into an
+  // ad-hoc `GENERATOR_ERROR:<message>` reason, which invented a new code for
+  // every distinct message and made the byReason table unusable.
+  NO_TEMPLATE_AT_DIFFICULTY: 'NO_TEMPLATE_AT_DIFFICULTY',
   INVALID_ARABIC_NUMBER_UNIT: 'INVALID_ARABIC_NUMBER_UNIT',
   RETRY_EXHAUSTED: 'RETRY_EXHAUSTED',
   // RC2-003. The default reason a family sampler discards its own draw. It is a

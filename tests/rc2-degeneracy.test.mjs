@@ -16,6 +16,7 @@
 //                either end, so reading the direction backwards still scores.
 
 import test from 'node:test';
+import {bandOfTemplate} from './_support/bands.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 
@@ -41,7 +42,7 @@ function draw(gen, difficulty, seed) {
 
 // --- the check itself works on the answer types this engine publishes --------
 
-test('RC2-005: a non-numeric wrong method that lands on the key is caught', () => {
+test('RC2-005: a non-numeric wrong method that lands on the key is caught', async () => {
   // MUST_REJECT — a day name.
   const day = validatePedagogy({
     correct: 'السبت',
@@ -58,7 +59,7 @@ test('RC2-005: a non-numeric wrong method that lands on the key is caught', () =
   assert.equal(other.valid, true);
 });
 
-test('RC2-005: numeric answers keep their epsilon comparison', () => {
+test('RC2-005: numeric answers keep their epsilon comparison', async () => {
   const near = validatePedagogy({
     correct: 12, pedagogy: {targetMisconception: 'OFF_BY_ONE_STEP', wrongMethodValue: 12 + 1e-12}
   });
@@ -69,35 +70,35 @@ test('RC2-005: numeric answers keep their epsilon comparison', () => {
   assert.equal(apart.valid, true);
 });
 
-test('RC2-005: a numeric string and its number are the same answer', () => {
+test('RC2-005: a numeric string and its number are the same answer', async () => {
   const v = validatePedagogy({
     correct: '48', pedagogy: {targetMisconception: 'OFF_BY_ONE_STEP', wrongMethodValue: 48}
   });
   assert.equal(v.valid, false);
 });
 
-test('RC2-005 meta: a template with no declared target is not accused of anything', () => {
+test('RC2-005 meta: a template with no declared target is not accused of anything', async () => {
   assert.equal(validatePedagogy({correct: 'السبت'}).valid, true);
   assert.equal(validatePedagogy({correct: 'السبت', pedagogy: {targetSkill: 'X'}}).valid, true);
 });
 
 // --- the two defects the blind spot was hiding ------------------------------
 
-test('RC2-005 MUST_REJECT: CAL_H_LONG where whole weeks and the remainder agree', () => {
+test('RC2-005 MUST_REJECT: CAL_H_LONG where whole weeks and the remainder agree', async () => {
   // n = 24: three whole weeks, remainder three. "Move by the number of weeks"
   // and "move by the remainder" are the same move, so the item measures nothing.
-  const {base, verdict} = draw(generateCalendar, 'hard', 'fx-cal-11');
+  const {base, verdict} = draw(generateCalendar, await bandOfTemplate('calendar','CAL_H_LONG'), 'fx-cal-6');
   assert.equal(base.template_id, 'CAL_H_LONG');
   assert.equal(base.parameters.offsetDays, 24);
   assert.equal(base.pedagogy.wrongMethodValue, base.correct);
   assert.ok(verdict.reasons.includes(REASON.DEGENERATE_WRONG_METHOD_EQUALS_KEY), verdict.reasons.join(','));
 });
 
-test('RC2-005: every CAL_H_LONG offset where weeks equal the remainder is refused', () => {
+test('RC2-005: every CAL_H_LONG offset where weeks equal the remainder is refused', async () => {
   const offsets = new Set();
   for (let i = 0; i < 900; i++) {
     let d;
-    try { d = draw(generateCalendar, 'hard', `cal-sweep-${i}`); } catch { continue; }
+    try { d = draw(generateCalendar, await bandOfTemplate('calendar','CAL_H_LONG'), `cal-sweep-${i}`); } catch { continue; }
     if (d.base.template_id !== 'CAL_H_LONG') continue;
     const n = d.base.parameters.offsetDays;
     const degenerate = Math.floor(n / 7) === n % 7;
@@ -112,9 +113,12 @@ test('RC2-005: every CAL_H_LONG offset where weeks equal the remainder is refuse
   assert.ok([...offsets].some(n => Math.floor(n / 7) !== n % 7), 'and a sound one');
 });
 
-test('RC2-005 MUST_REJECT: a chain position that reads the same from either end', () => {
-  for (const [seed, template] of [['fx-rel-6', 'REL_E_CHAIN'], ['fx-rel-8', 'REL_E_BETWEEN']]) {
-    const {base, verdict} = draw(generateRelational, 'easy', seed);
+test('RC2-005 MUST_REJECT: a chain position that reads the same from either end', async () => {
+  // RC2.2-1 moved templates into the pool whose band they actually compute, so
+  // both the seed and the band a fixture is found at can move. The fixture pins
+  // the CONDITION — a position that reads the same from either end — not the draw.
+  for (const [seed, template] of [['fx-rel-1', 'REL_E_CHAIN'], ['fx-rel-8', 'REL_E_BETWEEN']]) {
+    const {base, verdict} = draw(generateRelational, await bandOfTemplate('relational', template), seed);
     assert.equal(base.template_id, template);
     assert.equal(base.parameters.nodeCount, 5);
     assert.equal(base.pedagogy.wrongMethodValue, base.correct);
@@ -122,11 +126,11 @@ test('RC2-005 MUST_REJECT: a chain position that reads the same from either end'
   }
 });
 
-test('RC2-005 MUST_ACCEPT: an off-centre position in the same template passes', () => {
+test('RC2-005 MUST_ACCEPT: an off-centre position in the same template passes', async () => {
   let accepted = 0;
   for (let i = 0; i < 400 && accepted < 5; i++) {
     let d;
-    try { d = draw(generateRelational, 'easy', `rel-ok-${i}`); } catch { continue; }
+    try { d = draw(generateRelational, await bandOfTemplate('relational','REL_E_CHAIN'), `rel-ok-${i}`); } catch { continue; }
     if (d.base.template_id !== 'REL_E_CHAIN') continue;
     if (d.base.pedagogy.wrongMethodValue === d.base.correct) continue;
     assert.ok(!d.verdict.reasons.some(r => DEGENERACY.includes(r)), d.verdict.reasons.join(','));
@@ -135,18 +139,18 @@ test('RC2-005 MUST_ACCEPT: an off-centre position in the same template passes', 
   assert.equal(accepted, 5, 'the template must still publish');
 });
 
-test('RC2-005 MUST_REJECT: a count question where neither modelled error differs from the key', () => {
+test('RC2-005 MUST_REJECT: a count question where neither modelled error differs from the key', async () => {
   // The seed moved again when RC2.1-2 reclassified REL_M_CONFIRM out of the
   // medium list, which changes what the draw lands on. The fixture pins the
   // CONDITION (neither modelled error differs from the key), not the draw.
-  const {base, verdict} = draw(generateRelational, 'medium', 'fx-relm-23');
+  const {base, verdict} = draw(generateRelational, await bandOfTemplate('relational','REL_M_COUNT'), 'fx-relm-34');
   assert.equal(base.template_id, 'REL_M_COUNT');
   assert.equal(base.metadata.transitive_step_required, false);
   assert.equal(base.metadata.undetermined_step_required, false);
   assert.ok(verdict.reasons.includes(REASON.DEGENERATE_PARAMETERS), verdict.reasons.join(','));
 });
 
-test('RC2-005: the count model does not cost the template its answer space', () => {
+test('RC2-005: the count model does not cost the template its answer space', async () => {
   // The first version of this rule required transitive inference alone. It
   // rejected 56.7% of draws and removed «لا أحد» and «شخص واحد» from the
   // template entirely — a larger statistical leak (RC2-011) than the
@@ -155,7 +159,7 @@ test('RC2-005: the count model does not cost the template its answer space', () 
   let drawn = 0, rejected = 0;
   for (let i = 0; i < 1200; i++) {
     let d;
-    try { d = draw(generateRelational, 'medium', `rel-count-${i}`); } catch { continue; }
+    try { d = draw(generateRelational, await bandOfTemplate('relational','REL_M_COUNT'), `rel-count-${i}`); } catch { continue; }
     if (d.base.template_id !== 'REL_M_COUNT') continue;
     drawn++;
     if (d.verdict.valid) published.add(d.base.correct); else rejected++;
@@ -169,7 +173,7 @@ test('RC2-005: the count model does not cost the template its answer space', () 
 
 // --- rules that guard a sampler constraint must still be able to fire -------
 
-test('RC2-005 meta: the "statement copied from the stem" rule is not decorative', () => {
+test('RC2-005 meta: the "statement copied from the stem" rule is not decorative', async () => {
   // The sampler already refuses a guaranteed statement that appears verbatim in
   // the stem, so this rule should never fire in generation. A rule that cannot
   // fire at all, though, guards nothing — so it is fed the degenerate input.
@@ -189,7 +193,7 @@ test('RC2-005 meta: the "statement copied from the stem" rule is not decorative'
   let seen = 0;
   for (let i = 0; i < 500 && seen < 40; i++) {
     let d;
-    try { d = draw(generateRelational, 'hard', `rel-conf-${i}`); } catch { continue; }
+    try { d = draw(generateRelational, await bandOfTemplate('relational','REL_M_CONFIRM'), `rel-conf-${i}`); } catch { continue; }
     if (d.base.template_id !== 'REL_M_CONFIRM') continue;
     seen++;
     assert.ok(!d.verdict.reasons.includes(REASON.DEGENERATE_PARAMETERS), 'the sampler already prevents it');
@@ -199,13 +203,15 @@ test('RC2-005 meta: the "statement copied from the stem" rule is not decorative'
 
 // --- the NOT_APPLICABLE claims are proven, not asserted ---------------------
 
-test('RC2-005: the hidden-fraction direction cannot reach its key by any modelled error', () => {
+test('RC2-005: the hidden-fraction direction cannot reach its key by any modelled error', async () => {
   // The claim: the key is a name from a six-element lexicon sampled without
   // replacement, so a skipped stage necessarily names a different denominator.
+  // RC2.2-1: this family computes easy at every chain length, so easy is where
+  // all of its directions now live.
   let seen = 0;
   for (let i = 0; i < 900; i++) {
     let d;
-    try { d = draw(generateFractions, i % 3 === 0 ? 'easy' : i % 3 === 1 ? 'medium' : 'hard', `frac-${i}`); } catch { continue; }
+    try { d = draw(generateFractions, 'easy', `frac-${i}`); } catch { continue; }
     if (d.base.askedUnknown !== 'hiddenFraction') continue;
     seen++;
     const known = d.base.parameters.knownDenominators;
@@ -219,11 +225,11 @@ test('RC2-005: the hidden-fraction direction cannot reach its key by any modelle
   assert.ok(seen > 100, `the sweep must reach the direction, saw ${seen}`);
 });
 
-test('RC2-005: an undetermined-pair key cannot be produced by resolving a pair', () => {
+test('RC2-005: an undetermined-pair key cannot be produced by resolving a pair', async () => {
   let seen = 0;
   for (let i = 0; i < 900 && seen < 60; i++) {
     let d;
-    try { d = draw(generateRelational, 'medium', `rel-unres-${i}`); } catch { continue; }
+    try { d = draw(generateRelational, await bandOfTemplate('relational','REL_M_BRANCH_UNRES'), `rel-unres-${i}`); } catch { continue; }
     if (d.base.template_id !== 'REL_M_BRANCH_UNRES') continue;
     seen++;
     for (const dist of d.base.distractors) assert.notEqual(dist.value, d.base.correct);
@@ -235,7 +241,10 @@ test('RC2-005: an undetermined-pair key cannot be produced by resolving a pair',
 
 test('RC2-005: every template in the engine is classified, and every classification exists', async () => {
   const report = await measure(120);
-  assert.equal(report.totals.templates, 107, 'the template inventory is unchanged');
+  // RC2.2-1: fractions declines medium and hard, so FRAC_M_3 and FRAC_H_4 are no
+  // longer generated at all. The inventory is smaller BY DESIGN, and the number
+  // is pinned so a further silent loss would still be caught.
+  assert.equal(report.totals.templates, 105, 'the template inventory is 107 less the two chained-fraction variants');
   assert.deepEqual(report.totals.unclassified, []);
   assert.deepEqual(report.totals.declaredButAbsentFromEngine, []);
   assert.equal(report.totals.rc1TemplatesWithNoModel, 23, 'the RC1 gap was 23 templates');
@@ -281,7 +290,7 @@ test('RC2-005: the RC1 gap is preserved template by template, not only in aggreg
   }
 });
 
-test('RC2-005: the published artifact matches the engine', () => {
+test('RC2-005: the published artifact matches the engine', async () => {
   const saved = JSON.parse(readFileSync('rc2/DEGENERACY_COVERAGE.json', 'utf8'));
   assert.equal(saved.schema, 'rc2-degeneracy-coverage-v1');
   assert.equal(saved.totals.templates, 107);
@@ -298,17 +307,22 @@ test('RC2-005: the published artifact matches the engine', () => {
   }
 });
 
-test('RC2-005: no published question is degenerate', () => {
+test('RC2-005: no published question is degenerate', async () => {
   const engine = new Engine();
   const bands = ['easy', 'medium', 'hard'];
   let n = 0;
-  for (let i = 0; i < 400; i++) {
+  // RC2.2-1: the release gate turns away a band mismatch before the pipeline
+  // sees it, and capability-aware family selection stops many doomed draws
+  // being made at all, so a degenerate candidate reaches the pipeline less
+  // often per draw. The sweep is enlarged rather than the claim weakened —
+  // measured, 400 draws now yield none and 1,200 yield four.
+  for (let i = 0; i < 2000; i++) {
     let q;
     try { q = engine.generateQuestion({family: 'random', difficulty: bands[i % 3], seed: `degen-pub-${i}`}); } catch { continue; }
     n++;
     assert.equal(q.metadata.quality_gate, 'passed');
   }
-  assert.ok(n > 380, `the engine must still publish, published ${n}`);
+  assert.ok(n > 1900, `the engine must still publish, published ${n}`);
   const byReason = engine.getTelemetry().byReason;
   // The degeneracies are caught before publication, not absent from the draw.
   assert.ok(

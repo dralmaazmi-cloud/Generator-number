@@ -1,0 +1,1910 @@
+{
+  "schema": "rc22-difficulty-v1",
+  "section": "RC2.2-1/2",
+  "generatedAt": "2026-09-12T16:22:09.784Z",
+  "engineVersion": "1.4.0",
+  "rule": "boundaries are the tertiles of the ungated template-score distribution, each template weighted once by its own median",
+  "ungated": {
+    "templates": [
+      {
+        "templateId": "CAL_E_TOM",
+        "family": "calendar",
+        "n": 136,
+        "medianScore": 2.6,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 1,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 0
+        }
+      },
+      {
+        "templateId": "CAL_M_COMPOUND",
+        "family": "calendar",
+        "n": 144,
+        "medianScore": 2.8,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 1,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 1
+        }
+      },
+      {
+        "templateId": "CAL_E_AFTER",
+        "family": "calendar",
+        "n": 136,
+        "medianScore": 2.8,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 1,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 1
+        }
+      },
+      {
+        "templateId": "SPD_E_TIME",
+        "family": "speed",
+        "n": 216,
+        "medianScore": 3,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 1,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 2
+        }
+      },
+      {
+        "templateId": "SPD_E_DISTANCE",
+        "family": "speed",
+        "n": 246,
+        "medianScore": 3,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 1,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 2
+        }
+      },
+      {
+        "templateId": "ODD_M_PRONIC",
+        "family": "odd_one_out",
+        "n": 98,
+        "medianScore": 5,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 1,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 1,
+          "arithmeticWorkload": 5
+        }
+      },
+      {
+        "templateId": "ODD_E_MULT",
+        "family": "odd_one_out",
+        "n": 85,
+        "medianScore": 5,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 1,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 1,
+          "arithmeticWorkload": 5
+        }
+      },
+      {
+        "templateId": "ODD_E_SQUARES",
+        "family": "odd_one_out",
+        "n": 90,
+        "medianScore": 5,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 1,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 1,
+          "arithmeticWorkload": 5
+        }
+      },
+      {
+        "templateId": "CAL_M_TWO_SHIFT",
+        "family": "calendar",
+        "n": 137,
+        "medianScore": 5.6,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 2
+        }
+      },
+      {
+        "templateId": "CAL_H_LONG",
+        "family": "calendar",
+        "n": 147,
+        "medianScore": 5.8,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 3
+        }
+      },
+      {
+        "templateId": "WORK_E_VOLUME",
+        "family": "work_time",
+        "n": 233,
+        "medianScore": 6,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 2,
+          "independentConstraints": 1,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 2
+        }
+      },
+      {
+        "templateId": "ODD_M_PRIME2",
+        "family": "odd_one_out",
+        "n": 101,
+        "medianScore": 6.4,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 1,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 2,
+          "arithmeticWorkload": 5
+        }
+      },
+      {
+        "templateId": "RAT_E_KNOWN",
+        "family": "ratios",
+        "n": 650,
+        "medianScore": 6.6,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 2
+        }
+      },
+      {
+        "templateId": "PCT_E_OF",
+        "family": "percentages",
+        "n": 700,
+        "medianScore": 6.6,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 2
+        }
+      },
+      {
+        "templateId": "PROP_E_ITEMS",
+        "family": "direct_proportion",
+        "n": 353,
+        "medianScore": 6.6,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 2
+        }
+      },
+      {
+        "templateId": "PROP_M_FRAC_UNIT",
+        "family": "direct_proportion",
+        "n": 337,
+        "medianScore": 6.6,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 2
+        }
+      },
+      {
+        "templateId": "RATE_M_SCALE",
+        "family": "unit_rate",
+        "n": 238,
+        "medianScore": 6.6,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 2
+        }
+      },
+      {
+        "templateId": "RATE_E_TIME",
+        "family": "unit_rate",
+        "n": 239,
+        "medianScore": 6.6,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 2
+        }
+      },
+      {
+        "templateId": "RATE_E_DIRECT",
+        "family": "unit_rate",
+        "n": 223,
+        "medianScore": 6.6,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 2
+        }
+      },
+      {
+        "templateId": "COMB_E_OUTPUT",
+        "family": "combined_rate",
+        "n": 236,
+        "medianScore": 6.6,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 2
+        }
+      },
+      {
+        "templateId": "FRAC_E_2",
+        "family": "fractions",
+        "n": 188,
+        "medianScore": 6.8,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 1,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 3
+        }
+      },
+      {
+        "templateId": "COMB_E_THREE",
+        "family": "combined_rate",
+        "n": 240,
+        "medianScore": 6.8,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 3
+        }
+      },
+      {
+        "templateId": "FRAC_M_3",
+        "family": "fractions",
+        "n": 240,
+        "medianScore": 7.2,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 4
+        }
+      },
+      {
+        "templateId": "SEQ_M_INTERLEAVED",
+        "family": "sequences",
+        "n": 235,
+        "medianScore": 7.4,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 11
+        }
+      },
+      {
+        "templateId": "SEQ_E_GEO",
+        "family": "sequences",
+        "n": 235,
+        "medianScore": 7.4,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 5
+        }
+      },
+      {
+        "templateId": "AGE_E_MULT_DIFF",
+        "family": "ages",
+        "n": 345,
+        "medianScore": 7.6,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 2
+        }
+      },
+      {
+        "templateId": "WORK_M_EFF",
+        "family": "work_time",
+        "n": 204,
+        "medianScore": 7.8,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 3
+        }
+      },
+      {
+        "templateId": "COMB_E_TIME",
+        "family": "combined_rate",
+        "n": 222,
+        "medianScore": 8.2,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 2
+        }
+      },
+      {
+        "templateId": "WORK_E_INVERSE",
+        "family": "work_time",
+        "n": 229,
+        "medianScore": 8.4,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 3
+        }
+      },
+      {
+        "templateId": "AGE_E_SUM_DIFF",
+        "family": "ages",
+        "n": 338,
+        "medianScore": 8.6,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 4
+        }
+      },
+      {
+        "templateId": "SEQ_E_ARITH",
+        "family": "sequences",
+        "n": 228,
+        "medianScore": 8.8,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 6
+        }
+      },
+      {
+        "templateId": "ODD_M_CUBES",
+        "family": "odd_one_out",
+        "n": 110,
+        "medianScore": 8.8,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 1,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 3,
+          "arithmeticWorkload": 10
+        }
+      },
+      {
+        "templateId": "ODD_H_SQ_MINUS",
+        "family": "odd_one_out",
+        "n": 99,
+        "medianScore": 9,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 2,
+          "arithmeticWorkload": 10
+        }
+      },
+      {
+        "templateId": "ODD_H_TRIANGULAR",
+        "family": "odd_one_out",
+        "n": 111,
+        "medianScore": 9,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 0,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 2,
+          "arithmeticWorkload": 10
+        }
+      },
+      {
+        "templateId": "AVG_H_TARGET",
+        "family": "averages",
+        "n": 700,
+        "medianScore": 9.4,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 3
+        }
+      },
+      {
+        "templateId": "SPD_H_CATCH",
+        "family": "speed",
+        "n": 199,
+        "medianScore": 9.4,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 3
+        }
+      },
+      {
+        "templateId": "FRAC_H_4",
+        "family": "fractions",
+        "n": 238,
+        "medianScore": 9.4,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 5
+        }
+      },
+      {
+        "templateId": "PL_E_PROFIT",
+        "family": "profit_loss",
+        "n": 355,
+        "medianScore": 9.4,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 3
+        }
+      },
+      {
+        "templateId": "PL_E_LOSS",
+        "family": "profit_loss",
+        "n": 345,
+        "medianScore": 9.4,
+        "band": "easy",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 3
+        }
+      },
+      {
+        "templateId": "REL_E_BETWEEN",
+        "family": "relational",
+        "n": 700,
+        "medianScore": 9.8,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 1,
+          "independentConstraints": 0,
+          "informationIntegration": 6,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 1
+        }
+      },
+      {
+        "templateId": "REL_E_CHAIN",
+        "family": "relational",
+        "n": 700,
+        "medianScore": 9.8,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 1,
+          "independentConstraints": 0,
+          "informationIntegration": 6,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 1
+        }
+      },
+      {
+        "templateId": "MACH_H_TWO_TYPES",
+        "family": "machines",
+        "n": 183,
+        "medianScore": 10,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 2,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 4
+        }
+      },
+      {
+        "templateId": "PCT_E_REVERSE_ONE",
+        "family": "percentages",
+        "n": 164,
+        "medianScore": 10.2,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 4
+        }
+      },
+      {
+        "templateId": "RAT_E_SPLIT",
+        "family": "ratios",
+        "n": 667,
+        "medianScore": 10.4,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 3
+        }
+      },
+      {
+        "templateId": "AVG_E_REMOVE",
+        "family": "averages",
+        "n": 119,
+        "medianScore": 10.4,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 3
+        }
+      },
+      {
+        "templateId": "AVG_E_ADD",
+        "family": "averages",
+        "n": 115,
+        "medianScore": 10.4,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 1,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 3
+        }
+      },
+      {
+        "templateId": "SEQ_M_ALT_OPS",
+        "family": "sequences",
+        "n": 197,
+        "medianScore": 10.6,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 9
+        }
+      },
+      {
+        "templateId": "SEQ_H_RECURRENCE",
+        "family": "sequences",
+        "n": 149,
+        "medianScore": 10.8,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 10
+        }
+      },
+      {
+        "templateId": "PROP_M_MAP",
+        "family": "direct_proportion",
+        "n": 347,
+        "medianScore": 11,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 3
+        }
+      },
+      {
+        "templateId": "PL_H_REVERSE",
+        "family": "profit_loss",
+        "n": 255,
+        "medianScore": 11,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 3
+        }
+      },
+      {
+        "templateId": "PCT_H_CHAIN_VALUE",
+        "family": "percentages",
+        "n": 188,
+        "medianScore": 11.6,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 6
+        }
+      },
+      {
+        "templateId": "AVG_M_COMBINE",
+        "family": "averages",
+        "n": 114,
+        "medianScore": 11.6,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 4
+        }
+      },
+      {
+        "templateId": "AVG_M_ADD_PAIR",
+        "family": "averages",
+        "n": 110,
+        "medianScore": 11.6,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 4
+        }
+      },
+      {
+        "templateId": "MACH_E_REQUIRED",
+        "family": "machines",
+        "n": 186,
+        "medianScore": 11.6,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 4
+        }
+      },
+      {
+        "templateId": "PL_M_DISC_MARK",
+        "family": "profit_loss",
+        "n": 201,
+        "medianScore": 11.6,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 6
+        }
+      },
+      {
+        "templateId": "PCT_M_UNIT_PRICE",
+        "family": "percentages",
+        "n": 159,
+        "medianScore": 11.8,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 5
+        }
+      },
+      {
+        "templateId": "AVG_H_COMB_ADD",
+        "family": "averages",
+        "n": 107,
+        "medianScore": 11.8,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 5
+        }
+      },
+      {
+        "templateId": "SPD_M_AVG",
+        "family": "speed",
+        "n": 361,
+        "medianScore": 11.8,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 5
+        }
+      },
+      {
+        "templateId": "MACH_E_HOURS",
+        "family": "machines",
+        "n": 171,
+        "medianScore": 11.8,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 5
+        }
+      },
+      {
+        "templateId": "PROP_H_COMPOUND",
+        "family": "direct_proportion",
+        "n": 353,
+        "medianScore": 11.8,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 5
+        }
+      },
+      {
+        "templateId": "RATE_M_PERCENT",
+        "family": "unit_rate",
+        "n": 355,
+        "medianScore": 11.8,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 5
+        }
+      },
+      {
+        "templateId": "PCT_M_REMAIN",
+        "family": "percentages",
+        "n": 175,
+        "medianScore": 12,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 6
+        }
+      },
+      {
+        "templateId": "MACH_M_STOP",
+        "family": "machines",
+        "n": 142,
+        "medianScore": 12,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 6
+        }
+      },
+      {
+        "templateId": "SEQ_M_INC_DIFF",
+        "family": "sequences",
+        "n": 167,
+        "medianScore": 12.2,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 7
+        }
+      },
+      {
+        "templateId": "CAL_H_NESTED",
+        "family": "calendar",
+        "n": 700,
+        "medianScore": 12.2,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 1,
+          "transformationDepth": 3,
+          "independentConstraints": 2,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 3
+        }
+      },
+      {
+        "templateId": "AVG_M_REPLACE",
+        "family": "averages",
+        "n": 130,
+        "medianScore": 13.2,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 4
+        }
+      },
+      {
+        "templateId": "AGE_M_FUT_SUM_DIFF",
+        "family": "ages",
+        "n": 350,
+        "medianScore": 13.2,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 4
+        }
+      },
+      {
+        "templateId": "SPD_M_TWO_TIME",
+        "family": "speed",
+        "n": 258,
+        "medianScore": 13.2,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 4
+        }
+      },
+      {
+        "templateId": "PL_M_TOTAL_COST",
+        "family": "profit_loss",
+        "n": 244,
+        "medianScore": 13.2,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 4
+        }
+      },
+      {
+        "templateId": "AGE_M_RATIO_FUT_SUM",
+        "family": "ages",
+        "n": 340,
+        "medianScore": 13.4,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 5
+        }
+      },
+      {
+        "templateId": "WORK_M_TARGET",
+        "family": "work_time",
+        "n": 600,
+        "medianScore": 13.4,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 5
+        }
+      },
+      {
+        "templateId": "RATE_H_TARGET",
+        "family": "unit_rate",
+        "n": 345,
+        "medianScore": 13.4,
+        "band": "medium",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 5
+        }
+      },
+      {
+        "templateId": "WORK_M_CHANGE",
+        "family": "work_time",
+        "n": 247,
+        "medianScore": 13.6,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 6
+        }
+      },
+      {
+        "templateId": "SEQ_M_DOUBLE_DIFF",
+        "family": "sequences",
+        "n": 164,
+        "medianScore": 13.8,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 7
+        }
+      },
+      {
+        "templateId": "RATE_H_TWO_PHASE",
+        "family": "unit_rate",
+        "n": 700,
+        "medianScore": 14,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 3,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 6
+        }
+      },
+      {
+        "templateId": "SPD_H_MEET_DELAY",
+        "family": "speed",
+        "n": 174,
+        "medianScore": 14.2,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 3,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 4
+        }
+      },
+      {
+        "templateId": "MACH_M_NEW_FAST",
+        "family": "machines",
+        "n": 237,
+        "medianScore": 14.2,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 3,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 7
+        }
+      },
+      {
+        "templateId": "WORK_H_TWO_STAGE",
+        "family": "work_time",
+        "n": 204,
+        "medianScore": 14.4,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 3,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 8
+        }
+      },
+      {
+        "templateId": "PROP_H_COST_PLUS",
+        "family": "direct_proportion",
+        "n": 700,
+        "medianScore": 14.6,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 4,
+          "independentConstraints": 1,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 4
+        }
+      },
+      {
+        "templateId": "COMB_M_SOLO_THEN",
+        "family": "combined_rate",
+        "n": 214,
+        "medianScore": 14.8,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 5,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 4
+        }
+      },
+      {
+        "templateId": "COMB_M_TOGETHER_SOLO",
+        "family": "combined_rate",
+        "n": 170,
+        "medianScore": 14.8,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 5,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 4
+        }
+      },
+      {
+        "templateId": "SEQ_H_POW_INDEX",
+        "family": "sequences",
+        "n": 342,
+        "medianScore": 15,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 3,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 8
+        }
+      },
+      {
+        "templateId": "SEQ_H_ALT_DIV",
+        "family": "sequences",
+        "n": 358,
+        "medianScore": 15.2,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 3,
+          "transformationDepth": 3,
+          "independentConstraints": 0,
+          "informationIntegration": 3,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 7
+        }
+      },
+      {
+        "templateId": "PCT_H_REVERSE_CHAIN",
+        "family": "percentages",
+        "n": 356,
+        "medianScore": 15.2,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 5,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 6
+        }
+      },
+      {
+        "templateId": "WORK_H_WORKERS_EFF",
+        "family": "work_time",
+        "n": 229,
+        "medianScore": 15.2,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 3,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 9
+        }
+      },
+      {
+        "templateId": "COMB_H_STAGED",
+        "family": "combined_rate",
+        "n": 194,
+        "medianScore": 15.2,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 5,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 6
+        }
+      },
+      {
+        "templateId": "PL_H_CHAIN",
+        "family": "profit_loss",
+        "n": 700,
+        "medianScore": 16.2,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 3,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 9
+        }
+      },
+      {
+        "templateId": "RAT_H_TWO_COMB",
+        "family": "ratios",
+        "n": 150,
+        "medianScore": 16.8,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 3,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 12
+        }
+      },
+      {
+        "templateId": "RAT_M_COMMON_SUM",
+        "family": "ratios",
+        "n": 132,
+        "medianScore": 16.8,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 3,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 12
+        }
+      },
+      {
+        "templateId": "PCT_M_SUCCESSIVE",
+        "family": "percentages",
+        "n": 344,
+        "medianScore": 16.8,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 3,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 12
+        }
+      },
+      {
+        "templateId": "MACH_M_SUBSET_UP",
+        "family": "machines",
+        "n": 231,
+        "medianScore": 17.4,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 3,
+          "transformationDepth": 4,
+          "independentConstraints": 1,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 8
+        }
+      },
+      {
+        "templateId": "RAT_M_COMMON_DIFF",
+        "family": "ratios",
+        "n": 141,
+        "medianScore": 18.6,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 3,
+          "transformationDepth": 5,
+          "independentConstraints": 0,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 13
+        }
+      },
+      {
+        "templateId": "SPD_H_TIME_DIFF",
+        "family": "speed",
+        "n": 228,
+        "medianScore": 18.6,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 3,
+          "transformationDepth": 4,
+          "independentConstraints": 1,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 14
+        }
+      },
+      {
+        "templateId": "AGE_H_PAST_FUT",
+        "family": "ages",
+        "n": 231,
+        "medianScore": 19,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 4,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 3,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 8
+        }
+      },
+      {
+        "templateId": "MACH_H_STAGE_UP",
+        "family": "machines",
+        "n": 228,
+        "medianScore": 19.6,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 4,
+          "transformationDepth": 4,
+          "independentConstraints": 0,
+          "informationIntegration": 3,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 11
+        }
+      },
+      {
+        "templateId": "SPD_M_EQUAL_DIST",
+        "family": "speed",
+        "n": 238,
+        "medianScore": 20.2,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 4,
+          "transformationDepth": 4,
+          "independentConstraints": 1,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 12
+        }
+      },
+      {
+        "templateId": "REL_M_BRANCH_UNRES",
+        "family": "relational",
+        "n": 162,
+        "medianScore": 22.2,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 2,
+          "independentConstraints": 5,
+          "informationIntegration": 8,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 0
+        }
+      },
+      {
+        "templateId": "REL_M_CONFIRM",
+        "family": "relational",
+        "n": 128,
+        "medianScore": 22.2,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 2,
+          "independentConstraints": 5,
+          "informationIntegration": 8,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 0
+        }
+      },
+      {
+        "templateId": "AGE_M_FUT_RATIO",
+        "family": "ages",
+        "n": 254,
+        "medianScore": 22.8,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 4,
+          "transformationDepth": 5,
+          "independentConstraints": 1,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 17
+        }
+      },
+      {
+        "templateId": "AGE_H_TWO_TIME",
+        "family": "ages",
+        "n": 213,
+        "medianScore": 22.8,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 4,
+          "transformationDepth": 5,
+          "independentConstraints": 1,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 17
+        }
+      },
+      {
+        "templateId": "REL_M_COUNT",
+        "family": "relational",
+        "n": 148,
+        "medianScore": 23.4,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 2,
+          "transformationDepth": 1,
+          "independentConstraints": 6,
+          "informationIntegration": 8,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 2
+        }
+      },
+      {
+        "templateId": "RAT_H_TRANSFER",
+        "family": "ratios",
+        "n": 125,
+        "medianScore": 24.2,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 4,
+          "transformationDepth": 5,
+          "independentConstraints": 1,
+          "informationIntegration": 3,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 19
+        }
+      },
+      {
+        "templateId": "REL_H_POSITION",
+        "family": "relational",
+        "n": 135,
+        "medianScore": 26.8,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 3,
+          "transformationDepth": 3,
+          "independentConstraints": 5,
+          "informationIntegration": 9,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 0
+        }
+      },
+      {
+        "templateId": "RAT_M_ADD_SIDE",
+        "family": "ratios",
+        "n": 149,
+        "medianScore": 27,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 6,
+          "transformationDepth": 5,
+          "independentConstraints": 1,
+          "informationIntegration": 2,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 18
+        }
+      },
+      {
+        "templateId": "REL_H_GUARANTEE",
+        "family": "relational",
+        "n": 127,
+        "medianScore": 28.2,
+        "band": "hard",
+        "medianFactors": {
+          "dependencyDepth": 3,
+          "transformationDepth": 3,
+          "independentConstraints": 6,
+          "informationIntegration": 9,
+          "ruleSearchDepth": 0,
+          "arithmeticWorkload": 0
+        }
+      }
+    ],
+    "population": {
+      "easy": 39,
+      "medium": 33,
+      "hard": 33
+    },
+    "impliedBoundaries": {
+      "easyMedium": 9.4,
+      "mediumHard": 13.4
+    },
+    "boundariesInUse": {
+      "easyMedium": 9.4,
+      "mediumHard": 13.4
+    },
+    "boundaryDrift": {
+      "easyMedium": 0,
+      "mediumHard": 0
+    },
+    "boundariesMatchRule": true
+  },
+  "gated": {
+    "released": {
+      "easy": 1500,
+      "medium": 1500,
+      "hard": 1500
+    },
+    "exhausted": 0,
+    "violations": [],
+    "violationCount": 0,
+    "meanAttempts": 1.0691
+  },
+  "allHard": {
+    "sessions": 8,
+    "failedSessions": 0,
+    "total": 400,
+    "notHard": 0,
+    "notHardShare": 0,
+    "perFamily": [
+      {
+        "family": "relational",
+        "delivered": 64,
+        "hard": 64,
+        "medianScore": 26.8
+      },
+      {
+        "family": "ratios",
+        "delivered": 54,
+        "hard": 54,
+        "medianScore": 18.6
+      },
+      {
+        "family": "combined_rate",
+        "delivered": 40,
+        "hard": 40,
+        "medianScore": 14.8
+      },
+      {
+        "family": "speed",
+        "delivered": 37,
+        "hard": 37,
+        "medianScore": 18.6
+      },
+      {
+        "family": "machines",
+        "delivered": 35,
+        "hard": 35,
+        "medianScore": 17.4
+      },
+      {
+        "family": "ages",
+        "delivered": 33,
+        "hard": 33,
+        "medianScore": 22.8
+      },
+      {
+        "family": "work_time",
+        "delivered": 33,
+        "hard": 33,
+        "medianScore": 14.4
+      },
+      {
+        "family": "sequences",
+        "delivered": 29,
+        "hard": 29,
+        "medianScore": 15
+      },
+      {
+        "family": "percentages",
+        "delivered": 25,
+        "hard": 25,
+        "medianScore": 15.2
+      },
+      {
+        "family": "unit_rate",
+        "delivered": 17,
+        "hard": 17,
+        "medianScore": 14
+      },
+      {
+        "family": "profit_loss",
+        "delivered": 17,
+        "hard": 17,
+        "medianScore": 16.2
+      },
+      {
+        "family": "direct_proportion",
+        "delivered": 16,
+        "hard": 16,
+        "medianScore": 14.6
+      }
+    ]
+  },
+  "familyCapability": {
+    "rows": [
+      {
+        "family": "sequences",
+        "declared": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "produced": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "matches": true
+      },
+      {
+        "family": "ratios",
+        "declared": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "produced": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "matches": true
+      },
+      {
+        "family": "percentages",
+        "declared": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "produced": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "matches": true
+      },
+      {
+        "family": "averages",
+        "declared": [
+          "easy",
+          "medium"
+        ],
+        "produced": [
+          "easy",
+          "medium"
+        ],
+        "matches": true
+      },
+      {
+        "family": "ages",
+        "declared": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "produced": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "matches": true
+      },
+      {
+        "family": "speed",
+        "declared": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "produced": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "matches": true
+      },
+      {
+        "family": "work_time",
+        "declared": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "produced": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "matches": true
+      },
+      {
+        "family": "machines",
+        "declared": [
+          "medium",
+          "hard"
+        ],
+        "produced": [
+          "medium",
+          "hard"
+        ],
+        "matches": true
+      },
+      {
+        "family": "direct_proportion",
+        "declared": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "produced": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "matches": true
+      },
+      {
+        "family": "fractions",
+        "declared": [
+          "easy"
+        ],
+        "produced": [
+          "easy"
+        ],
+        "matches": true
+      },
+      {
+        "family": "unit_rate",
+        "declared": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "produced": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "matches": true
+      },
+      {
+        "family": "combined_rate",
+        "declared": [
+          "easy",
+          "hard"
+        ],
+        "produced": [
+          "easy",
+          "hard"
+        ],
+        "matches": true
+      },
+      {
+        "family": "relational",
+        "declared": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "produced": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "matches": true
+      },
+      {
+        "family": "calendar",
+        "declared": [
+          "easy",
+          "medium"
+        ],
+        "produced": [
+          "easy",
+          "medium"
+        ],
+        "matches": true
+      },
+      {
+        "family": "odd_one_out",
+        "declared": [
+          "easy"
+        ],
+        "produced": [
+          "easy"
+        ],
+        "matches": true
+      },
+      {
+        "family": "profit_loss",
+        "declared": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "produced": [
+          "easy",
+          "medium",
+          "hard"
+        ],
+        "matches": true
+      }
+    ],
+    "allMatch": true,
+    "mismatches": []
+  }
+}

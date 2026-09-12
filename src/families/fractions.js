@@ -12,7 +12,19 @@ const FRACS = [
 
 export function generateFractions({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'fractions', family_ar: 'الكسور المتتابعة', category: 'الكسور المتتابعة المباشرة'};
-  const count = difficulty === 'easy' ? 2 : difficulty === 'medium' ? 3 : 4;
+  // RC2.2-1/2. This family chains one operation — take a fraction of — and the
+  // chain length is what used to set its band. Under the RC2.2 scorer that is
+  // workload, not reasoning depth: two, three and four links all compute easy,
+  // which is what the Holdout C review said when it called FRAC_H_4 not hard.
+  // Rather than release an easy item under a harder label, the family declines
+  // the bands it cannot reach.
+  if (difficulty === 'medium' || difficulty === 'hard') {
+    throw Object.assign(
+      new Error(`NO_TEMPLATE_AT_DIFFICULTY: fractions has no template that computes ${difficulty}`),
+      {code: 'NO_TEMPLATE_AT_DIFFICULTY', family: 'fractions', difficulty}
+    );
+  }
+  const count = rng.pick([2, 3, 4]);
   // Section 17-A / 27: the audit found every item in this family pointing the
   // same way. The template is unchanged; what rotates is which quantity is
   // unknown, so the direction of reasoning genuinely varies.

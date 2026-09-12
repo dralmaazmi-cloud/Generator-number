@@ -1,12 +1,12 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine, resample, adj, risePercentPhrase} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine, resample, adj, risePercentPhrase, pickTemplate} from './_shared.js';
 
 export function generateMachines({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'machines', family_ar: 'الآلات والإنتاج', category: 'الآلات والإنتاج'};
-  const list = difficulty === 'easy' ? [machineHours, requiredMachines]
-    : difficulty === 'medium' ? [newMachineFaster, oneStops, twoTypesCombined]
-    : [stageChange, subsetUpgrade];
-  return rng.pick(list)(ctx);
+  const list = difficulty === 'easy' ? []
+    : difficulty === 'medium' ? [machineHours, oneStops, requiredMachines, twoTypesCombined]
+    : [newMachineFaster, subsetUpgrade, stageChange];
+  return pickTemplate(rng, list, 'machines', difficulty)(ctx);
 }
 
 function machineHours(ctx) {
@@ -34,7 +34,7 @@ function machineHours(ctx) {
   return buildBase(ctx, {
     templateId: 'MACH_E_HOURS',
     subskill: 'معدل آلة واحدة من آلة-ساعة',
-    difficulty: 'easy',
+    difficulty: 'medium',
     question: `تنتج ${u(machines, 'machine')} متطابقة في الإنتاجية ${u(total, 'piece')} خلال ${u(hours, 'hour', 'oblique')}. كم قطعة تنتج ${u(newMachines, 'machine')} من النوع نفسه خلال ${u(newHours, 'hour', 'oblique')}؟`,
     correct, distractors, format: unitFormat('piece'),
     steps: [
@@ -89,7 +89,7 @@ function requiredMachines(ctx) {
   return buildBase(ctx, {
     templateId: 'MACH_E_REQUIRED',
     subskill: 'إيجاد عدد الآلات المطلوبة',
-    difficulty: 'easy',
+    difficulty: 'medium',
     question: `تنتج ${u(machines, 'machine')} متطابقة في الإنتاجية ${u(total, 'piece')} خلال ${u(hours, 'hour', 'oblique')}. كم آلة نحتاج لإنتاج ${u(target, 'piece')} خلال ${u(targetHours, 'hour', 'oblique')}؟`,
     correct, distractors, format: unitFormat('machine'),
     steps: [
@@ -141,7 +141,7 @@ function newMachineFaster(ctx) {
   return buildBase(ctx, {
     templateId: 'MACH_M_NEW_FAST',
     subskill: 'آلة قديمة وآلة أسرع بنسبة معلومة',
-    difficulty: 'medium',
+    difficulty: 'hard',
     question: `تنتج ${u(machines, 'machine')} متطابقة في الإنتاجية ${u(total, 'piece')} خلال ${u(hours, 'hour', 'oblique')}. آلة جديدة تنتج في الساعة أكثر من الآلة القديمة ${risePercentPhrase(pct)}. كم قطعة تنتج آلة قديمة واحدة وآلة جديدة واحدة معًا خلال ${u(targetH, 'hour', 'oblique')}؟`,
     correct, distractors, format: unitFormat('piece'),
     steps: [

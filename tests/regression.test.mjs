@@ -5,6 +5,7 @@
 // whole file, and every threshold becomes free to tune.
 
 import test from 'node:test';
+import {bandOfTemplate} from './_support/bands.mjs';
 import assert from 'node:assert/strict';
 
 import {DAYS_AR} from '../src/utils.js';
@@ -51,9 +52,11 @@ test('temporal: N=2, M=3 gives a net offset of zero', () => {
 test('temporal: the nested template refuses a zero net offset in Medium/Hard', async () => {
   const {generateCalendar} = await import('../src/families/calendar.js');
   const {SeededRNG} = await import('../src/rng.js');
+  // RC2.2-1: this template now computes medium, so that is where it lives.
+  const nestedBand = await bandOfTemplate('calendar', 'CAL_H_NESTED');
   for (let i = 0; i < 400; i++) {
     const rng = new SeededRNG(`net-zero-${i}`);
-    const base = generateCalendar({difficulty: 'hard', rng: rng.fork('c'), seed: `s${i}`, engineVersion: 'test'});
+    const base = generateCalendar({difficulty: nestedBand, rng: rng.fork('c'), seed: `s${i}`, engineVersion: 'test'});
     if (base.template_id !== 'CAL_H_NESTED') continue;
     const net = base.parameters.netOffset;
     assert.notEqual(((net % 7) + 7) % 7, 0, 'a published nested item must not have a zero net offset');

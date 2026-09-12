@@ -1,4 +1,4 @@
-import {mk, usable, u, unitFormat, buildBase, eq, X, add, mul, resample} from './_shared.js';
+import {mk, usable, u, unitFormat, buildBase, eq, X, add, mul, resample, pickTemplate} from './_shared.js';
 
 export function generateCombinedRate({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'combined_rate', family_ar: 'المعدل المشترك', category: 'المعدل المشترك'};
@@ -8,10 +8,10 @@ export function generateCombinedRate({difficulty, rng, seed, engineVersion, tele
   // COMB_E_TIME (7.10), both of which are declared easy and compute easy. So
   // easy is where it belongs; the declaration was wrong, not the template, and
   // the template itself is unaltered.
-  const list = difficulty === 'easy' ? [togetherOutput, togetherTime, threeRates]
-    : difficulty === 'medium' ? [soloThenTogether, togetherThenSolo]
-    : [stagedTarget];
-  return rng.pick(list)(ctx);
+  const list = difficulty === 'easy' ? [threeRates, togetherTime, togetherOutput]
+    : difficulty === 'medium' ? []
+    : [soloThenTogether, togetherThenSolo, stagedTarget];
+  return pickTemplate(rng, list, 'combined_rate', difficulty)(ctx);
 }
 
 function togetherOutput(ctx) {
@@ -139,7 +139,7 @@ function soloThenTogether(ctx) {
   return buildBase(ctx, {
     templateId: 'COMB_M_SOLO_THEN',
     subskill: 'عمل منفرد أولًا ثم عمل مشترك',
-    difficulty: 'medium',
+    difficulty: 'hard',
     question: `ينجز العامل أ ${a} وحدة/ساعة، والعامل ب ${b} وحدة/ساعة. عمل أ وحده ${u(solo, 'hour', 'oblique')}، ثم عملا معًا حتى بلغ الإنجاز ${u(target, 'unit')}. كم ساعة عملا معًا؟`,
     correct, distractors, format: unitFormat('hour'),
     steps: [
@@ -194,7 +194,7 @@ function togetherThenSolo(ctx) {
   return buildBase(ctx, {
     templateId: 'COMB_M_TOGETHER_SOLO',
     subskill: 'عمل مشترك ثم استمرار طرف واحد',
-    difficulty: 'medium',
+    difficulty: 'hard',
     question: `يعمل أ بمعدل ${a} وحدة/ساعة وب بمعدل ${b} وحدة/ساعة. عملا معًا ${u(bothH, 'hour', 'oblique')}، ثم توقف ب واستمر أ وحده حتى بلغ الإنجاز ${u(target, 'unit')}. كم ساعة عمل أ وحده؟`,
     correct, distractors, format: unitFormat('hour'),
     steps: [

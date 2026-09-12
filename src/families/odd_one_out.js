@@ -6,7 +6,7 @@
 // complicated competing rule is not grounds for rejection, and a set with one
 // genuine rule must pass.
 
-import {mk, usable, buildBase} from './_shared.js';
+import {mk, usable, buildBase, pickTemplate} from './_shared.js';
 import {checkOddOneOutAmbiguity, DISCOVERABILITY_CEILING} from '../qa/ambiguity.js';
 import {canonicalNumberSet} from '../qa/fingerprint.js';
 
@@ -14,10 +14,10 @@ const PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
 
 export function generateOddOneOut({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'odd_one_out', family_ar: 'العدد الذي لا ينتمي', category: 'العدد الذي لا ينتمي إلى المجموعة'};
-  const list = difficulty === 'easy' ? [multiples, squares, pronic]
-    : difficulty === 'medium' ? [cubes, primeDoubles]
-    : [squareMinusOne, triangularPattern];
-  return rng.pick(list)(ctx);
+  const list = difficulty === 'easy' ? [multiples, squares, triangularPattern, pronic, cubes, squareMinusOne, primeDoubles]
+    : difficulty === 'medium' ? []
+    : [];
+  return pickTemplate(rng, list, 'odd_one_out', difficulty)(ctx);
 }
 
 /**

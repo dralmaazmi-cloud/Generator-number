@@ -18,6 +18,7 @@
 // for. What the audit objected to was one nudge repeated four times.
 
 import test from 'node:test';
+import {supportedBand, supportedBands} from './_support/bands.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 
@@ -141,7 +142,7 @@ test('RC2-012: no template in any family produces an unattributed key-neighbour'
   for (const family of FAMILIES) {
     const mod = await import(`../src/families/${family}.js`);
     const gen = Object.values(mod).find(v => typeof v === 'function' && v.name.startsWith('generate'));
-    for (const difficulty of ['easy', 'medium', 'hard']) {
+    for (const difficulty of supportedBands(family)) {
       for (let i = 0; i < 150; i++) {
         const rng = new SeededRNG(`prov-${family}-${difficulty}-${i}`);
         let base;
@@ -159,7 +160,10 @@ test('RC2-012: no template in any family produces an unattributed key-neighbour'
       }
     }
   }
-  assert.ok(candidates > 6000, `the sweep must be substantial, saw ${candidates}`);
+  // RC2.2-1: a family is swept only at bands it can compute, so the sweep is
+  // smaller than when every family was asked at all three. It still covers every
+  // template the engine can publish, which is what the claim needs.
+  assert.ok(candidates > 5000, `the sweep must be substantial, saw ${candidates}`);
   assert.deepEqual(offenders, {});
 });
 
@@ -198,7 +202,7 @@ test('RC2-012: the step reaches the published option metadata', () => {
   let seen = 0;
   for (let i = 0; i < 200 && seen < 5; i++) {
     let q;
-    try { q = engine.generateQuestion({family: 'ages', difficulty: 'hard', seed: `prov-meta-${i}`}); } catch { continue; }
+    try { q = engine.generateQuestion({family: 'ages', difficulty: supportedBand('ages','hard'), seed: `prov-meta-${i}`}); } catch { continue; }
     for (const m of Object.values(q.metadata.options_meta)) {
       assert.ok('reasoningStepAffected' in m, 'every option must carry the field');
       if (!m.correct && m.reasoningStepAffected !== null) {

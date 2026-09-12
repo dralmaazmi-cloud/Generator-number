@@ -1,12 +1,12 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine, resample, risePercentPhrase} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine, resample, risePercentPhrase, pickTemplate} from './_shared.js';
 
 export function generateUnitRate({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'unit_rate', family_ar: 'المعدل الوحدوي', category: 'المعدل الوحدوي'};
-  const list = difficulty === 'easy' ? [directRate, rateToTime]
-    : difficulty === 'medium' ? [rateThenPercent, rateThenNewQuantity]
-    : [rateChangeTarget, twoPhaseRate];
-  return rng.pick(list)(ctx);
+  const list = difficulty === 'easy' ? [directRate, rateToTime, rateThenNewQuantity]
+    : difficulty === 'medium' ? [rateThenPercent, rateChangeTarget]
+    : [twoPhaseRate];
+  return pickTemplate(rng, list, 'unit_rate', difficulty)(ctx);
 }
 
 function directRate(ctx) {
@@ -179,7 +179,7 @@ function rateThenNewQuantity(ctx) {
   return buildBase(ctx, {
     templateId: 'RATE_M_SCALE',
     subskill: 'استخراج معدل وحدة ثم التوسع',
-    difficulty: 'medium',
+    difficulty: 'easy',
     question: `قطعت سيارة ${u(amount, 'km')} باستخدام ${u(qty, 'liter', 'oblique')} من الوقود. إذا استمر المعدل نفسه، فكم كيلومترًا تقطع باستخدام ${u(targetQty, 'liter', 'oblique')}؟`,
     correct, distractors, format: unitFormat('km'),
     steps: [
@@ -232,7 +232,7 @@ function rateChangeTarget(ctx) {
   return buildBase(ctx, {
     templateId: 'RATE_H_TARGET',
     subskill: 'معدل محسن ثم زمن لهدف جديد',
-    difficulty: 'hard',
+    difficulty: 'medium',
     question: `تنجز آلة ${u(initial, 'unit')} خلال ${u(oldMinutes, 'minute', 'oblique')}. ارتفع معدلها في الدقيقة بعد تطوير ${risePercentPhrase(pct)}. كم دقيقة تحتاج بالمعدل الجديد لإنجاز ${u(target, 'unit')}؟`,
     correct, distractors, format: unitFormat('minute'),
     steps: [

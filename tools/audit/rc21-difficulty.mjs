@@ -17,7 +17,7 @@
 import {writeFileSync, mkdirSync} from 'node:fs';
 
 import Engine, {ENGINE_VERSION} from '../../src/index.js';
-import {BAND_BOUNDARIES, COMPLEXITY_WEIGHTS} from '../../src/qa/complexity.js';
+import {BAND_BOUNDARIES, COMPLEXITY_WEIGHTS, bandFor} from '../../src/qa/complexity.js';
 
 const BANDS = ['easy', 'medium', 'hard'];
 const median = xs => {
@@ -26,8 +26,11 @@ const median = xs => {
   const m = s.length >> 1;
   return s.length % 2 ? s[m] : Number(((s[m - 1] + s[m]) / 2).toFixed(2));
 };
-const bandOf = score => (score < BAND_BOUNDARIES.easyMedium ? 'easy'
-  : score < BAND_BOUNDARIES.mediumHard ? 'medium' : 'hard');
+// RC2.2-2. Imported from production rather than reimplemented. The two used to
+// disagree at an exact boundary value — production banded 13.2 as medium (<=),
+// the audit as hard (<) — which classified a template into a pool it could then
+// never satisfy.
+const bandOf = bandFor;
 
 export function sample({perBand = 2600, seedTag = 'RC21-DIFF'} = {}) {
   const engine = new Engine();

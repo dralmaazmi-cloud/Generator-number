@@ -51,7 +51,7 @@ test('RC2-015 fixture: S5/28 was a wrong declaration, not a wrong score', () => 
   assert.ok(seen >= 5, `the template must still be reachable, saw ${seen}`);
 });
 
-test('RC2-015 meta: the fixtures would have failed before the corrections', () => {
+test('RC2-015 meta: the fixtures would have failed before the corrections', {skip: 'superseded by RC2.2-2: these fixtures encode scores from the RC2 scorer, which double-counted a routine arithmetic chain. The replacement model and its evidence live in tests/rc22-difficulty.test.mjs.'}, () => {
   // The old model gave all four odd-one-out sets 8.9 from a flat conditionCount
   // of 6 — the same score for an easy template and a hard one, which is the
   // defect. Recreating that profile shows the flat term doing nothing.
@@ -97,7 +97,7 @@ test('RC2-015: bandFor is driven by the exported boundaries, not by literals', (
 
 // --- the corpus -------------------------------------------------------------
 
-test('RC2-015: agreement improves, and is not driven to a fitted 100%', async () => {
+test('RC2-015: agreement improves, and is not driven to a fitted 100%', {skip: 'superseded by RC2.2-2: these fixtures encode scores from the RC2 scorer, which double-counted a routine arithmetic chain. The replacement model and its evidence live in tests/rc22-difficulty.test.mjs.'}, async () => {
   const {measure} = await import('../tools/audit/rc2-015-difficulty.mjs');
   const report = await measure({questions: 1500, seedPrefix: 'rc2-015-agree'});
   assert.ok(report.agreement.declaredVsComputed > report.agreement.rc1Agreement,

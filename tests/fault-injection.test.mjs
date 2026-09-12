@@ -6,6 +6,7 @@
 // caught — and, alongside it, that the untouched original passes.
 
 import test from 'node:test';
+import {supportedBand} from './_support/bands.mjs';
 import assert from 'node:assert/strict';
 
 import Engine from '../src/index.js';
@@ -44,7 +45,7 @@ async function makeItem(family, difficulty, i) {
 
 for (const family of FAMILIES) {
   test(`fault injection: a corrupted key in ${family} is caught by the oracle`, async () => {
-    const {base, q} = await makeItem(family, family === 'relational' ? 'easy' : 'medium', 3);
+    const {base, q} = await makeItem(family, supportedBand(family, 'medium'), 3);
     assert.equal(validateCandidate(base, q).valid, true, 'the untouched item must pass');
 
     // Corrupt the answer the way a wrong formula would: one step out.
@@ -78,7 +79,7 @@ function structuredCloneish(base) {
 // --- the calendar off-by-one specifically ----------------------------------
 
 test('fault injection: the historical day-offset bug is caught', async () => {
-  const {base, q} = await makeItem('calendar', 'hard', 11);
+  const {base, q} = await makeItem('calendar', supportedBand('calendar', 'hard'), 11);
   if (base.template_id !== 'CAL_H_NESTED') return; // the shape under test
   const p = base.parameters;
   const broken = structuredCloneish(base);
@@ -94,7 +95,7 @@ test('fault injection: the historical day-offset bug is caught', async () => {
 // --- the explanation checks ------------------------------------------------
 
 test('fault injection: a corrupted equation in an explanation is caught', async () => {
-  const {base, q} = await makeItem('averages', 'medium', 5);
+  const {base, q} = await makeItem('averages', supportedBand('averages', 'medium'), 5);
   const clean = validateDisplayedEquations(q.explanation.steps);
   assert.equal(clean.valid, true, 'the untouched explanation must pass');
   const broken = q.explanation.steps.map(s => s.replace(/= (\d+)\./, (m, n) => `= ${Number(n) + 7}.`));
@@ -112,7 +113,7 @@ test('fault injection: a value slipped into an explanation without derivation is
 // --- the text/parameter check ----------------------------------------------
 
 test('fault injection: a stem number that drifts from the solver is caught', async () => {
-  const {base, q} = await makeItem('direct_proportion', 'easy', 7);
+  const {base, q} = await makeItem('direct_proportion', supportedBand('direct_proportion', 'easy'), 7);
   const clean = validateTextMatchesParams({
     questionText: q.question, parameters: base.parameters,
     derivedFromParams: base.textParams?.derivedFromParams || []
@@ -151,7 +152,7 @@ test('fault injection: dropping an edge changes what the order oracle can prove'
 // --- the distractor provenance rule ----------------------------------------
 
 test('fault injection: a distractor without provenance is refused, not padded', async () => {
-  const {base} = await makeItem('unit_rate', 'easy', 9);
+  const {base} = await makeItem('unit_rate', supportedBand('unit_rate', 'easy'), 9);
   const rng = new SeededRNG('provenance');
   const stripped = {...base, distractors: base.distractors.map(d => ({value: d.value}))};
   assert.throws(() => finalizeQuestion(stripped, rng.fork('o')), /provenance/,

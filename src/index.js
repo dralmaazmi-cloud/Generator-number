@@ -203,7 +203,17 @@ export class NumericalQuestionGeneratorEngine {
     for (let attempt = 0; attempt < this.config.maxGenerationAttempts; attempt++) {
       const seed = attempt === 0 ? requestedSeed : `${requestedSeed}|retry:${attempt}`;
       const rng = new SeededRNG(seed);
-      const family = familyInput === 'random' ? rng.pick(FAMILY_REGISTRY).id : familyInput;
+      // RC2.2-1. When the caller does not name a family, choose among families
+      // that can actually produce the requested band. Picking blind and letting
+      // the draw fail wastes attempts and fills telemetry with failures that
+      // were predictable before the draw.
+      const wanted = options.difficulty ?? this.config.defaultDifficulty;
+      const capable = wanted === 'mixed'
+        ? FAMILY_REGISTRY
+        : FAMILY_REGISTRY.filter(f => f.difficulties.includes(wanted));
+      const family = familyInput === 'random'
+        ? rng.pick(capable.length ? capable : FAMILY_REGISTRY).id
+        : familyInput;
       lastFamily = family;
       const difficulty = this.resolveDifficulty(
         options.difficulty ?? this.config.defaultDifficulty,
@@ -220,7 +230,11 @@ export class NumericalQuestionGeneratorEngine {
           telemetry: this.telemetry
         });
       } catch (err) {
-        const reasonCode = err.reason || `GENERATOR_ERROR:${err.message}`;
+        // RC2.2-1. A thrown error carries a code; use the declared reason it
+        // maps to rather than minting a new one from its message.
+        const reasonCode = err.reason
+          || (err.code && REASON[err.code] ? REASON[err.code] : null)
+          || `GENERATOR_ERROR:${err.message}`;
         rejections.push(reasonCode);
         // RC2-003: RC1 recorded nothing here at all.
         this.telemetry.samplerFailure({reasonCode, family, seed, attempt: attempt + 1});
@@ -243,6 +257,23 @@ export class NumericalQuestionGeneratorEngine {
 
       q.metadata.family_description = FAMILY_MAP[family].description;
       q.metadata.blueprint_family = FAMILY_MAP[family].category;
+
+      // RC2.2-1. The difficulty release gate. A question asked for at a band is
+      // only released at that band: no item may go out labelled HARD whose
+      // computed difficulty is medium or easy, and none may go out labelled
+      // easier than it is either. The published label is already the computed
+      // one, so this checks the remaining gap — between what was ASKED for and
+      // what the draw actually produced — and resamples rather than releasing a
+      // mismatch. Exhaustion is an explicit failure, never a quieter item.
+      if (difficulty !== 'mixed' && q.difficulty !== difficulty) {
+        this.telemetry.pipelineRejectedCandidate();
+        this.telemetry.pipelineRejection({
+          family, templateId: base.template_id, reasonCode: REASON.DIFFICULTY_BAND_MISMATCH,
+          seed, attempt: attempt + 1,
+          detail: `asked ${difficulty}, computed ${q.difficulty} (${q.metadata.complexity_score})`
+        });
+        continue;
+      }
 
       const verdict = validateCandidate(base, q);
       this.analytics.record(family, base.template_id, difficulty, {accepted: verdict.valid, reasons: verdict.reasons});
@@ -299,9 +330,21 @@ export class NumericalQuestionGeneratorEngine {
     const seed = options.seed ?? makeSeed('NUMSET');
     const rng = new SeededRNG(seed);
     const selectedFamilies = this._resolveFamilyPool(options);
-    const familySchedule = this._buildFamilySchedule(selectedFamilies, count, rng.fork('families'));
+    const requestedDifficulty = options.difficulty ?? this.config.defaultDifficulty;
     const difficultySchedule = this._buildDifficultySchedule(
-      options.difficulty ?? this.config.defaultDifficulty, count, rng.fork('difficulty'), options.adaptiveStats
+      requestedDifficulty, count, rng.fork('difficulty'), options.adaptiveStats
+    );
+    // RC2.2-1. Session selection is difficulty-aware. A family is only
+    // scheduled into a slot whose band it can actually produce — the registry's
+    // `difficulties` is a capability now, not an aspiration. Before this, a hard
+    // session scheduled calendar and odd-one-out slots that no draw could ever
+    // satisfy, and the choice was between failing the session and quietly
+    // handing back an easier item. Neither is necessary: schedule only what can
+    // be produced, and fail only when NOTHING can produce the band.
+    const eligibleFamilies = band => (band === 'mixed' ? selectedFamilies
+      : selectedFamilies.filter(f => (FAMILY_MAP[f]?.difficulties ?? []).includes(band)));
+    const familySchedule = this._buildFamilyScheduleForDifficulties(
+      selectedFamilies, difficultySchedule, rng.fork('families')
     );
     const letterSchedule = options.balanceAnswerLetters === false
       ? Array(count).fill(null)
@@ -364,8 +407,18 @@ export class NumericalQuestionGeneratorEngine {
         const stage = stages[Math.min(stages.length - 1, Math.floor(retry / Math.ceil(this.config.diversityAttempts / stages.length)))];
         let q;
         try {
+          // RC2.2-1. The slot's band fixes which families are eligible; the
+          // retry rotates among them. Pinning one family for all 24 retries
+          // made a slot fail outright once that family's instances were used
+          // up, even though the engine had ~1,900 distinct hard instances
+          // available across the others.
+          const eligible = eligibleFamilies(difficultySchedule[i]);
+          const primary = familySchedule[i];
+          const familyForAttempt = retry === 0 || !eligible.length
+            ? primary
+            : eligible[(eligible.indexOf(primary) + retry) % eligible.length];
           q = this.generateQuestion({
-            family: familySchedule[i],
+            family: familyForAttempt,
             difficulty: difficultySchedule[i],
             seed: `${seed}|Q${i + 1}|${retry}`,
             preferredCorrectLetter: letterSchedule[i],
@@ -664,6 +717,38 @@ export class NumericalQuestionGeneratorEngine {
       for(const f of round){
         if(out.length>=count) break;
         out.push(f);
+      }
+    }
+    return out;
+  }
+
+  /**
+   * RC2.2-1. Builds the family schedule against the per-slot band, so a family
+   * is never asked for a difficulty it cannot compute. Round-robins within the
+   * eligible set so coverage stays even, and refuses outright when a band has no
+   * eligible family at all — an explicit failure rather than a silent downgrade.
+   */
+  _buildFamilyScheduleForDifficulties(pool, difficultySchedule, rng) {
+    const eligible = band => pool.filter(f => (FAMILY_MAP[f]?.difficulties ?? []).includes(band));
+    const cursor = {};
+    const out = [];
+    for (let i = 0; i < difficultySchedule.length; i++) {
+      const band = difficultySchedule[i];
+      const options = eligible(band);
+      if (!options.length) {
+        throw Object.assign(
+          new Error(`NO_FAMILY_AT_DIFFICULTY: no selected family can produce a ${band} question`),
+          {code: 'NO_FAMILY_AT_DIFFICULTY', difficulty: band, pool: [...pool]}
+        );
+      }
+      // Rotate through the eligible families, offset by a seeded start so the
+      // schedule is neither fixed nor clumped.
+      const start = cursor[band] ??= rng.int(0, options.length - 1);
+      const pick = options[(start + (cursor[`${band}:n`] = (cursor[`${band}:n`] ?? 0) + 1) - 1) % options.length];
+      if (out.length && pick === out.at(-1) && options.length > 1) {
+        out.push(options[(options.indexOf(pick) + 1) % options.length]);
+      } else {
+        out.push(pick);
       }
     }
     return out;

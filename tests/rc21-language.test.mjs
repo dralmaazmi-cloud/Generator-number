@@ -3,6 +3,7 @@
 // six instances that happened to be sampled.
 
 import test from 'node:test';
+import {bandOfTemplate} from './_support/bands.mjs';
 import assert from 'node:assert/strict';
 
 import Engine from '../src/index.js';
@@ -92,15 +93,17 @@ test('RC2.1-4: a rise of 100% or more says what it is a percentage of', () => {
   assert.equal(risePercentPhrase(150), 'بنسبة 150% من القيمة السابقة');
 });
 
-test('RC2.1-4: clarifying the rise did not shrink the parameter space', () => {
+test('RC2.1-4: clarifying the rise did not shrink the parameter space', async () => {
   // The first attempt at this fix appended a computed second percentage, which
   // the text-params guard rejected — silently deleting every pct >= 100 draw,
   // 38% of this template's space. This is the test that would have caught it.
   const e = new Engine();
+  // RC2.2-1: the template sits in whichever pool its computed band puts it in.
+  const effBand = await bandOfTemplate('work_time', 'WORK_M_EFF');
   const seen = new Set();
   for (let i = 0; i < 20000 && seen.size < 9; i++) {
     let q;
-    try { q = e.generateQuestion({family: 'work_time', difficulty: 'medium', seed: `RC21-PCT-${i}`}); } catch { continue; }
+    try { q = e.generateQuestion({family: 'work_time', difficulty: effBand, seed: `RC21-PCT-${i}`}); } catch { continue; }
     if (q.generator_id === 'WORK_M_EFF') seen.add(q.metadata.parameters.efficiencyPercent);
   }
   for (const pct of [20, 25, 50, 60, 75, 80, 100, 125, 150]) {

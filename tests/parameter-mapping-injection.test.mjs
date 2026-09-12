@@ -16,6 +16,7 @@
 // in place; no production behaviour changes.
 
 import test from 'node:test';
+import {supportedBand, supportedBands, bandOfTemplate} from './_support/bands.mjs';
 import assert from 'node:assert/strict';
 
 import {SeededRNG} from '../src/rng.js';
@@ -113,7 +114,7 @@ test('parameter mapping: direct_proportion solver reads baseCount and targetCoun
 // --- 2. temporal ------------------------------------------------------------
 
 test('parameter mapping: calendar solver reads aheadDays and behindDays swapped', async () => {
-  const item = await cleanItem('calendar', 'hard', 'cal1', 'CAL_H_NESTED');
+  const item = await cleanItem('calendar', await bandOfTemplate('calendar','CAL_H_NESTED'), 'cal1', 'CAL_H_NESTED');
   assert.ok(item, 'need a clean CAL_H_NESTED item');
   const {base, q, rng} = item;
   assert.equal(validateCandidate(base, q).valid, true, 'MUST_ACCEPT: the untouched item passes');
@@ -138,7 +139,7 @@ test('parameter mapping: calendar solver reads aheadDays and behindDays swapped'
 test('parameter mapping: relational solver maps two participants to the wrong nodes', async () => {
   const isPosition = b => b.oracle?.kind === 'order' && b.oracle.ask?.type === 'position';
   const attempts = [];
-  for (const difficulty of ['easy', 'medium', 'hard']) {
+  for (const difficulty of supportedBands('relational')) {
     for (const tag of ['r1', 'r2', 'r3']) {
       const item = await cleanItem('relational', difficulty, tag, null, isPosition);
       if (!item) continue;
@@ -177,7 +178,7 @@ test('parameter mapping: relational solver maps two participants to the wrong no
 // --- 4. odd one out (rule-based, a fourth structure) ------------------------
 
 test('parameter mapping: odd_one_out solver is pointed at the wrong member of the set', async () => {
-  const item = await cleanItem('odd_one_out', 'medium', 'ooo1');
+  const item = await cleanItem('odd_one_out', supportedBand('odd_one_out', 'medium'), 'ooo1');
   assert.ok(item, 'need a clean odd_one_out item');
   const {base, q, rng} = item;
   assert.equal(validateCandidate(base, q).valid, true, 'MUST_ACCEPT: the untouched item passes');
@@ -205,7 +206,8 @@ const FAMILIES = [
 
 for (const family of FAMILIES) {
   test(`parameter mapping: ${family} solver keyed to a sibling instance's parameters`, async () => {
-    const difficulty = family === 'relational' ? 'easy' : 'medium';
+    // RC2.2-1: a family only answers at bands it can compute.
+    const difficulty = supportedBand(family, 'medium');
     const a = await cleanItem(family, difficulty, 'xa');
     assert.ok(a, `need a clean ${family} item`);
     assert.equal(validateCandidate(a.base, a.q).valid, true, 'MUST_ACCEPT: the untouched item passes');
