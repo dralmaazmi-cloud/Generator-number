@@ -307,10 +307,11 @@ reasoning path 5 of 250.
 
 ### Gate and suite
 
-`npm test` — 398 tests, **0 failures**, 19 skipped (each with a stated
+`npm test` — 398 tests, **0 failures**, 12 skipped (each with a stated
 supersession and a named replacement).
 `npm run test:units` — PASS. `npm run test:stress` — PASS.
-§23 internal gate — **35 conditions**, including eight new RC2.3 conditions.
+§23 internal gate — **PASS, 35 conditions, 0 failed**: ten new RC2.3 conditions
+added and two RC2.2 conditions removed, against 27 before.
 
 Two RC2.2 gate conditions were replaced rather than relaxed:
 `DIFFICULTY_GATE_HOLDS` checked that the released band equalled the computed one,
@@ -393,8 +394,10 @@ The bar was not lowered to reach any of these.
 
 ## Freeze
 
-RC2.3 is frozen at the commit recorded in `rc2/FREEZE.json`, taken after the
-§23 gate passed on a clean tree. The RC2.2 freeze is archived at
+RC2.3 is frozen at commit `337cff33`, taken after the §23 gate passed 35/35 on
+`fede1994` with a clean tree. Production is byte-identical between the gated and
+the frozen commit — the only difference is the gate's own result file — and
+`verifyFreeze()` confirms the bundle is intact. The RC2.2 freeze is archived at
 `rc2/FREEZE_RC2_2.json` and recorded in `rc2/SUPERSEDED_FREEZES.json` as spent —
 Holdout D was generated from exactly that production state.
 
