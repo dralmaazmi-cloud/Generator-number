@@ -1,0 +1,505 @@
+{
+  "batch": {
+    "schema": "rc24-preholdout-v1",
+    "generatedAt": "2026-09-12T20:21:48.303Z",
+    "engineVersion": "1.4.0",
+    "seed": "RC24-PREHOLDOUT-A",
+    "refused": false,
+    "plan": [
+      {
+        "id": "SESSION-1",
+        "kind": "MIXED",
+        "difficulty": "mixed",
+        "count": 50
+      },
+      {
+        "id": "SESSION-2",
+        "kind": "MIXED",
+        "difficulty": "mixed",
+        "count": 50
+      },
+      {
+        "id": "SESSION-3",
+        "kind": "MIXED",
+        "difficulty": "mixed",
+        "count": 50
+      },
+      {
+        "id": "SESSION-4",
+        "kind": "MIXED",
+        "difficulty": "mixed",
+        "count": 50
+      },
+      {
+        "id": "SESSION-5",
+        "kind": "ALL_HARD",
+        "difficulty": "hard",
+        "count": 50
+      }
+    ],
+    "totals": {
+      "questions": 250,
+      "hardQuestions": 82
+    },
+    "hard": {
+      "questions": 82,
+      "families": {
+        "distinct": 14,
+        "counts": {
+          "ages": 9,
+          "relational": 8,
+          "sequences": 7,
+          "ratios": 7,
+          "percentages": 6,
+          "averages": 6,
+          "speed": 6,
+          "machines": 6,
+          "work_time": 5,
+          "direct_proportion": 5,
+          "unit_rate": 5,
+          "calendar": 4,
+          "profit_loss": 4,
+          "combined_rate": 4
+        }
+      },
+      "templates": {
+        "distinct": 35,
+        "max": 5,
+        "counts": {
+          "PROP_H_TWO_ITEM_SYSTEM": 5,
+          "RATE_H_RATE_FROM_GAP": 5,
+          "PCT_H_MIXTURE": 4,
+          "MACH_H_TWO_CONFIG": 4,
+          "CAL_H_CYCLE_MEET": 4,
+          "AVG_H_OVERLAP": 4,
+          "AGE_M_FUT_RATIO": 3,
+          "PL_H_TWO_OUTCOMES": 3,
+          "SPD_H_CATCH": 3,
+          "WORK_H_EXTRA_WORKERS": 3,
+          "AVG_H_SPLIT_SIZE": 2,
+          "SPD_H_TIME_DIFF": 2,
+          "WORK_H_JOINT_SOLO": 2,
+          "REL_M_COUNT": 2,
+          "SEQ_H_POW_INDEX": 2,
+          "RAT_H_TWO_COMB": 2,
+          "PCT_H_TWO_GROUP_CHANGE": 2,
+          "AGE_H_TWO_TIME": 2,
+          "MACH_H_STOPPAGE_TIME": 2,
+          "COMB_H_TEAM_SIZE": 2,
+          "REL_M_CONFIRM": 2,
+          "REL_M_BRANCH_UNRES": 2,
+          "SEQ_H_ALT_DIV": 2,
+          "RAT_M_COMMON_DIFF": 2,
+          "AGE_H_PAST_FUT": 2,
+          "COMB_H_TWO_PUMPS": 2,
+          "SEQ_H_INDEX_MULT": 2,
+          "RAT_H_TRANSFER": 2,
+          "AGE_H_THREE_SIBLINGS": 2,
+          "SPD_M_EQUAL_DIST": 1,
+          "REL_H_POSITION": 1,
+          "SEQ_H_DIGIT_SUM": 1,
+          "REL_H_GUARANTEE": 1,
+          "PL_H_MARKUP_DISCOUNT": 1,
+          "RAT_M_COMMON_SUM": 1
+        }
+      },
+      "signatures": {
+        "distinct": 39,
+        "max": 5
+      },
+      "nonHardCapable": []
+    },
+    "duplication": {
+      "exactDuplicates": 0,
+      "semanticDuplicates": 0
+    },
+    "keys": {
+      "wrongKeys": 0,
+      "zeroCorrectOption": 0,
+      "multipleCorrectOptions": 0,
+      "postShuffleKeyMismatch": 0,
+      "correctValueMismatch": 0,
+      "oracleDisagreement": 0,
+      "invalidQuestions": 0
+    },
+    "ambiguity": {
+      "oddOneOutPublished": 12,
+      "verdicts": {
+        "CLEAN": 8,
+        "BORDERLINE": 4
+      },
+      "publishedAmbiguous": 0,
+      "publishedUndiscoverable": 0
+    },
+    "fallbacks": {
+      "reasoningCap": 0,
+      "templateShare": 0,
+      "relaxedCap": 0
+    },
+    "caps": {
+      "maxTemplateRepeatsPerSession": 3,
+      "maxTemplateIdRepeatsPerSession": 4,
+      "maxReasoningRepeatsPerSession": 3,
+      "maxReasoningRepeatsPerBatch": 5,
+      "note": "read from the engine, unchanged by this check"
+    },
+    "exhaustion": {
+      "engineExhaustions": 0,
+      "sessionsRefused": 0,
+      "sessionsDelivered": 5,
+      "allSessionsFull": true
+    },
+    "telemetry": {
+      "engine": {
+        "proposals": 344,
+        "accountedFor": 344,
+        "balanced": true,
+        "difference": 0,
+        "breakdown": {
+          "published": 332,
+          "samplerFailures": 0,
+          "finalizationFailures": 8,
+          "pipelineRejectedCandidates": 4
+        }
+      },
+      "session": {
+        "publishedToSessions": 332,
+        "delivered": 250,
+        "sessionDiscards": 82,
+        "accountedFor": 332,
+        "balanced": true,
+        "difference": 0,
+        "byReason": {
+          "SESSION_WINDOW_CAP": 45,
+          "SESSION_BATCH_DUPLICATE": 14,
+          "SESSION_TEMPLATE_CAP": 13,
+          "REPEATED_REASONING_PATTERN_IN_BATCH": 8,
+          "DUPLICATE_FINGERPRINT": 2
+        },
+        "anonymous": 0,
+        "note": "published candidates offered to sessions = delivered + every recorded session-level discard"
+      },
+      "byReason": {
+        "SAMPLER_CONSTRAINT": 200,
+        "DISTRACTOR_IMPOSSIBLE": 194,
+        "AMBIGUOUS_ODD_ONE_OUT": 19,
+        "DISTRACTOR_NO_MISCONCEPTION": 8,
+        "IMPLAUSIBLE_DISTRACTOR_DEMOTED": 66,
+        "SESSION_BATCH_DUPLICATE": 14,
+        "DUPLICATE_FINGERPRINT": 2,
+        "DEGENERATE_WRONG_METHOD_EQUALS_KEY": 4,
+        "SESSION_WINDOW_CAP": 45,
+        "REPEATED_REASONING_PATTERN_IN_BATCH": 8,
+        "SESSION_TEMPLATE_CAP": 13
+      }
+    },
+    "perSession": [
+      {
+        "session": "SESSION-1",
+        "kind": "MIXED",
+        "delivered": 50,
+        "bands": {
+          "medium": 29,
+          "easy": 13,
+          "hard": 8
+        },
+        "hardQuestions": 8,
+        "hardTemplates": 8,
+        "hardFamilies": 8,
+        "fallbacks": {
+          "reasoningCap": 0,
+          "templateShare": 0,
+          "relaxedCap": 0
+        },
+        "otherWarnings": 0,
+        "cost": {
+          "published_candidates": 50,
+          "delivered": 50,
+          "discarded": 0
+        }
+      },
+      {
+        "session": "SESSION-2",
+        "kind": "MIXED",
+        "delivered": 50,
+        "bands": {
+          "hard": 8,
+          "medium": 29,
+          "easy": 13
+        },
+        "hardQuestions": 8,
+        "hardTemplates": 8,
+        "hardFamilies": 8,
+        "fallbacks": {
+          "reasoningCap": 0,
+          "templateShare": 0,
+          "relaxedCap": 0
+        },
+        "otherWarnings": 0,
+        "cost": {
+          "published_candidates": 53,
+          "delivered": 50,
+          "discarded": 3
+        }
+      },
+      {
+        "session": "SESSION-3",
+        "kind": "MIXED",
+        "delivered": 50,
+        "bands": {
+          "medium": 29,
+          "easy": 13,
+          "hard": 8
+        },
+        "hardQuestions": 8,
+        "hardTemplates": 8,
+        "hardFamilies": 8,
+        "fallbacks": {
+          "reasoningCap": 0,
+          "templateShare": 0,
+          "relaxedCap": 0
+        },
+        "otherWarnings": 0,
+        "cost": {
+          "published_candidates": 60,
+          "delivered": 50,
+          "discarded": 10
+        }
+      },
+      {
+        "session": "SESSION-4",
+        "kind": "MIXED",
+        "delivered": 50,
+        "bands": {
+          "easy": 13,
+          "medium": 29,
+          "hard": 8
+        },
+        "hardQuestions": 8,
+        "hardTemplates": 8,
+        "hardFamilies": 8,
+        "fallbacks": {
+          "reasoningCap": 0,
+          "templateShare": 0,
+          "relaxedCap": 0
+        },
+        "otherWarnings": 0,
+        "cost": {
+          "published_candidates": 68,
+          "delivered": 50,
+          "discarded": 18
+        }
+      },
+      {
+        "session": "SESSION-5",
+        "kind": "ALL_HARD",
+        "delivered": 50,
+        "bands": {
+          "hard": 50
+        },
+        "hardQuestions": 50,
+        "hardTemplates": 34,
+        "hardFamilies": 14,
+        "fallbacks": {
+          "reasoningCap": 0,
+          "templateShare": 0,
+          "relaxedCap": 0
+        },
+        "otherWarnings": 0,
+        "cost": {
+          "published_candidates": 101,
+          "delivered": 50,
+          "discarded": 51
+        }
+      }
+    ],
+    "wallMs": 586
+  },
+  "readjudication": {
+    "templates": 18,
+    "stillHard": 18,
+    "neverDrawn": [],
+    "failing": [],
+    "rows": [
+      {
+        "templateId": "SEQ_H_DIGIT_SUM",
+        "criteria": [
+          "RULE_DISCOVERY",
+          "STRATEGY_SELECTION"
+        ],
+        "samples": 12,
+        "problems": []
+      },
+      {
+        "templateId": "SEQ_H_INDEX_MULT",
+        "criteria": [
+          "RULE_DISCOVERY",
+          "STRATEGY_SELECTION"
+        ],
+        "samples": 11,
+        "problems": []
+      },
+      {
+        "templateId": "PCT_H_MIXTURE",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "CROSS_PART_INTEGRATION"
+        ],
+        "samples": 16,
+        "problems": []
+      },
+      {
+        "templateId": "PCT_H_TWO_GROUP_CHANGE",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "CROSS_PART_INTEGRATION"
+        ],
+        "samples": 14,
+        "problems": []
+      },
+      {
+        "templateId": "AVG_H_OVERLAP",
+        "criteria": [
+          "CROSS_PART_INTEGRATION",
+          "STRATEGY_SELECTION"
+        ],
+        "samples": 19,
+        "problems": []
+      },
+      {
+        "templateId": "AVG_H_SPLIT_SIZE",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "STRATEGY_SELECTION"
+        ],
+        "samples": 11,
+        "problems": []
+      },
+      {
+        "templateId": "AGE_H_THREE_SIBLINGS",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "CROSS_PART_INTEGRATION"
+        ],
+        "samples": 1,
+        "problems": []
+      },
+      {
+        "templateId": "WORK_H_JOINT_SOLO",
+        "criteria": [
+          "COMPOSED_INVERSION",
+          "SIMULTANEOUS_CONSTRAINTS"
+        ],
+        "samples": 17,
+        "problems": []
+      },
+      {
+        "templateId": "WORK_H_EXTRA_WORKERS",
+        "criteria": [
+          "COMPOSED_INVERSION",
+          "STRATEGY_SELECTION"
+        ],
+        "samples": 15,
+        "problems": []
+      },
+      {
+        "templateId": "MACH_H_TWO_CONFIG",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "CROSS_PART_INTEGRATION"
+        ],
+        "samples": 15,
+        "problems": []
+      },
+      {
+        "templateId": "MACH_H_STOPPAGE_TIME",
+        "criteria": [
+          "COMPOSED_INVERSION",
+          "STRATEGY_SELECTION"
+        ],
+        "samples": 15,
+        "problems": []
+      },
+      {
+        "templateId": "PROP_H_TWO_ITEM_SYSTEM",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "CROSS_PART_INTEGRATION"
+        ],
+        "samples": 38,
+        "problems": []
+      },
+      {
+        "templateId": "RATE_H_RATE_FROM_GAP",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "STRATEGY_SELECTION"
+        ],
+        "samples": 36,
+        "problems": []
+      },
+      {
+        "templateId": "COMB_H_TWO_PUMPS",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "COMPOSED_INVERSION"
+        ],
+        "samples": 16,
+        "problems": []
+      },
+      {
+        "templateId": "COMB_H_TEAM_SIZE",
+        "criteria": [
+          "COMPOSED_INVERSION",
+          "CROSS_PART_INTEGRATION"
+        ],
+        "samples": 16,
+        "problems": []
+      },
+      {
+        "templateId": "CAL_H_CYCLE_MEET",
+        "criteria": [
+          "CROSS_PART_INTEGRATION",
+          "STRATEGY_SELECTION"
+        ],
+        "samples": 39,
+        "problems": []
+      },
+      {
+        "templateId": "PL_H_TWO_OUTCOMES",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "COMPOSED_INVERSION"
+        ],
+        "samples": 19,
+        "problems": []
+      },
+      {
+        "templateId": "PL_H_MARKUP_DISCOUNT",
+        "criteria": [
+          "COMPOSED_INVERSION",
+          "STRATEGY_SELECTION"
+        ],
+        "samples": 19,
+        "problems": []
+      }
+    ]
+  },
+  "hardBandSize": 37,
+  "hardFamilies": [
+    "sequences",
+    "ratios",
+    "percentages",
+    "averages",
+    "ages",
+    "speed",
+    "work_time",
+    "machines",
+    "direct_proportion",
+    "unit_rate",
+    "combined_rate",
+    "relational",
+    "calendar",
+    "profit_loss"
+  ]
+}
