@@ -1,0 +1,14 @@
+{
+  "schema": "rc24-holdout-corrections-v1",
+  "note": "Corrections to the GENERATION REPORT in rc2/HOLDOUT_E.json. The holdout itself — rc2/holdout-e-blind.jsonl.gz and rc2/holdout-e-full.jsonl.gz — is untouched and its recorded hashes stand. Nothing here changes a question, an option, a key or any hidden datum.",
+  "corrections": [
+    {
+      "field": "totals.bandsMatchRequest",
+      "recordedValue": false,
+      "correctValue": true,
+      "cause": "The generator compared the requested and delivered band tallies with JSON.stringify, which compares key ORDER as well as counts. The delivered tally was built in the order the sessions produced bands (medium, hard, easy) and the requested one in easy/medium/hard order, so identical counts read as a mismatch.",
+      "evidence": "Counted directly from the preserved blind dataset: easy 52, medium 116, hard 82, against a request of easy 52, medium 116, hard 82. Per session: SESSION-1..4 each 13 easy / 29 medium / 8 hard, SESSION-5 50 hard.",
+      "remediation": "The comparison is fixed in tools/audit/rc24-holdout.mjs for any future run. The preserved manifest is deliberately NOT edited: it is the record of what the generation reported, and a holdout artifact is not rewritten after the fact."
+    }
+  ]
+}
