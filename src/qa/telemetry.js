@@ -51,6 +51,7 @@ export class GenerationTelemetry {
       exhaustedProposals: 0
     };
     this.byReason = {};
+    this.sessionDiscardReasons = {};
     this.byStage = {};
     this.byTemplate = {};
   }
@@ -112,6 +113,15 @@ export class GenerationTelemetry {
    */
   sessionDiscard(meta) {
     this.counts.sessionDiscards++;
+    // RC2.3-5. Counted here, by reason, rather than reconstructed downstream
+    // from a list of reason codes. The §23 gate used to hold such a list and
+    // subtract it from the total to find discards nobody had named; two reason
+    // codes added in RC2.2 and RC2.3 were not in it, so three real, named
+    // discards were reported as anonymous. A vocabulary asserted in two places
+    // drifts; this is the one place that knows.
+    const code = meta?.reasonCode ?? null;
+    const key = code ?? '__anonymous__';
+    this.sessionDiscardReasons[key] = (this.sessionDiscardReasons[key] ?? 0) + 1;
     return this.record({...meta, stage: 'session_discard', publishedBoundaryReached: true});
   }
   /**
@@ -135,6 +145,8 @@ export class GenerationTelemetry {
   withdrawSessionDiscard(event) {
     if (!event) return;
     this.counts.sessionDiscards--;
+    const key = event.reasonCode ?? '__anonymous__';
+    if (this.sessionDiscardReasons[key]) this.sessionDiscardReasons[key]--;
     this.byStage.session_discard--;
     if (event.reasonCode) this.byReason[event.reasonCode]--;
     if (event.templateId && this.byTemplate[event.templateId]) this.byTemplate[event.templateId].rejected--;
@@ -186,6 +198,12 @@ export class GenerationTelemetry {
         accountedFor: c.delivered + c.sessionDiscards,
         balanced: c.sessionCandidates === c.delivered + c.sessionDiscards,
         difference: c.sessionCandidates - (c.delivered + c.sessionDiscards),
+        // RC2.3-5. What every session-level discard was FOR, counted where it
+        // happens. `anonymous` is the count with no reason code at all, which is
+        // the defect Holdout B exposed and must stay zero.
+        byReason: Object.fromEntries(Object.entries(this.sessionDiscardReasons)
+          .filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1])),
+        anonymous: this.sessionDiscardReasons.__anonymous__ ?? 0,
         note: 'published candidates offered to sessions = delivered + every recorded session-level discard'
       },
       // Work discarded inside proposals, which is not a disposition.
@@ -199,6 +217,6 @@ export class GenerationTelemetry {
   reset() {
     this.events = [];
     for (const k of Object.keys(this.counts)) this.counts[k] = 0;
-    this.byReason = {}; this.byStage = {}; this.byTemplate = {};
+    this.byReason = {}; this.byStage = {}; this.byTemplate = {}; this.sessionDiscardReasons = {};
   }
 }

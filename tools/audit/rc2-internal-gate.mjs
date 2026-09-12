@@ -14,11 +14,25 @@ import {existsSync, readFileSync, readdirSync, statSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 
 import Engine, {ENGINE_VERSION} from '../../src/index.js';
+import {FAMILY_MAP} from '../../src/registry.js';
 import {measure as measureDistractors} from './rc21-distractors.mjs';
 import {gated as gatedDifficulty, allHard as allHardEvidence, capabilityCheck} from './rc22-difficulty.mjs';
 import {build as repetitionBuild} from './rc22-repetition.mjs';
+import {
+  classification as structuralClassification, coverage as bandCoverage,
+  freshSample as freshStructuralSample, holdoutDRegression
+} from './rc23-structure.mjs';
+import {isHardCapable, structuralBandOf, TEMPLATE_STRUCTURE, ADJUDICATED_TEMPLATE_IDS} from '../../src/qa/structure.js';
 
 export const HOLDOUT_SEED = 'AUDIT-2026-09-12-B';
+
+/**
+ * RC2.3. The next sign-off holdout, named here and generated nowhere. Declaring
+ * it is what lets the gate check it has not leaked into development evidence
+ * before it exists; generating it is gated on the RC2.3 validation report being
+ * approved, which it is not.
+ */
+export const RC23_SIGNOFF_SEED = 'AUDIT-2026-09-12-E';
 
 const read = p => JSON.parse(readFileSync(p, 'utf8'));
 const git = args => {
@@ -177,12 +191,14 @@ function conditions() {
     }
     const t = e.getTelemetry();
     const r = t.sessionReconciliation;
-    const anonymous = r.sessionDiscards - ['DUPLICATE_FINGERPRINT', 'REPEATED_REASONING_PATTERN',
-      'SESSION_RECENT_MEMORY', 'SESSION_TEMPLATE_CAP', 'SESSION_WINDOW_CAP', 'SESSION_BATCH_DUPLICATE']
-      .reduce((a, k) => a + (t.byReason[k] ?? 0), 0);
+    // RC2.3-5. Read from the telemetry, which counts each session discard by
+    // reason where it happens. This used to subtract a hand-written list of
+    // reason codes from the total, and the list was missing the two codes added
+    // since — so three named discards were reported as anonymous and the gate
+    // failed for a reason that was not true.
     return {
-      pass: r.balanced && r.difference === 0 && r.delivered === delivered && anonymous === 0,
-      detail: {...r, anonymousDiscards: anonymous}
+      pass: r.balanced && r.difference === 0 && r.delivered === delivered && r.anonymous === 0,
+      detail: {...r}
     };
   });
 
@@ -238,7 +254,13 @@ function conditions() {
     // RC2.2: B and C are spent — reviewed, and their findings are the diagnosis
     // this release answers, so reports naturally name them. What must stay
     // untouched is the holdout that has NOT been reviewed yet.
-    const CURRENT = 'AUDIT-2026-09-12-D';
+    //
+    // RC2.3: D is spent too. Its independent audit — 250 correct keys, one
+    // ambiguous item, 44 of 82 hard items not hard — is the diagnosis THIS
+    // release answers, so RC2.2's report naming it is not a leak. The seed that
+    // must stay untouched is the next one, which has not been generated: the
+    // brief withholds it until the validation report is approved.
+    const CURRENT = RC23_SIGNOFF_SEED;
     const offenders = [];
     for (const f of readdirSync('rc2')) {
       if (f.startsWith('HOLDOUT_D') || f.startsWith('holdout-d')) continue;
@@ -253,16 +275,14 @@ function conditions() {
 
   // --- RC2.2 conditions ------------------------------------------------------
 
-  add('DIFFICULTY_GATE_HOLDS', 'RC2.2-1 — nothing is released at a band it does not compute', () => {
-    const r = gatedDifficulty({perBand: 700, seedTag: 'GATE-RC22'});
-    return {pass: r.violationCount === 0 && r.exhausted === 0, detail: {violations: r.violationCount, exhausted: r.exhausted, meanAttempts: r.meanAttempts}};
-  });
-
-  add('ALL_HARD_IS_HARD', 'RC2.2-1 — an ALL_HARD session contains only genuinely hard questions', () => {
-    const a = allHardEvidence({sessions: 6, seedTag: 'GATE-RC22-AH'});
-    return {pass: a.notHard === 0 && a.failedSessions === 0 && a.perFamily.length >= 8,
-      detail: {total: a.total, notHard: a.notHard, failedSessions: a.failedSessions, families: a.perFamily.length}};
-  });
+  // RC2.2's DIFFICULTY_GATE_HOLDS and ALL_HARD_IS_HARD are replaced rather than
+  // relaxed, and the replacements are below. The first checked that the released
+  // band equalled the computed one, which RC2.2 had made true by construction and
+  // which the Holdout D audit showed says nothing about whether the label is
+  // right. The second required eight families in an ALL_HARD session; only five
+  // hold a template that demands genuine reasoning depth, and the other three
+  // were supplying the routine items the audit rejected — so the number is now
+  // measured and reported (HARD_COVERAGE_REPORTED) instead of being met.
 
   add('FAMILY_CAPABILITY_TRUE', 'RC2.2-1 — the registry says what the engine can actually produce', () => {
     const c = capabilityCheck({attempts: 40});
@@ -296,6 +316,138 @@ function conditions() {
     }
     return {pass: outOfRange === 0 && linked / wrong > 0.40,
       detail: {wrong, linked, share: Number((linked / wrong).toFixed(3)), outOfRange}};
+  });
+
+  // --- RC2.3 conditions ------------------------------------------------------
+
+  add('STRUCTURE_ADJUDICATION_COMPLETE', 'RC2.3-1 — every template is adjudicated and every adjudication is reachable', () => {
+    const c = structuralClassification();
+    const orphans = c.templatesNotInAnyFamily;
+    return {pass: c.total === 107 && orphans.length === 0,
+      detail: {templates: c.total, byBand: c.byBand, orphans}};
+  });
+
+  add('BAND_IS_STRUCTURAL', 'RC2.3-1 — a question is released at its structural band and no other', () => {
+    const e = new Engine();
+    let n = 0, wrong = 0;
+    for (let i = 0; i < 900; i++) {
+      let q;
+      try { q = e.generateQuestion({family: 'random', difficulty: ['easy', 'medium', 'hard'][i % 3], seed: `GATE-RC23-BAND-${i}`}); }
+      catch { continue; }
+      n++;
+      if (q.difficulty !== structuralBandOf(q.metadata.template_id)
+        || q.metadata.band_source !== 'structural_adjudication') wrong++;
+    }
+    return {pass: n > 700 && wrong === 0, detail: {checked: n, wrong}};
+  });
+
+  add('NO_ROUTINE_ITEM_IS_HARD', 'RC2.3-1 — routine structure alone never reaches hard', () => {
+    const offenders = ADJUDICATED_TEMPLATE_IDS.filter(id =>
+      TEMPLATE_STRUCTURE[id].band === 'hard' && TEMPLATE_STRUCTURE[id].criteria.length === 0);
+    return {pass: offenders.length === 0, detail: offenders};
+  });
+
+  add('ALL_HARD_IS_STRUCTURALLY_HARD', 'RC2.3-2 — an ALL_HARD session draws only from HARD_CAPABLE structures', () => {
+    const e = new Engine();
+    let total = 0, filler = 0, failed = 0;
+    const families = new Set(), templates = new Set();
+    for (let i = 0; i < 6; i++) {
+      let s;
+      try { s = e.generatePractice({count: 50, difficulty: 'hard', family: 'random', seed: `GATE-RC23-AH-${i}`}); }
+      catch { failed++; continue; }
+      for (const q of s.questions) {
+        total++; families.add(q.family); templates.add(q.metadata.template_id);
+        if (!isHardCapable(q.metadata.template_id) || q.difficulty !== 'hard') filler++;
+      }
+    }
+    return {pass: failed === 0 && total === 300 && filler === 0,
+      detail: {total, filler, failedSessions: failed, families: families.size, templates: templates.size}};
+  });
+
+  add('HARD_COVERAGE_REPORTED', 'RC2.3-2 — the coverage a band can be built from is measured, and a band that cannot fill a session refuses', () => {
+    const cov = bandCoverage();
+    const e = new Engine();
+    let refused = false, named = null;
+    try { e.generatePractice({count: 50, difficulty: 'hard', family: 'sequences', seed: 'GATE-RC23-COV'}); }
+    catch (err) { refused = err.code === 'INSUFFICIENT_BAND_COVERAGE'; named = err.familiesWithout ?? null; }
+    return {
+      pass: refused && cov.hard.sessionDeliverable,
+      detail: {
+        hardTemplates: cov.hard.templates, hardFamilies: cov.hard.families,
+        familiesWithoutHard: cov.hard.familiesWithout,
+        meanUsesPerStructureInA250Batch: cov.hard.meanUsesPerStructureInABatch,
+        refusesWhenShort: refused, refusalNames: named
+      }
+    };
+  });
+
+  add('STRUCTURAL_EVIDENCE_CONSISTENT', 'RC2.3-1 — nothing a question publishes contradicts the criteria its template claims', () => {
+    const r = ['easy', 'medium', 'hard'].map(band => freshStructuralSample({band, n: 200, seedTag: 'GATE-RC23-EV'}));
+    const bad = r.reduce((a, x) => a + x.structuralContradictions.count, 0);
+    return {pass: bad === 0, detail: r.map(x => ({band: x.band, generated: x.generated, contradictions: x.structuralContradictions.count}))};
+  });
+
+  add('HOLDOUT_D_REGRESSION', 'RC2.3-1 — the adjudication lands where the independent Holdout D audit did', () => {
+    const r = holdoutDRegression();
+    if (!r.available) return {pass: false, detail: 'holdout D evidence is missing'};
+    return {pass: Math.abs(r.differenceFromAudit) <= 3,
+      detail: {releasedAsHard: r.releasedAsHard, auditSays: r.independentAuditSaysGenuinelyHard,
+        adjudicationKeeps: r.adjudicationKeepsAsHard, difference: r.differenceFromAudit}};
+  });
+
+  add('TEMPLATE_SHARE_CAPPED', 'RC2.3-5 — no template takes more than its share of a session', () => {
+    const e = new Engine();
+    let worst = 0;
+    for (const band of ['easy', 'medium', 'hard']) {
+      for (let i = 0; i < 3; i++) {
+        const s = e.generatePractice({count: 50, difficulty: band, family: 'random', seed: `GATE-RC23-SHARE-${band}-${i}`});
+        const counts = {};
+        for (const q of s.questions) counts[q.generator_id] = (counts[q.generator_id] ?? 0) + 1;
+        worst = Math.max(worst, ...Object.values(counts));
+      }
+    }
+    return {pass: worst <= new Engine().config.maxTemplateIdRepeatsPerSession, detail: {worstShareOf50: worst}};
+  });
+
+  add('COUNT_ANSWERS_ARE_WHOLE', 'RC2.3-4 — a count of indivisible things is not offered as a fraction', () => {
+    const e = new Engine();
+    let published = 0, fractional = 0;
+    for (let i = 0; i < 2500; i++) {
+      let q;
+      try { q = e.generateQuestion({family: 'random', difficulty: ['easy', 'medium', 'hard'][i % 3], seed: `GATE-RC23-CNT-${i}`}); }
+      catch { continue; }
+      if (!q.metadata.answer_count_unit) continue;
+      for (const o of Object.values(q.metadata.options_meta)) {
+        if (o.correct) continue;
+        published++;
+        if (typeof o.value === 'number' && !Number.isInteger(o.value)) fractional++;
+      }
+    }
+    // Demoted, never dropped, so the bar is a low residual rather than zero.
+    return {pass: published > 500 && fractional / published < 0.02,
+      detail: {published, fractional, share: Number((fractional / Math.max(published, 1)).toFixed(4))}};
+  });
+
+  add('RISE_WORDING_UNAMBIGUOUS', 'RC2.3-6 — a rise of 100% or more says BY how much, never «بنسبة»', () => {
+    // Drawn from the families whose rise percentages can reach 100%, because a
+    // random sweep finds only a handful in thousands and a check that sees four
+    // examples proves very little.
+    const e = new Engine();
+    let big = 0, ambiguous = 0, seen = 0;
+    for (const family of ['work_time', 'unit_rate', 'machines']) {
+      for (const band of FAMILY_MAP[family].difficulties) {
+        for (let i = 0; i < 700; i++) {
+          let q;
+          try { q = e.generateQuestion({family, difficulty: band, seed: `GATE-RC23-PCT-${family}-${band}-${i}`}); }
+          catch { continue; }
+          seen++;
+          if (!/\d{3,}%/.test(q.question)) continue;
+          big++;
+          if (/بنسبة \d{3,}%/.test(q.question)) ambiguous++;
+        }
+      }
+    }
+    return {pass: big > 40 && ambiguous === 0, detail: {sampled: seen, stemsWithARiseOf100OrMore: big, ambiguous}};
   });
 
   add('TREE_CLEAN', '§23 — the candidate is not still moving', () => {

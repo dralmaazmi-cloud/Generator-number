@@ -1,14 +1,20 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-12T16:55:55.517Z",
+  "evaluatedAt": "2026-09-12T19:03:43.434Z",
   "engineVersion": "1.4.0",
-  "headCommit": "fc08a81105bee33236310859d50becb9ab22f351",
+  "headCommit": "b20b38015eb9bf3fc5366c21e4482975ca03be78",
   "branch": "claude/rc2-implementation",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "PASS",
-  "conditions": 27,
-  "failedConditions": [],
+  "verdict": "FAIL",
+  "conditions": 35,
+  "failedConditions": [
+    "SUITE_GREEN",
+    "SESSION_TELEMETRY_RECONCILES",
+    "SIGNOFF_HOLDOUT_UNTOUCHED",
+    "RISE_WORDING_UNAMBIGUOUS",
+    "TREE_CLEAN"
+  ],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -37,17 +43,17 @@
     {
       "id": "SUITE_GREEN",
       "requirement": "The whole test suite passes",
-      "pass": true,
+      "pass": false,
       "detail": {
-        "passed": 363,
-        "failed": 0
+        "passed": 384,
+        "failed": 2
       }
     },
     {
       "id": "STRESS_GREEN",
       "requirement": "The stress suite passes",
       "pass": true,
-      "detail": "PASS: 4000 single questions + 120 mixed sessions + 100 adaptive questions + PDF HTML smoke."
+      "detail": "PASS: 3300 single questions + 120 mixed sessions + 100 adaptive questions + PDF HTML smoke."
     },
     {
       "id": "RC1_GAINS_PRESERVED",
@@ -80,10 +86,12 @@
         "offenders": [],
         "filesMentioningIt": [
           "rc2/DEVELOPMENT_CORPUS.json",
+          "rc2/FREEZE.json",
           "rc2/FREEZE_RC2.json",
           "rc2/FREEZE_RC2_1.json",
           "rc2/HOLDOUT.json",
           "rc2/HOLDOUT_C.json",
+          "rc2/HOLDOUT_D.json",
           "rc2/HOLDOUT_FINDINGS.json",
           "rc2/INTERNAL_GATE.json",
           "rc2/RC21_DEVELOPMENT_CORPUS.json",
@@ -198,16 +206,16 @@
     {
       "id": "SESSION_TELEMETRY_RECONCILES",
       "requirement": "RC2.1-1 — every published candidate a session sees is delivered or dispositioned",
-      "pass": true,
+      "pass": false,
       "detail": {
-        "publishedToSessions": 320,
+        "publishedToSessions": 557,
         "delivered": 250,
-        "sessionDiscards": 70,
-        "accountedFor": 320,
+        "sessionDiscards": 307,
+        "accountedFor": 557,
         "balanced": true,
         "difference": 0,
         "note": "published candidates offered to sessions = delivered + every recorded session-level discard",
-        "anonymousDiscards": 0
+        "anonymousDiscards": 3
       }
     },
     {
@@ -255,30 +263,11 @@
     {
       "id": "SIGNOFF_HOLDOUT_UNTOUCHED",
       "requirement": "the CURRENT sign-off holdout seed appears in no development evidence",
-      "pass": true,
+      "pass": false,
       "detail": {
-        "offenders": []
-      }
-    },
-    {
-      "id": "DIFFICULTY_GATE_HOLDS",
-      "requirement": "RC2.2-1 — nothing is released at a band it does not compute",
-      "pass": true,
-      "detail": {
-        "violations": 0,
-        "exhausted": 0,
-        "meanAttempts": 1.0614
-      }
-    },
-    {
-      "id": "ALL_HARD_IS_HARD",
-      "requirement": "RC2.2-1 — an ALL_HARD session contains only genuinely hard questions",
-      "pass": true,
-      "detail": {
-        "total": 300,
-        "notHard": 0,
-        "failedSessions": 0,
-        "families": 12
+        "offenders": [
+          "RC22_REMEDIATION_REPORT.md"
+        ]
       }
     },
     {
@@ -294,7 +283,7 @@
       "detail": {
         "exactRepeats": 0,
         "semanticRepeats": 0,
-        "reasoningPaths": 109,
+        "reasoningPaths": 115,
         "maxRepetition": 5,
         "cap": 5
       }
@@ -305,16 +294,144 @@
       "pass": true,
       "detail": {
         "wrong": 4500,
-        "linked": 2258,
-        "share": 0.502,
+        "linked": 2295,
+        "share": 0.51,
         "outOfRange": 0
+      }
+    },
+    {
+      "id": "STRUCTURE_ADJUDICATION_COMPLETE",
+      "requirement": "RC2.3-1 — every template is adjudicated and every adjudication is reachable",
+      "pass": true,
+      "detail": {
+        "templates": 107,
+        "byBand": {
+          "easy": 37,
+          "medium": 51,
+          "hard": 19
+        },
+        "orphans": []
+      }
+    },
+    {
+      "id": "BAND_IS_STRUCTURAL",
+      "requirement": "RC2.3-1 — a question is released at its structural band and no other",
+      "pass": true,
+      "detail": {
+        "checked": 900,
+        "wrong": 0
+      }
+    },
+    {
+      "id": "NO_ROUTINE_ITEM_IS_HARD",
+      "requirement": "RC2.3-1 — routine structure alone never reaches hard",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "id": "ALL_HARD_IS_STRUCTURALLY_HARD",
+      "requirement": "RC2.3-2 — an ALL_HARD session draws only from HARD_CAPABLE structures",
+      "pass": true,
+      "detail": {
+        "total": 300,
+        "filler": 0,
+        "failedSessions": 0,
+        "families": 5,
+        "templates": 19
+      }
+    },
+    {
+      "id": "HARD_COVERAGE_REPORTED",
+      "requirement": "RC2.3-2 — the coverage a band can be built from is measured, and a band that cannot fill a session refuses",
+      "pass": true,
+      "detail": {
+        "hardTemplates": 19,
+        "hardFamilies": 5,
+        "familiesWithoutHard": [
+          "percentages",
+          "averages",
+          "work_time",
+          "machines",
+          "direct_proportion",
+          "fractions",
+          "unit_rate",
+          "combined_rate",
+          "calendar",
+          "odd_one_out",
+          "profit_loss"
+        ],
+        "meanUsesPerStructureInA250Batch": 4.32,
+        "refusesWhenShort": true,
+        "refusalNames": []
+      }
+    },
+    {
+      "id": "STRUCTURAL_EVIDENCE_CONSISTENT",
+      "requirement": "RC2.3-1 — nothing a question publishes contradicts the criteria its template claims",
+      "pass": true,
+      "detail": [
+        {
+          "band": "easy",
+          "generated": 200,
+          "contradictions": 0
+        },
+        {
+          "band": "medium",
+          "generated": 200,
+          "contradictions": 0
+        },
+        {
+          "band": "hard",
+          "generated": 200,
+          "contradictions": 0
+        }
+      ]
+    },
+    {
+      "id": "HOLDOUT_D_REGRESSION",
+      "requirement": "RC2.3-1 — the adjudication lands where the independent Holdout D audit did",
+      "pass": true,
+      "detail": {
+        "releasedAsHard": 82,
+        "auditSays": 38,
+        "adjudicationKeeps": 37,
+        "difference": -1
+      }
+    },
+    {
+      "id": "TEMPLATE_SHARE_CAPPED",
+      "requirement": "RC2.3-5 — no template takes more than its share of a session",
+      "pass": true,
+      "detail": {
+        "worstShareOf50": 4
+      }
+    },
+    {
+      "id": "COUNT_ANSWERS_ARE_WHOLE",
+      "requirement": "RC2.3-4 — a count of indivisible things is not offered as a fraction",
+      "pass": true,
+      "detail": {
+        "published": 1075,
+        "fractional": 7,
+        "share": 0.0065
+      }
+    },
+    {
+      "id": "RISE_WORDING_UNAMBIGUOUS",
+      "requirement": "RC2.3-6 — a rise of 100% or more says BY how much, never «بنسبة»",
+      "pass": false,
+      "detail": {
+        "stemsWithARiseOf100OrMore": 4,
+        "ambiguous": 0
       }
     },
     {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": true,
-      "detail": "clean"
+      "pass": false,
+      "detail": [
+        "M tools/audit/rc2-internal-gate.mjs"
+      ]
     }
   ]
 }
