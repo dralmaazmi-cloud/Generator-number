@@ -1,7 +1,7 @@
 {
   "schema": "rc2-degeneracy-coverage-v1",
   "scopeItem": "RC2-005",
-  "generatedAt": "2026-09-12T09:54:30.360Z",
+  "generatedAt": "2026-09-12T10:10:34.447Z",
   "drawsPerFamilyPerBand": 400,
   "totals": {
     "templates": 107,
@@ -11,8 +11,8 @@
       "COVERED_BY_OTHER_INVARIANT": 8
     },
     "rc1TemplatesWithNoModel": 23,
-    "publishedSampled": 18724,
-    "publishedWithDeclaredModel": 16802,
+    "publishedSampled": 18717,
+    "publishedWithDeclaredModel": 16795,
     "publishedModelCoverage": 0.897,
     "rc1PublishedModelCoverage": 0.793,
     "unclassified": [],
@@ -699,8 +699,25 @@
         "easy"
       ],
       "answerType": "number",
-      "drawn": 191,
-      "declaresModelOnDraws": 191,
+      "drawn": 137,
+      "declaresModelOnDraws": 137,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "COMB_E_THREE",
+      "family": "combined_rate",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 135,
+      "declaresModelOnDraws": 135,
       "modelCoverageOfDraws": 1,
       "degenerateDraws": 0,
       "degenerateRate": 0,
@@ -716,8 +733,8 @@
         "easy"
       ],
       "answerType": "number",
-      "drawn": 209,
-      "declaresModelOnDraws": 209,
+      "drawn": 128,
+      "declaresModelOnDraws": 128,
       "modelCoverageOfDraws": 1,
       "degenerateDraws": 0,
       "degenerateRate": 0,
@@ -733,25 +750,8 @@
         "hard"
       ],
       "answerType": "number",
-      "drawn": 210,
-      "declaresModelOnDraws": 210,
-      "modelCoverageOfDraws": 1,
-      "degenerateDraws": 0,
-      "degenerateRate": 0,
-      "rc1Classification": "MODELLED",
-      "rc2Classification": "MODELLED",
-      "justification": null,
-      "direction": null
-    },
-    {
-      "templateId": "COMB_H_THREE",
-      "family": "combined_rate",
-      "difficulties": [
-        "hard"
-      ],
-      "answerType": "number",
-      "drawn": 190,
-      "declaresModelOnDraws": 190,
+      "drawn": 400,
+      "declaresModelOnDraws": 400,
       "modelCoverageOfDraws": 1,
       "degenerateDraws": 0,
       "degenerateRate": 0,

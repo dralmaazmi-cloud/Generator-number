@@ -1,7 +1,7 @@
 {
   "schema": "rc2-012-survivor-audit-v1",
   "scopeItem": "RC2-012",
-  "generatedAt": "2026-09-12T09:51:36.075Z",
+  "generatedAt": "2026-09-12T10:10:45.892Z",
   "corpus": {
     "questions": 3000,
     "wrongOptions": 15000,

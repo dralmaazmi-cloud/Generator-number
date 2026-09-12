@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "node --test tests/regression.test.mjs tests/properties.test.mjs tests/metamorphic.test.mjs tests/fault-injection.test.mjs tests/parameter-mapping-injection.test.mjs tests/rc2-rank-invariance.test.mjs tests/rc2-fingerprint.test.mjs tests/rc2-ambiguity.test.mjs tests/rc2-version-consistency.test.mjs tests/rc2-ratio-fraction.test.mjs tests/rc2-relational-position.test.mjs tests/rc2-arabic.test.mjs tests/rc2-telemetry.test.mjs tests/rc2-reproducibility.test.mjs tests/rc2-degeneracy.test.mjs tests/rc2-misconception-context.test.mjs tests/rc2-distractor-provenance.test.mjs tests/rc2-feedback.test.mjs",
+    "test": "node --test tests/regression.test.mjs tests/properties.test.mjs tests/metamorphic.test.mjs tests/fault-injection.test.mjs tests/parameter-mapping-injection.test.mjs tests/rc2-rank-invariance.test.mjs tests/rc2-fingerprint.test.mjs tests/rc2-ambiguity.test.mjs tests/rc2-version-consistency.test.mjs tests/rc2-ratio-fraction.test.mjs tests/rc2-relational-position.test.mjs tests/rc2-arabic.test.mjs tests/rc2-telemetry.test.mjs tests/rc2-reproducibility.test.mjs tests/rc2-degeneracy.test.mjs tests/rc2-misconception-context.test.mjs tests/rc2-distractor-provenance.test.mjs tests/rc2-feedback.test.mjs tests/rc2-difficulty.test.mjs",
     "test:units": "node tools/check-manual-units.mjs",
     "test:stress": "node tests/stress.mjs",
     "qa": "npm run test:units && npm test && npm run test:stress",

@@ -290,7 +290,7 @@ function twoTypesCombined(ctx) {
     mk(nA * rA * hours, 'STOPPED_AFTER_FIRST_STAGE', `${nA} × ${rA} × ${hours}`),
     mk(nB * rB * hours, 'USED_ONLY_LAST_STAGE', `${nB} × ${rB} × ${hours}`),
     mk(combined, 'STOPPED_AT_UNIT_RATE', `${nA} × ${rA} + ${nB} × ${rB}`),
-    // RC2-014: as COMB_H_THREE — the averaged rate is rounded before use.
+    // RC2-014: as COMB_E_THREE — the averaged rate is rounded before use.
     mk((nA + nB) * Math.round((rA + rB) / 2) * hours, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${nA} + ${nB}) × ${Math.round((rA + rB) / 2)} × ${hours}`),
     mk((nA + nB) * (rA + rB) * hours, 'RATE_APPLIED_TO_WRONG_COUNT', `(${nA} + ${nB}) × (${rA} + ${rB}) × ${hours}`)
   ]);

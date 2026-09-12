@@ -2,9 +2,15 @@ import {mk, usable, u, unitFormat, buildBase, eq, X, add, mul, resample} from '.
 
 export function generateCombinedRate({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'combined_rate', family_ar: 'المعدل المشترك', category: 'المعدل المشترك'};
-  const list = difficulty === 'easy' ? [togetherOutput, togetherTime]
+  // RC2-015. threeRates was declared hard while being one addition and one
+  // multiplication — the RC1 audit flagged S5/28 for exactly that. The
+  // recalibrated model scores it 5.80, between COMB_E_OUTPUT (5.30) and
+  // COMB_E_TIME (7.10), both of which are declared easy and compute easy. So
+  // easy is where it belongs; the declaration was wrong, not the template, and
+  // the template itself is unaltered.
+  const list = difficulty === 'easy' ? [togetherOutput, togetherTime, threeRates]
     : difficulty === 'medium' ? [soloThenTogether, togetherThenSolo]
-    : [stagedTarget, threeRates];
+    : [stagedTarget];
   return rng.pick(list)(ctx);
 }
 
@@ -284,9 +290,9 @@ function threeRates(ctx) {
     mk(sum * (h + 2), 'OFF_BY_ONE_STEP', `${sum} × (${h} + 2)`)
   ]);
   return buildBase(ctx, {
-    templateId: 'COMB_H_THREE',
+    templateId: 'COMB_E_THREE',
     subskill: 'ثلاثة معدلات تعمل معًا',
-    difficulty: 'hard',
+    difficulty: 'easy',
     question: `تعمل ثلاث آلات بمعدلات ${rates[0]} و${rates[1]} و${rates[2]} وحدة/ساعة. إذا عملت معًا ${u(h, 'hour', 'oblique')}، فكم وحدة تنتج؟`,
     correct, distractors, format: unitFormat('unit'),
     steps: [

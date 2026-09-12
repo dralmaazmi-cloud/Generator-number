@@ -99,10 +99,14 @@ function build(ctx, spec) {
     askedUnknown: 'outlier',
     stageCount: 1,
     pedagogy: {targetSkill: `RULE_${ruleId}`, targetMisconception: 'SATISFIES_SHARED_PROPERTY'},
+    // RC2-015. `conditionCount: 6` was the count of numbers on the page, not of
+    // conditions, and it was identical for every template in this family — a
+    // flat 4.2 that told the model nothing. What varies is the search a solver
+    // has to do, which RC2-008 already measures.
     complexityFactors: {
       reasoningTransformations: 2,
       conceptCount: 1,
-      conditionCount: 6,
+      ruleSearchDepth: ambiguity.intendedSalience + ambiguity.surfaceCompeting.length,
       arithmeticBurden: ctx.difficulty === 'hard' ? 3 : 2
     },
     metadata: {

@@ -1,7 +1,7 @@
 {
   "schema": "rc2-014-feedback-metrics-v1",
   "scopeItem": "RC2-014",
-  "generatedAt": "2026-09-12T10:03:17.200Z",
+  "generatedAt": "2026-09-12T10:10:49.282Z",
   "corpus": {
     "questions": 4000,
     "wrongOptions": 20000,
@@ -36,9 +36,9 @@
     "M3_discrimination": {
       "description": "Whether a question's five wrong options say five different things. Measured on the misconception and on the derivation, NOT on the rendered sentence: the rendered sentence carries the option's own value in its head and is therefore unique by construction — that is the error the retired metric made, and it is not repeated here.",
       "byMisconception": {
-        "meanDistinctPerQuestion": 3.958,
-        "questionsWithAllFiveDistinct": 1729,
-        "shareWithAllFiveDistinct": 0.4323,
+        "meanDistinctPerQuestion": 3.951,
+        "questionsWithAllFiveDistinct": 1716,
+        "shareWithAllFiveDistinct": 0.429,
         "minDistinct": 1,
         "note": "A single misconception across all five is correct where the family admits only one kind of error: every wrong option in an odd-one-out question is wrong because it satisfies the shared rule. Those questions still discriminate through the derivation, which names WHICH property each number satisfies."
       },
@@ -52,8 +52,8 @@
     "M4_questionSpecificity": {
       "description": "Wrong options whose derivation quotes at least one number from this question's own stem.",
       "specifiable": 20000,
-      "specific": 13310,
-      "value": 0.6655
+      "specific": 13300,
+      "value": 0.665
     },
     "M5_vacuity": {
       "description": "Wrong options falling back to the neutral sentence, or carrying no derivation at all.",
@@ -65,11 +65,11 @@
   "wordingDuplication": {
     "note": "Reported because the RC1 sample counted it. It is NOT a defect: two questions that produce the same error deserve the same sentence. Duplication that coincides with a real failure is counted under RC2-012 (vacuous) or RC2-013 (misattributed).",
     "classification": "OBSERVATION",
-    "questionsWithDuplicateSentence": 1970,
-    "shareOfQuestions": 0.4925,
-    "optionsWithNonUniqueSentence": 19042,
-    "shareOfWrongOptions": 0.9521,
-    "distinctSentences": 1539,
+    "questionsWithDuplicateSentence": 1958,
+    "shareOfQuestions": 0.4895,
+    "optionsWithNonUniqueSentence": 19052,
+    "shareOfWrongOptions": 0.9526,
+    "distinctSentences": 1558,
     "rc1Reported": {
       "questionsWithDuplicateExplanatorySentence": 6117,
       "ofQuestions": 10000,
