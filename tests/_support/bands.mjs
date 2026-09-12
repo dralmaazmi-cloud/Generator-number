@@ -24,23 +24,19 @@ export function supportedBand(family, preferred = 'medium') {
 export const supportedBands = family => [...(FAMILY_MAP[family]?.difficulties ?? [])];
 
 /**
- * The band a specific TEMPLATE now lives at. RC2.2 moved templates between
- * pools to match what they compute, so a test that names a template cannot
- * assume the band its id was christened with — CAL_H_LONG computes easy now.
- * Probed rather than tabulated, so it stays true after a later move.
+ * The band a specific TEMPLATE lives at.
+ *
+ * RC2.3 makes this a lookup rather than a probe: the band is now decided by the
+ * structural adjudication, so asking the adjudication is asking the source. The
+ * probe that used to stand here inferred the band from which pool a draw landed
+ * in, which was true while pools were the authority and is now one indirection
+ * away from it.
  */
-export async function bandOfTemplate(family, templateId, attempts = 400) {
-  const {SeededRNG} = await import('../../src/rng.js');
-  const mod = await import(`../../src/families/${family}.js`);
-  const gen = Object.values(mod).find(v => typeof v === 'function' && /^generate/.test(v.name));
-  for (const band of ORDER) {
-    for (let i = 0; i < attempts; i++) {
-      const seed = `probe-${family}-${band}-${i}`;
-      try {
-        const base = gen({difficulty: band, rng: new SeededRNG(seed).fork('c'), seed, engineVersion: 'probe', telemetry: null});
-        if (base && base.template_id === templateId) return band;
-      } catch { break; }
-    }
+export async function bandOfTemplate(family, templateId) {
+  const {structuralBandOf} = await import('../../src/qa/structure.js');
+  const band = structuralBandOf(templateId);
+  if (!supportedBands(family).includes(band)) {
+    throw new Error(`template ${templateId} bands at ${band}, which ${family} does not serve`);
   }
-  throw new Error(`template ${templateId} is not reachable in ${family} at any band`);
+  return band;
 }

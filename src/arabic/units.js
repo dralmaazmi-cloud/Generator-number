@@ -9,6 +9,22 @@
  *   plural    — جمع القلة, used for 3..10 with the numeral
  *   accSing   — المفرد المنصوب (تمييز), used for 11+, 0 and fractional counts
  */
+/**
+ * RC2.3-4. Units that count indivisible things.
+ *
+ * The distinction is about the WORLD, not about grammar: half a worker and two
+ * thirds of a machine do not exist, while 1.5 hours, 2.5 km and 7.25 dirhams all
+ * do. It matters because a wrong option that is not a whole number, next to a
+ * question asking how many workers, is one a candidate can strike out without
+ * doing any of the reasoning — 10.4% of published options were in that position
+ * before this list existed.
+ *
+ * `cup` is deliberately absent: a recipe really can call for a cup and a half.
+ */
+const COUNT_UNITS = new Set(['worker', 'machine', 'unit', 'piece', 'box', 'task', 'person', 'item', 'word']);
+
+export const isCountUnit = unitId => COUNT_UNITS.has(unitId);
+
 export const UNITS = Object.freeze({
   day:     {singular:'يوم',      one:'يوم واحد',      dual:'يومان',      dualOblique:'يومين',      plural:'أيام',      accSing:'يومًا'},
   hour:    {singular:'ساعة',     one:'ساعة واحدة',    dual:'ساعتان',     dualOblique:'ساعتين',     plural:'ساعات',     accSing:'ساعة'},

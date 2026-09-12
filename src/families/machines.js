@@ -1,12 +1,20 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine, resample, adj, risePercentPhrase, pickTemplate} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool} from './_shared.js';
 
 export function generateMachines({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'machines', family_ar: 'الآلات والإنتاج', category: 'الآلات والإنتاج'};
-  const list = difficulty === 'easy' ? []
-    : difficulty === 'medium' ? [machineHours, oneStops, requiredMachines, twoTypesCombined]
-    : [newMachineFaster, subsetUpgrade, stageChange];
-  return pickTemplate(rng, list, 'machines', difficulty)(ctx);
+  // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
+  // eligible for the requested band is decided by the structural adjudication in
+  // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
+  return bandPool(rng, 'machines', difficulty, [
+    ['MACH_E_HOURS', machineHours],
+    ['MACH_E_REQUIRED', requiredMachines],
+    ['MACH_M_STOP', oneStops],
+    ['MACH_M_NEW_FAST', newMachineFaster],
+    ['MACH_M_SUBSET_UP', subsetUpgrade],
+    ['MACH_H_TWO_TYPES', twoTypesCombined],
+    ['MACH_H_STAGE_UP', stageChange]
+  ])(ctx);
 }
 
 function machineHours(ctx) {
@@ -142,7 +150,7 @@ function newMachineFaster(ctx) {
     templateId: 'MACH_M_NEW_FAST',
     subskill: 'آلة قديمة وآلة أسرع بنسبة معلومة',
     difficulty: 'hard',
-    question: `تنتج ${u(machines, 'machine')} متطابقة في الإنتاجية ${u(total, 'piece')} خلال ${u(hours, 'hour', 'oblique')}. آلة جديدة تنتج في الساعة أكثر من الآلة القديمة ${risePercentPhrase(pct)}. كم قطعة تنتج آلة قديمة واحدة وآلة جديدة واحدة معًا خلال ${u(targetH, 'hour', 'oblique')}؟`,
+    question: `تنتج ${u(machines, 'machine')} متطابقة في الإنتاجية ${u(total, 'piece')} خلال ${u(hours, 'hour', 'oblique')}. آلة جديدة تنتج في الساعة أكثر من الآلة القديمة ${riseByPercentPhrase(pct)}. كم قطعة تنتج آلة قديمة واحدة وآلة جديدة واحدة معًا خلال ${u(targetH, 'hour', 'oblique')}؟`,
     correct, distractors, format: unitFormat('piece'),
     steps: [
       `معدل الآلة القديمة في الساعة = ${total} ÷ (${machines} × ${hours}) = ${oldRate}.`,
@@ -248,7 +256,7 @@ function subsetUpgrade(ctx) {
     templateId: 'MACH_M_SUBSET_UP',
     subskill: 'زيادة إنتاجية بعض الآلات فقط',
     difficulty: 'hard',
-    question: `تعمل ${u(machines, 'machine')} بمعدل ${rate} قطعة/ساعة لكل آلة. طُورت ${u(upgraded, 'machine')} منها فزادت إنتاجيتها ${risePercentPhrase(pct)} وبقيت البقية كما هي. كم قطعة تنتج المجموعة خلال ${u(hours, 'hour', 'oblique')}؟`,
+    question: `تعمل ${u(machines, 'machine')} بمعدل ${rate} قطعة/ساعة لكل آلة. طُورت ${u(upgraded, 'machine')} منها فزادت إنتاجيتها ${riseByPercentPhrase(pct)} وبقيت البقية كما هي. كم قطعة تنتج المجموعة خلال ${u(hours, 'hour', 'oblique')}؟`,
     correct, distractors, format: unitFormat('piece'),
     steps: [
       factorText,
@@ -358,7 +366,7 @@ function stageChange(ctx) {
     templateId: 'MACH_H_STAGE_UP',
     subskill: 'مرحلتان مع تطوير جزء من الآلات',
     difficulty: 'hard',
-    question: `عملت ${u(machines, 'machine')} بمعدل ${rate} قطعة/ساعة لمدة ${u(h1, 'hour', 'oblique')}. ثم طُورت ${u(upgraded, 'machine')} فزادت إنتاجيتها ${pct}%، وعملت المجموعة كلها ${u(h2, 'hour', 'oblique')} ${adj(h2, 'hour', 'إضافي')}. كم بلغ الإنتاج الكلي؟`,
+    question: `عملت ${u(machines, 'machine')} بمعدل ${rate} قطعة/ساعة لمدة ${u(h1, 'hour', 'oblique')}. ثم طُورت ${u(upgraded, 'machine')} فزادت إنتاجيتها ${riseByPercentPhrase(pct)}، وعملت المجموعة كلها ${u(h2, 'hour', 'oblique')} ${adj(h2, 'hour', 'إضافي')}. كم بلغ الإنتاج الكلي؟`,
     correct, distractors, format: unitFormat('piece'),
     steps: [
       `إنتاج المرحلة الأولى = ${machines} × ${rate} × ${h1} = ${stage1}.`,

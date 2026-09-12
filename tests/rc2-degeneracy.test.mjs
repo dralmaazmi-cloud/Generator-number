@@ -87,7 +87,7 @@ test('RC2-005 meta: a template with no declared target is not accused of anythin
 test('RC2-005 MUST_REJECT: CAL_H_LONG where whole weeks and the remainder agree', async () => {
   // n = 24: three whole weeks, remainder three. "Move by the number of weeks"
   // and "move by the remainder" are the same move, so the item measures nothing.
-  const {base, verdict} = draw(generateCalendar, await bandOfTemplate('calendar','CAL_H_LONG'), 'fx-cal-6');
+  const {base, verdict} = draw(generateCalendar, await bandOfTemplate('calendar','CAL_H_LONG'), 'fx-cal-19');
   assert.equal(base.template_id, 'CAL_H_LONG');
   assert.equal(base.parameters.offsetDays, 24);
   assert.equal(base.pedagogy.wrongMethodValue, base.correct);
@@ -140,10 +140,11 @@ test('RC2-005 MUST_ACCEPT: an off-centre position in the same template passes', 
 });
 
 test('RC2-005 MUST_REJECT: a count question where neither modelled error differs from the key', async () => {
-  // The seed moved again when RC2.1-2 reclassified REL_M_CONFIRM out of the
-  // medium list, which changes what the draw lands on. The fixture pins the
-  // CONDITION (neither modelled error differs from the key), not the draw.
-  const {base, verdict} = draw(generateRelational, await bandOfTemplate('relational','REL_M_COUNT'), 'fx-relm-34');
+  // The seed moves whenever the pool a band draws from changes — RC2.1-2
+  // reclassified REL_M_CONFIRM, RC2.3-1 replaced the pools with the structural
+  // adjudication. The fixture pins the CONDITION (neither modelled error differs
+  // from the key), not the draw, and is re-found rather than being preserved.
+  const {base, verdict} = draw(generateRelational, await bandOfTemplate('relational','REL_M_COUNT'), 'fx-relm-3');
   assert.equal(base.template_id, 'REL_M_COUNT');
   assert.equal(base.metadata.transitive_step_required, false);
   assert.equal(base.metadata.undetermined_step_required, false);
@@ -241,10 +242,13 @@ test('RC2-005: an undetermined-pair key cannot be produced by resolving a pair',
 
 test('RC2-005: every template in the engine is classified, and every classification exists', async () => {
   const report = await measure(120);
-  // RC2.2-1: fractions declines medium and hard, so FRAC_M_3 and FRAC_H_4 are no
-  // longer generated at all. The inventory is smaller BY DESIGN, and the number
-  // is pinned so a further silent loss would still be caught.
-  assert.equal(report.totals.templates, 105, 'the template inventory is 107 less the two chained-fraction variants');
+  // RC2.3-1: back to the full 107. RC2.2 narrowed each family's pools to the
+  // templates that COMPUTED a band, and two templates — PROP_E_COST and
+  // PROP_M_RECIPE — fell out of every pool and stopped being generated at all.
+  // Nothing reported that, because the count was pinned at what was left. The
+  // structural adjudication gives every template exactly one band, so a template
+  // can no longer be orphaned by a pool it fails to qualify for.
+  assert.equal(report.totals.templates, 107, 'every declared template is reachable');
   assert.deepEqual(report.totals.unclassified, []);
   assert.deepEqual(report.totals.declaredButAbsentFromEngine, []);
   assert.equal(report.totals.rc1TemplatesWithNoModel, 23, 'the RC1 gap was 23 templates');

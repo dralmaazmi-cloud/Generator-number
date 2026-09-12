@@ -5,17 +5,27 @@
 // not all obey the stated rule yields no surviving candidate at all, so a
 // malformed run is rejected rather than published with a plausible-looking key.
 
-import {mk, usable, num, buildBase, eq, X, add, sub, mul, div, resample, pickTemplate} from './_shared.js';
+import {mk, usable, num, buildBase, eq, X, add, sub, mul, div, resample, bandPool} from './_shared.js';
 
 export function generateSequences({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {
     difficulty, rng, seed, engineVersion,
     family: 'sequences', family_ar: 'المتتاليات العددية', category: 'المتتاليات العددية'
   };
-  const templates = difficulty === 'easy' ? [arithmetic, geometric, interleaved]
-    : difficulty === 'medium' ? [increasingDifferences, alternatingOps, recurrence, doublingDifferences]
-    : [alternateDivide, powersPlusIndex];
-  return pickTemplate(rng, templates, 'sequences', difficulty)(ctx);
+  // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
+  // eligible for the requested band is decided by the structural adjudication in
+  // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
+  return bandPool(rng, 'sequences', difficulty, [
+    ['SEQ_E_GEO', geometric],
+    ['SEQ_E_ARITH', arithmetic],
+    ['SEQ_M_INTERLEAVED', interleaved],
+    ['SEQ_M_INC_DIFF', increasingDifferences],
+    ['SEQ_M_ALT_OPS', alternatingOps],
+    ['SEQ_M_DOUBLE_DIFF', doublingDifferences],
+    ['SEQ_H_RECURRENCE', recurrence],
+    ['SEQ_H_POW_INDEX', powersPlusIndex],
+    ['SEQ_H_ALT_DIV', alternateDivide]
+  ])(ctx);
 }
 
 /** Differences written as the subtractions that produce them (Section 8-C). */

@@ -1,5 +1,9 @@
-import {mk, usable, buildBase, eq, X, mul} from './_shared.js';
+import {mk, usable, buildBase, eq, X, mul, fractionChainPhrase} from './_shared.js';
 import {grid} from '../qa/oracle-engine.js';
+import {structuralBandOf} from '../qa/structure.js';
+
+const FRACTION_TEMPLATE_IDS = ['FRAC_E_2', 'FRAC_M_3', 'FRAC_H_4'];
+const FRACTION_BANDS = new Set(FRACTION_TEMPLATE_IDS.map(structuralBandOf));
 
 const FRACS = [
   {d: 2, n: 'نصف', def: 'النصف'},
@@ -18,7 +22,12 @@ export function generateFractions({difficulty, rng, seed, engineVersion, telemet
   // which is what the Holdout C review said when it called FRAC_H_4 not hard.
   // Rather than release an easy item under a harder label, the family declines
   // the bands it cannot reach.
-  if (difficulty === 'medium' || difficulty === 'hard') {
+  //
+  // RC2.3-1. The refusal is no longer a hard-coded band test. The three ids this
+  // family can emit differ only in CHAIN LENGTH, and the structural adjudication
+  // puts all three at easy for that reason, so the bands it declines follow from
+  // the adjudication rather than from a second opinion recorded here.
+  if (!FRACTION_BANDS.has(difficulty)) {
     throw Object.assign(
       new Error(`NO_TEMPLATE_AT_DIFFICULTY: fractions has no template that computes ${difficulty}`),
       {code: 'NO_TEMPLATE_AT_DIFFICULTY', family: 'fractions', difficulty}
@@ -45,7 +54,7 @@ function buildFractionItem(ctx, count, direction) {
     : rng.pick([2, 3, 4, 5, 6]);
   const total = denomProduct * multiplier;
   const result = total / denomProduct;
-  const names = fracs.map(f => f.n).join(' ');
+  const names = fracs.map(f => f.n);
   const templateId = templateIdFor(count);
   const denomList = fracs.map(f => f.d);
 
@@ -99,7 +108,7 @@ function buildFractionItem(ctx, count, direction) {
       ...shared,
       subskill: `${count} كسور مباشرة متتابعة من عدد معلوم`,
       difficulty: ctx.difficulty,
-      question: `ما قيمة ${names} العدد ${total}؟`,
+      question: `${fractionChainPhrase(names, `العدد ${total}`)}. ما الناتج؟`,
       correct, distractors, format: v => String(v),
       steps: [...chainSteps],
       howToStart: 'طبّق الكسور واحدًا بعد الآخر على الناتج السابق، ولا تستخدم مفهوم «الباقي».',
@@ -130,10 +139,10 @@ function buildFractionItem(ctx, count, direction) {
       ...shared,
       subskill: `${count} كسور متتابعة — إيجاد العدد الأصلي`,
       difficulty: ctx.difficulty,
-      question: `${names} عدد يساوي ${result}. فما العدد؟`,
+      question: `${fractionChainPhrase(names, 'عدد')}، فكان الناتج ${result}. فما العدد؟`,
       correct, distractors, format: v => String(v),
       steps: [
-        `أخذ ${names} يعني القسمة على ${denomList.join(' ثم على ')}.`,
+        `${fractionChainPhrase(names, 'عدد')} يعني القسمة على ${denomList.join(' ثم على ')}.`,
         `حاصل ضرب المقامات = ${denomList.join(' × ')} = ${denomProduct}.`,
         `إذن العدد ÷ ${denomProduct} = ${result}، ومنه العدد = ${result} × ${denomProduct} = ${correct}.`
       ],
@@ -157,7 +166,7 @@ function buildFractionItem(ctx, count, direction) {
   const hidden = fracs.at(-1);
   const knownFracs = fracs.slice(0, -1);
   const knownProduct = knownFracs.reduce((p, f) => p * f.d, 1);
-  const knownNames = knownFracs.map(f => f.n).join(' ');
+  const knownNames = knownFracs.map(f => f.n);
   const correct = hidden.def;
   const distractors = usable(ctx, 
     FRACS.filter(f => f.d !== hidden.d).map(f =>
@@ -167,11 +176,11 @@ function buildFractionItem(ctx, count, direction) {
     ...shared,
     subskill: `${count} كسور متتابعة — تحديد الكسر المجهول`,
     difficulty: ctx.difficulty,
-    question: `${knownNames} العدد ${total} ثم كسرٌ منه يساوي ${result}. فما الكسر المجهول؟`,
+    question: `${fractionChainPhrase(knownNames, `العدد ${total}`)}، ثم كسرٌ من الناتج، فكان الناتج ${result}. فما هذا الكسر؟`,
     correct, distractors, format: v => String(v),
     steps: [
       `حاصل ضرب مقامات الكسور المعلومة = ${knownFracs.map(f => f.d).join(' × ')} = ${knownProduct}.`,
-      `${knownNames} من العدد ${total} هو ${total} ÷ ${knownProduct} = ${total / knownProduct}.`,
+      `${fractionChainPhrase(knownNames, `العدد ${total}`)} = ${total} ÷ ${knownProduct} = ${total / knownProduct}.`,
       `بقي أن ننتقل من ${total / knownProduct} إلى ${result}.`,
       `الكسر المجهول = الناتج بعده ÷ الناتج قبله = ${result} ÷ ${total / knownProduct}.`,
       `${total / knownProduct} ÷ ${result} = ${hidden.d}، وهذا مقام الكسر، فالكسر المجهول هو ${hidden.def}.`

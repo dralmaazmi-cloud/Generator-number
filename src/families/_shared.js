@@ -6,12 +6,13 @@
 //   * a number and an Arabic unit only ever meet inside `u` / `plain`, which
 //     delegate to the central lexicon (Section 12).
 
-import {agreeingAdjective, singularOf, accusativeSingularOf, definitePlural, theSingleUnit, formatNumberWithUnit, unitWordFor, displayNumber} from '../arabic/units.js';
+import {agreeingAdjective, singularOf, accusativeSingularOf, definitePlural, theSingleUnit, formatNumberWithUnit, unitWordFor, displayNumber, isCountUnit} from '../arabic/units.js';
 import {deriveDependencyDepth, deriveOperationProfile, deriveAffectedStep} from '../qa/complexity.js';
 import {partitionByPlausibility} from '../qa/distractor-plausibility.js';
 import {Fraction} from '../qa/fraction.js';
 import {isKnownMisconception} from '../qa/misconceptions.js';
 import {REASON} from '../qa/reasons.js';
+import {structuralBandOf} from '../qa/structure.js';
 
 /**
  * Distractor with provenance. Anything else is rejected by makeOptionSet.
@@ -97,6 +98,30 @@ export function pickTemplate(rng, list, family, difficulty) {
   return rng.pick(list);
 }
 
+/**
+ * RC2.3-1/2. Picks a template for a band from the STRUCTURAL adjudication.
+ *
+ * Before this, every family kept its own `difficulty === 'hard' ? [...]` list,
+ * so the band a template was published at lived in two places: the pool that
+ * selected it and the score that ranked it. That is how PROP_H_COST_PLUS — a
+ * unit price, a multiplication and a fixed fee — stayed in a hard pool through
+ * three releases.
+ *
+ * Now the pool IS the adjudication. A family lists what it can build, each entry
+ * naming the template id; which of them are eligible for a band is read from
+ * src/qa/structure.js and nowhere else. Adding a template to the wrong pool is
+ * no longer possible, because there are no pools.
+ *
+ * @param {object} rng
+ * @param {string} family
+ * @param {'easy'|'medium'|'hard'} difficulty
+ * @param {Array<[string, Function]>} entries  [templateId, generator]
+ */
+export function bandPool(rng, family, difficulty, entries) {
+  const list = entries.filter(([id]) => structuralBandOf(id) === difficulty).map(([, fn]) => fn);
+  return pickTemplate(rng, list, family, difficulty);
+}
+
 export const u = (n, unitId, ctx = 'nominative') => formatNumberWithUnit(n, unitId, ctx);
 
 export const adj = (n, unitId, stem, ctx = 'oblique') => agreeingAdjective(n, unitId, stem, ctx);
@@ -106,35 +131,76 @@ export const theSingle = unitId => theSingleUnit(unitId);
 export const defPlural = unitId => definitePlural(unitId);
 
 /**
- * RC2.1-4. «ارتفعت الكفاءة بنسبة 150%» is ambiguous in a way «بنسبة 20%» is not.
+ * RC2.1-4 / RC2.3-6. How a percentage RISE is said, so it can only be read one
+ * way.
  *
- * Below 100% the two readings are not both viable: "rose by 20%" and "rose to
- * 20%" cannot both be a rise, so the sentence resolves itself. At 100% and above
- * both readings remain increases — "rose by 150%" (to 250% of before) and "rose
- * to 150%" are each plausible — and the reader has no way to choose. The
- * independent review flagged exactly that case.
+ * «ارتفعت الكفاءة بنسبة 125%» has two readings that are both increases — rose BY
+ * 125% (to 225% of before) and rose TO 125% of before — and Arabic gives the
+ * reader nothing to choose between them. Below 100% the sentence resolves
+ * itself, because "rose to 20%" is not a rise; at and above 100% it does not.
  *
- * So the resulting level is stated outright once the ambiguity is real. The rule
- * is on the number, not on a template name: widen any percentage pool later and
- * the clarification follows automatically.
+ * RC2.1 attached «من القيمة السابقة» at 100% and up, and the independent Holdout
+ * D audit found that still ambiguous, correctly: «بنسبة 125% من القيمة السابقة»
+ * names the base without saying whether 125% is the increment or the result.
+ * The word carrying the ambiguity is «بنسبة» — a ratio, which a result can be as
+ * easily as an increment.
+ *
+ * «بمقدار» cannot. It says "by an AMOUNT of", which is additive and only
+ * additive, so «ارتفعت الكفاءة بمقدار 125% من القيمة السابقة» has one reading at
+ * any percentage. That makes the threshold unnecessary as well: one form is used
+ * throughout rather than two forms with a rule about when each applies, and the
+ * definite «القيمة السابقة» avoids a possessive pronoun that would have to agree
+ * with a different noun in each of the eight stems that use this.
+ *
+ * The contrasting sense — "became 125% OF the previous value" — is not a rise
+ * and is not rendered here; tests/rc21-language.test.mjs holds the pair up
+ * against each other and checks no stem can be read as the one it does not mean.
  */
-export function risePercentPhrase(pct) {
-  // The clarification must not introduce a numeral the stem cannot source. An
-  // earlier attempt appended «(أي صارت 250% مما كانت عليه)», and the text-params
-  // guard correctly rejected every candidate with pct >= 100 — silently removing
-  // 38% of this template's parameter space. Naming the base instead of computing
-  // a second percentage says the same thing and adds no number:
-  // «بنسبة 150% من القيمة السابقة» can only mean an increase OF 150% OF the
-  // previous value.
-  return pct >= 100
-    ? `بنسبة ${pct}% من القيمة السابقة`
-    : `بنسبة ${pct}%`;
+export function riseByPercentPhrase(pct) {
+  // No numeral beyond `pct` itself: an earlier attempt appended a computed
+  // «(أي صارت 250%…)» and the text-params guard correctly rejected every
+  // candidate with pct >= 100, silently removing 38% of a template's parameter
+  // space. Naming the base says the same thing and adds no number.
+  return `بمقدار ${pct}% من القيمة السابقة`;
+}
+
+/**
+ * RC2.3-6. A chain of unit fractions, said one step at a time.
+ *
+ * «ثلث نصف ربع سُدس عدد يساوي 2» stacks four fraction words with nothing between
+ * them, and the audit flagged it: a reader has to hold four nested scopes with
+ * no syntactic help, which is a reading difficulty and not the reasoning the
+ * item is meant to measure. The arithmetic is a chain, so the sentence is
+ * written as one — in the same left-to-right order the published solution steps
+ * take, so stem and explanation cannot drift apart.
+ *
+ * @param {string[]} names  fraction words in the order they are applied
+ * @param {string}   subject  what the first fraction is taken of, as an idafa
+ *                            complement — «العدد 360», «عدد»
+ */
+export function fractionChainPhrase(names, subject) {
+  const [first, ...rest] = names;
+  const steps = rest.map(n => `ثم ${n} الناتج`);
+  return `${first} ${subject}` + (steps.length ? `، ${steps.join('، ')}` : '');
 }
 export const word = (n, unitId) => unitWordFor(n, unitId);
 export const num = n => displayNumber(n);
 
-/** A choice formatter bound to one unit. */
-export const unitFormat = (unitId, ctx = 'nominative') => v => formatNumberWithUnit(v, unitId, ctx);
+/**
+ * A choice formatter bound to one unit.
+ *
+ * RC2.3-4. The formatter carries the unit it is bound to. That one tag is what
+ * lets `buildBase` know, without a template saying so, whether the quantity being
+ * asked for is a COUNT — and a mistake that lands on 8.67 workers is not an
+ * answer a learner would write to "how many workers", so it can be struck out
+ * without solving anything. The unit is in the question, not in the key, so
+ * reading it breaks no rule about observing the answer.
+ */
+export const unitFormat = (unitId, ctx = 'nominative') => {
+  const fn = v => formatNumberWithUnit(v, unitId, ctx);
+  fn.unitId = unitId;
+  return fn;
+};
 
 /** Exact value as an display string; throws nothing, rounds only for display. */
 export function exact(value) {
@@ -199,8 +265,12 @@ export function buildBase(ctx, spec) {
     // knows what its answer is bounded by. `stimulusIsOptions` marks families
     // whose six options ARE the displayed set, where a wide spread between
     // options is the question rather than a defect.
-    answerBounds = null, stimulusIsOptions = false
+    answerBounds = null, stimulusIsOptions = false,
+    // RC2.3-4. Defaults to whatever the answer's unit implies; a template may
+    // override it where its unit is a count but its answer legitimately is not.
+    answerIsCount = null
   } = spec;
+  const countedAnswer = answerIsCount === null ? isCountUnit(format?.unitId) : answerIsCount;
 
   // RC2.1-3. Implausible candidates sink to the back of the list; none is
   // dropped. A template with more candidates than slots stops offering the ones
@@ -224,14 +294,16 @@ export function buildBase(ctx, spec) {
 
   const ordered = (() => {
     const {plausible, implausible} = partitionByPlausibility(linked, {
-      bounds: answerBounds, stimulusIsOptions
+      bounds: answerBounds, stimulusIsOptions, answerIsCount: countedAnswer
     });
     if (implausible.length && ctx?.telemetry) {
       for (const d of implausible) {
         ctx.telemetry.record({
           stage: 'distractor_plausibility', reasonCode: REASON.IMPLAUSIBLE_DISTRACTOR_DEMOTED,
           family: ctx.family, templateId, seed: ctx.seed,
-          detail: `${d.misconceptionId}=${d.value} outside ${JSON.stringify(answerBounds?.between)}`
+          detail: `${d.misconceptionId}=${d.value} ${countedAnswer && !Number.isInteger(d.value)
+            ? `is not a whole ${format?.unitId}`
+            : `outside ${JSON.stringify(answerBounds?.between)}`}`
         });
       }
     }
@@ -306,6 +378,10 @@ export function buildBase(ctx, spec) {
         declared
       };
     })(),
+    // RC2.3-4. The unit the answer counts, when it counts indivisible things.
+    // Published as evidence so the option-quality claim can be checked from
+    // outside the engine without re-deriving which templates those are.
+    answerCountUnit: countedAnswer ? (format?.unitId ?? null) : null,
     textParams,
     allowedConstants,
     commutative,

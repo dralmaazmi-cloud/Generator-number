@@ -27,6 +27,7 @@ import {validateCandidate} from '../src/qa/pipeline.js';
 import {validateMisconceptionContext, CONTEXT_BOUND} from '../src/qa/misconception-context.js';
 import {MISCONCEPTIONS} from '../src/qa/misconceptions.js';
 import {REASON} from '../src/qa/reasons.js';
+import {ADJUDICATED_TEMPLATE_IDS} from '../src/qa/structure.js';
 import {generateSpeed} from '../src/families/speed.js';
 
 const FAMILIES = [
@@ -130,6 +131,7 @@ test('RC2-013: the chase sentence still appears where a chase actually is', asyn
 
 test('RC2-013: no template in any family attaches a situation to a stem without it', async () => {
   const offenders = {};
+  const seen = new Set();
   let candidates = 0;
   for (const family of FAMILIES) {
     const mod = await import(`../src/families/${family}.js`);
@@ -140,6 +142,7 @@ test('RC2-013: no template in any family attaches a situation to a stem without 
         let base;
         try { base = gen({difficulty, rng: rng.fork('c'), seed: `s${i}`, engineVersion: 'test', telemetry: null}); } catch { continue; }
         candidates++;
+        seen.add(base.template_id);
         const v = validateMisconceptionContext(base);
         if (!v.valid) {
           for (const o of v.details.misconceptionContext) {
@@ -150,17 +153,28 @@ test('RC2-013: no template in any family attaches a situation to a stem without 
       }
     }
   }
-  // RC2.2-1: families are swept only at bands they can compute, so the sweep is
-  // smaller than when all sixteen were asked at all three. It still covers every
-  // template the engine can publish.
-  assert.ok(candidates > 4000, `the sweep must be substantial, saw ${candidates}`);
+  // RC2.3-1: the claim is "no template in any family", so the sweep is measured
+  // by how many TEMPLATES it reached, not by how many draws it made. A raw draw
+  // count made the test fail whenever capability narrowed, which is a change in
+  // the shape of the corpus and not a loss of coverage.
+  assert.equal(seen.size, ADJUDICATED_TEMPLATE_IDS.length,
+    `the sweep must reach every template; missed ${ADJUDICATED_TEMPLATE_IDS.filter(t => !seen.has(t))}`);
+  assert.ok(candidates > 3000, `the sweep must be substantial, saw ${candidates}`);
   assert.deepEqual(offenders, {});
 });
 
 test('RC2-013: the check is wired into the pipeline, not only exported', async () => {
   // A candidate carrying a misattributed misconception must fail validateCandidate.
-  const rng = new SeededRNG('wired-1');
-  const base = generateSpeed({difficulty: await bandOfTemplate('speed','SPD_H_CATCH'), rng: rng.fork('c'), seed: 'wired', engineVersion: 'test'});
+  //
+  // RC2.3-1. The fixture used to name SPD_H_CATCH, and the injection stopped
+  // being a violation the moment that template moved to hard: a chase
+  // misconception on a chase stem is applicable, so nothing was flagged and the
+  // test was passing on the wrong reason. It has to be a stem with NO chase in
+  // it, which is what the audit found the misconception attached to — one
+  // vehicle covering two halves of a journey.
+  const rng = new SeededRNG('wired-0');
+  const base = generateSpeed({difficulty: await bandOfTemplate('speed','SPD_M_EQUAL_DIST'), rng: rng.fork('c'), seed: 'wired', engineVersion: 'test'});
+  assert.equal(base.template_id, 'SPD_M_EQUAL_DIST');
   const clean = finalizeQuestion(base, rng.fork('o'));
   assert.equal(validateCandidate(base, clean).valid, true, 'the untouched item must pass');
 

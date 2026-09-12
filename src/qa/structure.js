@@ -1,0 +1,463 @@
+// RC2.3-1. Structural adjudication: what KIND of reasoning a template demands.
+//
+// Why this module exists.
+//
+// RC2.2 made the published band equal the computed complexity score's band, and
+// that removed the declared/computed disagreement completely — 100% agreement,
+// by construction. The independent Holdout D audit then showed what that number
+// was worth: of 82 items released as HARD, 38 were genuinely hard and 44 were
+// not. Every key was correct; the arithmetic was sound; the LABEL was not human
+// valid.
+//
+// The cause is that a numeric score, however carefully weighted, ranks items on
+// a single axis. Reasoning burden is not one axis. «قطعت سيارة نصف المسافة
+// بسرعة 60 والنصف الآخر بسرعة 50» and «عمل جهاز بمعدل 20 لمدة 3 ساعات ثم ارتفع
+// معدله 20%» can land within a point of each other and be nothing alike: the
+// first hides the asked quantity inside two expressions that must be combined
+// into an equation, the second announces every step in the order the sentence
+// states them. No weighting of "how many operations, how deep the chain" tells
+// those apart, because both have four operations and a chain of three.
+//
+// So the band is decided by STRUCTURE, and the score is kept as evidence.
+//
+// The rule, stated so it can be argued with:
+//
+//   A template is HARD_CAPABLE only if solving it requires at least one of the
+//   structural criteria below. Number of operations, number of steps, size of
+//   the numbers and depth of a dependency chain never qualify a template on
+//   their own — those are workload.
+//
+// The criteria are the ones the RC2.3 brief names, restated as tests that can be
+// applied to a worked solution by a person who has never seen this code.
+
+/**
+ * The structural criteria that can qualify a template as HARD.
+ *
+ * Each is phrased as a question about the SOLUTION, not about the answer and
+ * not about the arithmetic.
+ */
+export const HARD_CRITERIA = Object.freeze({
+  SIMULTANEOUS_CONSTRAINTS:
+    'Two or more conditions pin the answer jointly and cannot be discharged one after ' +
+    'the other. Typically an equation has to be formed because no single given can be ' +
+    'evaluated on its own.',
+  COMPOSED_INVERSION:
+    'The asked quantity sits behind a composition of two or more different ' +
+    'transformations and the solver must invert the composition. Inverting ONE ' +
+    'transformation is routine and does not qualify.',
+  CROSS_PART_INTEGRATION:
+    'Information stated in separate parts of the stem — different entities, different ' +
+    'time points, different scales — must be brought onto one footing before any step ' +
+    'can be taken. Several givens feeding one formula does not qualify.',
+  RULE_DISCOVERY:
+    'The rule itself is not stated and has to be found among competing candidates, ' +
+    'and the search is not settled by the first thing a solver would try.',
+  PARTIAL_ORDER_BRANCHING:
+    'The reasoning runs over an incomplete order in which some relations stay ' +
+    'undetermined, so cases must be considered rather than a single line followed.',
+  STRATEGY_SELECTION:
+    'More than one solution route is available and the efficient one is not signalled ' +
+    'by the surface form of the question — the solver has to choose the frame.'
+});
+
+/**
+ * Markers of routine structure. These do not by themselves forbid a HARD band —
+ * a template can be a fixed pipeline in its arithmetic and still demand a
+ * genuine insight to set that pipeline up — but a template carrying only these
+ * and no criterion above cannot be HARD.
+ */
+export const ROUTINE_MARKERS = Object.freeze({
+  SINGLE_FORMULA:
+    'One named relationship applied once, in the direction the sentence states it.',
+  FIXED_PIPELINE:
+    'A sequence of routine steps in which each next step is determined by the surface ' +
+    'form — "then", "after that", "finally". Adding more stages adds work, not reasoning.',
+  REPEATED_OPERATION:
+    'One idea applied several times over. Chain length is workload.'
+});
+
+const C = HARD_CRITERIA;
+const R = ROUTINE_MARKERS;
+
+/**
+ * The adjudication. Every template the engine can emit appears exactly once.
+ *
+ * `band`     the band this template is released at, and the only one.
+ * `criteria` the HARD criteria it meets (empty for easy and medium).
+ * `routine`  the routine markers it carries.
+ * `why`      one line a reviewer can check against the worked solution.
+ *
+ * On single-band entries: the brief allows a template in more than one band
+ * "only if its parameters can genuinely change the reasoning burden". In this
+ * engine a template function fixes the SHAPE of its solution and its parameters
+ * vary the numbers inside that shape, so no template earns a second band.
+ * tests/rc23-structure.test.mjs samples every template and fails if any one of
+ * them ever produces a materially different structure across draws, which is
+ * what would make a second band legitimate.
+ */
+export const TEMPLATE_STRUCTURE = Object.freeze({
+  // ---------------------------------------------------------------- sequences
+  SEQ_E_GEO: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Constant ratio between adjacent terms; the first thing a solver checks is the answer.'},
+  SEQ_E_ARITH: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Constant difference; found by the first check.'},
+  SEQ_M_INTERLEAVED: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Two strands must be separated first, but "look at every other term" is the standard second move.'},
+  SEQ_M_INC_DIFF: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Differences of differences — the second move in the standard repertoire.'},
+  SEQ_M_ALT_OPS: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Alternating add/multiply; both operands are visible once the alternation is seen.'},
+  SEQ_M_DOUBLE_DIFF: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Doubling differences; one layer below the surface.'},
+  SEQ_H_RECURRENCE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Each term from the previous two; a solver who tries a+b finds it immediately.'},
+  SEQ_H_POW_INDEX: {band: 'hard', criteria: ['RULE_DISCOVERY', 'STRATEGY_SELECTION'],
+    why: 'Nothing works until the solver subtracts each term’s POSITION, which no difference or ratio check suggests; only then do the powers appear.'},
+  SEQ_H_ALT_DIV: {band: 'hard', criteria: ['RULE_DISCOVERY', 'STRATEGY_SELECTION'],
+    why: 'Two alternating operations where one operand advances between applications — neither the alternation nor the advancing divisor is visible from differences or ratios alone.'},
+
+  // ------------------------------------------------------------------- ratios
+  RAT_E_KNOWN: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'One part is given; divide and multiply.'},
+  RAT_E_SPLIT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Simple ratio split — named by the brief as not hard, and it is not medium either: total ÷ parts × share.'},
+  RAT_M_COMMON_SUM: {band: 'hard', criteria: ['CROSS_PART_INTEGRATION', 'STRATEGY_SELECTION'],
+    why: 'Two ratios stated about different pairs must be put on one scale through the shared term before a sum of two NON-adjacent terms means anything.'},
+  RAT_M_COMMON_DIFF: {band: 'hard', criteria: ['CROSS_PART_INTEGRATION', 'STRATEGY_SELECTION'],
+    why: 'As RAT_M_COMMON_SUM, with the joint condition given as a difference.'},
+  RAT_H_TWO_COMB: {band: 'hard', criteria: ['CROSS_PART_INTEGRATION', 'STRATEGY_SELECTION'],
+    why: 'As RAT_M_COMMON_SUM, asking for the term that was not part of the given combination.'},
+  RAT_M_ADD_SIDE: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'COMPOSED_INVERSION'],
+    why: 'A before-ratio and an after-ratio hold at once; neither can be evaluated alone, so the part value has to come out of an equation.'},
+  RAT_H_TRANSFER: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'COMPOSED_INVERSION', 'CROSS_PART_INTEGRATION'],
+    why: 'Two ratios plus the unstated fact that the transfer conserves the total; the conservation is what makes the equation solvable and it is not in the sentence.'},
+
+  // -------------------------------------------------------------- percentages
+  PCT_E_OF: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'One percentage of one value.'},
+  PCT_E_REVERSE_ONE: {band: 'medium', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Straightforward reverse percentage — named by the brief as not hard. One factor, one division.'},
+  PCT_M_UNIT_PRICE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Unit price, then a percentage, then a count. Each step is announced by the sentence.'},
+  PCT_M_REMAIN: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Percentage of a remainder; the order is the order of the clauses.'},
+  PCT_H_CHAIN_VALUE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
+    why: 'Direct chained percentages — named by the brief as not hard. Two applications of one idea.'},
+  PCT_M_SUCCESSIVE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
+    why: 'Chained percentages then one comparison against the original. Four operations, one idea.'},
+  PCT_H_REVERSE_CHAIN: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Two factors multiplied, then one division. The composition is inverted in a single move that the sentence signposts, so it does not reach COMPOSED_INVERSION.'},
+
+  // ----------------------------------------------------------------- averages
+  AVG_E_ADD: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Total from average, adjust, re-average. One relationship used twice.'},
+  AVG_E_REMOVE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'As AVG_E_ADD, downward.'},
+  AVG_M_COMBINE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Two totals reconstructed and pooled; routine averaging, named by the brief as not hard.'},
+  AVG_M_ADD_PAIR: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'As AVG_M_COMBINE with a pair given by its own average.'},
+  AVG_M_REPLACE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Replacement as a delta on the total.'},
+  AVG_H_COMB_ADD: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
+    why: 'Three totals pooled. One more addition than AVG_M_COMBINE and nothing else.'},
+  AVG_H_TARGET: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Required total minus current total. Works backwards through ONE relationship, which is not COMPOSED_INVERSION.'},
+
+  // --------------------------------------------------------------------- ages
+  AGE_E_SUM_DIFF: {band: 'medium', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Sum and difference at one time point; the half-the-difference move is a standard named technique.'},
+  AGE_E_MULT_DIFF: {band: 'medium', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Ratio and difference at one time point; parts arithmetic, no second time point.'},
+  AGE_M_FUT_SUM_DIFF: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Shift the sum back by 2×years, then sum-and-difference. The shift is mechanical and the sentence orders it.'},
+  AGE_M_RATIO_FUT_SUM: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'As AGE_M_FUT_SUM_DIFF with a ratio; the two conditions are still evaluated one after the other.'},
+  AGE_M_FUT_RATIO: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'CROSS_PART_INTEGRATION'],
+    why: 'A difference NOW and a ratio LATER; neither time point can be resolved alone, so an unknown must be carried across both.'},
+  AGE_H_TWO_TIME: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'CROSS_PART_INTEGRATION'],
+    why: 'As AGE_M_FUT_RATIO; the equation is unavoidable.'},
+  // The consistency check below caught this entry over-claiming, which is what it
+  // is for: the two conditions here ARE discharged one after the other — the
+  // future sum is walked back to the past and only then is the ratio applied —
+  // so SIMULTANEOUS_CONSTRAINTS does not hold. The other two do, and the template
+  // stays hard on them.
+  AGE_H_PAST_FUT: {band: 'hard', criteria: ['COMPOSED_INVERSION', 'CROSS_PART_INTEGRATION'],
+    why: 'Three time points: a future sum must be carried back through the present to a past ratio before either condition can be used.'},
+
+  // -------------------------------------------------------------------- speed
+  SPD_E_DISTANCE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'distance = speed × time.'},
+  SPD_E_TIME: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'time = distance ÷ speed.'},
+  SPD_M_AVG: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Total distance over total time; the trap is real but the route is announced.'},
+  SPD_M_TWO_TIME: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
+    why: 'Two leg times added, then a unit conversion. One idea twice.'},
+  SPD_H_CATCH: {band: 'hard', criteria: ['CROSS_PART_INTEGRATION', 'STRATEGY_SELECTION'],
+    why: 'The head start has to be turned into a distance and the chase recast in closing speed — a frame the sentence does not offer.'},
+  SPD_H_MEET_DELAY: {band: 'hard', criteria: ['CROSS_PART_INTEGRATION', 'STRATEGY_SELECTION'],
+    why: 'As SPD_H_CATCH, approaching rather than chasing, with the gap reduced by the delay first.'},
+  SPD_M_EQUAL_DIST: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'COMPOSED_INVERSION'],
+    why: 'The unknown distance appears inside both leg times and cannot be evaluated until the two are combined into one equation.'},
+  SPD_H_TIME_DIFF: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'COMPOSED_INVERSION'],
+    why: 'The distance is defined only by the DIFFERENCE of two times it produces; nothing numeric can be computed before the equation is formed.'},
+
+  // ---------------------------------------------------------------- work_time
+  WORK_E_VOLUME: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Workers scale with the work when time is fixed.'},
+  WORK_E_INVERSE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'worker-days is constant; one multiplication and one division.'},
+  WORK_M_EFF: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'One efficiency factor, applied inversely to the time.'},
+  WORK_M_TARGET: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'worker-days done, remaining, divided by a fixed span. Each step follows the clause before it.'},
+  WORK_M_CHANGE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'As WORK_M_TARGET with the crew size changing; still one stage after another.'},
+  WORK_H_TWO_STAGE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
+    why: 'Three stages of the same worker-day accounting. More arithmetic, no new idea.'},
+  WORK_H_WORKERS_EFF: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Worker-day accounting with one efficiency factor inserted. The factor is stated where it applies.'},
+
+  // ----------------------------------------------------------------- machines
+  MACH_H_TWO_TYPES: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Two group rates summed, then multiplied by a time.'},
+  MACH_E_REQUIRED: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'machine-hour rate, then the count needed. Routine both ways.'},
+  MACH_E_HOURS: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'machine-hour rate, then a new machine-hour total.'},
+  MACH_M_STOP: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
+    why: 'Two stages of the same rate × count × hours product.'},
+  MACH_M_NEW_FAST: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Routine rate-after-percentage — named by the brief as not hard.'},
+  MACH_M_SUBSET_UP: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'The group splits into upgraded and not, but the split is stated; the rates then add.'},
+  MACH_H_STAGE_UP: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
+    why: 'MACH_M_SUBSET_UP with a second stage appended. Six operations, still one idea per clause.'},
+
+  // -------------------------------------------------------- direct_proportion
+  PROP_E_ITEMS: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Unit value then scale.'},
+  PROP_E_COST: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Unit price then scale, or the same rate read the other way.'},
+  PROP_M_FRAC_UNIT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Unit weight then scale; the unit value is fractional, which is arithmetic, not reasoning.'},
+  PROP_M_RECIPE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Two ingredients scaled from one batch ratio.'},
+  PROP_M_MAP: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Lengths pooled, then one scale factor applied.'},
+  PROP_H_COMPOUND: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Unit value, scale, then one reserve factor. Announced in that order.'},
+  PROP_H_COST_PLUS: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Simple fixed-fee unit cost — named by the brief as not hard. Unit price, scale, add the fee once.'},
+
+  // ---------------------------------------------------------------- fractions
+  FRAC_E_2: {band: 'easy', criteria: [], routine: ['REPEATED_OPERATION'],
+    why: 'Two successive fractions of one number.'},
+  FRAC_M_3: {band: 'easy', criteria: [], routine: ['REPEATED_OPERATION'],
+    why: 'Three successive fractions. Chain length is workload.'},
+  FRAC_H_4: {band: 'easy', criteria: [], routine: ['REPEATED_OPERATION'],
+    why: 'Four successive fractions — the item the Holdout C review first named as scored hard while being one idea repeated.'},
+
+  // ---------------------------------------------------------------- unit_rate
+  RATE_E_DIRECT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Rate then scale.'},
+  RATE_E_TIME: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Rate then divide.'},
+  RATE_M_SCALE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Rate then scale, with a consumption unit.'},
+  RATE_M_PERCENT: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Routine rate-after-percentage — named by the brief as not hard.'},
+  RATE_H_TARGET: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Rate, percentage, then a division. Same pipeline as RATE_M_PERCENT, asked the other way.'},
+  RATE_H_TWO_PHASE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
+    why: 'Rate-after-percentage with a second phase appended and the two outputs added.'},
+
+  // ------------------------------------------------------------ combined_rate
+  COMB_E_OUTPUT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Rates add, then multiply by time.'},
+  COMB_E_THREE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Three rates add. One more addend than COMB_E_OUTPUT.'},
+  COMB_E_TIME: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Rates add, then divide into a target.'},
+  COMB_M_TOGETHER_SOLO: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Joint stage, remainder, solo stage. The clauses give the order.'},
+  COMB_M_SOLO_THEN: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'As COMB_M_TOGETHER_SOLO, reversed order of stages.'},
+  COMB_H_STAGED: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
+    why: 'Three stages of the same accounting. The third stage adds one subtraction.'},
+
+  // --------------------------------------------------------------- relational
+  REL_E_BETWEEN: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Four statements that chain into one total order; read off the position.'},
+  REL_E_CHAIN: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Five statements given out of order that still resolve to one total chain; assembling it is the whole task.'},
+  REL_M_CONFIRM: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'PARTIAL_ORDER_BRANCHING'],
+    why: 'The order is partial; each candidate statement must be tested against EVERY consistent ordering, not against one chain.'},
+  REL_M_BRANCH_UNRES: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'PARTIAL_ORDER_BRANCHING'],
+    why: 'Asks which pair stays undetermined — answerable only by reasoning about the set of consistent orderings.'},
+  REL_M_COUNT: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'PARTIAL_ORDER_BRANCHING'],
+    why: 'Counts who is certainly above a person: transitive closure over a branching order.'},
+  REL_H_POSITION: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'PARTIAL_ORDER_BRANCHING'],
+    why: 'A position that is fixed even though the order as a whole is not.'},
+  REL_H_GUARANTEE: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'PARTIAL_ORDER_BRANCHING'],
+    why: 'Requires separating what an undetermined branch can and cannot support.'},
+
+  // ----------------------------------------------------------------- calendar
+  CAL_E_TOM: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'One day back.'},
+  CAL_E_AFTER: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Two days back.'},
+  CAL_M_COMPOUND: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Two offsets added into one, then applied once.'},
+  CAL_M_TWO_SHIFT: {band: 'easy', criteria: [], routine: ['REPEATED_OPERATION'],
+    why: 'The same shift twice.'},
+  CAL_H_LONG: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Remainder modulo 7. One idea, whatever the size of the number.'},
+  CAL_H_NESTED: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Offsets combine with signs and the result is read backwards; two ideas, both signposted.'},
+
+  // -------------------------------------------------------------- odd_one_out
+  ODD_E_MULT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Multiples of a small number; visible on inspection.'},
+  ODD_E_SQUARES: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Perfect squares; visible on inspection.'},
+  ODD_M_PRONIC: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'n(n+1); one multiplication table away from the surface.'},
+  ODD_M_PRIME2: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Twice a prime; one division away.'},
+  ODD_M_CUBES: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Perfect cubes; one familiar list away.'},
+  ODD_H_SQ_MINUS: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'The property is a transformation of the number (n²−1), not the number — a search layer the easy ones do not have.'},
+  ODD_H_TRIANGULAR: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Triangular numbers; a second search layer, but a single stated property once found.'},
+
+  // -------------------------------------------------------------- profit_loss
+  PL_E_PROFIT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Difference, then a percentage of the cost.'},
+  PL_E_LOSS: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'As PL_E_PROFIT, downward.'},
+  PL_H_REVERSE: {band: 'medium', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'Straightforward reverse percentage — named by the brief as not hard.'},
+  PL_M_TOTAL_COST: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Costs pooled first, then the routine profit percentage.'},
+  PL_M_DISC_MARK: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'One discount then one markup, in the order stated.'},
+  PL_H_CHAIN: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
+    why: 'Direct chained percentages then a comparison — named by the brief as not hard.'}
+});
+
+const BANDS = ['easy', 'medium', 'hard'];
+
+// Entries above name only what applies to them — a hard template lists criteria
+// and a routine one lists markers. Normalised here so every consumer sees both
+// keys as arrays and none has to guard.
+for (const entry of Object.values(TEMPLATE_STRUCTURE)) {
+  entry.criteria = Object.freeze(entry.criteria ?? []);
+  entry.routine = Object.freeze(entry.routine ?? []);
+  Object.freeze(entry);
+}
+
+/** Every template id the adjudication covers. */
+export const ADJUDICATED_TEMPLATE_IDS = Object.freeze(Object.keys(TEMPLATE_STRUCTURE));
+
+/**
+ * The band a template is released at. Throws for an unknown template rather
+ * than guessing: a template that reaches the engine without being adjudicated is
+ * a template nobody has looked at, and that is exactly how 44 items came to be
+ * published as hard.
+ */
+export function structuralBandOf(templateId) {
+  const entry = TEMPLATE_STRUCTURE[templateId];
+  if (!entry) {
+    throw Object.assign(
+      new Error(`UNADJUDICATED_TEMPLATE: ${templateId} has no structural classification`),
+      {code: 'UNADJUDICATED_TEMPLATE', templateId}
+    );
+  }
+  return entry.band;
+}
+
+export function isHardCapable(templateId) {
+  return TEMPLATE_STRUCTURE[templateId]?.band === 'hard';
+}
+
+export function criteriaOf(templateId) {
+  return TEMPLATE_STRUCTURE[templateId]?.criteria ?? [];
+}
+
+/** Template ids at a band, in declaration order. */
+export function templatesAtBand(band) {
+  return ADJUDICATED_TEMPLATE_IDS.filter(id => TEMPLATE_STRUCTURE[id].band === band);
+}
+
+/**
+ * The capability of a family, derived from the adjudication so that the registry
+ * cannot drift away from it. `templateIdsByFamily` is supplied by the caller
+ * because this module deliberately knows nothing about the family generators.
+ */
+export function capabilityOf(templateIds) {
+  const bands = new Set(templateIds.map(structuralBandOf));
+  return BANDS.filter(b => bands.has(b));
+}
+
+/**
+ * Consistency of the adjudication with what a published question actually shows.
+ *
+ * This does not re-decide the band — structure is a judgement about the shape of
+ * the reasoning and a number cannot make it. What it can do is catch an entry
+ * that contradicts the evidence the question carries, which is how a table like
+ * this rots. Each check is one-directional and stated as such.
+ *
+ * @returns {string[]} human-readable contradictions; empty when consistent
+ */
+export function contradictions(question) {
+  const id = question?.metadata?.template_id ?? question?.template_id ?? question?.generator_id;
+  const entry = TEMPLATE_STRUCTURE[id];
+  if (!entry) return [`${id}: not adjudicated`];
+  // Read from the SCORED factor set, which is what a published question carries;
+  // `declared` survives only on an unfinalised base, so it is used when present
+  // and never required. An earlier version of this function read `declared` off
+  // a published question, found undefined everywhere, and reported 172
+  // contradictions in 300 items — a check that fires on everything says nothing.
+  const f = question?.metadata?.complexity_factors ?? question?.complexityFactors ?? {};
+  const declared = f.declared ?? {};
+  const out = [];
+
+  const has = c => entry.criteria.includes(c);
+
+  // A claim of simultaneous constraints has to be visible somewhere: the
+  // template solves an equation, or it declares conditions that hold at once.
+  // Both land in `independentConstraints`.
+  if (has('SIMULTANEOUS_CONSTRAINTS')) {
+    const simultaneous = (f.independentConstraints ?? 0) >= 1
+      || (declared.equationSolving ?? 0) >= 1
+      || (declared.conditionCount ?? 0) >= 2;
+    if (!simultaneous) out.push(`${id}: claims SIMULTANEOUS_CONSTRAINTS but solves no equation and holds no joint conditions`);
+  }
+  // Partial-order reasoning shows up as a relation graph. `graphDepth` is folded
+  // into `informationIntegration` alongside `conceptCount`, and the relational
+  // templates carry graphs of five or more against a concept count of two or
+  // three, so four is comfortably below any of them and above every template
+  // that has no graph at all.
+  if (has('PARTIAL_ORDER_BRANCHING') && (f.informationIntegration ?? 0) < 4
+      && (declared.graphDepth ?? 0) < 2) {
+    out.push(`${id}: claims PARTIAL_ORDER_BRANCHING but carries no relation graph`);
+  }
+  // Rule discovery means the rule is not stated, which in this engine means the
+  // question shows a stimulus the solver has to interpret.
+  if (has('RULE_DISCOVERY') && !(question?.display_expression ?? question?.displayExpression)) {
+    out.push(`${id}: claims RULE_DISCOVERY but presents no stimulus to search`);
+  }
+  // Composed inversion needs at least two distinct transformations to invert.
+  if (has('COMPOSED_INVERSION') && (f.transformationDepth ?? 0) < 3) {
+    out.push(`${id}: claims COMPOSED_INVERSION but composes fewer than three transformations`);
+  }
+  // The one check that runs the other way: a hard template carrying nothing but
+  // routine markers is exactly the failure this module exists to prevent.
+  if (entry.band === 'hard' && entry.criteria.length === 0) {
+    out.push(`${id}: released as hard with no structural criterion`);
+  }
+  return out;
+}

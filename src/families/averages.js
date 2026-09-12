@@ -1,11 +1,19 @@
-import {mk, usable, num, buildBase, eq, X, add, sub, mul, resample, pickTemplate} from './_shared.js';
+import {mk, usable, num, buildBase, eq, X, add, sub, mul, resample, bandPool} from './_shared.js';
 
 export function generateAverages({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'averages', family_ar: 'المتوسط الحسابي', category: 'المتوسط الحسابي'};
-  const list = difficulty === 'easy' ? [missingValueForTarget]
-    : difficulty === 'medium' ? [combineThenAdd, removeOne, combineGroups, replaceOne, addPairKnownAverage, addOne]
-    : [];
-  return pickTemplate(rng, list, 'averages', difficulty)(ctx);
+  // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
+  // eligible for the requested band is decided by the structural adjudication in
+  // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
+  return bandPool(rng, 'averages', difficulty, [
+    ['AVG_E_ADD', addOne],
+    ['AVG_E_REMOVE', removeOne],
+    ['AVG_M_COMBINE', combineGroups],
+    ['AVG_M_ADD_PAIR', addPairKnownAverage],
+    ['AVG_M_REPLACE', replaceOne],
+    ['AVG_H_COMB_ADD', combineThenAdd],
+    ['AVG_H_TARGET', missingValueForTarget]
+  ])(ctx);
 }
 
 const plain = v => num(v);

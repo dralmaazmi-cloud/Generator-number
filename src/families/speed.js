@@ -1,12 +1,21 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, approx, pickTemplate} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, approx, bandPool} from './_shared.js';
 
 export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'speed', family_ar: 'السرعة والمسافة والزمن', category: 'السرعة والمسافة والزمن'};
-  const list = difficulty === 'easy' ? [simpleTime, simpleDistance, catchupDelayed]
-    : difficulty === 'medium' ? [averageSpeedUnequalTime, twoStageTime]
-    : [sameDistanceTimeDifference, meetingDelayed, equalDistanceTotalTime];
-  return pickTemplate(rng, list, 'speed', difficulty)(ctx);
+  // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
+  // eligible for the requested band is decided by the structural adjudication in
+  // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
+  return bandPool(rng, 'speed', difficulty, [
+    ['SPD_E_DISTANCE', simpleDistance],
+    ['SPD_E_TIME', simpleTime],
+    ['SPD_M_AVG', averageSpeedUnequalTime],
+    ['SPD_M_TWO_TIME', twoStageTime],
+    ['SPD_H_CATCH', catchupDelayed],
+    ['SPD_H_MEET_DELAY', meetingDelayed],
+    ['SPD_M_EQUAL_DIST', equalDistanceTotalTime],
+    ['SPD_H_TIME_DIFF', sameDistanceTimeDifference]
+  ])(ctx);
 }
 
 const kmh = v => `${num(v)} كم/ساعة`;

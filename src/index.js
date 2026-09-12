@@ -5,6 +5,7 @@ import {validateCandidate} from './qa/pipeline.js';
 import {REASON} from './qa/reasons.js';
 import {GenerationAnalytics} from './qa/analytics.js';
 import {GenerationTelemetry} from './qa/telemetry.js';
+import {structuralBandOf} from './qa/structure.js';
 
 import {generateSequences} from './families/sequences.js';
 import {generateRatios} from './families/ratios.js';
@@ -93,6 +94,19 @@ export class NumericalQuestionGeneratorEngine {
       // as permissive.
       maxReasoningRepeatsPerSession: config.maxReasoningRepeatsPerSession ?? 3,
       maxReasoningRepeatsPerBatch: config.maxReasoningRepeatsPerBatch ?? 5,
+      // RC2.3-5. The per-session cap above counts a VARIANT — a template paired
+      // with the quantity it asks for — so a template that can be asked three
+      // ways was free to appear nine times in fifty. Measured on RC2.3 hard
+      // sessions it did exactly that, and no diversity warning was raised
+      // because no variant had exceeded anything.
+      //
+      // Different asked-unknowns are genuinely different reasoning, so the
+      // variant cap is right and stays. What it does not bound is how much of a
+      // session one template's SURFACE can occupy, and that is what a reader
+      // notices. Four in fifty is one in twelve, which needs thirteen distinct
+      // structures to fill a session — a floor the coverage check below enforces
+      // up front rather than discovering at question forty.
+      maxTemplateIdRepeatsPerSession: config.maxTemplateIdRepeatsPerSession ?? 4,
       slidingWindow: config.slidingWindow ?? 20,
       preferredRepeatsPerWindow: config.preferredRepeatsPerWindow ?? 1,
       diversityAttempts: config.diversityAttempts ?? 24,
@@ -365,6 +379,36 @@ export class NumericalQuestionGeneratorEngine {
     // be produced, and fail only when NOTHING can produce the band.
     const eligibleFamilies = band => (band === 'mixed' ? selectedFamilies
       : selectedFamilies.filter(f => (FAMILY_MAP[f]?.difficulties ?? []).includes(band)));
+    // RC2.3-2. Coverage is checked before a single question is drawn.
+    //
+    // The instruction is that a hard quota is never filled with easier
+    // templates, and that when there is not enough genuinely hard and diverse
+    // material the engine fails explicitly instead. Both halves matter: the
+    // first is now structural — a hard slot can only draw a HARD_CAPABLE
+    // template — and the second is this.
+    //
+    // Discovering the shortage at question forty-three, after hundreds of
+    // discards, and then relaxing a cap to finish, is the silent filling this
+    // release exists to stop. The arithmetic is knowable in advance: a session
+    // of `count` questions in one band needs at least
+    // ceil(count / maxTemplateIdRepeatsPerSession) distinct structures at that
+    // band. When it does not have them, it says so, and says which families hold
+    // nothing at that band.
+    for (const band of new Set(difficultySchedule)) {
+      const slots = difficultySchedule.filter(b => b === band).length;
+      const cov = this.bandCoverage(band, selectedFamilies);
+      const needed = Math.ceil(slots / this.config.maxTemplateIdRepeatsPerSession);
+      if (cov.distinctTemplates < needed) {
+        throw Object.assign(
+          new Error(
+            `INSUFFICIENT_BAND_COVERAGE: ${slots} ${band} slots need ${needed} distinct structures, ` +
+            `the selected families hold ${cov.distinctTemplates} ` +
+            `(families with none at ${band}: ${cov.familiesWithout.join(', ') || 'none'})`
+          ),
+          {code: 'INSUFFICIENT_BAND_COVERAGE', band, slots, needed, ...cov}
+        );
+      }
+    }
     const familySchedule = this._buildFamilyScheduleForDifficulties(
       selectedFamilies, difficultySchedule, rng.fork('families')
     );
@@ -386,6 +430,7 @@ export class NumericalQuestionGeneratorEngine {
     // what keeps a family holding a single hard template from filling its slots
     // with the same reasoning over and over.
     const variantCounts = new Map();
+    const templateCounts = new Map();
     const reasoningCounts = new Map();
     const batchReasoningCounts = options.batchReasoningCounts ?? null;
     const recentVariants = [];
@@ -486,6 +531,7 @@ export class NumericalQuestionGeneratorEngine {
         // questions are not collapsed together.
         const variant = `${q.generator_id}|${q.metadata?.asked_unknown ?? 'default'}`;
         const used = variantCounts.get(variant) || 0;
+        const usedTemplate = templateCounts.get(q.generator_id) || 0;
         const inWindow = recentVariants.slice(-this.config.slidingWindow)
           .filter(t => t === variant).length;
         // Keep the best fallback seen so far: one that still respects the hard
@@ -537,6 +583,13 @@ export class NumericalQuestionGeneratorEngine {
         // session identity would over-count by exactly the number of fallbacks.
         if (count <= 50 && used >= stage.cap) {
           const ev = this.telemetry.sessionDiscard({family: q.family, templateId: q.generator_id, reasonCode: REASON.SESSION_TEMPLATE_CAP, seed, attempt: retry + 1});
+          if (relaxed && relaxed.q === q) relaxed.discardEvent = ev;
+          continue;
+        }
+        // RC2.3-5. How much of the session one template's surface may occupy,
+        // independently of how many ways it can be asked.
+        if (usedTemplate >= this.config.maxTemplateIdRepeatsPerSession) {
+          const ev = this.telemetry.sessionDiscard({family: q.family, templateId: q.generator_id, reasonCode: REASON.SESSION_TEMPLATE_SHARE_CAP, seed, attempt: retry + 1});
           if (relaxed && relaxed.q === q) relaxed.discardEvent = ev;
           continue;
         }
@@ -592,6 +645,7 @@ export class NumericalQuestionGeneratorEngine {
         }
       }
       variantCounts.set(chosen.variant, (variantCounts.get(chosen.variant) || 0) + 1);
+      templateCounts.set(chosen.q.generator_id, (templateCounts.get(chosen.q.generator_id) || 0) + 1);
       recentVariants.push(chosen.variant);
       this.telemetry.deliveredToSession({family: chosen.q.family, templateId: chosen.q.generator_id, seed});
       if (batchFingerprints) batchFingerprints.add(chosen.fingerprint);
@@ -683,6 +737,33 @@ export class NumericalQuestionGeneratorEngine {
    * Section 41. How many genuinely distinct templates exist at a difficulty,
    * so a caller can see an exhaustion risk before asking for the session.
    */
+  /**
+   * RC2.3-2. What a band can actually be built from, read off the structural
+   * adjudication rather than probed.
+   *
+   * `availableDistinctTemplates` below samples the engine, which is the right
+   * measurement for "what does a draw really produce" and the wrong one for a
+   * precondition: it costs hundreds of generations and it answers a question
+   * about luck. This one answers the question about stock.
+   */
+  bandCoverage(band, families = null) {
+    const pool = (families && families.length
+      ? families.map(f => this.normalizeFamily(f))
+      : FAMILY_REGISTRY.map(f => f.id)).filter(f => f !== 'random');
+    const perFamily = pool.map(id => {
+      const templates = (FAMILY_MAP[id]?.templates ?? []).filter(t => structuralBandOf(t) === band);
+      return {family: id, templates, count: templates.length};
+    });
+    return {
+      band,
+      families: pool,
+      perFamily,
+      distinctTemplates: perFamily.reduce((n, f) => n + f.count, 0),
+      familiesWith: perFamily.filter(f => f.count > 0).map(f => f.family),
+      familiesWithout: perFamily.filter(f => f.count === 0).map(f => f.family)
+    };
+  }
+
   availableDistinctTemplates(difficulty, families = null, samples = 120) {
     const pool = families && families.length
       ? families.map(f => this.normalizeFamily(f))

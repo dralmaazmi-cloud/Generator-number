@@ -7,17 +7,25 @@
 // satisfy the stated proportion. Nothing is announced without being derived.
 
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, div, factorLine, resample, unitWord, unitWordKam, theSingle, defPlural, pickTemplate} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, div, factorLine, resample, unitWord, unitWordKam, theSingle, defPlural, bandPool} from './_shared.js';
 
 export function generateDirectProportion({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {
     difficulty, rng, seed, engineVersion,
     family: 'direct_proportion', family_ar: 'التناسب المباشر', category: 'التناسب المباشر البسيط'
   };
-  const list = difficulty === 'easy' ? [unitItems, fractionalUnit]
-    : difficulty === 'medium' ? [mapScale, compoundScale]
-    : [multiUnitCost];
-  return pickTemplate(rng, list, 'direct_proportion', difficulty)(ctx);
+  // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
+  // eligible for the requested band is decided by the structural adjudication in
+  // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
+  return bandPool(rng, 'direct_proportion', difficulty, [
+    ['PROP_E_ITEMS', unitItems],
+    ['PROP_E_COST', unitCost],
+    ['PROP_M_FRAC_UNIT', fractionalUnit],
+    ['PROP_M_RECIPE', recipeScale],
+    ['PROP_M_MAP', mapScale],
+    ['PROP_H_COMPOUND', compoundScale],
+    ['PROP_H_COST_PLUS', multiUnitCost]
+  ])(ctx);
 }
 
 // ---------------------------------------------------------------------------

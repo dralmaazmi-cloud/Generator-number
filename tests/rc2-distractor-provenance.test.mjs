@@ -29,6 +29,7 @@ import {validateCandidate} from '../src/qa/pipeline.js';
 import {validateDistractorProvenance, isAnswerDerived} from '../src/qa/distractor-provenance.js';
 import {mk} from '../src/families/_shared.js';
 import {REASON} from '../src/qa/reasons.js';
+import {ADJUDICATED_TEMPLATE_IDS} from '../src/qa/structure.js';
 
 const FAMILIES = [
   'sequences', 'ratios', 'percentages', 'averages', 'ages', 'speed', 'work_time',
@@ -138,6 +139,7 @@ test('RC2-012: the steps come from the published explanation, not only the descr
 
 test('RC2-012: no template in any family produces an unattributed key-neighbour', async () => {
   const offenders = {};
+  const seen = new Set();
   let candidates = 0;
   for (const family of FAMILIES) {
     const mod = await import(`../src/families/${family}.js`);
@@ -148,6 +150,7 @@ test('RC2-012: no template in any family produces an unattributed key-neighbour'
         let base;
         try { base = gen({difficulty, rng: rng.fork('c'), seed: `s${i}`, engineVersion: 'test', telemetry: null}); } catch { continue; }
         candidates++;
+        seen.add(base.template_id);
         const v = validateDistractorProvenance(base);
         if (!v.valid) {
           for (const o of v.details.unattributedAnswerDerived || []) {
@@ -160,10 +163,11 @@ test('RC2-012: no template in any family produces an unattributed key-neighbour'
       }
     }
   }
-  // RC2.2-1: a family is swept only at bands it can compute, so the sweep is
-  // smaller than when every family was asked at all three. It still covers every
-  // template the engine can publish, which is what the claim needs.
-  assert.ok(candidates > 5000, `the sweep must be substantial, saw ${candidates}`);
+  // RC2.3-1: measured by templates reached, not by draws made — see the matching
+  // note in rc2-misconception-context.test.mjs.
+  assert.equal(seen.size, ADJUDICATED_TEMPLATE_IDS.length,
+    `the sweep must reach every template; missed ${ADJUDICATED_TEMPLATE_IDS.filter(t => !seen.has(t))}`);
+  assert.ok(candidates > 3000, `the sweep must be substantial, saw ${candidates}`);
   assert.deepEqual(offenders, {});
 });
 

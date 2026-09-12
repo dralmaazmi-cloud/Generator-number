@@ -1,12 +1,19 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, approx, unitFormat, buildBase, eq, X, add, sub, mul, resample, pickTemplate} from './_shared.js';
+import {mk, usable, u, num, approx, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool} from './_shared.js';
 
 export function generateProfitLoss({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'profit_loss', family_ar: 'الربح والخسارة والأسعار', category: 'الربح والخسارة والأسعار'};
-  const list = difficulty === 'easy' ? [simpleLoss, simpleProfit]
-    : difficulty === 'medium' ? [discountThenSale, reverseSellingPrice, totalCostProfit]
-    : [discountMarkupChain];
-  return pickTemplate(rng, list, 'profit_loss', difficulty)(ctx);
+  // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
+  // eligible for the requested band is decided by the structural adjudication in
+  // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
+  return bandPool(rng, 'profit_loss', difficulty, [
+    ['PL_E_PROFIT', simpleProfit],
+    ['PL_E_LOSS', simpleLoss],
+    ['PL_H_REVERSE', reverseSellingPrice],
+    ['PL_M_TOTAL_COST', totalCostProfit],
+    ['PL_M_DISC_MARK', discountThenSale],
+    ['PL_H_CHAIN', discountMarkupChain]
+  ])(ctx);
 }
 
 const pct = v => `${num(v)}%`;

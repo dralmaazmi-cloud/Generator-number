@@ -1,12 +1,20 @@
 import {gcd} from '../utils.js';
-import {mk, usable, u, num, buildBase, eq, X, add, sub, mul, mod, resample, pickTemplate} from './_shared.js';
+import {mk, usable, u, num, buildBase, eq, X, add, sub, mul, mod, resample, bandPool} from './_shared.js';
 
 export function generateRatios({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'ratios', family_ar: 'النسب وتقسيم الكميات', category: 'النسب وتقسيم الكميات'};
-  const list = difficulty === 'easy' ? [scaleKnown]
-    : difficulty === 'medium' ? [splitTotal]
-    : [transferBetweenSides, twoRatiosExternalSum, commonTermSum, commonTermDifference, addToOneSide];
-  return pickTemplate(rng, list, 'ratios', difficulty)(ctx);
+  // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
+  // eligible for the requested band is decided by the structural adjudication in
+  // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
+  return bandPool(rng, 'ratios', difficulty, [
+    ['RAT_E_KNOWN', scaleKnown],
+    ['RAT_E_SPLIT', splitTotal],
+    ['RAT_M_COMMON_SUM', commonTermSum],
+    ['RAT_M_COMMON_DIFF', commonTermDifference],
+    ['RAT_H_TWO_COMB', twoRatiosExternalSum],
+    ['RAT_M_ADD_SIDE', addToOneSide],
+    ['RAT_H_TRANSFER', transferBetweenSides]
+  ])(ctx);
 }
 
 const plain = v => num(v);

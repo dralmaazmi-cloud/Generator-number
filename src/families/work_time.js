@@ -1,12 +1,20 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, adj, risePercentPhrase, pickTemplate} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool} from './_shared.js';
 
 export function generateWorkTime({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'work_time', family_ar: 'العمال والزمن', category: 'العمال والزمن'};
-  const list = difficulty === 'easy' ? [workVolume, inverseDirect, efficiencyChange]
-    : difficulty === 'medium' ? [targetDeadline]
-    : [workersAndEfficiency, twoStageWorkers, changeWorkers];
-  return pickTemplate(rng, list, 'work_time', difficulty)(ctx);
+  // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
+  // eligible for the requested band is decided by the structural adjudication in
+  // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
+  return bandPool(rng, 'work_time', difficulty, [
+    ['WORK_E_VOLUME', workVolume],
+    ['WORK_E_INVERSE', inverseDirect],
+    ['WORK_M_EFF', efficiencyChange],
+    ['WORK_M_TARGET', targetDeadline],
+    ['WORK_M_CHANGE', changeWorkers],
+    ['WORK_H_TWO_STAGE', twoStageWorkers],
+    ['WORK_H_WORKERS_EFF', workersAndEfficiency]
+  ])(ctx);
 }
 
 function inverseDirect(ctx) {
@@ -192,7 +200,7 @@ function efficiencyChange(ctx) {
     templateId: 'WORK_M_EFF',
     subskill: 'زيادة كفاءة العمال مع ثبات العدد',
     difficulty: 'easy',
-    question: `فريق ينجز عملًا في ${u(days, 'day', 'oblique')}. بعد تدريب ارتفعت كفاءة الفريق ${risePercentPhrase(pct)} مع بقاء عدد العمال نفسه. كم يومًا يحتاج للعمل نفسه؟`,
+    question: `فريق ينجز عملًا في ${u(days, 'day', 'oblique')}. بعد تدريب ارتفعت كفاءة الفريق ${riseByPercentPhrase(pct)} مع بقاء عدد العمال نفسه. كم يومًا يحتاج للعمل نفسه؟`,
     correct, distractors, format: unitFormat('day'),
     steps: [
       factorText,
@@ -364,7 +372,7 @@ function workersAndEfficiency(ctx) {
     templateId: 'WORK_H_WORKERS_EFF',
     subskill: 'تغير عدد العمال والكفاءة بعد بدء العمل',
     difficulty: 'hard',
-    question: `يستطيع ${u(w, 'worker')} إنجاز عمل في ${u(totalDays, 'day', 'oblique')}. بعد ${u(initial, 'day', 'oblique')} غادر ${u(left, 'worker')}، ثم ارتفعت كفاءة كل عامل باقٍ ${risePercentPhrase(pct)}. كم يومًا إضافيًا يحتاجون لإكمال العمل؟`,
+    question: `يستطيع ${u(w, 'worker')} إنجاز عمل في ${u(totalDays, 'day', 'oblique')}. بعد ${u(initial, 'day', 'oblique')} غادر ${u(left, 'worker')}، ثم ارتفعت كفاءة كل عامل باقٍ ${riseByPercentPhrase(pct)}. كم يومًا إضافيًا يحتاجون لإكمال العمل؟`,
     correct, distractors, format: unitFormat('day'),
     steps: [
       `العمل الكامل بوحدة عامل-يوم = ${w} × ${totalDays} = ${total}.`,

@@ -34,6 +34,11 @@ export const REASON = Object.freeze({
   SESSION_RECENT_MEMORY: 'SESSION_RECENT_MEMORY',
   SESSION_TEMPLATE_CAP: 'SESSION_TEMPLATE_CAP',
   SESSION_WINDOW_CAP: 'SESSION_WINDOW_CAP',
+  // RC2.3-5. One template id has already taken its share of the session. The
+  // cap above counts (template, asked unknown); this one counts the template, so
+  // a template askable three ways can no longer occupy nine slots in fifty
+  // without anything being recorded.
+  SESSION_TEMPLATE_SHARE_CAP: 'SESSION_TEMPLATE_SHARE_CAP',
   SESSION_BATCH_DUPLICATE: 'SESSION_BATCH_DUPLICATE',
   // RC2.1-3. Not a rejection: the candidate is still available, it has just been
   // moved behind the plausible ones.

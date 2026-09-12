@@ -1,12 +1,20 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, risePercentPhrase, pickTemplate} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool} from './_shared.js';
 
 export function generatePercentages({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'percentages', family_ar: 'النسب المئوية', category: 'النسب المئوية'};
-  const list = difficulty === 'easy' ? [simplePercent]
-    : difficulty === 'medium' ? [reverseOneChange, remainingChain, unitPriceChange, successiveWithTarget]
-    : [successiveChange, reverseSuccessive];
-  return pickTemplate(rng, list, 'percentages', difficulty)(ctx);
+  // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
+  // eligible for the requested band is decided by the structural adjudication in
+  // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
+  return bandPool(rng, 'percentages', difficulty, [
+    ['PCT_E_OF', simplePercent],
+    ['PCT_E_REVERSE_ONE', reverseOneChange],
+    ['PCT_M_UNIT_PRICE', unitPriceChange],
+    ['PCT_M_REMAIN', remainingChain],
+    ['PCT_H_CHAIN_VALUE', successiveWithTarget],
+    ['PCT_M_SUCCESSIVE', successiveChange],
+    ['PCT_H_REVERSE_CHAIN', reverseSuccessive]
+  ])(ctx);
 }
 
 const plain = v => num(v);
@@ -260,7 +268,7 @@ function unitPriceChange(ctx) {
     templateId: 'PCT_M_UNIT_PRICE',
     subskill: 'معدل وحدوي ثم زيادة مئوية',
     difficulty: 'medium',
-    question: `ثمن ${u(qty1, 'unit')} هو ${u(total1, 'dirham')}. إذا ارتفع سعر الوحدة ${risePercentPhrase(pct)}، فما ثمن ${u(qty2, 'unit')} بعد الزيادة؟`,
+    question: `ثمن ${u(qty1, 'unit')} هو ${u(total1, 'dirham')}. إذا ارتفع سعر الوحدة ${riseByPercentPhrase(pct)}، فما ثمن ${u(qty2, 'unit')} بعد الزيادة؟`,
     correct, distractors, format: unitFormat('dirham'),
     steps: [
       `سعر الوحدة الأصلي = ${total1} ÷ ${qty1} = ${unitPrice}.`,

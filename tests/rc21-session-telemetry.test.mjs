@@ -67,7 +67,14 @@ test('RC2.1-1: the identity survives the relaxed fallback', () => {
   e.resetTelemetry();
   // RC2.2-1: calendar holds no hard template, so a narrow pool that CAN reach
   // hard is used to force the fallback instead.
-  const s = e.generatePractice({count: 40, difficulty: 'hard', family: 'combined_rate', seed: 'RC21-RELAXED'});
+  // RC2.3-1: combined_rate no longer reaches hard either — its three staged
+  // templates are fixed pipelines. RC2.3-2 then added an up-front coverage
+  // refusal, so "forty hard questions from one narrow family" is no longer a
+  // setup the engine will attempt at all; it says INSUFFICIENT_BAND_COVERAGE
+  // before drawing anything. The fallback is exercised the way it now happens in
+  // practice — a session small enough to be deliverable, from a family with just
+  // enough structures that the caps still bind partway through.
+  const s = e.generatePractice({count: 20, difficulty: 'hard', family: 'ratios', seed: 'RLX-0'});
   const r = e.getTelemetry().sessionReconciliation;
   assert.ok(s.validation.diversity_warnings.length > 0, 'this setup is meant to exercise the fallback');
   assert.equal(r.publishedToSessions, r.delivered + r.sessionDiscards);

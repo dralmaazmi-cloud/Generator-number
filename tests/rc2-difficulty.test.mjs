@@ -68,7 +68,7 @@ test('RC2-015 meta: the fixtures would have failed before the corrections', {ski
 
 // --- the boundaries ---------------------------------------------------------
 
-test('RC2-015: the boundaries follow the stated rule, within a tenth', async () => {
+test('RC2-015: the boundaries follow the stated rule, within a tenth', {skip: 'superseded by RC2.3-1: the midpoint-of-medians rule was already replaced by the RC2.2 tertile rule, and the population it measures has now moved as well — the medians here are medians of the STRUCTURAL bands, which the score does not determine. tests/rc22-difficulty.test.mjs still checks the tertile rule on the score model itself, where it is meaningful.'}, async () => {
   const {measure} = await import('../tools/audit/rc2-015-difficulty.mjs');
   const report = await measure({questions: 1500, seedPrefix: 'rc2-015-bounds'});
   const drift = report.boundaries.driftFromRule;

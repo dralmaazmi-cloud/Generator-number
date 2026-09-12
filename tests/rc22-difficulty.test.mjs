@@ -81,13 +81,13 @@ test('RC2.2-2: the boundaries are the tertiles of the template population', asyn
 
 // --- the release gate -------------------------------------------------------
 
-test('RC2.2-1: no question is ever released at a band it does not compute', () => {
+test('RC2.2-1: no question is ever released at a band it does not compute', {skip: 'superseded by RC2.3-1: the published band is the STRUCTURAL band now, not the computed one. RC2.2 made the two identical and the independent Holdout D audit then found 44 of 82 items released as hard were not hard, so agreement between two views of one score was never evidence. tests/rc23-structure.test.mjs checks the replacement, and reports score-vs-structure agreement as evidence rather than as a gate.'}, () => {
   const g = gated({perBand: 800, seedTag: 'RC22-T-GATE'});
   assert.deepEqual(g.violations, [], `${g.violationCount} band violations`);
   assert.equal(g.exhausted, 0, 'the gate must not cost the engine its ability to publish');
 });
 
-test('RC2.2-1: the published label IS the computed one', () => {
+test('RC2.2-1: the published label IS the computed one', {skip: 'superseded by RC2.3-1: the published band is the STRUCTURAL band now, not the computed one. RC2.2 made the two identical and the independent Holdout D audit then found 44 of 82 items released as hard were not hard, so agreement between two views of one score was never evidence. tests/rc23-structure.test.mjs checks the replacement, and reports score-vs-structure agreement as evidence rather than as a gate.'}, () => {
   const e = new Engine();
   for (let i = 0; i < 600; i++) {
     let q;
@@ -130,7 +130,7 @@ test('RC2.2-1: the registry capability is what the engine really produces', () =
 
 // --- ALL_HARD ---------------------------------------------------------------
 
-test('RC2.2-1: an ALL_HARD session contains only genuinely hard questions', () => {
+test('RC2.2-1: an ALL_HARD session contains only genuinely hard questions', {skip: 'superseded by RC2.3-2: this asserted eight families in an ALL_HARD session, which the structural adjudication cannot meet — only five families hold a template that demands genuine reasoning depth, and the other eleven were contributing the routine items the audit rejected. Relaxing the number here would be lowering the bar; the shortfall is reported instead, in the RC2.3 coverage report, and tests/rc23-structure.test.mjs asserts what RC2.3 actually requires: every ALL_HARD item comes from a HARD_CAPABLE structure, and the engine refuses up front when a band cannot fill a session.'}, () => {
   const a = allHard({sessions: 6, seedTag: 'RC22-T-AH'});
   assert.equal(a.failedSessions, 0, 'sessions must still be producible');
   assert.equal(a.total, 300);
@@ -144,7 +144,10 @@ test('RC2.2-1: a mixed session still spans the bands, each correctly labelled', 
   const s = e.generatePractice({count: 50, difficulty: 'mixed', family: 'random', seed: 'RC22-T-MIX'});
   const bands = new Set(s.questions.map(q => q.difficulty));
   assert.ok(bands.size >= 2, `a mixed session collapsed to ${[...bands]}`);
-  for (const q of s.questions) assert.equal(q.difficulty, q.metadata.complexity_band);
+  // RC2.3-1: the label a question is released at is its structural band. The
+  // computed band is still recorded beside it and is still worth reporting, but
+  // it is evidence, not the label.
+  for (const q of s.questions) assert.equal(q.difficulty, q.metadata.structural_band);
 });
 
 test('RC2.2-1: session scheduling never asks a family for a band it lacks', () => {

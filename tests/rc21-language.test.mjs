@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 
 import Engine from '../src/index.js';
 import {agreeingAdjective, singularOf, definitePlural} from '../src/arabic/units.js';
-import {risePercentPhrase} from '../src/families/_shared.js';
+import {riseByPercentPhrase, fractionChainPhrase} from '../src/families/_shared.js';
 
 /** A corpus big enough that a defect at 1-in-200 cannot hide in it. */
 function corpus(n = 6000, seedTag = 'RC21-LANG') {
@@ -86,11 +86,60 @@ test('RC2.1-4: the box template names the same thing throughout', () => {
 
 // --- the ambiguous rise -----------------------------------------------------
 
-test('RC2.1-4: a rise of 100% or more says what it is a percentage of', () => {
-  assert.equal(risePercentPhrase(20), 'بنسبة 20%');
-  assert.equal(risePercentPhrase(80), 'بنسبة 80%');
-  assert.equal(risePercentPhrase(100), 'بنسبة 100% من القيمة السابقة');
-  assert.equal(risePercentPhrase(150), 'بنسبة 150% من القيمة السابقة');
+test('RC2.3-6: a rise says BY how much, at every percentage', () => {
+  // RC2.1 attached «من القيمة السابقة» at 100% and above and kept «بنسبة p%»
+  // below it. The Holdout D audit found 125% still ambiguous, and it was right:
+  // «بنسبة 125% من القيمة السابقة» names the base without saying whether the
+  // 125% is the increment or the result. «بمقدار» is additive and cannot be
+  // read as a result, so it holds at any percentage and the threshold is gone.
+  for (const pct of [20, 80, 100, 125, 150]) {
+    assert.equal(riseByPercentPhrase(pct), `بمقدار ${pct}% من القيمة السابقة`);
+  }
+  // The distinction the brief asks for: the rendered phrase must not be
+  // readable as "became p% of the previous value".
+  for (const pct of [20, 125]) {
+    const said = riseByPercentPhrase(pct);
+    assert.ok(said.startsWith('بمقدار'), said);
+    assert.ok(!/بنسبة|أصبح|صار/.test(said), said);
+  }
+});
+
+test('RC2.3-6: no published stem states a rise with the ambiguous «بنسبة»', () => {
+  // The renderer is only worth having if every stem goes through it. One did
+  // not: MACH_H_STAGE_UP interpolated «فزادت إنتاجيتها ${pct}%» directly, so the
+  // RC2.1 fix never applied to it at all.
+  //
+  // The ambiguity is a property of the NUMBER, not of the word: below 100%,
+  // «زادت بنسبة 20%» cannot mean "rose to 20%", because that is not a rise, and
+  // the idiomatic form is right there. At 100% and above both readings survive.
+  // So what must not appear anywhere is a rise stated with «بنسبة» at 100% or
+  // more — and every site that can draw such a percentage goes through the
+  // renderer, which is what the second half checks.
+  const rises = CORPUS.filter(q => /ارتفع|زادت|زاد|أكثر من/.test(q.question) && /%/.test(q.question));
+  assert.ok(rises.length > 100, `only ${rises.length} rise stems in the corpus`);
+  for (const q of rises) {
+    assert.ok(!/بنسبة \d{3,}%/.test(q.question), `ambiguous rise: ${q.question}`);
+  }
+  const bigRises = rises.filter(q => /\d{3,}%/.test(q.question));
+  assert.ok(bigRises.length > 0, 'no stem in the corpus draws a rise of 100% or more, so this proves nothing');
+  for (const q of bigRises) {
+    assert.ok(/بمقدار \d{3,}% من القيمة السابقة/.test(q.question), `not routed through the renderer: ${q.question}`);
+  }
+});
+
+test('RC2.3-6: a chain of fractions is said one step at a time', () => {
+  // «ثلث نصف ربع سُدس عدد» stacks four scopes with no syntax between them. The
+  // chain is written in the order the solution applies it.
+  assert.equal(fractionChainPhrase(['ثلث'], 'العدد 12'), 'ثلث العدد 12');
+  assert.equal(fractionChainPhrase(['ثلث', 'نصف', 'ربع'], 'عدد'),
+    'ثلث عدد، ثم نصف الناتج، ثم ربع الناتج');
+  const frac = CORPUS.filter(q => q.family === 'fractions');
+  assert.ok(frac.length > 100, `only ${frac.length} fraction questions`);
+  for (const q of frac) {
+    // Two fraction words side by side is the stacked form.
+    assert.ok(!/(نصف|ثلث|ربع|خُمس|سُدس|ثُمن)\s+(نصف|ثلث|ربع|خُمس|سُدس|ثُمن)/.test(q.question),
+      `stacked fractions: ${q.question}`);
+  }
 });
 
 test('RC2.1-4: clarifying the rise did not shrink the parameter space', async () => {
@@ -98,7 +147,8 @@ test('RC2.1-4: clarifying the rise did not shrink the parameter space', async ()
   // the text-params guard rejected — silently deleting every pct >= 100 draw,
   // 38% of this template's space. This is the test that would have caught it.
   const e = new Engine();
-  // RC2.2-1: the template sits in whichever pool its computed band puts it in.
+  // RC2.3-1: the template sits at whichever band the structural adjudication
+  // gives it — one efficiency factor applied inversely, so easy.
   const effBand = await bandOfTemplate('work_time', 'WORK_M_EFF');
   const seen = new Set();
   for (let i = 0; i < 20000 && seen.size < 9; i++) {

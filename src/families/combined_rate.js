@@ -1,4 +1,4 @@
-import {mk, usable, u, unitFormat, buildBase, eq, X, add, mul, resample, pickTemplate} from './_shared.js';
+import {mk, usable, u, unitFormat, buildBase, eq, X, add, mul, resample, bandPool} from './_shared.js';
 
 export function generateCombinedRate({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'combined_rate', family_ar: 'المعدل المشترك', category: 'المعدل المشترك'};
@@ -8,10 +8,17 @@ export function generateCombinedRate({difficulty, rng, seed, engineVersion, tele
   // COMB_E_TIME (7.10), both of which are declared easy and compute easy. So
   // easy is where it belongs; the declaration was wrong, not the template, and
   // the template itself is unaltered.
-  const list = difficulty === 'easy' ? [threeRates, togetherTime, togetherOutput]
-    : difficulty === 'medium' ? []
-    : [soloThenTogether, togetherThenSolo, stagedTarget];
-  return pickTemplate(rng, list, 'combined_rate', difficulty)(ctx);
+  // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
+  // eligible for the requested band is decided by the structural adjudication in
+  // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
+  return bandPool(rng, 'combined_rate', difficulty, [
+    ['COMB_E_OUTPUT', togetherOutput],
+    ['COMB_E_THREE', threeRates],
+    ['COMB_E_TIME', togetherTime],
+    ['COMB_M_TOGETHER_SOLO', togetherThenSolo],
+    ['COMB_M_SOLO_THEN', soloThenTogether],
+    ['COMB_H_STAGED', stagedTarget]
+  ])(ctx);
 }
 
 function togetherOutput(ctx) {

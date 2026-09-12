@@ -1,13 +1,20 @@
 import {DAYS_AR, dayShift} from '../utils.js';
-import {mk, usable, u, buildBase, eq, X, add, mod, resample, adj, pickTemplate} from './_shared.js';
+import {mk, usable, u, buildBase, eq, X, add, mod, resample, adj, bandPool} from './_shared.js';
 import {grid} from '../qa/oracle-engine.js';
 
 export function generateCalendar({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'calendar', family_ar: 'الاستدلال الزمني وأيام الأسبوع', category: 'الاستدلال الزمني وأيام الأسبوع'};
-  const list = difficulty === 'easy' ? [compoundForward, longOffset, tomorrowKnown, afterTomorrow, forwardThenBack]
-    : difficulty === 'medium' ? [nestedOffset]
-    : [];
-  return pickTemplate(rng, list, 'calendar', difficulty)(ctx);
+  // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
+  // eligible for the requested band is decided by the structural adjudication in
+  // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
+  return bandPool(rng, 'calendar', difficulty, [
+    ['CAL_E_TOM', tomorrowKnown],
+    ['CAL_E_AFTER', afterTomorrow],
+    ['CAL_M_COMPOUND', compoundForward],
+    ['CAL_M_TWO_SHIFT', forwardThenBack],
+    ['CAL_H_LONG', longOffset],
+    ['CAL_H_NESTED', nestedOffset]
+  ])(ctx);
 }
 
 const dayName = i => DAYS_AR[((i % 7) + 7) % 7];

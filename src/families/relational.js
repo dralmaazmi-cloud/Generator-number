@@ -11,7 +11,7 @@
 // undecidable when they disagree, so nothing here re-derives the generator's
 // reasoning.
 
-import {mk, usable, buildBase, resample, pickTemplate} from './_shared.js';
+import {mk, usable, buildBase, resample, bandPool} from './_shared.js';
 import {buildOrderOracle} from '../qa/relational-oracle.js';
 import {canonicalGraph} from '../qa/fingerprint.js';
 
@@ -22,10 +22,18 @@ const POSITION_WORDS = {1: 'الأول', 2: 'الثاني', 3: 'الثالث', 4
 
 export function generateRelational({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'relational', family_ar: 'المقارنة والترتيب العلاقاتي', category: 'المقارنة والترتيب العلاقاتي'};
-  const list = difficulty === 'easy' ? [betweenRelation]
-    : difficulty === 'medium' ? [fullChainPosition]
-    : [branchUnresolved, partialOrderPosition, confirmedStatement, branchGuaranteed, countAbove];
-  return pickTemplate(rng, list, 'relational', difficulty)(ctx);
+  // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
+  // eligible for the requested band is decided by the structural adjudication in
+  // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
+  return bandPool(rng, 'relational', difficulty, [
+    ['REL_E_BETWEEN', betweenRelation],
+    ['REL_E_CHAIN', fullChainPosition],
+    ['REL_M_CONFIRM', confirmedStatement],
+    ['REL_M_BRANCH_UNRES', branchUnresolved],
+    ['REL_M_COUNT', countAbove],
+    ['REL_H_POSITION', partialOrderPosition],
+    ['REL_H_GUARANTEE', branchGuaranteed]
+  ])(ctx);
 }
 
 // --- graph construction ----------------------------------------------------

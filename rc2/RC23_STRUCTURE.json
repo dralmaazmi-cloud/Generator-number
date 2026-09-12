@@ -1,0 +1,1657 @@
+{
+  "schema": "rc23-structure-v1",
+  "generatedAt": "2026-09-12T18:56:36.585Z",
+  "engineVersion": "1.4.0",
+  "classification": {
+    "total": 107,
+    "byBand": {
+      "easy": 37,
+      "medium": 51,
+      "hard": 19
+    },
+    "criteriaUse": {
+      "SIMULTANEOUS_CONSTRAINTS": 12,
+      "COMPOSED_INVERSION": 5,
+      "CROSS_PART_INTEGRATION": 9,
+      "RULE_DISCOVERY": 2,
+      "PARTIAL_ORDER_BRANCHING": 5,
+      "STRATEGY_SELECTION": 7
+    },
+    "routineUse": {
+      "SINGLE_FORMULA": 37,
+      "FIXED_PIPELINE": 47,
+      "REPEATED_OPERATION": 14
+    },
+    "templatesNotInAnyFamily": [],
+    "templates": [
+      {
+        "templateId": "SEQ_E_GEO",
+        "family": "sequences",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Constant ratio between adjacent terms; the first thing a solver checks is the answer."
+      },
+      {
+        "templateId": "SEQ_E_ARITH",
+        "family": "sequences",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Constant difference; found by the first check."
+      },
+      {
+        "templateId": "SEQ_M_INTERLEAVED",
+        "family": "sequences",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Two strands must be separated first, but \"look at every other term\" is the standard second move."
+      },
+      {
+        "templateId": "SEQ_M_INC_DIFF",
+        "family": "sequences",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Differences of differences — the second move in the standard repertoire."
+      },
+      {
+        "templateId": "SEQ_M_ALT_OPS",
+        "family": "sequences",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Alternating add/multiply; both operands are visible once the alternation is seen."
+      },
+      {
+        "templateId": "SEQ_M_DOUBLE_DIFF",
+        "family": "sequences",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Doubling differences; one layer below the surface."
+      },
+      {
+        "templateId": "SEQ_H_RECURRENCE",
+        "family": "sequences",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Each term from the previous two; a solver who tries a+b finds it immediately."
+      },
+      {
+        "templateId": "SEQ_H_POW_INDEX",
+        "family": "sequences",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "RULE_DISCOVERY",
+          "STRATEGY_SELECTION"
+        ],
+        "routine": [],
+        "why": "Nothing works until the solver subtracts each term’s POSITION, which no difference or ratio check suggests; only then do the powers appear."
+      },
+      {
+        "templateId": "SEQ_H_ALT_DIV",
+        "family": "sequences",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "RULE_DISCOVERY",
+          "STRATEGY_SELECTION"
+        ],
+        "routine": [],
+        "why": "Two alternating operations where one operand advances between applications — neither the alternation nor the advancing divisor is visible from differences or ratios alone."
+      },
+      {
+        "templateId": "RAT_E_KNOWN",
+        "family": "ratios",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "One part is given; divide and multiply."
+      },
+      {
+        "templateId": "RAT_E_SPLIT",
+        "family": "ratios",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Simple ratio split — named by the brief as not hard, and it is not medium either: total ÷ parts × share."
+      },
+      {
+        "templateId": "RAT_M_COMMON_SUM",
+        "family": "ratios",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "CROSS_PART_INTEGRATION",
+          "STRATEGY_SELECTION"
+        ],
+        "routine": [],
+        "why": "Two ratios stated about different pairs must be put on one scale through the shared term before a sum of two NON-adjacent terms means anything."
+      },
+      {
+        "templateId": "RAT_M_COMMON_DIFF",
+        "family": "ratios",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "CROSS_PART_INTEGRATION",
+          "STRATEGY_SELECTION"
+        ],
+        "routine": [],
+        "why": "As RAT_M_COMMON_SUM, with the joint condition given as a difference."
+      },
+      {
+        "templateId": "RAT_H_TWO_COMB",
+        "family": "ratios",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "CROSS_PART_INTEGRATION",
+          "STRATEGY_SELECTION"
+        ],
+        "routine": [],
+        "why": "As RAT_M_COMMON_SUM, asking for the term that was not part of the given combination."
+      },
+      {
+        "templateId": "RAT_M_ADD_SIDE",
+        "family": "ratios",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "COMPOSED_INVERSION"
+        ],
+        "routine": [],
+        "why": "A before-ratio and an after-ratio hold at once; neither can be evaluated alone, so the part value has to come out of an equation."
+      },
+      {
+        "templateId": "RAT_H_TRANSFER",
+        "family": "ratios",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "COMPOSED_INVERSION",
+          "CROSS_PART_INTEGRATION"
+        ],
+        "routine": [],
+        "why": "Two ratios plus the unstated fact that the transfer conserves the total; the conservation is what makes the equation solvable and it is not in the sentence."
+      },
+      {
+        "templateId": "PCT_E_OF",
+        "family": "percentages",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "One percentage of one value."
+      },
+      {
+        "templateId": "PCT_E_REVERSE_ONE",
+        "family": "percentages",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Straightforward reverse percentage — named by the brief as not hard. One factor, one division."
+      },
+      {
+        "templateId": "PCT_M_UNIT_PRICE",
+        "family": "percentages",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Unit price, then a percentage, then a count. Each step is announced by the sentence."
+      },
+      {
+        "templateId": "PCT_M_REMAIN",
+        "family": "percentages",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Percentage of a remainder; the order is the order of the clauses."
+      },
+      {
+        "templateId": "PCT_H_CHAIN_VALUE",
+        "family": "percentages",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE",
+          "REPEATED_OPERATION"
+        ],
+        "why": "Direct chained percentages — named by the brief as not hard. Two applications of one idea."
+      },
+      {
+        "templateId": "PCT_M_SUCCESSIVE",
+        "family": "percentages",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE",
+          "REPEATED_OPERATION"
+        ],
+        "why": "Chained percentages then one comparison against the original. Four operations, one idea."
+      },
+      {
+        "templateId": "PCT_H_REVERSE_CHAIN",
+        "family": "percentages",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Two factors multiplied, then one division. The composition is inverted in a single move that the sentence signposts, so it does not reach COMPOSED_INVERSION."
+      },
+      {
+        "templateId": "AVG_E_ADD",
+        "family": "averages",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Total from average, adjust, re-average. One relationship used twice."
+      },
+      {
+        "templateId": "AVG_E_REMOVE",
+        "family": "averages",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "As AVG_E_ADD, downward."
+      },
+      {
+        "templateId": "AVG_M_COMBINE",
+        "family": "averages",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Two totals reconstructed and pooled; routine averaging, named by the brief as not hard."
+      },
+      {
+        "templateId": "AVG_M_ADD_PAIR",
+        "family": "averages",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "As AVG_M_COMBINE with a pair given by its own average."
+      },
+      {
+        "templateId": "AVG_M_REPLACE",
+        "family": "averages",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Replacement as a delta on the total."
+      },
+      {
+        "templateId": "AVG_H_COMB_ADD",
+        "family": "averages",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE",
+          "REPEATED_OPERATION"
+        ],
+        "why": "Three totals pooled. One more addition than AVG_M_COMBINE and nothing else."
+      },
+      {
+        "templateId": "AVG_H_TARGET",
+        "family": "averages",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Required total minus current total. Works backwards through ONE relationship, which is not COMPOSED_INVERSION."
+      },
+      {
+        "templateId": "AGE_E_SUM_DIFF",
+        "family": "ages",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Sum and difference at one time point; the half-the-difference move is a standard named technique."
+      },
+      {
+        "templateId": "AGE_E_MULT_DIFF",
+        "family": "ages",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Ratio and difference at one time point; parts arithmetic, no second time point."
+      },
+      {
+        "templateId": "AGE_M_FUT_SUM_DIFF",
+        "family": "ages",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Shift the sum back by 2×years, then sum-and-difference. The shift is mechanical and the sentence orders it."
+      },
+      {
+        "templateId": "AGE_M_RATIO_FUT_SUM",
+        "family": "ages",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "As AGE_M_FUT_SUM_DIFF with a ratio; the two conditions are still evaluated one after the other."
+      },
+      {
+        "templateId": "AGE_M_FUT_RATIO",
+        "family": "ages",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "CROSS_PART_INTEGRATION"
+        ],
+        "routine": [],
+        "why": "A difference NOW and a ratio LATER; neither time point can be resolved alone, so an unknown must be carried across both."
+      },
+      {
+        "templateId": "AGE_H_TWO_TIME",
+        "family": "ages",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "CROSS_PART_INTEGRATION"
+        ],
+        "routine": [],
+        "why": "As AGE_M_FUT_RATIO; the equation is unavoidable."
+      },
+      {
+        "templateId": "AGE_H_PAST_FUT",
+        "family": "ages",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "COMPOSED_INVERSION",
+          "CROSS_PART_INTEGRATION"
+        ],
+        "routine": [],
+        "why": "Three time points: a future sum must be carried back through the present to a past ratio before either condition can be used."
+      },
+      {
+        "templateId": "SPD_E_DISTANCE",
+        "family": "speed",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "distance = speed × time."
+      },
+      {
+        "templateId": "SPD_E_TIME",
+        "family": "speed",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "time = distance ÷ speed."
+      },
+      {
+        "templateId": "SPD_M_AVG",
+        "family": "speed",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Total distance over total time; the trap is real but the route is announced."
+      },
+      {
+        "templateId": "SPD_M_TWO_TIME",
+        "family": "speed",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE",
+          "REPEATED_OPERATION"
+        ],
+        "why": "Two leg times added, then a unit conversion. One idea twice."
+      },
+      {
+        "templateId": "SPD_H_CATCH",
+        "family": "speed",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "CROSS_PART_INTEGRATION",
+          "STRATEGY_SELECTION"
+        ],
+        "routine": [],
+        "why": "The head start has to be turned into a distance and the chase recast in closing speed — a frame the sentence does not offer."
+      },
+      {
+        "templateId": "SPD_H_MEET_DELAY",
+        "family": "speed",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "CROSS_PART_INTEGRATION",
+          "STRATEGY_SELECTION"
+        ],
+        "routine": [],
+        "why": "As SPD_H_CATCH, approaching rather than chasing, with the gap reduced by the delay first."
+      },
+      {
+        "templateId": "SPD_M_EQUAL_DIST",
+        "family": "speed",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "COMPOSED_INVERSION"
+        ],
+        "routine": [],
+        "why": "The unknown distance appears inside both leg times and cannot be evaluated until the two are combined into one equation."
+      },
+      {
+        "templateId": "SPD_H_TIME_DIFF",
+        "family": "speed",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "COMPOSED_INVERSION"
+        ],
+        "routine": [],
+        "why": "The distance is defined only by the DIFFERENCE of two times it produces; nothing numeric can be computed before the equation is formed."
+      },
+      {
+        "templateId": "WORK_E_VOLUME",
+        "family": "work_time",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Workers scale with the work when time is fixed."
+      },
+      {
+        "templateId": "WORK_E_INVERSE",
+        "family": "work_time",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "worker-days is constant; one multiplication and one division."
+      },
+      {
+        "templateId": "WORK_M_EFF",
+        "family": "work_time",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "One efficiency factor, applied inversely to the time."
+      },
+      {
+        "templateId": "WORK_M_TARGET",
+        "family": "work_time",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "worker-days done, remaining, divided by a fixed span. Each step follows the clause before it."
+      },
+      {
+        "templateId": "WORK_M_CHANGE",
+        "family": "work_time",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "As WORK_M_TARGET with the crew size changing; still one stage after another."
+      },
+      {
+        "templateId": "WORK_H_TWO_STAGE",
+        "family": "work_time",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE",
+          "REPEATED_OPERATION"
+        ],
+        "why": "Three stages of the same worker-day accounting. More arithmetic, no new idea."
+      },
+      {
+        "templateId": "WORK_H_WORKERS_EFF",
+        "family": "work_time",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Worker-day accounting with one efficiency factor inserted. The factor is stated where it applies."
+      },
+      {
+        "templateId": "MACH_H_TWO_TYPES",
+        "family": "machines",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Two group rates summed, then multiplied by a time."
+      },
+      {
+        "templateId": "MACH_E_REQUIRED",
+        "family": "machines",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "machine-hour rate, then the count needed. Routine both ways."
+      },
+      {
+        "templateId": "MACH_E_HOURS",
+        "family": "machines",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "machine-hour rate, then a new machine-hour total."
+      },
+      {
+        "templateId": "MACH_M_STOP",
+        "family": "machines",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE",
+          "REPEATED_OPERATION"
+        ],
+        "why": "Two stages of the same rate × count × hours product."
+      },
+      {
+        "templateId": "MACH_M_NEW_FAST",
+        "family": "machines",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Routine rate-after-percentage — named by the brief as not hard."
+      },
+      {
+        "templateId": "MACH_M_SUBSET_UP",
+        "family": "machines",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "The group splits into upgraded and not, but the split is stated; the rates then add."
+      },
+      {
+        "templateId": "MACH_H_STAGE_UP",
+        "family": "machines",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE",
+          "REPEATED_OPERATION"
+        ],
+        "why": "MACH_M_SUBSET_UP with a second stage appended. Six operations, still one idea per clause."
+      },
+      {
+        "templateId": "PROP_E_ITEMS",
+        "family": "direct_proportion",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Unit value then scale."
+      },
+      {
+        "templateId": "PROP_E_COST",
+        "family": "direct_proportion",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Unit price then scale, or the same rate read the other way."
+      },
+      {
+        "templateId": "PROP_M_FRAC_UNIT",
+        "family": "direct_proportion",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Unit weight then scale; the unit value is fractional, which is arithmetic, not reasoning."
+      },
+      {
+        "templateId": "PROP_M_RECIPE",
+        "family": "direct_proportion",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Two ingredients scaled from one batch ratio."
+      },
+      {
+        "templateId": "PROP_M_MAP",
+        "family": "direct_proportion",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Lengths pooled, then one scale factor applied."
+      },
+      {
+        "templateId": "PROP_H_COMPOUND",
+        "family": "direct_proportion",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Unit value, scale, then one reserve factor. Announced in that order."
+      },
+      {
+        "templateId": "PROP_H_COST_PLUS",
+        "family": "direct_proportion",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Simple fixed-fee unit cost — named by the brief as not hard. Unit price, scale, add the fee once."
+      },
+      {
+        "templateId": "FRAC_E_2",
+        "family": "fractions",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "REPEATED_OPERATION"
+        ],
+        "why": "Two successive fractions of one number."
+      },
+      {
+        "templateId": "FRAC_M_3",
+        "family": "fractions",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "REPEATED_OPERATION"
+        ],
+        "why": "Three successive fractions. Chain length is workload."
+      },
+      {
+        "templateId": "FRAC_H_4",
+        "family": "fractions",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "REPEATED_OPERATION"
+        ],
+        "why": "Four successive fractions — the item the Holdout C review first named as scored hard while being one idea repeated."
+      },
+      {
+        "templateId": "RATE_E_DIRECT",
+        "family": "unit_rate",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Rate then scale."
+      },
+      {
+        "templateId": "RATE_E_TIME",
+        "family": "unit_rate",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Rate then divide."
+      },
+      {
+        "templateId": "RATE_M_SCALE",
+        "family": "unit_rate",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Rate then scale, with a consumption unit."
+      },
+      {
+        "templateId": "RATE_M_PERCENT",
+        "family": "unit_rate",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Routine rate-after-percentage — named by the brief as not hard."
+      },
+      {
+        "templateId": "RATE_H_TARGET",
+        "family": "unit_rate",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Rate, percentage, then a division. Same pipeline as RATE_M_PERCENT, asked the other way."
+      },
+      {
+        "templateId": "RATE_H_TWO_PHASE",
+        "family": "unit_rate",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE",
+          "REPEATED_OPERATION"
+        ],
+        "why": "Rate-after-percentage with a second phase appended and the two outputs added."
+      },
+      {
+        "templateId": "COMB_E_OUTPUT",
+        "family": "combined_rate",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Rates add, then multiply by time."
+      },
+      {
+        "templateId": "COMB_E_THREE",
+        "family": "combined_rate",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Three rates add. One more addend than COMB_E_OUTPUT."
+      },
+      {
+        "templateId": "COMB_E_TIME",
+        "family": "combined_rate",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Rates add, then divide into a target."
+      },
+      {
+        "templateId": "COMB_M_TOGETHER_SOLO",
+        "family": "combined_rate",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Joint stage, remainder, solo stage. The clauses give the order."
+      },
+      {
+        "templateId": "COMB_M_SOLO_THEN",
+        "family": "combined_rate",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "As COMB_M_TOGETHER_SOLO, reversed order of stages."
+      },
+      {
+        "templateId": "COMB_H_STAGED",
+        "family": "combined_rate",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE",
+          "REPEATED_OPERATION"
+        ],
+        "why": "Three stages of the same accounting. The third stage adds one subtraction."
+      },
+      {
+        "templateId": "REL_E_BETWEEN",
+        "family": "relational",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Four statements that chain into one total order; read off the position."
+      },
+      {
+        "templateId": "REL_E_CHAIN",
+        "family": "relational",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Five statements given out of order that still resolve to one total chain; assembling it is the whole task."
+      },
+      {
+        "templateId": "REL_M_CONFIRM",
+        "family": "relational",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "PARTIAL_ORDER_BRANCHING"
+        ],
+        "routine": [],
+        "why": "The order is partial; each candidate statement must be tested against EVERY consistent ordering, not against one chain."
+      },
+      {
+        "templateId": "REL_M_BRANCH_UNRES",
+        "family": "relational",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "PARTIAL_ORDER_BRANCHING"
+        ],
+        "routine": [],
+        "why": "Asks which pair stays undetermined — answerable only by reasoning about the set of consistent orderings."
+      },
+      {
+        "templateId": "REL_M_COUNT",
+        "family": "relational",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "PARTIAL_ORDER_BRANCHING"
+        ],
+        "routine": [],
+        "why": "Counts who is certainly above a person: transitive closure over a branching order."
+      },
+      {
+        "templateId": "REL_H_POSITION",
+        "family": "relational",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "PARTIAL_ORDER_BRANCHING"
+        ],
+        "routine": [],
+        "why": "A position that is fixed even though the order as a whole is not."
+      },
+      {
+        "templateId": "REL_H_GUARANTEE",
+        "family": "relational",
+        "capability": "HARD_CAPABLE",
+        "band": "hard",
+        "criteria": [
+          "SIMULTANEOUS_CONSTRAINTS",
+          "PARTIAL_ORDER_BRANCHING"
+        ],
+        "routine": [],
+        "why": "Requires separating what an undetermined branch can and cannot support."
+      },
+      {
+        "templateId": "CAL_E_TOM",
+        "family": "calendar",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "One day back."
+      },
+      {
+        "templateId": "CAL_E_AFTER",
+        "family": "calendar",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Two days back."
+      },
+      {
+        "templateId": "CAL_M_COMPOUND",
+        "family": "calendar",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Two offsets added into one, then applied once."
+      },
+      {
+        "templateId": "CAL_M_TWO_SHIFT",
+        "family": "calendar",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "REPEATED_OPERATION"
+        ],
+        "why": "The same shift twice."
+      },
+      {
+        "templateId": "CAL_H_LONG",
+        "family": "calendar",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Remainder modulo 7. One idea, whatever the size of the number."
+      },
+      {
+        "templateId": "CAL_H_NESTED",
+        "family": "calendar",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Offsets combine with signs and the result is read backwards; two ideas, both signposted."
+      },
+      {
+        "templateId": "ODD_E_MULT",
+        "family": "odd_one_out",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Multiples of a small number; visible on inspection."
+      },
+      {
+        "templateId": "ODD_E_SQUARES",
+        "family": "odd_one_out",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Perfect squares; visible on inspection."
+      },
+      {
+        "templateId": "ODD_M_PRONIC",
+        "family": "odd_one_out",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "n(n+1); one multiplication table away from the surface."
+      },
+      {
+        "templateId": "ODD_M_PRIME2",
+        "family": "odd_one_out",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Twice a prime; one division away."
+      },
+      {
+        "templateId": "ODD_M_CUBES",
+        "family": "odd_one_out",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Perfect cubes; one familiar list away."
+      },
+      {
+        "templateId": "ODD_H_SQ_MINUS",
+        "family": "odd_one_out",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "The property is a transformation of the number (n²−1), not the number — a search layer the easy ones do not have."
+      },
+      {
+        "templateId": "ODD_H_TRIANGULAR",
+        "family": "odd_one_out",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Triangular numbers; a second search layer, but a single stated property once found."
+      },
+      {
+        "templateId": "PL_E_PROFIT",
+        "family": "profit_loss",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Difference, then a percentage of the cost."
+      },
+      {
+        "templateId": "PL_E_LOSS",
+        "family": "profit_loss",
+        "capability": "EASY_CAPABLE",
+        "band": "easy",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "As PL_E_PROFIT, downward."
+      },
+      {
+        "templateId": "PL_H_REVERSE",
+        "family": "profit_loss",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "SINGLE_FORMULA"
+        ],
+        "why": "Straightforward reverse percentage — named by the brief as not hard."
+      },
+      {
+        "templateId": "PL_M_TOTAL_COST",
+        "family": "profit_loss",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "Costs pooled first, then the routine profit percentage."
+      },
+      {
+        "templateId": "PL_M_DISC_MARK",
+        "family": "profit_loss",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE"
+        ],
+        "why": "One discount then one markup, in the order stated."
+      },
+      {
+        "templateId": "PL_H_CHAIN",
+        "family": "profit_loss",
+        "capability": "MEDIUM_CAPABLE",
+        "band": "medium",
+        "criteria": [],
+        "routine": [
+          "FIXED_PIPELINE",
+          "REPEATED_OPERATION"
+        ],
+        "why": "Direct chained percentages then a comparison — named by the brief as not hard."
+      }
+    ]
+  },
+  "coverage": {
+    "easy": {
+      "templates": 37,
+      "families": 14,
+      "familyIds": [
+        "sequences",
+        "ratios",
+        "percentages",
+        "averages",
+        "speed",
+        "work_time",
+        "direct_proportion",
+        "fractions",
+        "unit_rate",
+        "combined_rate",
+        "relational",
+        "calendar",
+        "odd_one_out",
+        "profit_loss"
+      ],
+      "familiesWithout": [
+        "ages",
+        "machines"
+      ],
+      "perFamily": [
+        {
+          "family": "sequences",
+          "templates": 2
+        },
+        {
+          "family": "ratios",
+          "templates": 2
+        },
+        {
+          "family": "percentages",
+          "templates": 1
+        },
+        {
+          "family": "averages",
+          "templates": 2
+        },
+        {
+          "family": "speed",
+          "templates": 2
+        },
+        {
+          "family": "work_time",
+          "templates": 3
+        },
+        {
+          "family": "direct_proportion",
+          "templates": 3
+        },
+        {
+          "family": "fractions",
+          "templates": 3
+        },
+        {
+          "family": "unit_rate",
+          "templates": 3
+        },
+        {
+          "family": "combined_rate",
+          "templates": 3
+        },
+        {
+          "family": "relational",
+          "templates": 1
+        },
+        {
+          "family": "calendar",
+          "templates": 5
+        },
+        {
+          "family": "odd_one_out",
+          "templates": 5
+        },
+        {
+          "family": "profit_loss",
+          "templates": 2
+        }
+      ],
+      "structuresNeededForSession": 13,
+      "sessionDeliverable": true,
+      "meanUsesPerStructureInABatch": 2.22
+    },
+    "medium": {
+      "templates": 51,
+      "families": 14,
+      "familyIds": [
+        "sequences",
+        "percentages",
+        "averages",
+        "ages",
+        "speed",
+        "work_time",
+        "machines",
+        "direct_proportion",
+        "unit_rate",
+        "combined_rate",
+        "relational",
+        "calendar",
+        "odd_one_out",
+        "profit_loss"
+      ],
+      "familiesWithout": [
+        "ratios",
+        "fractions"
+      ],
+      "perFamily": [
+        {
+          "family": "sequences",
+          "templates": 5
+        },
+        {
+          "family": "percentages",
+          "templates": 6
+        },
+        {
+          "family": "averages",
+          "templates": 5
+        },
+        {
+          "family": "ages",
+          "templates": 4
+        },
+        {
+          "family": "speed",
+          "templates": 2
+        },
+        {
+          "family": "work_time",
+          "templates": 4
+        },
+        {
+          "family": "machines",
+          "templates": 7
+        },
+        {
+          "family": "direct_proportion",
+          "templates": 4
+        },
+        {
+          "family": "unit_rate",
+          "templates": 3
+        },
+        {
+          "family": "combined_rate",
+          "templates": 3
+        },
+        {
+          "family": "relational",
+          "templates": 1
+        },
+        {
+          "family": "calendar",
+          "templates": 1
+        },
+        {
+          "family": "odd_one_out",
+          "templates": 2
+        },
+        {
+          "family": "profit_loss",
+          "templates": 4
+        }
+      ],
+      "structuresNeededForSession": 13,
+      "sessionDeliverable": true,
+      "meanUsesPerStructureInABatch": 1.61
+    },
+    "hard": {
+      "templates": 19,
+      "families": 5,
+      "familyIds": [
+        "sequences",
+        "ratios",
+        "ages",
+        "speed",
+        "relational"
+      ],
+      "familiesWithout": [
+        "percentages",
+        "averages",
+        "work_time",
+        "machines",
+        "direct_proportion",
+        "fractions",
+        "unit_rate",
+        "combined_rate",
+        "calendar",
+        "odd_one_out",
+        "profit_loss"
+      ],
+      "perFamily": [
+        {
+          "family": "sequences",
+          "templates": 2
+        },
+        {
+          "family": "ratios",
+          "templates": 5
+        },
+        {
+          "family": "ages",
+          "templates": 3
+        },
+        {
+          "family": "speed",
+          "templates": 4
+        },
+        {
+          "family": "relational",
+          "templates": 5
+        }
+      ],
+      "structuresNeededForSession": 13,
+      "sessionDeliverable": true,
+      "meanUsesPerStructureInABatch": 4.32
+    }
+  },
+  "fresh": {
+    "hard": {
+      "band": "hard",
+      "requested": 300,
+      "generated": 300,
+      "attempts": 300,
+      "exhausted": 0,
+      "fromHardCapableStructures": {
+        "count": 300,
+        "share": 1,
+        "note": "true by construction: selection and label read one adjudication. A value below 1 means the wiring has a hole."
+      },
+      "releasedAtWrongBand": 0,
+      "structuralContradictions": {
+        "count": 172,
+        "note": "evidence published by the question contradicting the criteria its template claims. One-directional: zero does not confirm the criteria, it fails to refute them.",
+        "examples": [
+          {
+            "templateId": "REL_M_COUNT",
+            "problems": [
+              "REL_M_COUNT: claims PARTIAL_ORDER_BRANCHING but carries no relation graph"
+            ]
+          },
+          {
+            "templateId": "AGE_M_FUT_RATIO",
+            "problems": [
+              "AGE_M_FUT_RATIO: claims SIMULTANEOUS_CONSTRAINTS but solves no equation and declares fewer than two joint conditions"
+            ]
+          },
+          {
+            "templateId": "AGE_H_PAST_FUT",
+            "problems": [
+              "AGE_H_PAST_FUT: claims SIMULTANEOUS_CONSTRAINTS but solves no equation and declares fewer than two joint conditions"
+            ]
+          },
+          {
+            "templateId": "AGE_H_TWO_TIME",
+            "problems": [
+              "AGE_H_TWO_TIME: claims SIMULTANEOUS_CONSTRAINTS but solves no equation and declares fewer than two joint conditions"
+            ]
+          },
+          {
+            "templateId": "SPD_M_EQUAL_DIST",
+            "problems": [
+              "SPD_M_EQUAL_DIST: claims SIMULTANEOUS_CONSTRAINTS but solves no equation and declares fewer than two joint conditions"
+            ]
+          },
+          {
+            "templateId": "AGE_H_TWO_TIME",
+            "problems": [
+              "AGE_H_TWO_TIME: claims SIMULTANEOUS_CONSTRAINTS but solves no equation and declares fewer than two joint conditions"
+            ]
+          },
+          {
+            "templateId": "REL_M_BRANCH_UNRES",
+            "problems": [
+              "REL_M_BRANCH_UNRES: claims PARTIAL_ORDER_BRANCHING but carries no relation graph"
+            ]
+          },
+          {
+            "templateId": "RAT_M_ADD_SIDE",
+            "problems": [
+              "RAT_M_ADD_SIDE: claims SIMULTANEOUS_CONSTRAINTS but solves no equation and declares fewer than two joint conditions"
+            ]
+          },
+          {
+            "templateId": "REL_M_BRANCH_UNRES",
+            "problems": [
+              "REL_M_BRANCH_UNRES: claims PARTIAL_ORDER_BRANCHING but carries no relation graph"
+            ]
+          },
+          {
+            "templateId": "AGE_M_FUT_RATIO",
+            "problems": [
+              "AGE_M_FUT_RATIO: claims SIMULTANEOUS_CONSTRAINTS but solves no equation and declares fewer than two joint conditions"
+            ]
+          }
+        ]
+      },
+      "criteriaDistribution": {
+        "CROSS_PART_INTEGRATION": 136,
+        "STRATEGY_SELECTION": 128,
+        "SIMULTANEOUS_CONSTRAINTS": 172,
+        "PARTIAL_ORDER_BRANCHING": 63,
+        "COMPOSED_INVERSION": 73,
+        "RULE_DISCOVERY": 60
+      },
+      "distinctTemplates": 19,
+      "maxSharePerTemplate": 31,
+      "scoreVsStructure": {
+        "agrees": 291,
+        "share": 0.97,
+        "note": "EVIDENCE ONLY. The RC2.2 complexity score is not what bands an item; this says how often it would have agreed."
+      },
+      "latencyMs": {
+        "p50": 1,
+        "p95": 3,
+        "p99": 5,
+        "measured": true
+      },
+      "wallMs": 446
+    },
+    "medium": {
+      "band": "medium",
+      "requested": 300,
+      "generated": 300,
+      "attempts": 300,
+      "exhausted": 0,
+      "fromHardCapableStructures": {
+        "count": 300,
+        "share": 1,
+        "note": "true by construction: selection and label read one adjudication. A value below 1 means the wiring has a hole."
+      },
+      "releasedAtWrongBand": 0,
+      "structuralContradictions": {
+        "count": 0,
+        "note": "evidence published by the question contradicting the criteria its template claims. One-directional: zero does not confirm the criteria, it fails to refute them.",
+        "examples": []
+      },
+      "criteriaDistribution": {},
+      "distinctTemplates": 51,
+      "maxSharePerTemplate": 24,
+      "scoreVsStructure": {
+        "agrees": 174,
+        "share": 0.58,
+        "note": "EVIDENCE ONLY. The RC2.2 complexity score is not what bands an item; this says how often it would have agreed."
+      },
+      "latencyMs": {
+        "p50": 1,
+        "p95": 2,
+        "p99": 4,
+        "measured": true
+      },
+      "wallMs": 387
+    },
+    "easy": {
+      "band": "easy",
+      "requested": 300,
+      "generated": 300,
+      "attempts": 300,
+      "exhausted": 0,
+      "fromHardCapableStructures": {
+        "count": 300,
+        "share": 1,
+        "note": "true by construction: selection and label read one adjudication. A value below 1 means the wiring has a hole."
+      },
+      "releasedAtWrongBand": 0,
+      "structuralContradictions": {
+        "count": 0,
+        "note": "evidence published by the question contradicting the criteria its template claims. One-directional: zero does not confirm the criteria, it fails to refute them.",
+        "examples": []
+      },
+      "criteriaDistribution": {},
+      "distinctTemplates": 37,
+      "maxSharePerTemplate": 35,
+      "scoreVsStructure": {
+        "agrees": 256,
+        "share": 0.8533,
+        "note": "EVIDENCE ONLY. The RC2.2 complexity score is not what bands an item; this says how often it would have agreed."
+      },
+      "latencyMs": {
+        "p50": 1,
+        "p95": 2,
+        "p99": 3,
+        "measured": true
+      },
+      "wallMs": 305
+    }
+  },
+  "holdoutDRegression": {
+    "available": true,
+    "releasedAsHard": 82,
+    "independentAuditSaysGenuinelyHard": 38,
+    "adjudicationKeepsAsHard": 37,
+    "adjudicationDemotes": 45,
+    "differenceFromAudit": -1,
+    "demotedByTemplate": {
+      "RATE_H_TWO_PHASE": 5,
+      "PROP_H_COST_PLUS": 5,
+      "COMB_M_SOLO_THEN": 4,
+      "PL_H_CHAIN": 4,
+      "PCT_H_REVERSE_CHAIN": 4,
+      "PCT_M_SUCCESSIVE": 3,
+      "WORK_H_TWO_STAGE": 3,
+      "MACH_M_NEW_FAST": 3,
+      "MACH_M_SUBSET_UP": 3,
+      "COMB_H_STAGED": 3,
+      "WORK_M_CHANGE": 2,
+      "WORK_H_WORKERS_EFF": 2,
+      "MACH_H_STAGE_UP": 2,
+      "COMB_M_TOGETHER_SOLO": 2
+    },
+    "note": "Regression evidence only. No item id and no per-item verdict is used by production; the adjudication was written from template structure and is compared against the audit afterwards."
+  },
+  "reproducibility": {
+    "seed": "RC23-REPRO",
+    "count": 50,
+    "identical": true
+  }
+}

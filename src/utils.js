@@ -1,6 +1,7 @@
 import {isKnownMisconception, buildOptionFeedback, CORRECT_FEEDBACK} from './qa/misconceptions.js';
 import {REASON} from './qa/reasons.js';
 import {deriveOperationProfile, computeComplexity} from './qa/complexity.js';
+import {structuralBandOf, criteriaOf} from './qa/structure.js';
 import {buildFingerprint, buildSemanticFingerprint, buildStructuralSignature, questionFingerprint} from './qa/fingerprint.js';
 
 export const LETTERS = ['A','B','C','D','E','F'];
@@ -117,9 +118,35 @@ export function makeOptionSet({
   // fewer they still fill the set, so no template is starved into resampling.
   const preferred = pool.filter(d => !d.implausible);
   const fallback = pool.filter(d => d.implausible);
+  // RC2.3-4. Among equally plausible candidates, a set that diagnoses five
+  // DIFFERENT mistakes is worth more than one that diagnoses three. Measured
+  // before this, 14.9% of published wrong options repeated a misconception
+  // already on the page, so the learner who picked either was told the same
+  // thing twice and the set taught less than its six slots suggest.
+  //
+  // This selects on PROVENANCE — which slip a candidate came from — and never on
+  // the value, the key, or the shape of the resulting set, so OBSERVE_NEVER_TARGET
+  // is untouched: the same five candidates would be chosen whatever the answer
+  // turned out to be. Where a template does not offer five distinct slips, the
+  // repeats still fill the set rather than the template being starved.
+  const spread = candidates => {
+    const byMisconception = new Map();
+    for (const d of rng.shuffle(candidates)) {
+      if (!byMisconception.has(d.misconceptionId)) byMisconception.set(d.misconceptionId, []);
+      byMisconception.get(d.misconceptionId).push(d);
+    }
+    const out = [];
+    const queues = [...byMisconception.values()];
+    for (let round = 0; out.length < candidates.length; round++) {
+      for (const q of queues) if (q[round] !== undefined) out.push(q[round]);
+      if (round > candidates.length) break;
+    }
+    return out;
+  };
+  const take = (candidates, n) => spread(candidates).slice(0, n);
   const picked = preferred.length >= 5
-    ? rng.sample(preferred, 5)
-    : [...rng.sample(preferred, preferred.length), ...rng.sample(fallback, 5 - preferred.length)];
+    ? take(preferred, 5)
+    : [...take(preferred, preferred.length), ...take(fallback, 5 - preferred.length)];
 
   const correctLetter = preferredCorrectLetter && LETTERS.includes(preferredCorrectLetter)
     ? preferredCorrectLetter
@@ -225,6 +252,8 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
   });
 
   const complexity = computeComplexity(base.complexityFactors || {});
+  // RC2.3-1. Throws for a template nobody adjudicated, rather than guessing.
+  const structuralBand = structuralBandOf(base.template_id);
   // RC2-022 / RC2-023. Three fingerprints, three purposes, kept distinct:
   //   fingerprint  — this exact generated instance
   //   semantic     — mathematically equivalent content, display order removed
@@ -261,13 +290,20 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
     family_ar: base.family_ar,
     category: base.category,
     subskill: base.subskill,
-    // RC2.2-1. The published difficulty IS the computed one. Holdout C released
-    // 82 items as hard and an independent review found 43 were not; the cause
-    // was two labels for one property, free to disagree. There is now one label.
-    // What the template declared is kept in metadata as evidence, never as the
-    // released value.
-    difficulty: complexity.band,
-    difficulty_ar: DIFFICULTY_LABELS[complexity.band],
+    // RC2.3-1. The published difficulty is the STRUCTURAL band.
+    //
+    // RC2.2 published the computed band, which removed declared/computed
+    // disagreement entirely — and the independent Holdout D audit then found 44
+    // of 82 items released as hard were not hard. Agreement between two views of
+    // one number was never evidence that the number measured the right thing.
+    //
+    // The score ranks reasoning burden on one axis; what makes a question hard is
+    // the KIND of reasoning it demands, which is a property of the template's
+    // structure and not of its arithmetic. So the band comes from the structural
+    // adjudication, and the score is kept beside it as evidence — reportable,
+    // falsifiable, and no longer the thing that decides the label.
+    difficulty: structuralBand,
+    difficulty_ar: DIFFICULTY_LABELS[structuralBand],
     question: base.question,
     display_expression: base.display_expression ?? null,
     options: optionSet.options,
@@ -301,7 +337,14 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
       complexity_score: complexity.score,
       complexity_band: complexity.band,
       declared_difficulty: base.difficulty,
-      difficulty_is_computed: true,
+      // RC2.3-1. Difficulty evidence, kept separate so a reviewer can see the
+      // two views disagree where they do. `structural_band` is what was
+      // published; `complexity_band` is what the RC2.2 scorer would have said.
+      structural_band: structuralBand,
+      answer_count_unit: base.answerCountUnit ?? null,
+      structural_criteria: criteriaOf(base.template_id),
+      band_source: 'structural_adjudication',
+      score_agrees_with_structure: complexity.band === structuralBand,
       complexity_factors: complexity.factors,
       empirical_difficulty: null,
       correct_numeric_rank: optionSet.numeric_rank,

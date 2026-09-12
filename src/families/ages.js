@@ -1,11 +1,19 @@
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, pickTemplate} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool} from './_shared.js';
 
 export function generateAges({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'ages', family_ar: 'مسائل الأعمار', category: 'مسائل الأعمار'};
-  const list = difficulty === 'easy' ? [multipleDifference, sumDifference]
-    : difficulty === 'medium' ? [futureSumDifference, currentRatioFutureSum]
-    : [futureRatio, pastRatioFutureSum, twoTimeRatio];
-  return pickTemplate(rng, list, 'ages', difficulty)(ctx);
+  // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
+  // eligible for the requested band is decided by the structural adjudication in
+  // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
+  return bandPool(rng, 'ages', difficulty, [
+    ['AGE_E_SUM_DIFF', sumDifference],
+    ['AGE_E_MULT_DIFF', multipleDifference],
+    ['AGE_M_FUT_SUM_DIFF', futureSumDifference],
+    ['AGE_M_RATIO_FUT_SUM', currentRatioFutureSum],
+    ['AGE_M_FUT_RATIO', futureRatio],
+    ['AGE_H_PAST_FUT', pastRatioFutureSum],
+    ['AGE_H_TWO_TIME', twoTimeRatio]
+  ])(ctx);
 }
 
 const years = unitFormat('year');

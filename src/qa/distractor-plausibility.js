@@ -97,11 +97,32 @@ export function violatesBounds(distractor, bounds) {
  * `stimulusIsOptions` marks families whose six options ARE the displayed set —
  * in odd-one-out the spread between options is the question, not a defect.
  */
+/**
+ * RC2.3-4. A wrong option that is not a whole number, where the question asks
+ * for a count of indivisible things.
+ *
+ * This is the largest of the three shapes the Holdout D review described as
+ * "removable without meaningful solving", and it is judged entirely from the
+ * question: the unit the answer is expressed in is fixed by the template before
+ * any value is computed, so nothing here consults the key. A learner's slip that
+ * lands on 8.67 workers is a real slip, but it is not an answer anyone would
+ * write down, and next to five whole numbers it is a free elimination.
+ *
+ * Demoted, never dropped — like every other judgement in this module. A template
+ * with nothing better still uses it, so no answer space is narrowed.
+ */
+export function isNotAWholeCount(distractor, answerIsCount) {
+  if (!answerIsCount) return false;
+  const v = numericOf(distractor?.value);
+  return v !== null && !Number.isInteger(v);
+}
+
 export function partitionByPlausibility(distractors, opts = {}) {
   const plausible = [], implausible = [];
   for (const d of distractors) {
     if (!d) continue;
-    const bad = !opts.stimulusIsOptions && violatesBounds(d, opts.bounds);
+    const bad = !opts.stimulusIsOptions
+      && (violatesBounds(d, opts.bounds) || isNotAWholeCount(d, opts.answerIsCount));
     (bad ? implausible : plausible).push(d);
   }
   return {plausible, implausible};
