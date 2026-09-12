@@ -65,12 +65,17 @@ function togetherTime(ctx) {
     mk(target / a, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${a}`),
     mk(target / b, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${b}`),
     mk(a + b, 'STOPPED_AT_UNIT_RATE', `${a} + ${b}`),
-    mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
-    mk(Math.max(1, correct - 2), 'OFF_BY_ONE_STEP', `${correct} − 2`),
     mk(target / Math.abs(b - a), 'SUBTRACTED_INSTEAD_OF_ADDED', `${target} ÷ |${b} − ${a}|`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
     mk(target / (a + b + Math.min(a, b)), 'RATE_APPLIED_TO_WRONG_COUNT', `${target} ÷ (${a} + ${b} + ${Math.min(a, b)})`),
-    mk(target / (2 * (a + b)), 'APPLIED_STEP_TWICE', `${target} ÷ (2 × ${a + b})`)
+    mk(target / (2 * (a + b)), 'APPLIED_STEP_TWICE', `${target} ÷ (2 × ${a + b})`),
+    // RC2-012: deepened; half this template's draws were being thrown away once
+    // the key-neighbour padding was removed. These land on whole hours far more
+    // often than the ratio-shaped slips above.
+    mk(target / (a + b) * 2, 'APPLIED_STEP_TWICE', `${target} ÷ ${a + b} × 2`),
+    mk(target / (a + b) + a, 'ADDED_INSTEAD_OF_SCALING', `${target} ÷ ${a + b} + ${a}`),
+    mk((a + b) * target, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `(${a} + ${b}) × ${target}`),
+    mk(target - (a + b), 'SUBTRACTED_INSTEAD_OF_ADDED', `${target} − (${a} + ${b})`),
+    mk(a * b, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${a} × ${b}`)
   ]);
   return buildBase(ctx, {
     templateId: 'COMB_E_TIME',
@@ -110,15 +115,15 @@ function soloThenTogether(ctx) {
     mk(target / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `${target} ÷ ${a + b}`),
     mk((target - a * solo) / a, 'USED_ONLY_FIRST_RATE', `(${target} − ${a * solo}) ÷ ${a}`),
     mk((target - a * solo) / b, 'USED_ONLY_SECOND_RATE', `(${target} − ${a * solo}) ÷ ${b}`),
-    mk(solo + correct, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${solo} + ${correct}`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(Math.max(1, correct - 1), 'OFF_BY_ONE_STEP', `${correct} − 1`),
+    // RC2-012: the intermediate total and the two nudges are replaced by slips
+    // built from the stated solo span and the two rates.
+    mk(solo, 'STOPPED_AT_INTERMEDIATE_TOTAL', `مدة العمل المنفرد ${solo}`),
     mk(target / a, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${a}`),
     mk(target / b, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${b}`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
-    mk(solo + correct + 1, 'OFF_BY_ONE_STEP', `${solo} + ${correct} + 1`),
+    mk(a * solo, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${a} × ${solo}`),
     mk((target - a * solo) / (a + b + Math.min(a, b)), 'RATE_APPLIED_TO_WRONG_COUNT', `${target - a * solo} ÷ (${a} + ${b} + ${Math.min(a, b)})`),
-    mk(Math.max(1, correct - 2), 'OFF_BY_ONE_STEP', `${correct} − 2`)
+    mk((target - a * solo) / (2 * (a + b)), 'APPLIED_STEP_TWICE', `${target - a * solo} ÷ (2 × ${a + b})`),
+    mk(target / (a * b), 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${target} ÷ (${a} × ${b})`)
   ]);
   return buildBase(ctx, {
     templateId: 'COMB_M_SOLO_THEN',
@@ -163,15 +168,16 @@ function togetherThenSolo(ctx) {
   const distractors = usable(ctx, [
     mk(target / a, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${a}`),
     mk(target / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `${target} ÷ ${a + b}`),
-    mk(bothH + correct, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${bothH} + ${correct}`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(Math.max(1, correct - 1), 'OFF_BY_ONE_STEP', `${correct} − 1`),
+    mk(bothH, 'STOPPED_AT_INTERMEDIATE_TOTAL', `مدة العمل المشترك ${bothH}`),
     mk((target - (a + b) * bothH) / b, 'USED_ONLY_SECOND_RATE', `(${target} − ${(a + b) * bothH}) ÷ ${b}`),
     mk((target - (a + b) * bothH) / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `${a * correct} ÷ ${a + b}`),
-    mk(bothH + correct + 1, 'OFF_BY_ONE_STEP', `${bothH} + ${correct} + 1`),
+    mk((a + b) * bothH, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${a + b} × ${bothH}`),
     mk(target / b, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${b}`),
     mk((target - (a + b) * bothH) / (a + b + Math.min(a, b)), 'RATE_APPLIED_TO_WRONG_COUNT', `${a * correct} ÷ (${a} + ${b} + ${Math.min(a, b)})`),
-    mk(Math.max(1, correct - 2), 'OFF_BY_ONE_STEP', `${correct} − 2`)
+    mk((target - (a + b) * bothH) / (2 * b), 'APPLIED_STEP_TWICE', `${target - (a + b) * bothH} ÷ (2 × ${b})`),
+    mk((target - (a + b) * bothH) / b * 2, 'APPLIED_STEP_TWICE', `${target - (a + b) * bothH} ÷ ${b} × 2`),
+    mk((target - (a + b) * bothH) / b + bothH, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${target - (a + b) * bothH} ÷ ${b} + ${bothH}`),
+    mk(target / (a * b), 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${target} ÷ (${a} × ${b})`)
   ]);
   return buildBase(ctx, {
     templateId: 'COMB_M_TOGETHER_SOLO',
@@ -214,13 +220,15 @@ function stagedTarget(ctx) {
   const distractors = usable(ctx, [
     mk(target / b, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${b}`),
     mk((target - a * soloA) / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `(${target} − ${a * soloA}) ÷ ${a + b}`),
-    mk(soloA + togetherH + correct, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${soloA} + ${togetherH} + ${correct}`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(Math.max(1, correct - 1), 'OFF_BY_ONE_STEP', `${correct} − 1`),
+    mk(soloA + togetherH, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${soloA} + ${togetherH}`),
     mk((target - (a + b) * togetherH) / b, 'MISSED_ONE_STAGE', `(${target} − ${(a + b) * togetherH}) ÷ ${b}`),
     mk((target - a * soloA - (a + b) * togetherH) / a, 'USED_ONLY_FIRST_RATE', `${b * correct} ÷ ${a}`),
     mk((target - a * soloA - (a + b) * togetherH) / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `${b * correct} ÷ ${a + b}`),
-    mk(Math.max(1, correct - 2), 'OFF_BY_ONE_STEP', `${correct} − 2`)
+    mk((target - a * soloA - (a + b) * togetherH) / (2 * b), 'APPLIED_STEP_TWICE', `${target - a * soloA - (a + b) * togetherH} ÷ (2 × ${b})`),
+    mk(target / a, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${a}`),
+    mk((target - a * soloA) / b, 'MISSED_ONE_STAGE', `(${target} − ${a * soloA}) ÷ ${b}`),
+    mk((target - a * soloA - (a + b) * togetherH) / b * 2, 'APPLIED_STEP_TWICE', `${target - a * soloA - (a + b) * togetherH} ÷ ${b} × 2`),
+    mk(target / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `${target} ÷ ${a + b}`)
   ]);
   return buildBase(ctx, {
     templateId: 'COMB_H_STAGED',

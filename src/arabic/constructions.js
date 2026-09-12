@@ -73,6 +73,10 @@ const NON_COUNT_FOLLOWERS = {
   'حتى': 'PARTICLE', 'دون': 'PARTICLE', 'بدل': 'PARTICLE', 'كل': 'PARTICLE', 'لا': 'PARTICLE',
   'هو': 'PARTICLE', 'بقيمة': 'PARTICLE', 'وزمن': 'PARTICLE', 'والثانية': 'PARTICLE',
   'على': 'PARTICLE', 'عن': 'PARTICLE', 'مع': 'PARTICLE',
+  // RC2-012 introduced derivations that name a value and then qualify it
+  // adverbially: «إعادة الحد 42 كما هو»، «الفرق 7 وحده». The word after the
+  // numeral is an adverbial, not a counted noun.
+  'كما': 'PARTICLE', 'وحده': 'PARTICLE', 'وحدها': 'PARTICLE', 'نفسه': 'PARTICLE', 'نفسها': 'PARTICLE',
   // verbs: the numeral is the subject or object of the clause, not a count
   'يحقق': 'VERB', 'وتزيد': 'VERB', 'ليتساوى': 'VERB', 'تعطي': 'VERB', 'واضرب': 'VERB',
   'وتجاهلت': 'VERB', 'وابحث': 'VERB', 'وتحرك': 'VERB', 'واطرح': 'VERB', 'واجمع': 'VERB',

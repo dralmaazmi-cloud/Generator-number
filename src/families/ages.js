@@ -22,8 +22,10 @@ function sumDifference(ctx) {
     mk(younger, 'ANSWERED_OTHER_PERSON', `${sum} − ${older}`),
     mk(sum / 2, 'HALVED_THE_SUM', `${sum} ÷ 2`),
     mk(diff, 'USED_AGE_DIFFERENCE_AS_ANSWER', `الفرق المعطى ${diff}`),
-    mk(older - 2, 'OFF_BY_ONE_STEP', `${older} − 2`),
-    mk(older + 2, 'OFF_BY_ONE_STEP', `${older} + 2`),
+    // RC2-012: the pair of ±2 nudges is gone; these two are the actual halving
+    // slips, built from the given sum and difference.
+    mk(sum / 2 - diff / 2, 'SUBTRACTED_INSTEAD_OF_ADDED', `${sum / 2} − ${diff / 2}`, 3),
+    mk(sum / 2 + diff, 'APPLIED_STEP_TWICE', `${sum / 2} + ${diff}`, 2),
     mk(sum - diff, 'SUBTRACTED_INSTEAD_OF_ADDED', `${sum} − ${diff}`),
     mk(sum, 'USED_GIVEN_VALUE_AS_ANSWER', `المجموع المعطى ${sum}`),
     mk((sum + diff * 2) / 2, 'APPLIED_STEP_TWICE', `(${sum} + ${diff} × 2) ÷ 2`)
@@ -77,14 +79,14 @@ function multipleDifference(ctx) {
   const distractors = usable(ctx, [
     mk(older, 'ANSWERED_OTHER_PERSON', `${mult} × ${younger}`),
     mk(diff, 'USED_AGE_DIFFERENCE_AS_ANSWER', `الفرق المعطى ${diff}`),
-    mk(diff / mult, 'OFF_BY_ONE_STEP', `${diff} ÷ ${mult}`),
-    mk(younger + 4, 'OFF_BY_ONE_STEP', `${younger} + 4`),
-    mk(younger - 2, 'OFF_BY_ONE_STEP', `${younger} − 2`),
+    // RC2-012: dividing by the wrong count of parts is the real slip here, and
+    // it is written from the given difference rather than from the answer.
+    mk(diff / mult, 'RATE_APPLIED_TO_WRONG_COUNT', `${diff} ÷ ${mult}`, 2),
     mk(diff * mult, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${diff} × ${mult}`),
     mk(diff + mult, 'ADDED_INSTEAD_OF_SCALING', `${diff} + ${mult}`),
     mk(older + younger, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${older} + ${younger}`),
-    mk(Math.round(diff / (mult + 1)), 'OFF_BY_ONE_STEP', `${diff} ÷ (${mult} + 1)`),
-    mk(Math.max(1, younger - 4), 'OFF_BY_ONE_STEP', `${younger} − 4`)
+    mk(Math.round(diff / (mult + 1)), 'RATE_APPLIED_TO_WRONG_COUNT', `${diff} ÷ (${mult} + 1)`, 2),
+    mk(diff - mult, 'SUBTRACTED_INSTEAD_OF_ADDED', `${diff} − ${mult}`, 2)
   ]);
   return buildBase(ctx, {
     templateId: 'AGE_E_MULT_DIFF',
@@ -129,11 +131,15 @@ function futureSumDifference(ctx) {
   const distractors = usable(ctx, [
     mk(younger, 'ANSWERED_OTHER_PERSON', `${older + younger} − ${older}`),
     mk(futureSum / 2, 'HALVED_THE_SUM', `${futureSum} ÷ 2`),
-    mk(older + yrs, 'ANSWERED_FUTURE_AGE', `${older} + ${yrs}`),
-    mk(older - yrs, 'ANSWERED_PAST_AGE', `${older} − ${yrs}`),
+    // RC2-012: both are real answers to a question that was not asked, and both
+    // happen next to the age asked for, so each names the step it lands after.
+    mk(older + yrs, 'ANSWERED_FUTURE_AGE', `${older} + ${yrs}`, 3),
+    mk(older - yrs, 'ANSWERED_PAST_AGE', `${older} − ${yrs}`, 3),
     mk((futureSum - yrs + diff) / 2, 'FORGOT_BOTH_AGES_GROW', `(${futureSum} − ${yrs} + ${diff}) ÷ 2`),
-    mk(older + 2, 'OFF_BY_ONE_STEP', `${older} + 2`),
-    mk(older - 2, 'OFF_BY_ONE_STEP', `${older} − 2`),
+    mk((futureSum + diff) / 2, 'FORGOT_BOTH_AGES_GROW', `(${futureSum} + ${diff}) ÷ 2`, 1),
+    mk((futureSum - 2 * yrs - diff) / 2, 'ANSWERED_OTHER_PERSON', `(${futureSum} − ${2 * yrs} − ${diff}) ÷ 2`),
+    mk(futureSum - 2 * yrs, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${futureSum} − ${2 * yrs}`),
+    mk((futureSum - yrs + diff) / 2 + yrs, 'ANSWERED_FUTURE_AGE', `(${futureSum} − ${yrs} + ${diff}) ÷ 2 + ${yrs}`),
     mk(diff, 'USED_AGE_DIFFERENCE_AS_ANSWER', `الفرق المعطى ${diff}`)
   ]);
   return buildBase(ctx, {
@@ -184,16 +190,19 @@ function futureRatio(ctx) {
   const params = {ageDifference: diff, yearsAhead: yrs, ratio};
   const ratioWord = ratio === 2 ? 'ضعف' : 'ثلاثة أمثال';
   const distractors = usable(ctx, [
-    mk(old, 'ANSWERED_OTHER_PERSON', `${young} + ${diff}`),
-    mk(youngFuture, 'ANSWERED_FUTURE_AGE', `${young} + ${yrs}`),
-    mk(oldFuture, 'ANSWERED_FUTURE_AGE', `${old} + ${yrs}`),
+    mk(old, 'ANSWERED_OTHER_PERSON', `${young} + ${diff}`, 5),
+    // RC2-012. Only one of these two may be answer-derived under the same name,
+    // and the daughter's future age is the one that is: it is the answer plus
+    // the stated years, so it names the step it lands after. The mother's future
+    // age is built from her present age instead.
+    mk(youngFuture, 'ANSWERED_FUTURE_AGE', `${young} + ${yrs}`, 5),
+    mk(oldFuture, 'ANSWERED_OTHER_PERSON', `${old} + ${yrs}`),
     mk(diff, 'USED_AGE_DIFFERENCE_AS_ANSWER', `الفرق المعطى ${diff}`),
     mk(diff / (ratio - 1), 'APPLIED_FUTURE_RATIO_NOW', `${diff} ÷ (${ratio} − 1)`),
-    mk(young + 2, 'OFF_BY_ONE_STEP', `${young} + 2`),
-    mk(young - 2, 'OFF_BY_ONE_STEP', `${young} − 2`),
-    mk(young * ratio, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${young} × ${ratio}`),
-    mk(Math.round(diff / (ratio + 1)), 'OFF_BY_ONE_STEP', `${diff} ÷ (${ratio} + 1)`),
-    mk(Math.max(1, young - 4), 'OFF_BY_ONE_STEP', `${young} − 4`)
+    mk(young * ratio, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${young} × ${ratio}`, 5),
+    mk(Math.round(diff / (ratio + 1)), 'RATE_APPLIED_TO_WRONG_COUNT', `${diff} ÷ (${ratio} + 1)`, 5),
+    mk(Math.round((diff + yrs) / ratio), 'APPLIED_FUTURE_RATIO_NOW', `(${diff} + ${yrs}) ÷ ${ratio}`, 5),
+    mk(diff - yrs, 'SUBTRACTED_INSTEAD_OF_ADDED', `${diff} − ${yrs}`, 3)
   ]);
   return buildBase(ctx, {
     templateId: 'AGE_M_FUT_RATIO',
@@ -240,14 +249,17 @@ function currentRatioFutureSum(ctx) {
   const params = {ratio, yearsAhead: yrs, futureSum};
   const ratioWord = ratio === 2 ? 'ضعف' : 'ثلاثة أمثال';
   const distractors = usable(ctx, [
-    mk(younger, 'ANSWERED_OTHER_PERSON', `${older} ÷ ${ratio}`),
-    mk(older + yrs, 'ANSWERED_FUTURE_AGE', `${older} + ${yrs}`),
-    mk(younger + yrs, 'ANSWERED_FUTURE_AGE', `${younger} + ${yrs}`),
+    mk(younger, 'ANSWERED_OTHER_PERSON', `${older} ÷ ${ratio}`, 4),
+    mk(older + yrs, 'ANSWERED_FUTURE_AGE', `${older} + ${yrs}`, 4),
+    mk(younger + yrs, 'ANSWERED_PAST_AGE', `${younger} + ${yrs}`),
     mk(futureSum - 2 * yrs, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${futureSum} − ${2 * yrs}`),
     mk(futureSum / (ratio + 1), 'FORGOT_BOTH_AGES_GROW', `${futureSum} ÷ (${ratio} + 1)`),
-    mk(older + 2, 'OFF_BY_ONE_STEP', `${older} + 2`),
-    mk(older - 2, 'OFF_BY_ONE_STEP', `${older} − 2`),
-    mk(older - younger, 'USED_AGE_DIFFERENCE_AS_ANSWER', `${older} − ${younger}`)
+    mk(futureSum / (ratio + 1) * ratio, 'FORGOT_BOTH_AGES_GROW', `(${futureSum} ÷ ${ratio + 1}) × ${ratio}`, 1),
+    // RC2-012: deepened.
+    mk(futureSum - 2 * yrs - younger, 'ANSWERED_OTHER_PERSON', `${futureSum} − ${2 * yrs} − ${younger}`),
+    mk((futureSum - yrs) / (ratio + 1) * ratio, 'FORGOT_BOTH_AGES_GROW', `(${futureSum} − ${yrs}) ÷ ${ratio + 1} × ${ratio}`),
+    mk(futureSum / 2, 'HALVED_THE_SUM', `${futureSum} ÷ 2`),
+    mk(older - younger, 'USED_AGE_DIFFERENCE_AS_ANSWER', `${older} − ${younger}`, 4)
   ]);
   return buildBase(ctx, {
     templateId: 'AGE_M_RATIO_FUT_SUM',
@@ -295,13 +307,12 @@ function pastRatioFutureSum(ctx) {
   const params = {pastYears, futureYears, ratio, futureSum};
   const ratioWord = ratio === 2 ? 'ضعف' : 'ثلاثة أمثال';
   const distractors = usable(ctx, [
-    mk(oldPast, 'ANSWERED_PAST_AGE', `${oldNow} − ${pastYears}`),
+    mk(oldPast, 'ANSWERED_PAST_AGE', `${oldNow} − ${pastYears}`, 5),
     mk(youngNow, 'ANSWERED_OTHER_PERSON', `${youngPast} + ${pastYears}`),
-    mk(oldNow + futureYears, 'ANSWERED_FUTURE_AGE', `${oldNow} + ${futureYears}`),
+    mk(oldNow + futureYears, 'ANSWERED_FUTURE_AGE', `${oldNow} + ${futureYears}`, 5),
     mk(youngPast, 'ANSWERED_PAST_AGE', `${youngNow} − ${pastYears}`),
     mk(futureSum / 2, 'HALVED_THE_SUM', `${futureSum} ÷ 2`),
-    mk(oldNow + 2, 'OFF_BY_ONE_STEP', `${oldNow} + 2`),
-    mk(oldNow - 2, 'OFF_BY_ONE_STEP', `${oldNow} − 2`),
+    mk((futureSum - 2 * futureYears) / 2, 'HALVED_THE_SUM', `(${futureSum} − ${2 * futureYears}) ÷ 2`, 1),
     mk((futureSum - 2 * futureYears) / (ratio + 1) * ratio, 'FORGOT_BOTH_AGES_GROW', `((${futureSum} − ${2 * futureYears}) ÷ ${ratio + 1}) × ${ratio}`)
   ]);
   return buildBase(ctx, {
@@ -354,16 +365,18 @@ function twoTimeRatio(ctx) {
   const params = {ageDifference: gap, yearsAhead: yrs, ratio};
   const ratioWord = ratio === 2 ? 'ضعف' : ratio === 3 ? 'ثلاثة أمثال' : 'أربعة أمثال';
   const distractors = usable(ctx, [
-    mk(nowOld, 'ANSWERED_OTHER_PERSON', `${nowYoung} + ${gap}`),
-    mk(futureYoung, 'ANSWERED_FUTURE_AGE', `${nowYoung} + ${yrs}`),
-    mk(futureOld, 'ANSWERED_FUTURE_AGE', `${nowOld} + ${yrs}`),
+    // RC2-012: three real errors, each landing after the final step, and each
+    // under its own name — the repetition the audit found was four copies of one
+    // nudge, not several distinct errors.
+    mk(nowOld, 'ANSWERED_OTHER_PERSON', `${nowYoung} + ${gap}`, 5),
+    mk(futureYoung, 'ANSWERED_FUTURE_AGE', `${nowYoung} + ${yrs}`, 5),
+    mk(futureOld, 'ANSWERED_PAST_AGE', `${nowOld} + ${yrs}`),
     mk(gap, 'USED_AGE_DIFFERENCE_AS_ANSWER', `الفرق المعطى ${gap}`),
     mk(gap / (ratio - 1), 'APPLIED_FUTURE_RATIO_NOW', `${gap} ÷ (${ratio} − 1)`),
-    mk(nowYoung + 2, 'OFF_BY_ONE_STEP', `${nowYoung} + 2`),
-    mk(nowYoung - 2, 'OFF_BY_ONE_STEP', `${nowYoung} − 2`),
-    mk(nowYoung * ratio, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${nowYoung} × ${ratio}`),
-    mk(Math.round(gap / (ratio + 1)), 'OFF_BY_ONE_STEP', `${gap} ÷ (${ratio} + 1)`),
-    mk(Math.max(1, nowYoung - 4), 'OFF_BY_ONE_STEP', `${nowYoung} − 4`)
+    mk(nowYoung * ratio, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${nowYoung} × ${ratio}`, 5),
+    mk(Math.round(gap / (ratio + 1)), 'RATE_APPLIED_TO_WRONG_COUNT', `${gap} ÷ (${ratio} + 1)`, 5),
+    mk(Math.round((gap + yrs) / ratio), 'APPLIED_FUTURE_RATIO_NOW', `(${gap} + ${yrs}) ÷ ${ratio}`, 5),
+    mk(gap - yrs, 'SUBTRACTED_INSTEAD_OF_ADDED', `${gap} − ${yrs}`, 3)
   ]);
   return buildBase(ctx, {
     templateId: 'AGE_H_TWO_TIME',

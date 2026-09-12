@@ -24,11 +24,10 @@ function simplePercent(ctx) {
     mk(baseVal / pct, 'REVERSED_DIRECT_PROPORTION', `${baseVal} ÷ ${pct}`),
     mk(pct, 'USED_GIVEN_VALUE_AS_ANSWER', `النسبة المعطاة ${pct}`),
     mk(baseVal, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة المعطاة ${baseVal}`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
     mk(baseVal * pct / 10, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${baseVal} × ${pct} ÷ 10`),
     mk(baseVal / 100, 'MISSED_ONE_STAGE', `${baseVal} ÷ 100 — حساب 1% ونسيان الضرب في ${pct}`),
     mk(baseVal * pct / 200, 'APPLIED_STEP_TWICE', `${baseVal} × ${pct} ÷ 100 ÷ 2`),
-    mk(correct + baseVal, 'USED_ORIGINAL_TOTAL', `${correct} + ${baseVal}`)
+    mk(baseVal * (100 + pct) / 100, 'USED_ORIGINAL_TOTAL', `${baseVal} × (100 + ${pct}) ÷ 100`)
   ]);
   return buildBase(ctx, {
     templateId: 'PCT_E_OF',
@@ -79,7 +78,7 @@ function reverseOneChange(ctx) {
     mk(final + pct, 'TREATED_PERCENT_AS_AMOUNT', `${final} + ${pct}`),
     mk(Math.max(1, final - pct), 'TREATED_PERCENT_AS_AMOUNT', `${final} − ${pct}`),
     mk(final * 100 / pct, 'APPLIED_PERCENT_TO_WRONG_TOTAL', `${final} × 100 ÷ ${pct}`),
-    mk(original + pct, 'TREATED_PERCENT_AS_AMOUNT', `${original} + ${pct}`),
+    mk(final + final * pct / 100, 'TREATED_PERCENT_AS_AMOUNT', `${final} + ${final} × ${pct} ÷ 100`),
     mk(Fraction.from(original).mul(factor).mul(factor).toNumber(), 'APPLIED_STEP_TWICE', `${original} × ${factor.toDecimalString()} × ${factor.toDecimalString()}`)
   ]);
   return buildBase(ctx, {
@@ -135,8 +134,8 @@ function successiveChange(ctx) {
     mk(-signed, 'SUBTRACTED_PERCENTAGES', `${upFirst ? p2 : p1} − ${upFirst ? p1 : p2}`),
     mk(upFirst ? p1 + p2 : -(p1 + p2), 'ADDED_PERCENTAGES', `${p1} + ${p2}`),
     mk(-correct, 'APPLIED_OPERATION_IN_REVERSE', `عكس إشارة ${num(correct)}`),
-    mk(correct + (correct >= 0 ? 1 : -1), 'OFF_BY_ONE_STEP', `${num(correct)} ± 1`),
-    mk(Math.round((f1 * f2 - 10000) / 100 * 2 * 100) / 100 / 2 * 2, 'APPLIED_STEP_TWICE', `${num(correct)} × 2`),
+    mk((f1 * f2 - 10000) / 200, 'APPLIED_STEP_TWICE', `(${f1} × ${f2} − 10000) ÷ 200`),
+    mk((f1 * f2 - 10000) / 50, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `(${f1} × ${f2} − 10000) ÷ 50`),
     mk(upFirst ? p1 : -p1, 'STOPPED_AFTER_FIRST_STAGE', `التغير الأول ${p1}% فقط`),
     mk(upFirst ? -p2 : p2, 'USED_ONLY_LAST_STAGE', `التغير الثاني ${p2}% فقط`)
   ], {allowNegative: true, allowZero: true});
@@ -186,9 +185,12 @@ function remainingChain(ctx) {
     mk(total * (100 - p2) / 100, 'APPLIED_PERCENT_TO_ORIGINAL', `${total} × (100 − ${p2}) ÷ 100`),
     mk(wrongCombined, 'ADDED_PERCENTAGES', `${total} × (100 − ${p1} − ${p2}) ÷ 100`),
     mk(total - final, 'TOOK_COMPLEMENT_PERCENT', `${total} − ${final}`),
-    mk(final + p2, 'TREATED_PERCENT_AS_AMOUNT', `${final} + ${p2}`),
-    mk(Math.max(1, final - p2), 'TREATED_PERCENT_AS_AMOUNT', `${final} − ${p2}`),
-    mk(total, 'USED_ORIGINAL_TOTAL', `العدد الأصلي ${total}`)
+    mk(total * (100 - p1 - p2) / 100, 'SUBTRACTED_PERCENTAGES', `${total} × (100 − ${p1} − ${p2}) ÷ 100`),
+    mk(total - p1 - p2, 'TREATED_PERCENT_AS_AMOUNT', `${total} − ${p1} − ${p2}`),
+    mk(total, 'USED_ORIGINAL_TOTAL', `العدد الأصلي ${total}`),
+    mk(total * (100 - p1) / 100, 'STOPPED_AFTER_FIRST_STAGE', `${total} × (100 − ${p1}) ÷ 100`),
+    mk(total * p2 / 100, 'APPLIED_PERCENT_TO_ORIGINAL', `${total} × ${p2} ÷ 100`),
+    mk(total - p1 - p2, 'TREATED_PERCENT_AS_AMOUNT', `${total} − ${p1} − ${p2}`)
   ]);
   return buildBase(ctx, {
     templateId: 'PCT_M_REMAIN',
@@ -238,9 +240,13 @@ function unitPriceChange(ctx) {
     mk(Fraction.from(total1).mul(factor).toNumber(), 'APPLIED_PERCENT_TO_WRONG_TOTAL', `${total1} × ${factor.toDecimalString()}`),
     mk(newUnit.toNumber(), 'STOPPED_AT_UNIT_RATE', `${unitPrice} × ${factor.toDecimalString()}`),
     mk(qty2 * (unitPrice + pct), 'TREATED_PERCENT_AS_AMOUNT', `${qty2} × (${unitPrice} + ${pct})`),
-    mk(correct + total1, 'USED_ORIGINAL_TOTAL', `${correct} + ${total1}`),
     mk(newUnit.mul(qty1).toNumber(), 'RATE_APPLIED_TO_WRONG_COUNT', `${newUnit.toDecimalString()} × ${qty1}`),
-    mk(newUnit.mul(factor).mul(qty2).toNumber(), 'APPLIED_STEP_TWICE', `${newUnit.toDecimalString()} × ${factor.toDecimalString()} × ${qty2}`)
+    mk(newUnit.mul(factor).mul(qty2).toNumber(), 'APPLIED_STEP_TWICE', `${newUnit.toDecimalString()} × ${factor.toDecimalString()} × ${qty2}`),
+    // RC2-012: deepened.
+    mk(total1 * qty2 / qty1, 'USED_RATE_BEFORE_CHANGE', `${total1} × ${qty2} ÷ ${qty1}`),
+    mk(total1 + pct, 'TREATED_PERCENT_AS_AMOUNT', `${total1} + ${pct}`),
+    mk(qty2 * unitPrice + pct, 'TREATED_PERCENT_AS_AMOUNT', `${qty2} × ${unitPrice} + ${pct}`),
+    mk(total1 * qty2, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${total1} × ${qty2}`)
   ]);
   return buildBase(ctx, {
     templateId: 'PCT_M_UNIT_PRICE',
@@ -295,10 +301,10 @@ function reverseSuccessive(ctx) {
     mk(Fraction.from(final).mul(100).div(100 + p1 - p2).toNumber(), 'ADDED_PERCENTAGES', `${final} × 100 ÷ (100 + ${p1} − ${p2})`),
     mk(after1, 'STOPPED_AFTER_FIRST_STAGE', `${original} × ${f1} ÷ 100`),
     mk(Fraction.from(final).mul(netFactor).toNumber(), 'APPLIED_OPERATION_IN_REVERSE', `${final} × ${netFactor.toDecimalString()}`),
-    mk(original + 50, 'OFF_BY_ONE_STEP', `${original} + 50`),
-    mk(Math.max(1, original - 50), 'OFF_BY_ONE_STEP', `${original} − 50`),
+    mk(final * 10000 / (f1 * f1), 'APPLIED_STEP_TWICE', `${final} × 10000 ÷ (${f1} × ${f1})`),
+    mk(final * 10000 / (f2 * f2), 'APPLIED_STEP_TWICE', `${final} × 10000 ÷ (${f2} × ${f2})`),
     mk(final + p1 - p2, 'TREATED_PERCENT_AS_AMOUNT', `${final} + ${p1} − ${p2}`),
-    mk(Fraction.from(final).mul(10000).div(f1 * f2).mul(2).toNumber(), 'APPLIED_STEP_TWICE', `${correct} × 2`)
+    mk(Fraction.from(final).mul(20000).div(f1 * f2).toNumber(), 'APPLIED_STEP_TWICE', `${final} × 20000 ÷ (${f1} × ${f2})`)
   ]);
   return buildBase(ctx, {
     templateId: 'PCT_H_REVERSE_CHAIN',
@@ -350,8 +356,8 @@ function successiveWithTarget(ctx) {
     mk(original * f2 / 100, 'APPLIED_PERCENT_TO_ORIGINAL', `${original} × ${f2} ÷ 100`),
     mk(wrongNet, 'ADDED_PERCENTAGES', `${original} × (100 + ${p2} − ${p1}) ÷ 100`),
     mk(original, 'USED_ORIGINAL_TOTAL', `القيمة الأصلية ${original}`),
-    mk(correct + 20, 'OFF_BY_ONE_STEP', `${correct} + 20`),
-    mk(Math.max(1, correct - 20), 'OFF_BY_ONE_STEP', `${correct} − 20`),
+    mk(original * f2 / 100, 'STOPPED_AFTER_FIRST_STAGE', `${original} × ${num(f2 / 100)}`),
+    mk(after + original, 'USED_ORIGINAL_TOTAL', `${after} + ${original}`),
     mk(Fraction.from(after).mul(f2).mul(f2).div(10000).toNumber(), 'APPLIED_STEP_TWICE', `${after} × ${num(f2 / 100)} × ${num(f2 / 100)}`)
   ]);
   return buildBase(ctx, {

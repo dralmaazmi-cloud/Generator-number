@@ -74,14 +74,14 @@ function buildFractionItem(ctx, count, direction) {
       }),
       mk(total / fracs[0].d, 'STOPPED_AFTER_FIRST_STAGE', `${total} ÷ ${fracs[0].d}`),
       mk(total / fracs.at(-1).d, 'APPLIED_FRACTION_TO_ORIGINAL', `${total} ÷ ${fracs.at(-1).d} من العدد الأصلي`),
-      mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
-      mk(correct + multiplier, 'OFF_BY_ONE_STEP', `${correct} + ${multiplier}`),
-      mk(Math.max(1, correct - multiplier), 'OFF_BY_ONE_STEP', `${correct} − ${multiplier}`),
       mk(total / (denomProduct * fracs[0].d), 'APPLIED_STEP_TWICE', `${total} ÷ (${denomProduct} × ${fracs[0].d})`),
       mk(total / (denomProduct * fracs.at(-1).d), 'APPLIED_STEP_TWICE', `${total} ÷ (${denomProduct} × ${fracs.at(-1).d})`),
       mk(total, 'USED_ORIGINAL_TOTAL', `العدد الأصلي ${total}`),
-      mk(correct + 2 * multiplier, 'OFF_BY_ONE_STEP', `${correct} + ${2 * multiplier}`),
-      mk(Math.max(1, correct - 2 * multiplier), 'OFF_BY_ONE_STEP', `${correct} − ${2 * multiplier}`)
+      mk(total / (denomProduct / fracs[0].d), 'MISSED_ONE_FRACTION_STAGE', `${total} ÷ ${denomProduct / fracs[0].d}`),
+      // RC2-012: deepened.
+      mk(total / denomProduct * 2, 'APPLIED_STEP_TWICE', `${total} ÷ ${denomProduct} × 2`),
+      mk(total - denomProduct, 'SUBTRACTED_INSTEAD_OF_ADDED', `${total} − ${denomProduct}`),
+      mk(denomProduct, 'USED_GIVEN_VALUE_AS_ANSWER', `حاصل ضرب المقامات ${denomProduct}`)
     ]);
     return buildBase(ctx, {
       ...shared,
@@ -112,9 +112,7 @@ function buildFractionItem(ctx, count, direction) {
       mk(result * (denomProduct / fracs[0].d), 'MISSED_ONE_FRACTION_STAGE', `${result} × ${denomProduct / fracs[0].d}`),
       mk(result / denomProduct, 'APPLIED_OPERATION_IN_REVERSE', `${result} ÷ ${denomProduct}`),
       mk(result + denomProduct, 'ADDED_INSTEAD_OF_SCALING', `${result} + ${denomProduct}`),
-      mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
-      mk(correct + denomProduct, 'OFF_BY_ONE_STEP', `${correct} + ${denomProduct}`),
-      mk(Math.max(1, correct - denomProduct), 'OFF_BY_ONE_STEP', `${correct} − ${denomProduct}`)
+      mk(result * denomProduct * denomProduct, 'APPLIED_STEP_TWICE', `${result} × ${denomProduct} × ${denomProduct}`)
     ]);
     return buildBase(ctx, {
       ...shared,

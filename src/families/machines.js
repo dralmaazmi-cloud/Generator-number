@@ -24,10 +24,12 @@ function machineHours(ctx) {
     mk(total, 'USED_GIVEN_VALUE_AS_ANSWER', `الإنتاج المعطى ${total}`),
     mk(newMachines * hours * rate, 'RATE_APPLIED_TO_WRONG_COUNT', `${newMachines} × ${hours} × ${rate}`),
     mk(machines * newHours * rate, 'RATE_APPLIED_TO_WRONG_COUNT', `${machines} × ${newHours} × ${rate}`),
-    mk(correct + rate, 'OFF_BY_ONE_STEP', `${correct} + ${rate}`),
-    mk(correct - rate, 'OFF_BY_ONE_STEP', `${correct} − ${rate}`),
     mk(total + correct, 'USED_ORIGINAL_TOTAL', `${total} + ${correct}`),
-    mk(rate * (newMachines + newHours), 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${rate} × (${newMachines} + ${newHours})`)
+    mk(rate * (newMachines + newHours), 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${rate} × (${newMachines} + ${newHours})`),
+    // RC2-012: deepened so six options can be filled without padding.
+    mk(total * newMachines / machines, 'MISSED_ONE_STAGE', `${total} × ${newMachines} ÷ ${machines}`),
+    mk(total * newHours / hours, 'MISSED_ONE_STAGE', `${total} × ${newHours} ÷ ${hours}`),
+    mk(total * machines * hours / (newMachines * newHours), 'REVERSED_DIRECT_PROPORTION', `${total} × ${machines} × ${hours} ÷ (${newMachines} × ${newHours})`)
   ]);
   return buildBase(ctx, {
     templateId: 'MACH_E_HOURS',
@@ -73,15 +75,14 @@ function requiredMachines(ctx) {
     mk(machines, 'USED_GIVEN_VALUE_AS_ANSWER', `عدد الآلات المعطى ${machines}`),
     mk(target / rate, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${target} ÷ ${rate}`),
     mk(target / (rate * hours), 'RATE_APPLIED_TO_WRONG_COUNT', `${target} ÷ (${rate} × ${hours})`),
-    mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
-    mk(correct - 2, 'OFF_BY_ONE_STEP', `${correct} − 2`),
     mk(rate, 'STOPPED_AT_UNIT_RATE', `${total} ÷ (${machines} × ${hours})`),
-    mk(correct * targetHours, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${correct} × ${targetHours}`),
     mk(machines + correct, 'USED_ORIGINAL_TOTAL', `${machines} + ${correct}`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
-    mk(target / (rate * targetHours) * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
-    mk(machines * targetHours / hours, 'REVERSED_DIRECT_PROPORTION', `${machines} × ${targetHours} ÷ ${hours}`)
+    mk(machines * targetHours / hours, 'REVERSED_DIRECT_PROPORTION', `${machines} × ${targetHours} ÷ ${hours}`),
+    mk(target / total * machines * hours, 'RATE_APPLIED_TO_WRONG_COUNT', `${target} ÷ ${total} × ${machines} × ${hours}`),
+    mk(target / (total / machines), 'MISSED_ONE_STAGE', `${target} ÷ (${total} ÷ ${machines})`),
+    mk(machines * target / total, 'MISSED_ONE_STAGE', `${machines} × ${target} ÷ ${total}`),
+    mk(target / (rate * targetHours) * 2, 'APPLIED_STEP_TWICE', `${target} ÷ (${rate} × ${targetHours}) × 2`),
+    mk(target / rate / targetHours + machines, 'ADDED_INSTEAD_OF_SCALING', `${target} ÷ ${rate} ÷ ${targetHours} + ${machines}`)
   ]);
   return buildBase(ctx, {
     templateId: 'MACH_E_REQUIRED',
@@ -132,8 +133,6 @@ function newMachineFaster(ctx) {
     mk(2 * newRateN * targetH, 'UPGRADED_ALL_INSTEAD_OF_SOME', `2 × ${newRateN} × ${targetH}`),
     mk(newRateN * targetH, 'USED_ONLY_SECOND_RATE', `${newRateN} × ${targetH}`),
     mk(oldRate * targetH, 'USED_ONLY_FIRST_RATE', `${oldRate} × ${targetH}`),
-    mk(correct + oldRate, 'OFF_BY_ONE_STEP', `${correct} + ${oldRate}`),
-    mk(correct - oldRate, 'OFF_BY_ONE_STEP', `${correct} − ${oldRate}`),
     mk((oldRate + newRateN) * hours, 'RATE_APPLIED_TO_WRONG_COUNT', `(${oldRate} + ${newRateN}) × ${hours}`),
     mk(oldRate + newRateN, 'STOPPED_AT_UNIT_RATE', `${oldRate} + ${newRateN}`)
   ]);
@@ -184,9 +183,11 @@ function oneStops(ctx) {
     mk((machines - stopped) * rate * (h1 + h2), 'FAILED_TO_UPDATE_COUNT', `${machines - stopped} × ${rate} × (${h1} + ${h2})`),
     mk(machines * rate * h1, 'STOPPED_AFTER_FIRST_STAGE', `${machines} × ${rate} × ${h1}`),
     mk((machines - stopped) * rate * h2, 'USED_ONLY_LAST_STAGE', `${machines - stopped} × ${rate} × ${h2}`),
-    mk(correct + rate * h2, 'OFF_BY_ONE_STEP', `${correct} + ${rate * h2}`),
-    mk(correct - rate * h2, 'OFF_BY_ONE_STEP', `${correct} − ${rate * h2}`),
-    mk(machines * rate * h2 + (machines - stopped) * rate * h1, 'RATE_APPLIED_TO_WRONG_COUNT', `${machines} × ${rate} × ${h2} + ${machines - stopped} × ${rate} × ${h1}`)
+    mk(machines * rate * h2 + (machines - stopped) * rate * h1, 'RATE_APPLIED_TO_WRONG_COUNT', `${machines} × ${rate} × ${h2} + ${machines - stopped} × ${rate} × ${h1}`),
+    mk(stopped * rate * (h1 + h2), 'USED_ONLY_LAST_STAGE', `${stopped} × ${rate} × (${h1} + ${h2})`),
+    mk((machines - stopped) * rate * h1, 'FAILED_TO_UPDATE_COUNT', `${machines - stopped} × ${rate} × ${h1}`),
+    mk(machines * rate * h1 + machines * rate * h2, 'IGNORED_STOPPAGE', `${machines} × ${rate} × ${h1} + ${machines} × ${rate} × ${h2}`),
+    mk(rate * (h1 + h2), 'STOPPED_AT_UNIT_RATE', `${rate} × (${h1} + ${h2})`)
   ]);
   return buildBase(ctx, {
     templateId: 'MACH_M_STOP',
@@ -238,10 +239,7 @@ function subsetUpgrade(ctx) {
     mk(machines * rate * hours, 'IGNORED_UPGRADE', `${machines} × ${rate} × ${hours}`),
     mk(upgraded * newRateN * hours, 'USED_ONLY_SECOND_RATE', `${upgraded} × ${newRateN} × ${hours}`),
     mk((machines - upgraded) * rate * hours, 'USED_ONLY_FIRST_RATE', `${machines - upgraded} × ${rate} × ${hours}`),
-    mk(correct + rate * hours, 'OFF_BY_ONE_STEP', `${correct} + ${rate * hours}`),
-    mk(correct - rate * hours, 'OFF_BY_ONE_STEP', `${correct} − ${rate * hours}`),
     mk(combined, 'STOPPED_AT_UNIT_RATE', `${upgraded} × ${newRateN} + ${machines - upgraded} × ${rate}`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
     mk(combined * (hours + 1), 'OFF_BY_ONE_STEP', `${combined} × (${hours} + 1)`)
   ]);
   return buildBase(ctx, {
@@ -293,7 +291,7 @@ function twoTypesCombined(ctx) {
     mk(nB * rB * hours, 'USED_ONLY_LAST_STAGE', `${nB} × ${rB} × ${hours}`),
     mk(combined, 'STOPPED_AT_UNIT_RATE', `${nA} × ${rA} + ${nB} × ${rB}`),
     mk((nA + nB) * Math.round((rA + rB) / 2) * hours, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${nA} + ${nB}) × ((${rA} + ${rB}) ÷ 2) × ${hours}`),
-    mk(correct + rA * hours, 'OFF_BY_ONE_STEP', `${correct} + ${rA * hours}`)
+    mk((nA + nB) * (rA + rB) * hours, 'RATE_APPLIED_TO_WRONG_COUNT', `(${nA} + ${nB}) × (${rA} + ${rB}) × ${hours}`)
   ]);
   return buildBase(ctx, {
     templateId: 'MACH_H_TWO_TYPES',
@@ -348,9 +346,10 @@ function stageChange(ctx) {
     mk(machines * newRateN * (h1 + h2), 'UPGRADED_ALL_INSTEAD_OF_SOME', `${machines} × ${newRateN} × (${h1} + ${h2})`),
     mk(stage1, 'STOPPED_AFTER_FIRST_STAGE', `${machines} × ${rate} × ${h1}`),
     mk(stage2, 'USED_ONLY_LAST_STAGE', `${combined} × ${h2}`),
-    mk(correct + rate * h2, 'OFF_BY_ONE_STEP', `${correct} + ${rate * h2}`),
-    mk(correct - rate * h2, 'OFF_BY_ONE_STEP', `${correct} − ${rate * h2}`),
-    mk(stage1 + upgraded * newRateN * h2, 'MISSED_ONE_STAGE', `${stage1} + ${upgraded} × ${newRateN} × ${h2}`)
+    mk(stage1 + upgraded * newRateN * h2, 'MISSED_ONE_STAGE', `${stage1} + ${upgraded} × ${newRateN} × ${h2}`),
+    mk(combined * (h1 + h2), 'STOPPED_AT_UNIT_RATE', `${combined} × (${h1} + ${h2})`),
+    mk(stage1 + (machines - upgraded) * rate * h2, 'USED_ONLY_FIRST_RATE', `${stage1} + ${machines - upgraded} × ${rate} × ${h2}`),
+    mk(machines * newRateN * h1 + combined * h2, 'UPGRADED_ALL_INSTEAD_OF_SOME', `${machines} × ${newRateN} × ${h1} + ${combined} × ${h2}`)
   ]);
   return buildBase(ctx, {
     templateId: 'MACH_H_STAGE_UP',

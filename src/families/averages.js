@@ -27,12 +27,13 @@ function addOne(ctx) {
     mk(newVal, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة المضافة ${newVal}`),
     mk((total + newVal) / n, 'FAILED_TO_UPDATE_COUNT', `(${total} + ${newVal}) ÷ ${n}`),
     mk((avg + newVal) / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${avg} + ${newVal}) ÷ 2`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
     mk(total / (n + 1), 'MISSED_ONE_STAGE', `${total} ÷ ${n + 1}`),
     mk(total + newVal, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} + ${newVal}`),
-    mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
-    mk(correct - 2, 'OFF_BY_ONE_STEP', `${correct} − 2`)
+    // RC2-012: the key-minus-two nudge replaced by two slips a learner makes on
+    // the totals themselves.
+    mk((total + newVal) / (n + 2), 'FAILED_TO_UPDATE_COUNT', `(${total} + ${newVal}) ÷ ${n + 2}`),
+    mk((total - newVal) / (n + 1), 'SUBTRACTED_INSTEAD_OF_ADDED', `(${total} − ${newVal}) ÷ ${n + 1}`),
+    mk(newVal / (n + 1), 'MISSED_ONE_STAGE', `${newVal} ÷ ${n + 1}`)
   ]);
   return buildBase(ctx, {
     templateId: 'AVG_E_ADD',
@@ -83,13 +84,13 @@ function removeOne(ctx) {
     mk(removed, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة المحذوفة ${removed}`),
     mk(total / (n - 1), 'MISSED_ONE_STAGE', `${total} ÷ ${n - 1}`),
     mk(remain / n, 'FAILED_TO_UPDATE_COUNT', `${remain} ÷ ${n}`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
     mk((total + removed) / (n - 1), 'ADDED_INSTEAD_OF_SUBTRACTED', `(${total} + ${removed}) ÷ ${n - 1}`),
     mk(remain, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} − ${removed}`),
-    mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
-    mk(correct - 2, 'OFF_BY_ONE_STEP', `${correct} − 2`),
-    mk(remain / (n + 1), 'FAILED_TO_UPDATE_COUNT', `${remain} ÷ ${n + 1}`)
+    mk(remain / (n + 1), 'FAILED_TO_UPDATE_COUNT', `${remain} ÷ ${n + 1}`),
+    mk(removed / (n - 1), 'MISSED_ONE_STAGE', `${removed} ÷ ${n - 1}`),
+    mk((total - removed) / (n - 2), 'FAILED_TO_UPDATE_COUNT', `${remain} ÷ ${n - 2}`),
+    mk(remain / (n - 1) * 2, 'APPLIED_STEP_TWICE', `${remain} ÷ ${n - 1} × 2`),
+    mk(total - removed - avg, 'SUBTRACTED_INSTEAD_OF_ADDED', `${remain} − ${avg}`)
   ]);
   return buildBase(ctx, {
     templateId: 'AVG_E_REMOVE',
@@ -137,10 +138,11 @@ function replaceOne(ctx) {
     mk(avg + diff, 'ADDED_DIFFERENCE_TO_AVERAGE', `${avg} + (${newVal} − ${oldVal})`),
     mk(newVal, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة الجديدة ${newVal}`),
     mk(oldVal, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة القديمة ${oldVal}`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
     mk(newTotal / (n + 1), 'FAILED_TO_UPDATE_COUNT', `${newTotal} ÷ ${n + 1}`),
-    mk((total - diff) / n, 'SUBTRACTED_INSTEAD_OF_ADDED', `(${total} − ${diff}) ÷ ${n}`)
+    mk((total - diff) / n, 'SUBTRACTED_INSTEAD_OF_ADDED', `(${total} − ${diff}) ÷ ${n}`),
+    mk(newTotal / (n - 1), 'FAILED_TO_UPDATE_COUNT', `${newTotal} ÷ ${n - 1}`),
+    mk((total + newVal) / n, 'ADDED_INSTEAD_OF_SUBTRACTED', `(${total} + ${newVal}) ÷ ${n}`),
+    mk(avg - diff, 'SUBTRACTED_INSTEAD_OF_ADDED', `${avg} − (${newVal} − ${oldVal})`)
   ]);
   return buildBase(ctx, {
     templateId: 'AVG_M_REPLACE',
@@ -193,10 +195,11 @@ function combineGroups(ctx) {
     mk((a1 + a2) / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${a1} + ${a2}) ÷ 2`),
     mk(a1, 'USED_GIVEN_VALUE_AS_ANSWER', `متوسط المجموعة الأولى ${a1}`),
     mk(a2, 'USED_GIVEN_VALUE_AS_ANSWER', `متوسط المجموعة الثانية ${a2}`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
     mk(total / n1, 'FAILED_TO_UPDATE_COUNT', `${total} ÷ ${n1}`),
-    mk(total / n2, 'FAILED_TO_UPDATE_COUNT', `${total} ÷ ${n2}`)
+    mk(total / n2, 'FAILED_TO_UPDATE_COUNT', `${total} ÷ ${n2}`),
+    mk((n1 * a1 + n2 * a2) / (n1 * n2), 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${n1 * a1 + n2 * a2} ÷ (${n1} × ${n2})`),
+    mk((n2 * a1 + n1 * a2) / (n1 + n2), 'SWAPPED_RATE_AND_COUNT', `(${n2} × ${a1} + ${n1} × ${a2}) ÷ ${n1 + n2}`),
+    mk(a1 + a2, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${a1} + ${a2}`)
   ]);
   return buildBase(ctx, {
     templateId: 'AVG_M_COMBINE',
@@ -247,10 +250,15 @@ function addPairKnownAverage(ctx) {
     mk(avg, 'USED_OLD_AVERAGE', `المتوسط القديم ${avg}`),
     mk(pairAvg, 'USED_GIVEN_VALUE_AS_ANSWER', `متوسط القيمتين ${pairAvg}`),
     mk((avg + pairAvg) / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${avg} + ${pairAvg}) ÷ 2`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
     mk(total / n, 'FAILED_TO_UPDATE_COUNT', `${total} ÷ ${n}`),
-    mk((n * avg + pairAvg) / (n + 1), 'MISSED_ONE_STAGE', `(${n * avg} + ${pairAvg}) ÷ ${n + 1}`)
+    mk((n * avg + pairAvg) / (n + 1), 'MISSED_ONE_STAGE', `(${n * avg} + ${pairAvg}) ÷ ${n + 1}`),
+    // RC2-012: this template could not fill six options without padding. These
+    // four are the slips available on its own quantities.
+    mk((n * avg + 2 * pairAvg) / n, 'FAILED_TO_UPDATE_COUNT', `(${n * avg} + ${2 * pairAvg}) ÷ ${n}`),
+    mk((n * avg + 2 * pairAvg) / (n + 1), 'FAILED_TO_UPDATE_COUNT', `(${n * avg} + ${2 * pairAvg}) ÷ ${n + 1}`),
+    mk((n * avg + 2 * pairAvg) / (n + 3), 'FAILED_TO_UPDATE_COUNT', `(${n * avg} + ${2 * pairAvg}) ÷ ${n + 3}`),
+    mk(n * avg + 2 * pairAvg, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${n * avg} + ${2 * pairAvg}`),
+    mk(2 * pairAvg, 'STOPPED_AT_INTERMEDIATE_TOTAL', `مجموع القيمتين ${2 * pairAvg}`)
   ]);
   return buildBase(ctx, {
     templateId: 'AVG_M_ADD_PAIR',
@@ -304,13 +312,14 @@ function combineThenAdd(ctx) {
     mk((a1 + a2) / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${a1} + ${a2}) ÷ 2`),
     mk((n1 * a1 + n2 * a2) / (n1 + n2), 'STOPPED_AFTER_FIRST_STAGE', `${n1 * a1 + n2 * a2} ÷ ${n1 + n2}`),
     mk(extra, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة المضافة ${extra}`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
     mk(total / (n1 + n2), 'FAILED_TO_UPDATE_COUNT', `${total} ÷ ${n1 + n2}`),
     mk(a2, 'USED_GIVEN_VALUE_AS_ANSWER', `متوسط المجموعة الثانية ${a2}`),
     mk(a1, 'USED_GIVEN_VALUE_AS_ANSWER', `متوسط المجموعة الأولى ${a1}`),
     mk(total / n1, 'FAILED_TO_UPDATE_COUNT', `${total} ÷ ${n1}`),
-    mk((n1 * a1 + n2 * a2 + extra) / (n1 + n2 + 2), 'OFF_BY_ONE_STEP', `${total} ÷ ${n1 + n2 + 2}`)
+    mk((n1 * a1 + n2 * a2 + extra) / (n1 + n2 + 2), 'FAILED_TO_UPDATE_COUNT', `${total} ÷ ${n1 + n2 + 2}`),
+    mk(total / n2, 'FAILED_TO_UPDATE_COUNT', `${total} ÷ ${n2}`),
+    mk(total, 'STOPPED_AT_INTERMEDIATE_TOTAL', `المجموع الكلي ${total}`),
+    mk((n1 * a1 + n2 * a2) / (n1 + n2 + 1), 'MISSED_ONE_STAGE', `${n1 * a1 + n2 * a2} ÷ ${n1 + n2 + 1}`)
   ]);
   return buildBase(ctx, {
     templateId: 'AVG_H_COMB_ADD',
@@ -362,9 +371,10 @@ function missingValueForTarget(ctx) {
     mk(oldAvg, 'USED_OLD_AVERAGE', `المتوسط القديم ${oldAvg}`),
     mk(target - oldAvg, 'USED_AGE_DIFFERENCE_AS_ANSWER', `${target} − ${oldAvg}`),
     mk(n * target - current, 'FAILED_TO_UPDATE_COUNT', `${n} × ${target} − ${current}`),
-    mk(correct + 5, 'OFF_BY_ONE_STEP', `${correct} + 5`),
-    mk(Math.max(1, correct - 5), 'OFF_BY_ONE_STEP', `${correct} − 5`),
-    mk((n + 1) * target, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${n + 1} × ${target}`)
+    mk((n + 1) * target, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${n + 1} × ${target}`),
+    mk(current, 'STOPPED_AT_INTERMEDIATE_TOTAL', `مجموع القيم الحالية ${current}`),
+    mk((n + 2) * target - current, 'FAILED_TO_UPDATE_COUNT', `${n + 2} × ${target} − ${current}`),
+    mk(n * (target - oldAvg), 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${n} × (${target} − ${oldAvg})`)
   ]);
   return buildBase(ctx, {
     templateId: 'AVG_H_TARGET',

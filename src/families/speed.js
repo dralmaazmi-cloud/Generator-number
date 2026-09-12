@@ -22,13 +22,18 @@ function simpleTime(ctx) {
     mk(distance / speed + 1, 'OFF_BY_ONE_STEP', `${distance} ÷ ${speed} + 1`),
     mk(distance / (speed + 10), 'RATE_APPLIED_TO_WRONG_COUNT', `${distance} ÷ (${speed} + 10)`),
     mk(distance / (speed - 10), 'RATE_APPLIED_TO_WRONG_COUNT', `${distance} ÷ (${speed} − 10)`),
-    mk(hours + 0.5, 'OFF_BY_ONE_STEP', `${num(hours)} + 0.5`),
-    mk(Math.max(0.5, hours - 0.5), 'OFF_BY_ONE_STEP', `${num(hours)} − 0.5`),
+    // RC2-012: two interchangeable nudges replaced by a slip built from the
+    // numbers on the page — reading the speed five too high.
+    mk(distance / (speed + 5), 'MISREAD_THE_STEP', `${distance} ÷ (${speed} + 5)`, 2),
     mk(speed / distance, 'INVERTED_SPEED_TIME', `${speed} ÷ ${distance}`),
-    mk(hours * 2, 'APPLIED_STEP_TWICE', `${num(hours)} × 2`),
-    mk(hours / 2, 'HALF_DISTANCE_AS_ANSWER', `${distance} ÷ 2 ÷ ${speed}`),
-    mk(hours + 2, 'OFF_BY_ONE_STEP', `${num(hours)} + 2`),
-    mk(distance / (speed / 2), 'RATE_APPLIED_TO_WRONG_COUNT', `${distance} ÷ (${speed} ÷ 2)`)
+    mk(distance * 2 / speed, 'APPLIED_STEP_TWICE', `${distance} × 2 ÷ ${speed}`, 2),
+    mk(distance / speed / 2, 'HALF_DISTANCE_AS_ANSWER', `${distance} ÷ ${speed} ÷ 2`, 2),
+    mk(distance / (speed / 2), 'RATE_APPLIED_TO_WRONG_COUNT', `${distance} ÷ (${speed} ÷ 2)`),
+    // RC2-012: deepened so six options can be filled from real slips alone.
+    mk(distance / (speed - 5), 'MISREAD_THE_STEP', `${distance} ÷ (${speed} − 5)`, 2),
+    mk((distance + 10) / speed, 'MISREAD_THE_STEP', `(${distance} + 10) ÷ ${speed}`, 2),
+    mk(distance / (speed * 2), 'RATE_APPLIED_TO_WRONG_COUNT', `${distance} ÷ (${speed} × 2)`, 2),
+    mk(distance - speed, 'SUBTRACTED_INSTEAD_OF_ADDED', `${distance} − ${speed}`, 2)
   ]);
   return buildBase(ctx, {
     templateId: 'SPD_E_TIME',
@@ -67,9 +72,10 @@ function simpleDistance(ctx) {
     mk(speed * (hours + 1), 'OFF_BY_ONE_STEP', `${speed} × (${num(hours)} + 1)`),
     mk(speed * Math.max(0.5, hours - 0.5), 'OFF_BY_ONE_STEP', `${speed} × (${num(hours)} − 0.5)`),
     mk(speed / hours, 'INVERTED_SPEED_TIME', `${speed} ÷ ${num(hours)}`),
-    mk(correct + speed / 2, 'OFF_BY_ONE_STEP', `${correct} + ${num(speed / 2)}`),
-    mk(correct / 2, 'HALF_DISTANCE_AS_ANSWER', `${correct} ÷ 2`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`)
+    mk(speed * hours * 2, 'APPLIED_STEP_TWICE', `${speed} × ${num(hours)} × 2`, 2),
+    mk(speed * (hours + 1), 'MISREAD_THE_STEP', `${speed} × (${num(hours)} + 1)`, 2),
+    mk((speed + 10) * hours, 'MISREAD_THE_STEP', `(${speed} + 10) × ${num(hours)}`, 2),
+    mk(hours / speed, 'INVERTED_SPEED_TIME', `${num(hours)} ÷ ${speed}`)
   ]);
   return buildBase(ctx, {
     templateId: 'SPD_E_DISTANCE',
@@ -110,12 +116,13 @@ function twoStageTime(ctx) {
     mk(t2 * 60, 'USED_ONE_STAGE_TIME', `${num(t2)} × 60`),
     mk((d1 + d2) / s1 * 60, 'USED_ONLY_FIRST_RATE', `(${d1} + ${d2}) ÷ ${s1} × 60`),
     mk((d1 + d2) / s2 * 60, 'USED_ONLY_SECOND_RATE', `(${d1} + ${d2}) ÷ ${s2} × 60`),
-    mk(correct + 30, 'OFF_BY_ONE_STEP', `${correct} + 30`),
-    mk(correct - 30, 'OFF_BY_ONE_STEP', `${correct} − 30`),
     mk(t1 + t2, 'MISSED_ONE_STAGE', `${num(t1)} + ${num(t2)}`),
     mk((d1 + d2) / ((s1 + s2) / 2) * 60, 'USED_ARITHMETIC_MEAN_OF_SPEEDS', `(${d1} + ${d2}) ÷ ((${s1} + ${s2}) ÷ 2) × 60`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
-    mk(correct + 60, 'OFF_BY_ONE_STEP', `${correct} + 60`)
+    mk((d1 + d2) / Math.min(s1, s2) * 60, 'USED_ONLY_FIRST_RATE', `(${d1} + ${d2}) ÷ ${Math.min(s1, s2)} × 60`),
+    mk((d1 + d2) / Math.max(s1, s2) * 60, 'USED_ONLY_SECOND_RATE', `(${d1} + ${d2}) ÷ ${Math.max(s1, s2)} × 60`),
+    mk(d1 / s2 * 60 + d2 / s1 * 60, 'SWAPPED_RATE_AND_COUNT', `${d1} ÷ ${s2} × 60 + ${d2} ÷ ${s1} × 60`),
+    mk((d1 / s1 + d2 / s2), 'MISSED_ONE_STAGE', `${d1} ÷ ${s1} + ${d2} ÷ ${s2} بالساعات`),
+    mk((d1 + d2) / (s1 + s2) * 60, 'STOPPED_AT_UNIT_RATE', `(${d1} + ${d2}) ÷ (${s1} + ${s2}) × 60`)
   ]);
   return buildBase(ctx, {
     templateId: 'SPD_M_TWO_TIME',
@@ -173,12 +180,8 @@ function averageSpeedUnequalTime(ctx) {
     mk(s2, 'USED_ONLY_SECOND_RATE', `السرعة الثانية ${s2}`),
     mk((d1 + d2) / t1, 'USED_ONE_STAGE_TIME', `(${d1} + ${d2}) ÷ ${num(t1)}`),
     mk((d1 + d2) / t2, 'USED_ONE_STAGE_TIME', `(${d1} + ${d2}) ÷ ${num(t2)}`),
-    mk(correct + 5, 'OFF_BY_ONE_STEP', `${correct} + 5`),
-    mk(correct - 5, 'OFF_BY_ONE_STEP', `${correct} − 5`),
-    mk(d1 + d2, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${d1} + ${d2}`),
-    mk(correct + 10, 'OFF_BY_ONE_STEP', `${correct} + 10`),
-    mk(correct - 10, 'OFF_BY_ONE_STEP', `${correct} − 10`),
-    mk((d1 + d2) / (t1 + t2) / 2, 'HALF_DISTANCE_AS_ANSWER', `${correct} ÷ 2`)
+    mk(d1 + d2, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${d1} + ${d2}`, 3),
+    mk((d1 + d2) / (t1 + t2) / 2, 'HALF_DISTANCE_AS_ANSWER', `(${d1} + ${d2}) ÷ (${num(t1)} + ${num(t2)}) ÷ 2`)
   ]);
   return buildBase(ctx, {
     templateId: 'SPD_M_AVG',
@@ -228,8 +231,6 @@ function equalDistanceTotalTime(ctx) {
     mk(s1 * total, 'USED_ONLY_FIRST_RATE', `${s1} × ${num(total)}`),
     mk(s2 * total, 'USED_ONLY_SECOND_RATE', `${s2} × ${num(total)}`),
     mk(half, 'HALF_DISTANCE_AS_ANSWER', `نصف المسافة ${half}`),
-    mk(correct + 60, 'OFF_BY_ONE_STEP', `${correct} + 60`),
-    mk(correct - 60, 'OFF_BY_ONE_STEP', `${correct} − 60`),
     // RC2-013: this stem is one car over two halves of a journey. There is no
     // chase in it, so the chase sentence cannot be the explanation.
     mk((s1 + s2) * total, 'SUMMED_SPEEDS_OVER_WHOLE_JOURNEY', `(${s1} + ${s2}) × ${num(total)}`)
@@ -281,16 +282,18 @@ function meetingDelayed(ctx) {
     mk(total / (sA + sB), 'USED_TOTAL_DISTANCE_WITHOUT_DELAY', `${total} ÷ (${sA} + ${sB})`),
     mk(remaining / sB, 'DIVIDED_BY_ONE_SPEED', `${remaining} ÷ ${sB}`),
     mk(remaining / sA, 'DIVIDED_BY_ONE_SPEED', `${remaining} ÷ ${sA}`),
-    mk(correct + 0.5, 'OFF_BY_ONE_STEP', `${num(correct)} + 0.5`),
-    mk(Math.max(0.5, correct - 0.5), 'OFF_BY_ONE_STEP', `${num(correct)} − 0.5`),
+    // RC2-012: the interchangeable nudges are replaced by slips built from the
+    // remaining gap and the two speeds.
+    mk(remaining / (sA + sB + 10), 'MISREAD_THE_STEP', `${num(remaining)} ÷ (${sA} + ${sB} + 10)`, 3),
     mk(delay + correct, 'ADDED_DELAY_TO_ANSWER', `${num(delay)} + ${num(correct)}`),
     mk(remaining / Math.abs(sB - sA), 'USED_DIFFERENCE_OF_SPEEDS_IN_MEETING', `${remaining} ÷ |${sB} − ${sA}|`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${num(correct)} + 1`),
-    mk(Math.max(0.5, correct - 1), 'OFF_BY_ONE_STEP', `${num(correct)} − 1`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${num(correct)} × 2`),
+    mk(remaining * 2 / (sA + sB), 'APPLIED_STEP_TWICE', `${num(remaining)} × 2 ÷ ${sA + sB}`, 4),
     mk(total / sA - delay, 'DIVIDED_BY_ONE_SPEED', `${total} ÷ ${sA} − ${num(delay)}`),
     mk(remaining / (sA + sB + sA), 'RATE_APPLIED_TO_WRONG_COUNT', `${num(remaining)} ÷ (${sA} + ${sB} + ${sA})`),
-    mk(Math.max(0.5, correct - 1.5), 'OFF_BY_ONE_STEP', `${num(correct)} − 1.5`)
+    mk(remaining / (sA + sB) / 2, 'HALF_DISTANCE_AS_ANSWER', `${num(remaining)} ÷ ${sA + sB} ÷ 2`, 4),
+    mk(total / (sA + sB), 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} ÷ ${sA + sB}`),
+    mk(remaining / sB, 'USED_ONLY_SECOND_RATE', `${num(remaining)} ÷ ${sB}`),
+    mk(remaining / sA, 'USED_ONLY_FIRST_RATE', `${num(remaining)} ÷ ${sA}`)
   ]);
   return buildBase(ctx, {
     templateId: 'SPD_H_MEET_DELAY',
@@ -339,12 +342,14 @@ function catchupDelayed(ctx) {
     mk(lead / sA, 'DIVIDED_BY_ONE_SPEED', `${num(lead)} ÷ ${sA}`),
     mk(lead / (sA + sB), 'USED_SUM_OF_SPEEDS_IN_CHASE', `${num(lead)} ÷ (${sA} + ${sB})`),
     mk(delay + correct, 'ADDED_DELAY_TO_ANSWER', `${num(delay)} + ${num(correct)}`),
-    mk(correct + 0.5, 'OFF_BY_ONE_STEP', `${num(correct)} + 0.5`),
-    mk(Math.max(0.5, correct - 0.5), 'OFF_BY_ONE_STEP', `${num(correct)} − 0.5`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${num(correct)} × 2`),
+    // RC2-012: built from the head start and the closing speed instead of from
+    // the answer.
+    mk(lead / (sB - sA + 10), 'MISREAD_THE_STEP', `${num(lead)} ÷ (${sB} − ${sA} + 10)`, 2),
+    mk(lead * 2 / (sB - sA), 'APPLIED_STEP_TWICE', `${num(lead)} × 2 ÷ ${sB - sA}`, 2),
     mk(delay, 'USED_GIVEN_VALUE_AS_ANSWER', `مدة التأخير ${num(delay)}`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${num(correct)} + 1`),
-    mk(Math.max(0.5, correct - 1), 'OFF_BY_ONE_STEP', `${num(correct)} − 1`),
+    mk(lead / (sB - sA) / 2, 'HALF_DISTANCE_AS_ANSWER', `${num(lead)} ÷ ${sB - sA} ÷ 2`, 2),
+    mk(sB * delay / (sB - sA), 'RATE_APPLIED_TO_WRONG_COUNT', `${sB} × ${num(delay)} ÷ ${sB - sA}`),
+    mk(lead / sB * 2, 'APPLIED_STEP_TWICE', `${num(lead)} ÷ ${sB} × 2`),
     mk((sB - sA) / sA * delay, 'INVERTED_SPEED_TIME', `(${sB} − ${sA}) ÷ ${sA} × ${num(delay)}`),
     mk(lead, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${sA} × ${num(delay)}`),
     mk(sB * delay / (sB - sA), 'RATE_APPLIED_TO_WRONG_COUNT', `${sB} × ${num(delay)} ÷ (${sB} − ${sA})`),
@@ -398,14 +403,15 @@ function sameDistanceTimeDifference(ctx) {
     mk(s1 * diff, 'USED_ONE_SPEED_WITH_TIME_GAP', `${s1} × ${num(diff)}`),
     mk(s2 * diff, 'USED_ONE_SPEED_WITH_TIME_GAP', `${s2} × ${num(diff)}`),
     mk((s1 + s2) * diff, 'USED_SUM_WHERE_DIFFERENCE_BELONGS', `(${s1} + ${s2}) × ${num(diff)}`),
-    mk(correct + 60, 'OFF_BY_ONE_STEP', `${correct} + 60`),
-    mk(correct - 60, 'OFF_BY_ONE_STEP', `${correct} − 60`),
-    mk(correct / 2, 'HALF_DISTANCE_AS_ANSWER', `${correct} ÷ 2`),
     mk((s2 - s1) * diff, 'USED_SPEED_DIFFERENCE_WITH_TIME_GAP', `(${s2} − ${s1}) × ${num(diff)}`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
-    mk(correct + 120, 'OFF_BY_ONE_STEP', `${correct} + 120`),
-    mk(Math.max(30, correct - 120), 'OFF_BY_ONE_STEP', `${correct} − 120`),
-    mk(s1 * s2 * diff / (s1 + s2), 'USED_SUM_WHERE_DIFFERENCE_BELONGS', `${s1} × ${s2} × ${num(diff)} ÷ (${s1} + ${s2})`)
+    mk(s1 * s2 * diff / (s1 + s2), 'USED_SUM_WHERE_DIFFERENCE_BELONGS', `${s1} × ${s2} × ${num(diff)} ÷ (${s1} + ${s2})`),
+    // RC2-012: deepened; this template threw away more than half its draws once
+    // the key-neighbour padding was removed.
+    mk(s1 * s2 / (s2 - s1), 'STOPPED_AT_UNIT_RATE', `${s1} × ${s2} ÷ (${s2} − ${s1})`),
+    mk(s1 * s2 * diff / (s2 - s1) / 2, 'HALF_DISTANCE_AS_ANSWER', `${s1} × ${s2} × ${num(diff)} ÷ (${s2} − ${s1}) ÷ 2`),
+    mk(s1 * s2 * diff / (s2 - s1) * 2, 'APPLIED_STEP_TWICE', `${s1} × ${s2} × ${num(diff)} ÷ (${s2} − ${s1}) × 2`),
+    mk((s1 + s2) * diff / 2, 'USED_ARITHMETIC_MEAN_OF_SPEEDS', `(${s1} + ${s2}) × ${num(diff)} ÷ 2`),
+    mk(diff * s1 * s2, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${num(diff)} × ${s1} × ${s2}`)
   ]);
   return buildBase(ctx, {
     templateId: 'SPD_H_TIME_DIFF',

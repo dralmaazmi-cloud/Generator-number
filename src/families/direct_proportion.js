@@ -198,8 +198,10 @@ function unitItems(ctx) {
     mk(targetAmount / boxes, 'REVERSED_DIRECT_PROPORTION', `${targetAmount} ÷ ${boxes}`),
     mk(boxes + (targetAmount - total), 'ADDED_INSTEAD_OF_SCALING', `${boxes} + (${targetAmount} − ${total})`),
     mk(targetAmount * boxes / total * 2, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `(${targetAmount} × ${boxes} ÷ ${total}) × 2`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`)
+    // RC2-012: the key-plus-one is replaced by slips on the given amounts.
+    mk(targetAmount / total, 'STOPPED_AFTER_FIRST_STAGE', `${targetAmount} ÷ ${total}`),
+    mk(targetAmount / per / 2, 'HALF_DISTANCE_AS_ANSWER', `${targetAmount} ÷ ${per} ÷ 2`),
+    mk((targetAmount - total) / per, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `(${targetAmount} − ${total}) ÷ ${per}`)
   ]);
   return buildBase(ctx, {
     templateId: 'PROP_E_ITEMS',
@@ -303,11 +305,11 @@ function unitCostReverse(ctx, n, unitPrice, total, targetCount) {
     mk(unitPrice, 'STOPPED_AT_UNIT_RATE', `${total} ÷ ${n}`),
     mk(budget / n, 'REVERSED_DIRECT_PROPORTION', `${budget} ÷ ${n}`),
     mk(budget / total * n * n, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${budget} ÷ ${total} × ${n} × ${n}`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
     mk(n + correct, 'USED_ORIGINAL_TOTAL', `${n} + ${correct}`),
-    mk((budget - total) / unitPrice, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `(${budget} − ${total}) ÷ ${unitPrice}`)
+    mk((budget - total) / unitPrice, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `(${budget} − ${total}) ÷ ${unitPrice}`),
+    mk(budget / unitPrice / 2, 'HALF_DISTANCE_AS_ANSWER', `${budget} ÷ ${unitPrice} ÷ 2`),
+    mk(budget / total, 'STOPPED_AFTER_FIRST_STAGE', `${budget} ÷ ${total}`),
+    mk(budget / unitPrice * 2, 'APPLIED_STEP_TWICE', `${budget} ÷ ${unitPrice} × 2`)
   ]);
   return buildBase(ctx, {
     templateId: 'PROP_E_COST',
@@ -413,7 +415,9 @@ function recipeScaleReverse(ctx, pieces, cups, factor) {
     mk(pieces + pieces * factor, 'USED_ORIGINAL_TOTAL', `${pieces} + ${pieces} × ${factor}`),
     mk(pieces * (factor - 1), 'OFF_BY_ONE_STEP', `${pieces} × (${factor} − 1)`),
     mk(pieces * (factor + 1), 'OFF_BY_ONE_STEP', `${pieces} × (${factor} + 1)`),
-    mk(availableCups * cups, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${availableCups} × ${cups}`)
+    mk(availableCups * cups, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${availableCups} × ${cups}`),
+    mk(pieces * availableCups, 'RATE_APPLIED_TO_WRONG_COUNT', `${pieces} × ${availableCups}`),
+    mk(pieces / factor, 'REVERSED_DIRECT_PROPORTION', `${pieces} ÷ ${factor}`)
   ]);
   return buildBase(ctx, {
     templateId: 'PROP_M_RECIPE',
@@ -535,7 +539,9 @@ function fractionalUnit(ctx) {
     mk(targetCount * totalKg, 'RATE_APPLIED_TO_WRONG_COUNT', `${targetCount} × ${totalKg}`),
     mk(unitNum * (targetCount - 1), 'OFF_BY_ONE_STEP', `${unitNum} × (${targetCount} − 1)`),
     mk(totalKg + unitNum * targetCount, 'USED_ORIGINAL_TOTAL', `${totalKg} + ${unitNum} × ${targetCount}`),
-    mk(unitNum * (n + targetCount), 'RATE_APPLIED_TO_WRONG_COUNT', `${unitNum} × (${n} + ${targetCount})`)
+    mk(unitNum * (n + targetCount), 'RATE_APPLIED_TO_WRONG_COUNT', `${unitNum} × (${n} + ${targetCount})`),
+    mk(unitNum * targetCount * 2, 'APPLIED_STEP_TWICE', `${unitNum} × ${targetCount} × 2`),
+    mk(totalKg / targetCount, 'REVERSED_DIRECT_PROPORTION', `${totalKg} ÷ ${targetCount}`)
   ]);
   return buildBase(ctx, {
     templateId: 'PROP_M_FRAC_UNIT',

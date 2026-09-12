@@ -88,13 +88,13 @@ export function makeOptionSet({
 
   for (const d of distractors || []) {
     if (!d || typeof d !== 'object' || !('value' in d)) continue;
-    const {value, misconceptionId, derivation} = d;
+    const {value, misconceptionId, derivation, reasoningStepAffected = null} = d;
     if (!isKnownMisconception(misconceptionId)) continue;        // no provenance, no option
     if (typeof value === 'number' && !Number.isFinite(value)) continue;
     const formatted = format(value);
     if (formatted === correctFormatted || seenFormatted.has(formatted)) continue;
     seenFormatted.add(formatted);
-    pool.push({value, formatted, misconceptionId, derivation: derivation || null});
+    pool.push({value, formatted, misconceptionId, derivation: derivation || null, reasoningStepAffected});
   }
 
   if (pool.length < 5) {
@@ -121,7 +121,7 @@ export function makeOptionSet({
     if (letter === correctLetter) {
       options[letter] = correctFormatted;
       distractorAnalysis[letter] = CORRECT_FEEDBACK;
-      optionsMeta[letter] = {correct: true, value: correct, misconceptionId: null, derivation: null};
+      optionsMeta[letter] = {correct: true, value: correct, misconceptionId: null, derivation: null, reasoningStepAffected: null};
     } else {
       const item = shuffledWrong[wi++];
       options[letter] = item.formatted;
@@ -130,7 +130,8 @@ export function makeOptionSet({
         misconceptionId: item.misconceptionId,
         derivation: item.derivation
       });
-      optionsMeta[letter] = {correct: false, value: item.value, misconceptionId: item.misconceptionId, derivation: item.derivation};
+      // RC2-012: which step of the published solution this error corrupts.
+      optionsMeta[letter] = {correct: false, value: item.value, misconceptionId: item.misconceptionId, derivation: item.derivation, reasoningStepAffected: item.reasoningStepAffected};
     }
   }
   // RC2-001 / OBSERVE_NEVER_TARGET. Both figures below are computed *after* the

@@ -36,17 +36,16 @@ function splitTotal(ctx) {
     mk(other * k, 'USED_WRONG_SIDE_OF_RATIO', `${other} × ${k}`),
     mk(k, 'USED_PART_VALUE_AS_ANSWER', `${total} ÷ (${a} + ${b})`),
     mk(total - correct, 'USED_WRONG_SIDE_OF_RATIO', `${total} − ${correct}`),
-    mk(total / (a + b) * (mine + 1), 'OFF_BY_ONE_STEP', `${k} × (${mine} + 1)`),
-    mk(total / (a + b) * Math.max(1, mine - 1), 'OFF_BY_ONE_STEP', `${k} × (${mine} − 1)`),
+    mk(total / (a + b) * (mine + 1), 'RATE_APPLIED_TO_WRONG_COUNT', `${k} × (${mine} + 1)`),
+    mk(total / (a + b) * Math.max(1, mine - 1), 'MISSED_ONE_STAGE', `${k} × (${mine} − 1)`),
     mk(total / mine, 'REVERSED_DIRECT_PROPORTION', `${total} ÷ ${mine}`),
     mk(total, 'USED_ORIGINAL_TOTAL', `المجموع المعطى ${total}`),
-    mk(correct + k, 'OFF_BY_ONE_STEP', `${correct} + ${k}`),
-    mk(correct - k, 'OFF_BY_ONE_STEP', `${correct} − ${k}`),
     mk(mine * other, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${mine} × ${other}`),
     mk(total / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `${total} ÷ 2`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
     mk(total / other, 'REVERSED_DIRECT_PROPORTION', `${total} ÷ ${other}`),
-    mk(a * b * k, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${a} × ${b} × ${k}`)
+    mk(a * b * k, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${a} × ${b} × ${k}`),
+    mk(total * mine / other, 'REVERSED_DIRECT_PROPORTION', `${total} × ${mine} ÷ ${other}`),
+    mk(k * mine * 2, 'APPLIED_STEP_TWICE', `${k} × ${mine} × 2`)
   ]);
   return buildBase(ctx, {
     templateId: 'RAT_E_SPLIT',
@@ -90,14 +89,9 @@ function scaleKnown(ctx) {
     mk(k, 'USED_PART_VALUE_AS_ANSWER', `${given} ÷ ${givenParts}`),
     mk((a + b) * k, 'USED_SUM_OF_PARTS', `(${a} + ${b}) × ${k}`),
     mk(given * givenParts / wantedParts, 'REVERSED_DIRECT_PROPORTION', `${given} × ${givenParts} ÷ ${wantedParts}`),
-    mk(correct + k, 'OFF_BY_ONE_STEP', `${correct} + ${k}`),
-    mk(correct - k, 'OFF_BY_ONE_STEP', `${correct} − ${k}`),
     mk(Math.abs(b - a) * k, 'SUBTRACTED_INSTEAD_OF_ADDED', `|${b} − ${a}| × ${k}`),
     mk(given + wantedParts, 'ADDED_INSTEAD_OF_SCALING', `${given} + ${wantedParts}`),
     mk(given * wantedParts, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${given} × ${wantedParts}`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
     mk(given - wantedParts, 'SUBTRACTED_INSTEAD_OF_ADDED', `${given} − ${wantedParts}`)
   ]);
   return buildBase(ctx, {
@@ -151,15 +145,12 @@ function commonTermSum(ctx) {
   if (A === C) return resample(ctx, commonTermSum);
   const params = {firstA: a, firstB: b, secondB: c, secondC: d, sumAC: given};
   const distractors = usable(ctx, [
-    mk(A * k, 'USED_WRONG_SIDE_OF_RATIO', `${A} × ${k}`),
-    mk(C * k, 'USED_WRONG_SIDE_OF_RATIO', `${C} × ${k}`),
+    mk(A * k, 'USED_WRONG_SIDE_OF_RATIO', `${A} × ${k}`, 3),
+    mk(C * k, 'USED_WRONG_SIDE_OF_RATIO', `${C} × ${k}`, 3),
     mk((A + B + C) * k, 'USED_SUM_OF_PARTS', `(${A} + ${B} + ${C}) × ${k}`),
     mk(k, 'USED_PART_VALUE_AS_ANSWER', `${given} ÷ ${A + C}`),
     mk(given, 'USED_GIVEN_VALUE_AS_ANSWER', `المجموع المعطى ${given}`),
-    mk(correct + k, 'OFF_BY_ONE_STEP', `${correct} + ${k}`),
-    mk(correct - k, 'OFF_BY_ONE_STEP', `${correct} − ${k}`),
     mk(given * b / (a + b), 'MISSED_ONE_STAGE', `${given} × ${b} ÷ (${a} + ${b})`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
     mk((A + B + C) * k + given, 'USED_ORIGINAL_TOTAL', `(${A} + ${B} + ${C}) × ${k} + ${given}`)
   ]);
   return buildBase(ctx, {
@@ -213,16 +204,13 @@ function commonTermDifference(ctx) {
   const correct = (A + B + C) * k;
   const params = {firstA: a, firstB: b, secondB: c, secondC: d, differenceAC: given};
   const distractors = usable(ctx, [
-    mk(B * k, 'USED_WRONG_SIDE_OF_RATIO', `${B} × ${k}`),
+    mk(B * k, 'USED_WRONG_SIDE_OF_RATIO', `${B} × ${k}`, 3),
     mk((A + C) * k, 'MISSED_ONE_STAGE', `(${A} + ${C}) × ${k}`),
     mk((A + B) * k, 'MISSED_ONE_STAGE', `(${A} + ${B}) × ${k}`),
     mk((B + C) * k, 'MISSED_ONE_STAGE', `(${B} + ${C}) × ${k}`),
-    mk(correct - k, 'OFF_BY_ONE_STEP', `${correct} − ${k}`),
-    mk(correct + k, 'OFF_BY_ONE_STEP', `${correct} + ${k}`),
     mk(given, 'USED_GIVEN_VALUE_AS_ANSWER', `الفرق المعطى ${given}`),
     mk(k, 'USED_PART_VALUE_AS_ANSWER', `${given} ÷ ${diffParts}`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
-    mk(correct + given, 'USED_ORIGINAL_TOTAL', `${correct} + ${given}`)
+    mk((A + B + C) * k, 'USED_SUM_OF_PARTS', `(${A} + ${B} + ${C}) × ${k}`)
   ]);
   return buildBase(ctx, {
     templateId: 'RAT_M_COMMON_DIFF',
@@ -281,15 +269,13 @@ function addToOneSide(ctx) {
     mk(A, 'USED_WRONG_SIDE_OF_RATIO', `${p} × ${k}`),
     mk(newB, 'USED_POST_ADDITION_VALUE', `${r} × ${k}`),
     mk(A + newB, 'USED_NEW_TOTAL', `${A} + ${newB}`),
-    mk(correct + addUnits, 'ADDED_INSTEAD_OF_SUBTRACTED', `${correct} + ${addUnits}`),
-    mk(correct - addUnits, 'SUBTRACTED_INSTEAD_OF_ADDED', `${correct} − ${addUnits}`),
     mk(B, 'USED_WRONG_SIDE_OF_RATIO', `${q} × ${k}`),
     mk(k, 'USED_PART_VALUE_AS_ANSWER', `${crossRightC} ÷ ${coefficient}`),
     mk(addUnits, 'USED_GIVEN_VALUE_AS_ANSWER', `الكمية المضافة ${addUnits}`),
     mk(A - B, 'SUBTRACTED_INSTEAD_OF_ADDED', `${A} − ${B}`),
     mk((p + q) * (k + 1), 'OFF_BY_ONE_STEP', `(${p} + ${q}) × (${k} + 1)`),
     mk((p + q) * (k - 1), 'OFF_BY_ONE_STEP', `(${p} + ${q}) × (${k} − 1)`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`)
+    mk((p + q) * k * 2, 'APPLIED_STEP_TWICE', `(${p} + ${q}) × ${k} × 2`)
   ]);
   return buildBase(ctx, {
     templateId: 'RAT_M_ADD_SIDE',
@@ -357,15 +343,15 @@ function transferBetweenSides(ctx) {
   const params = {partA: p, partB: q, transferred: x, newPartA: nrA, newPartB: nrB};
   const distractors = usable(ctx, [
     mk(askA ? B : A, 'USED_WRONG_SIDE_OF_RATIO', `الطرف الآخر ${askA ? B : A}`),
-    mk(askA ? A - x : B + x, 'USED_POST_TRANSFER_VALUE', `${askA ? `${A} − ${x}` : `${B} + ${x}`}`),
-    mk(askA ? A + x : B - x, 'USED_PRE_TRANSFER_VALUE', `${askA ? `${A} + ${x}` : `${B} − ${x}`}`),
-    mk(A + B, 'USED_SUM_OF_PARTS', `${A} + ${B}`),
+    // RC2-012: the value after the transfer and the value before it are the two
+    // errors this template exists to catch, and each necessarily sits one
+    // transfer away from the value asked for, so each names the step it follows.
+    mk(askA ? A - x : B + x, 'USED_POST_TRANSFER_VALUE', `${askA ? `${A} − ${x}` : `${B} + ${x}`}`, 4),
+    mk(askA ? A + x : B - x, 'USED_PRE_TRANSFER_VALUE', `${askA ? `${A} + ${x}` : `${B} − ${x}`}`, 4),
+    mk(A + B, 'USED_SUM_OF_PARTS', `${A} + ${B}`, 4),
     mk(k, 'USED_PART_VALUE_AS_ANSWER', `قيمة الجزء ${k}`),
-    mk(correct + k, 'OFF_BY_ONE_STEP', `${correct} + ${k}`),
-    mk(correct - k, 'OFF_BY_ONE_STEP', `${correct} − ${k}`),
     mk((askA ? nrA : nrB) * k, 'USED_POST_TRANSFER_VALUE', `${askA ? nrA : nrB} × ${k}`),
     mk(x, 'USED_GIVEN_VALUE_AS_ANSWER', `الكمية المنقولة ${x}`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
     mk((askA ? p : q) * (k + 1), 'OFF_BY_ONE_STEP', `${askA ? p : q} × (${k} + 1)`),
     mk((askA ? p : q) * (k - 1), 'OFF_BY_ONE_STEP', `${askA ? p : q} × (${k} − 1)`),
     mk(A + B - x, 'USED_POST_TRANSFER_VALUE', `${A + B} − ${x}`)
@@ -419,14 +405,17 @@ function twoRatiosExternalSum(ctx) {
   const correct = C * k;
   const params = {firstA: a, firstB: b, secondB: c, secondC: d, sumAB: given};
   const distractors = usable(ctx, [
-    mk(A * k, 'USED_WRONG_SIDE_OF_RATIO', `${A} × ${k}`),
-    mk(B * k, 'USED_WRONG_SIDE_OF_RATIO', `${B} × ${k}`),
+    mk(A * k, 'USED_WRONG_SIDE_OF_RATIO', `${A} × ${k}`, 3),
+    mk(B * k, 'USED_WRONG_SIDE_OF_RATIO', `${B} × ${k}`, 3),
     mk((A + C) * k, 'MISSED_ONE_STAGE', `(${A} + ${C}) × ${k}`),
     mk((B + C) * k, 'MISSED_ONE_STAGE', `(${B} + ${C}) × ${k}`),
     mk((A + B + C) * k, 'USED_SUM_OF_PARTS', `(${A} + ${B} + ${C}) × ${k}`),
-    mk(correct + k, 'OFF_BY_ONE_STEP', `${correct} + ${k}`),
-    mk(correct - k, 'OFF_BY_ONE_STEP', `${correct} − ${k}`),
-    mk(k, 'USED_PART_VALUE_AS_ANSWER', `${given} ÷ ${A + B}`)
+    mk(k, 'USED_PART_VALUE_AS_ANSWER', `${given} ÷ ${A + B}`),
+    // RC2-012: deepened.
+    mk(given, 'USED_GIVEN_VALUE_AS_ANSWER', `المجموع المعطى ${given}`),
+    mk((A + B) * k, 'USED_SUM_OF_PARTS', `(${A} + ${B}) × ${k}`),
+    mk(C * k * 2, 'APPLIED_STEP_TWICE', `${C} × ${k} × 2`),
+    mk(given - C * k, 'SUBTRACTED_INSTEAD_OF_ADDED', `${given} − ${C * k}`)
   ]);
   return buildBase(ctx, {
     templateId: 'RAT_H_TWO_COMB',

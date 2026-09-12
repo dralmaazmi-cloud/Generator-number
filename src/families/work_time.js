@@ -25,10 +25,12 @@ function inverseDirect(ctx) {
     mk(w2, 'USED_GIVEN_VALUE_AS_ANSWER', `عدد العمال الجديد ${w2}`),
     mk(d1 * w2 / w1, 'REVERSED_INVERSE_PROPORTION', `${d1} × ${w2} ÷ ${w1}`),
     mk(work / (w1 + w2), 'RATE_APPLIED_TO_WRONG_COUNT', `${work} ÷ (${w1} + ${w2})`),
-    mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
-    mk(correct - 2, 'OFF_BY_ONE_STEP', `${correct} − 2`),
     mk(d1 + (w2 - w1), 'ADDED_INSTEAD_OF_SCALING', `${d1} + (${w2} − ${w1})`),
-    mk(work, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${w1} × ${d1}`)
+    mk(work, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${w1} × ${d1}`),
+    // RC2-012: deepened so the template can fill six options from real slips.
+    mk(d1 * w1 / w2 / 2, 'HALF_DISTANCE_AS_ANSWER', `${work} ÷ ${w2} ÷ 2`),
+    mk(work / Math.abs(w2 - w1 || 1), 'RATE_APPLIED_TO_WRONG_COUNT', `${work} ÷ |${w2} − ${w1}|`),
+    mk(d1 - (w2 - w1), 'SUBTRACTED_INSTEAD_OF_ADDED', `${d1} − (${w2} − ${w1})`)
   ]);
   return buildBase(ctx, {
     templateId: 'WORK_E_INVERSE',
@@ -71,10 +73,10 @@ function workVolume(ctx) {
     mk(newUnits * workers, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${newUnits} × ${workers}`),
     mk(workers + newUnits - oldUnits, 'ADDED_INSTEAD_OF_SCALING', `${workers} + (${newUnits} − ${oldUnits})`),
     mk(workers * oldUnits / newUnits, 'REVERSED_DIRECT_PROPORTION', `${workers} × ${oldUnits} ÷ ${newUnits}`),
-    mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
-    mk(correct - 2, 'OFF_BY_ONE_STEP', `${correct} − 2`),
     mk(workers * newUnits, 'RATE_APPLIED_TO_WRONG_COUNT', `${workers} × ${newUnits}`),
-    mk(workers + correct, 'USED_ORIGINAL_TOTAL', `${workers} + ${correct}`)
+    mk(workers * newUnits / oldUnits / 2, 'HALF_DISTANCE_AS_ANSWER', `${workers} × ${newUnits} ÷ ${oldUnits} ÷ 2`),
+    mk(newUnits / oldUnits, 'STOPPED_AT_UNIT_RATE', `${newUnits} ÷ ${oldUnits}`),
+    mk(workers * (newUnits - oldUnits) / oldUnits, 'MISSED_ONE_STAGE', `${workers} × (${newUnits} − ${oldUnits}) ÷ ${oldUnits}`)
   ]);
   return buildBase(ctx, {
     templateId: 'WORK_E_VOLUME',
@@ -123,11 +125,16 @@ function changeWorkers(ctx) {
     mk(totalDays - initialDays, 'USED_COUNT_BEFORE_CHANGE', `${totalDays} − ${initialDays}`),
     mk(totalDays, 'USED_GIVEN_VALUE_AS_ANSWER', `المدة الأصلية ${totalDays}`),
     mk(remain / w1, 'USED_COUNT_BEFORE_CHANGE', `${remain} ÷ ${w1}`),
-    mk(totalWork / w2, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${totalWork} ÷ ${w2}`),
-    mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
-    mk(correct - 2, 'OFF_BY_ONE_STEP', `${correct} − 2`),
-    mk(initialDays + correct, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${initialDays} + ${correct}`),
-    mk(remain, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${totalWork} − ${done}`)
+    mk(totalWork / w2, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${totalWork} ÷ ${w2}`, 3),
+    mk(remain, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${totalWork} − ${done}`),
+    mk(remain / (w1 + Math.abs(change)), 'RATE_APPLIED_TO_WRONG_COUNT', `${remain} ÷ ${w1 + Math.abs(change)}`),
+    mk(done / w2, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${done} ÷ ${w2}`, 3),
+    mk(totalWork / w1, 'USED_COUNT_BEFORE_CHANGE', `${totalWork} ÷ ${w1}`),
+    // RC2-012: deepened.
+    mk(remain / w2 * 2, 'APPLIED_STEP_TWICE', `${remain} ÷ ${w2} × 2`),
+    mk(remain / w2 + initialDays, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${remain} ÷ ${w2} + ${initialDays}`),
+    mk(totalDays - 2 * initialDays, 'USED_COUNT_BEFORE_CHANGE', `${totalDays} − 2 × ${initialDays}`),
+    mk(done / w1, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${done} ÷ ${w1}`, 3)
   ]);
   return buildBase(ctx, {
     templateId: 'WORK_M_CHANGE',
@@ -175,12 +182,8 @@ function efficiencyChange(ctx) {
     mk(days * (100 - pct) / 100, 'SUBTRACTED_PERCENTAGE_DIRECTLY', `${days} × (100 − ${pct}) ÷ 100`),
     mk(Fraction.from(days).mul(factor).toNumber(), 'REVERSED_INVERSE_PROPORTION', `${days} × ${factor.toDecimalString()}`),
     mk(days - pct / 10, 'TREATED_PERCENT_AS_AMOUNT', `${days} − ${pct} ÷ 10`),
-    mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
-    mk(correct - 2, 'OFF_BY_ONE_STEP', `${correct} − 2`),
     mk(Fraction.from(days).div(factor).div(factor).toNumber(), 'APPLIED_STEP_TWICE', `${days} ÷ ${factor.toDecimalString()} ÷ ${factor.toDecimalString()}`),
-    mk(days - correct, 'TOOK_COMPLEMENT_PERCENT', `${days} − ${correct}`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
+    mk(days - Fraction.from(days).div(factor).toNumber(), 'TOOK_COMPLEMENT_PERCENT', `${days} − ${days} ÷ ${factor.toDecimalString()}`),
     mk(days + pct / 10, 'TREATED_PERCENT_AS_AMOUNT', `${days} + ${pct} ÷ 10`)
   ]);
   return buildBase(ctx, {
@@ -225,13 +228,19 @@ function targetDeadline(ctx) {
   const params = {workers: w, totalDays, workedDays: initialDays, deadlineDays: finishDays};
   const distractors = usable(ctx, [
     mk(w, 'USED_GIVEN_VALUE_AS_ANSWER', `عدد العمال الأصلي ${w}`),
-    mk(total / finishDays, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${total} ÷ ${finishDays}`),
+    mk(total / finishDays, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${total} ÷ ${finishDays}`, 3),
     mk(remain / (totalDays - initialDays), 'USED_ORIGINAL_SCHEDULE', `${remain} ÷ (${totalDays} − ${initialDays})`),
-    mk(correct - w, 'SUBTRACTED_INSTEAD_OF_ADDED', `${correct} − ${w}`),
-    mk(correct + w, 'ADDED_INSTEAD_OF_SUBTRACTED', `${correct} + ${w}`),
-    mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
-    mk(correct - 2, 'OFF_BY_ONE_STEP', `${correct} − 2`),
-    mk(remain, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} − ${done}`)
+    mk(remain, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} − ${done}`),
+    // RC2-012: this template could not fill six options at all. These are the
+    // slips available on the work, the crew and the two spans.
+    mk(remain / totalDays, 'USED_ORIGINAL_SCHEDULE', `${remain} ÷ ${totalDays}`),
+    mk(total / totalDays, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${total} ÷ ${totalDays}`, 3),
+    mk(done / finishDays, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${done} ÷ ${finishDays}`, 3),
+    mk(w * finishDays / totalDays, 'REVERSED_INVERSE_PROPORTION', `${w} × ${finishDays} ÷ ${totalDays}`),
+    mk(w + remain / finishDays, 'ADDED_INSTEAD_OF_SCALING', `${w} + ${remain} ÷ ${finishDays}`),
+    mk(remain / finishDays * 2, 'APPLIED_STEP_TWICE', `${remain} ÷ ${finishDays} × 2`),
+    mk(remain / finishDays + w, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${remain} ÷ ${finishDays} + ${w}`),
+    mk(w * totalDays / finishDays, 'REVERSED_INVERSE_PROPORTION', `${w} × ${totalDays} ÷ ${finishDays}`)
   ]);
   return buildBase(ctx, {
     templateId: 'WORK_M_TARGET',
@@ -284,10 +293,9 @@ function twoStageWorkers(ctx) {
     mk(totalDays - firstDays - secondDays, 'USED_COUNT_BEFORE_CHANGE', `${totalDays} − ${firstDays} − ${secondDays}`),
     mk((total - done) / w2, 'MISSED_ONE_STAGE', `(${total} − ${done}) ÷ ${w2}`),
     mk(remain / w1, 'USED_COUNT_BEFORE_CHANGE', `${remain} ÷ ${w1}`),
-    mk(secondDays + correct, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${secondDays} + ${correct}`),
-    mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
-    mk(correct - 2, 'OFF_BY_ONE_STEP', `${correct} − 2`),
-    mk(total / w2, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${total} ÷ ${w2}`),
+    mk(firstDays + secondDays, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${firstDays} + ${secondDays}`),
+    mk(remain / (w1 + w2), 'RATE_APPLIED_TO_WRONG_COUNT', `${remain} ÷ (${w1} + ${w2})`),
+    mk(total / w2, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${total} ÷ ${w2}`, 3),
     mk(remain, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} − ${done} − ${done2}`)
   ]);
   return buildBase(ctx, {
@@ -345,13 +353,9 @@ function workersAndEfficiency(ctx) {
     mk(totalDays - initial, 'USED_COUNT_BEFORE_CHANGE', `${totalDays} − ${initial}`),
     mk(Fraction.from(remain).div(Fraction.from(w).mul(factor)).toNumber(), 'FAILED_TO_UPDATE_COUNT', `${remain} ÷ (${w} × ${factor.toDecimalString()})`),
     mk(Fraction.from(total).div(effective).toNumber(), 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${total} ÷ ${effective.toDecimalString()}`),
-    mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
-    mk(correct - 2, 'OFF_BY_ONE_STEP', `${correct} − 2`),
     mk(Fraction.from(totalDays).div(factor).toNumber(), 'MISSED_ONE_STAGE', `${totalDays} ÷ ${factor.toDecimalString()}`),
-    mk(initial + correct, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${initial} + ${correct}`),
+    mk(Fraction.from(remain).div(Fraction.from(newW).mul(factor)).mul(2).toNumber(), 'APPLIED_STEP_TWICE', `${remain} ÷ (${newW} × ${factor.toDecimalString()}) × 2`),
     mk(Fraction.from(remain).div(newW).div(factor).div(factor).toNumber(), 'APPLIED_STEP_TWICE', `${remain} ÷ ${newW} ÷ ${factor.toDecimalString()} ÷ ${factor.toDecimalString()}`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
     mk(Fraction.from(remain).mul(factor).div(newW).toNumber(), 'REVERSED_INVERSE_PROPORTION', `${remain} × ${factor.toDecimalString()} ÷ ${newW}`)
   ]);
   return buildBase(ctx, {

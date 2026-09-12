@@ -633,7 +633,9 @@ function recurrence(ctx) {
     mk(2 * prev + 2 * prev2, 'APPLIED_STEP_TWICE', `2 × ${prev} + 2 × ${prev2}`, 3),
     mk(2 * (prev + prev2), 'APPLIED_STEP_TWICE', `2 × (${prev} + ${prev2})`, 3),
     mk(prev * prev2, 'USED_WRONG_OPERATION_IN_ALTERNATION', `${prev} × ${prev2}`, 1),
-    mk(2 * prev - prev2, 'APPLIED_OPERATION_IN_REVERSE', `2 × ${prev} − ${prev2}`, 3)
+    mk(2 * prev - prev2, 'APPLIED_OPERATION_IN_REVERSE', `2 × ${prev} − ${prev2}`, 3),
+    mk(prev + 2 * prev2, 'USED_WRONG_OPERATION_IN_ALTERNATION', `${prev} + 2 × ${prev2}`, 3),
+    mk(4 * prev, 'TREATED_AS_GEOMETRIC', `4 × ${prev}`, 1)
   ]);
   return buildBase(ctx, {
     templateId: 'SEQ_H_RECURRENCE',

@@ -65,12 +65,13 @@ function rateToTime(ctx) {
     mk(minutes, 'USED_GIVEN_VALUE_AS_ANSWER', `الزمن المعطى ${minutes}`),
     mk(rate, 'STOPPED_AT_UNIT_RATE', `${total} ÷ ${minutes}`),
     mk(total * minutes / targetWords, 'REVERSED_DIRECT_PROPORTION', `${total} × ${minutes} ÷ ${targetWords}`),
-    mk(correct - 10, 'OFF_BY_ONE_STEP', `${correct} − 10`),
-    mk(correct + 10, 'OFF_BY_ONE_STEP', `${correct} + 10`),
     mk(minutes + correct, 'USED_ORIGINAL_TOTAL', `${minutes} + ${correct}`),
     mk(targetWords / minutes, 'SWAPPED_RATE_AND_COUNT', `${targetWords} ÷ ${minutes}`),
-    mk(correct - minutes, 'SUBTRACTED_INSTEAD_OF_ADDED', `${correct} − ${minutes}`),
-    mk((targetWords - total) / rate, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `(${targetWords} − ${total}) ÷ ${rate}`)
+    mk((targetWords - total) / rate, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `(${targetWords} − ${total}) ÷ ${rate}`),
+    // RC2-012: deepened so six options can be filled without padding.
+    mk(targetWords * minutes / total / 2, 'HALF_DISTANCE_AS_ANSWER', `${targetWords} × ${minutes} ÷ ${total} ÷ 2`),
+    mk(targetWords / (rate * minutes), 'RATE_APPLIED_TO_WRONG_COUNT', `${targetWords} ÷ (${rate} × ${minutes})`),
+    mk(targetWords * minutes / total * 2, 'APPLIED_STEP_TWICE', `${targetWords} × ${minutes} ÷ ${total} × 2`)
   ]);
   return buildBase(ctx, {
     templateId: 'RATE_E_TIME',
@@ -219,13 +220,13 @@ function rateChangeTarget(ctx) {
     mk(target / oldRate, 'USED_RATE_BEFORE_CHANGE', `${target} ÷ ${oldRate}`),
     mk(oldMinutes, 'USED_GIVEN_VALUE_AS_ANSWER', `الزمن المعطى ${oldMinutes}`),
     mk(newRateNum, 'STOPPED_AT_UNIT_RATE', `${oldRate} × ${factor.toDecimalString()}`),
-    mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
-    mk(Math.max(1, correct - 2), 'OFF_BY_ONE_STEP', `${correct} − 2`),
     mk(target / initial * oldMinutes, 'RATE_APPLIED_TO_WRONG_COUNT', `${target} ÷ ${initial} × ${oldMinutes}`),
-    mk(correct + oldMinutes, 'USED_ORIGINAL_TOTAL', `${correct} + ${oldMinutes}`),
     mk(Fraction.from(target).mul(factor).div(oldRate).toNumber(), 'APPLIED_OPERATION_IN_REVERSE', `${target} × ${factor.toDecimalString()} ÷ ${oldRate}`),
     mk(Fraction.from(target).div(newRate).div(2).toNumber(), 'APPLIED_STEP_TWICE', `${target} ÷ ${newRateNum} ÷ 2`),
-    mk(Fraction.from(target).div(newRate.mul(factor)).toNumber(), 'APPLIED_STEP_TWICE', `${target} ÷ (${newRateNum} × ${factor.toDecimalString()})`)
+    mk(Fraction.from(target).div(newRate.mul(factor)).toNumber(), 'APPLIED_STEP_TWICE', `${target} ÷ (${newRateNum} × ${factor.toDecimalString()})`),
+    mk(Fraction.from(target).div(newRate).mul(2).toNumber(), 'APPLIED_STEP_TWICE', `${target} ÷ ${newRateNum} × 2`),
+    mk(target / initial * oldMinutes * 2, 'RATE_APPLIED_TO_WRONG_COUNT', `${target} ÷ ${initial} × ${oldMinutes} × 2`),
+    mk(Fraction.from(target).div(oldRate).div(2).toNumber(), 'USED_RATE_BEFORE_CHANGE', `${target} ÷ ${oldRate} ÷ 2`)
   ]);
   return buildBase(ctx, {
     templateId: 'RATE_H_TARGET',
@@ -274,8 +275,10 @@ function twoPhaseRate(ctx) {
     mk(r1 * h1, 'STOPPED_AFTER_FIRST_STAGE', `${r1} × ${h1}`),
     mk(r1 * h1 + r1 * h2 + pct, 'TREATED_PERCENT_AS_AMOUNT', `${r1} × ${h1} + ${r1} × ${h2} + ${pct}`),
     mk(r1 * h2 + r2n * h1, 'RATE_APPLIED_TO_WRONG_COUNT', `${r1} × ${h2} + ${r2n} × ${h1}`),
-    mk(correct + r1, 'OFF_BY_ONE_STEP', `${correct} + ${r1}`),
-    mk(r2.mul(factor).mul(h2).add(r1 * h1).toNumber(), 'APPLIED_STEP_TWICE', `${r1} × ${h1} + ${r2n} × ${factor.toDecimalString()} × ${h2}`)
+    mk(r2.mul(factor).mul(h2).add(r1 * h1).toNumber(), 'APPLIED_STEP_TWICE', `${r1} × ${h1} + ${r2n} × ${factor.toDecimalString()} × ${h2}`),
+    mk((r1 + r2n) * (h1 + h2), 'STOPPED_AT_UNIT_RATE', `(${r1} + ${r2n}) × (${h1} + ${h2})`),
+    mk(r1 * h1 + r1 * h2, 'USED_RATE_BEFORE_CHANGE', `${r1} × ${h1} + ${r1} × ${h2}`),
+    mk(r2n * h1 + r2n * h2, 'USED_ONLY_SECOND_RATE', `${r2n} × ${h1} + ${r2n} × ${h2}`)
   ]);
   return buildBase(ctx, {
     templateId: 'RATE_H_TWO_PHASE',

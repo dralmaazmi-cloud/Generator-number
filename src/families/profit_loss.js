@@ -25,12 +25,13 @@ function simpleProfit(ctx) {
     mk(profit, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${sell} − ${buy}`),
     mk(approx(sell / buy * 100), 'USED_ORIGINAL_TOTAL', `${sell} ÷ ${buy} × 100`),
     mk(approx(profit / sell * 100), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} ÷ ${sell} × 100`),
-    mk(percent + 5, 'OFF_BY_ONE_STEP', `${percent} + 5`),
-    mk(Math.max(1, percent - 5), 'OFF_BY_ONE_STEP', `${percent} − 5`),
+    // RC2-012: four key-neighbour pads replaced by slips on the two prices.
+    mk(approx(profit * 200 / buy), 'APPLIED_STEP_TWICE', `${profit} × 200 ÷ ${buy}`),
+    mk(approx(sell * 100 / buy), 'USED_ORIGINAL_TOTAL', `${sell} × 100 ÷ ${buy}`),
     mk(100 - percent, 'TOOK_COMPLEMENT_PERCENT', `100 − ${percent}`),
-    mk(percent * 2, 'APPLIED_STEP_TWICE', `${percent} × 2`),
+    mk(approx(profit * 100 / (buy - profit)), 'USED_PURCHASE_PRICE_AS_DENOMINATOR', `${profit} × 100 ÷ (${buy} − ${profit})`),
     mk(approx(profit * 100 / (buy + sell)), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} × 100 ÷ (${buy} + ${sell})`),
-    mk(approx(percent / 2), 'APPLIED_STEP_TWICE', `${percent} ÷ 2`)
+    mk(approx(profit * 50 / buy), 'APPLIED_STEP_TWICE', `${profit} × 50 ÷ ${buy}`)
   ]);
   return buildBase(ctx, {
     templateId: 'PL_E_PROFIT',
@@ -69,13 +70,13 @@ function simpleLoss(ctx) {
   const distractors = usable(ctx, [
     mk(loss, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${buy} − ${sell}`),
     mk(approx(loss / sell * 100), 'USED_SALE_PRICE_AS_DENOMINATOR', `${loss} ÷ ${sell} × 100`),
-    mk(percent + 5, 'OFF_BY_ONE_STEP', `${percent} + 5`),
-    mk(Math.max(1, percent - 5), 'OFF_BY_ONE_STEP', `${percent} − 5`),
+    mk(approx(loss * 200 / buy), 'APPLIED_STEP_TWICE', `${loss} × 200 ÷ ${buy}`),
+    mk(approx(buy * 100 / sell), 'USED_ORIGINAL_TOTAL', `${buy} × 100 ÷ ${sell}`),
     mk(approx(sell / buy * 100), 'TOOK_COMPLEMENT_PERCENT', `${sell} ÷ ${buy} × 100`),
     mk(100 - percent, 'TOOK_COMPLEMENT_PERCENT', `100 − ${percent}`),
-    mk(percent * 2, 'APPLIED_STEP_TWICE', `${percent} × 2`),
+    mk(approx(loss * 100 / (buy - loss)), 'USED_PURCHASE_PRICE_AS_DENOMINATOR', `${loss} × 100 ÷ (${buy} − ${loss})`),
     mk(approx(loss * 100 / (buy + sell)), 'USED_SALE_PRICE_AS_DENOMINATOR', `${loss} × 100 ÷ (${buy} + ${sell})`),
-    mk(approx(percent / 2), 'APPLIED_STEP_TWICE', `${percent} ÷ 2`)
+    mk(approx(loss * 50 / buy), 'APPLIED_STEP_TWICE', `${loss} × 50 ÷ ${buy}`)
   ]);
   return buildBase(ctx, {
     templateId: 'PL_E_LOSS',
@@ -117,8 +118,8 @@ function totalCostProfit(ctx) {
     mk(approx((sell - buy) / buy * 100), 'IGNORED_EXTRA_COST', `(${sell} − ${buy}) ÷ ${buy} × 100`),
     mk(approx(profit / buy * 100), 'USED_PURCHASE_PRICE_AS_DENOMINATOR', `${profit} ÷ ${buy} × 100`),
     mk(approx(profit / sell * 100), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} ÷ ${sell} × 100`),
-    mk(percent + 5, 'OFF_BY_ONE_STEP', `${percent} + 5`),
-    mk(Math.max(1, percent - 5), 'OFF_BY_ONE_STEP', `${percent} − 5`),
+    mk(approx((sell - buy - shipping) * 200 / total), 'APPLIED_STEP_TWICE', `${sell - buy - shipping} × 200 ÷ ${total}`),
+    mk(approx(sell * 100 / total), 'USED_ORIGINAL_TOTAL', `${sell} × 100 ÷ ${total}`),
     mk(approx(shipping / total * 100), 'TREATED_PERCENT_AS_AMOUNT', `${shipping} ÷ ${total} × 100`),
     mk(profit, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${sell} − ${total}`)
   ]);
@@ -167,10 +168,14 @@ function discountThenSale(ctx) {
     mk(approx(tag * (100 + markup) / 100), 'APPLIED_PERCENT_TO_ORIGINAL', `${tag} × (100 + ${markup}) ÷ 100`),
     mk(costN, 'STOPPED_AFTER_FIRST_STAGE', `${tag} × (100 − ${discount}) ÷ 100`),
     mk(approx(tag * (100 + markup - discount) / 100), 'ADDED_PERCENTAGES', `${tag} × (100 + ${markup} − ${discount}) ÷ 100`),
-    mk(correct + 20, 'OFF_BY_ONE_STEP', `${correct} + 20`),
-    mk(Math.max(1, correct - 20), 'OFF_BY_ONE_STEP', `${correct} − 20`),
     mk(costN + markup, 'TREATED_PERCENT_AS_AMOUNT', `${costN} + ${markup}`),
-    mk(tag, 'USED_ORIGINAL_TOTAL', `السعر المعلن ${tag}`)
+    mk(tag, 'USED_ORIGINAL_TOTAL', `السعر المعلن ${tag}`),
+    // RC2-012: deepened.
+    mk(tag * (100 + markup) / 100, 'APPLIED_PERCENT_TO_ORIGINAL', `${tag} × (100 + ${markup}) ÷ 100`),
+    mk(tag * (100 - discount) / 100, 'STOPPED_AFTER_FIRST_STAGE', `${tag} × (100 − ${discount}) ÷ 100`),
+    mk(tag * (100 - discount + markup) / 100, 'ADDED_PERCENTAGES', `${tag} × (100 − ${discount} + ${markup}) ÷ 100`),
+    mk(tag + markup, 'TREATED_PERCENT_AS_AMOUNT', `${tag} + ${markup}`),
+    mk(tag - discount, 'TREATED_PERCENT_AS_AMOUNT', `${tag} − ${discount}`)
   ]);
   return buildBase(ctx, {
     templateId: 'PL_M_DISC_MARK',
@@ -216,8 +221,10 @@ function reverseSellingPrice(ctx) {
     mk(approx(sell * (100 - percent) / 100), 'SUBTRACTED_PERCENTAGE_DIRECTLY', `${sell} × (100 − ${percent}) ÷ 100`),
     mk(sell - cost, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${sell} − ${cost}`),
     mk(approx(sell * 100 / percent), 'USED_SALE_PRICE_AS_DENOMINATOR', `${sell} × 100 ÷ ${percent}`),
-    mk(cost + 20, 'OFF_BY_ONE_STEP', `${cost} + 20`),
-    mk(Math.max(1, cost - 20), 'OFF_BY_ONE_STEP', `${cost} − 20`),
+    mk(sell * 100 / (100 + 2 * percent), 'APPLIED_STEP_TWICE', `${sell} × 100 ÷ (100 + 2 × ${percent})`),
+    mk(sell * (100 - percent) / 100, 'SUBTRACTED_PERCENTAGE_DIRECTLY', `${sell} × (100 − ${percent}) ÷ 100`),
+    mk(sell - percent, 'TREATED_PERCENT_AS_AMOUNT', `${sell} − ${percent}`),
+    mk(sell * 100 / (100 - percent), 'APPLIED_OPERATION_IN_REVERSE', `${sell} × 100 ÷ (100 − ${percent})`),
     mk(sell, 'USED_GIVEN_VALUE_AS_ANSWER', `سعر البيع ${sell}`),
     mk(sell - percent, 'TREATED_PERCENT_AS_AMOUNT', `${sell} − ${percent}`)
   ]);
@@ -271,7 +278,7 @@ function discountMarkupChain(ctx) {
     mk(markup + disc, 'ADDED_PERCENTAGES', `${markup} + ${disc}`),
     mk(disc - markup, 'SUBTRACTED_PERCENTAGES', `${disc} − ${markup}`),
     mk(-correct, 'APPLIED_OPERATION_IN_REVERSE', `عكس إشارة ${num(correct)}`),
-    mk(correct + (correct >= 0 ? 5 : -5), 'OFF_BY_ONE_STEP', `${num(correct)} ± 5`),
+    mk(approx((disc + markup) / 2), 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${disc} + ${markup}) ÷ 2`),
     mk(markup, 'USED_ONLY_LAST_STAGE', `نسبة الزيادة ${markup} وحدها`),
     mk(-disc, 'STOPPED_AFTER_FIRST_STAGE', `نسبة الخصم ${disc} وحدها`)
   ], {allowNegative: true, allowZero: true});
