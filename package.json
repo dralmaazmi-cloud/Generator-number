@@ -4,11 +4,12 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "node --test tests/regression.test.mjs tests/properties.test.mjs tests/metamorphic.test.mjs tests/fault-injection.test.mjs",
+    "test": "node --test tests/regression.test.mjs tests/properties.test.mjs tests/metamorphic.test.mjs tests/fault-injection.test.mjs tests/parameter-mapping-injection.test.mjs tests/rank-calibration-guard.test.mjs",
     "test:units": "node tools/check-manual-units.mjs",
     "test:stress": "node tests/stress.mjs",
     "qa": "npm run test:units && npm test && npm run test:stress",
     "qa:corpus": "node tools/stress-qa.mjs",
-    "qa:inventory": "node tools/template-inventory.mjs"
+    "qa:inventory": "node tools/template-inventory.mjs",
+    "qa:rank-snapshot": "node tools/audit/snapshot-rank-inventory.mjs > qa-artifacts/rank-calibration-inventory.json"
   }
 }

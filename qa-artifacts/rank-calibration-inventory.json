@@ -1,0 +1,728 @@
+{
+  "generated_at": "2026-09-12T05:09:06.115Z",
+  "samples_per_cell": 400,
+  "distinct_template_cells": 107,
+  "distinct_template_ids": 107,
+  "weights": [
+    1.0702,
+    0.3862,
+    0.2171,
+    0.2769,
+    0.8765,
+    3.1731
+  ],
+  "weights_digest": "1b4c1d0c84c15d2b",
+  "inventory_digest": "3e21a60fda5c5dee24910c430710023b450cf7747e58550af7eb7b8c78429afe",
+  "rows": [
+    {
+      "key": "ages|easy|AGE_E_MULT_DIFF",
+      "feasible": [
+        1,
+        5
+      ]
+    },
+    {
+      "key": "ages|easy|AGE_E_SUM_DIFF",
+      "feasible": [
+        2,
+        6
+      ]
+    },
+    {
+      "key": "ages|hard|AGE_H_PAST_FUT",
+      "feasible": [
+        2,
+        6
+      ]
+    },
+    {
+      "key": "ages|hard|AGE_H_TWO_TIME",
+      "feasible": [
+        1,
+        4
+      ]
+    },
+    {
+      "key": "ages|medium|AGE_M_FUT_RATIO",
+      "feasible": [
+        1,
+        4
+      ]
+    },
+    {
+      "key": "ages|medium|AGE_M_FUT_SUM_DIFF",
+      "feasible": [
+        2,
+        6
+      ]
+    },
+    {
+      "key": "ages|medium|AGE_M_RATIO_FUT_SUM",
+      "feasible": [
+        3,
+        6
+      ]
+    },
+    {
+      "key": "averages|easy|AVG_E_ADD",
+      "feasible": [
+        1,
+        5
+      ]
+    },
+    {
+      "key": "averages|easy|AVG_E_REMOVE",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "averages|hard|AVG_H_COMB_ADD",
+      "feasible": [
+        2,
+        6
+      ]
+    },
+    {
+      "key": "averages|hard|AVG_H_TARGET",
+      "feasible": [
+        4,
+        6
+      ]
+    },
+    {
+      "key": "averages|medium|AVG_M_ADD_PAIR",
+      "feasible": [
+        2,
+        3
+      ]
+    },
+    {
+      "key": "averages|medium|AVG_M_COMBINE",
+      "feasible": [
+        1,
+        4
+      ]
+    },
+    {
+      "key": "averages|medium|AVG_M_REPLACE",
+      "feasible": [
+        2,
+        6
+      ]
+    },
+    {
+      "key": "calendar|easy|CAL_E_AFTER",
+      "feasible": null
+    },
+    {
+      "key": "calendar|easy|CAL_E_TOM",
+      "feasible": null
+    },
+    {
+      "key": "calendar|hard|CAL_H_LONG",
+      "feasible": null
+    },
+    {
+      "key": "calendar|hard|CAL_H_NESTED",
+      "feasible": null
+    },
+    {
+      "key": "calendar|medium|CAL_M_COMPOUND",
+      "feasible": null
+    },
+    {
+      "key": "calendar|medium|CAL_M_TWO_SHIFT",
+      "feasible": null
+    },
+    {
+      "key": "combined_rate|easy|COMB_E_OUTPUT",
+      "feasible": [
+        2,
+        6
+      ]
+    },
+    {
+      "key": "combined_rate|easy|COMB_E_TIME",
+      "feasible": [
+        1,
+        4
+      ]
+    },
+    {
+      "key": "combined_rate|hard|COMB_H_STAGED",
+      "feasible": [
+        1,
+        4
+      ]
+    },
+    {
+      "key": "combined_rate|hard|COMB_H_THREE",
+      "feasible": [
+        3,
+        6
+      ]
+    },
+    {
+      "key": "combined_rate|medium|COMB_M_SOLO_THEN",
+      "feasible": [
+        1,
+        4
+      ]
+    },
+    {
+      "key": "combined_rate|medium|COMB_M_TOGETHER_SOLO",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "direct_proportion|easy|PROP_E_COST",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "direct_proportion|easy|PROP_E_ITEMS",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "direct_proportion|hard|PROP_H_COMPOUND",
+      "feasible": [
+        3,
+        6
+      ]
+    },
+    {
+      "key": "direct_proportion|hard|PROP_H_COST_PLUS",
+      "feasible": [
+        3,
+        6
+      ]
+    },
+    {
+      "key": "direct_proportion|medium|PROP_M_FRAC_UNIT",
+      "feasible": [
+        2,
+        6
+      ]
+    },
+    {
+      "key": "direct_proportion|medium|PROP_M_MAP",
+      "feasible": [
+        2,
+        6
+      ]
+    },
+    {
+      "key": "direct_proportion|medium|PROP_M_RECIPE",
+      "feasible": [
+        2,
+        6
+      ]
+    },
+    {
+      "key": "fractions|easy|FRAC_E_2",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "fractions|hard|FRAC_H_4",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "fractions|medium|FRAC_M_3",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "machines|easy|MACH_E_HOURS",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "machines|easy|MACH_E_REQUIRED",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "machines|hard|MACH_H_STAGE_UP",
+      "feasible": [
+        4,
+        6
+      ]
+    },
+    {
+      "key": "machines|hard|MACH_H_TWO_TYPES",
+      "feasible": [
+        3,
+        6
+      ]
+    },
+    {
+      "key": "machines|medium|MACH_M_NEW_FAST",
+      "feasible": [
+        3,
+        6
+      ]
+    },
+    {
+      "key": "machines|medium|MACH_M_STOP",
+      "feasible": [
+        3,
+        6
+      ]
+    },
+    {
+      "key": "machines|medium|MACH_M_SUBSET_UP",
+      "feasible": [
+        2,
+        6
+      ]
+    },
+    {
+      "key": "odd_one_out|easy|ODD_E_MULT",
+      "feasible": [
+        2,
+        5
+      ]
+    },
+    {
+      "key": "odd_one_out|easy|ODD_E_SQUARES",
+      "feasible": [
+        2,
+        5
+      ]
+    },
+    {
+      "key": "odd_one_out|hard|ODD_H_PRIME_OFFSET",
+      "feasible": [
+        2,
+        5
+      ]
+    },
+    {
+      "key": "odd_one_out|hard|ODD_H_SQ_MINUS",
+      "feasible": [
+        2,
+        5
+      ]
+    },
+    {
+      "key": "odd_one_out|medium|ODD_M_CUBES",
+      "feasible": [
+        2,
+        5
+      ]
+    },
+    {
+      "key": "odd_one_out|medium|ODD_M_PRIME2",
+      "feasible": [
+        2,
+        5
+      ]
+    },
+    {
+      "key": "odd_one_out|medium|ODD_M_PRONIC",
+      "feasible": [
+        2,
+        5
+      ]
+    },
+    {
+      "key": "percentages|easy|PCT_E_OF",
+      "feasible": [
+        1,
+        5
+      ]
+    },
+    {
+      "key": "percentages|easy|PCT_E_REVERSE_ONE",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "percentages|hard|PCT_H_CHAIN_VALUE",
+      "feasible": [
+        1,
+        4
+      ]
+    },
+    {
+      "key": "percentages|hard|PCT_H_REVERSE_CHAIN",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "percentages|medium|PCT_M_REMAIN",
+      "feasible": [
+        1,
+        4
+      ]
+    },
+    {
+      "key": "percentages|medium|PCT_M_SUCCESSIVE",
+      "feasible": [
+        1,
+        5
+      ]
+    },
+    {
+      "key": "percentages|medium|PCT_M_UNIT_PRICE",
+      "feasible": [
+        2,
+        4
+      ]
+    },
+    {
+      "key": "profit_loss|easy|PL_E_LOSS",
+      "feasible": [
+        1,
+        4
+      ]
+    },
+    {
+      "key": "profit_loss|easy|PL_E_PROFIT",
+      "feasible": [
+        1,
+        5
+      ]
+    },
+    {
+      "key": "profit_loss|hard|PL_H_CHAIN",
+      "feasible": [
+        1,
+        4
+      ]
+    },
+    {
+      "key": "profit_loss|hard|PL_H_REVERSE",
+      "feasible": [
+        2,
+        4
+      ]
+    },
+    {
+      "key": "profit_loss|medium|PL_M_DISC_MARK",
+      "feasible": [
+        2,
+        5
+      ]
+    },
+    {
+      "key": "profit_loss|medium|PL_M_TOTAL_COST",
+      "feasible": [
+        1,
+        4
+      ]
+    },
+    {
+      "key": "ratios|easy|RAT_E_KNOWN",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "ratios|easy|RAT_E_SPLIT",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "ratios|hard|RAT_H_TRANSFER",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "ratios|hard|RAT_H_TWO_COMB",
+      "feasible": [
+        1,
+        5
+      ]
+    },
+    {
+      "key": "ratios|medium|RAT_M_ADD_SIDE",
+      "feasible": [
+        3,
+        6
+      ]
+    },
+    {
+      "key": "ratios|medium|RAT_M_COMMON_DIFF",
+      "feasible": [
+        3,
+        6
+      ]
+    },
+    {
+      "key": "ratios|medium|RAT_M_COMMON_SUM",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "relational|easy|REL_E_BETWEEN",
+      "feasible": null
+    },
+    {
+      "key": "relational|easy|REL_E_CHAIN",
+      "feasible": null
+    },
+    {
+      "key": "relational|hard|REL_H_GUARANTEE",
+      "feasible": null
+    },
+    {
+      "key": "relational|hard|REL_H_POSITION_UNCERTAIN",
+      "feasible": null
+    },
+    {
+      "key": "relational|medium|REL_M_BRANCH_UNRES",
+      "feasible": null
+    },
+    {
+      "key": "relational|medium|REL_M_CONFIRM",
+      "feasible": null
+    },
+    {
+      "key": "relational|medium|REL_M_COUNT",
+      "feasible": null
+    },
+    {
+      "key": "sequences|easy|SEQ_E_ARITH",
+      "feasible": [
+        2,
+        5
+      ]
+    },
+    {
+      "key": "sequences|easy|SEQ_E_GEO",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "sequences|hard|SEQ_H_ALT_DIV",
+      "feasible": [
+        1,
+        4
+      ]
+    },
+    {
+      "key": "sequences|hard|SEQ_H_POW_INDEX",
+      "feasible": [
+        3,
+        5
+      ]
+    },
+    {
+      "key": "sequences|hard|SEQ_H_RECURRENCE",
+      "feasible": [
+        3,
+        4
+      ]
+    },
+    {
+      "key": "sequences|medium|SEQ_M_ALT_OPS",
+      "feasible": [
+        2,
+        3
+      ]
+    },
+    {
+      "key": "sequences|medium|SEQ_M_DOUBLE_DIFF",
+      "feasible": [
+        1,
+        5
+      ]
+    },
+    {
+      "key": "sequences|medium|SEQ_M_INC_DIFF",
+      "feasible": [
+        1,
+        3
+      ]
+    },
+    {
+      "key": "sequences|medium|SEQ_M_INTERLEAVED",
+      "feasible": [
+        2,
+        4
+      ]
+    },
+    {
+      "key": "speed|easy|SPD_E_DISTANCE",
+      "feasible": [
+        3,
+        5
+      ]
+    },
+    {
+      "key": "speed|easy|SPD_E_TIME",
+      "feasible": [
+        1,
+        5
+      ]
+    },
+    {
+      "key": "speed|hard|SPD_H_CATCH",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "speed|hard|SPD_H_MEET_DELAY",
+      "feasible": [
+        1,
+        5
+      ]
+    },
+    {
+      "key": "speed|hard|SPD_H_TIME_DIFF",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "speed|medium|SPD_M_AVG",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "speed|medium|SPD_M_EQUAL_DIST",
+      "feasible": [
+        2,
+        4
+      ]
+    },
+    {
+      "key": "speed|medium|SPD_M_TWO_TIME",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "unit_rate|easy|RATE_E_DIRECT",
+      "feasible": [
+        2,
+        6
+      ]
+    },
+    {
+      "key": "unit_rate|easy|RATE_E_TIME",
+      "feasible": [
+        3,
+        6
+      ]
+    },
+    {
+      "key": "unit_rate|hard|RATE_H_TARGET",
+      "feasible": [
+        1,
+        5
+      ]
+    },
+    {
+      "key": "unit_rate|hard|RATE_H_TWO_PHASE",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "unit_rate|medium|RATE_M_PERCENT",
+      "feasible": [
+        3,
+        5
+      ]
+    },
+    {
+      "key": "unit_rate|medium|RATE_M_SCALE",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "work_time|easy|WORK_E_INVERSE",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "work_time|easy|WORK_E_VOLUME",
+      "feasible": [
+        3,
+        5
+      ]
+    },
+    {
+      "key": "work_time|hard|WORK_H_TWO_STAGE",
+      "feasible": [
+        2,
+        4
+      ]
+    },
+    {
+      "key": "work_time|hard|WORK_H_WORKERS_EFF",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "work_time|medium|WORK_M_CHANGE",
+      "feasible": [
+        1,
+        4
+      ]
+    },
+    {
+      "key": "work_time|medium|WORK_M_EFF",
+      "feasible": [
+        1,
+        6
+      ]
+    },
+    {
+      "key": "work_time|medium|WORK_M_TARGET",
+      "feasible": [
+        2,
+        4
+      ]
+    }
+  ]
+}

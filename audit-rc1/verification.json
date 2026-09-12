@@ -1,0 +1,2211 @@
+{
+  "corpus": {
+    "label": "corpus",
+    "tally": {
+      "n": 10000,
+      "rebuildFailures": [],
+      "oracleRan": 10000,
+      "oracleNotRun": 0,
+      "notRunReasons": {},
+      "oracleDisagreement": 0,
+      "oracleNoSolution": 0,
+      "oracleNonUnique": 0,
+      "ambiguous": 0,
+      "postShuffleKeyMismatch": 0,
+      "zeroCorrectOption": 0,
+      "multipleCorrectOptions": 0,
+      "correctValueMismatch": 0,
+      "metaKeyMismatch": 0,
+      "disagreementExamples": [],
+      "mismatchExamples": []
+    },
+    "templates": [
+      {
+        "family": "ages",
+        "templateId": "AGE_E_MULT_DIFF",
+        "n": 109,
+        "oracleRan": 109,
+        "oracleAgreed": 109,
+        "keyMatched": 109,
+        "flags": []
+      },
+      {
+        "family": "ages",
+        "templateId": "AGE_E_SUM_DIFF",
+        "n": 97,
+        "oracleRan": 97,
+        "oracleAgreed": 97,
+        "keyMatched": 97,
+        "flags": []
+      },
+      {
+        "family": "ages",
+        "templateId": "AGE_H_PAST_FUT",
+        "n": 99,
+        "oracleRan": 99,
+        "oracleAgreed": 99,
+        "keyMatched": 99,
+        "flags": []
+      },
+      {
+        "family": "ages",
+        "templateId": "AGE_H_TWO_TIME",
+        "n": 75,
+        "oracleRan": 75,
+        "oracleAgreed": 75,
+        "keyMatched": 75,
+        "flags": []
+      },
+      {
+        "family": "ages",
+        "templateId": "AGE_M_FUT_RATIO",
+        "n": 74,
+        "oracleRan": 74,
+        "oracleAgreed": 74,
+        "keyMatched": 74,
+        "flags": []
+      },
+      {
+        "family": "ages",
+        "templateId": "AGE_M_FUT_SUM_DIFF",
+        "n": 84,
+        "oracleRan": 84,
+        "oracleAgreed": 84,
+        "keyMatched": 84,
+        "flags": []
+      },
+      {
+        "family": "ages",
+        "templateId": "AGE_M_RATIO_FUT_SUM",
+        "n": 87,
+        "oracleRan": 87,
+        "oracleAgreed": 87,
+        "keyMatched": 87,
+        "flags": []
+      },
+      {
+        "family": "averages",
+        "templateId": "AVG_E_ADD",
+        "n": 110,
+        "oracleRan": 110,
+        "oracleAgreed": 110,
+        "keyMatched": 110,
+        "flags": []
+      },
+      {
+        "family": "averages",
+        "templateId": "AVG_E_REMOVE",
+        "n": 84,
+        "oracleRan": 84,
+        "oracleAgreed": 84,
+        "keyMatched": 84,
+        "flags": []
+      },
+      {
+        "family": "averages",
+        "templateId": "AVG_H_COMB_ADD",
+        "n": 81,
+        "oracleRan": 81,
+        "oracleAgreed": 81,
+        "keyMatched": 81,
+        "flags": []
+      },
+      {
+        "family": "averages",
+        "templateId": "AVG_H_TARGET",
+        "n": 101,
+        "oracleRan": 101,
+        "oracleAgreed": 101,
+        "keyMatched": 101,
+        "flags": []
+      },
+      {
+        "family": "averages",
+        "templateId": "AVG_M_ADD_PAIR",
+        "n": 87,
+        "oracleRan": 87,
+        "oracleAgreed": 87,
+        "keyMatched": 87,
+        "flags": []
+      },
+      {
+        "family": "averages",
+        "templateId": "AVG_M_COMBINE",
+        "n": 85,
+        "oracleRan": 85,
+        "oracleAgreed": 85,
+        "keyMatched": 85,
+        "flags": []
+      },
+      {
+        "family": "averages",
+        "templateId": "AVG_M_REPLACE",
+        "n": 77,
+        "oracleRan": 77,
+        "oracleAgreed": 77,
+        "keyMatched": 77,
+        "flags": []
+      },
+      {
+        "family": "calendar",
+        "templateId": "CAL_E_AFTER",
+        "n": 111,
+        "oracleRan": 111,
+        "oracleAgreed": 111,
+        "keyMatched": 111,
+        "flags": []
+      },
+      {
+        "family": "calendar",
+        "templateId": "CAL_E_TOM",
+        "n": 89,
+        "oracleRan": 89,
+        "oracleAgreed": 89,
+        "keyMatched": 89,
+        "flags": []
+      },
+      {
+        "family": "calendar",
+        "templateId": "CAL_H_LONG",
+        "n": 97,
+        "oracleRan": 97,
+        "oracleAgreed": 97,
+        "keyMatched": 97,
+        "flags": []
+      },
+      {
+        "family": "calendar",
+        "templateId": "CAL_H_NESTED",
+        "n": 84,
+        "oracleRan": 84,
+        "oracleAgreed": 84,
+        "keyMatched": 84,
+        "flags": []
+      },
+      {
+        "family": "calendar",
+        "templateId": "CAL_M_COMPOUND",
+        "n": 110,
+        "oracleRan": 110,
+        "oracleAgreed": 110,
+        "keyMatched": 110,
+        "flags": []
+      },
+      {
+        "family": "calendar",
+        "templateId": "CAL_M_TWO_SHIFT",
+        "n": 134,
+        "oracleRan": 134,
+        "oracleAgreed": 134,
+        "keyMatched": 134,
+        "flags": []
+      },
+      {
+        "family": "combined_rate",
+        "templateId": "COMB_E_OUTPUT",
+        "n": 106,
+        "oracleRan": 106,
+        "oracleAgreed": 106,
+        "keyMatched": 106,
+        "flags": []
+      },
+      {
+        "family": "combined_rate",
+        "templateId": "COMB_E_TIME",
+        "n": 86,
+        "oracleRan": 86,
+        "oracleAgreed": 86,
+        "keyMatched": 86,
+        "flags": []
+      },
+      {
+        "family": "combined_rate",
+        "templateId": "COMB_H_STAGED",
+        "n": 89,
+        "oracleRan": 89,
+        "oracleAgreed": 89,
+        "keyMatched": 89,
+        "flags": []
+      },
+      {
+        "family": "combined_rate",
+        "templateId": "COMB_H_THREE",
+        "n": 93,
+        "oracleRan": 93,
+        "oracleAgreed": 93,
+        "keyMatched": 93,
+        "flags": []
+      },
+      {
+        "family": "combined_rate",
+        "templateId": "COMB_M_SOLO_THEN",
+        "n": 122,
+        "oracleRan": 122,
+        "oracleAgreed": 122,
+        "keyMatched": 122,
+        "flags": []
+      },
+      {
+        "family": "combined_rate",
+        "templateId": "COMB_M_TOGETHER_SOLO",
+        "n": 129,
+        "oracleRan": 129,
+        "oracleAgreed": 129,
+        "keyMatched": 129,
+        "flags": []
+      },
+      {
+        "family": "direct_proportion",
+        "templateId": "PROP_E_COST",
+        "n": 105,
+        "oracleRan": 105,
+        "oracleAgreed": 105,
+        "keyMatched": 105,
+        "flags": []
+      },
+      {
+        "family": "direct_proportion",
+        "templateId": "PROP_E_ITEMS",
+        "n": 80,
+        "oracleRan": 80,
+        "oracleAgreed": 80,
+        "keyMatched": 80,
+        "flags": []
+      },
+      {
+        "family": "direct_proportion",
+        "templateId": "PROP_H_COMPOUND",
+        "n": 104,
+        "oracleRan": 104,
+        "oracleAgreed": 104,
+        "keyMatched": 104,
+        "flags": []
+      },
+      {
+        "family": "direct_proportion",
+        "templateId": "PROP_H_COST_PLUS",
+        "n": 84,
+        "oracleRan": 84,
+        "oracleAgreed": 84,
+        "keyMatched": 84,
+        "flags": []
+      },
+      {
+        "family": "direct_proportion",
+        "templateId": "PROP_M_FRAC_UNIT",
+        "n": 86,
+        "oracleRan": 86,
+        "oracleAgreed": 86,
+        "keyMatched": 86,
+        "flags": []
+      },
+      {
+        "family": "direct_proportion",
+        "templateId": "PROP_M_MAP",
+        "n": 83,
+        "oracleRan": 83,
+        "oracleAgreed": 83,
+        "keyMatched": 83,
+        "flags": []
+      },
+      {
+        "family": "direct_proportion",
+        "templateId": "PROP_M_RECIPE",
+        "n": 83,
+        "oracleRan": 83,
+        "oracleAgreed": 83,
+        "keyMatched": 83,
+        "flags": []
+      },
+      {
+        "family": "fractions",
+        "templateId": "FRAC_E_2",
+        "n": 196,
+        "oracleRan": 196,
+        "oracleAgreed": 196,
+        "keyMatched": 196,
+        "flags": []
+      },
+      {
+        "family": "fractions",
+        "templateId": "FRAC_H_4",
+        "n": 180,
+        "oracleRan": 180,
+        "oracleAgreed": 180,
+        "keyMatched": 180,
+        "flags": []
+      },
+      {
+        "family": "fractions",
+        "templateId": "FRAC_M_3",
+        "n": 249,
+        "oracleRan": 249,
+        "oracleAgreed": 249,
+        "keyMatched": 249,
+        "flags": []
+      },
+      {
+        "family": "machines",
+        "templateId": "MACH_E_HOURS",
+        "n": 79,
+        "oracleRan": 79,
+        "oracleAgreed": 79,
+        "keyMatched": 79,
+        "flags": []
+      },
+      {
+        "family": "machines",
+        "templateId": "MACH_E_REQUIRED",
+        "n": 113,
+        "oracleRan": 113,
+        "oracleAgreed": 113,
+        "keyMatched": 113,
+        "flags": []
+      },
+      {
+        "family": "machines",
+        "templateId": "MACH_H_STAGE_UP",
+        "n": 93,
+        "oracleRan": 93,
+        "oracleAgreed": 93,
+        "keyMatched": 93,
+        "flags": []
+      },
+      {
+        "family": "machines",
+        "templateId": "MACH_H_TWO_TYPES",
+        "n": 93,
+        "oracleRan": 93,
+        "oracleAgreed": 93,
+        "keyMatched": 93,
+        "flags": []
+      },
+      {
+        "family": "machines",
+        "templateId": "MACH_M_NEW_FAST",
+        "n": 87,
+        "oracleRan": 87,
+        "oracleAgreed": 87,
+        "keyMatched": 87,
+        "flags": []
+      },
+      {
+        "family": "machines",
+        "templateId": "MACH_M_STOP",
+        "n": 75,
+        "oracleRan": 75,
+        "oracleAgreed": 75,
+        "keyMatched": 75,
+        "flags": []
+      },
+      {
+        "family": "machines",
+        "templateId": "MACH_M_SUBSET_UP",
+        "n": 85,
+        "oracleRan": 85,
+        "oracleAgreed": 85,
+        "keyMatched": 85,
+        "flags": []
+      },
+      {
+        "family": "odd_one_out",
+        "templateId": "ODD_E_MULT",
+        "n": 83,
+        "oracleRan": 83,
+        "oracleAgreed": 83,
+        "keyMatched": 83,
+        "flags": []
+      },
+      {
+        "family": "odd_one_out",
+        "templateId": "ODD_E_SQUARES",
+        "n": 107,
+        "oracleRan": 107,
+        "oracleAgreed": 107,
+        "keyMatched": 107,
+        "flags": []
+      },
+      {
+        "family": "odd_one_out",
+        "templateId": "ODD_H_PRIME_OFFSET",
+        "n": 76,
+        "oracleRan": 76,
+        "oracleAgreed": 76,
+        "keyMatched": 76,
+        "flags": []
+      },
+      {
+        "family": "odd_one_out",
+        "templateId": "ODD_H_SQ_MINUS",
+        "n": 103,
+        "oracleRan": 103,
+        "oracleAgreed": 103,
+        "keyMatched": 103,
+        "flags": []
+      },
+      {
+        "family": "odd_one_out",
+        "templateId": "ODD_M_CUBES",
+        "n": 75,
+        "oracleRan": 75,
+        "oracleAgreed": 75,
+        "keyMatched": 75,
+        "flags": []
+      },
+      {
+        "family": "odd_one_out",
+        "templateId": "ODD_M_PRIME2",
+        "n": 90,
+        "oracleRan": 90,
+        "oracleAgreed": 90,
+        "keyMatched": 90,
+        "flags": []
+      },
+      {
+        "family": "odd_one_out",
+        "templateId": "ODD_M_PRONIC",
+        "n": 91,
+        "oracleRan": 91,
+        "oracleAgreed": 91,
+        "keyMatched": 91,
+        "flags": []
+      },
+      {
+        "family": "percentages",
+        "templateId": "PCT_E_OF",
+        "n": 86,
+        "oracleRan": 86,
+        "oracleAgreed": 86,
+        "keyMatched": 86,
+        "flags": []
+      },
+      {
+        "family": "percentages",
+        "templateId": "PCT_E_REVERSE_ONE",
+        "n": 108,
+        "oracleRan": 108,
+        "oracleAgreed": 108,
+        "keyMatched": 108,
+        "flags": []
+      },
+      {
+        "family": "percentages",
+        "templateId": "PCT_H_CHAIN_VALUE",
+        "n": 99,
+        "oracleRan": 99,
+        "oracleAgreed": 99,
+        "keyMatched": 99,
+        "flags": []
+      },
+      {
+        "family": "percentages",
+        "templateId": "PCT_H_REVERSE_CHAIN",
+        "n": 91,
+        "oracleRan": 91,
+        "oracleAgreed": 91,
+        "keyMatched": 91,
+        "flags": []
+      },
+      {
+        "family": "percentages",
+        "templateId": "PCT_M_REMAIN",
+        "n": 85,
+        "oracleRan": 85,
+        "oracleAgreed": 85,
+        "keyMatched": 85,
+        "flags": []
+      },
+      {
+        "family": "percentages",
+        "templateId": "PCT_M_SUCCESSIVE",
+        "n": 70,
+        "oracleRan": 70,
+        "oracleAgreed": 70,
+        "keyMatched": 70,
+        "flags": []
+      },
+      {
+        "family": "percentages",
+        "templateId": "PCT_M_UNIT_PRICE",
+        "n": 86,
+        "oracleRan": 86,
+        "oracleAgreed": 86,
+        "keyMatched": 86,
+        "flags": []
+      },
+      {
+        "family": "profit_loss",
+        "templateId": "PL_E_LOSS",
+        "n": 104,
+        "oracleRan": 104,
+        "oracleAgreed": 104,
+        "keyMatched": 104,
+        "flags": []
+      },
+      {
+        "family": "profit_loss",
+        "templateId": "PL_E_PROFIT",
+        "n": 92,
+        "oracleRan": 92,
+        "oracleAgreed": 92,
+        "keyMatched": 92,
+        "flags": []
+      },
+      {
+        "family": "profit_loss",
+        "templateId": "PL_H_CHAIN",
+        "n": 94,
+        "oracleRan": 94,
+        "oracleAgreed": 94,
+        "keyMatched": 94,
+        "flags": []
+      },
+      {
+        "family": "profit_loss",
+        "templateId": "PL_H_REVERSE",
+        "n": 87,
+        "oracleRan": 87,
+        "oracleAgreed": 87,
+        "keyMatched": 87,
+        "flags": []
+      },
+      {
+        "family": "profit_loss",
+        "templateId": "PL_M_DISC_MARK",
+        "n": 134,
+        "oracleRan": 134,
+        "oracleAgreed": 134,
+        "keyMatched": 134,
+        "flags": []
+      },
+      {
+        "family": "profit_loss",
+        "templateId": "PL_M_TOTAL_COST",
+        "n": 114,
+        "oracleRan": 114,
+        "oracleAgreed": 114,
+        "keyMatched": 114,
+        "flags": []
+      },
+      {
+        "family": "ratios",
+        "templateId": "RAT_E_KNOWN",
+        "n": 114,
+        "oracleRan": 114,
+        "oracleAgreed": 114,
+        "keyMatched": 114,
+        "flags": []
+      },
+      {
+        "family": "ratios",
+        "templateId": "RAT_E_SPLIT",
+        "n": 84,
+        "oracleRan": 84,
+        "oracleAgreed": 84,
+        "keyMatched": 84,
+        "flags": []
+      },
+      {
+        "family": "ratios",
+        "templateId": "RAT_H_TRANSFER",
+        "n": 111,
+        "oracleRan": 111,
+        "oracleAgreed": 111,
+        "keyMatched": 111,
+        "flags": []
+      },
+      {
+        "family": "ratios",
+        "templateId": "RAT_H_TWO_COMB",
+        "n": 74,
+        "oracleRan": 74,
+        "oracleAgreed": 74,
+        "keyMatched": 74,
+        "flags": []
+      },
+      {
+        "family": "ratios",
+        "templateId": "RAT_M_ADD_SIDE",
+        "n": 85,
+        "oracleRan": 85,
+        "oracleAgreed": 85,
+        "keyMatched": 85,
+        "flags": []
+      },
+      {
+        "family": "ratios",
+        "templateId": "RAT_M_COMMON_DIFF",
+        "n": 75,
+        "oracleRan": 75,
+        "oracleAgreed": 75,
+        "keyMatched": 75,
+        "flags": []
+      },
+      {
+        "family": "ratios",
+        "templateId": "RAT_M_COMMON_SUM",
+        "n": 82,
+        "oracleRan": 82,
+        "oracleAgreed": 82,
+        "keyMatched": 82,
+        "flags": []
+      },
+      {
+        "family": "relational",
+        "templateId": "REL_E_BETWEEN",
+        "n": 94,
+        "oracleRan": 94,
+        "oracleAgreed": 94,
+        "keyMatched": 94,
+        "flags": []
+      },
+      {
+        "family": "relational",
+        "templateId": "REL_E_CHAIN",
+        "n": 99,
+        "oracleRan": 99,
+        "oracleAgreed": 99,
+        "keyMatched": 99,
+        "flags": []
+      },
+      {
+        "family": "relational",
+        "templateId": "REL_H_GUARANTEE",
+        "n": 89,
+        "oracleRan": 89,
+        "oracleAgreed": 89,
+        "keyMatched": 89,
+        "flags": []
+      },
+      {
+        "family": "relational",
+        "templateId": "REL_H_POSITION_UNCERTAIN",
+        "n": 91,
+        "oracleRan": 91,
+        "oracleAgreed": 91,
+        "keyMatched": 91,
+        "flags": []
+      },
+      {
+        "family": "relational",
+        "templateId": "REL_M_BRANCH_UNRES",
+        "n": 95,
+        "oracleRan": 95,
+        "oracleAgreed": 95,
+        "keyMatched": 95,
+        "flags": []
+      },
+      {
+        "family": "relational",
+        "templateId": "REL_M_CONFIRM",
+        "n": 79,
+        "oracleRan": 79,
+        "oracleAgreed": 79,
+        "keyMatched": 79,
+        "flags": []
+      },
+      {
+        "family": "relational",
+        "templateId": "REL_M_COUNT",
+        "n": 78,
+        "oracleRan": 78,
+        "oracleAgreed": 78,
+        "keyMatched": 78,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_E_ARITH",
+        "n": 79,
+        "oracleRan": 79,
+        "oracleAgreed": 79,
+        "keyMatched": 79,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_E_GEO",
+        "n": 110,
+        "oracleRan": 110,
+        "oracleAgreed": 110,
+        "keyMatched": 110,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_H_ALT_DIV",
+        "n": 57,
+        "oracleRan": 57,
+        "oracleAgreed": 57,
+        "keyMatched": 57,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_H_POW_INDEX",
+        "n": 70,
+        "oracleRan": 70,
+        "oracleAgreed": 70,
+        "keyMatched": 70,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_H_RECURRENCE",
+        "n": 53,
+        "oracleRan": 53,
+        "oracleAgreed": 53,
+        "keyMatched": 53,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_M_ALT_OPS",
+        "n": 70,
+        "oracleRan": 70,
+        "oracleAgreed": 70,
+        "keyMatched": 70,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_M_DOUBLE_DIFF",
+        "n": 59,
+        "oracleRan": 59,
+        "oracleAgreed": 59,
+        "keyMatched": 59,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_M_INC_DIFF",
+        "n": 53,
+        "oracleRan": 53,
+        "oracleAgreed": 53,
+        "keyMatched": 53,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_M_INTERLEAVED",
+        "n": 74,
+        "oracleRan": 74,
+        "oracleAgreed": 74,
+        "keyMatched": 74,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_E_DISTANCE",
+        "n": 91,
+        "oracleRan": 91,
+        "oracleAgreed": 91,
+        "keyMatched": 91,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_E_TIME",
+        "n": 97,
+        "oracleRan": 97,
+        "oracleAgreed": 97,
+        "keyMatched": 97,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_H_CATCH",
+        "n": 57,
+        "oracleRan": 57,
+        "oracleAgreed": 57,
+        "keyMatched": 57,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_H_MEET_DELAY",
+        "n": 48,
+        "oracleRan": 48,
+        "oracleAgreed": 48,
+        "keyMatched": 48,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_H_TIME_DIFF",
+        "n": 73,
+        "oracleRan": 73,
+        "oracleAgreed": 73,
+        "keyMatched": 73,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_M_AVG",
+        "n": 75,
+        "oracleRan": 75,
+        "oracleAgreed": 75,
+        "keyMatched": 75,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_M_EQUAL_DIST",
+        "n": 81,
+        "oracleRan": 81,
+        "oracleAgreed": 81,
+        "keyMatched": 81,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_M_TWO_TIME",
+        "n": 103,
+        "oracleRan": 103,
+        "oracleAgreed": 103,
+        "keyMatched": 103,
+        "flags": []
+      },
+      {
+        "family": "unit_rate",
+        "templateId": "RATE_E_DIRECT",
+        "n": 75,
+        "oracleRan": 75,
+        "oracleAgreed": 75,
+        "keyMatched": 75,
+        "flags": []
+      },
+      {
+        "family": "unit_rate",
+        "templateId": "RATE_E_TIME",
+        "n": 120,
+        "oracleRan": 120,
+        "oracleAgreed": 120,
+        "keyMatched": 120,
+        "flags": []
+      },
+      {
+        "family": "unit_rate",
+        "templateId": "RATE_H_TARGET",
+        "n": 95,
+        "oracleRan": 95,
+        "oracleAgreed": 95,
+        "keyMatched": 95,
+        "flags": []
+      },
+      {
+        "family": "unit_rate",
+        "templateId": "RATE_H_TWO_PHASE",
+        "n": 89,
+        "oracleRan": 89,
+        "oracleAgreed": 89,
+        "keyMatched": 89,
+        "flags": []
+      },
+      {
+        "family": "unit_rate",
+        "templateId": "RATE_M_PERCENT",
+        "n": 146,
+        "oracleRan": 146,
+        "oracleAgreed": 146,
+        "keyMatched": 146,
+        "flags": []
+      },
+      {
+        "family": "unit_rate",
+        "templateId": "RATE_M_SCALE",
+        "n": 100,
+        "oracleRan": 100,
+        "oracleAgreed": 100,
+        "keyMatched": 100,
+        "flags": []
+      },
+      {
+        "family": "work_time",
+        "templateId": "WORK_E_INVERSE",
+        "n": 102,
+        "oracleRan": 102,
+        "oracleAgreed": 102,
+        "keyMatched": 102,
+        "flags": []
+      },
+      {
+        "family": "work_time",
+        "templateId": "WORK_E_VOLUME",
+        "n": 97,
+        "oracleRan": 97,
+        "oracleAgreed": 97,
+        "keyMatched": 97,
+        "flags": []
+      },
+      {
+        "family": "work_time",
+        "templateId": "WORK_H_TWO_STAGE",
+        "n": 82,
+        "oracleRan": 82,
+        "oracleAgreed": 82,
+        "keyMatched": 82,
+        "flags": []
+      },
+      {
+        "family": "work_time",
+        "templateId": "WORK_H_WORKERS_EFF",
+        "n": 97,
+        "oracleRan": 97,
+        "oracleAgreed": 97,
+        "keyMatched": 97,
+        "flags": []
+      },
+      {
+        "family": "work_time",
+        "templateId": "WORK_M_CHANGE",
+        "n": 81,
+        "oracleRan": 81,
+        "oracleAgreed": 81,
+        "keyMatched": 81,
+        "flags": []
+      },
+      {
+        "family": "work_time",
+        "templateId": "WORK_M_EFF",
+        "n": 90,
+        "oracleRan": 90,
+        "oracleAgreed": 90,
+        "keyMatched": 90,
+        "flags": []
+      },
+      {
+        "family": "work_time",
+        "templateId": "WORK_M_TARGET",
+        "n": 76,
+        "oracleRan": 76,
+        "oracleAgreed": 76,
+        "keyMatched": 76,
+        "flags": []
+      }
+    ],
+    "degenerate": {
+      "n": 0,
+      "covered": 7928,
+      "uncovered": 2072,
+      "degenerateWhenFired": 0,
+      "examples": [],
+      "whenExamples": [],
+      "uncoveredTemplates": {
+        "REL_E_CHAIN": 99,
+        "CAL_E_AFTER": 111,
+        "ODD_E_MULT": 83,
+        "REL_M_CONFIRM": 79,
+        "CAL_M_COMPOUND": 110,
+        "ODD_M_PRIME2": 90,
+        "REL_H_GUARANTEE": 89,
+        "CAL_H_LONG": 97,
+        "ODD_H_PRIME_OFFSET": 76,
+        "FRAC_M_3": 83,
+        "REL_M_BRANCH_UNRES": 95,
+        "FRAC_E_2": 57,
+        "CAL_M_TWO_SHIFT": 134,
+        "ODD_M_CUBES": 75,
+        "ODD_H_SQ_MINUS": 103,
+        "REL_E_BETWEEN": 94,
+        "ODD_E_SQUARES": 107,
+        "REL_M_COUNT": 78,
+        "CAL_H_NESTED": 84,
+        "REL_H_POSITION_UNCERTAIN": 91,
+        "FRAC_H_4": 57,
+        "CAL_E_TOM": 89,
+        "ODD_M_PRONIC": 91
+      }
+    },
+    "askedUnknown": {
+      "sequences": {
+        "nextTerm": 348,
+        "missingMiddleTerm": 155,
+        "nextTermOfSecondRun": 74,
+        "previousTerm": 48
+      },
+      "ratios": {
+        "sideB": 126,
+        "sumBeforeChange": 85,
+        "commonTerm": 82,
+        "sumOfAllThree": 75,
+        "thirdTerm": 74,
+        "sideA": 72,
+        "sideABeforeTransfer": 56,
+        "sideBBeforeTransfer": 55
+      },
+      "percentages": {
+        "originalFromFinal": 108,
+        "finalAfterTwoChanges": 99,
+        "originalFromTwoChanges": 91,
+        "percentOfValue": 86,
+        "scaledCostAfterIncrease": 86,
+        "remainingAfterTwoStages": 85,
+        "netPercentChange": 70
+      },
+      "averages": {
+        "newAverageAfterAdd": 110,
+        "valueForTargetAverage": 101,
+        "averageAfterAddingPair": 87,
+        "weightedAverage": 85,
+        "newAverageAfterRemove": 84,
+        "weightedAveragePlusValue": 81,
+        "newAverageAfterReplace": 77
+      },
+      "ages": {
+        "olderAgeNow": 270,
+        "youngerAgeNow": 149,
+        "youngerAge": 109,
+        "olderAge": 97
+      },
+      "speed": {
+        "totalTimeMinutes": 103,
+        "time": 97,
+        "distance": 91,
+        "totalDistance": 81,
+        "averageSpeed": 75,
+        "distanceFromTimeGap": 73,
+        "catchupTime": 57,
+        "meetingTime": 48
+      },
+      "work_time": {
+        "daysForNewCrew": 102,
+        "extraDaysAfterCrewAndEfficiency": 97,
+        "workersForMoreWork": 97,
+        "daysAfterEfficiencyGain": 90,
+        "extraDaysAfterTwoStages": 82,
+        "extraDaysAfterCrewChange": 81,
+        "workersForDeadline": 76
+      },
+      "machines": {
+        "totalAcrossStages": 168,
+        "machinesForTarget": 113,
+        "mixedFleetOutput": 93,
+        "mixedPairOutput": 87,
+        "mixedGroupOutput": 85,
+        "outputForNewSetup": 79
+      },
+      "direct_proportion": {
+        "scaledOutput": 339,
+        "scaledOutputPlusReserve": 104,
+        "scaledOutputPlusFee": 84,
+        "requiredInput": 68,
+        "scaledOutputFromResource": 30
+      },
+      "fractions": {
+        "chainResult": 226,
+        "startNumber": 202,
+        "hiddenFraction": 197
+      },
+      "unit_rate": {
+        "scaledOutput": 175,
+        "scaledOutputAfterIncrease": 146,
+        "requiredTime": 120,
+        "requiredTimeAfterIncrease": 95,
+        "totalAcrossStages": 89
+      },
+      "combined_rate": {
+        "jointOutput": 199,
+        "soloTimeAfterJoint": 129,
+        "jointTimeAfterSolo": 122,
+        "finalSoloTime": 89,
+        "jointTime": 86
+      },
+      "relational": {
+        "undeterminedPair": 95,
+        "guaranteedDespiteBranches": 89,
+        "guaranteedStatement": 79,
+        "countAbove": 78,
+        "position3": 76,
+        "position2": 62,
+        "position4": 39,
+        "undeterminedPosition2": 29,
+        "undeterminedPosition3": 23,
+        "undeterminedPosition4": 22,
+        "undeterminedPosition5": 17,
+        "position5": 16
+      },
+      "calendar": {
+        "todayFromOffset": 200,
+        "pastDayFromFutureAnchor": 134,
+        "todayFromCompoundOffset": 110,
+        "dayAfterLongOffset": 97,
+        "todayFromNestedOffset": 84
+      },
+      "odd_one_out": {
+        "outlier": 625
+      },
+      "profit_loss": {
+        "sellPriceAfterDiscountAndMarkup": 134,
+        "profitPercentOnTotalCost": 114,
+        "lossPercent": 104,
+        "netPercentChange": 94,
+        "profitPercent": 92,
+        "costFromSellPrice": 87
+      }
+    }
+  },
+  "audit": {
+    "label": "audit",
+    "tally": {
+      "n": 250,
+      "rebuildFailures": [],
+      "oracleRan": 250,
+      "oracleNotRun": 0,
+      "notRunReasons": {},
+      "oracleDisagreement": 0,
+      "oracleNoSolution": 0,
+      "oracleNonUnique": 0,
+      "ambiguous": 0,
+      "postShuffleKeyMismatch": 0,
+      "zeroCorrectOption": 0,
+      "multipleCorrectOptions": 0,
+      "correctValueMismatch": 0,
+      "metaKeyMismatch": 0,
+      "disagreementExamples": [],
+      "mismatchExamples": []
+    },
+    "templates": [
+      {
+        "family": "ages",
+        "templateId": "AGE_E_MULT_DIFF",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "ages",
+        "templateId": "AGE_E_SUM_DIFF",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "ages",
+        "templateId": "AGE_H_PAST_FUT",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "ages",
+        "templateId": "AGE_H_TWO_TIME",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "ages",
+        "templateId": "AGE_M_FUT_RATIO",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "ages",
+        "templateId": "AGE_M_FUT_SUM_DIFF",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "ages",
+        "templateId": "AGE_M_RATIO_FUT_SUM",
+        "n": 4,
+        "oracleRan": 4,
+        "oracleAgreed": 4,
+        "keyMatched": 4,
+        "flags": []
+      },
+      {
+        "family": "averages",
+        "templateId": "AVG_E_REMOVE",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "averages",
+        "templateId": "AVG_H_COMB_ADD",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "averages",
+        "templateId": "AVG_H_TARGET",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "averages",
+        "templateId": "AVG_M_ADD_PAIR",
+        "n": 4,
+        "oracleRan": 4,
+        "oracleAgreed": 4,
+        "keyMatched": 4,
+        "flags": []
+      },
+      {
+        "family": "averages",
+        "templateId": "AVG_M_COMBINE",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "averages",
+        "templateId": "AVG_M_REPLACE",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "calendar",
+        "templateId": "CAL_E_AFTER",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "calendar",
+        "templateId": "CAL_H_LONG",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "calendar",
+        "templateId": "CAL_H_NESTED",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "calendar",
+        "templateId": "CAL_M_COMPOUND",
+        "n": 6,
+        "oracleRan": 6,
+        "oracleAgreed": 6,
+        "keyMatched": 6,
+        "flags": []
+      },
+      {
+        "family": "calendar",
+        "templateId": "CAL_M_TWO_SHIFT",
+        "n": 5,
+        "oracleRan": 5,
+        "oracleAgreed": 5,
+        "keyMatched": 5,
+        "flags": []
+      },
+      {
+        "family": "combined_rate",
+        "templateId": "COMB_E_OUTPUT",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "combined_rate",
+        "templateId": "COMB_E_TIME",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "combined_rate",
+        "templateId": "COMB_H_STAGED",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "combined_rate",
+        "templateId": "COMB_H_THREE",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "combined_rate",
+        "templateId": "COMB_M_SOLO_THEN",
+        "n": 4,
+        "oracleRan": 4,
+        "oracleAgreed": 4,
+        "keyMatched": 4,
+        "flags": []
+      },
+      {
+        "family": "combined_rate",
+        "templateId": "COMB_M_TOGETHER_SOLO",
+        "n": 4,
+        "oracleRan": 4,
+        "oracleAgreed": 4,
+        "keyMatched": 4,
+        "flags": []
+      },
+      {
+        "family": "direct_proportion",
+        "templateId": "PROP_H_COMPOUND",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "direct_proportion",
+        "templateId": "PROP_H_COST_PLUS",
+        "n": 5,
+        "oracleRan": 5,
+        "oracleAgreed": 5,
+        "keyMatched": 5,
+        "flags": []
+      },
+      {
+        "family": "direct_proportion",
+        "templateId": "PROP_M_FRAC_UNIT",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "direct_proportion",
+        "templateId": "PROP_M_MAP",
+        "n": 4,
+        "oracleRan": 4,
+        "oracleAgreed": 4,
+        "keyMatched": 4,
+        "flags": []
+      },
+      {
+        "family": "direct_proportion",
+        "templateId": "PROP_M_RECIPE",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "fractions",
+        "templateId": "FRAC_E_2",
+        "n": 4,
+        "oracleRan": 4,
+        "oracleAgreed": 4,
+        "keyMatched": 4,
+        "flags": []
+      },
+      {
+        "family": "fractions",
+        "templateId": "FRAC_H_4",
+        "n": 4,
+        "oracleRan": 4,
+        "oracleAgreed": 4,
+        "keyMatched": 4,
+        "flags": []
+      },
+      {
+        "family": "fractions",
+        "templateId": "FRAC_M_3",
+        "n": 7,
+        "oracleRan": 7,
+        "oracleAgreed": 7,
+        "keyMatched": 7,
+        "flags": []
+      },
+      {
+        "family": "machines",
+        "templateId": "MACH_E_HOURS",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "machines",
+        "templateId": "MACH_E_REQUIRED",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "machines",
+        "templateId": "MACH_H_STAGE_UP",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "machines",
+        "templateId": "MACH_H_TWO_TYPES",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "machines",
+        "templateId": "MACH_M_NEW_FAST",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "machines",
+        "templateId": "MACH_M_STOP",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "machines",
+        "templateId": "MACH_M_SUBSET_UP",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "odd_one_out",
+        "templateId": "ODD_E_MULT",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "odd_one_out",
+        "templateId": "ODD_E_SQUARES",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "odd_one_out",
+        "templateId": "ODD_H_PRIME_OFFSET",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "odd_one_out",
+        "templateId": "ODD_H_SQ_MINUS",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "odd_one_out",
+        "templateId": "ODD_M_CUBES",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "odd_one_out",
+        "templateId": "ODD_M_PRIME2",
+        "n": 4,
+        "oracleRan": 4,
+        "oracleAgreed": 4,
+        "keyMatched": 4,
+        "flags": []
+      },
+      {
+        "family": "odd_one_out",
+        "templateId": "ODD_M_PRONIC",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "percentages",
+        "templateId": "PCT_E_REVERSE_ONE",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "percentages",
+        "templateId": "PCT_H_CHAIN_VALUE",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "percentages",
+        "templateId": "PCT_H_REVERSE_CHAIN",
+        "n": 4,
+        "oracleRan": 4,
+        "oracleAgreed": 4,
+        "keyMatched": 4,
+        "flags": []
+      },
+      {
+        "family": "percentages",
+        "templateId": "PCT_M_REMAIN",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "percentages",
+        "templateId": "PCT_M_SUCCESSIVE",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "percentages",
+        "templateId": "PCT_M_UNIT_PRICE",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "profit_loss",
+        "templateId": "PL_E_LOSS",
+        "n": 4,
+        "oracleRan": 4,
+        "oracleAgreed": 4,
+        "keyMatched": 4,
+        "flags": []
+      },
+      {
+        "family": "profit_loss",
+        "templateId": "PL_E_PROFIT",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "profit_loss",
+        "templateId": "PL_H_CHAIN",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "profit_loss",
+        "templateId": "PL_H_REVERSE",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "profit_loss",
+        "templateId": "PL_M_DISC_MARK",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "profit_loss",
+        "templateId": "PL_M_TOTAL_COST",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "ratios",
+        "templateId": "RAT_E_KNOWN",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "ratios",
+        "templateId": "RAT_E_SPLIT",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "ratios",
+        "templateId": "RAT_H_TRANSFER",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "ratios",
+        "templateId": "RAT_H_TWO_COMB",
+        "n": 4,
+        "oracleRan": 4,
+        "oracleAgreed": 4,
+        "keyMatched": 4,
+        "flags": []
+      },
+      {
+        "family": "ratios",
+        "templateId": "RAT_M_ADD_SIDE",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "ratios",
+        "templateId": "RAT_M_COMMON_SUM",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "relational",
+        "templateId": "REL_E_BETWEEN",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "relational",
+        "templateId": "REL_H_GUARANTEE",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "relational",
+        "templateId": "REL_H_POSITION_UNCERTAIN",
+        "n": 5,
+        "oracleRan": 5,
+        "oracleAgreed": 5,
+        "keyMatched": 5,
+        "flags": []
+      },
+      {
+        "family": "relational",
+        "templateId": "REL_M_BRANCH_UNRES",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "relational",
+        "templateId": "REL_M_CONFIRM",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "relational",
+        "templateId": "REL_M_COUNT",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_E_ARITH",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_H_ALT_DIV",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_H_POW_INDEX",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_H_RECURRENCE",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_M_ALT_OPS",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_M_DOUBLE_DIFF",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_M_INC_DIFF",
+        "n": 4,
+        "oracleRan": 4,
+        "oracleAgreed": 4,
+        "keyMatched": 4,
+        "flags": []
+      },
+      {
+        "family": "sequences",
+        "templateId": "SEQ_M_INTERLEAVED",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_E_DISTANCE",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_E_TIME",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_H_CATCH",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_H_MEET_DELAY",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_H_TIME_DIFF",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_M_AVG",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_M_EQUAL_DIST",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "speed",
+        "templateId": "SPD_M_TWO_TIME",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "unit_rate",
+        "templateId": "RATE_E_DIRECT",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "unit_rate",
+        "templateId": "RATE_E_TIME",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "unit_rate",
+        "templateId": "RATE_H_TARGET",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "unit_rate",
+        "templateId": "RATE_H_TWO_PHASE",
+        "n": 4,
+        "oracleRan": 4,
+        "oracleAgreed": 4,
+        "keyMatched": 4,
+        "flags": []
+      },
+      {
+        "family": "unit_rate",
+        "templateId": "RATE_M_PERCENT",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "unit_rate",
+        "templateId": "RATE_M_SCALE",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "work_time",
+        "templateId": "WORK_E_INVERSE",
+        "n": 4,
+        "oracleRan": 4,
+        "oracleAgreed": 4,
+        "keyMatched": 4,
+        "flags": []
+      },
+      {
+        "family": "work_time",
+        "templateId": "WORK_E_VOLUME",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "work_time",
+        "templateId": "WORK_H_TWO_STAGE",
+        "n": 3,
+        "oracleRan": 3,
+        "oracleAgreed": 3,
+        "keyMatched": 3,
+        "flags": []
+      },
+      {
+        "family": "work_time",
+        "templateId": "WORK_H_WORKERS_EFF",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "work_time",
+        "templateId": "WORK_M_CHANGE",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      },
+      {
+        "family": "work_time",
+        "templateId": "WORK_M_EFF",
+        "n": 1,
+        "oracleRan": 1,
+        "oracleAgreed": 1,
+        "keyMatched": 1,
+        "flags": []
+      },
+      {
+        "family": "work_time",
+        "templateId": "WORK_M_TARGET",
+        "n": 2,
+        "oracleRan": 2,
+        "oracleAgreed": 2,
+        "keyMatched": 2,
+        "flags": []
+      }
+    ],
+    "degenerate": {
+      "n": 0,
+      "covered": 195,
+      "uncovered": 55,
+      "degenerateWhenFired": 0,
+      "examples": [],
+      "whenExamples": [],
+      "uncoveredTemplates": {
+        "ODD_M_CUBES": 3,
+        "REL_M_CONFIRM": 2,
+        "CAL_M_COMPOUND": 6,
+        "CAL_M_TWO_SHIFT": 5,
+        "REL_H_GUARANTEE": 2,
+        "ODD_H_SQ_MINUS": 3,
+        "REL_M_COUNT": 3,
+        "ODD_M_PRONIC": 2,
+        "FRAC_H_4": 3,
+        "REL_E_BETWEEN": 1,
+        "ODD_M_PRIME2": 4,
+        "FRAC_M_3": 2,
+        "REL_M_BRANCH_UNRES": 3,
+        "CAL_E_AFTER": 1,
+        "ODD_E_MULT": 1,
+        "FRAC_E_2": 2,
+        "ODD_E_SQUARES": 1,
+        "REL_H_POSITION_UNCERTAIN": 5,
+        "CAL_H_NESTED": 2,
+        "CAL_H_LONG": 2,
+        "ODD_H_PRIME_OFFSET": 2
+      }
+    },
+    "askedUnknown": {
+      "work_time": {
+        "daysForNewCrew": 4,
+        "extraDaysAfterTwoStages": 3,
+        "extraDaysAfterCrewAndEfficiency": 2,
+        "workersForMoreWork": 2,
+        "extraDaysAfterCrewChange": 2,
+        "workersForDeadline": 2,
+        "daysAfterEfficiencyGain": 1
+      },
+      "direct_proportion": {
+        "scaledOutput": 7,
+        "scaledOutputPlusFee": 5,
+        "scaledOutputPlusReserve": 2,
+        "scaledOutputFromResource": 1
+      },
+      "percentages": {
+        "originalFromTwoChanges": 4,
+        "remainingAfterTwoStages": 3,
+        "netPercentChange": 3,
+        "finalAfterTwoChanges": 3,
+        "originalFromFinal": 2,
+        "scaledCostAfterIncrease": 1
+      },
+      "unit_rate": {
+        "scaledOutput": 6,
+        "totalAcrossStages": 4,
+        "requiredTimeAfterIncrease": 3,
+        "scaledOutputAfterIncrease": 2,
+        "requiredTime": 1
+      },
+      "sequences": {
+        "nextTerm": 9,
+        "missingMiddleTerm": 5,
+        "nextTermOfSecondRun": 2
+      },
+      "fractions": {
+        "hiddenFraction": 7,
+        "chainResult": 4,
+        "startNumber": 4
+      },
+      "machines": {
+        "totalAcrossStages": 5,
+        "machinesForTarget": 3,
+        "outputForNewSetup": 3,
+        "mixedGroupOutput": 2,
+        "mixedFleetOutput": 2,
+        "mixedPairOutput": 1
+      },
+      "odd_one_out": {
+        "outlier": 16
+      },
+      "profit_loss": {
+        "lossPercent": 4,
+        "profitPercent": 3,
+        "profitPercentOnTotalCost": 3,
+        "costFromSellPrice": 2,
+        "netPercentChange": 2,
+        "sellPriceAfterDiscountAndMarkup": 1
+      },
+      "combined_rate": {
+        "soloTimeAfterJoint": 4,
+        "jointTimeAfterSolo": 4,
+        "jointOutput": 3,
+        "jointTime": 2,
+        "finalSoloTime": 2
+      },
+      "averages": {
+        "averageAfterAddingPair": 4,
+        "weightedAveragePlusValue": 3,
+        "newAverageAfterReplace": 2,
+        "newAverageAfterRemove": 2,
+        "weightedAverage": 2,
+        "valueForTargetAverage": 2
+      },
+      "relational": {
+        "countAbove": 3,
+        "undeterminedPair": 3,
+        "undeterminedPosition4": 3,
+        "guaranteedStatement": 2,
+        "guaranteedDespiteBranches": 2,
+        "position3": 1,
+        "undeterminedPosition5": 1,
+        "undeterminedPosition3": 1
+      },
+      "speed": {
+        "distance": 3,
+        "distanceFromTimeGap": 3,
+        "totalTimeMinutes": 3,
+        "time": 2,
+        "totalDistance": 2,
+        "meetingTime": 2,
+        "averageSpeed": 1,
+        "catchupTime": 1
+      },
+      "ratios": {
+        "thirdTerm": 4,
+        "sumBeforeChange": 3,
+        "sideB": 2,
+        "sideA": 2,
+        "commonTerm": 2,
+        "sideBBeforeTransfer": 1,
+        "sideABeforeTransfer": 1
+      },
+      "calendar": {
+        "todayFromCompoundOffset": 6,
+        "pastDayFromFutureAnchor": 5,
+        "todayFromNestedOffset": 2,
+        "dayAfterLongOffset": 2,
+        "todayFromOffset": 1
+      },
+      "ages": {
+        "olderAgeNow": 9,
+        "youngerAgeNow": 3,
+        "youngerAge": 2,
+        "olderAge": 1
+      }
+    }
+  }
+}
