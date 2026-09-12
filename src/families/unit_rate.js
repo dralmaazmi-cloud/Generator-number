@@ -1,8 +1,8 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine, resample} from './_shared.js';
 
-export function generateUnitRate({difficulty, rng, seed, engineVersion}) {
-  const ctx = {difficulty, rng, seed, engineVersion, family: 'unit_rate', family_ar: 'المعدل الوحدوي', category: 'المعدل الوحدوي'};
+export function generateUnitRate({difficulty, rng, seed, engineVersion, telemetry}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'unit_rate', family_ar: 'المعدل الوحدوي', category: 'المعدل الوحدوي'};
   const list = difficulty === 'easy' ? [directRate, rateToTime]
     : difficulty === 'medium' ? [rateThenPercent, rateThenNewQuantity]
     : [rateChangeTarget, twoPhaseRate];
@@ -17,7 +17,7 @@ function directRate(ctx) {
   const target = rng.pick([3, 4, 5, 7, 9].filter(v => v !== minutes));
   const correct = target * rate;
   const params = {baseAmount: total, baseMinutes: minutes, targetMinutes: target};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(total, 'USED_GIVEN_VALUE_AS_ANSWER', `الكمية المعطاة ${total}`),
     mk(rate, 'STOPPED_AT_UNIT_RATE', `${total} ÷ ${minutes}`),
     mk(target * minutes, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${target} × ${minutes}`),
@@ -61,7 +61,7 @@ function rateToTime(ctx) {
   const correct = rng.pick([45, 50, 60, 75].filter(v => v !== minutes));
   const targetWords = correct * rate;
   const params = {baseAmount: total, baseMinutes: minutes, targetAmount: targetWords};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(minutes, 'USED_GIVEN_VALUE_AS_ANSWER', `الزمن المعطى ${minutes}`),
     mk(rate, 'STOPPED_AT_UNIT_RATE', `${total} ÷ ${minutes}`),
     mk(total * minutes / targetWords, 'REVERSED_DIRECT_PROPORTION', `${total} × ${minutes} ÷ ${targetWords}`),
@@ -110,10 +110,10 @@ function rateThenPercent(ctx) {
   // which is exactly the mistake this template exists to catch (Section 10).
   const targetMin = rng.pick([4, 5, 6].filter(v => v !== minutes));
   const answer = newRate.mul(targetMin);
-  if (!answer.isInteger || !newRate.isExactDecimal || newRate.decimalPlaces > 2) return rateThenPercent(ctx);
+  if (!answer.isInteger || !newRate.isExactDecimal || newRate.decimalPlaces > 2) return resample(ctx, rateThenPercent);
   const correct = answer.toNumber();
   const params = {baseAmount: total, baseMinutes: minutes, increasePct: pct, targetMinutes: targetMin};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(rate * targetMin, 'IGNORED_UPGRADE', `${rate} × ${targetMin}`),
     mk(Fraction.from(total).mul(factor).toNumber(), 'APPLIED_PERCENT_TO_WRONG_TOTAL', `${total} × ${factor.toDecimalString()}`),
     mk(newRate.toNumber(), 'STOPPED_AT_UNIT_RATE', `${rate} × ${factor.toDecimalString()}`),
@@ -156,13 +156,13 @@ function rateThenNewQuantity(ctx) {
   const qty = rng.pick([12, 15, 18, 20]);
   const amount = rng.pick([180, 240, 300, 360]);
   const rate = Fraction.from(amount).div(qty);
-  if (!rate.isInteger) return rateThenNewQuantity(ctx);
+  if (!rate.isInteger) return resample(ctx, rateThenNewQuantity);
   const targetQty = rng.pick([25, 30, 36, 40].filter(v => v !== qty));
   const rateNum = rate.toNumber();
-  if (rateNum === qty) return rateThenNewQuantity(ctx);
+  if (rateNum === qty) return resample(ctx, rateThenNewQuantity);
   const correct = rateNum * targetQty;
   const params = {baseAmount: amount, baseCount: qty, targetCount: targetQty};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(amount, 'USED_GIVEN_VALUE_AS_ANSWER', `المسافة المعطاة ${amount}`),
     mk(rateNum, 'STOPPED_AT_UNIT_RATE', `${amount} ÷ ${qty}`),
     mk(targetQty * qty, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${targetQty} × ${qty}`),
@@ -206,16 +206,16 @@ function rateChangeTarget(ctx) {
   const pct = rng.pick([20, 25, 50]);
   const {factor, text: factorText} = factorLine(pct, 'up', 'معامل التطوير');
   const newRate = Fraction.from(oldRate).mul(factor);
-  if (!newRate.isInteger) return rateChangeTarget(ctx);
+  if (!newRate.isInteger) return resample(ctx, rateChangeTarget);
   const oldMinutes = rng.pick([6, 8, 10]);
   const initial = oldRate * oldMinutes;
   const target = rng.pick([600, 720, 800, 900, 1000]);
   const answer = Fraction.from(target).div(newRate);
-  if (!answer.isInteger) return rateChangeTarget(ctx);
+  if (!answer.isInteger) return resample(ctx, rateChangeTarget);
   const correct = answer.toNumber();
   const params = {baseAmount: initial, baseMinutes: oldMinutes, increasePct: pct, targetAmount: target};
   const newRateNum = newRate.toNumber();
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(target / oldRate, 'IGNORED_UPGRADE', `${target} ÷ ${oldRate}`),
     mk(oldMinutes, 'USED_GIVEN_VALUE_AS_ANSWER', `الزمن المعطى ${oldMinutes}`),
     mk(newRateNum, 'STOPPED_AT_UNIT_RATE', `${oldRate} × ${factor.toDecimalString()}`),
@@ -262,12 +262,12 @@ function twoPhaseRate(ctx) {
   const pct = rng.pick([20, 25, 50]);
   const {factor, text: factorText} = factorLine(pct, 'up', 'معامل الزيادة');
   const r2 = Fraction.from(r1).mul(factor);
-  if (!r2.isInteger) return twoPhaseRate(ctx);
+  if (!r2.isInteger) return resample(ctx, twoPhaseRate);
   const h2 = rng.pick([3, 4, 5].filter(v => v !== h1));
   const r2n = r2.toNumber();
   const correct = r1 * h1 + r2n * h2;
   const params = {firstRate: r1, firstHours: h1, increasePct: pct, secondHours: h2};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(r1 * (h1 + h2), 'USED_ONLY_FIRST_RATE', `${r1} × (${h1} + ${h2})`),
     mk(r2n * (h1 + h2), 'USED_ONLY_SECOND_RATE', `${r2n} × (${h1} + ${h2})`),
     mk(r2n * h2, 'USED_ONLY_LAST_STAGE', `${r2n} × ${h2}`),

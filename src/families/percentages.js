@@ -1,8 +1,8 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample} from './_shared.js';
 
-export function generatePercentages({difficulty, rng, seed, engineVersion}) {
-  const ctx = {difficulty, rng, seed, engineVersion, family: 'percentages', family_ar: 'النسب المئوية', category: 'النسب المئوية'};
+export function generatePercentages({difficulty, rng, seed, engineVersion, telemetry}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'percentages', family_ar: 'النسب المئوية', category: 'النسب المئوية'};
   const list = difficulty === 'easy' ? [simplePercent, reverseOneChange]
     : difficulty === 'medium' ? [successiveChange, remainingChain, unitPriceChange]
     : [reverseSuccessive, successiveWithTarget];
@@ -17,7 +17,7 @@ function simplePercent(ctx) {
   const baseVal = rng.pick([80, 100, 120, 160, 200, 240, 300, 400, 500]);
   const correct = baseVal * pct / 100;
   const params = {baseValue: baseVal, percent: pct};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(baseVal * (100 - pct) / 100, 'TOOK_COMPLEMENT_PERCENT', `${baseVal} × (100 − ${pct}) ÷ 100`),
     mk(baseVal + pct, 'TREATED_PERCENT_AS_AMOUNT', `${baseVal} + ${pct}`),
     mk(baseVal - pct, 'TREATED_PERCENT_AS_AMOUNT', `${baseVal} − ${pct}`),
@@ -69,11 +69,11 @@ function reverseOneChange(ctx) {
   const original = rng.pick([80, 100, 120, 160, 200, 240, 300, 400]);
   const {factor, text: factorText} = factorLine(pct, inc ? 'up' : 'down');
   const finalF = Fraction.from(original).mul(factor);
-  if (!finalF.isInteger) return reverseOneChange(ctx);
+  if (!finalF.isInteger) return resample(ctx, reverseOneChange);
   const final = finalF.toNumber();
   const correct = original;
   const params = {finalValue: final, percent: pct, direction: inc ? 1 : 0};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(final, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة النهائية ${final}`),
     mk(Fraction.from(final).mul(factorLine(pct, inc ? 'down' : 'up').factor).toNumber(), 'SUBTRACTED_PERCENTAGE_DIRECTLY', `${final} × ${factorLine(pct, inc ? 'down' : 'up').factor.toDecimalString()}`),
     mk(final + pct, 'TREATED_PERCENT_AS_AMOUNT', `${final} + ${pct}`),
@@ -123,14 +123,14 @@ function successiveChange(ctx) {
   const correct = deltaTimes100 / 100;
   // Section 13: a net factor of 1 makes the item trivial for a template whose
   // point is that successive changes do not cancel.
-  if (correct === 0) return successiveChange(ctx);
+  if (correct === 0) return resample(ctx, successiveChange);
   const original = rng.pick([100, 200, 400, 500, 800]);
   const after1 = original * f1 / 100;
   const final = after1 * f2 / 100;
-  if (!Number.isInteger(after1) || !Number.isInteger(final)) return successiveChange(ctx);
+  if (!Number.isInteger(after1) || !Number.isInteger(final)) return resample(ctx, successiveChange);
   const params = {originalValue: original, firstPercent: p1, secondPercent: p2, upFirst: upFirst ? 1 : 0};
   const signed = upFirst ? p1 - p2 : p2 - p1;
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(signed, 'ADDED_PERCENTAGES', `${upFirst ? p1 : p2} − ${upFirst ? p2 : p1}`),
     mk(-signed, 'SUBTRACTED_PERCENTAGES', `${upFirst ? p2 : p1} − ${upFirst ? p1 : p2}`),
     mk(upFirst ? p1 + p2 : -(p1 + p2), 'ADDED_PERCENTAGES', `${p1} + ${p2}`),
@@ -177,11 +177,11 @@ function remainingChain(ctx) {
   const p2 = rng.pick([10, 20, 25]);
   const after1 = total * (100 - p1) / 100;
   const final = after1 * (100 - p2) / 100;
-  if (!Number.isInteger(after1) || !Number.isInteger(final)) return remainingChain(ctx);
+  if (!Number.isInteger(after1) || !Number.isInteger(final)) return resample(ctx, remainingChain);
   const correct = final;
   const wrongCombined = total * (100 - p1 - p2) / 100;
   const params = {totalCount: total, firstPercent: p1, secondPercent: p2};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(after1, 'STOPPED_AFTER_FIRST_STAGE', `${total} × (100 − ${p1}) ÷ 100`),
     mk(total * (100 - p2) / 100, 'APPLIED_PERCENT_TO_ORIGINAL', `${total} × (100 − ${p2}) ÷ 100`),
     mk(wrongCombined, 'ADDED_PERCENTAGES', `${total} × (100 − ${p1} − ${p2}) ÷ 100`),
@@ -230,10 +230,10 @@ function unitPriceChange(ctx) {
   const {factor, text: factorText} = factorLine(pct, 'up', 'معامل الزيادة');
   const newUnit = Fraction.from(unitPrice).mul(factor);
   const answer = newUnit.mul(qty2);
-  if (!newUnit.isExactDecimal || newUnit.decimalPlaces > 2 || !answer.isExactDecimal || answer.decimalPlaces > 2) return unitPriceChange(ctx);
+  if (!newUnit.isExactDecimal || newUnit.decimalPlaces > 2 || !answer.isExactDecimal || answer.decimalPlaces > 2) return resample(ctx, unitPriceChange);
   const correct = answer.toNumber();
   const params = {baseCount: qty1, baseAmount: total1, percent: pct, targetCount: qty2};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(unitPrice * qty2, 'IGNORED_UPGRADE', `${unitPrice} × ${qty2}`),
     mk(Fraction.from(total1).mul(factor).toNumber(), 'APPLIED_PERCENT_TO_WRONG_TOTAL', `${total1} × ${factor.toDecimalString()}`),
     mk(newUnit.toNumber(), 'STOPPED_AT_UNIT_RATE', `${unitPrice} × ${factor.toDecimalString()}`),
@@ -279,16 +279,16 @@ function reverseSuccessive(ctx) {
   const p2 = rng.pick([10, 20, 25]);
   const original = rng.pick([100, 200, 300, 400, 500, 600, 800]);
   const f1 = 100 + p1, f2 = 100 - p2;
-  if (f1 * f2 === 10000) return reverseSuccessive(ctx);
+  if (f1 * f2 === 10000) return resample(ctx, reverseSuccessive);
   const finalF = Fraction.from(original).mul(f1).mul(f2).div(10000);
-  if (!finalF.isInteger) return reverseSuccessive(ctx);
+  if (!finalF.isInteger) return resample(ctx, reverseSuccessive);
   const final = finalF.toNumber();
   const after1 = original * f1 / 100;
-  if (!Number.isInteger(after1)) return reverseSuccessive(ctx);
+  if (!Number.isInteger(after1)) return resample(ctx, reverseSuccessive);
   const correct = original;
   const netFactor = Fraction.from(f1).mul(f2).div(10000);
   const params = {finalValue: final, firstPercent: p1, secondPercent: p2};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(final, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة النهائية ${final}`),
     mk(Fraction.from(final).mul(100).div(f1).toNumber(), 'REVERSED_ONE_STAGE_ONLY', `${final} × 100 ÷ ${f1}`),
     mk(Fraction.from(final).mul(100).div(f2).toNumber(), 'REVERSED_ONE_STAGE_ONLY', `${final} × 100 ÷ ${f2}`),
@@ -337,15 +337,15 @@ function successiveWithTarget(ctx) {
   const p1 = rng.pick([10, 20, 25]);
   const p2 = rng.pick([10, 20]);
   const f1 = 100 - p1, f2 = 100 + p2;
-  if (f1 * f2 === 10000) return successiveWithTarget(ctx);
+  if (f1 * f2 === 10000) return resample(ctx, successiveWithTarget);
   const afterF = Fraction.from(original).mul(f1).div(100);
   const finalF = afterF.mul(f2).div(100);
-  if (!afterF.isInteger || !finalF.isInteger) return successiveWithTarget(ctx);
+  if (!afterF.isInteger || !finalF.isInteger) return resample(ctx, successiveWithTarget);
   const correct = finalF.toNumber();
   const after = afterF.toNumber();
   const params = {originalValue: original, discountPercent: p1, increasePercent: p2};
   const wrongNet = original * (100 + p2 - p1) / 100;
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(after, 'STOPPED_AFTER_FIRST_STAGE', `${original} × ${f1} ÷ 100`),
     mk(original * f2 / 100, 'APPLIED_PERCENT_TO_ORIGINAL', `${original} × ${f2} ÷ 100`),
     mk(wrongNet, 'ADDED_PERCENTAGES', `${original} × (100 + ${p2} − ${p1}) ÷ 100`),

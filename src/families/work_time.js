@@ -1,8 +1,8 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample} from './_shared.js';
 
-export function generateWorkTime({difficulty, rng, seed, engineVersion}) {
-  const ctx = {difficulty, rng, seed, engineVersion, family: 'work_time', family_ar: 'العمال والزمن', category: 'العمال والزمن'};
+export function generateWorkTime({difficulty, rng, seed, engineVersion, telemetry}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'work_time', family_ar: 'العمال والزمن', category: 'العمال والزمن'};
   const list = difficulty === 'easy' ? [inverseDirect, workVolume]
     : difficulty === 'medium' ? [changeWorkers, efficiencyChange, targetDeadline]
     : [twoStageWorkers, workersAndEfficiency];
@@ -15,12 +15,12 @@ function inverseDirect(ctx) {
   const d1 = rng.pick([6, 8, 10, 12, 15, 18]);
   const work = w1 * d1;
   const candidates = [6, 8, 10, 12, 15, 16, 18, 20, 24].filter(w => work % w === 0 && w !== w1);
-  if (!candidates.length) return inverseDirect(ctx);
+  if (!candidates.length) return resample(ctx, inverseDirect);
   const w2 = rng.pick(candidates);
   const correct = work / w2;
-  if (correct === d1) return inverseDirect(ctx);
+  if (correct === d1) return resample(ctx, inverseDirect);
   const params = {workers: w1, days: d1, newWorkers: w2};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(d1, 'USED_GIVEN_VALUE_AS_ANSWER', `عدد الأيام المعطى ${d1}`),
     mk(w2, 'USED_GIVEN_VALUE_AS_ANSWER', `عدد العمال الجديد ${w2}`),
     mk(d1 * w2 / w1, 'REVERSED_INVERSE_PROPORTION', `${d1} × ${w2} ÷ ${w1}`),
@@ -64,9 +64,9 @@ function workVolume(ctx) {
   const oldUnits = rng.pick([2, 3, 4]);
   const newUnits = oldUnits + rng.pick([1, 2]);
   const correct = workers * newUnits / oldUnits;
-  if (!Number.isInteger(correct)) return workVolume(ctx);
+  if (!Number.isInteger(correct)) return resample(ctx, workVolume);
   const params = {workers, days, currentTasks: oldUnits, targetTasks: newUnits};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(workers, 'USED_GIVEN_VALUE_AS_ANSWER', `عدد العمال المعطى ${workers}`),
     mk(newUnits * workers, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${newUnits} × ${workers}`),
     mk(workers + newUnits - oldUnits, 'ADDED_INSTEAD_OF_SCALING', `${workers} + (${newUnits} − ${oldUnits})`),
@@ -111,15 +111,15 @@ function changeWorkers(ctx) {
   const initialDays = rng.int(3, Math.min(5, totalDays - 3));
   const change = rng.pick([-2, 2, 4]);
   const w2 = w1 + change;
-  if (w2 <= 2) return changeWorkers(ctx);
+  if (w2 <= 2) return resample(ctx, changeWorkers);
   const totalWork = w1 * totalDays;
   const done = w1 * initialDays;
   const remain = totalWork - done;
-  if (remain % w2 !== 0) return changeWorkers(ctx);
+  if (remain % w2 !== 0) return resample(ctx, changeWorkers);
   const correct = remain / w2;
-  if (correct === totalDays - initialDays) return changeWorkers(ctx);
+  if (correct === totalDays - initialDays) return resample(ctx, changeWorkers);
   const params = {workers: w1, totalDays, workedDays: initialDays, crewChange: change};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(totalDays - initialDays, 'IGNORED_UPGRADE', `${totalDays} − ${initialDays}`),
     mk(totalDays, 'USED_GIVEN_VALUE_AS_ANSWER', `المدة الأصلية ${totalDays}`),
     mk(remain / w1, 'IGNORED_UPGRADE', `${remain} ÷ ${w1}`),
@@ -167,10 +167,10 @@ function efficiencyChange(ctx) {
   const pct = rng.pick([20, 25, 50]);
   const {factor, text: factorText} = factorLine(pct, 'up', 'معامل الكفاءة');
   const answer = Fraction.from(days).div(factor);
-  if (!answer.isInteger) return efficiencyChange(ctx);
+  if (!answer.isInteger) return resample(ctx, efficiencyChange);
   const correct = answer.toNumber();
   const params = {days, efficiencyPercent: pct};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(days, 'USED_GIVEN_VALUE_AS_ANSWER', `المدة الأصلية ${days}`),
     mk(days * (100 - pct) / 100, 'SUBTRACTED_PERCENTAGE_DIRECTLY', `${days} × (100 − ${pct}) ÷ 100`),
     mk(Fraction.from(days).mul(factor).toNumber(), 'REVERSED_INVERSE_PROPORTION', `${days} × ${factor.toDecimalString()}`),
@@ -219,11 +219,11 @@ function targetDeadline(ctx) {
   const done = w * initialDays;
   const remain = total - done;
   const finishDays = rng.pick([3, 4, 5, 6]);
-  if (remain % finishDays !== 0) return targetDeadline(ctx);
+  if (remain % finishDays !== 0) return resample(ctx, targetDeadline);
   const correct = remain / finishDays;
-  if (correct === w) return targetDeadline(ctx);
+  if (correct === w) return resample(ctx, targetDeadline);
   const params = {workers: w, totalDays, workedDays: initialDays, deadlineDays: finishDays};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(w, 'USED_GIVEN_VALUE_AS_ANSWER', `عدد العمال الأصلي ${w}`),
     mk(total / finishDays, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${total} ÷ ${finishDays}`),
     mk(remain / (totalDays - initialDays), 'IGNORED_UPGRADE', `${remain} ÷ (${totalDays} − ${initialDays})`),
@@ -273,14 +273,14 @@ function twoStageWorkers(ctx) {
   const done = w1 * firstDays;
   const left = rng.pick([2, 4]);
   const w2 = w1 - left;
-  if (w2 <= 0) return twoStageWorkers(ctx);
+  if (w2 <= 0) return resample(ctx, twoStageWorkers);
   const secondDays = rng.pick([2, 3, 4]);
   const done2 = w2 * secondDays;
   const remain = total - done - done2;
-  if (remain <= 0 || remain % w2 !== 0) return twoStageWorkers(ctx);
+  if (remain <= 0 || remain % w2 !== 0) return resample(ctx, twoStageWorkers);
   const correct = remain / w2;
   const params = {workers: w1, totalDays, firstDays, workersLeft: left, secondDays};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(totalDays - firstDays - secondDays, 'IGNORED_UPGRADE', `${totalDays} − ${firstDays} − ${secondDays}`),
     mk((total - done) / w2, 'MISSED_ONE_STAGE', `(${total} − ${done}) ÷ ${w2}`),
     mk(remain / w1, 'IGNORED_UPGRADE', `${remain} ÷ ${w1}`),
@@ -337,10 +337,10 @@ function workersAndEfficiency(ctx) {
   const {factor, text: factorText} = factorLine(pct, 'up', 'معامل الكفاءة');
   const effective = Fraction.from(newW).mul(factor);
   const answer = Fraction.from(remain).div(effective);
-  if (!answer.isInteger || !effective.isExactDecimal || effective.decimalPlaces > 2) return workersAndEfficiency(ctx);
+  if (!answer.isInteger || !effective.isExactDecimal || effective.decimalPlaces > 2) return resample(ctx, workersAndEfficiency);
   const correct = answer.toNumber();
   const params = {workers: w, totalDays, workedDays: initial, workersLeft: left, efficiencyPercent: pct};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(remain / newW, 'IGNORED_UPGRADE', `${remain} ÷ ${newW}`),
     mk(totalDays - initial, 'IGNORED_UPGRADE', `${totalDays} − ${initial}`),
     mk(Fraction.from(remain).div(Fraction.from(w).mul(factor)).toNumber(), 'FAILED_TO_UPDATE_COUNT', `${remain} ÷ (${w} × ${factor.toDecimalString()})`),

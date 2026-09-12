@@ -1,8 +1,8 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine, resample} from './_shared.js';
 
-export function generateMachines({difficulty, rng, seed, engineVersion}) {
-  const ctx = {difficulty, rng, seed, engineVersion, family: 'machines', family_ar: 'الآلات والإنتاج', category: 'الآلات والإنتاج'};
+export function generateMachines({difficulty, rng, seed, engineVersion, telemetry}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'machines', family_ar: 'الآلات والإنتاج', category: 'الآلات والإنتاج'};
   const list = difficulty === 'easy' ? [machineHours, requiredMachines]
     : difficulty === 'medium' ? [newMachineFaster, oneStops, subsetUpgrade]
     : [twoTypesCombined, stageChange];
@@ -19,7 +19,7 @@ function machineHours(ctx) {
   const newHours = rng.pick([2, 3, 4].filter(v => v !== hours));
   const correct = newMachines * newHours * rate;
   const params = {machines, hours, totalOutput: total, newMachines, newHours};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(rate, 'STOPPED_AT_UNIT_RATE', `${total} ÷ (${machines} × ${hours})`),
     mk(total, 'USED_GIVEN_VALUE_AS_ANSWER', `الإنتاج المعطى ${total}`),
     mk(newMachines * hours * rate, 'RATE_APPLIED_TO_WRONG_COUNT', `${newMachines} × ${hours} × ${rate}`),
@@ -69,7 +69,7 @@ function requiredMachines(ctx) {
   const correct = rng.pick([6, 8, 10, 12].filter(v => v !== machines));
   const target = correct * targetHours * rate;
   const params = {machines, hours, totalOutput: total, targetOutput: target, targetHours};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(machines, 'USED_GIVEN_VALUE_AS_ANSWER', `عدد الآلات المعطى ${machines}`),
     mk(target / rate, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${target} ÷ ${rate}`),
     mk(target / (rate * hours), 'RATE_APPLIED_TO_WRONG_COUNT', `${target} ÷ (${rate} × ${hours})`),
@@ -122,12 +122,12 @@ function newMachineFaster(ctx) {
   const pct = rng.pick([25, 50]);
   const {factor, text: factorText} = factorLine(pct, 'up', 'معامل السرعة');
   const newRate = Fraction.from(oldRate).mul(factor);
-  if (!newRate.isInteger) return newMachineFaster(ctx);
+  if (!newRate.isInteger) return resample(ctx, newMachineFaster);
   const targetH = rng.pick([2, 3, 4]);
   const newRateN = newRate.toNumber();
   const correct = (oldRate + newRateN) * targetH;
   const params = {machines, hours, totalOutput: total, fasterPercent: pct, targetHours: targetH};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(2 * oldRate * targetH, 'IGNORED_UPGRADE', `2 × ${oldRate} × ${targetH}`),
     mk(2 * newRateN * targetH, 'UPGRADED_ALL_INSTEAD_OF_SOME', `2 × ${newRateN} × ${targetH}`),
     mk(newRateN * targetH, 'USED_ONLY_SECOND_RATE', `${newRateN} × ${targetH}`),
@@ -176,10 +176,10 @@ function oneStops(ctx) {
   const h1 = rng.pick([3, 4, 5]);
   const h2 = rng.pick([3, 4, 5].filter(v => v !== h1));
   const stopped = rng.pick([1, 2]);
-  if (stopped >= machines) return oneStops(ctx);
+  if (stopped >= machines) return resample(ctx, oneStops);
   const correct = machines * rate * h1 + (machines - stopped) * rate * h2;
   const params = {machines, hourlyRate: rate, firstHours: h1, secondHours: h2, stoppedMachines: stopped};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(machines * rate * (h1 + h2), 'IGNORED_UPGRADE', `${machines} × ${rate} × (${h1} + ${h2})`),
     mk((machines - stopped) * rate * (h1 + h2), 'FAILED_TO_UPDATE_COUNT', `${machines - stopped} × ${rate} × (${h1} + ${h2})`),
     mk(machines * rate * h1, 'STOPPED_AFTER_FIRST_STAGE', `${machines} × ${rate} × ${h1}`),
@@ -228,12 +228,12 @@ function subsetUpgrade(ctx) {
   const pct = rng.pick([20, 25, 50]);
   const {factor, text: factorText} = factorLine(pct, 'up', 'معامل التطوير');
   const newRate = Fraction.from(rate).mul(factor);
-  if (!newRate.isInteger) return subsetUpgrade(ctx);
+  if (!newRate.isInteger) return resample(ctx, subsetUpgrade);
   const newRateN = newRate.toNumber();
   const combined = upgraded * newRateN + (machines - upgraded) * rate;
   const correct = combined * hours;
   const params = {machines, hourlyRate: rate, upgradedMachines: upgraded, upgradePercent: pct, hours};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(machines * newRateN * hours, 'UPGRADED_ALL_INSTEAD_OF_SOME', `${machines} × ${newRateN} × ${hours}`),
     mk(machines * rate * hours, 'IGNORED_UPGRADE', `${machines} × ${rate} × ${hours}`),
     mk(upgraded * newRateN * hours, 'USED_ONLY_SECOND_RATE', `${upgraded} × ${newRateN} × ${hours}`),
@@ -285,7 +285,7 @@ function twoTypesCombined(ctx) {
   const combined = nA * rA + nB * rB;
   const correct = combined * hours;
   const params = {rateA: rA, rateB: rB, countA: nA, countB: nB, hours};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk((nA + nB) * rA * hours, 'USED_ONLY_FIRST_RATE', `(${nA} + ${nB}) × ${rA} × ${hours}`),
     mk((nA + nB) * rB * hours, 'USED_ONLY_SECOND_RATE', `(${nA} + ${nB}) × ${rB} × ${hours}`),
     mk((rA + rB) * hours, 'FAILED_TO_UPDATE_COUNT', `(${rA} + ${rB}) × ${hours}`),
@@ -336,14 +336,14 @@ function stageChange(ctx) {
   const pct = rng.pick([25, 50]);
   const {factor, text: factorText} = factorLine(pct, 'up', 'معامل التطوير');
   const newRate = Fraction.from(rate).mul(factor);
-  if (!newRate.isInteger) return stageChange(ctx);
+  if (!newRate.isInteger) return resample(ctx, stageChange);
   const newRateN = newRate.toNumber();
   const stage1 = machines * rate * h1;
   const combined = upgraded * newRateN + (machines - upgraded) * rate;
   const stage2 = combined * h2;
   const correct = stage1 + stage2;
   const params = {machines, hourlyRate: rate, firstHours: h1, upgradedMachines: upgraded, upgradePercent: pct, secondHours: h2};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(machines * rate * (h1 + h2), 'IGNORED_UPGRADE', `${machines} × ${rate} × (${h1} + ${h2})`),
     mk(machines * newRateN * (h1 + h2), 'UPGRADED_ALL_INSTEAD_OF_SOME', `${machines} × ${newRateN} × (${h1} + ${h2})`),
     mk(stage1, 'STOPPED_AFTER_FIRST_STAGE', `${machines} × ${rate} × ${h1}`),

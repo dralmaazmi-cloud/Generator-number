@@ -10,9 +10,9 @@ import {Fraction} from '../qa/fraction.js';
 import {
   mk, usable, u, num, unitFormat, buildBase,
   eq, X, add, sub, mul, div, factorLine
-} from './_shared.js';
+, resample} from './_shared.js';
 
-export function generateDirectProportion({difficulty, rng, seed, engineVersion}) {
+export function generateDirectProportion({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {
     difficulty, rng, seed, engineVersion,
     family: 'direct_proportion', family_ar: 'التناسب المباشر', category: 'التناسب المباشر البسيط'
@@ -143,7 +143,7 @@ function unitItems(ctx) {
     const params = {baseCount: boxes, baseAmount: total, targetCount};
     const s = solve(params, 'scaledOutput');
     const correct = s.answer;
-    const distractors = usable([
+    const distractors = usable(ctx, [
       mk(total, 'USED_GIVEN_VALUE_AS_ANSWER', `العدد المعطى ${total}`),
       mk(per, 'STOPPED_AT_UNIT_RATE', `${total} ÷ ${boxes}`),
       mk(targetCount * boxes, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${targetCount} × ${boxes}`),
@@ -192,7 +192,7 @@ function unitItems(ctx) {
   const params = {baseCount: boxes, baseAmount: total, targetAmount};
   const s = solve(params, 'requiredInput');
   const correct = s.answer;
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(boxes, 'USED_GIVEN_VALUE_AS_ANSWER', `العدد المعطى ${boxes}`),
     mk(per, 'STOPPED_AT_UNIT_RATE', `${total} ÷ ${boxes}`),
     mk(targetAmount / boxes, 'REVERSED_DIRECT_PROPORTION', `${targetAmount} ÷ ${boxes}`),
@@ -245,7 +245,7 @@ function unitCost(ctx) {
   const params = {baseCount: n, baseAmount: total, targetCount};
   const s = solve(params, 'scaledOutput');
   const correct = s.answer;
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(total, 'USED_GIVEN_VALUE_AS_ANSWER', `السعر المعطى ${total}`),
     mk(unitPrice, 'STOPPED_AT_UNIT_RATE', `${total} ÷ ${n}`),
     mk(targetCount * n, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${targetCount} × ${n}`),
@@ -298,7 +298,7 @@ function unitCostReverse(ctx, n, unitPrice, total, targetCount) {
   const params = {baseCount: n, baseAmount: total, targetAmount: budget};
   const s = solve(params, 'requiredInput');
   const correct = s.answer;
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(n, 'USED_GIVEN_VALUE_AS_ANSWER', `العدد المعطى ${n}`),
     mk(unitPrice, 'STOPPED_AT_UNIT_RATE', `${total} ÷ ${n}`),
     mk(budget / n, 'REVERSED_DIRECT_PROPORTION', `${budget} ÷ ${n}`),
@@ -353,7 +353,7 @@ function recipeScale(ctx) {
   const params = {baseCount: pieces, baseAmount: cups, targetCount: targetPieces};
   const s = solve(params, 'scaledOutput');
   const correct = s.answer;
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(cups, 'USED_GIVEN_VALUE_AS_ANSWER', `الكمية الأصلية ${cups}`),
     mk(factor, 'STOPPED_AFTER_FIRST_STAGE', `${targetPieces} ÷ ${pieces}`),
     mk(cups + factor, 'ADDED_INSTEAD_OF_SCALING', `${cups} + ${factor}`),
@@ -404,7 +404,7 @@ function recipeScaleReverse(ctx, pieces, cups, factor) {
   const s = solve(params, 'scaledOutput');
   const correct = s.answer;
   const perCup = pieces / cups;
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(pieces, 'USED_GIVEN_VALUE_AS_ANSWER', `العدد المعطى ${pieces}`),
     mk(factor, 'STOPPED_AFTER_FIRST_STAGE', `${availableCups} ÷ ${cups}`),
     mk(pieces + (availableCups - cups), 'ADDED_INSTEAD_OF_SCALING', `${pieces} + (${availableCups} − ${cups})`),
@@ -452,7 +452,7 @@ function mapScale(ctx) {
   const cmBase = rng.pick([2, 4, 5]);
   const kmBase = rng.pick([10, 20, 40, 60]);
   const perCm = Fraction.from(kmBase).div(cmBase);
-  if (!perCm.isInteger) return mapScale(ctx);
+  if (!perCm.isInteger) return resample(ctx, mapScale);
   const a = rng.pick([4, 5, 6, 7, 8]);
   const b = rng.pick([3, 4, 5, 6]);
   const totalCm = a + b;
@@ -460,7 +460,7 @@ function mapScale(ctx) {
   const s = solve({baseCount: cmBase, baseAmount: kmBase, targetCount: totalCm}, 'scaledOutput');
   const correct = s.answer;
   const per = perCm.toNumber();
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(a * per, 'STOPPED_AFTER_FIRST_STAGE', `${a} × ${per}`),
     mk(b * per, 'USED_ONLY_LAST_STAGE', `${b} × ${per}`),
     mk(totalCm * kmBase, 'RATE_APPLIED_TO_WRONG_COUNT', `${totalCm} × ${kmBase}`),
@@ -519,14 +519,14 @@ function fractionalUnit(ctx) {
   const answer = unitW.mul(targetCount);
   // Section 8-A: an intermediate that cannot be printed exactly must not be
   // produced at all, so the sampler is what rejects it — not the display.
-  if (!unitW.isExactDecimal || unitW.decimalPlaces > 2) return fractionalUnit(ctx);
-  if (!answer.isExactDecimal || answer.decimalPlaces > 2) return fractionalUnit(ctx);
-  if (unitW.eq(Fraction.from(n))) return fractionalUnit(ctx);
+  if (!unitW.isExactDecimal || unitW.decimalPlaces > 2) return resample(ctx, fractionalUnit);
+  if (!answer.isExactDecimal || answer.decimalPlaces > 2) return resample(ctx, fractionalUnit);
+  if (unitW.eq(Fraction.from(n))) return resample(ctx, fractionalUnit);
   const params = {baseCount: n, baseAmount: totalKg, targetCount};
   const s = solve(params, 'scaledOutput');
   const correct = s.answer;
   const unitNum = unitW.toNumber();
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(totalKg, 'USED_GIVEN_VALUE_AS_ANSWER', `الوزن المعطى ${totalKg}`),
     mk(unitNum, 'STOPPED_AT_UNIT_RATE', `${totalKg} ÷ ${n}`),
     mk(targetCount * n, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${targetCount} × ${n}`),
@@ -577,14 +577,14 @@ function compoundScale(ctx) {
   const reservePct = rng.pick([10, 20, 25]);
   const params = {baseCount: units, baseAmount: amount, targetCount: targetUnits, reservePct};
   const unitVal = Fraction.from(amount).div(units);
-  if (!unitVal.isExactDecimal || unitVal.decimalPlaces > 2) return compoundScale(ctx);
+  if (!unitVal.isExactDecimal || unitVal.decimalPlaces > 2) return resample(ctx, compoundScale);
   const scaled = unitVal.mul(targetUnits);
-  if (!scaled.isInteger) return compoundScale(ctx);
+  if (!scaled.isInteger) return resample(ctx, compoundScale);
   const s = solve(params, 'scaledOutputPlusReserve');
-  if (!s.exactAnswer.isInteger) return compoundScale(ctx);
+  if (!s.exactAnswer.isInteger) return resample(ctx, compoundScale);
   const correct = s.answer;
   const {factor, text: factorText} = factorLine(reservePct, 'up', 'معامل الاحتياط');
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(scaled.toNumber(), 'STOPPED_AFTER_FIRST_STAGE', `${unitVal.toDecimalString()} × ${targetUnits}`),
     mk(Fraction.from(amount).mul(factor).toNumber(), 'APPLIED_PERCENT_TO_WRONG_TOTAL', `${amount} × ${factor.toDecimalString()}`),
     mk(unitVal.toNumber(), 'STOPPED_AT_UNIT_RATE', `${amount} ÷ ${units}`),
@@ -641,13 +641,13 @@ function multiUnitCost(ctx) {
   const flatFee = rng.pick([5, 10, 15]);
   const params = {baseCount: packN, baseAmount: packCost, targetCount, flatFee};
   const unitVal = Fraction.from(packCost).div(packN);
-  if (!unitVal.isExactDecimal || unitVal.decimalPlaces > 2) return multiUnitCost(ctx);
+  if (!unitVal.isExactDecimal || unitVal.decimalPlaces > 2) return resample(ctx, multiUnitCost);
   const scaled = unitVal.mul(targetCount);
-  if (!scaled.isExactDecimal || scaled.decimalPlaces > 2) return multiUnitCost(ctx);
+  if (!scaled.isExactDecimal || scaled.decimalPlaces > 2) return resample(ctx, multiUnitCost);
   const s = solve(params, 'scaledOutputPlusFee');
-  if (!s.exactAnswer.isInteger) return multiUnitCost(ctx);
+  if (!s.exactAnswer.isInteger) return resample(ctx, multiUnitCost);
   const correct = s.answer;
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(scaled.toNumber(), 'DROPPED_FLAT_FEE', `${unitVal.toDecimalString()} × ${targetCount}`),
     mk(scaled.add(Fraction.from(flatFee).mul(targetCount)).toNumber(), 'FLAT_FEE_PER_UNIT', `${scaled.toDecimalString()} + ${flatFee} × ${targetCount}`),
     mk(packCost + flatFee, 'USED_GIVEN_VALUE_AS_ANSWER', `${packCost} + ${flatFee}`),

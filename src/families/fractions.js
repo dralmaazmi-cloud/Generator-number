@@ -10,8 +10,8 @@ const FRACS = [
   {d: 8, n: 'ثُمن', def: 'الثُمن'}
 ];
 
-export function generateFractions({difficulty, rng, seed, engineVersion}) {
-  const ctx = {difficulty, rng, seed, engineVersion, family: 'fractions', family_ar: 'الكسور المتتابعة', category: 'الكسور المتتابعة المباشرة'};
+export function generateFractions({difficulty, rng, seed, engineVersion, telemetry}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'fractions', family_ar: 'الكسور المتتابعة', category: 'الكسور المتتابعة المباشرة'};
   const count = difficulty === 'easy' ? 2 : difficulty === 'medium' ? 3 : 4;
   // Section 17-A / 27: the audit found every item in this family pointing the
   // same way. The template is unchanged; what rotates is which quantity is
@@ -67,7 +67,7 @@ function buildFractionItem(ctx, count, direction) {
 
   if (direction === 'forward') {
     const correct = result;
-    const distractors = usable([
+    const distractors = usable(ctx, [
       ...fracs.map((f, i) => {
         const prod = fracs.reduce((p, g, j) => p * (j === i ? 1 : g.d), 1);
         return mk(total / prod, 'MISSED_ONE_FRACTION_STAGE', `${total} ÷ ${prod} بإسقاط ${f.def}`);
@@ -106,7 +106,7 @@ function buildFractionItem(ctx, count, direction) {
 
   if (direction === 'findNumber') {
     const correct = total;
-    const distractors = usable([
+    const distractors = usable(ctx, [
       mk(result * fracs[0].d, 'STOPPED_AFTER_FIRST_STAGE', `${result} × ${fracs[0].d}`),
       mk(result * (denomProduct / fracs.at(-1).d), 'MISSED_ONE_FRACTION_STAGE', `${result} × ${denomProduct / fracs.at(-1).d}`),
       mk(result * (denomProduct / fracs[0].d), 'MISSED_ONE_FRACTION_STAGE', `${result} × ${denomProduct / fracs[0].d}`),
@@ -149,7 +149,7 @@ function buildFractionItem(ctx, count, direction) {
   const knownProduct = knownFracs.reduce((p, f) => p * f.d, 1);
   const knownNames = knownFracs.map(f => f.n).join(' ');
   const correct = hidden.def;
-  const distractors = usable(
+  const distractors = usable(ctx, 
     FRACS.filter(f => f.d !== hidden.d).map(f =>
       mk(f.def, 'MISSED_ONE_FRACTION_STAGE', `القسمة على ${f.d} بدل ${hidden.d}`))
   );

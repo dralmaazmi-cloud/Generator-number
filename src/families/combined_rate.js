@@ -1,7 +1,7 @@
-import {mk, usable, u, unitFormat, buildBase, eq, X, add, mul} from './_shared.js';
+import {mk, usable, u, unitFormat, buildBase, eq, X, add, mul, resample} from './_shared.js';
 
-export function generateCombinedRate({difficulty, rng, seed, engineVersion}) {
-  const ctx = {difficulty, rng, seed, engineVersion, family: 'combined_rate', family_ar: 'المعدل المشترك', category: 'المعدل المشترك'};
+export function generateCombinedRate({difficulty, rng, seed, engineVersion, telemetry}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'combined_rate', family_ar: 'المعدل المشترك', category: 'المعدل المشترك'};
   const list = difficulty === 'easy' ? [togetherOutput, togetherTime]
     : difficulty === 'medium' ? [soloThenTogether, togetherThenSolo]
     : [stagedTarget, threeRates];
@@ -15,7 +15,7 @@ function togetherOutput(ctx) {
   const h = rng.pick([3, 4, 5, 6]);
   const correct = (a + b) * h;
   const params = {rateA: a, rateB: b, hours: h};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(a * h, 'USED_ONLY_FIRST_RATE', `${a} × ${h}`),
     mk(b * h, 'USED_ONLY_SECOND_RATE', `${b} × ${h}`),
     mk(a + b, 'STOPPED_AT_UNIT_RATE', `${a} + ${b}`),
@@ -61,7 +61,7 @@ function togetherTime(ctx) {
   const correct = rng.pick([4, 5, 6, 8]);
   const target = (a + b) * correct;
   const params = {rateA: a, rateB: b, targetAmount: target};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(target / a, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${a}`),
     mk(target / b, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${b}`),
     mk(a + b, 'STOPPED_AT_UNIT_RATE', `${a} + ${b}`),
@@ -106,7 +106,7 @@ function soloThenTogether(ctx) {
   const correct = rng.pick([3, 4, 5, 6].filter(v => v !== solo));
   const target = a * solo + (a + b) * correct;
   const params = {rateA: a, rateB: b, soloHours: solo, targetAmount: target};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(target / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `${target} ÷ ${a + b}`),
     mk((target - a * solo) / a, 'USED_ONLY_FIRST_RATE', `(${target} − ${a * solo}) ÷ ${a}`),
     mk((target - a * solo) / b, 'USED_ONLY_SECOND_RATE', `(${target} − ${a * solo}) ÷ ${b}`),
@@ -157,10 +157,10 @@ function togetherThenSolo(ctx) {
   // Section 10: with these numbers, dividing the whole target by the combined
   // rate would also land on the key, so the item would stop measuring the
   // staging skill it exists for.
-  if (bothH * (a + b) === correct * b) return togetherThenSolo(ctx);
+  if (bothH * (a + b) === correct * b) return resample(ctx, togetherThenSolo);
   const target = (a + b) * bothH + a * correct;
   const params = {rateA: a, rateB: b, jointHours: bothH, targetAmount: target};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(target / a, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${a}`),
     mk(target / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `${target} ÷ ${a + b}`),
     mk(bothH + correct, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${bothH} + ${correct}`),
@@ -208,10 +208,10 @@ function stagedTarget(ctx) {
   const togetherH = rng.pick([3, 4, 5]);
   const correct = rng.pick([3, 4, 5].filter(v => v !== soloA && v !== togetherH));
   // Same guard as above: keep the combined-rate shortcut genuinely wrong.
-  if ((a + b) * togetherH === correct * a) return stagedTarget(ctx);
+  if ((a + b) * togetherH === correct * a) return resample(ctx, stagedTarget);
   const target = a * soloA + (a + b) * togetherH + b * correct;
   const params = {rateA: a, rateB: b, soloAHours: soloA, jointHours: togetherH, targetAmount: target};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(target / b, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${b}`),
     mk((target - a * soloA) / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `(${target} − ${a * soloA}) ÷ ${a + b}`),
     mk(soloA + togetherH + correct, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${soloA} + ${togetherH} + ${correct}`),
@@ -260,7 +260,7 @@ function threeRates(ctx) {
   const sum = rates.reduce((x, y) => x + y, 0);
   const correct = sum * h;
   const params = {rateA: rates[0], rateB: rates[1], rateC: rates[2], hours: h};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(rates[0] * h, 'USED_ONLY_FIRST_RATE', `${rates[0]} × ${h}`),
     mk(rates[2] * h, 'USED_ONLY_SECOND_RATE', `${rates[2]} × ${h}`),
     mk((rates[0] + rates[1]) * h, 'MISSED_ONE_STAGE', `(${rates[0]} + ${rates[1]}) × ${h}`),

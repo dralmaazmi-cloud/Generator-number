@@ -1,9 +1,9 @@
 import {DAYS_AR, dayShift} from '../utils.js';
-import {mk, usable, u, buildBase, eq, X, add, mod} from './_shared.js';
+import {mk, usable, u, buildBase, eq, X, add, mod, resample} from './_shared.js';
 import {grid} from '../qa/oracle-engine.js';
 
-export function generateCalendar({difficulty, rng, seed, engineVersion}) {
-  const ctx = {difficulty, rng, seed, engineVersion, family: 'calendar', family_ar: 'الاستدلال الزمني وأيام الأسبوع', category: 'الاستدلال الزمني وأيام الأسبوع'};
+export function generateCalendar({difficulty, rng, seed, engineVersion, telemetry}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'calendar', family_ar: 'الاستدلال الزمني وأيام الأسبوع', category: 'الاستدلال الزمني وأيام الأسبوع'};
   const list = difficulty === 'easy' ? [tomorrowKnown, afterTomorrow]
     : difficulty === 'medium' ? [compoundForward, forwardThenBack]
     : [nestedOffset, longOffset];
@@ -46,7 +46,7 @@ function shiftLabel(days) {
  * @param {number} netOffset    how far the answer sits from the stated day
  * @param {Array<{index:number, misconceptionId:string, derivation:string}>} preferred
  */
-function dayDistractors(correctIndex, netOffset, preferred) {
+function dayDistractors(ctx, correctIndex, netOffset, preferred) {
   const chosen = new Map();
   for (const p of preferred) {
     const idx = ((p.index % 7) + 7) % 7;
@@ -62,7 +62,7 @@ function dayDistractors(correctIndex, netOffset, preferred) {
     // `netOffset` from the stated day.
     chosen.set(idx, mk(dayName(idx), 'OFF_BY_ONE_STEP', `${shiftLabel(netOffset - k)} بدل ${shiftLabel(netOffset)}`));
   }
-  return usable([...chosen.values()]);
+  return usable(ctx, [...chosen.values()]);
 }
 
 function tomorrowKnown(ctx) {
@@ -70,7 +70,7 @@ function tomorrowKnown(ctx) {
   const today = rng.int(0, 6);
   const target = dayShift(today, 1);
   const correct = DAYS_AR[today];
-  const distractors = dayDistractors(today, 1, [
+  const distractors = dayDistractors(ctx, today, 1, [
     {index: target + 1, misconceptionId: 'SHIFTED_WRONG_DIRECTION', derivation: `التقدم يومًا واحدًا من ${DAYS_AR[target]} بدل الرجوع`},
     {index: target, misconceptionId: 'USED_GIVEN_VALUE_AS_ANSWER', derivation: `اليوم المذكور نفسه ${DAYS_AR[target]}`}
   ]);
@@ -100,7 +100,7 @@ function afterTomorrow(ctx) {
   const today = rng.int(0, 6);
   const target = dayShift(today, 2);
   const correct = DAYS_AR[today];
-  const distractors = dayDistractors(today, 2, [
+  const distractors = dayDistractors(ctx, today, 2, [
     {index: target + 2, misconceptionId: 'SHIFTED_WRONG_DIRECTION', derivation: `التقدم يومين من ${DAYS_AR[target]} بدل الرجوع`},
     {index: target, misconceptionId: 'USED_GIVEN_VALUE_AS_ANSWER', derivation: `اليوم المذكور نفسه ${DAYS_AR[target]}`}
   ]);
@@ -133,7 +133,7 @@ function compoundForward(ctx) {
   const target = dayShift(today, netOffset);
   const correct = DAYS_AR[today];
   const aheadWord = u(ahead, 'day', 'oblique');
-  const distractors = dayDistractors(today, netOffset, [
+  const distractors = dayDistractors(ctx, today, netOffset, [
     {index: target - ahead, misconceptionId: 'IGNORED_NET_OFFSET', derivation: `الرجوع ${u(ahead, 'day', 'oblique')} فقط ونسيان يوم الغد`},
     {index: target + netOffset, misconceptionId: 'SHIFTED_WRONG_DIRECTION', derivation: `التقدم ${u(netOffset, 'day', 'oblique')} بدل الرجوع`},
     {index: target, misconceptionId: 'USED_GIVEN_VALUE_AS_ANSWER', derivation: `اليوم المذكور نفسه ${DAYS_AR[target]}`}
@@ -170,7 +170,7 @@ function forwardThenBack(ctx) {
   // Two chained shifts: from the stated day, go back 2 to reach today, then
   // back `back` more. Net offset from the answer to the stated day is 2 + back.
   const netOffset = 2 + back;
-  const distractors = dayDistractors(asked, netOffset, [
+  const distractors = dayDistractors(ctx, asked, netOffset, [
     {index: today, misconceptionId: 'STOPPED_AFTER_FIRST_STAGE', derivation: 'التوقف عند تحديد اليوم الحالي'},
     {index: afterTom - back, misconceptionId: 'IGNORED_NET_OFFSET', derivation: `الرجوع ${u(back, 'day', 'oblique')} من ${DAYS_AR[afterTom]} مباشرة`},
     {index: asked + back, misconceptionId: 'SHIFTED_WRONG_DIRECTION', derivation: `التقدم ${u(back, 'day', 'oblique')} بدل الرجوع`},
@@ -218,13 +218,13 @@ function nestedOffset(ctx) {
   // Section 7: a net offset of zero (mod 7) makes the answer the stated day
   // itself and produces the sentence "go back 0 days". The item is sound
   // arithmetically but degenerate for a template built on compound reasoning.
-  if (((netOffset % 7) + 7) % 7 === 0) return nestedOffset(ctx);
+  if (((netOffset % 7) + 7) % 7 === 0) return resample(ctx, nestedOffset);
   const today = rng.int(0, 6);
   const target = dayShift(today, netOffset);
   const correct = DAYS_AR[today];
   const aheadWord = u(ahead, 'day', 'oblique');
   const behindWord = u(behind, 'day', 'oblique');
-  const distractors = dayDistractors(today, netOffset, [
+  const distractors = dayDistractors(ctx, today, netOffset, [
     // The headline slip this template teaches against: treating the net offset
     // as N - M and forgetting that "tomorrow" is itself a shift of one.
     {index: target - (ahead - behind), misconceptionId: 'IGNORED_NET_OFFSET', derivation: `الرجوع ${u(ahead - behind, 'day', 'oblique')} ونسيان أن «الغد» إزاحة قدرها 1`},
@@ -278,7 +278,7 @@ function longOffset(ctx) {
   const correct = DAYS_AR[target];
   const weeks = Math.floor(n / 7);
   const rem = n % 7;
-  const distractors = dayDistractors(target, -rem, [
+  const distractors = dayDistractors(ctx, target, -rem, [
     {index: today - rem, misconceptionId: 'SHIFTED_WRONG_DIRECTION', derivation: `الرجوع ${u(rem, 'day', 'oblique')} بدل التقدم`},
     {index: today, misconceptionId: 'USED_GIVEN_VALUE_AS_ANSWER', derivation: `اليوم الحالي نفسه ${DAYS_AR[today]}`},
     {index: today + weeks, misconceptionId: 'IGNORED_NET_OFFSET', derivation: 'التحرك بعدد الأسابيع الكاملة بدل الباقي'}

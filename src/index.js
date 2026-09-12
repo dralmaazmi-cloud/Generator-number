@@ -4,6 +4,7 @@ import {finalizeQuestion, validateQuestion, questionSignature, buildBalancedLett
 import {validateCandidate} from './qa/pipeline.js';
 import {REASON} from './qa/reasons.js';
 import {GenerationAnalytics} from './qa/analytics.js';
+import {GenerationTelemetry} from './qa/telemetry.js';
 
 import {generateSequences} from './families/sequences.js';
 import {generateRatios} from './families/ratios.js';
@@ -90,12 +91,23 @@ export class NumericalQuestionGeneratorEngine {
       recentFingerprintMemory: config.recentFingerprintMemory ?? 150
     };
     this.analytics = new GenerationAnalytics();
+    // RC2-003: one telemetry object spanning every rejection stage.
+    this.telemetry = new GenerationTelemetry();
     this._recentFingerprints = [];
   }
 
   /** Section 6 / 45: the rejection and latency figures behind the published items. */
   getAnalytics() {
     return this.analytics.snapshot();
+  }
+
+  /** RC2-003: the reconciled rejection telemetry across every stage. */
+  getTelemetry() {
+    return this.telemetry.snapshot();
+  }
+
+  resetTelemetry() {
+    this.telemetry.reset();
   }
 
   resetAnalytics() {
@@ -199,11 +211,19 @@ export class NumericalQuestionGeneratorEngine {
       );
       const generator = GENERATORS[family];
 
+      this.telemetry.proposal({family, seed, attempt: attempt + 1});
       let base;
       try {
-        base = generator({difficulty, rng: rng.fork('content'), seed, engineVersion: this.version});
+        base = generator({
+          difficulty, rng: rng.fork('content'), seed, engineVersion: this.version,
+          telemetry: this.telemetry
+        });
       } catch (err) {
-        rejections.push(err.reason || `GENERATOR_ERROR:${err.message}`);
+        const reasonCode = err.reason || `GENERATOR_ERROR:${err.message}`;
+        rejections.push(reasonCode);
+        // RC2-003: RC1 recorded nothing here at all.
+        this.telemetry.samplerFailure({reasonCode, family, seed, attempt: attempt + 1});
+        this.analytics.record(family, null, difficulty, {accepted: false, reasons: [reasonCode]});
         continue;
       }
       lastTemplate = base.template_id;
@@ -213,8 +233,10 @@ export class NumericalQuestionGeneratorEngine {
         q = finalizeQuestion(base, rng.fork('options'), options.preferredCorrectLetter ?? null);
       } catch (err) {
         // Not enough distractors with real provenance: reject, do not pad.
-        rejections.push(err.reason || REASON.DISTRACTOR_NO_MISCONCEPTION);
-        this.analytics.record(family, base.template_id, difficulty, {accepted: false, reasons: [err.reason || REASON.DISTRACTOR_NO_MISCONCEPTION]});
+        const reasonCode = err.reason || REASON.DISTRACTOR_NO_MISCONCEPTION;
+        rejections.push(reasonCode);
+        this.telemetry.finalizationFailure({family, templateId: base.template_id, reasonCode, seed, attempt: attempt + 1});
+        this.analytics.record(family, base.template_id, difficulty, {accepted: false, reasons: [reasonCode]});
         continue;
       }
 
@@ -223,6 +245,14 @@ export class NumericalQuestionGeneratorEngine {
 
       const verdict = validateCandidate(base, q);
       this.analytics.record(family, base.template_id, difficulty, {accepted: verdict.valid, reasons: verdict.reasons});
+      if (!verdict.valid) {
+        this.telemetry.pipelineRejectedCandidate();
+        for (const reasonCode of verdict.reasons) {
+          this.telemetry.pipelineRejection({family, templateId: base.template_id, reasonCode, seed, attempt: attempt + 1});
+        }
+      } else {
+        this.telemetry.published({family, templateId: base.template_id, seed, attempt: attempt + 1});
+      }
 
       if (verdict.valid) {
         q.metadata.quality_gate = 'passed';
@@ -243,6 +273,8 @@ export class NumericalQuestionGeneratorEngine {
 
     const summary = summarizeReasons(rejections);
     this.analytics.recordExhaustion(lastFamily, lastTemplate);
+    // RC2-003: RETRY_EXHAUSTED had no emission site in RC1. It has one now.
+    this.telemetry.exhaustion({family: lastFamily, templateId: lastTemplate, seed: requestedSeed, attempt: this.config.maxGenerationAttempts});
     const error = new Error(`QUESTION_GENERATION_EXHAUSTED: ${lastFamily}/${lastTemplate} — ${Object.keys(summary).join(', ')}`);
     error.code = 'QUESTION_GENERATION_EXHAUSTED';
     error.family = lastFamily;
@@ -285,7 +317,29 @@ export class NumericalQuestionGeneratorEngine {
     const reasoningSignatures = new Set();
     const recentVariants = [];
     const diversityWarnings = [];
-    const useRecentMemory = options.useRecentSessionMemory !== false;
+    // RC2-004. Two generation modes, named and documented, because the RC1
+    // engine silently had both and called the result reproducible.
+    //
+    //   DETERMINISTIC_SINGLE_GENERATION (default)
+    //     The session is a pure function of its declared inputs. Nothing the
+    //     engine generated earlier can change it, so the same seed replays
+    //     identically in a fresh engine, in a long-lived one, and after any
+    //     number of unrelated generations. This is what audit and replay need.
+    //
+    //   STATEFUL_SESSION_GENERATION (opt in)
+    //     The engine additionally avoids fingerprints it produced in recent
+    //     sessions. Useful for a learner working through several sessions in one
+    //     sitting, and NOT reproducible from the seed alone — by design, since
+    //     the engine's own history is an input.
+    //
+    // RC1 defaulted to the stateful behaviour, which is why the same seed gave
+    // different questions depending on what the engine had done before.
+    const mode = options.mode
+      ?? (options.useRecentSessionMemory === true ? 'STATEFUL_SESSION_GENERATION' : 'DETERMINISTIC_SINGLE_GENERATION');
+    if (!['DETERMINISTIC_SINGLE_GENERATION', 'STATEFUL_SESSION_GENERATION'].includes(mode)) {
+      throw new Error(`Unknown generation mode: ${mode}`);
+    }
+    const useRecentMemory = mode === 'STATEFUL_SESSION_GENERATION';
 
     for (let i = 0; i < count; i++) {
       let chosen = null;
@@ -319,14 +373,20 @@ export class NumericalQuestionGeneratorEngine {
         // however the choices happen to be ordered.
         // RC2-022: `fingerprint` here is the semantic fingerprint, so two
         // display permutations of one mathematical instance collide.
-        if (fingerprints.has(fingerprint)) continue;
+        if (fingerprints.has(fingerprint)) {
+          this.telemetry.diversityRejection({family: q.family, templateId: q.generator_id, reasonCode: REASON.DUPLICATE_FINGERPRINT, seed, attempt: retry + 1});
+          continue;
+        }
         if (useRecentMemory && this._recentFingerprints.includes(fingerprint)) continue;
         // RC2-023: and never publish the same reasoning *pattern* twice in a
         // session either. A template that declares no pattern has a null
         // signature and is governed by the semantic check alone, so unrelated
         // questions are not collapsed together.
         const structural = q.metadata?.structural_reasoning_signature ?? null;
-        if (structural && reasoningSignatures.has(structural)) continue;
+        if (structural && reasoningSignatures.has(structural)) {
+          this.telemetry.diversityRejection({family: q.family, templateId: q.generator_id, reasonCode: REASON.REPEATED_REASONING_PATTERN, seed, attempt: retry + 1});
+          continue;
+        }
 
         const variant = `${q.generator_id}|${q.metadata?.asked_unknown ?? 'default'}`;
         const used = variantCounts.get(variant) || 0;
@@ -375,6 +435,7 @@ export class NumericalQuestionGeneratorEngine {
     }
 
     const validation = this.validateBatch(questions);
+    validation.generation_mode = mode;
     validation.diversity_warnings = diversityWarnings;
     return {
       engine_version: this.version,

@@ -1,8 +1,8 @@
 import {gcd} from '../utils.js';
-import {mk, usable, u, num, buildBase, eq, X, add, sub, mul, mod} from './_shared.js';
+import {mk, usable, u, num, buildBase, eq, X, add, sub, mul, mod, resample} from './_shared.js';
 
-export function generateRatios({difficulty, rng, seed, engineVersion}) {
-  const ctx = {difficulty, rng, seed, engineVersion, family: 'ratios', family_ar: 'النسب وتقسيم الكميات', category: 'النسب وتقسيم الكميات'};
+export function generateRatios({difficulty, rng, seed, engineVersion, telemetry}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'ratios', family_ar: 'النسب وتقسيم الكميات', category: 'النسب وتقسيم الكميات'};
   const list = difficulty === 'easy' ? [splitTotal, scaleKnown]
     : difficulty === 'medium' ? [commonTermSum, commonTermDifference, addToOneSide]
     : [transferBetweenSides, twoRatiosExternalSum];
@@ -32,7 +32,7 @@ function splitTotal(ctx) {
   const other = askA ? b : a;
   const correct = mine * k;
   const params = {partA: a, partB: b, total};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(other * k, 'USED_WRONG_SIDE_OF_RATIO', `${other} × ${k}`),
     mk(k, 'USED_PART_VALUE_AS_ANSWER', `${total} ÷ (${a} + ${b})`),
     mk(total - correct, 'USED_WRONG_SIDE_OF_RATIO', `${total} − ${correct}`),
@@ -85,7 +85,7 @@ function scaleKnown(ctx) {
   const given = givenParts * k;
   const correct = wantedParts * k;
   const params = {partA: a, partB: b, givenValue: given};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(given, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة المعطاة ${given}`),
     mk(k, 'USED_PART_VALUE_AS_ANSWER', `${given} ÷ ${givenParts}`),
     mk((a + b) * k, 'USED_SUM_OF_PARTS', `(${a} + ${b}) × ${k}`),
@@ -148,9 +148,9 @@ function commonTermSum(ctx) {
   const k = rng.int(1, 5);
   const given = (A + C) * k;
   const correct = B * k;
-  if (A === C) return commonTermSum(ctx);
+  if (A === C) return resample(ctx, commonTermSum);
   const params = {firstA: a, firstB: b, secondB: c, secondC: d, sumAC: given};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(A * k, 'USED_WRONG_SIDE_OF_RATIO', `${A} × ${k}`),
     mk(C * k, 'USED_WRONG_SIDE_OF_RATIO', `${C} × ${k}`),
     mk((A + B + C) * k, 'USED_SUM_OF_PARTS', `(${A} + ${B} + ${C}) × ${k}`),
@@ -206,13 +206,13 @@ function commonTermDifference(ctx) {
     const diffParts = Math.abs(cand.C - cand.A);
     if (diffParts >= 1 && diffParts <= 10) { picked = {...cand, diffParts}; break; }
   }
-  if (!picked) return commonTermDifference(ctx);
+  if (!picked) return resample(ctx, commonTermDifference);
   const {a, b, c, d, A, B, C, diffParts} = picked;
   const k = rng.int(1, 5);
   const given = diffParts * k;
   const correct = (A + B + C) * k;
   const params = {firstA: a, firstB: b, secondB: c, secondC: d, differenceAC: given};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(B * k, 'USED_WRONG_SIDE_OF_RATIO', `${B} × ${k}`),
     mk((A + C) * k, 'MISSED_ONE_STAGE', `(${A} + ${C}) × ${k}`),
     mk((A + B) * k, 'MISSED_ONE_STAGE', `(${A} + ${B}) × ${k}`),
@@ -265,9 +265,9 @@ function addToOneSide(ctx) {
   const {rng} = ctx;
   const p = rng.pick([2, 3, 4, 5]);
   const q = rng.pick([1, 2, 3].filter(v => v !== p && gcd(p, v) === 1));
-  if (q === undefined) return addToOneSide(ctx);
+  if (q === undefined) return resample(ctx, addToOneSide);
   const r = q + rng.pick([1, 2, 3]);
-  if (gcd(p, r) !== 1 || p === r) return addToOneSide(ctx);
+  if (gcd(p, r) !== 1 || p === r) return resample(ctx, addToOneSide);
   const k = rng.int(2, 5);
   const A = p * k, B = q * k, newB = r * k;
   const addUnits = newB - B;
@@ -277,7 +277,7 @@ function addToOneSide(ctx) {
   const crossRightC = p * addUnits; // p × add
   const coefficient = crossLeft - crossRightK;
   const params = {partA: p, partB: q, newPartB: r, addedUnits: addUnits};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(A, 'USED_WRONG_SIDE_OF_RATIO', `${p} × ${k}`),
     mk(newB, 'USED_POST_TRANSFER_VALUE', `${r} × ${k}`),
     mk(A + newB, 'USED_NEW_TOTAL', `${A} + ${newB}`),
@@ -350,12 +350,12 @@ function transferBetweenSides(ctx) {
       break;
     }
   }
-  if (!found) return transferBetweenSides(ctx);
+  if (!found) return resample(ctx, transferBetweenSides);
   const {p, q, k, A, B, x, nrA, nrB} = found;
   const askA = rng.bool();
   const correct = askA ? A : B;
   const params = {partA: p, partB: q, transferred: x, newPartA: nrA, newPartB: nrB};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(askA ? B : A, 'USED_WRONG_SIDE_OF_RATIO', `الطرف الآخر ${askA ? B : A}`),
     mk(askA ? A - x : B + x, 'USED_POST_TRANSFER_VALUE', `${askA ? `${A} − ${x}` : `${B} + ${x}`}`),
     mk(askA ? A + x : B - x, 'USED_PRE_TRANSFER_VALUE', `${askA ? `${A} + ${x}` : `${B} − ${x}`}`),
@@ -418,7 +418,7 @@ function twoRatiosExternalSum(ctx) {
   const given = (A + B) * k;
   const correct = C * k;
   const params = {firstA: a, firstB: b, secondB: c, secondC: d, sumAB: given};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(A * k, 'USED_WRONG_SIDE_OF_RATIO', `${A} × ${k}`),
     mk(B * k, 'USED_WRONG_SIDE_OF_RATIO', `${B} × ${k}`),
     mk((A + C) * k, 'MISSED_ONE_STAGE', `(${A} + ${C}) × ${k}`),

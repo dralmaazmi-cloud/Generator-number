@@ -11,7 +11,7 @@
 // undecidable when they disagree, so nothing here re-derives the generator's
 // reasoning.
 
-import {mk, usable, buildBase} from './_shared.js';
+import {mk, usable, buildBase, resample} from './_shared.js';
 import {buildOrderOracle} from '../qa/relational-oracle.js';
 import {canonicalGraph} from '../qa/fingerprint.js';
 
@@ -20,8 +20,8 @@ const UNDETERMINED = 'لا يمكن تحديده';
 const COUNT_LABELS = ['لا أحد', 'شخص واحد', 'شخصان', 'ثلاثة أشخاص', 'أربعة أشخاص', 'خمسة أشخاص'];
 const POSITION_WORDS = {1: 'الأول', 2: 'الثاني', 3: 'الثالث', 4: 'الرابع', 5: 'الخامس'};
 
-export function generateRelational({difficulty, rng, seed, engineVersion}) {
-  const ctx = {difficulty, rng, seed, engineVersion, family: 'relational', family_ar: 'المقارنة والترتيب العلاقاتي', category: 'المقارنة والترتيب العلاقاتي'};
+export function generateRelational({difficulty, rng, seed, engineVersion, telemetry}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'relational', family_ar: 'المقارنة والترتيب العلاقاتي', category: 'المقارنة والترتيب العلاقاتي'};
   const list = difficulty === 'easy' ? [fullChainPosition, betweenRelation]
     : difficulty === 'medium' ? [branchUnresolved, countAbove, confirmedStatement]
     : [branchGuaranteed, partialOrderPosition];
@@ -130,8 +130,8 @@ function fullChainPosition(ctx) {
   const oracle = buildOrderOracle(nodes, edges);
   const targetPos = rng.int(2, size - 1);
   const correct = oracle.whoAtPosition(targetPos);
-  if (!correct) return fullChainPosition(ctx);
-  const distractors = usable([
+  if (!correct) return resample(ctx, fullChainPosition);
+  const distractors = usable(ctx, [
     ...nodes.filter(n => n !== correct).map(n => {
       const pos = oracle.positionsOf(n)[0];
       return mk(n, 'COUNTED_DIRECT_RELATIONS_ONLY', `قراءة المركز ${POSITION_WORDS[pos] || pos} بدل ${POSITION_WORDS[targetPos]}`);
@@ -168,8 +168,8 @@ function betweenRelation(ctx) {
   const oracle = buildOrderOracle(nodes, edges);
   const targetPos = rng.int(2, size - 1);
   const correct = oracle.whoAtPosition(targetPos);
-  if (!correct) return betweenRelation(ctx);
-  const distractors = usable([
+  if (!correct) return resample(ctx, betweenRelation);
+  const distractors = usable(ctx, [
     ...nodes.filter(n => n !== correct).map(n => {
       const pos = oracle.positionsOf(n)[0];
       return mk(n, 'COUNTED_DIRECT_RELATIONS_ONLY', `قراءة المركز ${POSITION_WORDS[pos] || pos} بدل ${POSITION_WORDS[targetPos]}`);
@@ -203,23 +203,23 @@ function betweenRelation(ctx) {
 function branchUnresolved(ctx) {
   const {rng} = ctx;
   const {nodes, edges, shape} = branchedGraph(rng, rng.pick([5, 6]));
-  if (nodes.length < 5) return branchUnresolved(ctx);
+  if (nodes.length < 5) return resample(ctx, branchUnresolved);
   const oracle = buildOrderOracle(nodes, edges);
   const undetermined = oracle.allUndeterminedPairs();
-  if (!undetermined.length) return branchUnresolved(ctx);
+  if (!undetermined.length) return resample(ctx, branchUnresolved);
   const determined = [];
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {
       if (!oracle.undetermined(nodes[i], nodes[j])) determined.push([nodes[i], nodes[j]]);
     }
   }
-  if (determined.length < 5) return branchUnresolved(ctx);
+  if (determined.length < 5) return resample(ctx, branchUnresolved);
   // Section 17-B: the undecidable pair is chosen at random among all of them,
   // not fixed to the first two branch heads.
   const chosen = rng.pick(undetermined);
   const label = pair => `${pair[0]} و${pair[1]}`;
   const correct = label(chosen);
-  const distractors = usable(rng.shuffle(determined).slice(0, 6).map(p => {
+  const distractors = usable(ctx, rng.shuffle(determined).slice(0, 6).map(p => {
     const [a, b] = p;
     const above = oracle.definitelyAbove(a, b) ? a : b;
     const below = above === a ? b : a;
@@ -254,14 +254,14 @@ function branchUnresolved(ctx) {
 function countAbove(ctx) {
   const {rng} = ctx;
   const {nodes, edges, shape} = branchedGraph(rng, 6);
-  if (nodes.length < 5) return countAbove(ctx);
+  if (nodes.length < 5) return resample(ctx, countAbove);
   const oracle = buildOrderOracle(nodes, edges);
   const target = rng.pick(nodes);
   const above = nodes.filter(n => n !== target && oracle.definitelyAbove(n, target));
   const count = above.length;
   const correct = COUNT_LABELS[count];
-  if (!correct) return countAbove(ctx);
-  const distractors = usable(
+  if (!correct) return resample(ctx, countAbove);
+  const distractors = usable(ctx, 
     COUNT_LABELS.filter((_, i) => i !== count).map((labelText, i) => mk(
       labelText,
       i < count ? 'COUNTED_DIRECT_RELATIONS_ONLY' : 'COUNTED_EVERYONE',
@@ -311,16 +311,16 @@ function statementOptions(rng, oracle, nodes) {
 function confirmedStatement(ctx) {
   const {rng} = ctx;
   const {nodes, edges, shape} = branchedGraph(rng, rng.pick([5, 6]));
-  if (nodes.length < 4) return confirmedStatement(ctx);
+  if (nodes.length < 4) return resample(ctx, confirmedStatement);
   const oracle = buildOrderOracle(nodes, edges);
   const {guaranteed, notGuaranteed} = statementOptions(rng, oracle, nodes);
   // Only indirect facts are worth asking about: a sentence copied from the
   // stem would make the item a reading exercise.
   const indirect = guaranteed.filter(g => !edges.some(([x, y]) => x === g.a && y === g.b));
-  if (!indirect.length || notGuaranteed.length < 5) return confirmedStatement(ctx);
+  if (!indirect.length || notGuaranteed.length < 5) return resample(ctx, confirmedStatement);
   const pick = rng.pick(indirect);
   const correct = pick.text;
-  const distractors = usable(notGuaranteed.slice(0, 6).map(s => mk(
+  const distractors = usable(ctx, notGuaranteed.slice(0, 6).map(s => mk(
     s.text,
     s.undetermined ? 'RELATION_REQUIRES_UNSTATED_ASSUMPTION' : 'RELATION_CONTRADICTS_STATEMENT',
     s.undetermined ? `لا يوجد مسار يحسم العلاقة بين ${s.a} و${s.b}` : `المعطيات تثبت العكس: ${s.b} أسرع من ${s.a}`
@@ -356,17 +356,17 @@ function confirmedStatement(ctx) {
 function branchGuaranteed(ctx) {
   const {rng} = ctx;
   const {nodes, edges, shape} = branchedGraph(rng, 6);
-  if (nodes.length < 5) return branchGuaranteed(ctx);
+  if (nodes.length < 5) return resample(ctx, branchGuaranteed);
   const oracle = buildOrderOracle(nodes, edges);
   const undetermined = oracle.allUndeterminedPairs();
-  if (!undetermined.length) return branchGuaranteed(ctx);
+  if (!undetermined.length) return resample(ctx, branchGuaranteed);
   const {guaranteed, notGuaranteed} = statementOptions(rng, oracle, nodes);
   const indirect = guaranteed.filter(g => !edges.some(([x, y]) => x === g.a && y === g.b));
-  if (!indirect.length || notGuaranteed.length < 5) return branchGuaranteed(ctx);
+  if (!indirect.length || notGuaranteed.length < 5) return resample(ctx, branchGuaranteed);
   const pick = rng.pick(indirect);
   const openPair = rng.pick(undetermined);
   const correct = pick.text;
-  const distractors = usable(notGuaranteed.slice(0, 6).map(s => mk(
+  const distractors = usable(ctx, notGuaranteed.slice(0, 6).map(s => mk(
     s.text,
     s.undetermined ? 'RESOLVED_AN_UNRESOLVED_PAIR' : 'RELATION_CONTRADICTS_STATEMENT',
     s.undetermined ? `حسم العلاقة بين ${s.a} و${s.b} رغم أن المعطيات تتركها مفتوحة` : `المعطيات تثبت العكس: ${s.b} أسرع من ${s.a}`
@@ -417,7 +417,7 @@ function partialOrderPosition(ctx) {
   const {nodes, edges, shape} = positionGraph(rng, 6);
   // Structural resample only: the graph must be big enough to ask about a
   // middle position at all. This looks at the shape, never at the answer.
-  if (nodes.length < 5) return partialOrderPosition(ctx);
+  if (nodes.length < 5) return resample(ctx, partialOrderPosition);
   const oracle = buildOrderOracle(nodes, edges);
 
   const targetPos = rng.int(2, nodes.length - 1);
@@ -439,7 +439,7 @@ function partialOrderPosition(ctx) {
   // which means a pool larger than five leaves inclusion to chance; the pool is
   // therefore built at exactly five for this case. This is a pedagogical choice
   // about which errors to show, not a choice made on any property of the answer.
-  const distractors = usable(determined
+  const distractors = usable(ctx, determined
     ? [
       mk(UNDETERMINED, 'RELATION_REQUIRES_UNSTATED_ASSUMPTION',
         `توقّف قبل استنتاج الترتيب كاملًا رغم أن المركز ${POSITION_WORDS[targetPos]} محسوم`),

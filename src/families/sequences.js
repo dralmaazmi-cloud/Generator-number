@@ -5,9 +5,9 @@
 // not all obey the stated rule yields no surviving candidate at all, so a
 // malformed run is rejected rather than published with a plausible-looking key.
 
-import {mk, usable, num, buildBase, eq, X, add, sub, mul, div} from './_shared.js';
+import {mk, usable, num, buildBase, eq, X, add, sub, mul, div, resample} from './_shared.js';
 
-export function generateSequences({difficulty, rng, seed, engineVersion}) {
+export function generateSequences({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {
     difficulty, rng, seed, engineVersion,
     family: 'sequences', family_ar: 'المتتاليات العددية', category: 'المتتاليات العددية'
@@ -55,7 +55,7 @@ function arithmetic(ctx) {
     : askPrevious ? `؟، ${seq.join('، ')}`
     : `${seq.join('، ')}، ؟`;
   const known = askMiddle ? seq.filter((_, i) => i !== hiddenIndex) : seq;
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(correct + step, 'APPLIED_STEP_TWICE', `${correct} + ${step > 0 ? step : `(${step})`}`),
     mk(correct - step, 'APPLIED_PREVIOUS_STEP', `${correct} − ${step > 0 ? step : `(${step})`}`),
     mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
@@ -129,7 +129,7 @@ function geometric(ctx) {
   }
   // Section 10: when subtracting the ratio happens to land on the key, the
   // item stops separating "multiply/divide" from "add/subtract".
-  if (seq.at(-1) + (divide ? -factor : factor) === correct) return geometric(ctx);
+  if (seq.at(-1) + (divide ? -factor : factor) === correct) return resample(ctx, geometric);
   // Section 17-A / 27: rotate which term is unknown.
   // "The term before" only makes sense when it is a whole number: a run that
   // starts at 3 and multiplies by 2 has no integer predecessor.
@@ -147,7 +147,7 @@ function geometric(ctx) {
     ? seq.map((v, i) => (i === hiddenIndex ? '؟' : v)).join('، ')
     : askPrevious ? `؟، ${seq.join('، ')}`
     : `${seq.join('، ')}، ؟`;
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(correct * factor, 'APPLIED_STEP_TWICE', `${correct} × ${factor}`),
     mk(correct / factor, 'APPLIED_PREVIOUS_STEP', `${correct} ÷ ${factor}`),
     mk(correct + factor, 'USED_WRONG_OPERATION_IN_ALTERNATION', `${correct} + ${factor}`),
@@ -227,7 +227,7 @@ function increasingDifferences(ctx) {
   const shown = askMiddle
     ? seq.map((v, i) => (i === hiddenIndex ? '؟' : v)).join('، ')
     : `${seq.join('، ')}، ؟`;
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(seq.at(-1) + d - diffStep, 'APPLIED_PREVIOUS_STEP', `${seq.at(-1)} + ${d - diffStep}`),
     mk(seq.at(-1) + d + diffStep, 'APPLIED_STEP_TWICE', `${seq.at(-1)} + ${d + diffStep}`),
     mk(correct + diffStep, 'OFF_BY_ONE_STEP', `${correct} + ${diffStep}`),
@@ -297,7 +297,7 @@ function alternatingOps(ctx) {
   }
   const nextAdd = addStart + 3;
   const correct = current + nextAdd;
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(current * (multStart + 3), 'USED_WRONG_OPERATION_IN_ALTERNATION', `${current} × ${multStart + 3}`),
     mk(current + nextAdd - 1, 'OFF_BY_ONE_STEP', `${current} + ${nextAdd - 1}`),
     mk(current + nextAdd + 1, 'OFF_BY_ONE_STEP', `${current} + ${nextAdd + 1}`),
@@ -361,7 +361,7 @@ function interleaved(ctx) {
   const correct = b0 + 3 * db;
   const oddRun = [0, 2, 4, 6].map(i => seq[i]);
   const evenRun = [1, 3, 5].map(i => seq[i]);
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(a0 + 4 * da, 'CONTINUED_WRONG_SUBSEQUENCE', `${oddRun.at(-1)} + ${da}`),
     mk(b0 + 2 * db, 'APPLIED_PREVIOUS_STEP', `${evenRun.at(-2)} ${db < 0 ? '−' : '+'} ${Math.abs(db)}`),
     mk(b0 + 4 * db, 'APPLIED_STEP_TWICE', `${correct} ${db < 0 ? '−' : '+'} ${Math.abs(db)}`),
@@ -423,7 +423,7 @@ function doublingDifferences(ctx) {
   const shown = askMiddle
     ? seq.map((v, i) => (i === hiddenIndex ? '؟' : v)).join('، ')
     : `${seq.join('، ')}، ؟`;
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(seq.at(-1) + d / 2, 'APPLIED_PREVIOUS_STEP', `${seq.at(-1)} + ${d / 2}`),
     mk(correct + d / 2, 'OFF_BY_ONE_STEP', `${correct} + ${d / 2}`),
     mk(correct - d / 2, 'OFF_BY_ONE_STEP', `${correct} − ${d / 2}`),
@@ -494,8 +494,8 @@ function alternateDivide(ctx) {
     const f = e / 4;
     if (f > 1) { seq = [x, a, b, c, d, e]; correct = f; break; }
   }
-  if (!seq) return alternateDivide(ctx);
-  const distractors = usable([
+  if (!seq) return resample(ctx, alternateDivide);
+  const distractors = usable(ctx, [
     mk(seq.at(-1) - subtract, 'USED_WRONG_OPERATION_IN_ALTERNATION', `${seq.at(-1)} − ${subtract}`),
     mk(seq.at(-1) / 3, 'APPLIED_PREVIOUS_STEP', `${seq.at(-1)} ÷ 3`),
     mk(seq.at(-1) / 2, 'APPLIED_PREVIOUS_STEP', `${seq.at(-1)} ÷ 2`),
@@ -561,7 +561,7 @@ function recurrence(ctx) {
   const shown = askMiddle
     ? seq.map((v, i) => (i === hiddenIndex ? '؟' : v)).join('، ')
     : `${seq.join('، ')}، ؟`;
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(seq.at(-1) + seq.at(-2), 'TREATED_PATTERN_AS_CONSTANT', `${seq.at(-1)} + ${seq.at(-2)}`),
     mk(2 * seq.at(-1), 'MISSED_ONE_STAGE', `2 × ${seq.at(-1)}`),
     mk(2 * seq.at(-2) + seq.at(-1), 'USED_WRONG_OPERATION_IN_ALTERNATION', `2 × ${seq.at(-2)} + ${seq.at(-1)}`),
@@ -629,7 +629,7 @@ function powersPlusIndex(ctx) {
   for (let i = startIndex; i <= n; i++) seq.push(basePow ** i + i);
   const correct = basePow ** (n + 1) + (n + 1);
   const p = basePow ** (n + 1);
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(p, 'MISSED_ONE_STAGE', `${basePow} أُس 6 = ${p} دون إضافة رقم الترتيب`),
     mk(p + n, 'OFF_BY_ONE_STEP', `${p} + ${n}`),
     mk(p + n + 2, 'OFF_BY_ONE_STEP', `${p} + ${n + 2}`),

@@ -1,7 +1,7 @@
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample} from './_shared.js';
 
-export function generateAges({difficulty, rng, seed, engineVersion}) {
-  const ctx = {difficulty, rng, seed, engineVersion, family: 'ages', family_ar: 'مسائل الأعمار', category: 'مسائل الأعمار'};
+export function generateAges({difficulty, rng, seed, engineVersion, telemetry}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'ages', family_ar: 'مسائل الأعمار', category: 'مسائل الأعمار'};
   const list = difficulty === 'easy' ? [sumDifference, multipleDifference]
     : difficulty === 'medium' ? [futureSumDifference, futureRatio, currentRatioFutureSum]
     : [pastRatioFutureSum, twoTimeRatio];
@@ -18,7 +18,7 @@ function sumDifference(ctx) {
   const sum = older + younger;
   const correct = older;
   const params = {ageDifference: diff, ageSum: sum};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(younger, 'ANSWERED_OTHER_PERSON', `${sum} − ${older}`),
     mk(sum / 2, 'HALVED_THE_SUM', `${sum} ÷ 2`),
     mk(diff, 'USED_AGE_DIFFERENCE_AS_ANSWER', `الفرق المعطى ${diff}`),
@@ -74,7 +74,7 @@ function multipleDifference(ctx) {
   const correct = younger;
   const params = {multiple: mult, ageDifference: diff};
   const multWord = mult === 3 ? 'ثلاثة أمثال' : 'أربعة أمثال';
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(older, 'ANSWERED_OTHER_PERSON', `${mult} × ${younger}`),
     mk(diff, 'USED_AGE_DIFFERENCE_AS_ANSWER', `الفرق المعطى ${diff}`),
     mk(diff / mult, 'OFF_BY_ONE_STEP', `${diff} ÷ ${mult}`),
@@ -126,7 +126,7 @@ function futureSumDifference(ctx) {
   const futureSum = older + younger + 2 * yrs;
   const correct = older;
   const params = {ageDifference: diff, yearsAhead: yrs, futureSum};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(younger, 'ANSWERED_OTHER_PERSON', `${older + younger} − ${older}`),
     mk(futureSum / 2, 'HALVED_THE_SUM', `${futureSum} ÷ 2`),
     mk(older + yrs, 'ANSWERED_FUTURE_AGE', `${older} + ${yrs}`),
@@ -174,16 +174,16 @@ function futureRatio(ctx) {
   // Section 11: choose the (constant) age gap first, inside the realistic range
   // for a parent, rather than filtering afterwards.
   const diff = rng.int(20, 40);
-  if ((diff % (ratio - 1)) !== 0) return futureRatio(ctx);
+  if ((diff % (ratio - 1)) !== 0) return resample(ctx, futureRatio);
   const youngFuture = diff / (ratio - 1);
   const oldFuture = ratio * youngFuture;
   const young = youngFuture - yrs;
   const old = oldFuture - yrs;
-  if (young <= 0) return futureRatio(ctx);
+  if (young <= 0) return resample(ctx, futureRatio);
   const correct = young;
   const params = {ageDifference: diff, yearsAhead: yrs, ratio};
   const ratioWord = ratio === 2 ? 'ضعف' : 'ثلاثة أمثال';
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(old, 'ANSWERED_OTHER_PERSON', `${young} + ${diff}`),
     mk(youngFuture, 'ANSWERED_FUTURE_AGE', `${young} + ${yrs}`),
     mk(oldFuture, 'ANSWERED_FUTURE_AGE', `${old} + ${yrs}`),
@@ -239,7 +239,7 @@ function currentRatioFutureSum(ctx) {
   const correct = older;
   const params = {ratio, yearsAhead: yrs, futureSum};
   const ratioWord = ratio === 2 ? 'ضعف' : 'ثلاثة أمثال';
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(younger, 'ANSWERED_OTHER_PERSON', `${older} ÷ ${ratio}`),
     mk(older + yrs, 'ANSWERED_FUTURE_AGE', `${older} + ${yrs}`),
     mk(younger + yrs, 'ANSWERED_FUTURE_AGE', `${younger} + ${yrs}`),
@@ -294,7 +294,7 @@ function pastRatioFutureSum(ctx) {
   const correct = oldNow;
   const params = {pastYears, futureYears, ratio, futureSum};
   const ratioWord = ratio === 2 ? 'ضعف' : 'ثلاثة أمثال';
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(oldPast, 'ANSWERED_PAST_AGE', `${oldNow} − ${pastYears}`),
     mk(youngNow, 'ANSWERED_OTHER_PERSON', `${youngPast} + ${pastYears}`),
     mk(oldNow + futureYears, 'ANSWERED_FUTURE_AGE', `${oldNow} + ${futureYears}`),
@@ -347,13 +347,13 @@ function twoTimeRatio(ctx) {
   const yrs = rng.int(4, 8);
   const futureYoung = nowYoung + yrs;
   const futureOld = nowOld + yrs;
-  if (futureOld % futureYoung !== 0) return twoTimeRatio(ctx);
+  if (futureOld % futureYoung !== 0) return resample(ctx, twoTimeRatio);
   const ratio = futureOld / futureYoung;
-  if (ratio < 2 || ratio > 4) return twoTimeRatio(ctx);
+  if (ratio < 2 || ratio > 4) return resample(ctx, twoTimeRatio);
   const correct = nowYoung;
   const params = {ageDifference: gap, yearsAhead: yrs, ratio};
   const ratioWord = ratio === 2 ? 'ضعف' : ratio === 3 ? 'ثلاثة أمثال' : 'أربعة أمثال';
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(nowOld, 'ANSWERED_OTHER_PERSON', `${nowYoung} + ${gap}`),
     mk(futureYoung, 'ANSWERED_FUTURE_AGE', `${nowYoung} + ${yrs}`),
     mk(futureOld, 'ANSWERED_FUTURE_AGE', `${nowOld} + ${yrs}`),

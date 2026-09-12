@@ -12,8 +12,8 @@ import {canonicalNumberSet} from '../qa/fingerprint.js';
 
 const PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
 
-export function generateOddOneOut({difficulty, rng, seed, engineVersion}) {
-  const ctx = {difficulty, rng, seed, engineVersion, family: 'odd_one_out', family_ar: 'العدد الذي لا ينتمي', category: 'العدد الذي لا ينتمي إلى المجموعة'};
+export function generateOddOneOut({difficulty, rng, seed, engineVersion, telemetry}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'odd_one_out', family_ar: 'العدد الذي لا ينتمي', category: 'العدد الذي لا ينتمي إلى المجموعة'};
   const list = difficulty === 'easy' ? [multiples, squares]
     : difficulty === 'medium' ? [cubes, pronic, primeDoubles]
     : [squareMinusOne, triangularPattern];
@@ -67,7 +67,7 @@ function build(ctx, spec) {
   // that was the S5/22 case, a Hard item solvable by "which one is even".
   if (!declaredRuleIsDiscoverable(ruleId)) return null;
 
-  const distractors = usable(valid.map(v => mk(v, 'SATISFIES_SHARED_PROPERTY', `${v} يحقق الخاصية: ${propertyText}`)));
+  const distractors = usable(ctx, valid.map(v => mk(v, 'SATISFIES_SHARED_PROPERTY', `${v} يحقق الخاصية: ${propertyText}`)));
   return buildBase(ctx, {
     templateId,
     subskill,
@@ -141,6 +141,12 @@ function attempt(ctx, make) {
   for (let i = 0; i < 30; i++) {
     const built = make(ctx);
     if (built) return built;
+    // RC2-003. This is the rejection RC1 could not see: 135 of 1,256 draws
+    // discarded here, none of it in the histogram.
+    ctx.telemetry?.familyResample({
+      family: ctx.family, templateId: 'odd_one_out/attempt',
+      reasonCode: 'AMBIGUOUS_ODD_ONE_OUT', attempt: i + 1, seed: ctx.seed
+    });
   }
   const err = new Error('odd_one_out: could not find an unambiguous set');
   err.reason = 'AMBIGUOUS_ODD_ONE_OUT';

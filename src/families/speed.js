@@ -1,8 +1,8 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample} from './_shared.js';
 
-export function generateSpeed({difficulty, rng, seed, engineVersion}) {
-  const ctx = {difficulty, rng, seed, engineVersion, family: 'speed', family_ar: 'السرعة والمسافة والزمن', category: 'السرعة والمسافة والزمن'};
+export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'speed', family_ar: 'السرعة والمسافة والزمن', category: 'السرعة والمسافة والزمن'};
   const list = difficulty === 'easy' ? [simpleTime, simpleDistance]
     : difficulty === 'medium' ? [twoStageTime, averageSpeedUnequalTime, equalDistanceTotalTime]
     : [meetingDelayed, catchupDelayed, sameDistanceTimeDifference];
@@ -18,7 +18,7 @@ function simpleTime(ctx) {
   const distance = speed * hours;
   const correct = hours;
   const params = {speed, distance};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(distance / speed + 1, 'OFF_BY_ONE_STEP', `${distance} ÷ ${speed} + 1`),
     mk(distance / (speed + 10), 'RATE_APPLIED_TO_WRONG_COUNT', `${distance} ÷ (${speed} + 10)`),
     mk(distance / (speed - 10), 'RATE_APPLIED_TO_WRONG_COUNT', `${distance} ÷ (${speed} − 10)`),
@@ -62,7 +62,7 @@ function simpleDistance(ctx) {
   const hours = rng.pick([1.5, 2, 2.5, 3, 4]);
   const correct = speed * hours;
   const params = {speed, hours};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(speed + hours, 'ADDED_INSTEAD_OF_SCALING', `${speed} + ${num(hours)}`),
     mk(speed * (hours + 1), 'OFF_BY_ONE_STEP', `${speed} × (${num(hours)} + 1)`),
     mk(speed * Math.max(0.5, hours - 0.5), 'OFF_BY_ONE_STEP', `${speed} × (${num(hours)} − 0.5)`),
@@ -105,7 +105,7 @@ function twoStageTime(ctx) {
   const d1 = s1 * t1, d2 = s2 * t2;
   const correct = (t1 + t2) * 60;
   const params = {speedA: s1, speedB: s2, distanceA: d1, distanceB: d2};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(t1 * 60, 'USED_ONE_STAGE_TIME', `${num(t1)} × 60`),
     mk(t2 * 60, 'USED_ONE_STAGE_TIME', `${num(t2)} × 60`),
     mk((d1 + d2) / s1 * 60, 'USED_ONLY_FIRST_RATE', `(${d1} + ${d2}) ÷ ${s1} × 60`),
@@ -154,20 +154,20 @@ function averageSpeedUnequalTime(ctx) {
   const {rng} = ctx;
   const s1 = rng.pick([50, 60, 70, 80]);
   const s2 = rng.pick([80, 90, 100, 120]);
-  if (s1 === s2) return averageSpeedUnequalTime(ctx);
+  if (s1 === s2) return resample(ctx, averageSpeedUnequalTime);
   const t1 = rng.pick([1, 1.5, 2]);
   const t2 = rng.pick([2, 2.5, 3]);
   // Section 10 / 43: equal times are exactly when the arithmetic mean of the
   // speeds is right, and this template exists to catch that mistake.
-  if (t1 === t2) return averageSpeedUnequalTime(ctx);
+  if (t1 === t2) return resample(ctx, averageSpeedUnequalTime);
   const d1 = s1 * t1, d2 = s2 * t2;
   const totalT = t1 + t2;
   const answer = Fraction.from(d1 + d2).div(totalT);
-  if (!answer.isInteger) return averageSpeedUnequalTime(ctx);
+  if (!answer.isInteger) return resample(ctx, averageSpeedUnequalTime);
   const correct = answer.toNumber();
   const simpleAvg = (s1 + s2) / 2;
   const params = {speedA: s1, speedB: s2, hoursA: t1, hoursB: t2};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(simpleAvg, 'USED_ARITHMETIC_MEAN_OF_SPEEDS', `(${s1} + ${s2}) ÷ 2`),
     mk(s1, 'USED_ONLY_FIRST_RATE', `السرعة الأولى ${s1}`),
     mk(s2, 'USED_ONLY_SECOND_RATE', `السرعة الثانية ${s2}`),
@@ -216,14 +216,14 @@ function equalDistanceTotalTime(ctx) {
   const {rng} = ctx;
   const s1 = rng.pick([60, 80, 90]);
   const s2 = rng.pick([30, 40, 45, 60]);
-  if (s1 === s2) return equalDistanceTotalTime(ctx);
+  if (s1 === s2) return resample(ctx, equalDistanceTotalTime);
   const half = rng.pick([120, 180, 240, 360]);
-  if (half % s1 || half % s2) return equalDistanceTotalTime(ctx);
+  if (half % s1 || half % s2) return resample(ctx, equalDistanceTotalTime);
   const t1 = half / s1, t2 = half / s2;
   const total = t1 + t2;
   const correct = 2 * half;
   const params = {speedA: s1, speedB: s2, totalHours: total};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk((s1 + s2) / 2 * total, 'USED_ARITHMETIC_MEAN_OF_SPEEDS', `((${s1} + ${s2}) ÷ 2) × ${num(total)}`),
     mk(s1 * total, 'USED_ONLY_FIRST_RATE', `${s1} × ${num(total)}`),
     mk(s2 * total, 'USED_ONLY_SECOND_RATE', `${s2} × ${num(total)}`),
@@ -272,10 +272,10 @@ function meetingDelayed(ctx) {
   const sB = rng.pick([70, 80, 90, 100]);
   const remaining = total - sA * delay;
   const t = Fraction.from(remaining).div(sA + sB);
-  if (t.lte(0) || !t.isExactDecimal || t.decimalPlaces > 1) return meetingDelayed(ctx);
+  if (t.lte(0) || !t.isExactDecimal || t.decimalPlaces > 1) return resample(ctx, meetingDelayed);
   const correct = t.toNumber();
   const params = {totalDistance: total, speedA: sA, speedB: sB, delayHours: delay};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(total / (sA + sB), 'USED_TOTAL_DISTANCE_WITHOUT_DELAY', `${total} ÷ (${sA} + ${sB})`),
     mk(remaining / sB, 'DIVIDED_BY_ONE_SPEED', `${remaining} ÷ ${sB}`),
     mk(remaining / sA, 'DIVIDED_BY_ONE_SPEED', `${remaining} ÷ ${sA}`),
@@ -325,14 +325,14 @@ function catchupDelayed(ctx) {
   const {rng} = ctx;
   const sA = rng.pick([50, 60, 72, 80]);
   const sB = rng.pick([80, 90, 96, 100, 120]);
-  if (sB <= sA) return catchupDelayed(ctx);
+  if (sB <= sA) return resample(ctx, catchupDelayed);
   const delay = rng.pick([1, 1.5, 2]);
   const lead = sA * delay;
   const t = Fraction.from(lead).div(sB - sA);
-  if (!t.isExactDecimal || t.decimalPlaces > 1) return catchupDelayed(ctx);
+  if (!t.isExactDecimal || t.decimalPlaces > 1) return resample(ctx, catchupDelayed);
   const correct = t.toNumber();
   const params = {speedA: sA, speedB: sB, delayHours: delay};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(lead / sB, 'DIVIDED_BY_ONE_SPEED', `${num(lead)} ÷ ${sB}`),
     mk(lead / sA, 'DIVIDED_BY_ONE_SPEED', `${num(lead)} ÷ ${sA}`),
     mk(lead / (sA + sB), 'USED_SUM_OF_SPEEDS_IN_CHASE', `${num(lead)} ÷ (${sA} + ${sB})`),
@@ -384,12 +384,12 @@ function sameDistanceTimeDifference(ctx) {
   const s1 = rng.pick([40, 50, 60]);
   const s2 = rng.pick([80, 90, 100]);
   const distance = rng.pick([120, 180, 240, 300, 360]);
-  if (distance % s1 || distance % s2) return sameDistanceTimeDifference(ctx);
+  if (distance % s1 || distance % s2) return resample(ctx, sameDistanceTimeDifference);
   const diff = distance / s1 - distance / s2;
-  if (diff <= 0) return sameDistanceTimeDifference(ctx);
+  if (diff <= 0) return resample(ctx, sameDistanceTimeDifference);
   const correct = distance;
   const params = {speedA: s1, speedB: s2, timeDifference: diff};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(s1 * diff, 'DIVIDED_BY_ONE_SPEED', `${s1} × ${num(diff)}`),
     mk(s2 * diff, 'DIVIDED_BY_ONE_SPEED', `${s2} × ${num(diff)}`),
     mk((s1 + s2) * diff, 'USED_SUM_OF_SPEEDS_IN_CHASE', `(${s1} + ${s2}) × ${num(diff)}`),

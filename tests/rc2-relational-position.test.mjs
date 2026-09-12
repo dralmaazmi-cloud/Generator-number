@@ -75,10 +75,12 @@ test('RC2-010: the generator does not resample on the strength of the answer', a
   const body = fn.slice(0, fn.indexOf('return buildBase'));
   const code = body.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/^\s*\/\/.*$/gm, ' ');
   assert.ok(!/openPositions/.test(code), 'the answer-driven position search must be gone');
-  const resamples = [...code.matchAll(/return partialOrderPosition\(ctx\)/g)];
-  assert.equal(resamples.length, 1, 'exactly one structural resample should remain');
+  // Since RC2-003 the resample is routed through the telemetry helper, so it
+  // reads `resample(ctx, partialOrderPosition)` rather than a bare call.
+  const resamples = [...code.matchAll(/resample\(ctx, partialOrderPosition\)|return partialOrderPosition\(ctx\)/g)];
+  assert.equal(resamples.length, 1, `exactly one structural resample should remain, found ${resamples.length}`);
   assert.ok(/nodes\.length < 5/.test(code), 'and it must be guarded by graph size, not by the answer');
-  assert.ok(!/correct\s*===|who\s*===\s*null\s*\)\s*return partialOrderPosition/.test(code),
+  assert.ok(!/(?:correct|who)[^\n]*\)\s*return (?:resample\(ctx, )?partialOrderPosition/.test(code),
     'no resample may depend on what the answer turned out to be');
 });
 

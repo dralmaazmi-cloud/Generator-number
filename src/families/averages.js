@@ -1,7 +1,7 @@
-import {mk, usable, num, buildBase, eq, X, add, sub, mul} from './_shared.js';
+import {mk, usable, num, buildBase, eq, X, add, sub, mul, resample} from './_shared.js';
 
-export function generateAverages({difficulty, rng, seed, engineVersion}) {
-  const ctx = {difficulty, rng, seed, engineVersion, family: 'averages', family_ar: 'المتوسط الحسابي', category: 'المتوسط الحسابي'};
+export function generateAverages({difficulty, rng, seed, engineVersion, telemetry}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'averages', family_ar: 'المتوسط الحسابي', category: 'المتوسط الحسابي'};
   const list = difficulty === 'easy' ? [addOne, removeOne]
     : difficulty === 'medium' ? [replaceOne, combineGroups, addPairKnownAverage]
     : [combineThenAdd, missingValueForTarget];
@@ -17,12 +17,12 @@ function addOne(ctx) {
   const newVal = avg + rng.pick([-6, -4, -2, 2, 4, 6, 8]);
   const total = n * avg;
   const correct = (total + newVal) / (n + 1);
-  if (!Number.isInteger(correct) || correct === avg) return addOne(ctx);
+  if (!Number.isInteger(correct) || correct === avg) return resample(ctx, addOne);
   // RC2-002: the resulting count is a genuine parameter of the question. It
   // used to be sourced from the stem's bare numeral; now that the stem states
   // the count in words, the explanation sources it from here.
   const params = {count: n, average: avg, addedValue: newVal, resultingCount: n + 1};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(avg, 'USED_OLD_AVERAGE', `المتوسط القديم ${avg}`),
     mk(newVal, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة المضافة ${newVal}`),
     mk((total + newVal) / n, 'FAILED_TO_UPDATE_COUNT', `(${total} + ${newVal}) ÷ ${n}`),
@@ -71,14 +71,14 @@ function removeOne(ctx) {
   const removed = rng.int(8, 35);
   const total = n * avg;
   const remain = total - removed;
-  if (remain <= 0 || remain % (n - 1) !== 0) return removeOne(ctx);
+  if (remain <= 0 || remain % (n - 1) !== 0) return resample(ctx, removeOne);
   const correct = remain / (n - 1);
-  if (correct === avg) return removeOne(ctx);
+  if (correct === avg) return resample(ctx, removeOne);
   // RC2-002: the resulting count is a genuine parameter of the question. It
   // used to be sourced from the stem's bare numeral; now that the stem states
   // the count in words, the explanation sources it from here.
   const params = {count: n, average: avg, removedValue: removed, resultingCount: n - 1};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(avg, 'USED_OLD_AVERAGE', `المتوسط القديم ${avg}`),
     mk(removed, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة المحذوفة ${removed}`),
     mk(total / (n - 1), 'MISSED_ONE_STAGE', `${total} ÷ ${n - 1}`),
@@ -129,10 +129,10 @@ function replaceOne(ctx) {
   const newVal = oldVal + diff;
   const total = n * avg;
   const newTotal = total + diff;
-  if (newTotal % n !== 0) return replaceOne(ctx);
+  if (newTotal % n !== 0) return resample(ctx, replaceOne);
   const correct = newTotal / n;
   const params = {count: n, average: avg, oldValue: oldVal, newValue: newVal};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(avg, 'USED_OLD_AVERAGE', `المتوسط القديم ${avg}`),
     mk(avg + diff, 'ADDED_DIFFERENCE_TO_AVERAGE', `${avg} + (${newVal} − ${oldVal})`),
     mk(newVal, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة الجديدة ${newVal}`),
@@ -179,17 +179,17 @@ function combineGroups(ctx) {
   const n2 = rng.pick([4, 5, 6, 8]);
   // Section 10 / 43: equal group sizes make "average the two averages" correct,
   // which is exactly the mistake this template exists to detect.
-  if (n1 === n2) return combineGroups(ctx);
+  if (n1 === n2) return resample(ctx, combineGroups);
   const a1 = rng.int(12, 24);
   const a2 = a1 + rng.pick([4, 5, 6, 8]);
   const total = n1 * a1 + n2 * a2;
-  if (total % (n1 + n2) !== 0) return combineGroups(ctx);
+  if (total % (n1 + n2) !== 0) return resample(ctx, combineGroups);
   const correct = total / (n1 + n2);
   // RC2-002: the resulting count is a genuine parameter of the question. It
   // used to be sourced from the stem's bare numeral; now that the stem states
   // the count in words, the explanation sources it from here.
   const params = {countA: n1, averageA: a1, countB: n2, averageB: a2, resultingCount: n1 + n2};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk((a1 + a2) / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${a1} + ${a2}) ÷ 2`),
     mk(a1, 'USED_GIVEN_VALUE_AS_ANSWER', `متوسط المجموعة الأولى ${a1}`),
     mk(a2, 'USED_GIVEN_VALUE_AS_ANSWER', `متوسط المجموعة الثانية ${a2}`),
@@ -237,13 +237,13 @@ function addPairKnownAverage(ctx) {
   const avg = rng.int(15, 26);
   const pairAvg = avg + rng.pick([3, 6, 9]);
   const total = n * avg + 2 * pairAvg;
-  if (total % (n + 2) !== 0) return addPairKnownAverage(ctx);
+  if (total % (n + 2) !== 0) return resample(ctx, addPairKnownAverage);
   const correct = total / (n + 2);
   // RC2-002: the resulting count is a genuine parameter of the question. It
   // used to be sourced from the stem's bare numeral; now that the stem states
   // the count in words, the explanation sources it from here.
   const params = {count: n, average: avg, pairAverage: pairAvg, resultingCount: n + 2};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(avg, 'USED_OLD_AVERAGE', `المتوسط القديم ${avg}`),
     mk(pairAvg, 'USED_GIVEN_VALUE_AS_ANSWER', `متوسط القيمتين ${pairAvg}`),
     mk((avg + pairAvg) / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${avg} + ${pairAvg}) ÷ 2`),
@@ -294,13 +294,13 @@ function combineThenAdd(ctx) {
   const extra = rng.pick([30, 36, 40, 45, 50]);
   const total = n1 * a1 + n2 * a2 + extra;
   const n = n1 + n2 + 1;
-  if (total % n !== 0) return combineThenAdd(ctx);
+  if (total % n !== 0) return resample(ctx, combineThenAdd);
   const correct = total / n;
   // RC2-002: the resulting count is a genuine parameter of the question. It
   // used to be sourced from the stem's bare numeral; now that the stem states
   // the count in words, the explanation sources it from here.
   const params = {countA: n1, averageA: a1, countB: n2, averageB: a2, extraValue: extra, resultingCount: n1 + n2 + 1};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk((a1 + a2) / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${a1} + ${a2}) ÷ 2`),
     mk((n1 * a1 + n2 * a2) / (n1 + n2), 'STOPPED_AFTER_FIRST_STAGE', `${n1 * a1 + n2 * a2} ÷ ${n1 + n2}`),
     mk(extra, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة المضافة ${extra}`),
@@ -352,12 +352,12 @@ function missingValueForTarget(ctx) {
   const target = oldAvg + rng.pick([2, 3, 4, 5]);
   const current = n * oldAvg;
   const correct = (n + 1) * target - current;
-  if (correct <= 0) return missingValueForTarget(ctx);
+  if (correct <= 0) return resample(ctx, missingValueForTarget);
   // RC2-002: the resulting count is a genuine parameter of the question. It
   // used to be sourced from the stem's bare numeral; now that the stem states
   // the count in words, the explanation sources it from here.
   const params = {count: n, currentAverage: oldAvg, targetAverage: target, resultingCount: n + 1};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(target, 'USED_TARGET_AS_ANSWER', `المتوسط المستهدف ${target}`),
     mk(oldAvg, 'USED_OLD_AVERAGE', `المتوسط القديم ${oldAvg}`),
     mk(target - oldAvg, 'USED_AGE_DIFFERENCE_AS_ANSWER', `${target} − ${oldAvg}`),

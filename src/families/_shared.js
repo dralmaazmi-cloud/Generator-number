@@ -9,6 +9,7 @@
 import {formatNumberWithUnit, unitWordFor, displayNumber} from '../arabic/units.js';
 import {Fraction} from '../qa/fraction.js';
 import {isKnownMisconception} from '../qa/misconceptions.js';
+import {REASON} from '../qa/reasons.js';
 
 /** Distractor with provenance. Anything else is rejected by makeOptionSet. */
 export function mk(value, misconceptionId, derivation) {
@@ -24,16 +25,33 @@ export function mk(value, misconceptionId, derivation) {
  * 35.714286 is not a plausible answer, so it is not a plausible distractor.
  * This is a presentation filter; provenance is enforced separately.
  */
-export function usable(distractors, {allowZero = false, allowNegative = false, maxDecimals = 2} = {}) {
+/**
+ * Drops distractor values a learner could not arrive at or would never write:
+ * a negative or zero count, a non-finite value, or a number needing more
+ * decimal places than the answer format shows.
+ *
+ * RC2-003. These drops used to be silent, and DISTRACTOR_IMPOSSIBLE was a reason
+ * code with no emission site anywhere in the engine. This is that code's real
+ * meaning, and it is now counted.
+ */
+export function usable(ctx, distractors, opts = {}) {
+  const {allowZero = false, allowNegative = false, maxDecimals = 2} = opts;
+  const drop = (d, why) => {
+    ctx?.telemetry?.record({
+      stage: 'distractor_filter', reasonCode: REASON.DISTRACTOR_IMPOSSIBLE,
+      family: ctx.family, seed: ctx.seed, detail: why
+    });
+    return false;
+  };
   return distractors.filter(d => {
     if (!d) return false;
     const v = d.value;
     if (typeof v !== 'number') return true;
-    if (!Number.isFinite(v)) return false;
-    if (!allowNegative && v < 0) return false;
-    if (!allowZero && v === 0) return false;
+    if (!Number.isFinite(v)) return drop(d, 'not finite');
+    if (!allowNegative && v < 0) return drop(d, 'negative');
+    if (!allowZero && v === 0) return drop(d, 'zero');
     const f = Fraction.from(v);
-    if (!f.isExactDecimal || f.decimalPlaces > maxDecimals) return false;
+    if (!f.isExactDecimal || f.decimalPlaces > maxDecimals) return drop(d, 'precision beyond the displayed format');
     return true;
   });
 }
@@ -93,6 +111,20 @@ export const abs = a => ({abs: a});
  * The published shape every family returns. Keeping it in one place means the
  * QA fields cannot be forgotten by one template and present in another.
  */
+/**
+ * RC2-003. A sampler discarding its own draw and trying again.
+ *
+ * Families used to recurse directly — `return addOne(ctx)` — which made every
+ * internal resample invisible to telemetry. The call is routed through here so
+ * the event is counted at the stage where it actually happens.
+ */
+export function resample(ctx, fn, reason = REASON.SAMPLER_CONSTRAINT) {
+  ctx.telemetry?.familyResample({
+    family: ctx.family, templateId: fn.name, reasonCode: reason, seed: ctx.seed
+  });
+  return fn(ctx);
+}
+
 export function buildBase(ctx, spec) {
   const {
     templateId, subskill, difficulty, question, displayExpression = null,

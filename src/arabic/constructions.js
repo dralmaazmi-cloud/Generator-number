@@ -43,6 +43,15 @@ const GENITIVE_GOVERNORS = [
  */
 const DEFINITE_COUNT_NOUNS = ['القيم', 'الأيام', 'الساعات', 'العمال', 'الآلات', 'المهام', 'الأشخاص', 'القطع', 'الوحدات'];
 
+/**
+ * Heads of the إضافة constructions the generator builds. The definiteness rule
+ * fires only for these, because deciding in general whether a following word is
+ * a second noun or an adjective needs a lexicon this validator does not have.
+ * Without that restriction the rule reported متوسط القيم and معدل أ الكلي as
+ * errors — the first version of this file did exactly that.
+ */
+const IDAFA_HEADS = ['سعر', 'قيمة', 'تكلفة', 'ثمن', 'مبلغ', 'وزن', 'طول', 'مساحة', 'حجم'];
+
 /** Adjectives the generator attaches to a noun phrase. */
 const KNOWN_ADJECTIVES = ['المعلن', 'الجديد', 'الجديدة', 'الباقية', 'الباقي', 'الفعلية', 'الفعلي', 'الكلية', 'الكلي', 'الأصلي', 'الأصلية', 'المتبقية', 'المتبقي'];
 
@@ -63,9 +72,10 @@ const NON_COUNT_FOLLOWERS = {
   'و': 'PARTICLE', 'ثم': 'PARTICLE', 'في': 'PARTICLE', 'من': 'PARTICLE', 'إلى': 'PARTICLE',
   'حتى': 'PARTICLE', 'دون': 'PARTICLE', 'بدل': 'PARTICLE', 'كل': 'PARTICLE', 'لا': 'PARTICLE',
   'هو': 'PARTICLE', 'بقيمة': 'PARTICLE', 'وزمن': 'PARTICLE', 'والثانية': 'PARTICLE',
+  'على': 'PARTICLE', 'عن': 'PARTICLE', 'مع': 'PARTICLE',
   // verbs: the numeral is the subject or object of the clause, not a count
   'يحقق': 'VERB', 'وتزيد': 'VERB', 'ليتساوى': 'VERB', 'تعطي': 'VERB', 'واضرب': 'VERB',
-  'وتجاهلت': 'VERB', 'وابحث': 'VERB',
+  'وتجاهلت': 'VERB', 'وابحث': 'VERB', 'وتحرك': 'VERB', 'واطرح': 'VERB', 'واجمع': 'VERB',
   // the numeral is an exponent, an ordinal or a percentage, not a quantity
   'أُس': 'EXPONENT', 'مرفوعًا': 'EXPONENT', 'بالترتيب': 'ORDINAL', 'بالمئة': 'PERCENT_WORD',
   'إشارة': 'PREDICATE', 'أطول': 'PREDICATE',
@@ -81,7 +91,10 @@ const EXEMPT_SHAPES = [
 ];
 
 const isDualNominative = w => /ان$/.test(w) && w.length > 3;
-const isDefinite = w => /^ال/.test(w);
+// Definite includes the article carried behind a prefixed particle: بالسعر,
+// للسعر, كالسعر, فالسعر, والسعر are all definite.
+const isDefinite = w => /^(?:[بلكفو])?ال/.test(w);
+const isProperNameLetter = w => w.length <= 2;
 const isNumber = t => /^\d/.test(t);
 
 /**
@@ -128,8 +141,9 @@ export function classifyConstructions(text) {
 
     // --- a definite adjective on an indefinite إضافة (RC2-017) --------------
     if (next && after && KNOWN_ADJECTIVES.includes(after)
-        && !isDefinite(t) && !isDefinite(next)
-        && !GENITIVE_GOVERNORS.includes(t) && !isNumber(t) && !isNumber(next)) {
+        && IDAFA_HEADS.includes(t)
+        && !isDefinite(next) && !isProperNameLetter(next)
+        && !isNumber(next)) {
       record(STATUS.INVALID, 'INDEFINITE_IDAFA_THEN_DEFINITE_ADJECTIVE', `${t} ${next} ${after}`,
         `${t} ${next} نكرة فلا تُوصف بـ${after}`);
     }
@@ -151,6 +165,13 @@ export function classifyConstructions(text) {
       }
       if (exempt) { record(STATUS.EXEMPT, exempt.id, full, next); continue; }
       if (KNOWN_COUNT_NOUNS.includes(next)) { record(STATUS.VALID, 'NUMERAL_THEN_KNOWN_COUNT_NOUN', full, next); continue; }
+      // A word carrying a proclitic preposition (بـ، لـ، كـ) heads a
+      // prepositional phrase, so the numeral before it is a value rather than a
+      // count: "5 بإسقاط أحد الكسور". A lexicon unit is never written this way,
+      // and a test asserts that a prefixed unit would still be checked.
+      const prepositional = /^[بلك][\u0621-\u064A]{3,}$/.test(next)
+        && !UNITS[next] && !UNIT_ALIASES[next];
+      if (prepositional) { record(STATUS.EXEMPT, 'NUMERAL_THEN_PREPOSITIONAL_PHRASE', full, next); continue; }
       const role = NON_COUNT_FOLLOWERS[next];
       if (role) { record(STATUS.EXEMPT, `NUMERAL_THEN_${role}`, full, next); continue; }
       // A counted noun after a numeral must be indefinite: 5 قيم, never 5 القيم.

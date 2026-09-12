@@ -1,8 +1,8 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, approx, unitFormat, buildBase, eq, X, add, sub, mul} from './_shared.js';
+import {mk, usable, u, num, approx, unitFormat, buildBase, eq, X, add, sub, mul, resample} from './_shared.js';
 
-export function generateProfitLoss({difficulty, rng, seed, engineVersion}) {
-  const ctx = {difficulty, rng, seed, engineVersion, family: 'profit_loss', family_ar: 'الربح والخسارة والأسعار', category: 'الربح والخسارة والأسعار'};
+export function generateProfitLoss({difficulty, rng, seed, engineVersion, telemetry}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'profit_loss', family_ar: 'الربح والخسارة والأسعار', category: 'الربح والخسارة والأسعار'};
   const list = difficulty === 'easy' ? [simpleProfit, simpleLoss]
     : difficulty === 'medium' ? [totalCostProfit, discountThenSale]
     : [reverseSellingPrice, discountMarkupChain];
@@ -17,11 +17,11 @@ function simpleProfit(ctx) {
   const buy = rng.pick([100, 120, 160, 200, 240, 300, 400]);
   const percent = rng.pick([10, 15, 20, 25, 30]);
   const profit = buy * percent / 100;
-  if (!Number.isInteger(profit)) return simpleProfit(ctx);
+  if (!Number.isInteger(profit)) return resample(ctx, simpleProfit);
   const sell = buy + profit;
   const correct = percent;
   const params = {buyPrice: buy, sellPrice: sell};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(profit, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${sell} − ${buy}`),
     mk(approx(sell / buy * 100), 'USED_ORIGINAL_TOTAL', `${sell} ÷ ${buy} × 100`),
     mk(approx(profit / sell * 100), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} ÷ ${sell} × 100`),
@@ -62,11 +62,11 @@ function simpleLoss(ctx) {
   const buy = rng.pick([100, 120, 160, 200, 240, 300, 400]);
   const percent = rng.pick([10, 20, 25]);
   const loss = buy * percent / 100;
-  if (!Number.isInteger(loss)) return simpleLoss(ctx);
+  if (!Number.isInteger(loss)) return resample(ctx, simpleLoss);
   const sell = buy - loss;
   const correct = percent;
   const params = {buyPrice: buy, sellPrice: sell};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(loss, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${buy} − ${sell}`),
     mk(approx(loss / sell * 100), 'USED_SALE_PRICE_AS_DENOMINATOR', `${loss} ÷ ${sell} × 100`),
     mk(percent + 5, 'OFF_BY_ONE_STEP', `${percent} + 5`),
@@ -109,11 +109,11 @@ function totalCostProfit(ctx) {
   const total = buy + shipping;
   const percent = rng.pick([10, 20, 25]);
   const profit = total * percent / 100;
-  if (!Number.isInteger(profit)) return totalCostProfit(ctx);
+  if (!Number.isInteger(profit)) return resample(ctx, totalCostProfit);
   const sell = total + profit;
   const correct = percent;
   const params = {buyPrice: buy, shipping, sellPrice: sell};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(approx((sell - buy) / buy * 100), 'IGNORED_EXTRA_COST', `(${sell} − ${buy}) ÷ ${buy} × 100`),
     mk(approx(profit / buy * 100), 'USED_PURCHASE_PRICE_AS_DENOMINATOR', `${profit} ÷ ${buy} × 100`),
     mk(approx(profit / sell * 100), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} ÷ ${sell} × 100`),
@@ -159,11 +159,11 @@ function discountThenSale(ctx) {
   const cost = Fraction.from(tag).mul(100 - discount).div(100);
   const markup = rng.pick([10, 20, 25]);
   const sell = cost.mul(100 + markup).div(100);
-  if (!cost.isInteger || !sell.isInteger) return discountThenSale(ctx);
+  if (!cost.isInteger || !sell.isInteger) return resample(ctx, discountThenSale);
   const correct = sell.toNumber();
   const costN = cost.toNumber();
   const params = {listPrice: tag, discountPercent: discount, markupPercent: markup};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(approx(tag * (100 + markup) / 100), 'APPLIED_PERCENT_TO_ORIGINAL', `${tag} × (100 + ${markup}) ÷ 100`),
     mk(costN, 'STOPPED_AFTER_FIRST_STAGE', `${tag} × (100 − ${discount}) ÷ 100`),
     mk(approx(tag * (100 + markup - discount) / 100), 'ADDED_PERCENTAGES', `${tag} × (100 + ${markup} − ${discount}) ÷ 100`),
@@ -208,11 +208,11 @@ function reverseSellingPrice(ctx) {
   const cost = rng.pick([100, 120, 160, 200, 240, 300, 400]);
   const percent = rng.pick([20, 25, 50]);
   const sellF = Fraction.from(cost).mul(100 + percent).div(100);
-  if (!sellF.isInteger) return reverseSellingPrice(ctx);
+  if (!sellF.isInteger) return resample(ctx, reverseSellingPrice);
   const sell = sellF.toNumber();
   const correct = cost;
   const params = {sellPrice: sell, profitPercent: percent};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(approx(sell * (100 - percent) / 100), 'SUBTRACTED_PERCENTAGE_DIRECTLY', `${sell} × (100 − ${percent}) ÷ 100`),
     mk(sell - cost, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${sell} − ${cost}`),
     mk(approx(sell * 100 / percent), 'USED_SALE_PRICE_AS_DENOMINATOR', `${sell} × 100 ÷ ${percent}`),
@@ -257,16 +257,16 @@ function discountMarkupChain(ctx) {
   const f1 = 100 - disc, f2 = 100 + markup;
   // Section 13: a net factor of 1 makes the compound change trivial for a
   // template whose point is that a discount and a mark-up do not cancel.
-  if (f1 * f2 === 10000) return discountMarkupChain(ctx);
+  if (f1 * f2 === 10000) return resample(ctx, discountMarkupChain);
   const afterF = Fraction.from(list).mul(f1).div(100);
   const finalF = afterF.mul(f2).div(100);
-  if (!afterF.isInteger || !finalF.isInteger) return discountMarkupChain(ctx);
+  if (!afterF.isInteger || !finalF.isInteger) return resample(ctx, discountMarkupChain);
   const after = afterF.toNumber();
   const final = finalF.toNumber();
   const changeTimes100 = f1 * f2 - 10000;
   const correct = changeTimes100 / 100;
   const params = {listPrice: list, discountPercent: disc, markupPercent: markup};
-  const distractors = usable([
+  const distractors = usable(ctx, [
     mk(markup - disc, 'ADDED_PERCENTAGES', `${markup} − ${disc}`),
     mk(markup + disc, 'ADDED_PERCENTAGES', `${markup} + ${disc}`),
     mk(disc - markup, 'SUBTRACTED_PERCENTAGES', `${disc} − ${markup}`),
