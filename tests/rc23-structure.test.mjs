@@ -53,9 +53,10 @@ test('RC2.3-1: every template is adjudicated, and every adjudication is reachabl
   const adjudicated = [...ADJUDICATED_TEMPLATE_IDS].sort();
   assert.deepEqual(reachable, adjudicated,
     `unreachable: ${adjudicated.filter(t => !seen.has(t))}; unadjudicated: ${reachable.filter(t => !TEMPLATE_STRUCTURE[t])}`);
-  // RC2.4 added eighteen HARD templates across eleven families; the count is
-  // pinned so a silent loss is still caught.
-  assert.equal(adjudicated.length, 125, 'the engine holds 125 templates');
+  // RC2.4 added eighteen HARD templates across eleven families; RC2.5 split the
+  // relational count question into its routine and its branch-combining form,
+  // making 126. The count is pinned so a silent loss is still caught.
+  assert.equal(adjudicated.length, 126, 'the engine holds 126 templates');
 });
 
 test('RC2.3-1: a hard template names a structural criterion, and nothing else may', () => {
@@ -332,13 +333,15 @@ test('RC2.3-1: Holdout D, re-adjudicated, lands where the independent audit did'
   const r = holdoutDRegression();
   if (!r.available) return; // the holdout is evidence, not a dependency
   assert.equal(r.releasedAsHard, 82);
-  // The audit said 38 of the 82 were genuinely hard. The adjudication was written
-  // from template structure, with no item id and no per-item verdict in front of
-  // it, and is compared against that count afterwards. Agreement to within a
-  // couple of items is the only independent evidence available that the criteria
-  // pick out what a human reviewer picks out.
-  assert.ok(Math.abs(r.differenceFromAudit) <= 3,
-    `adjudication keeps ${r.adjudicationKeepsAsHard}, the audit said ${r.independentAuditSaysGenuinelyHard}`);
+  // Two independent human audits now bracket this, and they disagree with each
+  // other: Holdout D's reviewers called 38 of its 82 hard items genuinely hard,
+  // Holdout E's called 29 of its 82. RC2.5 recalibrated against the stricter of
+  // the two, so applying it to Holdout D's items should land at or below D's own
+  // count and at or above the rate E's reviewers applied — not on either number.
+  // Pinning it to D alone, as RC2.3 did, would mean re-fitting the criteria to
+  // the looser audit every time the stricter one moves.
+  assert.ok(r.adjudicationKeepsAsHard >= 29 && r.adjudicationKeepsAsHard <= 38,
+    `adjudication keeps ${r.adjudicationKeepsAsHard}; the two audits bracket 29..38`);
   assert.ok(r.adjudicationDemotes >= 40, `only ${r.adjudicationDemotes} of the 82 demoted`);
 });
 

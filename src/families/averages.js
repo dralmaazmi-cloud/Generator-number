@@ -480,13 +480,17 @@ function overlappingSubsets(ctx) {
     templateId: 'AVG_H_OVERLAP',
     subskill: 'قيمة مشتركة بين مجموعتين متداخلتين',
     difficulty: 'hard',
-    question: `متوسط ${count} قيم مرتبة هو ${whole}. ومتوسط أول ${head} قيم هو ${headAvg}، ومتوسط آخر ${head} قيم هو ${tailAvg}. فما القيمة التي تقع في المنتصف؟`,
+    // RC2.5-4. «قيم مرتبة» read as SORTED, and under that reading a head
+    // average above the tail average is contradictory, which is what the blind
+    // review flagged. The order here is positional — where a value sits in the
+    // list — so the stem now says that with positional words only.
+    question: `في قائمة من ${count} قيم، متوسط القيم كلها ${whole}. متوسط أول ${head} قيم في القائمة هو ${headAvg}، ومتوسط آخر ${head} قيم فيها هو ${tailAvg}. فما القيمة التي تقع في الموضع الأوسط من القائمة؟`,
     correct, distractors, format: v => num(v),
     steps: [
       `مجموع القيم كلها = ${count} × ${whole} = ${wholeSum}.`,
       `مجموع المجموعة الأولى = ${head} × ${headAvg} = ${headSum}، ومجموع الثانية = ${head} × ${tailAvg} = ${tailSum}.`,
-      `المجموعتان تغطيان القيم كلها، لكن القيمة الوسطى تقع في كلتيهما فتُحسب مرتين: ${headSum} + ${tailSum} = ${headSum + tailSum}.`,
-      `إذن القيمة الوسطى = ${headSum + tailSum} − ${wholeSum} = ${correct}.`
+      `المجموعتان تغطيان القيم كلها، لكن القيمة في الموضع الأوسط تقع في كلتيهما فتُحسب مرتين: ${headSum} + ${tailSum} = ${headSum + tailSum}.`,
+      `إذن القيمة في الموضع الأوسط = ${headSum + tailSum} − ${wholeSum} = ${correct}.`
     ],
     howToStart: 'اجمع مجموعي المجموعتين ولاحظ أي قيمة دخلت في الجمع مرتين.',
     remember: 'عند تداخل مجموعتين، الفرق بين مجموعهما ومجموع الكل هو القيمة المشتركة.',

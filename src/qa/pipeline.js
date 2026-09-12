@@ -16,6 +16,7 @@ import {validateFeedbackTruthfulness} from './feedback-metrics.js';
 import {validateDisplayedEquations, validateExplanationSourcing, numbersIn} from './equations.js';
 import {checkArabicNumberUnitsDeep} from '../arabic/units.js';
 import {classifyQuestionConstructions, STATUS as AR_STATUS} from '../arabic/constructions.js';
+import {checkOrderingWords, checkRateAnswerUnit} from './wording.js';
 import {isKnownMisconception} from './misconceptions.js';
 import {LETTERS, parseLeadingNumber, validateQuestion, DAYS_AR} from '../utils.js';
 
@@ -234,11 +235,23 @@ export function validateLanguage(q) {
   const classified = classifyQuestionConstructions(texts);
   const reasons = [];
   if (violations.length || classified.invalid.length) reasons.push(REASON.INVALID_ARABIC_NUMBER_UNIT);
+  // RC2.5-4. Two wording rules that change what the question asks, so they are
+  // rejections rather than notes. See src/qa/wording.js.
+  const ordering = checkOrderingWords(texts);
+  if (ordering.length) reasons.push(REASON.ORDERING_WORD_AMBIGUITY);
+  const rateUnit = checkRateAnswerUnit({
+    stem: q.question,
+    answerUnitId: q.metadata?.answer_unit_id ?? null,
+    optionTexts: LETTERS.map(l => q.options?.[l]).filter(t => typeof t === 'string')
+  });
+  if (rateUnit) reasons.push(REASON.RATE_ANSWER_NOT_RATE_UNIT);
   return verdict(reasons, {
     arabicViolations: violations,
     arabicInvalidConstructions: classified.invalid,
     arabicUnclassifiedConstructions: classified.unclassified,
-    arabicConstructionCount: classified.constructions.length
+    arabicConstructionCount: classified.constructions.length,
+    orderingWordAmbiguities: ordering,
+    rateAnswerUnit: rateUnit
   });
 }
 

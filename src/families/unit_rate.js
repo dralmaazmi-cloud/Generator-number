@@ -376,7 +376,9 @@ function rateFromTimeSaved(ctx) {
     subskill: 'المعدل الأصلي من توفير في الزمن',
     difficulty: 'hard',
     question: `ينجز جهاز ${u(total, 'unit')} بمعدل ثابت. ولو زاد معدله بمقدار ${bump} وحدة/ساعة لأنجز العمل نفسه في ${u(saved, 'hour', 'oblique')} أقل. فما معدله الأصلي؟`,
-    correct, distractors, format: unitFormat('unit'),
+    // RC2.5-4. The answer is a RATE. It was rendered «60 وحدة», which states a
+    // quantity and answers a different question than the stem asks.
+    correct, distractors, format: unitFormat('unitPerHour'),
     steps: [
       `نفرض المعدل الأصلي = س، فالزمن الأول = ${total} ÷ س، والزمن بعد الزيادة = ${total} ÷ (س + ${bump})، والفرق بينهما ${saved}.`,
       `بضرب طرفي المعادلة في س وفي (س + ${bump}) تصبح: س × (س + ${bump}) = ${total} × ${bump} ÷ ${saved}.`,

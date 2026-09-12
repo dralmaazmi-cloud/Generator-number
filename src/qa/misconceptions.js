@@ -127,6 +127,12 @@ export const MISCONCEPTIONS = Object.freeze({
   COUNTED_DIRECT_RELATIONS_ONLY: 'عددت العلاقات المباشرة فقط ولم تكمل الاستنتاج الانتقالي.',
   COUNTED_EVERYONE: 'عددت كل الأشخاص بدل من يثبت تفوقهم على الهدف.',
   RESOLVED_AN_UNRESOLVED_PAIR: 'حسمت زوجًا لا تحسمه المعطيات.',
+  // RC2.5-5. The two slips a branch-spanning count actually produces: following
+  // the one branch the target sits on and stopping there, and collapsing the
+  // partial order into a single arrangement and reading the count off it.
+  COUNTED_ONE_BRANCH_ONLY: 'تتبعت الفرع الذي يقع فيه الهدف وحده ولم تضم إليه الفرع الآخر.',
+  COUNTED_FROM_ONE_ORDERING: 'رتبت الجميع في ترتيب واحد ممكن ثم عددت من سبق الهدف فيه، والمعطيات تسمح بأكثر من ترتيب.',
+  MISCOUNTED_THE_CONFIRMED_PATHS: 'أخطأت في عدّ أصحاب المسارات المؤكدة، فزاد العدد أو نقص عن عددهم.',
   SATISFIES_SHARED_PROPERTY: 'هذا العدد يحقق الخاصية المشتركة، فهو ينتمي إلى المجموعة.',
 
   // --- generic arithmetic-direction errors (must still be derivable) ---

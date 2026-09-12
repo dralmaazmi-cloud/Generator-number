@@ -471,7 +471,8 @@ function twoConfigurations(ctx) {
     subskill: 'معدل آلة من مجموعتين مختلطتين',
     difficulty: 'hard',
     question: `تنتج ${u(a, 'machine')} من النوع الأول و${u(b, 'machine')} من النوع الثاني معًا ${u(out1, 'piece')} في الساعة. وتنتج ${u(c, 'machine')} من النوع الأول و${u(d, 'machine')} من النوع الثاني معًا ${u(out2, 'piece')} في الساعة. كم قطعة تنتج آلة واحدة من النوع الأول في الساعة؟`,
-    correct, distractors, format: unitFormat('piece'),
+    // RC2.5-4. Pieces PER HOUR, as the stem asks; `piece` alone read as a count.
+    correct, distractors, format: unitFormat('piecePerHour'),
     steps: [
       `نضرب العبارة الأولى في ${d} والثانية في ${b} ليتساوى عدد آلات النوع الثاني: ${out1} × ${d} = ${out1 * d}، و${out2} × ${b} = ${out2 * b}.`,
       `بالطرح يختفي النوع الثاني ويبقى الفرق في الإنتاج = ${out1 * d} − ${out2 * b} = ${lhs}.`,

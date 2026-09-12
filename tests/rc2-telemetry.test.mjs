@@ -165,6 +165,9 @@ test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs ou
   // unfinalisable candidate. The fixture pins the CONDITION — a budget that
   // genuinely runs out — not the draw, and is re-found each time the corpus
   // moves rather than being preserved by loosening the assertion.
+  // Repinned again for RC2.5: the relational count template's option set was
+  // rebuilt with per-slip provenance, which moves the corpus once more.
+  //
   // This seed replaced an earlier one that exhausted on REDUCIBLE_RATIO. RC2-003's
   // cost measurement found that rejection was 69% of three ratio templates' draws
   // and moved the constraint into the sampler, so that rejection no longer
@@ -172,7 +175,7 @@ test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs ou
   // its job, not failing.
   const engine = new Engine({maxGenerationAttempts: 1});
   assert.throws(
-    () => engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-29'}),
+    () => engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-58'}),
     err => err.code === 'QUESTION_GENERATION_EXHAUSTED'
   );
   const s = engine.getTelemetry();
@@ -186,7 +189,7 @@ test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs ou
 
 test('RC2-003 meta: a budget that does not run out emits no exhaustion', () => {
   const engine = new Engine();
-  engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-29'});
+  engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-58'});
   assert.equal(engine.getTelemetry().exhaustions, 0);
 });
 

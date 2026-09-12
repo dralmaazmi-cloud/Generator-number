@@ -342,6 +342,7 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
       // published; `complexity_band` is what the RC2.2 scorer would have said.
       structural_band: structuralBand,
       answer_count_unit: base.answerCountUnit ?? null,
+      answer_unit_id: base.answerUnitId ?? null,
       structural_criteria: criteriaOf(base.template_id),
       band_source: 'structural_adjudication',
       score_agrees_with_structure: complexity.band === structuralBand,

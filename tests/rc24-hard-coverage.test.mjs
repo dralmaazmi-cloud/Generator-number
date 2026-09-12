@@ -32,9 +32,21 @@ test('RC2.4: the structural criteria are untouched', () => {
     ['FIXED_PIPELINE', 'REPEATED_OPERATION', 'SINGLE_FORMULA']);
 });
 
-test('RC2.4: no existing template was reclassified', () => {
-  // Every template RC2.3 adjudicated hard is still hard...
-  for (const id of RC23_HARD) assert.equal(isHardCapable(id), true, `${id} lost its hard band`);
+test('RC2.4/RC2.5: nothing was reclassified upward, and the demotions are the declared ones', () => {
+  // RC2.4's rule was that no RC2.3 hard template lost its band. RC2.5 changes
+  // that deliberately and in one direction only: the Holdout E blind review
+  // found most of the delivered HARD items overclassified, and the relational
+  // re-adjudication against the derived graph conditions demoted two shapes that
+  // never draw a hard graph. Downward moves are the point of RC2.5; upward moves
+  // are still forbidden, and the demotions are named so a silent one is caught.
+  const RC25_DEMOTED = ['REL_M_CONFIRM', 'REL_H_GUARANTEE', 'REL_M_COUNT'];
+  for (const id of RC25_DEMOTED) {
+    assert.equal(isHardCapable(id), false, `${id} should have been demoted by RC2.5`);
+  }
+  for (const id of RC23_HARD) {
+    if (RC25_DEMOTED.includes(id)) continue;
+    assert.equal(isHardCapable(id), true, `${id} lost its hard band`);
+  }
   // ...and every shape the RC2.3 brief ruled out of hard is still out of it.
   // This is the requirement that coverage was raised by adding structures, not
   // by promoting the routine ones that were demoted for being routine.
@@ -67,9 +79,12 @@ test('RC2.4: the two families at their honest ceiling stay there', () => {
 test('RC2.4: hard coverage is materially broader than RC2.3', () => {
   const hard = templatesAtBand('hard');
   const families = FAMILY_REGISTRY.filter(f => f.difficulties.includes('hard'));
-  assert.ok(hard.length >= 37, `${hard.length} hard templates, RC2.3 had ${RC23_HARD.length}`);
+  // RC2.4 reached 37. RC2.5 demoted three relational shapes and added one
+  // (REL_H_COUNT_BRANCHED), leaving 35 — still nearly double RC2.3's 19, and
+  // arrived at by removing structures that do not meet the bar rather than by
+  // holding a number.
+  assert.ok(hard.length >= 35, `${hard.length} hard templates, RC2.3 had ${RC23_HARD.length}`);
   assert.ok(families.length >= 14, `${families.length} hard families, RC2.3 had 5`);
-  assert.equal(newHardTemplates().length, hard.length - RC23_HARD.length);
   // Spread, not a pile: no family may hold more than a quarter of the hard band.
   for (const f of families) {
     const n = f.templates.filter(t => TEMPLATE_STRUCTURE[t].band === 'hard').length;

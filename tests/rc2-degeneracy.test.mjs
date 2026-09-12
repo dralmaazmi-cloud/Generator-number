@@ -117,7 +117,9 @@ test('RC2-005 MUST_REJECT: a chain position that reads the same from either end'
   // RC2.2-1 moved templates into the pool whose band they actually compute, so
   // both the seed and the band a fixture is found at can move. The fixture pins
   // the CONDITION — a position that reads the same from either end — not the draw.
-  for (const [seed, template] of [['fx-rel-1', 'REL_E_CHAIN'], ['fx-rel-8', 'REL_E_BETWEEN']]) {
+  // RC2.5-2 split REL_M_COUNT and re-banded two relational templates, which
+  // moves the pool a seed lands in again. Re-found, same condition.
+  for (const [seed, template] of [['fx-rel-60', 'REL_E_CHAIN'], ['fx-rel-8', 'REL_E_BETWEEN']]) {
     const {base, verdict} = draw(generateRelational, await bandOfTemplate('relational', template), seed);
     assert.equal(base.template_id, template);
     assert.equal(base.parameters.nodeCount, 5);
@@ -144,7 +146,7 @@ test('RC2-005 MUST_REJECT: a count question where neither modelled error differs
   // reclassified REL_M_CONFIRM, RC2.3-1 replaced the pools with the structural
   // adjudication. The fixture pins the CONDITION (neither modelled error differs
   // from the key), not the draw, and is re-found rather than being preserved.
-  const {base, verdict} = draw(generateRelational, await bandOfTemplate('relational','REL_M_COUNT'), 'fx-relm-3');
+  const {base, verdict} = draw(generateRelational, await bandOfTemplate('relational','REL_M_COUNT'), 'fx-relm-23');
   assert.equal(base.template_id, 'REL_M_COUNT');
   assert.equal(base.metadata.transitive_step_required, false);
   assert.equal(base.metadata.undetermined_step_required, false);
@@ -248,7 +250,9 @@ test('RC2-005: every template in the engine is classified, and every classificat
   // Nothing reported that, because the count was pinned at what was left. The
   // structural adjudication gives every template exactly one band, so a template
   // can no longer be orphaned by a pool it fails to qualify for.
-  assert.equal(report.totals.templates, 125, 'every declared template is reachable');
+  // RC2.5-2: 126. The relational count question was split into its routine and
+  // its branch-combining form, which is one template more than RC2.4 had.
+  assert.equal(report.totals.templates, 126, 'every declared template is reachable');
   assert.deepEqual(report.totals.unclassified, []);
   assert.deepEqual(report.totals.declaredButAbsentFromEngine, []);
   assert.equal(report.totals.rc1TemplatesWithNoModel, 23, 'the RC1 gap was 23 templates');

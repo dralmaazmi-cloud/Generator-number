@@ -382,6 +382,10 @@ export function buildBase(ctx, spec) {
     // Published as evidence so the option-quality claim can be checked from
     // outside the engine without re-deriving which templates those are.
     answerCountUnit: countedAnswer ? (format?.unitId ?? null) : null,
+    // RC2.5-4. The unit the ANSWER is rendered in, whatever kind of quantity it
+    // is. `answerCountUnit` is null for a rate, which is exactly the case the
+    // rate-unit rule has to inspect, so the raw id is published too.
+    answerUnitId: format?.unitId ?? null,
     textParams,
     allowedConstants,
     commutative,

@@ -55,7 +55,11 @@ test('RC2-010: every published key is confirmed by independent enumeration', () 
     const edges = [...body.matchAll(/([ء-ي]+)\s+(?:أسرع|أطول)\s+من\s+([ء-ي]+)/g)].map(m => [m[1], m[2]]);
     const nodes = [...new Set(edges.flat())];
     const oracle = buildOrderOracle(nodes, edges);
-    const posWord = {'الثاني': 2, 'الثالث': 3, 'الرابع': 4, 'الخامس': 5, 'السادس': 6};
+    // RC2.5-2: the graphs run to ten people, so the ordinals do too.
+    const posWord = {
+      'الثاني': 2, 'الثالث': 3, 'الرابع': 4, 'الخامس': 5,
+      'السادس': 6, 'السابع': 7, 'الثامن': 8, 'التاسع': 9, 'العاشر': 10
+    };
     const k = Object.entries(posWord).find(([w]) => q.question.includes(w))?.[1];
     assert.ok(k, `could not read the asked position from: ${q.question}`);
     const who = oracle.whoAtPosition(k);
@@ -70,17 +74,28 @@ test('RC2-010: the generator does not resample on the strength of the answer', a
   // position — and the note beside it says so.
   const {readFileSync} = await import('node:fs');
   const src = readFileSync('src/families/relational.js', 'utf8');
-  const fn = src.slice(src.indexOf('function partialOrderPosition'), src.indexOf('function graphMeta') > src.indexOf('function partialOrderPosition')
-    ? src.indexOf('function graphMeta') : src.length);
+  // Exactly this function: `partialOrderPositionGraph` shares its prefix, and
+  // slicing on the prefix used to scan the wrong body and pass vacuously.
+  const start = src.search(/function partialOrderPosition\(ctx\)/);
+  assert.ok(start > 0, 'partialOrderPosition must exist');
+  const fn = src.slice(start);
   const body = fn.slice(0, fn.indexOf('return buildBase'));
   const code = body.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/^\s*\/\/.*$/gm, ' ');
   assert.ok(!/openPositions/.test(code), 'the answer-driven position search must be gone');
-  // Since RC2-003 the resample is routed through the telemetry helper, so it
-  // reads `resample(ctx, partialOrderPosition)` rather than a bare call.
+  // RC2.5-2. Two resamples now: the graph is too small to ask a middle position
+  // of, and the drawn graph is not the partial order the HARD band requires.
+  // Both read the GRAPH. Neither may read the answer.
   const resamples = [...code.matchAll(/resample\(ctx, partialOrderPosition\)|return partialOrderPosition\(ctx\)/g)];
-  assert.equal(resamples.length, 1, `exactly one structural resample should remain, found ${resamples.length}`);
-  assert.ok(/nodes\.length < 5/.test(code), 'and it must be guarded by graph size, not by the answer');
-  assert.ok(!/(?:correct|who)[^\n]*\)\s*return (?:resample\(ctx, )?partialOrderPosition/.test(code),
+  assert.equal(resamples.length, 2, `expected the two structural resamples, found ${resamples.length}`);
+  assert.ok(/nodes\.length < 5/.test(code), 'one must be guarded by graph size');
+  assert.ok(/po\.verdict\.band !== 'hard'/.test(code), 'the other by the graph-complexity band');
+  // The band is computed from the graph and the asked position only: if the
+  // complexity call were handed `determined`, `who` or `correct`, the band would
+  // be a property of the answer and RC2-010 would be back.
+  const poCall = code.slice(code.indexOf('complexityMeta('), code.indexOf('complexityMeta(') + 200);
+  assert.ok(!/\b(determined|who|correct|candidates)\b/.test(poCall),
+    `the complexity call must not read the answer: ${poCall}`);
+  assert.ok(!/(?:correct|who|determined)[^\n]*\)\s*return (?:resample\(ctx, )?partialOrderPosition/.test(code),
     'no resample may depend on what the answer turned out to be');
 });
 

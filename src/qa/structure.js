@@ -322,16 +322,31 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Four statements that chain into one total order; read off the position.'},
   REL_E_CHAIN: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
     why: 'Five statements given out of order that still resolve to one total chain; assembling it is the whole task.'},
-  REL_M_CONFIRM: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'PARTIAL_ORDER_BRANCHING'],
-    why: 'The order is partial; each candidate statement must be tested against EVERY consistent ordering, not against one chain.'},
+  // RC2.5-2. The relational family is re-adjudicated against the derived
+  // graph-complexity conditions in src/qa/partial-order.js, measured on the
+  // graphs the templates actually draw rather than on the question they ask.
+  //
+  // REL_M_CONFIRM and REL_H_GUARANTEE are DEMOTED. Both ask which pair relation
+  // is guaranteed, and a guaranteed relation is by definition one with a stated
+  // path between its two people — so a single chain always answers the question
+  // immediately (H3). Measured over 529 and 506 drawn instances, neither
+  // produced a single HARD graph. That is a structural ceiling on the shape, not
+  // a sampling accident: no parameter choice makes "find the provable pair"
+  // anything other than a routine transitive conclusion.
+  REL_M_CONFIRM: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Asks which statement is guaranteed. A guaranteed relation has a stated path, so one chain proves it: a routine transitive conclusion (0/529 drawn instances met the HARD graph conditions).'},
+  REL_H_GUARANTEE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Names an open pair, but the answer is still a pair relation proved along one path, so the open branch never has to be reasoned about (0/506 drawn instances met the HARD graph conditions).'},
   REL_M_BRANCH_UNRES: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'PARTIAL_ORDER_BRANCHING'],
-    why: 'Asks which pair stays undetermined — answerable only by reasoning about the set of consistent orderings.'},
-  REL_M_COUNT: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'PARTIAL_ORDER_BRANCHING'],
-    why: 'Counts who is certainly above a person: transitive closure over a branching order.'},
+    why: 'Asks which pair stays undetermined — a question about the SET of consistent orderings, not about any one of them. The sampler now requires H1-H3, so the order is genuinely partial with more than one open pair.'},
+  // The count and position questions were each TWO tasks sharing one id and one
+  // HARD label. They are split by the feature that separates them.
+  REL_M_COUNT: {band: 'medium', criteria: [], routine: ['REPEATED_OPERATION'],
+    why: 'Counts who is certainly above a person where all of them lie on ONE root-to-sink path: the chain is followed and the count read off.'},
+  REL_H_COUNT_BRANCHED: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'PARTIAL_ORDER_BRANCHING'],
+    why: 'The same count where it spans two or more branches: no chain contains the answer, so the branches must be held together to separate who is certainly above from who is merely not below.'},
   REL_H_POSITION: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'PARTIAL_ORDER_BRANCHING'],
-    why: 'A position that is fixed even though the order as a whole is not.'},
-  REL_H_GUARANTEE: {band: 'hard', criteria: ['SIMULTANEOUS_CONSTRAINTS', 'PARTIAL_ORDER_BRANCHING'],
-    why: 'Requires separating what an undetermined branch can and cannot support.'},
+    why: 'Who holds a position on an order that stays partial with more than one open pair and a proof depth of three or more. The routine case — an order the statements settle — is REL_E_CHAIN, so it is not drawn here.'},
 
   // ----------------------------------------------------------------- calendar
   CAL_E_TOM: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],

@@ -55,6 +55,10 @@ export const REASON = Object.freeze({
   // across this multi-session batch.
   REPEATED_REASONING_PATTERN_IN_BATCH: 'REPEATED_REASONING_PATTERN_IN_BATCH',
   INVALID_ARABIC_NUMBER_UNIT: 'INVALID_ARABIC_NUMBER_UNIT',
+  // RC2.5-4. «مرتبة» asserting a numeric sort where the stem means position in
+  // a list, and a rate answer whose options are rendered as a bare quantity.
+  ORDERING_WORD_AMBIGUITY: 'ORDERING_WORD_AMBIGUITY',
+  RATE_ANSWER_NOT_RATE_UNIT: 'RATE_ANSWER_NOT_RATE_UNIT',
   RETRY_EXHAUSTED: 'RETRY_EXHAUSTED',
   // RC2-003. The default reason a family sampler discards its own draw. It is a
   // work code, never a verdict: it can never appear in a validation verdict.

@@ -13,12 +13,27 @@
 
 import {mk, usable, buildBase, resample, bandPool} from './_shared.js';
 import {buildOrderOracle} from '../qa/relational-oracle.js';
+import {graphComplexity, partialOrderBand} from '../qa/partial-order.js';
 import {canonicalGraph} from '../qa/fingerprint.js';
 
 const NAMES = ['خالد', 'سالم', 'ماجد', 'راشد', 'ناصر', 'فهد', 'علي', 'بدر', 'حمد', 'سامي', 'نورة', 'سارة', 'هند', 'ريم', 'ليان', 'مريم'];
 const UNDETERMINED = 'لا يمكن تحديده';
 const COUNT_LABELS = ['لا أحد', 'شخص واحد', 'شخصان', 'ثلاثة أشخاص', 'أربعة أشخاص', 'خمسة أشخاص'];
-const POSITION_WORDS = {1: 'الأول', 2: 'الثاني', 3: 'الثالث', 4: 'الرابع', 5: 'الخامس'};
+// RC2.5-2. Ordinals to ten. The partial-order position template draws graphs of
+// eight to ten people, and a missing ordinal rendered «المركز undefined» in the
+// stem — silently, because the key was still a name. `positionWord` throws
+// rather than interpolating a gap, so a graph the vocabulary does not cover is a
+// loud failure instead of a published defect.
+const POSITION_WORDS = {
+  1: 'الأول', 2: 'الثاني', 3: 'الثالث', 4: 'الرابع', 5: 'الخامس',
+  6: 'السادس', 7: 'السابع', 8: 'الثامن', 9: 'التاسع', 10: 'العاشر'
+};
+
+function positionWord(k) {
+  const w = POSITION_WORDS[k];
+  if (!w) throw new Error(`RELATIONAL_NO_ORDINAL_FOR_POSITION:${k}`);
+  return w;
+}
 
 export function generateRelational({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'relational', family_ar: 'المقارنة والترتيب العلاقاتي', category: 'المقارنة والترتيب العلاقاتي'};
@@ -30,7 +45,8 @@ export function generateRelational({difficulty, rng, seed, engineVersion, teleme
     ['REL_E_CHAIN', fullChainPosition],
     ['REL_M_CONFIRM', confirmedStatement],
     ['REL_M_BRANCH_UNRES', branchUnresolved],
-    ['REL_M_COUNT', countAbove],
+    ['REL_M_COUNT', countAboveOnOneChain],
+    ['REL_H_COUNT_BRANCHED', countAboveAcrossBranches],
     ['REL_H_POSITION', partialOrderPosition],
     ['REL_H_GUARANTEE', branchGuaranteed]
   ])(ctx);
@@ -108,6 +124,68 @@ function positionGraph(rng, size) {
   return {nodes, edges, shape: `chainWithTail@${forkAt}`};
 }
 
+/**
+ * RC2.5-2. The shape family the HARD position question needs: an order that is
+ * genuinely partial — three or more people whose relative order the statements
+ * never settle — attached to a spine whose positions ARE settled. That is what
+ * makes "who is third?" a question rather than a lookup: the solver has to work
+ * out how far down the certainty reaches before answering.
+ *
+ * Two mirror shapes, so the settled part is not always at the top:
+ *
+ *   lowFork   a spine, with the open group hanging below its last member
+ *   highFork  the open group on top, all of them above a spine
+ *
+ * The shape, the sizes and the asked position are all drawn here, before any
+ * answer exists. Nothing in this function can see whether the position it is
+ * about to ask for turns out to be determined — RC2-010 is exactly what happens
+ * when a graph is redrawn on the strength of its answer.
+ */
+function partialOrderPositionGraph(rng) {
+  const size = rng.pick([8, 9, 9, 10]);
+  // Only the two fork shapes. A `branchedGraph` leaves most middle positions
+  // open, which pushes the template back towards answering "cannot be
+  // determined" most of the time — the RC2-010 defect. The other three
+  // relational templates still draw that shape; this one does not need it, and
+  // the variety here comes from size, spine length, open-group size and which
+  // end of the order is settled.
+  const kind = rng.pick(['lowFork', 'highFork']);
+  const nodes = rng.sample(NAMES, size);
+  // Three or four people whose order is never settled. Three is the smaller
+  // open group that still leaves more than one pair open, which H2 requires.
+  const openCount = rng.pick([3, 3, 3, 4]);
+  const spineLen = size - openCount;
+  if (spineLen < 2) return branchedGraph(rng, size);
+  const edges = [];
+  if (kind === 'lowFork') {
+    const spine = nodes.slice(0, spineLen);
+    const open = nodes.slice(spineLen);
+    for (let i = 0; i < spine.length - 1; i++) edges.push([spine[i], spine[i + 1]]);
+    for (const o of open) edges.push([spine.at(-1), o]);
+  } else {
+    const open = nodes.slice(0, openCount);
+    const spine = nodes.slice(openCount);
+    for (const o of open) edges.push([o, spine[0]]);
+    for (let i = 0; i < spine.length - 1; i++) edges.push([spine[i], spine[i + 1]]);
+  }
+  return {nodes, edges, shape: `${kind}${openCount}/${spineLen}`};
+}
+
+/** Every root-to-sink path that passes through `node`. */
+function rootPathsThrough(nodes, edges, node) {
+  const out = new Map(nodes.map(n => [n, []]));
+  const inn = new Map(nodes.map(n => [n, []]));
+  for (const [a, b] of edges) { out.get(a)?.push(b); inn.get(b)?.push(a); }
+  const paths = [];
+  const walk = (n, acc) => {
+    const next = out.get(n) || [];
+    if (!next.length) { paths.push([...acc, n]); return; }
+    for (const m of next) walk(m, [...acc, n]);
+  };
+  for (const r of nodes.filter(n => (inn.get(n) || []).length === 0)) walk(r, []);
+  return paths.filter(p => p.includes(node));
+}
+
 function graphMeta(nodes, edges) {
   const canonical = canonicalGraph(nodes, edges);
   return {
@@ -116,6 +194,26 @@ function graphMeta(nodes, edges) {
       nodeCount: nodes.length,
       edgeCount: edges.length,
       canonicalEdges: canonical.edges.map(e => e.join('>'))
+    }
+  };
+}
+
+/**
+ * RC2.5-2. The graph facts this drawn instance actually carries, and the band
+ * they give it. Published on every relational item as evidence, so the claim
+ * "this one is hard" can be checked from the item rather than from the template
+ * it came from.
+ */
+function complexityMeta(nodes, edges, task, candidateCount) {
+  const metrics = graphComplexity(nodes, edges, task, {candidateCount});
+  const verdict = partialOrderBand(metrics);
+  return {
+    metrics, verdict,
+    metadata: {
+      graph_complexity: metrics,
+      partial_order_band: verdict.band,
+      partial_order_conditions_met: verdict.met,
+      partial_order_conditions_missed: verdict.missed
     }
   };
 }
@@ -142,7 +240,7 @@ function fullChainPosition(ctx) {
   const distractors = usable(ctx, [
     ...nodes.filter(n => n !== correct).map(n => {
       const pos = oracle.positionsOf(n)[0];
-      return mk(n, 'COUNTED_DIRECT_RELATIONS_ONLY', `قراءة المركز ${POSITION_WORDS[pos] || pos} بدل ${POSITION_WORDS[targetPos]}`);
+      return mk(n, 'COUNTED_DIRECT_RELATIONS_ONLY', `قراءة المركز ${positionWord(pos)} بدل ${positionWord(targetPos)}`);
     }),
     mk(UNDETERMINED, 'RESOLVED_AN_UNRESOLVED_PAIR', 'اعتبار الترتيب غير محسوم رغم أن السلسلة كاملة')
   ]);
@@ -151,11 +249,11 @@ function fullChainPosition(ctx) {
     templateId: 'REL_E_CHAIN',
     subskill: 'ترتيب كامل وتحديد مركز',
     difficulty: 'medium',
-    question: `${sentences(rng, edges)} من صاحب المركز ${POSITION_WORDS[targetPos]} من الأسرع إلى الأبطأ؟`,
+    question: `${sentences(rng, edges)} من صاحب المركز ${positionWord(targetPos)} من الأسرع إلى الأبطأ؟`,
     correct, distractors, format: v => String(v),
     steps: [
       `نربط العلاقات في سلسلة واحدة: ${oracle.extensions[0].join(' > ')}.`,
-      `المركز المطلوب هو ${POSITION_WORDS[targetPos]}، إذن الإجابة ${correct}.`
+      `المركز المطلوب هو ${positionWord(targetPos)}، إذن الإجابة ${correct}.`
     ],
     howToStart: 'حوّل الجمل إلى سلسلة واحدة.',
     remember: 'إذا كانت كل العلاقات قابلة للربط، اقرأ المركز المطلوب مباشرة.',
@@ -190,7 +288,7 @@ function betweenRelation(ctx) {
   const distractors = usable(ctx, [
     ...nodes.filter(n => n !== correct).map(n => {
       const pos = oracle.positionsOf(n)[0];
-      return mk(n, 'COUNTED_DIRECT_RELATIONS_ONLY', `قراءة المركز ${POSITION_WORDS[pos] || pos} بدل ${POSITION_WORDS[targetPos]}`);
+      return mk(n, 'COUNTED_DIRECT_RELATIONS_ONLY', `قراءة المركز ${positionWord(pos)} بدل ${positionWord(targetPos)}`);
     }),
     mk(UNDETERMINED, 'RESOLVED_AN_UNRESOLVED_PAIR', 'اعتبار الترتيب غير محسوم رغم اكتمال السلسلة'),
     mk('لا أحد', 'RELATION_CONTRADICTS_STATEMENT', 'نفي وجود شخص في هذا المركز رغم تحديده')
@@ -200,11 +298,11 @@ function betweenRelation(ctx) {
     templateId: 'REL_E_BETWEEN',
     subskill: 'تحديد شخص في مركز من ترتيب كامل',
     difficulty: 'easy',
-    question: `${sentences(rng, edges, 'أطول من')} من صاحب المركز ${POSITION_WORDS[targetPos]} من الأطول إلى الأقصر؟`,
+    question: `${sentences(rng, edges, 'أطول من')} من صاحب المركز ${positionWord(targetPos)} من الأطول إلى الأقصر؟`,
     correct, distractors, format: v => String(v),
     steps: [
       `من الجمل نحصل على الترتيب: ${oracle.extensions[0].join(' > ')}.`,
-      `صاحب المركز ${POSITION_WORDS[targetPos]} هو ${correct}.`
+      `صاحب المركز ${positionWord(targetPos)} هو ${correct}.`
     ],
     howToStart: 'ضع العلاقات في ترتيب واحد.',
     remember: 'الجملة «أطول من» تحدد اتجاه السلسلة.',
@@ -249,6 +347,14 @@ function branchUnresolved(ctx) {
     return mk(label(p), 'RELATION_REQUIRES_UNSTATED_ASSUMPTION', `هذه المقارنة محسومة: ${above} أعلى من ${below} عبر سلسلة واضحة`);
   }));
   const {reasoningGraph, parameters} = graphMeta(nodes, edges);
+  // RC2.5-2. Every offered pair needs its paths traced before it can be ruled
+  // in or out, so no partial reading narrows the answer space: null, not a
+  // number, is the honest value for the candidate measure here.
+  const po = complexityMeta(nodes, edges, {type: 'undeterminedPair'}, null);
+  // Asking which comparison stays open is a question ABOUT the set of consistent
+  // orderings, but only when the order is genuinely partial and more than one
+  // pair is open. A graph that leaves exactly one gap is a spot-the-gap item.
+  if (po.verdict.band !== 'hard') return resample(ctx, branchUnresolved);
   return buildBase(ctx, {
     templateId: 'REL_M_BRANCH_UNRES',
     subskill: 'فروع وعلاقة غير محسومة',
@@ -268,13 +374,35 @@ function branchUnresolved(ctx) {
     oracle: orderOracleSpec(nodes, edges, {type: 'undeterminedPair'},
       undetermined.map(p => p.slice().sort().join('|'))),
     askedUnknown: 'undeterminedPair', stageCount: 2,
-    metadata: {graph_shape: shape},
+    metadata: {graph_shape: shape, ...po.metadata},
     complexityFactors: {reasoningTransformations: 2, conceptCount: 2, graphDepth: nodes.length, conditionCount: edges.length, dependencyDepth: 2},
     textParams: false
   });
 }
 
-function countAbove(ctx) {
+/**
+ * RC2.5-2. Counting who is certainly above someone is TWO tasks, and the graph
+ * decides which one was drawn:
+ *
+ *   everyone the count covers lies on ONE root-to-sink path — the answer is read
+ *   off a single chain, transitivity and all: a routine transitive conclusion.
+ *
+ *   the count spans two or more branches — no chain contains the answer, and the
+ *   branches have to be held together to know who is certainly above and who is
+ *   merely not below.
+ *
+ * The two used to share a template id and a HARD label. They are separate
+ * templates now, each sampled until the graph it drew is the kind it claims.
+ */
+function countAboveOnOneChain(ctx) {
+  return countAboveAt(ctx, 'medium', 'REL_M_COUNT', countAboveOnOneChain);
+}
+
+function countAboveAcrossBranches(ctx) {
+  return countAboveAt(ctx, 'hard', 'REL_H_COUNT_BRANCHED', countAboveAcrossBranches);
+}
+
+function countAboveAt(ctx, requiredBand, templateId, self) {
   const {rng} = ctx;
   // RC2-011. The graph was always built at size six, so the number of people
   // provably above the target clustered on one or two counts. The size varies
@@ -291,18 +419,66 @@ function countAbove(ctx) {
   // RC2-005: the two modelled wrong methods, measured on the graph as drawn.
   const directlyAbove = edges.filter(([, below]) => below === target).length;
   const couldBeAbove = nodes.filter(n => n !== target && !oracle.definitelyAbove(target, n)).length;
-  const distractors = usable(ctx, 
-    COUNT_LABELS.filter((_, i) => i !== count).map((labelText, i) => mk(
-      labelText,
-      i < count ? 'COUNTED_DIRECT_RELATIONS_ONLY' : 'COUNTED_EVERYONE',
-      i < count ? `عدّ ${labelText} فقط دون إكمال الاستنتاج الانتقالي` : `عدّ ${labelText} بإدخال من لا يثبت تفوقهم`
-    )).concat([mk(UNDETERMINED, 'RESOLVED_AN_UNRESOLVED_PAIR', 'اعتبار العدد غير قابل للتحديد رغم وضوح المسارات')])
-  );
+  // RC2.5-5. Each wrong count is attached to the slip that actually produces it,
+  // rather than every label below the key sharing one diagnosis and every label
+  // above it sharing another. Two of them are specific to a count that spans
+  // branches, which is the case this template exists to ask about:
+  //
+  //   one branch only     follow the path the target sits on and stop there
+  //   from one ordering   collapse the partial order into a single arrangement
+  //                       and count whoever precedes the target in it
+  const targetPaths = rootPathsThrough(nodes, edges, target);
+  const oneBranchCount = targetPaths.length
+    ? Math.max(...targetPaths.map(p => p.indexOf(target)))
+    : 0;
+  const singleOrderingCount = oracle.extensions[0].indexOf(target);
+  const modelled = [
+    [directlyAbove, 'COUNTED_DIRECT_RELATIONS_ONLY',
+      `عدّ من ذُكروا فوق ${target} مباشرة فقط دون إكمال الاستنتاج الانتقالي`],
+    [couldBeAbove, 'COUNTED_EVERYONE',
+      `عدّ كل من لا يثبت أن ${target} أعلى منهم، لا من يثبت تفوقهم عليه`],
+    [oneBranchCount, 'COUNTED_ONE_BRANCH_ONLY',
+      `تتبّع الفرع الذي يقع فيه ${target} وحده وتوقّف عنده`],
+    [singleOrderingCount, 'COUNTED_FROM_ONE_ORDERING',
+      `رتّب الجميع في ترتيب واحد ممكن ثم عدّ من سبق ${target} فيه`],
+    [count + 1, 'OFF_BY_ONE_STEP', `أدخل ${target} نفسه في العدّ`],
+    [count - 1, 'OFF_BY_ONE_STEP', `أسقط واحدًا من أصحاب المسارات المؤكدة`]
+  ];
+  //
+  // Several of these can land on the same count, and on a small graph they can
+  // between them cover only two labels. The remaining labels are still offered —
+  // the option set needs five — but they are offered as what they are: a
+  // miscount of the confirmed paths, not a specific slip they did not come from.
+  const offered = new Set([count]);
+  const take = ([v, id, why]) => {
+    if (!Number.isInteger(v) || v < 0 || v >= COUNT_LABELS.length || offered.has(v)) return [];
+    offered.add(v);
+    return [mk(COUNT_LABELS[v], id, why)];
+  };
+  const fromSlips = modelled.flatMap(take);
+  const fill = COUNT_LABELS.map((_, v) => v).flatMap(v => take([
+    v, 'MISCOUNTED_THE_CONFIRMED_PATHS',
+    `عدّ ${COUNT_LABELS[v]} بدل ${COUNT_LABELS[count]} عند تتبّع المسارات المؤكدة`
+  ]));
+  const distractors = usable(ctx, [
+    ...fromSlips, ...fill,
+    mk(UNDETERMINED, 'RESOLVED_AN_UNRESOLVED_PAIR', 'اعتبار العدد غير قابل للتحديد رغم وضوح المسارات')
+  ]);
   const {reasoningGraph, parameters} = graphMeta(nodes, edges);
+  // RC2.5-2. A partial reading of the graph puts the count somewhere between
+  // "only the people named directly above" and "everyone not provably below";
+  // the width of that span is how many answers are genuinely in play.
+  const po = complexityMeta(nodes, edges, {type: 'countAbove', target},
+    couldBeAbove - directlyAbove + 1);
+  // The graph decides the band; the band was requested, so a graph of the other
+  // kind is discarded. Nothing here looks at the answer.
+  if (po.verdict.band !== requiredBand) return resample(ctx, self);
   return buildBase(ctx, {
-    templateId: 'REL_M_COUNT',
-    subskill: 'عدّ الأشخاص المؤكد تفوقهم على شخص محدد',
-    difficulty: 'hard',
+    templateId,
+    subskill: requiredBand === 'hard'
+      ? 'عدّ المؤكد تفوقهم عبر فرعين'
+      : 'عدّ الأشخاص المؤكد تفوقهم على شخص محدد',
+    difficulty: requiredBand,
     question: `${sentences(rng, edges)} كم شخصًا نعرف يقينًا أنهم أسرع من ${target}؟`,
     correct, distractors, format: v => String(v),
     steps: [
@@ -343,7 +519,8 @@ function countAbove(ctx) {
     metadata: {
       graph_shape: shape,
       transitive_step_required: directlyAbove !== count,
-      undetermined_step_required: couldBeAbove !== count
+      undetermined_step_required: couldBeAbove !== count,
+      ...po.metadata
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, graphDepth: nodes.length, conditionCount: edges.length, dependencyDepth: 2},
     textParams: false
@@ -382,6 +559,11 @@ function confirmedStatement(ctx) {
     s.undetermined ? `لا يوجد مسار يحسم العلاقة بين ${s.a} و${s.b}` : `المعطيات تثبت العكس: ${s.b} أسرع من ${s.a}`
   )));
   const {reasoningGraph, parameters} = graphMeta(nodes, edges);
+  // RC2.5-2. A statement that contradicts a stated sentence is eliminated by
+  // reading that one sentence; an undetermined one is not. The second kind is
+  // what keeps the answer space open.
+  const po = complexityMeta(nodes, edges, {type: 'pairRelation', a: pick.a, b: pick.b},
+    notGuaranteed.slice(0, 6).filter(x => x.undetermined).length + 1);
   return buildBase(ctx, {
     templateId: 'REL_M_CONFIRM',
     subskill: 'اختيار عبارة مؤكدة',
@@ -415,7 +597,7 @@ function confirmedStatement(ctx) {
         note: 'the guaranteed statement is a sentence of the stem: no derivation is needed'
       }]
     },
-    metadata: {graph_shape: shape},
+    metadata: {graph_shape: shape, ...po.metadata},
     complexityFactors: {reasoningTransformations: 2, conceptCount: 2, graphDepth: nodes.length, conditionCount: edges.length, dependencyDepth: 2},
     textParams: false
   });
@@ -440,6 +622,11 @@ function branchGuaranteed(ctx) {
     s.undetermined ? `حسم العلاقة بين ${s.a} و${s.b} رغم أن المعطيات تتركها مفتوحة` : `المعطيات تثبت العكس: ${s.b} أسرع من ${s.a}`
   )));
   const {reasoningGraph, parameters} = graphMeta(nodes, edges);
+  // RC2.5-2. The question names an open pair and asks what survives BOTH of its
+  // orders, so it is asked over the set of consistent orderings by construction.
+  const po = complexityMeta(nodes, edges,
+    {type: 'guarantee', a: pick.a, b: pick.b, asksIndeterminate: true},
+    notGuaranteed.slice(0, 6).filter(x => x.undetermined).length + 1);
   return buildBase(ctx, {
     templateId: 'REL_H_GUARANTEE',
     subskill: 'استنتاج مضمون رغم وجود فروع غير محسومة',
@@ -476,7 +663,7 @@ function branchGuaranteed(ctx) {
         }
       ]
     },
-    metadata: {graph_shape: shape},
+    metadata: {graph_shape: shape, ...po.metadata},
     complexityFactors: {reasoningTransformations: 3, conceptCount: 3, graphDepth: nodes.length, conditionCount: edges.length, dependencyDepth: 3},
     textParams: false
   });
@@ -495,9 +682,23 @@ function branchGuaranteed(ctx) {
  * to be. Sometimes the partial order pins the position down and sometimes it
  * does not, which is the skill the item is supposed to measure.
  */
+/**
+ * RC2.5-2. Asking who holds a position stays ONE template, because the routine
+ * case — an order the statements settle completely — is REL_E_CHAIN's job and
+ * splitting it off here would only duplicate that template. What changes is the
+ * bar: the graph must be a genuinely partial order, with more than one pair left
+ * open and a proof depth that makes the position something to work out rather
+ * than read off.
+ *
+ * The band condition is computed from the GRAPH and the asked position, both
+ * drawn blind. It deliberately does not consult whether the position turned out
+ * to be determined: that is the answer, and RC2-010 exists because an earlier
+ * version resampled on exactly that, leaving the template answering "cannot be
+ * determined" every time.
+ */
 function partialOrderPosition(ctx) {
   const {rng} = ctx;
-  const {nodes, edges, shape} = positionGraph(rng, 6);
+  const {nodes, edges, shape} = partialOrderPositionGraph(rng);
   // Structural resample only: the graph must be big enough to ask about a
   // middle position at all. This looks at the shape, never at the answer.
   if (nodes.length < 5) return resample(ctx, partialOrderPosition);
@@ -513,8 +714,8 @@ function partialOrderPosition(ctx) {
     n,
     candidates.includes(n) ? 'RESOLVED_AN_UNRESOLVED_PAIR' : 'RELATION_CONTRADICTS_STATEMENT',
     candidates.includes(n)
-      ? `${n} أحد المرشحين للمركز ${POSITION_WORDS[targetPos]}، لكنه ليس الوحيد`
-      : `${n} لا يمكن أن يشغل المركز ${POSITION_WORDS[targetPos]} في أي ترتيب متوافق`
+      ? `${n} أحد المرشحين للمركز ${positionWord(targetPos)}، لكنه ليس الوحيد`
+      : `${n} لا يمكن أن يشغل المركز ${positionWord(targetPos)} في أي ترتيب متوافق`
   ));
   // When the position IS pinned down, "cannot be determined" is the misconception
   // the item exists to catch — stopping before the order is fully derived — so it
@@ -525,27 +726,35 @@ function partialOrderPosition(ctx) {
   const distractors = usable(ctx, determined
     ? [
       mk(UNDETERMINED, 'RELATION_REQUIRES_UNSTATED_ASSUMPTION',
-        `توقّف قبل استنتاج الترتيب كاملًا رغم أن المركز ${POSITION_WORDS[targetPos]} محسوم`),
+        `توقّف قبل استنتاج الترتيب كاملًا رغم أن المركز ${positionWord(targetPos)} محسوم`),
       ...wrongNames.slice(0, 4)
     ]
     : wrongNames);
 
   const {reasoningGraph, parameters} = graphMeta(nodes, edges);
+  // RC2.5-2. The names that can hold the asked position across the consistent
+  // orderings, plus the "cannot be determined" reading, which is always in play
+  // until the orderings have actually been examined.
+  // No candidate-count measure is passed: for a position question the offered
+  // answers are names, and how many a solver can eliminate before doing the work
+  // is not a graph fact. D1 therefore does not apply here.
+  const po = complexityMeta(nodes, edges, {type: 'position', position: targetPos}, null);
+  if (po.verdict.band !== 'hard') return resample(ctx, partialOrderPosition);
   return buildBase(ctx, {
     templateId: 'REL_H_POSITION',
     subskill: determined ? 'مركز محسوم في ترتيب جزئي' : 'مركز غير محسوم في ترتيب جزئي',
     difficulty: 'hard',
-    question: `${sentences(rng, edges)} من صاحب المركز ${POSITION_WORDS[targetPos]}؟`,
+    question: `${sentences(rng, edges)} من صاحب المركز ${positionWord(targetPos)}؟`,
     correct, distractors, format: v => String(v),
     steps: determined
       ? [
         `نفحص كل ترتيب متوافق مع الجمل.`,
-        `المركز ${POSITION_WORDS[targetPos]} يشغله ${correct} في كل ترتيب متوافق دون استثناء.`,
+        `المركز ${positionWord(targetPos)} يشغله ${correct} في كل ترتيب متوافق دون استثناء.`,
         `ما دام المرشح واحدًا في جميع الترتيبات، فالمركز محسوم.`
       ]
       : [
         `نفحص كل ترتيب متوافق مع الجمل.`,
-        `المركز ${POSITION_WORDS[targetPos]} يشغله ${candidates.join(' أو ')} باختلاف الترتيب.`,
+        `المركز ${positionWord(targetPos)} يشغله ${candidates.join(' أو ')} باختلاف الترتيب.`,
         `ما دام أكثر من مرشح ممكنًا، فالمركز غير قابل للتحديد.`
       ],
     howToStart: 'حدد ما هو ثابت أولًا، ثم انظر هل المركز المطلوب يقع بين عنصرين غير مرتبين.',
@@ -556,7 +765,7 @@ function partialOrderPosition(ctx) {
     oracle: orderOracleSpec(nodes, edges, {type: 'position', position: targetPos}, correct, UNDETERMINED),
     askedUnknown: determined ? `position${targetPos}` : `undeterminedPosition${targetPos}`,
     stageCount: 3,
-    metadata: {graph_shape: shape, position_determined: determined},
+    metadata: {graph_shape: shape, position_determined: determined, ...po.metadata},
     complexityFactors: {reasoningTransformations: 3, conceptCount: 3, graphDepth: nodes.length, conditionCount: edges.length, dependencyDepth: 3},
     textParams: false
   });

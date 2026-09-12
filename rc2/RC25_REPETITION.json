@@ -1,0 +1,523 @@
+{
+  "schema": "rc25-repetition-v1",
+  "generatedAt": "2026-09-12T21:53:19.116Z",
+  "holdoutE": {
+    "items": 250,
+    "exactDuplicate": {
+      "distinctKeys": 250,
+      "keysUsedMoreThanOnce": 0,
+      "itemsInSuchAGroup": 0,
+      "largestGroup": 1,
+      "examples": []
+    },
+    "sharedStemLineOnly": {
+      "note": "same instruction line, different stimulus. Not duplication; reported so it is not mistaken for it.",
+      "itemsSharingAStemLine": 31,
+      "largestGroup": 13,
+      "examples": [
+        {
+          "stem": "أي عدد لا ينتمي إلى المجموعة الآتية؟",
+          "n": 13
+        },
+        {
+          "stem": "ما العدد التالي في المتتالية؟",
+          "n": 10
+        },
+        {
+          "stem": "ما العدد المفقود في المتتالية؟",
+          "n": 8
+        }
+      ]
+    },
+    "semanticDuplicate": {
+      "distinctKeys": 250,
+      "keysUsedMoreThanOnce": 0,
+      "itemsInSuchAGroup": 0,
+      "largestGroup": 1,
+      "examples": []
+    },
+    "parameterOnlyNearDuplicate": {
+      "note": "same template and asked unknown, different values. Normal item variation, not a defect.",
+      "groups": [
+        {
+          "key": "RATE_H_TWO_PHASE|",
+          "distinctParameterSets": 5
+        },
+        {
+          "key": "CAL_H_NESTED|",
+          "distinctParameterSets": 5
+        },
+        {
+          "key": "SPD_M_TWO_TIME|",
+          "distinctParameterSets": 5
+        },
+        {
+          "key": "ODD_H_TRIANGULAR|",
+          "distinctParameterSets": 5
+        },
+        {
+          "key": "RATE_H_RATE_FROM_GAP|",
+          "distinctParameterSets": 5
+        },
+        {
+          "key": "CAL_H_CYCLE_MEET|",
+          "distinctParameterSets": 5
+        },
+        {
+          "key": "PROP_M_MAP|",
+          "distinctParameterSets": 4
+        },
+        {
+          "key": "COMB_H_STAGED|",
+          "distinctParameterSets": 4
+        }
+      ],
+      "itemsSharingATemplateAndAsk": 223
+    },
+    "sameInternalTemplate": {
+      "distinctKeys": 102,
+      "keysUsedMoreThanOnce": 75,
+      "itemsInSuchAGroup": 223,
+      "largestGroup": 5,
+      "examples": [
+        {
+          "key": "RATE_H_TWO_PHASE",
+          "n": 5,
+          "items": [
+            "E-S1-05",
+            "E-S1-29",
+            "E-S3-06",
+            "E-S3-31",
+            "E-S4-06"
+          ]
+        },
+        {
+          "key": "CAL_H_NESTED",
+          "n": 5,
+          "items": [
+            "E-S1-10",
+            "E-S1-33",
+            "E-S2-15",
+            "E-S2-38",
+            "E-S3-09"
+          ]
+        },
+        {
+          "key": "SPD_M_TWO_TIME",
+          "n": 5,
+          "items": [
+            "E-S1-25",
+            "E-S2-27",
+            "E-S3-49",
+            "E-S4-01",
+            "E-S4-23"
+          ]
+        },
+        {
+          "key": "ODD_H_TRIANGULAR",
+          "n": 5,
+          "items": [
+            "E-S1-34",
+            "E-S2-19",
+            "E-S3-10",
+            "E-S3-36",
+            "E-S4-12"
+          ]
+        },
+        {
+          "key": "RATE_H_RATE_FROM_GAP",
+          "n": 5,
+          "items": [
+            "E-S1-46",
+            "E-S2-13",
+            "E-S3-35",
+            "E-S5-06",
+            "E-S5-34"
+          ]
+        }
+      ]
+    },
+    "sameReasoningSignature": {
+      "distinctKeys": 116,
+      "keysUsedMoreThanOnce": 70,
+      "itemsInSuchAGroup": 204,
+      "largestGroup": 5,
+      "examples": [
+        {
+          "key": "{askedUnknown:totalAcrossStages,derivedFrom:operationKinds,family:unit_rate,operationKinds",
+          "n": 5,
+          "items": [
+            "E-S1-05",
+            "E-S1-29",
+            "E-S3-06",
+            "E-S3-31",
+            "E-S4-06"
+          ]
+        },
+        {
+          "key": "{askedUnknown:todayFromNestedOffset,derivedFrom:operationKinds,family:calendar,operationKi",
+          "n": 5,
+          "items": [
+            "E-S1-10",
+            "E-S1-33",
+            "E-S2-15",
+            "E-S2-38",
+            "E-S3-09"
+          ]
+        },
+        {
+          "key": "{askedUnknown:totalTimeMinutes,derivedFrom:operationKinds,family:speed,operationKinds:[div",
+          "n": 5,
+          "items": [
+            "E-S1-25",
+            "E-S2-27",
+            "E-S3-49",
+            "E-S4-01",
+            "E-S4-23"
+          ]
+        },
+        {
+          "key": "{askedUnknown:outlier,derivedFrom:operationKinds,family:odd_one_out,operationKinds:[multip",
+          "n": 5,
+          "items": [
+            "E-S1-34",
+            "E-S2-19",
+            "E-S3-10",
+            "E-S3-36",
+            "E-S4-12"
+          ]
+        },
+        {
+          "key": "{askedUnknown:originalRate,derivedFrom:operationKinds,family:unit_rate,operationKinds:[div",
+          "n": 5,
+          "items": [
+            "E-S1-46",
+            "E-S2-13",
+            "E-S3-35",
+            "E-S5-06",
+            "E-S5-34"
+          ]
+        }
+      ]
+    },
+    "perSession": [
+      {
+        "sessionId": "SESSION-1",
+        "n": 50,
+        "maxSameTemplate": 2,
+        "maxSameReasoning": 2,
+        "distinctTemplates": 43,
+        "distinctReasoning": 44
+      },
+      {
+        "sessionId": "SESSION-2",
+        "n": 50,
+        "maxSameTemplate": 2,
+        "maxSameReasoning": 2,
+        "distinctTemplates": 48,
+        "distinctReasoning": 48
+      },
+      {
+        "sessionId": "SESSION-3",
+        "n": 50,
+        "maxSameTemplate": 2,
+        "maxSameReasoning": 2,
+        "distinctTemplates": 47,
+        "distinctReasoning": 47
+      },
+      {
+        "sessionId": "SESSION-4",
+        "n": 50,
+        "maxSameTemplate": 2,
+        "maxSameReasoning": 2,
+        "distinctTemplates": 43,
+        "distinctReasoning": 43
+      },
+      {
+        "sessionId": "SESSION-5",
+        "n": 50,
+        "maxSameTemplate": 4,
+        "maxSameReasoning": 2,
+        "distinctTemplates": 32,
+        "distinctReasoning": 34
+      }
+    ],
+    "caps": {
+      "sameTemplateVariantPerSession": 3,
+      "sameTemplateIdPerSession": 4,
+      "sameReasoningPerSession": 3,
+      "sameReasoningPerBatch": 5
+    },
+    "capBreaches": {
+      "sameTemplateIdPerSession": [],
+      "sameReasoningPerSession": [],
+      "sameReasoningPerBatch": []
+    },
+    "broadClusterComparison": {
+      "definition": "items sharing a family/topic count as one cluster",
+      "itemsInSomeCluster": 250,
+      "share": 1,
+      "clusters": 16
+    }
+  },
+  "fresh": {
+    "items": 250,
+    "exactDuplicate": {
+      "distinctKeys": 250,
+      "keysUsedMoreThanOnce": 0,
+      "itemsInSuchAGroup": 0,
+      "largestGroup": 1,
+      "examples": []
+    },
+    "sharedStemLineOnly": {
+      "note": "same instruction line, different stimulus. Not duplication; reported so it is not mistaken for it.",
+      "itemsSharingAStemLine": 34,
+      "largestGroup": 17,
+      "examples": [
+        {
+          "stem": "ما العدد التالي في المتتالية؟",
+          "n": 17
+        },
+        {
+          "stem": "أي عدد لا ينتمي إلى المجموعة الآتية؟",
+          "n": 14
+        },
+        {
+          "stem": "ما العدد المفقود في المتتالية؟",
+          "n": 3
+        }
+      ]
+    },
+    "semanticDuplicate": {
+      "distinctKeys": 250,
+      "keysUsedMoreThanOnce": 0,
+      "itemsInSuchAGroup": 0,
+      "largestGroup": 1,
+      "examples": []
+    },
+    "parameterOnlyNearDuplicate": {
+      "note": "same template and asked unknown, different values. Normal item variation, not a defect.",
+      "groups": [
+        {
+          "key": "PROP_H_TWO_ITEM_SYSTEM|boxUnitPrice",
+          "distinctParameterSets": 5
+        },
+        {
+          "key": "RATE_H_RATE_FROM_GAP|originalRate",
+          "distinctParameterSets": 5
+        },
+        {
+          "key": "CAL_H_NESTED|todayFromNestedOffset",
+          "distinctParameterSets": 5
+        },
+        {
+          "key": "ODD_H_TRIANGULAR|outlier",
+          "distinctParameterSets": 5
+        },
+        {
+          "key": "PL_M_DISC_MARK|sellPriceAfterDiscountAndMarkup",
+          "distinctParameterSets": 5
+        },
+        {
+          "key": "CAL_H_CYCLE_MEET|meetingWeekday",
+          "distinctParameterSets": 5
+        },
+        {
+          "key": "AVG_H_TARGET|valueForTargetAverage",
+          "distinctParameterSets": 4
+        },
+        {
+          "key": "AGE_M_RATIO_FUT_SUM|olderAgeNow",
+          "distinctParameterSets": 4
+        }
+      ],
+      "itemsSharingATemplateAndAsk": 199
+    },
+    "sameInternalTemplate": {
+      "distinctKeys": 109,
+      "keysUsedMoreThanOnce": 77,
+      "itemsInSuchAGroup": 218,
+      "largestGroup": 6,
+      "examples": [
+        {
+          "key": "REL_H_POSITION",
+          "n": 6,
+          "items": [
+            "REL_H_POSITION-RC25-REPS2Q170",
+            "REL_H_POSITION-RC25-REPS3Q470",
+            "REL_H_POSITION-RC25-REPS5Q233",
+            "REL_H_POSITION-RC25-REPS5Q251",
+            "REL_H_POSITION-RC25-REPS5Q260",
+            "REL_H_POSITION-25-REPS5Q400retry1"
+          ]
+        },
+        {
+          "key": "PROP_H_TWO_ITEM_SYSTEM",
+          "n": 5,
+          "items": [
+            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS1Q160",
+            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS2Q10",
+            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS3Q160",
+            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS5Q90",
+            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS5Q370"
+          ]
+        },
+        {
+          "key": "RATE_H_RATE_FROM_GAP",
+          "n": 5,
+          "items": [
+            "RATE_H_RATE_FROM_GAP-RC25-REPS1Q180",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS2Q70",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS3Q190",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS5Q100",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS5Q380"
+          ]
+        },
+        {
+          "key": "CAL_H_NESTED",
+          "n": 5,
+          "items": [
+            "CAL_H_NESTED-RC25-REPS1Q210",
+            "CAL_H_NESTED-RC25-REPS1Q440",
+            "CAL_H_NESTED-RC25-REPS2Q90",
+            "CAL_H_NESTED-RC25-REPS2Q350",
+            "CAL_H_NESTED-RC25-REPS3Q450"
+          ]
+        },
+        {
+          "key": "ODD_H_TRIANGULAR",
+          "n": 5,
+          "items": [
+            "ODD_H_TRIANGULAR-RC25-REPS1Q230",
+            "ODD_H_TRIANGULAR-RC25-REPS1Q450",
+            "ODD_H_TRIANGULAR-RC25-REPS3Q10",
+            "ODD_H_TRIANGULAR-RC25-REPS3Q241",
+            "ODD_H_TRIANGULAR-RC25-REPS4Q71"
+          ]
+        }
+      ]
+    },
+    "sameReasoningSignature": {
+      "distinctKeys": 125,
+      "keysUsedMoreThanOnce": 70,
+      "itemsInSuchAGroup": 195,
+      "largestGroup": 5,
+      "examples": [
+        {
+          "key": "{askedUnknown:boxUnitPrice,derivedFrom:operationKinds,family:direct_proportion,operationKi",
+          "n": 5,
+          "items": [
+            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS1Q160",
+            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS2Q10",
+            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS3Q160",
+            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS5Q90",
+            "PROP_H_TWO_ITEM_SYSTEM-RC25-REPS5Q370"
+          ]
+        },
+        {
+          "key": "{askedUnknown:originalRate,derivedFrom:operationKinds,family:unit_rate,operationKinds:[div",
+          "n": 5,
+          "items": [
+            "RATE_H_RATE_FROM_GAP-RC25-REPS1Q180",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS2Q70",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS3Q190",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS5Q100",
+            "RATE_H_RATE_FROM_GAP-RC25-REPS5Q380"
+          ]
+        },
+        {
+          "key": "{askedUnknown:todayFromNestedOffset,derivedFrom:operationKinds,family:calendar,operationKi",
+          "n": 5,
+          "items": [
+            "CAL_H_NESTED-RC25-REPS1Q210",
+            "CAL_H_NESTED-RC25-REPS1Q440",
+            "CAL_H_NESTED-RC25-REPS2Q90",
+            "CAL_H_NESTED-RC25-REPS2Q350",
+            "CAL_H_NESTED-RC25-REPS3Q450"
+          ]
+        },
+        {
+          "key": "{askedUnknown:outlier,derivedFrom:operationKinds,family:odd_one_out,operationKinds:[multip",
+          "n": 5,
+          "items": [
+            "ODD_H_TRIANGULAR-RC25-REPS1Q230",
+            "ODD_H_TRIANGULAR-RC25-REPS1Q450",
+            "ODD_H_TRIANGULAR-RC25-REPS3Q10",
+            "ODD_H_TRIANGULAR-RC25-REPS3Q241",
+            "ODD_H_TRIANGULAR-RC25-REPS4Q71"
+          ]
+        },
+        {
+          "key": "{askedUnknown:sellPriceAfterDiscountAndMarkup,derivedFrom:operationKinds,family:profit_los",
+          "n": 5,
+          "items": [
+            "PL_M_DISC_MARK-RC25-REPS1Q260",
+            "PL_M_DISC_MARK-RC25-REPS2Q121",
+            "PL_M_DISC_MARK-RC25-REPS3Q20",
+            "PL_M_DISC_MARK-RC25-REPS3Q251",
+            "PL_M_DISC_MARK-RC25-REPS4Q502"
+          ]
+        }
+      ]
+    },
+    "perSession": [
+      {
+        "sessionId": "SESSION-1",
+        "n": 50,
+        "maxSameTemplate": 2,
+        "maxSameReasoning": 2,
+        "distinctTemplates": 48,
+        "distinctReasoning": 48
+      },
+      {
+        "sessionId": "SESSION-2",
+        "n": 50,
+        "maxSameTemplate": 2,
+        "maxSameReasoning": 2,
+        "distinctTemplates": 44,
+        "distinctReasoning": 44
+      },
+      {
+        "sessionId": "SESSION-3",
+        "n": 50,
+        "maxSameTemplate": 2,
+        "maxSameReasoning": 2,
+        "distinctTemplates": 47,
+        "distinctReasoning": 47
+      },
+      {
+        "sessionId": "SESSION-4",
+        "n": 50,
+        "maxSameTemplate": 2,
+        "maxSameReasoning": 2,
+        "distinctTemplates": 43,
+        "distinctReasoning": 44
+      },
+      {
+        "sessionId": "SESSION-5",
+        "n": 50,
+        "maxSameTemplate": 4,
+        "maxSameReasoning": 2,
+        "distinctTemplates": 33,
+        "distinctReasoning": 37
+      }
+    ],
+    "caps": {
+      "sameTemplateVariantPerSession": 3,
+      "sameTemplateIdPerSession": 4,
+      "sameReasoningPerSession": 3,
+      "sameReasoningPerBatch": 5
+    },
+    "capBreaches": {
+      "sameTemplateIdPerSession": [],
+      "sameReasoningPerSession": [],
+      "sameReasoningPerBatch": []
+    },
+    "broadClusterComparison": {
+      "definition": "items sharing a family/topic count as one cluster",
+      "itemsInSomeCluster": 250,
+      "share": 1,
+      "clusters": 16
+    }
+  }
+}
