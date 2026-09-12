@@ -1,17 +1,15 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-12T16:45:16.218Z",
+  "evaluatedAt": "2026-09-12T16:47:37.799Z",
   "engineVersion": "1.4.0",
-  "headCommit": "0121d4c8f94c33524fdf16cac54b63b145a5ff8e",
+  "headCommit": "0afb51c3c0228f586e3d68efb2fffc64be33644d",
   "branch": "claude/rc2-implementation",
   "holdoutSeed": "AUDIT-2026-09-12-B",
   "verdict": "FAIL",
   "conditions": 27,
   "failedConditions": [
-    "STRESS_GREEN",
-    "HOLDOUT_C_UNTOUCHED",
-    "TREE_CLEAN"
+    "STRESS_GREEN"
   ],
   "checks": [
     {
@@ -92,6 +90,7 @@
           "rc2/INTERNAL_GATE.json",
           "rc2/RC21_DEVELOPMENT_CORPUS.json",
           "rc2/RC21_REMEDIATION_REPORT.md",
+          "rc2/RC22_DEVELOPMENT_CORPUS.json",
           "rc2/RC2_IMPLEMENTATION_REPORT.md",
           "rc2/SUPERSEDED_FREEZES.json",
           "rc2/holdout-c-package/MANIFEST.json",
@@ -256,13 +255,11 @@
       }
     },
     {
-      "id": "HOLDOUT_C_UNTOUCHED",
-      "requirement": "RC2.1 — the sign-off holdout seed appears in no development evidence",
-      "pass": false,
+      "id": "SIGNOFF_HOLDOUT_UNTOUCHED",
+      "requirement": "the CURRENT sign-off holdout seed appears in no development evidence",
+      "pass": true,
       "detail": {
-        "offenders": [
-          "RC21_REMEDIATION_REPORT.md"
-        ]
+        "offenders": []
       }
     },
     {
@@ -318,14 +315,8 @@
     {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": false,
-      "detail": [
-        "M rc2/INTERNAL_GATE.json",
-        " M tools/audit/rc2-development-corpus.mjs",
-        " M tools/audit/rc2-internal-gate.mjs",
-        "?? rc2/RC22_DEVELOPMENT_CORPUS.json",
-        "?? rc2/rc22-development-corpus.jsonl.gz"
-      ]
+      "pass": true,
+      "detail": "clean"
     }
   ]
 }

@@ -186,7 +186,21 @@ export class NumericalQuestionGeneratorEngine {
   generateAdaptiveQuestion(options = {}) {
     const history = Array.isArray(options.history) ? options.history : [];
     const stats = this.deriveAdaptiveStats(history);
-    const difficulty = this.recommendDifficulty(stats);
+    const recommended = this.recommendDifficulty(stats);
+    // RC2.2-1. A named family may not be able to produce the recommended band —
+    // fractions computes easy and nothing else. Recommending a band the family
+    // cannot reach would fail the request outright, so the recommendation is
+    // met as closely as the family allows rather than demanded of it. With no
+    // family named, capability-aware selection in generateQuestion handles it.
+    const named = options.family && options.family !== 'random' ? this.normalizeFamily(options.family) : null;
+    const can = named ? (FAMILY_MAP[named]?.difficulties ?? []) : null;
+    const ORDER = ['easy', 'medium', 'hard'];
+    let difficulty = recommended;
+    if (can && can.length && !can.includes(recommended)) {
+      const want = ORDER.indexOf(recommended);
+      difficulty = [...can].sort((a, b) =>
+        Math.abs(ORDER.indexOf(a) - want) - Math.abs(ORDER.indexOf(b) - want))[0];
+    }
     return this.generateQuestion({
       ...options,
       difficulty,
