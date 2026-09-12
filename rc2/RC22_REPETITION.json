@@ -1,0 +1,93 @@
+{
+  "schema": "rc22-repetition-v1",
+  "section": "RC2.2-4",
+  "generatedAt": "2026-09-12T16:38:56.010Z",
+  "engineVersion": "1.4.0",
+  "caps": {
+    "perSession": 3,
+    "perBatch": 5
+  },
+  "distinctReasoningPathsAvailable": {
+    "easy": 84,
+    "medium": 51,
+    "hard": 44
+  },
+  "feasibilityNote": "a 50-question hard session draws from 44 distinct reasoning paths, so the best achievable maximum repetition is 2; an absolute ban is not satisfiable and was never the goal",
+  "batches": [
+    {
+      "seed": "RC22-REP-A",
+      "questions": 250,
+      "exact": {
+        "distinct": 250,
+        "repeats": 0,
+        "max": 1
+      },
+      "semantic": {
+        "distinct": 250,
+        "repeats": 0,
+        "max": 1
+      },
+      "reasoning": {
+        "distinct": 109,
+        "max": 5,
+        "questionsOnPathsUsedFourOrMore": 94,
+        "capBreachesWarned": 0
+      },
+      "templateReuse": {
+        "distinct": 93,
+        "max": 10,
+        "note": "reuse is expected and is not a defect; it is reported so that a fix which merely suppressed it would be visible"
+      }
+    },
+    {
+      "seed": "RC22-REP-B",
+      "questions": 250,
+      "exact": {
+        "distinct": 250,
+        "repeats": 0,
+        "max": 1
+      },
+      "semantic": {
+        "distinct": 250,
+        "repeats": 0,
+        "max": 1
+      },
+      "reasoning": {
+        "distinct": 111,
+        "max": 5,
+        "questionsOnPathsUsedFourOrMore": 96,
+        "capBreachesWarned": 0
+      },
+      "templateReuse": {
+        "distinct": 92,
+        "max": 9,
+        "note": "reuse is expected and is not a defect; it is reported so that a fix which merely suppressed it would be visible"
+      }
+    },
+    {
+      "seed": "RC22-REP-C",
+      "questions": 250,
+      "exact": {
+        "distinct": 250,
+        "repeats": 0,
+        "max": 1
+      },
+      "semantic": {
+        "distinct": 250,
+        "repeats": 0,
+        "max": 1
+      },
+      "reasoning": {
+        "distinct": 112,
+        "max": 5,
+        "questionsOnPathsUsedFourOrMore": 103,
+        "capBreachesWarned": 0
+      },
+      "templateReuse": {
+        "distinct": 92,
+        "max": 8,
+        "note": "reuse is expected and is not a defect; it is reported so that a fix which merely suppressed it would be visible"
+      }
+    }
+  ]
+}

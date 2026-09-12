@@ -145,15 +145,34 @@ export function buildSemanticFingerprint(spec) {
  * ADD(4) MUL(2) ADD(5) MUL(3) ADD(6) MUL(4) ADD(7), differing only in
  * firstTerm — the same reasoning experience twice in one session.
  */
+/**
+ * RC2.2-4. The reasoning path an item walks, for every item.
+ *
+ * This used to return null unless a template declared a `reasoningPattern`, and
+ * only the sequences family ever did — 15 of Holdout C's 250 items had a
+ * signature at all. The session's reasoning-level diversity check was therefore
+ * inert for 94% of what it was supposed to govern, which is how 65 instances of
+ * the same reasoning repeated with nothing changed but the numbers.
+ *
+ * So the signature is DERIVED where it is not declared, from things the item
+ * already carries: what is being asked, in which direction, and which kinds of
+ * transformation the published solution composes. Two draws of one template that
+ * differ only in their numbers land on the same signature — which is the point.
+ * A template asked in a genuinely different direction, or composing different
+ * operations, does not.
+ *
+ * A declared `reasoningPattern` is richer than the derivation and still wins
+ * where a template offers one.
+ */
 export function buildStructuralSignature(spec) {
-  if (!spec.reasoningPattern) return null;
-  return stableStringify({
+  const base = {
     family: spec.family,
     templateId: spec.templateId,
     askedUnknown: spec.askedUnknown ?? 'default',
-    reasoningDirection: spec.reasoningDirection ?? spec.askedUnknown ?? 'default',
-    pattern: spec.reasoningPattern
-  });
+    reasoningDirection: spec.reasoningDirection ?? spec.askedUnknown ?? 'default'
+  };
+  if (spec.reasoningPattern) return stableStringify({...base, pattern: spec.reasoningPattern});
+  return stableStringify({...base, derivedFrom: 'operationKinds', operationKinds: spec.operationKinds ?? []});
 }
 
 export {stableStringify};

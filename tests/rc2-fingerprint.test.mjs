@@ -129,7 +129,7 @@ test('RC2-023 MUST_ACCEPT: a genuinely different chain is a different pattern', 
   assert.notEqual(buildStructuralSignature(altOps(7)), buildStructuralSignature(other));
 });
 
-test('RC2-023: a template with no declared pattern has a null signature', () => {
+test('RC2-023: a template with no declared pattern has a null signature', {skip: 'superseded by RC2.2-4: a signature is now DERIVED for every item. Only sequences ever declared a pattern, so 235 of Holdout C\'s 250 items had none and the reasoning-diversity rule governed nothing. tests/rc22-repetition.test.mjs covers the replacement.'}, () => {
   assert.equal(buildStructuralSignature({family: 'ages', templateId: 'AGE_E_SUM_DIFF', askedUnknown: 'olderAgeNow'}), null,
     'an undeclared pattern must not collapse unrelated questions together');
 });
@@ -142,7 +142,7 @@ test('RC2-023: different rules are not collapsed because their answers coincide'
 
 // --- session behaviour -----------------------------------------------------
 
-test('RC2-022/023: no session repeats a semantic instance or a reasoning pattern', () => {
+test('RC2-022/023: no session repeats a semantic instance or a reasoning pattern', {skip: 'superseded by RC2.2-4: semantic repetition is still forbidden, but reasoning repetition is now a CAP rather than a ban — the hard band offers 45 distinct paths and a hard session asks for 50, so a ban is not satisfiable. tests/rc22-repetition.test.mjs checks both.'}, () => {
   const engine = new Engine();
   for (let s = 0; s < 25; s++) {
     const set = engine.generatePractice({difficulty: 'mixed', count: 50, seed: `rc2-session-${s}`});
@@ -153,7 +153,7 @@ test('RC2-022/023: no session repeats a semantic instance or a reasoning pattern
   }
 });
 
-test('RC2-022/023: the same holds for all-hard sessions', () => {
+test('RC2-022/023: the same holds for all-hard sessions', {skip: 'superseded by RC2.2-4, same reason: reasoning repetition is capped, not banned.'}, () => {
   const engine = new Engine();
   for (let s = 0; s < 15; s++) {
     const set = engine.generatePractice({difficulty: 'hard', count: 50, seed: `rc2-hard-${s}`});

@@ -85,6 +85,14 @@ export class NumericalQuestionGeneratorEngine {
       // The ceiling a single-difficulty session may reach before the engine
       // reports a diversity limitation rather than quietly repeating further.
       maxTemplateRepeatsPerSession: config.maxTemplateRepeatsPerSession ?? 3,
+      // RC2.2-4. How often one reasoning path may recur. The floor is set by
+      // arithmetic, not taste: the hard band offers 45 distinct paths and a
+      // session asks for 50, so the best achievable maximum is ceil(50/45) = 2.
+      // Three leaves the scheduler room to satisfy the other constraints; the
+      // batch allowance is proportionate to five sessions rather than five times
+      // as permissive.
+      maxReasoningRepeatsPerSession: config.maxReasoningRepeatsPerSession ?? 3,
+      maxReasoningRepeatsPerBatch: config.maxReasoningRepeatsPerBatch ?? 5,
       slidingWindow: config.slidingWindow ?? 20,
       preferredRepeatsPerWindow: config.preferredRepeatsPerWindow ?? 1,
       diversityAttempts: config.diversityAttempts ?? 24,
@@ -364,7 +372,8 @@ export class NumericalQuestionGeneratorEngine {
     // what keeps a family holding a single hard template from filling its slots
     // with the same reasoning over and over.
     const variantCounts = new Map();
-    const reasoningSignatures = new Set();
+    const reasoningCounts = new Map();
+    const batchReasoningCounts = options.batchReasoningCounts ?? null;
     const recentVariants = [];
     const diversityWarnings = [];
     // RC2-004. Two generation modes, named and documented, because the RC1
@@ -461,12 +470,6 @@ export class NumericalQuestionGeneratorEngine {
         // session either. A template that declares no pattern has a null
         // signature and is governed by the semantic check alone, so unrelated
         // questions are not collapsed together.
-        const structural = q.metadata?.structural_reasoning_signature ?? null;
-        if (structural && reasoningSignatures.has(structural)) {
-          this.telemetry.sessionDiscard({family: q.family, templateId: q.generator_id, reasonCode: REASON.REPEATED_REASONING_PATTERN, seed, attempt: retry + 1});
-          continue;
-        }
-
         const variant = `${q.generator_id}|${q.metadata?.asked_unknown ?? 'default'}`;
         const used = variantCounts.get(variant) || 0;
         const inWindow = recentVariants.slice(-this.config.slidingWindow)
@@ -476,6 +479,41 @@ export class NumericalQuestionGeneratorEngine {
         if (!relaxed || (relaxed.used >= this.config.maxTemplateRepeatsPerSession && used < this.config.maxTemplateRepeatsPerSession)) {
           relaxed = {q, fingerprint, used, variant, discardEvent: null};
         }
+        // RC2.2-4. A CAP, not a ban. Before RC2.2 a reasoning signature existed
+        // only where a template declared one — sequences alone, 15 of Holdout
+        // C's 250 items — so the rule governed almost nothing and the same
+        // reasoning repeated with only the numbers changed. The signature is
+        // derived for every item now, and an absolute ban immediately became
+        // infeasible: the hard band offers 45 distinct reasoning paths and a
+        // hard session asks for 50 questions, so "never repeat" cannot be
+        // satisfied and every hard session failed.
+        //
+        // Ordinary reuse is not a defect. Excessive parameter-only repetition
+        // is. The cap is what separates them, at both levels.
+        const structural = q.metadata?.structural_reasoning_signature ?? null;
+        if (structural) {
+          // The discard event is remembered on the fallback for the same reason
+          // the cap branches do it: this candidate may still be delivered as the
+          // relaxed fallback, and a candidate counted as both discarded and
+          // delivered breaks the session identity by exactly the number of
+          // fallbacks used.
+          const usedHere = reasoningCounts.get(structural) ?? 0;
+          if (usedHere >= this.config.maxReasoningRepeatsPerSession) {
+            const ev = this.telemetry.sessionDiscard({family: q.family, templateId: q.generator_id, reasonCode: REASON.REPEATED_REASONING_PATTERN, seed, attempt: retry + 1});
+            if (relaxed && relaxed.q === q) relaxed.discardEvent = ev;
+            continue;
+          }
+          if (batchReasoningCounts) {
+            const usedInBatch = batchReasoningCounts.get(structural) ?? 0;
+            if (usedInBatch >= this.config.maxReasoningRepeatsPerBatch) {
+              const ev = this.telemetry.sessionDiscard({family: q.family, templateId: q.generator_id, reasonCode: REASON.REPEATED_REASONING_PATTERN_IN_BATCH, seed, attempt: retry + 1});
+              if (relaxed && relaxed.q === q) relaxed.discardEvent = ev;
+              continue;
+            }
+          }
+        }
+
+
         // Preferences: honoured when the stock allows, relaxed in stages when not.
         // RC2.1-1. Both were bare `continue`s before RC2.1, and between them they
         // accounted for most of the 104 undispositioned discards on holdout B.
@@ -505,6 +543,24 @@ export class NumericalQuestionGeneratorEngine {
         }
         chosen = relaxed;
         this.telemetry.withdrawSessionDiscard(relaxed.discardEvent);
+        // RC2.2-4. The fallback used to bypass the reasoning caps entirely, so a
+        // cap of three could still produce ten. It is still a fallback — the
+        // session must be deliverable — but a breach is now recorded rather than
+        // silent, so the cap means something even where it cannot be honoured.
+        const relaxedSignature = relaxed.q.metadata?.structural_reasoning_signature;
+        if (relaxedSignature) {
+          const over = (reasoningCounts.get(relaxedSignature) ?? 0) >= this.config.maxReasoningRepeatsPerSession
+            || (batchReasoningCounts
+              && (batchReasoningCounts.get(relaxedSignature) ?? 0) >= this.config.maxReasoningRepeatsPerBatch);
+          if (over) {
+            diversityWarnings.push({
+              index: i + 1,
+              template_id: relaxed.q.generator_id,
+              reason: REASON.REPEATED_REASONING_PATTERN,
+              note: 'reasoning-path allowance exceeded by the fallback: no candidate within the cap was available'
+            });
+          }
+        }
         diversityWarnings.push({
           index: i + 1,
           template_id: chosen.q.generator_id,
@@ -514,8 +570,12 @@ export class NumericalQuestionGeneratorEngine {
       }
 
       fingerprints.add(chosen.fingerprint);
-      if (chosen.q.metadata?.structural_reasoning_signature) {
-        reasoningSignatures.add(chosen.q.metadata.structural_reasoning_signature);
+      const chosenSignature = chosen.q.metadata?.structural_reasoning_signature;
+      if (chosenSignature) {
+        reasoningCounts.set(chosenSignature, (reasoningCounts.get(chosenSignature) ?? 0) + 1);
+        if (batchReasoningCounts) {
+          batchReasoningCounts.set(chosenSignature, (batchReasoningCounts.get(chosenSignature) ?? 0) + 1);
+        }
       }
       variantCounts.set(chosen.variant, (variantCounts.get(chosen.variant) || 0) + 1);
       recentVariants.push(chosen.variant);
@@ -580,11 +640,13 @@ export class NumericalQuestionGeneratorEngine {
     if (!specs.length) throw new Error('generateMockBatch: at least one session is required');
     const seed = options.seed ?? makeSeed('NUMBATCH');
     const batchFingerprints = new Set();
+    const batchReasoningCounts = new Map();
     const sessions = specs.map((spec, k) => this.generatePractice({
       ...options.defaults,
       ...spec,
       seed: `${seed}|S${k + 1}`,
-      batchFingerprints
+      batchFingerprints,
+      batchReasoningCounts
     }));
     return {
       engine_version: this.version,
@@ -595,6 +657,8 @@ export class NumericalQuestionGeneratorEngine {
         sessions: sessions.length,
         questions: sessions.reduce((a, s) => a + s.questions.length, 0),
         distinct_semantic_fingerprints: batchFingerprints.size,
+        distinct_reasoning_paths: batchReasoningCounts.size,
+        most_repeated_reasoning_path: Math.max(0, ...batchReasoningCounts.values()),
         published_candidates: sessions.reduce((a, s) => a + s.validation.session_cost.published_candidates, 0),
         discarded: sessions.reduce((a, s) => a + s.validation.session_cost.discarded, 0)
       }

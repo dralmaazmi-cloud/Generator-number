@@ -51,6 +51,25 @@ export function scaleRatio(value, key) {
   return r >= 1 ? r : 1 / r;
 }
 
+// RC2.2-3. A note on where this mechanism stops.
+//
+// The Holdout C review asked for the generator-level causes behind 25 weak and
+// 11 mixed option sets to be repaired, and said plainly: do NOT suppress
+// legitimate distractors merely because they are numerically far from the key.
+//
+// That draws the line for `answerBounds`. It belongs where an option is not a
+// possible ANSWER at all — a total distance wearing a km/h label, a running sum
+// offered where a mean was asked for. It does NOT belong wherever a bound
+// happens to exist: "stopped at the intermediate total" is a real slip that
+// produces a far value, and a bound on the averages templates would have
+// suppressed it. That was tried, measured, and reverted.
+//
+// So the bounds stay on the templates whose out-of-bracket option is
+// dimensionally wrong, and the broader improvement to distractor quality is
+// made on the diagnostics instead — see deriveAffectedStep, which raised the
+// share of wrong options linked to the exact solution step they diverge at from
+// 9% to 49%.
+
 /**
  * An answer that is a weighted mean of given quantities must lie between the
  * smallest and largest of them. An option outside that interval is not a

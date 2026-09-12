@@ -120,6 +120,36 @@ export function deriveOperationProfile(steps) {
   return {transformationDepth: kinds.size, arithmeticWorkload: total, kinds: [...kinds]};
 }
 
+/**
+ * RC2.2-5. Which solution step a wrong option diverges at.
+ *
+ * Every distractor already carries a misconception id — the NAME of the slip —
+ * but only 9% carried a pointer to WHERE in the worked solution it happens, and
+ * eleven of sixteen families carried none at all. Annotating five hundred
+ * declaration sites by hand would be neither practical nor durable, so the link
+ * is derived from what the two texts already share.
+ *
+ * A distractor's derivation states the arithmetic the learner did. The step it
+ * diverges at is the last step whose RESULT the derivation still uses: the
+ * learner got that far correctly and went wrong after it. Where no step's result
+ * appears, the slip happens before any step completes, and null is returned
+ * rather than a guess.
+ */
+export function deriveAffectedStep(derivation, steps) {
+  if (typeof derivation !== 'string' || !Array.isArray(steps) || !steps.length) return null;
+  const used = new Set(derivation.match(NUM) ?? []);
+  if (!used.size) return null;
+  let best = null;
+  for (let i = 0; i < steps.length; i++) {
+    const text = String(steps[i] ?? '');
+    const at = text.lastIndexOf('=');
+    if (at < 0) continue;
+    const result = (text.slice(at + 1).match(NUM) ?? [])[0];
+    if (result !== undefined && used.has(result)) best = i;
+  }
+  return best;
+}
+
 export function deriveDependencyDepth(steps) {
   if (!Array.isArray(steps) || !steps.length) return null;
   const parsed = [];

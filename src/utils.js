@@ -1,6 +1,6 @@
 import {isKnownMisconception, buildOptionFeedback, CORRECT_FEEDBACK} from './qa/misconceptions.js';
 import {REASON} from './qa/reasons.js';
-import {computeComplexity} from './qa/complexity.js';
+import {deriveOperationProfile, computeComplexity} from './qa/complexity.js';
 import {buildFingerprint, buildSemanticFingerprint, buildStructuralSignature, questionFingerprint} from './qa/fingerprint.js';
 
 export const LETTERS = ['A','B','C','D','E','F'];
@@ -247,7 +247,10 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
     family: base.family,
     templateId: base.template_id,
     askedUnknown: base.askedUnknown,
-    reasoningPattern: base.reasoningPattern
+    reasoningPattern: base.reasoningPattern,
+    // RC2.2-4. The kinds of transformation this solution composes, so an item
+    // without a declared pattern still has a reasoning identity.
+    operationKinds: deriveOperationProfile(base.explanation?.steps ?? base.steps)?.kinds ?? []
   });
 
   const q = {

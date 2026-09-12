@@ -24,6 +24,29 @@ function differenceLine(seq) {
 }
 
 /**
+ * RC2.2-5. The same line, for a sequence with a term hidden in the middle.
+ *
+ * The Holdout C review flagged one explanation as self-contradicting, and it
+ * was: for «24، ؟، 42، 51، 60» the steps read "the differences between the known
+ * terms: 42 − 24 = 18, 51 − 42 = 9, 60 − 51 = 9" and then "the difference is
+ * constant and equals 9". 18 is not a difference between adjacent terms — it
+ * spans the gap. The cause was dropping the hidden term from the array, which
+ * made the terms either side of it adjacent and let the subtraction run straight
+ * across the hole.
+ *
+ * Pairs that span the hidden position are not differences between neighbours,
+ * so they are not shown as if they were.
+ */
+function differenceLineAround(seq, hiddenIndex) {
+  const parts = [];
+  for (let i = 1; i < seq.length; i++) {
+    if (i === hiddenIndex || i - 1 === hiddenIndex) continue;
+    parts.push(`${seq[i]} − ${seq[i - 1]} = ${seq[i] - seq[i - 1]}`);
+  }
+  return parts.join('، ');
+}
+
+/**
  * Constraints that re-check every printed term against the rule, plus the one
  * constraint that pins the unknown.
  */
@@ -88,7 +111,7 @@ function arithmetic(ctx) {
     displayExpression: shown,
     correct, distractors, format: v => num(v),
     steps: [
-      `نحسب الفروق بين الحدود المعلومة: ${differenceLine(known)}.`,
+      `نحسب الفروق بين الحدود المتجاورة المعلومة: ${askMiddle ? differenceLineAround(seq, hiddenIndex) : differenceLine(known)}.`,
       `الفرق ثابت ويساوي ${step}.`,
       askMiddle
         ? `الحد المفقود = ${seq[hiddenIndex - 1]} + ${step} = ${correct}.`

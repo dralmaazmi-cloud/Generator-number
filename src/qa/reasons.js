@@ -46,6 +46,9 @@ export const REASON = Object.freeze({
   // ad-hoc `GENERATOR_ERROR:<message>` reason, which invented a new code for
   // every distinct message and made the byReason table unusable.
   NO_TEMPLATE_AT_DIFFICULTY: 'NO_TEMPLATE_AT_DIFFICULTY',
+  // RC2.2-4. The reasoning path has already been used its allowance of times
+  // across this multi-session batch.
+  REPEATED_REASONING_PATTERN_IN_BATCH: 'REPEATED_REASONING_PATTERN_IN_BATCH',
   INVALID_ARABIC_NUMBER_UNIT: 'INVALID_ARABIC_NUMBER_UNIT',
   RETRY_EXHAUSTED: 'RETRY_EXHAUSTED',
   // RC2-003. The default reason a family sampler discards its own draw. It is a

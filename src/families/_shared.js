@@ -7,7 +7,7 @@
 //     delegate to the central lexicon (Section 12).
 
 import {agreeingAdjective, singularOf, accusativeSingularOf, definitePlural, theSingleUnit, formatNumberWithUnit, unitWordFor, displayNumber} from '../arabic/units.js';
-import {deriveDependencyDepth, deriveOperationProfile} from '../qa/complexity.js';
+import {deriveDependencyDepth, deriveOperationProfile, deriveAffectedStep} from '../qa/complexity.js';
 import {partitionByPlausibility} from '../qa/distractor-plausibility.js';
 import {Fraction} from '../qa/fraction.js';
 import {isKnownMisconception} from '../qa/misconceptions.js';
@@ -207,8 +207,23 @@ export function buildBase(ctx, spec) {
   // a candidate could strike out without solving, and a template with exactly
   // enough is unaffected — so no template is pushed into resampling, which is
   // what narrows an answer space.
+  // RC2.2-5. Where a template did not say which step a wrong option diverges at,
+  // derive it from what the derivation and the steps already share. Declared
+  // always wins.
+  const stepCount = Array.isArray(steps) ? steps.length : 0;
+  const linked = (distractors ?? []).map(d => {
+    if (!d) return d;
+    const declared = d.reasoningStepAffected;
+    // A declared index that points past the end of the solution is worse than
+    // no index at all — it sends a learner to a step that is not there. Such a
+    // pointer is replaced by the derivation rather than trusted.
+    const declaredIsUsable = Number.isInteger(declared) && declared >= 0 && declared < stepCount;
+    if (declaredIsUsable) return d;
+    return {...d, reasoningStepAffected: deriveAffectedStep(d.derivation, steps)};
+  });
+
   const ordered = (() => {
-    const {plausible, implausible} = partitionByPlausibility(distractors, {
+    const {plausible, implausible} = partitionByPlausibility(linked, {
       bounds: answerBounds, stimulusIsOptions
     });
     if (implausible.length && ctx?.telemetry) {
