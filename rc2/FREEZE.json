@@ -1,0 +1,321 @@
+{
+  "schema": "rc2-freeze-v1",
+  "section": "§24",
+  "frozenAt": "2026-09-12T11:15:12.650Z",
+  "RC2_COMMIT": "ddc2c9016a9ff68106a18182605e0a20a603f158",
+  "treeHash": "aa7b51f9b329a0b1341419a199a4c55e09adecd7",
+  "branch": "claude/rc2-implementation",
+  "engineVersion": "1.4.0",
+  "testCount": 297,
+  "frozenRC1Baseline": "7b5d4617295c98a8ed0f87d204f4745dd5db05dd",
+  "scopeCommit": "af61d28d6fd6797288ad767832f354dd91a0d400",
+  "scopeSchema": "rc2-scope-frozen-v2",
+  "developmentSeeds": [
+    "RC2-DEV-ALPHA",
+    "RC2-DEV-BETA",
+    "RC2-DEV-GAMMA",
+    "RC2-DEV-DELTA",
+    "RC2-DEV-EPSILON"
+  ],
+  "holdoutSeed": "AUDIT-2026-09-12-B",
+  "holdoutGenerated": false,
+  "developmentCorpus": {
+    "published": 10000,
+    "templates": 107,
+    "families": 16,
+    "sha256": "1b75313247a21444e1805840a938c51adc0b6039434c237f89e44ec09ab01a57",
+    "gzipSha256": "bf27cd60048635b7e180e734096e4cc7c3196e0e8a4b1d419432f6ae926bc1b4"
+  },
+  "internalGate": {
+    "verdict": "PASS",
+    "conditions": 15,
+    "evaluatedAt": "2026-09-12T11:14:08.716Z"
+  },
+  "productionFileCount": 45,
+  "productionFiles": [
+    {
+      "path": "app.js",
+      "bytes": 40101,
+      "sha256": "6efee939b6114069d3d88b650667f57991023b16039d17f2d4cce225c0af21d6"
+    },
+    {
+      "path": "generator_manifest.json",
+      "bytes": 17920,
+      "sha256": "db5a3b5dd70b5c99cc0639ea08e1d3a5e61bdb262f6ed1e2b3d1350993fbfd47"
+    },
+    {
+      "path": "index.html",
+      "bytes": 14166,
+      "sha256": "c278260b3799a2b7ff8f9735047f113ed0ccdb113936e949d197de3cfd89667b"
+    },
+    {
+      "path": "package.json",
+      "bytes": 1184,
+      "sha256": "fb59137b6a2bd7fc13ba2d4fd15e303f06fe9913a716e06481400db9b442d8e0"
+    },
+    {
+      "path": "report.js",
+      "bytes": 10870,
+      "sha256": "1eb2f37977b6a29d213ed75a719a9e4672bde7fc6d5a257f23cd763d10f6e515"
+    },
+    {
+      "path": "src/arabic/constructions.js",
+      "bytes": 10945,
+      "sha256": "9f142b67c92193c2962989597284632663560a10a567803711910ea3e78b3832"
+    },
+    {
+      "path": "src/arabic/units.js",
+      "bytes": 9815,
+      "sha256": "352caab43974d31efab2782f3e83c3b40c452f05c882d0d4eee336c05b6e8b08"
+    },
+    {
+      "path": "src/families/_shared.js",
+      "bytes": 7677,
+      "sha256": "dbc83b8fffa9ccefa00cd17aae3b2c2b4dd31fb67d6628ca34a38e3cbd70d1e2"
+    },
+    {
+      "path": "src/families/ages.js",
+      "bytes": 24184,
+      "sha256": "1d94429097adf0a4b79f0b503f9768c41449cad1b79084b91f572c725f28017d"
+    },
+    {
+      "path": "src/families/averages.js",
+      "bytes": 24489,
+      "sha256": "6c309d2568f2a4682aec401801b0b0ae4fb992bc697d2012fcac86866fc03f82"
+    },
+    {
+      "path": "src/families/calendar.js",
+      "bytes": 18857,
+      "sha256": "cd67296e13e72ea6f215ac50ea394f06d178be31d25712f5e2470b6e8b522694"
+    },
+    {
+      "path": "src/families/combined_rate.js",
+      "bytes": 21399,
+      "sha256": "122b5041109839fd6c7bd34ca559060a71422c5f97264d939c9a7cbd97d5ea81"
+    },
+    {
+      "path": "src/families/direct_proportion.js",
+      "bytes": 38594,
+      "sha256": "bfecd77d3c5cd069c95caf286e43567d8742c0bb16a88fbca391aa4aad56451c"
+    },
+    {
+      "path": "src/families/fractions.js",
+      "bytes": 10611,
+      "sha256": "e4eab2243da1be654bb689d82bcdbb9c917e7dac2aefca218e7f46f59ab25a5a"
+    },
+    {
+      "path": "src/families/machines.js",
+      "bytes": 25374,
+      "sha256": "a29f4ed519fb3ed6944557637942833f53f9427db4ca55c484a8b20a6f82f763"
+    },
+    {
+      "path": "src/families/odd_one_out.js",
+      "bytes": 13975,
+      "sha256": "b617362503ec5807fa02aaad9e53643880285cc3e866cc06fa66cb8babf43345"
+    },
+    {
+      "path": "src/families/percentages.js",
+      "bytes": 24637,
+      "sha256": "bf7698b276f9be194e2810b692a37a500eca509f0635f796d1f1c33817245429"
+    },
+    {
+      "path": "src/families/profit_loss.js",
+      "bytes": 19357,
+      "sha256": "ee2637d18c71e360fad851b51d80396c7bea2b04c89d7e245ab154a054d847ba"
+    },
+    {
+      "path": "src/families/ratios.js",
+      "bytes": 27147,
+      "sha256": "aa11ed81b08be5ba73c80a677dbe8ec4cac165720d34cd9e682d94714aef2bb4"
+    },
+    {
+      "path": "src/families/relational.js",
+      "bytes": 30355,
+      "sha256": "519336d7bba382b94c1b28b51aa01063c18bcd4083ba01781cabc91a5bd054ab"
+    },
+    {
+      "path": "src/families/sequences.js",
+      "bytes": 41262,
+      "sha256": "4c8411a29932c477a95204527db28d4f1c2e70bc81b64bc7b83b2f2f978d9e15"
+    },
+    {
+      "path": "src/families/speed.js",
+      "bytes": 27825,
+      "sha256": "909d7aa66519f92a6776635f17f53f5f8747aa4dab097dc540d8dc9a96935e27"
+    },
+    {
+      "path": "src/families/unit_rate.js",
+      "bytes": 20299,
+      "sha256": "d362acdd9538ac20ad0e48d2d590afae5c35c6e2d45fad84868ecb075583721b"
+    },
+    {
+      "path": "src/families/work_time.js",
+      "bytes": 25486,
+      "sha256": "44c7cec600893c0a104a63a2bded15e8b130f116029ba880845033305fff8b42"
+    },
+    {
+      "path": "src/index.js",
+      "bytes": 26310,
+      "sha256": "f63da55dddf53b2b49a0e6a74bfb18cdcd789d3429e0ead4b6b2495938c7ba3f"
+    },
+    {
+      "path": "src/qa/ambiguity.js",
+      "bytes": 10562,
+      "sha256": "643fc6adfa6f2174515949af325f321aa61490ebc19c014b1cfd147a0a30082e"
+    },
+    {
+      "path": "src/qa/analytics.js",
+      "bytes": 3954,
+      "sha256": "0e67b1a9d21fa59e99237e158175211e06a5dc35040647d531351fb3ea11e69e"
+    },
+    {
+      "path": "src/qa/complexity.js",
+      "bytes": 3829,
+      "sha256": "5a5145db2c79082673faa9ab6846d98aa22892937477eb78c911e3d36b689a6e"
+    },
+    {
+      "path": "src/qa/distractor-provenance.js",
+      "bytes": 6550,
+      "sha256": "0d2f87a1e8cfdb938eabd1cbfcb9f642771411587b94868d04c287451d1f4f61"
+    },
+    {
+      "path": "src/qa/equations.js",
+      "bytes": 10355,
+      "sha256": "e493667fd25cdaebe070c4a106fc4a95539507a11b85ec20108000df23811a30"
+    },
+    {
+      "path": "src/qa/feedback-metrics.js",
+      "bytes": 6613,
+      "sha256": "24185c779be698848c3a3787a8d1ba45597fafa462f69d107d87654d208e6dd5"
+    },
+    {
+      "path": "src/qa/fingerprint.js",
+      "bytes": 6672,
+      "sha256": "c0ecfb92d56311007c696ab86c454f86eb9b16ddd8a2154de1a70628dd236377"
+    },
+    {
+      "path": "src/qa/fraction.js",
+      "bytes": 5470,
+      "sha256": "33fb98995d3bffe83eccb7965f54e00497504448bbbec6239dd18fa69c186520"
+    },
+    {
+      "path": "src/qa/misconception-context.js",
+      "bytes": 5933,
+      "sha256": "901d421b3b4a833a0e495414dd770032998a4b3d7ab3ad4ce9a3c8c382e1cf5b"
+    },
+    {
+      "path": "src/qa/misconceptions.js",
+      "bytes": 13918,
+      "sha256": "e216c3f6c0165e6098a9516245f91feab00aa4f6f24a265b3b22684ee29e36e8"
+    },
+    {
+      "path": "src/qa/oracle-engine.js",
+      "bytes": 4140,
+      "sha256": "a7fa43d3093ad3131518aab738fe57501bb107012bd494831e403efd50044a85"
+    },
+    {
+      "path": "src/qa/pedagogy.js",
+      "bytes": 5555,
+      "sha256": "437aeb709bc4194e1417f1d8b036467f5f1fa416e33dac6309768227d6f51687"
+    },
+    {
+      "path": "src/qa/pipeline.js",
+      "bytes": 13755,
+      "sha256": "6b7bffb856863aa6fc98d263fbaf1030c06cea233ff5d7349aca571c1267012e"
+    },
+    {
+      "path": "src/qa/reasons.js",
+      "bytes": 3021,
+      "sha256": "de107f3628e71fef870e68049942eccce28e3071d591b7c022eff3937e7f9635"
+    },
+    {
+      "path": "src/qa/relational-oracle.js",
+      "bytes": 3187,
+      "sha256": "eae51805f1a45ab1be0bacadb658d4a1266c2a5bd0ec4d696d1ff99b52da91f8"
+    },
+    {
+      "path": "src/qa/telemetry.js",
+      "bytes": 6359,
+      "sha256": "d466992ac4e74fd61d6e22756a9bb1030f056b5dbeb7096fee0d0d5f9423611b"
+    },
+    {
+      "path": "src/qa/text-params.js",
+      "bytes": 2271,
+      "sha256": "d83520c38e4aa54377603e29d355232a6e407975bc32cc585229135977ec8d8e"
+    },
+    {
+      "path": "src/registry.js",
+      "bytes": 5549,
+      "sha256": "e29802ff3cdfed3d2374ea7ffe80d03f1af83949d7799bbd1b1e5e4878064def"
+    },
+    {
+      "path": "src/rng.js",
+      "bytes": 1892,
+      "sha256": "564fd40c853f528dc1fa6cc92aa9ce3f54d41590627ad4e8b45c7030341dd1d9"
+    },
+    {
+      "path": "src/utils.js",
+      "bytes": 15296,
+      "sha256": "151feb44a1fad39d6151724b47630911091a26e5bcf6d5869fa459c954b36084"
+    }
+  ],
+  "productionBundleSha256": "3d2d668d6455193453692723801ee6cab359969d82fc383e4386179657b42dd3",
+  "evidenceArtifacts": [
+    {
+      "path": "rc2/COVERAGE_MATRIX.json",
+      "bytes": 51413,
+      "sha256": "6d47667966658b5290b7338d1510ab4ea367288c65cf36baf42599eece526956"
+    },
+    {
+      "path": "rc2/DEGENERACY_COVERAGE.json",
+      "bytes": 67132,
+      "sha256": "3b38be13ecc2714049152616176de7d820345bb557e48bb1c0034b591924dcec"
+    },
+    {
+      "path": "rc2/DEVELOPMENT_CORPUS.json",
+      "bytes": 6105,
+      "sha256": "e74db85a964e41536e814dc928462149ba690c2948e69dac56e4204ea51059eb"
+    },
+    {
+      "path": "rc2/INTERNAL_GATE.json",
+      "bytes": 5057,
+      "sha256": "445a7676f7c544361e8a1b68ce9e89950f487e68f16dabfc47f2014c658082d8"
+    },
+    {
+      "path": "rc2/RC2_003_REJECTION_COST.json",
+      "bytes": 51938,
+      "sha256": "738ec6a0b7cb356657ac85183daa15c727b3a3fb7efd0fed716d45ddca56a73a"
+    },
+    {
+      "path": "rc2/RC2_006_PDF_ACCESSIBILITY.json",
+      "bytes": 5233,
+      "sha256": "6905fee30e7367007b257d00f4516cff291559bf2bb5608000f84f43f32237ad"
+    },
+    {
+      "path": "rc2/RC2_011_ANSWER_SPACE.json",
+      "bytes": 35908,
+      "sha256": "58fde7e42b4f1e1504e6c4832b71f4c19f6200d08e4e6e6f7a3e3589cfe327da"
+    },
+    {
+      "path": "rc2/RC2_012_SURVIVOR_AUDIT.json",
+      "bytes": 246905,
+      "sha256": "20049eedc3f92da49c50a6eb69c828fdbe92f02540921f97bbf3389d656ca243"
+    },
+    {
+      "path": "rc2/RC2_014_FEEDBACK_METRICS.json",
+      "bytes": 3524,
+      "sha256": "ce54832653440283ffdca15301105c9f2635d40745b9b14c561b5482d43bea43"
+    },
+    {
+      "path": "rc2/RC2_015_DIFFICULTY_CALIBRATION.json",
+      "bytes": 40832,
+      "sha256": "246b67d297c9b64142d0b7aa425d77b201ca22438d319c43d427632c0d8ac072"
+    },
+    {
+      "path": "rc2/development-corpus.jsonl.gz",
+      "bytes": 1198125,
+      "sha256": "bf27cd60048635b7e180e734096e4cc7c3196e0e8a4b1d419432f6ae926bc1b4"
+    }
+  ],
+  "declaration": "After this point no production file changes. The holdout is generated from this engine and from no other."
+}

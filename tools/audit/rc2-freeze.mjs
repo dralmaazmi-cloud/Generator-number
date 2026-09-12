@@ -35,6 +35,19 @@ function productionFiles() {
   }));
 }
 
+/** A freeze taken before the candidate stopped moving, kept rather than erased. */
+function priorFreezes() {
+  try {
+    const prior = JSON.parse(readFileSync('rc2/FREEZE.json', 'utf8'));
+    const entries = prior.supersedes ?? [];
+    return [...entries, {
+      RC2_COMMIT: prior.RC2_COMMIT, treeHash: prior.treeHash, frozenAt: prior.frozenAt,
+      productionBundleSha256: prior.productionBundleSha256,
+      reason: 'superseded: production moved after it was taken'
+    }];
+  } catch { return []; }
+}
+
 export function freeze() {
   const gate = JSON.parse(readFileSync('rc2/INTERNAL_GATE.json', 'utf8'));
   if (gate.verdict !== 'PASS') {
@@ -60,8 +73,10 @@ export function freeze() {
     sha256: createHash('sha256').update(readFileSync(`rc2/${f}`)).digest('hex')
   }));
 
+  const prior = priorFreezes();
   return {
     schema: 'rc2-freeze-v1',
+    supersedes: prior,
     section: '§24',
     frozenAt: new Date().toISOString(),
     RC2_COMMIT: git(['rev-parse', 'HEAD']),
@@ -88,7 +103,39 @@ export function freeze() {
     productionBundleSha256: createHash('sha256')
       .update(files.map(f => `${f.path}:${f.sha256}`).join('\n')).digest('hex'),
     evidenceArtifacts: evidence,
-    declaration: 'After this point no production file changes. The holdout is generated from this engine and from no other.'
+    declaration: 'After this point no production file changes. The holdout is generated from this engine and from no other.',
+    note: 'RC2_COMMIT identifies the frozen PRODUCTION state. This file is evidence recorded about that state, so the commit that carries this file is necessarily a later one; what must not change is productionBundleSha256, and verifyFreeze() is what checks that.'
+  };
+}
+
+/**
+ * §24 enforcement. The freeze is only meaningful if a later edit is caught, so
+ * this recomputes the production bundle hash and reports every file that has
+ * moved since. Evidence files are expected to be added after the freeze; a
+ * production file is not.
+ */
+export function verifyFreeze(path = 'rc2/FREEZE.json') {
+  const frozen = JSON.parse(readFileSync(path, 'utf8'));
+  const now = productionFiles();
+  const before = new Map(frozen.productionFiles.map(f => [f.path, f.sha256]));
+  const after = new Map(now.map(f => [f.path, f.sha256]));
+
+  const changed = [], added = [], removed = [];
+  for (const [p2, h] of after) {
+    if (!before.has(p2)) added.push(p2);
+    else if (before.get(p2) !== h) changed.push(p2);
+  }
+  for (const p2 of before.keys()) if (!after.has(p2)) removed.push(p2);
+
+  const bundle = createHash('sha256')
+    .update(now.map(f => `${f.path}:${f.sha256}`).join('\n')).digest('hex');
+
+  return {
+    frozenCommit: frozen.RC2_COMMIT,
+    frozenBundle: frozen.productionBundleSha256,
+    currentBundle: bundle,
+    intact: bundle === frozen.productionBundleSha256,
+    changed, added, removed
   };
 }
 

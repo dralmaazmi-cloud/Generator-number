@@ -1,0 +1,96 @@
+// RC2 §24 — the freeze.
+//
+// The freeze is only meaningful if a later production edit is caught. These
+// tests hold the record to being complete, and the enforcement to being able to
+// detect a change rather than merely asserting there was none.
+
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync, writeFileSync, mkdtempSync, rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+
+import {verifyFreeze} from '../tools/audit/rc2-freeze.mjs';
+import {ENGINE_VERSION} from '../src/index.js';
+
+test('§24: the freeze records everything the scope asks it to', () => {
+  const f = JSON.parse(readFileSync('rc2/FREEZE.json', 'utf8'));
+  assert.equal(f.schema, 'rc2-freeze-v1');
+  for (const key of [
+    'RC2_COMMIT', 'treeHash', 'engineVersion', 'testCount',
+    'developmentSeeds', 'holdoutSeed', 'scopeSchema', 'developmentCorpus'
+  ]) {
+    assert.ok(f[key] !== undefined && f[key] !== null, `§24 requires ${key}`);
+  }
+  assert.equal(f.engineVersion, ENGINE_VERSION);
+  assert.equal(f.scopeSchema, 'rc2-scope-frozen-v2');
+  assert.match(f.RC2_COMMIT, /^[0-9a-f]{40}$/);
+  assert.match(f.treeHash, /^[0-9a-f]{40}$/);
+  assert.ok(f.testCount > 250, `${f.testCount} tests`);
+  assert.equal(f.developmentSeeds.length, 5);
+  assert.equal(f.holdoutSeed, 'AUDIT-2026-09-12-B');
+  assert.equal(f.holdoutGenerated, false, 'the freeze precedes the holdout');
+});
+
+test('§24: the freeze was only taken on a passing gate', () => {
+  const f = JSON.parse(readFileSync('rc2/FREEZE.json', 'utf8'));
+  assert.equal(f.internalGate.verdict, 'PASS');
+  assert.ok(f.internalGate.conditions >= 15);
+});
+
+test('§24: every production file is hashed individually, not just in bulk', () => {
+  const f = JSON.parse(readFileSync('rc2/FREEZE.json', 'utf8'));
+  assert.ok(f.productionFileCount >= 40, `${f.productionFileCount} production files`);
+  assert.equal(f.productionFiles.length, f.productionFileCount);
+  for (const file of f.productionFiles) {
+    assert.match(file.sha256, /^[0-9a-f]{64}$/, file.path);
+    assert.ok(file.bytes > 0, file.path);
+  }
+  // The families, the QA pipeline and the shipped surfaces must all be in it.
+  const paths = f.productionFiles.map(x => x.path);
+  assert.ok(paths.some(p => p.startsWith('src/families/')));
+  assert.ok(paths.some(p => p.startsWith('src/qa/')));
+  assert.ok(paths.includes('report.js'));
+  assert.ok(paths.includes('index.html'));
+});
+
+test('§24: production has not moved since the freeze', () => {
+  const v = verifyFreeze();
+  assert.deepEqual({changed: v.changed, added: v.added, removed: v.removed},
+    {changed: [], added: [], removed: []});
+  assert.equal(v.intact, true, `${v.frozenBundle} -> ${v.currentBundle}`);
+});
+
+test('§24 meta: the check can detect a change', () => {
+  // A verifier that cannot fail proves nothing. The frozen record is compared
+  // against a deliberately altered copy of itself.
+  const f = JSON.parse(readFileSync('rc2/FREEZE.json', 'utf8'));
+  const tampered = {
+    ...f,
+    productionFiles: f.productionFiles.map((x, i) =>
+      (i === 0 ? {...x, sha256: '0'.repeat(64)} : x)),
+    productionBundleSha256: '0'.repeat(64)
+  };
+  const dir = mkdtempSync(join(tmpdir(), 'rc2-freeze-'));
+  const path = join(dir, 'FREEZE.json');
+  try {
+    writeFileSync(path, JSON.stringify(tampered));
+    const v = verifyFreeze(path);
+    assert.equal(v.intact, false);
+    assert.deepEqual(v.changed, [f.productionFiles[0].path]);
+  } finally {
+    rmSync(dir, {recursive: true, force: true});
+  }
+});
+
+test('§24: an earlier freeze that was superseded says so', () => {
+  // The first freeze was taken before this file existed, so registering these
+  // tests changed package.json — which is in the production bundle. The freeze
+  // was premature and the record says so rather than being quietly overwritten.
+  const f = JSON.parse(readFileSync('rc2/FREEZE.json', 'utf8'));
+  if (!f.supersedes) return;
+  assert.ok(Array.isArray(f.supersedes));
+  for (const s of f.supersedes) {
+    assert.ok(s.RC2_COMMIT && s.reason, 'a superseded freeze must say which and why');
+  }
+});
