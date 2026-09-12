@@ -71,6 +71,35 @@ function branchedGraph(rng, size) {
   return {nodes: live, edges, shape: `tops${tops}-branches${branches.filter(b => b.length).length}${bottom ? '-sink' : ''}`};
 }
 
+/**
+ * RC2-010. A wider topology space for the position question.
+ *
+ * `branchedGraph` alone almost never pins a middle position down, which is why
+ * the old template answered "cannot be determined" every time. The shape is
+ * drawn at random here — never the answer — so that both determined and
+ * undetermined positions arise naturally from the order the candidate is given.
+ *
+ *   chain            every position determined
+ *   chainWithTail    determined until the split, open after it
+ *   branched         mostly open in the middle
+ */
+function positionGraph(rng, size) {
+  const shape = rng.pick(['chain', 'chain', 'chainWithTail', 'chainWithTail', 'branched']);
+  if (shape === 'chain') return chainGraph(rng, size);
+  if (shape === 'branched') return branchedGraph(rng, size);
+
+  // A spine with a short fork hanging off one of its lower links: the positions
+  // above the fork are pinned, the ones at and below it are not.
+  const nodes = rng.sample(NAMES, size);
+  const forkAt = rng.int(2, Math.max(2, size - 3));
+  const spine = nodes.slice(0, forkAt + 1);
+  const fork = nodes.slice(forkAt + 1);
+  const edges = [];
+  for (let i = 0; i < spine.length - 1; i++) edges.push([spine[i], spine[i + 1]]);
+  for (const f of fork) edges.push([spine.at(-1), f]);
+  return {nodes, edges, shape: `chainWithTail@${forkAt}`};
+}
+
 function graphMeta(nodes, edges) {
   const canonical = canonicalGraph(nodes, edges);
   return {
@@ -370,47 +399,81 @@ function branchGuaranteed(ctx) {
   });
 }
 
+/**
+ * RC2-010. This template used to answer "cannot be determined" every single
+ * time — 91 of 91 instances in the frozen RC1 corpus, entropy zero. The cause
+ * was here in the sampler: it searched the graph for a position the orderings
+ * disagreed about and resampled the whole graph whenever none existed. That is
+ * target-answer sampling, and it made the question carry no information.
+ *
+ * Now the position is chosen blind to the answer and the answer is whatever the
+ * enumeration gives. Both outcomes arise from the sampled graph itself; nothing
+ * is retried, filtered or weighted on the strength of what the answer turned out
+ * to be. Sometimes the partial order pins the position down and sometimes it
+ * does not, which is the skill the item is supposed to measure.
+ */
 function partialOrderPosition(ctx) {
   const {rng} = ctx;
-  const {nodes, edges, shape} = branchedGraph(rng, 6);
+  const {nodes, edges, shape} = positionGraph(rng, 6);
+  // Structural resample only: the graph must be big enough to ask about a
+  // middle position at all. This looks at the shape, never at the answer.
   if (nodes.length < 5) return partialOrderPosition(ctx);
   const oracle = buildOrderOracle(nodes, edges);
-  // Look for a position the consistent orderings genuinely disagree about.
-  const openPositions = [];
-  for (let p = 2; p <= nodes.length - 1; p++) {
-    if (oracle.whoAtPosition(p) === null) openPositions.push(p);
-  }
-  if (!openPositions.length) return partialOrderPosition(ctx);
-  const targetPos = rng.pick(openPositions);
+
+  const targetPos = rng.int(2, nodes.length - 1);
+  const who = oracle.whoAtPosition(targetPos);
+  const determined = who !== null && who !== undefined;
+  const correct = determined ? who : UNDETERMINED;
   const candidates = [...new Set(oracle.extensions.map(ext => ext[targetPos - 1]))];
-  const correct = UNDETERMINED;
-  const distractors = usable(nodes.map(n => mk(
+
+  const wrongNames = nodes.filter(n => n !== correct).map(n => mk(
     n,
     candidates.includes(n) ? 'RESOLVED_AN_UNRESOLVED_PAIR' : 'RELATION_CONTRADICTS_STATEMENT',
     candidates.includes(n)
       ? `${n} أحد المرشحين للمركز ${POSITION_WORDS[targetPos]}، لكنه ليس الوحيد`
       : `${n} لا يمكن أن يشغل المركز ${POSITION_WORDS[targetPos]} في أي ترتيب متوافق`
-  )));
+  ));
+  // When the position IS pinned down, "cannot be determined" is the misconception
+  // the item exists to catch — stopping before the order is fully derived — so it
+  // must actually be on the paper. Distractor selection is rank-blind (RC2-001),
+  // which means a pool larger than five leaves inclusion to chance; the pool is
+  // therefore built at exactly five for this case. This is a pedagogical choice
+  // about which errors to show, not a choice made on any property of the answer.
+  const distractors = usable(determined
+    ? [
+      mk(UNDETERMINED, 'RELATION_REQUIRES_UNSTATED_ASSUMPTION',
+        `توقّف قبل استنتاج الترتيب كاملًا رغم أن المركز ${POSITION_WORDS[targetPos]} محسوم`),
+      ...wrongNames.slice(0, 4)
+    ]
+    : wrongNames);
+
   const {reasoningGraph, parameters} = graphMeta(nodes, edges);
   return buildBase(ctx, {
-    templateId: 'REL_H_POSITION_UNCERTAIN',
-    subskill: 'مركز غير محسوم في ترتيب جزئي',
+    templateId: 'REL_H_POSITION',
+    subskill: determined ? 'مركز محسوم في ترتيب جزئي' : 'مركز غير محسوم في ترتيب جزئي',
     difficulty: 'hard',
     question: `${sentences(rng, edges)} من صاحب المركز ${POSITION_WORDS[targetPos]}؟`,
     correct, distractors, format: v => String(v),
-    steps: [
-      `نفحص كل ترتيب متوافق مع الجمل.`,
-      `المركز ${POSITION_WORDS[targetPos]} يشغله ${candidates.join(' أو ')} باختلاف الترتيب.`,
-      `ما دام أكثر من مرشح ممكنًا، فالمركز غير قابل للتحديد.`
-    ],
+    steps: determined
+      ? [
+        `نفحص كل ترتيب متوافق مع الجمل.`,
+        `المركز ${POSITION_WORDS[targetPos]} يشغله ${correct} في كل ترتيب متوافق دون استثناء.`,
+        `ما دام المرشح واحدًا في جميع الترتيبات، فالمركز محسوم.`
+      ]
+      : [
+        `نفحص كل ترتيب متوافق مع الجمل.`,
+        `المركز ${POSITION_WORDS[targetPos]} يشغله ${candidates.join(' أو ')} باختلاف الترتيب.`,
+        `ما دام أكثر من مرشح ممكنًا، فالمركز غير قابل للتحديد.`
+      ],
     howToStart: 'حدد ما هو ثابت أولًا، ثم انظر هل المركز المطلوب يقع بين عنصرين غير مرتبين.',
-    remember: 'في الترتيب الجزئي قد يبقى بعض المراكز غير محسوم رغم معرفة الأول والأخير.',
-    fastMethod: 'إذا بقي مرشحان للمركز نفسه بلا علاقة بينهما فالإجابة غير محسومة.',
+    remember: 'في الترتيب الجزئي قد يكون المركز محسومًا وقد لا يكون؛ افحص كل الترتيبات المتوافقة قبل أن تقرر.',
+    fastMethod: 'اعدّ المرشحين الممكنين للمركز المطلوب: مرشح واحد يعني أنه محسوم، وأكثر من مرشح يعني أنه غير محسوم.',
     estimatedSteps: 4, conceptTags: ['ordering', 'partial-order'], parameters,
     reasoningGraph,
-    oracle: orderOracleSpec(nodes, edges, {type: 'position', position: targetPos}, UNDETERMINED, UNDETERMINED),
-    askedUnknown: `undeterminedPosition${targetPos}`, stageCount: 3,
-    metadata: {graph_shape: shape},
+    oracle: orderOracleSpec(nodes, edges, {type: 'position', position: targetPos}, correct, UNDETERMINED),
+    askedUnknown: determined ? `position${targetPos}` : `undeterminedPosition${targetPos}`,
+    stageCount: 3,
+    metadata: {graph_shape: shape, position_determined: determined},
     complexityFactors: {reasoningTransformations: 3, conceptCount: 3, graphDepth: nodes.length, conditionCount: edges.length, dependencyDepth: 3},
     textParams: false
   });
