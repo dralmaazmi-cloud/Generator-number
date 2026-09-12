@@ -1,6 +1,6 @@
 {
   "schema": "rc26-acceptance-v1",
-  "generatedAt": "2026-09-12T23:41:46.539Z",
+  "generatedAt": "2026-09-12T23:53:09.463Z",
   "constructionCapPerBatch": 6,
   "coverage": {
     "hardTemplates": 26,
