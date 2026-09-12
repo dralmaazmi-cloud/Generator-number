@@ -37,7 +37,15 @@ whenFrozen('§24: the freeze records everything the scope asks it to', () => {
   assert.match(f.treeHash, /^[0-9a-f]{40}$/);
   assert.ok(f.testCount > 250, `${f.testCount} tests`);
   assert.equal(f.developmentSeeds.length, 5);
-  assert.equal(f.holdoutSeed, 'AUDIT-2026-09-12-B');
+  // RC2.1 froze against its own unused sign-off holdout. Holdout B is carried
+  // forward as a failed diagnostic holdout and must NOT be the frozen one — a
+  // holdout an engine has been remediated against is no longer a holdout.
+  assert.equal(f.holdoutSeed, f.release === 'RC2.1' ? 'AUDIT-2026-09-12-C' : 'AUDIT-2026-09-12-B');
+  if (f.release === 'RC2.1') {
+    assert.equal(f.previousHoldout.seed, 'AUDIT-2026-09-12-B');
+    assert.equal(f.previousHoldout.status, 'FAILED_DIAGNOSTIC_HOLDOUT');
+    assert.equal(f.previousHoldout.reused, false);
+  }
   assert.equal(f.holdoutGenerated, false, 'the freeze precedes the holdout');
 });
 
