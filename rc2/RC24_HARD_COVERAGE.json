@@ -1,6 +1,6 @@
 {
   "schema": "rc24-hard-coverage-v1",
-  "generatedAt": "2026-09-12T19:47:29.496Z",
+  "generatedAt": "2026-09-12T20:11:21.056Z",
   "engineVersion": "1.4.0",
   "coverage": {
     "hardTemplatesBefore": 19,
@@ -343,14 +343,14 @@
     "acrossAllSessions": {
       "templates": {
         "distinct": 37,
-        "max": 12
+        "max": 11
       },
       "families": {
         "distinct": 14,
         "max": 36
       },
       "reasoning": {
-        "distinct": 50,
+        "distinct": 51,
         "max": 9
       }
     },
@@ -359,15 +359,15 @@
         "session": 1,
         "delivered": 50,
         "templates": {
-          "distinct": 33,
+          "distinct": 34,
           "max": 2
         },
         "families": {
           "distinct": 14,
-          "max": 5
+          "max": 7
         },
         "reasoning": {
-          "distinct": 35,
+          "distinct": 36,
           "max": 2
         },
         "diversityWarnings": 0,
@@ -384,17 +384,17 @@
           "SEQ_H_ALT_DIV": 2,
           "PCT_H_MIXTURE": 2,
           "AGE_M_FUT_RATIO": 2,
-          "AGE_H_TWO_TIME": 2,
           "MACH_H_STOPPAGE_TIME": 2,
-          "WORK_H_EXTRA_WORKERS": 2,
           "COMB_H_TWO_PUMPS": 2,
+          "REL_M_BRANCH_UNRES": 2,
           "RAT_H_TRANSFER": 2,
           "AGE_H_THREE_SIBLINGS": 1,
           "WORK_H_JOINT_SOLO": 1,
           "PL_H_TWO_OUTCOMES": 1,
           "RAT_H_TWO_COMB": 1,
+          "AGE_H_TWO_TIME": 1,
           "REL_M_COUNT": 1,
-          "REL_M_BRANCH_UNRES": 1,
+          "REL_H_GUARANTEE": 1,
           "RAT_M_ADD_SIDE": 1,
           "PL_H_MARKUP_DISCOUNT": 1,
           "SEQ_H_INDEX_MULT": 1,
@@ -402,21 +402,22 @@
           "SEQ_H_DIGIT_SUM": 1,
           "AVG_H_SPLIT_SIZE": 1,
           "SPD_H_TIME_DIFF": 1,
+          "WORK_H_EXTRA_WORKERS": 1,
           "SEQ_H_POW_INDEX": 1,
           "SPD_M_EQUAL_DIST": 1,
           "REL_H_POSITION": 1
         },
         "familyCounts": {
-          "ages": 5,
-          "relational": 5,
+          "relational": 7,
           "sequences": 5,
           "ratios": 5,
           "percentages": 4,
+          "ages": 4,
           "speed": 4,
           "machines": 4,
           "combined_rate": 4,
           "averages": 3,
-          "work_time": 3,
+          "work_time": 2,
           "direct_proportion": 2,
           "unit_rate": 2,
           "calendar": 2,
@@ -567,56 +568,58 @@
         "session": 4,
         "delivered": 50,
         "templates": {
-          "distinct": 26,
+          "distinct": 27,
           "max": 4
         },
         "families": {
-          "distinct": 10,
-          "max": 12
+          "distinct": 11,
+          "max": 11
         },
         "reasoning": {
-          "distinct": 32,
+          "distinct": 33,
           "max": 3
         },
         "diversityWarnings": 14,
         "templateCounts": {
           "REL_H_POSITION": 4,
-          "RAT_H_TRANSFER": 4,
           "SEQ_H_ALT_DIV": 3,
           "RAT_M_ADD_SIDE": 3,
           "AGE_H_PAST_FUT": 3,
           "SEQ_H_INDEX_MULT": 3,
+          "RAT_H_TRANSFER": 3,
           "SEQ_H_POW_INDEX": 3,
-          "REL_M_BRANCH_UNRES": 2,
           "PL_H_TWO_OUTCOMES": 2,
           "RAT_M_COMMON_DIFF": 2,
+          "WORK_H_EXTRA_WORKERS": 2,
           "REL_H_GUARANTEE": 2,
           "AGE_H_TWO_TIME": 2,
           "RAT_H_TWO_COMB": 2,
           "SPD_H_MEET_DELAY": 2,
           "SPD_M_EQUAL_DIST": 2,
+          "REL_M_BRANCH_UNRES": 1,
           "SPD_H_TIME_DIFF": 1,
           "WORK_H_JOINT_SOLO": 1,
           "SPD_H_CATCH": 1,
-          "WORK_H_EXTRA_WORKERS": 1,
           "SEQ_H_DIGIT_SUM": 1,
           "MACH_H_TWO_CONFIG": 1,
           "AVG_H_SPLIT_SIZE": 1,
           "AGE_H_THREE_SIBLINGS": 1,
+          "RATE_H_RATE_FROM_GAP": 1,
           "RAT_M_COMMON_SUM": 1,
           "PCT_H_TWO_GROUP_CHANGE": 1,
           "AVG_H_OVERLAP": 1
         },
         "familyCounts": {
-          "ratios": 12,
+          "ratios": 11,
           "sequences": 10,
-          "relational": 8,
+          "relational": 7,
           "speed": 6,
           "ages": 6,
+          "work_time": 3,
           "profit_loss": 2,
-          "work_time": 2,
           "averages": 2,
           "machines": 1,
+          "unit_rate": 1,
           "percentages": 1
         }
       },
@@ -624,7 +627,7 @@
         "session": 5,
         "delivered": 50,
         "templates": {
-          "distinct": 29,
+          "distinct": 28,
           "max": 4
         },
         "families": {
@@ -635,23 +638,23 @@
           "distinct": 33,
           "max": 3
         },
-        "diversityWarnings": 64,
+        "diversityWarnings": 66,
         "templateCounts": {
           "REL_H_POSITION": 4,
-          "SEQ_H_INDEX_MULT": 3,
           "SEQ_H_POW_INDEX": 3,
+          "SEQ_H_INDEX_MULT": 3,
           "SEQ_H_ALT_DIV": 3,
-          "COMB_H_TEAM_SIZE": 3,
-          "CAL_H_CYCLE_MEET": 3,
           "PL_H_TWO_OUTCOMES": 3,
+          "MACH_H_TWO_CONFIG": 3,
+          "RATE_H_RATE_FROM_GAP": 3,
+          "CAL_H_CYCLE_MEET": 3,
+          "COMB_H_TEAM_SIZE": 2,
           "SPD_H_MEET_DELAY": 2,
           "RAT_H_TRANSFER": 2,
           "PROP_H_TWO_ITEM_SYSTEM": 2,
-          "RATE_H_RATE_FROM_GAP": 2,
           "AGE_M_FUT_RATIO": 2,
-          "MACH_H_TWO_CONFIG": 2,
+          "AGE_H_TWO_TIME": 1,
           "RAT_M_COMMON_DIFF": 1,
-          "REL_H_GUARANTEE": 1,
           "SEQ_H_DIGIT_SUM": 1,
           "AGE_H_THREE_SIBLINGS": 1,
           "RAT_H_TWO_COMB": 1,
@@ -659,7 +662,6 @@
           "AVG_H_SPLIT_SIZE": 1,
           "WORK_H_JOINT_SOLO": 1,
           "COMB_H_TWO_PUMPS": 1,
-          "RAT_M_COMMON_SUM": 1,
           "RAT_M_ADD_SIDE": 1,
           "PCT_H_TWO_GROUP_CHANGE": 1,
           "AVG_H_OVERLAP": 1,
@@ -669,23 +671,23 @@
         },
         "familyCounts": {
           "sequences": 10,
-          "ratios": 6,
-          "relational": 6,
-          "combined_rate": 4,
-          "calendar": 3,
-          "speed": 3,
-          "ages": 3,
+          "ratios": 5,
+          "relational": 5,
+          "ages": 4,
+          "machines": 4,
+          "combined_rate": 3,
           "profit_loss": 3,
-          "machines": 3,
+          "speed": 3,
+          "unit_rate": 3,
+          "calendar": 3,
           "direct_proportion": 2,
-          "unit_rate": 2,
           "percentages": 2,
           "averages": 2,
           "work_time": 1
         }
       }
     ],
-    "wallMs": 2175
+    "wallMs": 2181
   },
   "acceptanceIndependent": {
     "mode": "INDEPENDENT",
@@ -706,10 +708,10 @@
       },
       "families": {
         "distinct": 14,
-        "max": 27
+        "max": 28
       },
       "reasoning": {
-        "distinct": 46,
+        "distinct": 47,
         "max": 10
       }
     },
@@ -921,7 +923,7 @@
         "session": 4,
         "delivered": 50,
         "templates": {
-          "distinct": 34,
+          "distinct": 35,
           "max": 3
         },
         "families": {
@@ -929,7 +931,7 @@
           "max": 7
         },
         "reasoning": {
-          "distinct": 37,
+          "distinct": 38,
           "max": 2
         },
         "diversityWarnings": 0,
@@ -945,12 +947,12 @@
           "RAT_M_ADD_SIDE": 2,
           "PCT_H_MIXTURE": 2,
           "AVG_H_OVERLAP": 2,
-          "WORK_H_EXTRA_WORKERS": 2,
           "MACH_H_TWO_CONFIG": 2,
           "PL_H_MARKUP_DISCOUNT": 2,
           "SEQ_H_POW_INDEX": 2,
           "AGE_H_PAST_FUT": 1,
           "SPD_H_MEET_DELAY": 1,
+          "WORK_H_EXTRA_WORKERS": 1,
           "COMB_H_TWO_PUMPS": 1,
           "REL_M_CONFIRM": 1,
           "RAT_H_TRANSFER": 1,
@@ -959,12 +961,13 @@
           "SPD_H_TIME_DIFF": 1,
           "AGE_M_FUT_RATIO": 1,
           "SPD_M_EQUAL_DIST": 1,
-          "MACH_H_STOPPAGE_TIME": 1,
+          "WORK_H_JOINT_SOLO": 1,
           "SEQ_H_DIGIT_SUM": 1,
           "PCT_H_TWO_GROUP_CHANGE": 1,
           "AVG_H_SPLIT_SIZE": 1,
           "AGE_H_TWO_TIME": 1,
           "SPD_H_CATCH": 1,
+          "MACH_H_STOPPAGE_TIME": 1,
           "REL_M_BRANCH_UNRES": 1,
           "SEQ_H_ALT_DIV": 1,
           "RAT_M_COMMON_SUM": 1
@@ -990,7 +993,7 @@
         "session": 5,
         "delivered": 50,
         "templates": {
-          "distinct": 32,
+          "distinct": 33,
           "max": 2
         },
         "families": {
@@ -998,7 +1001,7 @@
           "max": 7
         },
         "reasoning": {
-          "distinct": 34,
+          "distinct": 35,
           "max": 2
         },
         "diversityWarnings": 0,
@@ -1012,7 +1015,6 @@
           "AVG_H_OVERLAP": 2,
           "AGE_H_PAST_FUT": 2,
           "SPD_H_MEET_DELAY": 2,
-          "WORK_H_EXTRA_WORKERS": 2,
           "MACH_H_TWO_CONFIG": 2,
           "PROP_H_TWO_ITEM_SYSTEM": 2,
           "RATE_H_RATE_FROM_GAP": 2,
@@ -1021,6 +1023,7 @@
           "SEQ_H_ALT_DIV": 2,
           "PCT_H_MIXTURE": 2,
           "RAT_H_TRANSFER": 2,
+          "WORK_H_EXTRA_WORKERS": 1,
           "REL_M_BRANCH_UNRES": 1,
           "AVG_H_SPLIT_SIZE": 1,
           "AGE_H_TWO_TIME": 1,
@@ -1033,42 +1036,43 @@
           "PL_H_MARKUP_DISCOUNT": 1,
           "SEQ_H_INDEX_MULT": 1,
           "WORK_H_JOINT_SOLO": 1,
+          "REL_H_POSITION": 1,
           "RAT_M_ADD_SIDE": 1,
           "AGE_M_FUT_RATIO": 1
         },
         "familyCounts": {
           "ratios": 7,
+          "relational": 5,
           "sequences": 5,
           "ages": 5,
-          "relational": 4,
           "percentages": 4,
           "speed": 4,
           "profit_loss": 3,
           "averages": 3,
-          "work_time": 3,
           "machines": 3,
           "combined_rate": 3,
           "calendar": 2,
+          "work_time": 2,
           "direct_proportion": 2,
           "unit_rate": 2
         }
       }
     ],
-    "wallMs": 608
+    "wallMs": 500
   },
   "newTemplateOptions": {
     "templatesMeasured": 18,
     "items": 720,
     "options": 3600,
     "repeatedDiagnosis": {
-      "count": 212,
-      "share": 0.0589
+      "count": 190,
+      "share": 0.0528
     },
     "outOfScaleAt25x": {
       "count": 13,
       "share": 0.0036
     },
-    "fractionalCountOptions": 24,
+    "fractionalCountOptions": 0,
     "perTemplate": [
       {
         "templateId": "AVG_H_OVERLAP",
@@ -1147,17 +1151,17 @@
         "templateId": "MACH_H_TWO_CONFIG",
         "items": 40,
         "options": 200,
-        "repeats": 10,
+        "repeats": 7,
         "outOfScale": 1,
-        "fractionalCounts": 1,
+        "fractionalCounts": 0,
         "slips": 6,
         "distinctSlips": [
-          "SOLVED_ONE_CONDITION_ONLY",
           "SWAPPED_THE_TWO_UNKNOWNS",
-          "USED_DIFFERENCE_AS_ANSWER",
+          "MISREAD_THE_STEP",
           "ADDED_INSTEAD_OF_SCALING",
           "STOPPED_AT_INTERMEDIATE_TOTAL",
-          "MISREAD_THE_STEP"
+          "SOLVED_ONE_CONDITION_ONLY",
+          "USED_DIFFERENCE_AS_ANSWER"
         ],
         "outOfScaleShare": 0.005
       },
@@ -1165,7 +1169,7 @@
         "templateId": "SEQ_H_DIGIT_SUM",
         "items": 40,
         "options": 200,
-        "repeats": 7,
+        "repeats": 8,
         "outOfScale": 1,
         "fractionalCounts": 0,
         "slips": 5,
@@ -1201,16 +1205,15 @@
         "templateId": "COMB_H_TEAM_SIZE",
         "items": 40,
         "options": 200,
-        "repeats": 68,
+        "repeats": 52,
         "outOfScale": 0,
-        "fractionalCounts": 19,
-        "slips": 5,
+        "fractionalCounts": 0,
+        "slips": 4,
         "distinctSlips": [
-          "OFF_BY_ONE_STEP",
-          "USED_NEW_TOTAL",
           "SOLVED_ONE_CONDITION_ONLY",
-          "ADDED_INSTEAD_OF_SUBTRACTED",
-          "IGNORED_THE_TEAM_CHANGE"
+          "USED_NEW_TOTAL",
+          "APPLIED_STEP_TWICE",
+          "OFF_BY_ONE_STEP"
         ],
         "outOfScaleShare": 0
       },
@@ -1363,18 +1366,19 @@
         "templateId": "WORK_H_EXTRA_WORKERS",
         "items": 40,
         "options": 200,
-        "repeats": 4,
+        "repeats": 0,
         "outOfScale": 0,
-        "fractionalCounts": 4,
-        "slips": 7,
+        "fractionalCounts": 0,
+        "slips": 8,
         "distinctSlips": [
           "ADDED_INSTEAD_OF_SCALING",
-          "USED_ORIGINAL_TOTAL",
-          "STOPPED_AT_INTERMEDIATE_TOTAL",
-          "USED_GIVEN_VALUE_AS_ANSWER",
           "USED_NEW_TOTAL",
-          "APPLIED_STEP_TWICE",
-          "REVERSED_INVERSE_PROPORTION"
+          "USED_GIVEN_VALUE_AS_ANSWER",
+          "USED_ORIGINAL_TOTAL",
+          "REVERSED_INVERSE_PROPORTION",
+          "STOPPED_AT_INTERMEDIATE_TOTAL",
+          "MISREAD_THE_STEP",
+          "APPLIED_STEP_TWICE"
         ],
         "outOfScaleShare": 0
       },
