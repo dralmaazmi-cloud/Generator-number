@@ -1,0 +1,486 @@
+{
+  "schema": "rc2-freeze-v1",
+  "supersedes": [
+    {
+      "RC2_COMMIT": "ddc2c9016a9ff68106a18182605e0a20a603f158",
+      "treeHash": "aa7b51f9b329a0b1341419a199a4c55e09adecd7",
+      "frozenAt": "2026-09-12T11:15:12.650Z",
+      "productionBundleSha256": "3d2d668d6455193453692723801ee6cab359969d82fc383e4386179657b42dd3",
+      "reason": "superseded: package.json moved when the freeze's own tests were registered, and package.json is in the production bundle"
+    },
+    {
+      "RC2_COMMIT": "56565ec4e1be4ace34dff60a0b5b6368e6177cf0",
+      "treeHash": "43515585d1901495df4607472cf637d0349f9295",
+      "frozenAt": "2026-09-12T11:37:09.472Z",
+      "productionBundleSha256": "69e39e737a0347ae5edd890011b6cb1161fcc1edc5482fdf98b9669fcf0e3c53",
+      "reason": "archived, not invalidated: this freeze was sound and holdout AUDIT-2026-09-12-B was generated from exactly this production state. RC2.1 remediates defects the holdout exposed, so production necessarily moves past it and a new freeze must be taken. The full record is kept at rc2/FREEZE_RC2.json so holdout B's provenance stays checkable.",
+      "archivedRecord": "rc2/FREEZE_RC2.json",
+      "holdoutGeneratedFromIt": "AUDIT-2026-09-12-B"
+    }
+  ],
+  "section": "§24",
+  "frozenAt": "2026-09-12T13:59:58.115Z",
+  "RC2_COMMIT": "fc45667fa977679a4b4ded3857fb0e2c00a7d456",
+  "treeHash": "818047b26026efa50b3ce9ef2289e2731af9b0cc",
+  "branch": "claude/rc2-implementation",
+  "engineVersion": "1.4.0",
+  "testCount": 348,
+  "frozenRC1Baseline": "7b5d4617295c98a8ed0f87d204f4745dd5db05dd",
+  "scopeCommit": "af61d28d6fd6797288ad767832f354dd91a0d400",
+  "scopeSchema": "rc2-scope-frozen-v2",
+  "developmentSeeds": [
+    "RC2-DEV-ALPHA",
+    "RC2-DEV-BETA",
+    "RC2-DEV-GAMMA",
+    "RC2-DEV-DELTA",
+    "RC2-DEV-EPSILON"
+  ],
+  "holdoutSeed": "AUDIT-2026-09-12-B",
+  "holdoutGenerated": false,
+  "developmentCorpus": {
+    "published": 10000,
+    "templates": 107,
+    "families": 16,
+    "sha256": "1b75313247a21444e1805840a938c51adc0b6039434c237f89e44ec09ab01a57",
+    "gzipSha256": "bf27cd60048635b7e180e734096e4cc7c3196e0e8a4b1d419432f6ae926bc1b4"
+  },
+  "internalGate": {
+    "verdict": "PASS",
+    "conditions": 22,
+    "evaluatedAt": "2026-09-12T13:58:25.781Z",
+    "headCommit": "f3657b27183f47180ec6a07956944ccfcc1a9ea5"
+  },
+  "productionFileCount": 46,
+  "productionFiles": [
+    {
+      "path": "app.js",
+      "bytes": 40101,
+      "sha256": "6efee939b6114069d3d88b650667f57991023b16039d17f2d4cce225c0af21d6"
+    },
+    {
+      "path": "generator_manifest.json",
+      "bytes": 17920,
+      "sha256": "db5a3b5dd70b5c99cc0639ea08e1d3a5e61bdb262f6ed1e2b3d1350993fbfd47"
+    },
+    {
+      "path": "index.html",
+      "bytes": 14166,
+      "sha256": "c278260b3799a2b7ff8f9735047f113ed0ccdb113936e949d197de3cfd89667b"
+    },
+    {
+      "path": "package.json",
+      "bytes": 1376,
+      "sha256": "cdb0796f02a98d4cf27f1dd6647c02366ac311567d00af3736b7a87a5ec97b8e"
+    },
+    {
+      "path": "report.js",
+      "bytes": 10870,
+      "sha256": "1eb2f37977b6a29d213ed75a719a9e4672bde7fc6d5a257f23cd763d10f6e515"
+    },
+    {
+      "path": "src/arabic/constructions.js",
+      "bytes": 10945,
+      "sha256": "9f142b67c92193c2962989597284632663560a10a567803711910ea3e78b3832"
+    },
+    {
+      "path": "src/arabic/units.js",
+      "bytes": 13515,
+      "sha256": "6982377755e38b54e90ef3974ba494ce8782909726d01d94275834969085002c"
+    },
+    {
+      "path": "src/families/_shared.js",
+      "bytes": 11536,
+      "sha256": "1113c72af8d969db96b5c574631efaf06beaceaf6de022b7437deccb3ff1ff53"
+    },
+    {
+      "path": "src/families/ages.js",
+      "bytes": 24182,
+      "sha256": "923b2eea91bac086af1df5a8d3724b2dac59784e3416fda939d192766ceb76d2"
+    },
+    {
+      "path": "src/families/averages.js",
+      "bytes": 24838,
+      "sha256": "d52ba4a34e21a977287fcb390ef56cf59dc1f0eeb8848738f01a768785d44830"
+    },
+    {
+      "path": "src/families/calendar.js",
+      "bytes": 19471,
+      "sha256": "3f87e4ba6b003702b001661bf6c4498fb4bc32b08e559977a26b1eda9597b186"
+    },
+    {
+      "path": "src/families/combined_rate.js",
+      "bytes": 21399,
+      "sha256": "122b5041109839fd6c7bd34ca559060a71422c5f97264d939c9a7cbd97d5ea81"
+    },
+    {
+      "path": "src/families/direct_proportion.js",
+      "bytes": 38983,
+      "sha256": "778b79fc966344eb40f3937a279b119b4d9aedb9d22545b227afc7cace3588f4"
+    },
+    {
+      "path": "src/families/fractions.js",
+      "bytes": 10611,
+      "sha256": "e4eab2243da1be654bb689d82bcdbb9c917e7dac2aefca218e7f46f59ab25a5a"
+    },
+    {
+      "path": "src/families/machines.js",
+      "bytes": 25452,
+      "sha256": "55595b2e113c760617b9b92ba6a3fa133f5367b39b88f58b728121066f5ac584"
+    },
+    {
+      "path": "src/families/odd_one_out.js",
+      "bytes": 14166,
+      "sha256": "c2eaf3184f96857060ddde124dee7d8bda347c6d629372c8adf1291af782967a"
+    },
+    {
+      "path": "src/families/percentages.js",
+      "bytes": 24663,
+      "sha256": "0e52d22c00cc813074cb91ac3af11235c22177a35c6b11fd599854b68158affd"
+    },
+    {
+      "path": "src/families/profit_loss.js",
+      "bytes": 19357,
+      "sha256": "ee2637d18c71e360fad851b51d80396c7bea2b04c89d7e245ab154a054d847ba"
+    },
+    {
+      "path": "src/families/ratios.js",
+      "bytes": 27145,
+      "sha256": "9148a3896d8839a3b2182e6fbfd2651b514c6842daa48f7e0f21cf28f546b3d3"
+    },
+    {
+      "path": "src/families/relational.js",
+      "bytes": 30353,
+      "sha256": "a9421ccea8db23c878d8f1234a87981df56ee8431831634bd5bbc88d72adeb03"
+    },
+    {
+      "path": "src/families/sequences.js",
+      "bytes": 41264,
+      "sha256": "8c8bfb3ebe5746f4c6a641f0a0f3abe6706b80c5ac1fea05292e546ef346e0b0"
+    },
+    {
+      "path": "src/families/speed.js",
+      "bytes": 28858,
+      "sha256": "6139de8033c95792e5ac7ab60da8626c3c1e5f0cb724b0b0f850caceea4f8d13"
+    },
+    {
+      "path": "src/families/unit_rate.js",
+      "bytes": 20339,
+      "sha256": "a2c9938d90c843830d16c4bcd34aff6a1353b37021fdac455c98b5f0d7f82b5f"
+    },
+    {
+      "path": "src/families/work_time.js",
+      "bytes": 25549,
+      "sha256": "3c1e2e325eafc5483815412b959182636df5afb7419703819d6c1a9f57ee1731"
+    },
+    {
+      "path": "src/index.js",
+      "bytes": 31594,
+      "sha256": "6c4871cb183bc25ad5ace0c4c72f8d4f08897b35410c71f5f283e957bbae1f49"
+    },
+    {
+      "path": "src/qa/ambiguity.js",
+      "bytes": 10562,
+      "sha256": "643fc6adfa6f2174515949af325f321aa61490ebc19c014b1cfd147a0a30082e"
+    },
+    {
+      "path": "src/qa/analytics.js",
+      "bytes": 3954,
+      "sha256": "0e67b1a9d21fa59e99237e158175211e06a5dc35040647d531351fb3ea11e69e"
+    },
+    {
+      "path": "src/qa/complexity.js",
+      "bytes": 7346,
+      "sha256": "a404e31205177619fee19dca883a32d747e71a32442f13e5aced062567011ae3"
+    },
+    {
+      "path": "src/qa/distractor-plausibility.js",
+      "bytes": 4351,
+      "sha256": "e9d2c39112ee68ddba13611e46fc2ced1efaa74e35bb9a536b6b3793dae3172f"
+    },
+    {
+      "path": "src/qa/distractor-provenance.js",
+      "bytes": 6550,
+      "sha256": "0d2f87a1e8cfdb938eabd1cbfcb9f642771411587b94868d04c287451d1f4f61"
+    },
+    {
+      "path": "src/qa/equations.js",
+      "bytes": 10355,
+      "sha256": "e493667fd25cdaebe070c4a106fc4a95539507a11b85ec20108000df23811a30"
+    },
+    {
+      "path": "src/qa/feedback-metrics.js",
+      "bytes": 6613,
+      "sha256": "24185c779be698848c3a3787a8d1ba45597fafa462f69d107d87654d208e6dd5"
+    },
+    {
+      "path": "src/qa/fingerprint.js",
+      "bytes": 6672,
+      "sha256": "c0ecfb92d56311007c696ab86c454f86eb9b16ddd8a2154de1a70628dd236377"
+    },
+    {
+      "path": "src/qa/fraction.js",
+      "bytes": 5470,
+      "sha256": "33fb98995d3bffe83eccb7965f54e00497504448bbbec6239dd18fa69c186520"
+    },
+    {
+      "path": "src/qa/misconception-context.js",
+      "bytes": 5933,
+      "sha256": "901d421b3b4a833a0e495414dd770032998a4b3d7ab3ad4ce9a3c8c382e1cf5b"
+    },
+    {
+      "path": "src/qa/misconceptions.js",
+      "bytes": 14567,
+      "sha256": "f8ee426cefaeee4cde1c6e656205833c0089160ade8036a1cb7228fe72fe78a2"
+    },
+    {
+      "path": "src/qa/oracle-engine.js",
+      "bytes": 4140,
+      "sha256": "a7fa43d3093ad3131518aab738fe57501bb107012bd494831e403efd50044a85"
+    },
+    {
+      "path": "src/qa/pedagogy.js",
+      "bytes": 5555,
+      "sha256": "437aeb709bc4194e1417f1d8b036467f5f1fa416e33dac6309768227d6f51687"
+    },
+    {
+      "path": "src/qa/pipeline.js",
+      "bytes": 13755,
+      "sha256": "6b7bffb856863aa6fc98d263fbaf1030c06cea233ff5d7349aca571c1267012e"
+    },
+    {
+      "path": "src/qa/reasons.js",
+      "bytes": 3723,
+      "sha256": "0358a3cec4d6cddeeab160a8d6691538b10061850f025577a883ea28cce223ee"
+    },
+    {
+      "path": "src/qa/relational-oracle.js",
+      "bytes": 3187,
+      "sha256": "eae51805f1a45ab1be0bacadb658d4a1266c2a5bd0ec4d696d1ff99b52da91f8"
+    },
+    {
+      "path": "src/qa/telemetry.js",
+      "bytes": 9265,
+      "sha256": "de9e5f3479122215ddb593ee6821ddb8ce3c894955ca3ebb2fd92958ef072e30"
+    },
+    {
+      "path": "src/qa/text-params.js",
+      "bytes": 2271,
+      "sha256": "d83520c38e4aa54377603e29d355232a6e407975bc32cc585229135977ec8d8e"
+    },
+    {
+      "path": "src/registry.js",
+      "bytes": 5549,
+      "sha256": "e29802ff3cdfed3d2374ea7ffe80d03f1af83949d7799bbd1b1e5e4878064def"
+    },
+    {
+      "path": "src/rng.js",
+      "bytes": 1892,
+      "sha256": "564fd40c853f528dc1fa6cc92aa9ce3f54d41590627ad4e8b45c7030341dd1d9"
+    },
+    {
+      "path": "src/utils.js",
+      "bytes": 16066,
+      "sha256": "01f88a84064d31b9697bb451494ef0638df5fd3f544683bdaa1469b6b21aaf62"
+    }
+  ],
+  "productionBundleSha256": "fd0db212b5ef871561e66ac55f92381be3bc59cb7fd8dad67eef1743458f092a",
+  "evidenceArtifacts": [
+    {
+      "path": "rc2/COVERAGE_MATRIX.json",
+      "bytes": 51413,
+      "sha256": "6d47667966658b5290b7338d1510ab4ea367288c65cf36baf42599eece526956"
+    },
+    {
+      "path": "rc2/DEGENERACY_COVERAGE.json",
+      "bytes": 67132,
+      "sha256": "3b38be13ecc2714049152616176de7d820345bb557e48bb1c0034b591924dcec"
+    },
+    {
+      "path": "rc2/DEVELOPMENT_CORPUS.json",
+      "bytes": 6105,
+      "sha256": "e74db85a964e41536e814dc928462149ba690c2948e69dac56e4204ea51059eb"
+    },
+    {
+      "path": "rc2/FREEZE_RC2.json",
+      "bytes": 11172,
+      "sha256": "5ac98cfa0f7b8f6448ae73d40d3be178fe5842cc4263bd1443436c9454f3fa9f"
+    },
+    {
+      "path": "rc2/HOLDOUT.json",
+      "bytes": 16545,
+      "sha256": "4da553b82936ce3bc8cacd6fb2c65fb94463158b7fdef0fadad1e6a756b80145"
+    },
+    {
+      "path": "rc2/HOLDOUT_FINDINGS.json",
+      "bytes": 6115,
+      "sha256": "a19ada0537d3e182ddba524e0e78d00c26492e0234c9b29e66076e82529413fe"
+    },
+    {
+      "path": "rc2/INTERNAL_GATE.json",
+      "bytes": 7805,
+      "sha256": "af6ebae1efd876819b2e6f97be3171bf41014077a2ced5937fa760f316c2fe56"
+    },
+    {
+      "path": "rc2/RC21_DEVELOPMENT_CORPUS.json",
+      "bytes": 6219,
+      "sha256": "056adb15976bc50002be8e3c8bb64c7b84e8c53996696db6869447ac89b1e943"
+    },
+    {
+      "path": "rc2/RC21_DIFFICULTY.json",
+      "bytes": 113991,
+      "sha256": "48d66a91c250ac0aa057b021f2e739c8fb9f34fe27630b178c43383974837406"
+    },
+    {
+      "path": "rc2/RC21_DISTRACTORS.json",
+      "bytes": 8312,
+      "sha256": "273f3b1e5db959f4b5e59cb834925b39c36fc3b5bd57e0303227479b6b89f3bd"
+    },
+    {
+      "path": "rc2/RC2_003_REJECTION_COST.json",
+      "bytes": 51938,
+      "sha256": "738ec6a0b7cb356657ac85183daa15c727b3a3fb7efd0fed716d45ddca56a73a"
+    },
+    {
+      "path": "rc2/RC2_006_PDF_ACCESSIBILITY.json",
+      "bytes": 5233,
+      "sha256": "6905fee30e7367007b257d00f4516cff291559bf2bb5608000f84f43f32237ad"
+    },
+    {
+      "path": "rc2/RC2_011_ANSWER_SPACE.json",
+      "bytes": 35908,
+      "sha256": "58fde7e42b4f1e1504e6c4832b71f4c19f6200d08e4e6e6f7a3e3589cfe327da"
+    },
+    {
+      "path": "rc2/RC2_012_SURVIVOR_AUDIT.json",
+      "bytes": 246905,
+      "sha256": "20049eedc3f92da49c50a6eb69c828fdbe92f02540921f97bbf3389d656ca243"
+    },
+    {
+      "path": "rc2/RC2_014_FEEDBACK_METRICS.json",
+      "bytes": 3524,
+      "sha256": "ce54832653440283ffdca15301105c9f2635d40745b9b14c561b5482d43bea43"
+    },
+    {
+      "path": "rc2/RC2_015_DIFFICULTY_CALIBRATION.json",
+      "bytes": 40832,
+      "sha256": "246b67d297c9b64142d0b7aa425d77b201ca22438d319c43d427632c0d8ac072"
+    },
+    {
+      "path": "rc2/RC2_IMPLEMENTATION_REPORT.md",
+      "bytes": 9466,
+      "sha256": "8d44f80ccfe4f0623ea722e00ebfa2c8dd122390d89877eedeb562a0097137d0"
+    },
+    {
+      "path": "rc2/SUPERSEDED_FREEZES.json",
+      "bytes": 1361,
+      "sha256": "b7229ca297cd7a9f42e5c0ddda62936b2b4d54f4198e7876e8da9fad050c134b"
+    },
+    {
+      "path": "rc2/development-corpus.jsonl.gz",
+      "bytes": 1198125,
+      "sha256": "bf27cd60048635b7e180e734096e4cc7c3196e0e8a4b1d419432f6ae926bc1b4"
+    },
+    {
+      "path": "rc2/holdout-package/MANIFEST.json",
+      "bytes": 10095,
+      "sha256": "595ad2be853e66edab3db41404649bf8255ac65f2dcf281b4459335ea6f37003"
+    },
+    {
+      "path": "rc2/holdout-package/README.md",
+      "bytes": 8077,
+      "sha256": "8062bd76e446712bd805849d8a85f8e067990cb4a248b971ce0c8a4399383dd2"
+    },
+    {
+      "path": "rc2/holdout-package/SOLVABILITY.json",
+      "bytes": 74846,
+      "sha256": "25ec130c4dd4deeca414064a9f74d5a8679fb4a56dc5d8d0a24f61c6cdd3425c"
+    },
+    {
+      "path": "rc2/holdout-package/blind/blind-questions.jsonl",
+      "bytes": 138685,
+      "sha256": "ed45cc7b7af41613acc8091b89c1bb20b9d48c9e0d02e0a1b8b570d5ca0a2e5c"
+    },
+    {
+      "path": "rc2/holdout-package/blind/blind-questions.txt",
+      "bytes": 81023,
+      "sha256": "bfd0805304e0db17225587688099cd3ecb5b3d203a1554b4102fcb9552af4e12"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-1.html",
+      "bytes": 52468,
+      "sha256": "de236d8c4d42bdcec538f162e965950398358b7ce530d26cc24977ca55f63515"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-1.pdf",
+      "bytes": 239029,
+      "sha256": "4ec8bbd577ae8c755a634ed6ac99ec1b3d0e5f65bce33cd04048b553cbc92eaa"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-2.html",
+      "bytes": 53286,
+      "sha256": "a433d69f582e1a694a9e1edaecca7cbd6590b72357713cc55ca022f920303749"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-2.pdf",
+      "bytes": 241521,
+      "sha256": "f0f5baf89d0cf87c7303c0c83d11fc180a0296de5cf49b82ba8e036010aebf8e"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-3.html",
+      "bytes": 51835,
+      "sha256": "57745fb52eeeff7d8bb42aee867df4f99a971e0a4a88027f53ea6ded70812b27"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-3.pdf",
+      "bytes": 240233,
+      "sha256": "a2c19ff32375a16c557cba14e7a41abf7ad8e3680ecc33da2be7354eb22b82ac"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-4.html",
+      "bytes": 52932,
+      "sha256": "aaba632c7bcc2d8dde33a4455e5ac5d8994d4b13838b42c3a8ee0ee5f959aff2"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-4.pdf",
+      "bytes": 242559,
+      "sha256": "7c8da225f1130a99790ca93f0ad89a04daa34ccc793f9dda96953fd6b69b6da4"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-5.html",
+      "bytes": 54977,
+      "sha256": "ab4df5ddbaaee0103b118761a87c8dde7f3d8116acebe87704a35429cbe116fc"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-5.pdf",
+      "bytes": 244367,
+      "sha256": "a9f586b331ec21c36e9a0fe1bfc6d50716f8b8a5ca264d7f1151ed0f3c8f4d09"
+    },
+    {
+      "path": "rc2/holdout-package/keys/answer-key.jsonl",
+      "bytes": 13910,
+      "sha256": "966c523d33e60ebbf53ea7c9cd178875157296d38b46100fd33a41b2fea27bd1"
+    },
+    {
+      "path": "rc2/holdout-package/keys/item-metadata.jsonl",
+      "bytes": 178110,
+      "sha256": "941a7e29c4ef31d01583fd8a75464ec05aeac02d92deac6a2f19f650e10848fd"
+    },
+    {
+      "path": "rc2/holdout-package/telemetry/HOLDOUT_TELEMETRY_EVIDENCE.json",
+      "bytes": 3563,
+      "sha256": "b4d8e242c5b71a65a4a5d1d84f40efc5737ed58c64c0756815d3dd33b3c5bc77"
+    },
+    {
+      "path": "rc2/holdout.jsonl.gz",
+      "bytes": 32046,
+      "sha256": "7bbae0177ec5048b8af3d14cfbc32975e5d72c4fdcb95cb8b148b10a74319c49"
+    },
+    {
+      "path": "rc2/rc21-development-corpus.jsonl.gz",
+      "bytes": 1196674,
+      "sha256": "ddf7490a3a134fc7826bf26e276ced6c3821899ca5cf0ddaf74c18f52a0264a7"
+    }
+  ],
+  "declaration": "After this point no production file changes. The holdout is generated from this engine and from no other.",
+  "note": "RC2_COMMIT identifies the frozen PRODUCTION state. This file is evidence recorded about that state, so the commit that carries this file is necessarily a later one; what must not change is productionBundleSha256, and verifyFreeze() is what checks that."
+}
