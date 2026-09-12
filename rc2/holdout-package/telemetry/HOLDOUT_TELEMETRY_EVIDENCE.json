@@ -1,0 +1,83 @@
+{
+  "schema": "rc2-holdout-telemetry-evidence-v1",
+  "section": "§26",
+  "holdoutSeed": "AUDIT-2026-09-12-B",
+  "holdoutStatus": "FAILED_DIAGNOSTIC_HOLDOUT",
+  "RC2_COMMIT": "56565ec4e1be4ace34dff60a0b5b6368e6177cf0",
+  "derivedFrom": {
+    "file": "rc2/HOLDOUT.json",
+    "sha256": "4da553b82936ce3bc8cacd6fb2c65fb94463158b7fdef0fadad1e6a756b80145",
+    "note": "Every figure below is read or subtracted from this preserved file. Nothing was re-run on the holdout seed to produce it."
+  },
+  "engineLevelReconciliation": {
+    "note": "This identity holds exactly. RC2-003 gated on it, and it is not what failed.",
+    "proposals": 373,
+    "published": 359,
+    "samplerFailures": 0,
+    "finalizationFailures": 13,
+    "pipelineRejectedCandidates": 1,
+    "identity": "373 = 359 + 0 + 13 + 1",
+    "balanced": true,
+    "difference": 0
+  },
+  "sessionLevelAccounting": {
+    "note": "This is what failed. The session layer discards questions the engine already published, and records a disposition for only some of them.",
+    "generatedAndPublishedCandidates": 359,
+    "deliveredToSessions": 250,
+    "discarded": 109,
+    "discardedWithRecordedDisposition": 5,
+    "discardedWithoutTelemetryDisposition": 104,
+    "derivation": [
+      "generated/published candidates = 359  (rejectionTelemetry.reconciliation.breakdown.published)",
+      "delivered                      = 250  (totals.delivered; 5 sessions x 50)",
+      "discarded                      = 359 - 250 = 109",
+      "with recorded disposition      = 5  (rejectionTelemetry.byStage.diversity)",
+      "without any disposition        = 109 - 5 = 104"
+    ],
+    "unrecordedShareOfPublished": 0.2897,
+    "recordedDispositionsByReason": {
+      "REPEATED_REASONING_PATTERN": 4,
+      "DUPLICATE_FINGERPRINT": 1
+    },
+    "codePathsThatRecord": [
+      "src/index.js:379  DUPLICATE_FINGERPRINT      -> telemetry.diversityRejection",
+      "src/index.js:389  REPEATED_REASONING_PATTERN -> telemetry.diversityRejection"
+    ],
+    "codePathsThatDoNotRecord": [
+      "src/index.js:381  recent-session memory (STATEFUL_SESSION_GENERATION only) -> bare continue",
+      "src/index.js:402  per-session template cap                                 -> bare continue",
+      "src/index.js:403  sliding-window cap                                       -> bare continue"
+    ],
+    "notMeasured": "The split of the 104 between src/index.js:402 and src/index.js:403 was not measured. Separating them requires instrumenting frozen production code, which §24 forbids and which has not been done."
+  },
+  "independentReproductionOnDevelopmentSeed": {
+    "how": "Five sessions of the same shape on development seed RC2-DEV-ALPHA, so the finding does not rest on the holdout alone and the holdout did not need a second generation to confirm it.",
+    "enginePublished": 328,
+    "deliveredToSessions": 250,
+    "diversityRejectionsRecorded": 4,
+    "unrecordedDiscards": 74,
+    "unrecordedShareOfPublished": 0.2256
+  },
+  "fullTelemetrySnapshot": {
+    "byStage": {
+      "proposal": 373,
+      "published": 359,
+      "distractor_filter": 315,
+      "family_sampler": 295,
+      "finalization": 13,
+      "diversity": 5,
+      "pipeline": 1
+    },
+    "byReason": {
+      "DISTRACTOR_IMPOSSIBLE": 315,
+      "SAMPLER_CONSTRAINT": 284,
+      "AMBIGUOUS_ODD_ONE_OUT": 11,
+      "DISTRACTOR_NO_MISCONCEPTION": 13,
+      "REPEATED_REASONING_PATTERN": 4,
+      "DUPLICATE_FINGERPRINT": 1,
+      "DEGENERATE_WRONG_METHOD_EQUALS_KEY": 1
+    },
+    "internalResamplesPerProposal": 0.791,
+    "exhaustions": 0
+  }
+}

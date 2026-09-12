@@ -1,0 +1,271 @@
+{
+  "schema": "rc2-holdout-package-v1",
+  "section": "§26",
+  "builtAt": "2026-09-12T11:57:59.787Z",
+  "holdout": {
+    "seed": "AUDIT-2026-09-12-B",
+    "status": "FAILED_DIAGNOSTIC_HOLDOUT",
+    "statusNote": "This holdout failed. It is delivered as diagnostic evidence for an independent review. It is NOT a sign-off holdout and does not become one.",
+    "generatedExactlyOnce": true,
+    "questions": 250,
+    "sessions": [
+      {
+        "id": "SESSION-1",
+        "kind": "MIXED",
+        "seed": "AUDIT-2026-09-12-B-SESSION-1",
+        "delivered": 50,
+        "bands": {
+          "medium": 29,
+          "easy": 13,
+          "hard": 8
+        },
+        "generationMode": "DETERMINISTIC_SINGLE_GENERATION",
+        "diversityWarnings": 0
+      },
+      {
+        "id": "SESSION-2",
+        "kind": "MIXED",
+        "seed": "AUDIT-2026-09-12-B-SESSION-2",
+        "delivered": 50,
+        "bands": {
+          "easy": 13,
+          "hard": 8,
+          "medium": 29
+        },
+        "generationMode": "DETERMINISTIC_SINGLE_GENERATION",
+        "diversityWarnings": 0
+      },
+      {
+        "id": "SESSION-3",
+        "kind": "MIXED",
+        "seed": "AUDIT-2026-09-12-B-SESSION-3",
+        "delivered": 50,
+        "bands": {
+          "hard": 8,
+          "medium": 29,
+          "easy": 13
+        },
+        "generationMode": "DETERMINISTIC_SINGLE_GENERATION",
+        "diversityWarnings": 0
+      },
+      {
+        "id": "SESSION-4",
+        "kind": "MIXED",
+        "seed": "AUDIT-2026-09-12-B-SESSION-4",
+        "delivered": 50,
+        "bands": {
+          "medium": 29,
+          "easy": 13,
+          "hard": 8
+        },
+        "generationMode": "DETERMINISTIC_SINGLE_GENERATION",
+        "diversityWarnings": 0
+      },
+      {
+        "id": "SESSION-5",
+        "kind": "ALL_HARD",
+        "seed": "AUDIT-2026-09-12-B-SESSION-5",
+        "delivered": 50,
+        "bands": {
+          "hard": 50
+        },
+        "generationMode": "DETERMINISTIC_SINGLE_GENERATION",
+        "diversityWarnings": 0
+      }
+    ]
+  },
+  "provenance": {
+    "RC2_COMMIT": "56565ec4e1be4ace34dff60a0b5b6368e6177cf0",
+    "treeHash": "43515585d1901495df4607472cf637d0349f9295",
+    "engineVersion": "1.4.0",
+    "productionBundleSha256": "69e39e737a0347ae5edd890011b6cb1161fcc1edc5482fdf98b9669fcf0e3c53",
+    "internalGate": {
+      "verdict": "PASS",
+      "conditions": 15,
+      "evaluatedAt": "2026-09-12T11:36:23.926Z",
+      "headCommit": "fa6cc617f3cfc69ea8baf8cc49eab5d5a0baba0d"
+    },
+    "sessionSeedRule": "`${HOLDOUT_SEED}-${sessionId}` — stated so the holdout is replayable"
+  },
+  "integrity": {
+    "note": "The preserved sources. This package is derived from them; none of them was written to.",
+    "sources": {
+      "corpus": {
+        "path": "rc2/holdout.jsonl.gz",
+        "sha256": "7bbae0177ec5048b8af3d14cfbc32975e5d72c4fdcb95cb8b148b10a74319c49",
+        "bytes": 32046
+      },
+      "report": {
+        "path": "rc2/HOLDOUT.json",
+        "sha256": "4da553b82936ce3bc8cacd6fb2c65fb94463158b7fdef0fadad1e6a756b80145",
+        "bytes": 16545
+      },
+      "findings": {
+        "path": "rc2/HOLDOUT_FINDINGS.json",
+        "sha256": "a19ada0537d3e182ddba524e0e78d00c26492e0234c9b29e66076e82529413fe",
+        "bytes": 6115
+      },
+      "freeze": {
+        "path": "rc2/FREEZE.json",
+        "sha256": "5ac98cfa0f7b8f6448ae73d40d3be178fe5842cc4263bd1443436c9454f3fa9f",
+        "bytes": 11172
+      }
+    },
+    "preservedCorpusSha256Uncompressed": "2c0ceb13c002f78f49cc2436a615378850e88ce25a0bb75d9f01ebf2640c4a42",
+    "recomputedCorpusSha256Uncompressed": "2c0ceb13c002f78f49cc2436a615378850e88ce25a0bb75d9f01ebf2640c4a42",
+    "corpusUnchanged": true
+  },
+  "blindness": {
+    "blindSetContains": [
+      "itemId",
+      "sessionId",
+      "sessionKind",
+      "questionNumber",
+      "family",
+      "templateId",
+      "declaredDifficulty",
+      "stem",
+      "options A-F"
+    ],
+    "blindSetExcludes": [
+      "correct option",
+      "correct value",
+      "computed complexity score",
+      "computed complexity band",
+      "fingerprints",
+      "structural signature"
+    ],
+    "keysDeliveredSeparatelyIn": [
+      "keys/answer-key.jsonl",
+      "keys/item-metadata.jsonl"
+    ],
+    "note": "Options are already in published order; nothing was reordered for this package."
+  },
+  "telemetryEvidence": {
+    "generatedAndPublishedCandidates": 359,
+    "deliveredToSessions": 250,
+    "discarded": 109,
+    "discardedWithoutTelemetryDisposition": 104,
+    "discardedWithRecordedDisposition": 5,
+    "file": "telemetry/HOLDOUT_TELEMETRY_EVIDENCE.json"
+  },
+  "rendering": {
+    "chromium": "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
+    "pdfs": [
+      {
+        "id": "SESSION-1",
+        "rendered": true,
+        "bytes": 236255
+      },
+      {
+        "id": "SESSION-2",
+        "rendered": true,
+        "bytes": 238350
+      },
+      {
+        "id": "SESSION-3",
+        "rendered": true,
+        "bytes": 237604
+      },
+      {
+        "id": "SESSION-4",
+        "rendered": true,
+        "bytes": 238675
+      },
+      {
+        "id": "SESSION-5",
+        "rendered": true,
+        "bytes": 240219
+      }
+    ]
+  },
+  "limitations": [
+    "The preserved holdout corpus records stems, the six published options, the key and the diversity/complexity metadata. It does NOT record per-question explanations, solution steps, per-option derivations or misconception ids. A blind review of mathematical correctness, option plausibility and Arabic language quality is fully supported by this package; a review of explanation and distractor-feedback quality is not, because those fields were never written to the preserved artifact.",
+    "Recovering them would mean replaying the holdout seeds through the engine. Replay is deterministic and would yield byte-identical questions, but it is still a second generation and it has NOT been performed. It requires explicit authorisation.",
+    "rc2/HOLDOUT.json records per-question latency percentiles as 0. They are unmeasured, not zero — see HOLDOUT-F2 in rc2/HOLDOUT_FINDINGS.json. The per-session figures in the same file are real.",
+    "The split of the 104 undispositioned discards between src/index.js:402 and src/index.js:403 was not measured, because separating them requires instrumenting frozen production code."
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 5194,
+      "sha256": "3083b98cb3708a541e49bcd1313fd1cc2954851c3b28d0bee4a779a50989606d"
+    },
+    {
+      "path": "blind/blind-questions.jsonl",
+      "bytes": 111539,
+      "sha256": "d8af82a759bbd4e2a2ac48e9e1a3fb7abc885a6f7fa64f282974df6abee380d7"
+    },
+    {
+      "path": "blind/blind-questions.txt",
+      "bytes": 79027,
+      "sha256": "e99ec0cbd0db86c944ecd513d19ad68feac033254b1f4177b4f522468fe60495"
+    },
+    {
+      "path": "blind/session-1.html",
+      "bytes": 32750,
+      "sha256": "8a40327238d2c0833195f4feadeb5cd0eddf556aa5a90b21d63f5575c514f5f0"
+    },
+    {
+      "path": "blind/session-1.pdf",
+      "bytes": 236255,
+      "sha256": "32e893d8b43c45a8989a4db0d35fe2ffd52cc22026fc1b032ce83313d6eeff20"
+    },
+    {
+      "path": "blind/session-2.html",
+      "bytes": 33135,
+      "sha256": "ed8df8670ab36cf7758ee5903ee30d2d9328086074211e3e9867a3be9615b8b1"
+    },
+    {
+      "path": "blind/session-2.pdf",
+      "bytes": 238350,
+      "sha256": "2a876aa52910cd20f1b2e47adfd6526d2a728d0031bf5891d85da4e64d1b5e9b"
+    },
+    {
+      "path": "blind/session-3.html",
+      "bytes": 32429,
+      "sha256": "bd7573e89869df8b2b283151b733f670e2842f2463984dda22a3f4b7f22e75ba"
+    },
+    {
+      "path": "blind/session-3.pdf",
+      "bytes": 237604,
+      "sha256": "46679074f45bda4f4607384b424ed077b2147f66f1ac8a9da7a4416825245a9d"
+    },
+    {
+      "path": "blind/session-4.html",
+      "bytes": 32955,
+      "sha256": "d61fec6b5d378c6dcc97a3fd7e5cdf0ac5ff4d31655c8baffc24b31b956d0bc3"
+    },
+    {
+      "path": "blind/session-4.pdf",
+      "bytes": 238675,
+      "sha256": "424923a7f1dad3a640173dd5178d3821b4b1500ce2d0c95fac242d9867994f74"
+    },
+    {
+      "path": "blind/session-5.html",
+      "bytes": 33993,
+      "sha256": "0c1c2d714fffb6728bbcf7590ea5d08c5c38146f3b7fd9548ccfb327711ef350"
+    },
+    {
+      "path": "blind/session-5.pdf",
+      "bytes": 240219,
+      "sha256": "16dd671a177988d4734c118dff4b21e77da3c7f0321bd1b1e83f7dcbe4241e94"
+    },
+    {
+      "path": "keys/answer-key.jsonl",
+      "bytes": 13910,
+      "sha256": "966c523d33e60ebbf53ea7c9cd178875157296d38b46100fd33a41b2fea27bd1"
+    },
+    {
+      "path": "keys/item-metadata.jsonl",
+      "bytes": 178110,
+      "sha256": "941a7e29c4ef31d01583fd8a75464ec05aeac02d92deac6a2f19f650e10848fd"
+    },
+    {
+      "path": "telemetry/HOLDOUT_TELEMETRY_EVIDENCE.json",
+      "bytes": 3563,
+      "sha256": "b4d8e242c5b71a65a4a5d1d84f40efc5737ed58c64c0756815d3dd33b3c5bc77"
+    }
+  ],
+  "fileCount": 16
+}

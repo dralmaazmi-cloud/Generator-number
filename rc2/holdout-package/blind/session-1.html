@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<title>SESSION-1 — blind holdout</title>
+<style>
+  @page { size: A4; margin: 14mm; }
+  body { font-family: "FreeSerif", "DejaVu Sans", "Noto Naskh Arabic", serif; font-size: 12pt; line-height: 1.85; color: #111; margin: 0; }
+  header { border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 14px; }
+  h1 { font-size: 15pt; margin: 0 0 4px; }
+  .meta { font-size: 9pt; color: #444; direction: ltr; text-align: left; font-family: "DejaVu Sans Mono", monospace; }
+  .warn { border: 1px solid #900; color: #900; padding: 6px 10px; margin: 10px 0 16px; font-size: 9.5pt; text-align: left; font-family: "DejaVu Sans", sans-serif; }
+  .q { break-inside: avoid; page-break-inside: avoid; margin: 0 0 14px; padding: 8px 10px; border-right: 3px solid #ccc; }
+  .hd { display: flex; justify-content: space-between; font-size: 8.5pt; color: #555; direction: ltr; font-family: "DejaVu Sans Mono", monospace; margin-bottom: 4px; }
+  .stem { margin: 0 0 6px; font-size: 12.5pt; }
+  .opts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px; }
+  .opts li { font-size: 11.5pt; }
+  .l { display: inline-block; min-width: 1.6em; color: #555; font-family: "DejaVu Sans Mono", monospace; }
+  footer { margin-top: 16px; border-top: 1px solid #999; padding-top: 6px; font-size: 8.5pt; color: #555; direction: ltr; text-align: left; }
+</style></head><body>
+<header>
+  <h1>RC2 — الاختبار التشخيصي المحجوز (نسخة بلا إجابات)</h1>
+  <div class="meta">SESSION-1 [MIXED] · seed AUDIT-2026-09-12-B-SESSION-1 · 50 questions · engine 1.4.0 · RC2_COMMIT 56565ec4e1be</div>
+</header>
+<div class="warn" dir="ltr"><strong>FAILED DIAGNOSTIC HOLDOUT.</strong> Delivered for independent blind review. No answer keys in this document. Questions are preserved exactly as generated and must not be edited, replaced or regenerated.</div>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-01</span><span class="tpl">REL_M_CONFIRM · relational · medium</span></div>
+    <p class="stem">راشد أسرع من فهد. خالد أسرع من علي. فهد أسرع من ريم. خالد أسرع من راشد. أي عبارة مؤكدة؟</p>
+    <ol class="opts"><li><span class="l">A</span>ريم أسرع من علي</li><li><span class="l">B</span>فهد أسرع من خالد</li><li><span class="l">C</span>راشد أسرع من خالد</li><li><span class="l">D</span>علي أسرع من راشد</li><li><span class="l">E</span>راشد أسرع من ريم</li><li><span class="l">F</span>علي أسرع من فهد</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-02</span><span class="tpl">WORK_E_INVERSE · work_time · easy</span></div>
+    <p class="stem">يستطيع 8 عمال إنجاز عمل في 6 أيام. إذا عمل 16 عاملًا بالكفاءة نفسها، فكم يومًا يحتاجون؟</p>
+    <ol class="opts"><li><span class="l">A</span>14 يومًا</li><li><span class="l">B</span>3 أيام</li><li><span class="l">C</span>1.5 يومًا</li><li><span class="l">D</span>12 يومًا</li><li><span class="l">E</span>48 يومًا</li><li><span class="l">F</span>يومان</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-03</span><span class="tpl">AGE_M_FUT_SUM_DIFF · ages · medium</span></div>
+    <p class="stem">سارة أكبر من مريم بـ8 سنوات. بعد 4 سنوات سيكون مجموع عمريهما 42 سنة. كم عمر سارة الآن؟</p>
+    <ol class="opts"><li><span class="l">A</span>25 سنة</li><li><span class="l">B</span>21 سنة</li><li><span class="l">C</span>8 سنوات</li><li><span class="l">D</span>27 سنة</li><li><span class="l">E</span>13 سنة</li><li><span class="l">F</span>17 سنة</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-04</span><span class="tpl">COMB_M_SOLO_THEN · combined_rate · medium</span></div>
+    <p class="stem">ينجز العامل أ 18 وحدة/ساعة، والعامل ب 9 وحدة/ساعة. عمل أ وحده 4 ساعات، ثم عملا معًا حتى بلغ الإنجاز 234 وحدة. كم ساعة عملا معًا؟</p>
+    <ol class="opts"><li><span class="l">A</span>6 ساعات</li><li><span class="l">B</span>3 ساعات</li><li><span class="l">C</span>72 ساعة</li><li><span class="l">D</span>9 ساعات</li><li><span class="l">E</span>18 ساعة</li><li><span class="l">F</span>4.5 ساعة</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-05</span><span class="tpl">AVG_H_TARGET · averages · hard</span></div>
+    <p class="stem">متوسط 6 قيم هو 17. ما القيمة التي يجب إضافتها ليصبح متوسط القيم جميعها هو 22؟</p>
+    <ol class="opts"><li><span class="l">A</span>30</li><li><span class="l">B</span>52</li><li><span class="l">C</span>22</li><li><span class="l">D</span>154</li><li><span class="l">E</span>5</li><li><span class="l">F</span>102</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-06</span><span class="tpl">RATE_H_TWO_PHASE · unit_rate · hard</span></div>
+    <p class="stem">يعمل جهاز بمعدل 40 وحدة/ساعة لمدة 3 ساعات، ثم ارتفع معدله بنسبة 20% وعمل 4 ساعات أخرى. كم وحدة أنجز إجمالًا؟</p>
+    <ol class="opts"><li><span class="l">A</span>300 وحدة</li><li><span class="l">B</span>304 وحدة</li><li><span class="l">C</span>312 وحدة</li><li><span class="l">D</span>280 وحدة</li><li><span class="l">E</span>350.4 وحدة</li><li><span class="l">F</span>120 وحدة</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-07</span><span class="tpl">CAL_M_COMPOUND · calendar · medium</span></div>
+    <p class="stem">اليوم الذي يأتي بعد يومين من غد هو الخميس. فما اليوم الحالي؟</p>
+    <ol class="opts"><li><span class="l">A</span>الخميس</li><li><span class="l">B</span>الأربعاء</li><li><span class="l">C</span>الثلاثاء</li><li><span class="l">D</span>السبت</li><li><span class="l">E</span>الأحد</li><li><span class="l">F</span>الاثنين</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-08</span><span class="tpl">PL_E_PROFIT · profit_loss · easy</span></div>
+    <p class="stem">اشترى متجر سلعة بـ125 درهمًا وباعها بـ145 درهمًا. ما نسبة الربح من سعر الشراء؟</p>
+    <ol class="opts"><li><span class="l">A</span>7.4%</li><li><span class="l">B</span>8%</li><li><span class="l">C</span>116%</li><li><span class="l">D</span>13.8%</li><li><span class="l">E</span>16%</li><li><span class="l">F</span>32%</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-09</span><span class="tpl">SPD_M_EQUAL_DIST · speed · medium</span></div>
+    <p class="stem">قطعت سيارة نصف المسافة بسرعة 100 كم/ساعة، والنصف الآخر بسرعة 25 كم/ساعة. إذا استغرقت الرحلة كاملة 30 ساعة، فما المسافة الكلية؟</p>
+    <ol class="opts"><li><span class="l">A</span>3750 كيلومترًا</li><li><span class="l">B</span>750 كيلومترًا</li><li><span class="l">C</span>1200 كيلومترًا</li><li><span class="l">D</span>1875 كيلومترًا</li><li><span class="l">E</span>3000 كيلومترًا</li><li><span class="l">F</span>600 كيلومترًا</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-10</span><span class="tpl">ODD_M_PRIME2 · odd_one_out · medium</span></div>
+    <p class="stem">أي عدد لا ينتمي إلى المجموعة الآتية؟</p>
+    <ol class="opts"><li><span class="l">A</span>10</li><li><span class="l">B</span>34</li><li><span class="l">C</span>2</li><li><span class="l">D</span>14</li><li><span class="l">E</span>26</li><li><span class="l">F</span>22</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-11</span><span class="tpl">SEQ_E_ARITH · sequences · easy</span></div>
+    <p class="stem">ما العدد المفقود في المتتالية؟</p>
+    <ol class="opts"><li><span class="l">A</span>56</li><li><span class="l">B</span>100</li><li><span class="l">C</span>60</li><li><span class="l">D</span>55</li><li><span class="l">E</span>50</li><li><span class="l">F</span>5</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-12</span><span class="tpl">FRAC_M_3 · fractions · medium</span></div>
+    <p class="stem">ثُمن سُدس ربع عدد يساوي 12. فما العدد؟</p>
+    <ol class="opts"><li><span class="l">A</span>442368</li><li><span class="l">B</span>2304</li><li><span class="l">C</span>576</li><li><span class="l">D</span>288</li><li><span class="l">E</span>204</li><li><span class="l">F</span>96</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-13</span><span class="tpl">PCT_M_UNIT_PRICE · percentages · medium</span></div>
+    <p class="stem">ثمن 4 وحدات هو 32 درهمًا. إذا ارتفع سعر الوحدة بنسبة 20%، فما ثمن 10 وحدات بعد الزيادة؟</p>
+    <ol class="opts"><li><span class="l">A</span>96 درهمًا</li><li><span class="l">B</span>52 درهمًا</li><li><span class="l">C</span>38.4 درهمًا</li><li><span class="l">D</span>100 درهمًا</li><li><span class="l">E</span>280 درهمًا</li><li><span class="l">F</span>9.6 درهمًا</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-14</span><span class="tpl">MACH_E_REQUIRED · machines · easy</span></div>
+    <p class="stem">تنتج 4 آلات متطابقة في الإنتاجية 320 قطعة خلال 5 ساعات. كم آلة نحتاج لإنتاج 720 قطعة خلال 3 ساعات؟</p>
+    <ol class="opts"><li><span class="l">A</span>4 آلات</li><li><span class="l">B</span>15 آلة</li><li><span class="l">C</span>9 آلات</li><li><span class="l">D</span>30 آلة</li><li><span class="l">E</span>19 آلة</li><li><span class="l">F</span>16 آلة</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-15</span><span class="tpl">PROP_H_COST_PLUS · direct_proportion · hard</span></div>
+    <p class="stem">تكلف 3 وحدات مبلغ 18 درهمًا بالسعر نفسه. إذا اشترينا 12 وحدة وأُضيف رسم ثابت قدره 15 درهمًا يُدفع مرة واحدة، فما التكلفة الكلية؟</p>
+    <ol class="opts"><li><span class="l">A</span>87 درهمًا</li><li><span class="l">B</span>33 درهمًا</li><li><span class="l">C</span>252 درهمًا</li><li><span class="l">D</span>19.5 درهمًا</li><li><span class="l">E</span>72 درهمًا</li><li><span class="l">F</span>105 درهمًا</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-16</span><span class="tpl">RAT_M_COMMON_SUM · ratios · medium</span></div>
+    <p class="stem">النسبة أ : ب = 1 : 3، والنسبة ب : ج = 2 : 3. إذا كان أ + ج = 11، فما قيمة ب؟</p>
+    <ol class="opts"><li><span class="l">A</span>6</li><li><span class="l">B</span>1</li><li><span class="l">C</span>28</li><li><span class="l">D</span>11</li><li><span class="l">E</span>8.25</li><li><span class="l">F</span>2</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-17</span><span class="tpl">ODD_H_TRIANGULAR · odd_one_out · hard</span></div>
+    <p class="stem">أي عدد لا ينتمي إلى المجموعة الآتية؟</p>
+    <ol class="opts"><li><span class="l">A</span>66</li><li><span class="l">B</span>55</li><li><span class="l">C</span>78</li><li><span class="l">D</span>36</li><li><span class="l">E</span>45</li><li><span class="l">F</span>25</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-18</span><span class="tpl">AVG_M_COMBINE · averages · medium</span></div>
+    <p class="stem">متوسط 4 قيم هو 14، ومتوسط 6 قيم أخرى هو 19. فما متوسط القيم مجتمعة؟</p>
+    <ol class="opts"><li><span class="l">A</span>33</li><li><span class="l">B</span>16</li><li><span class="l">C</span>19</li><li><span class="l">D</span>14</li><li><span class="l">E</span>17</li><li><span class="l">F</span>16.5</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-19</span><span class="tpl">CAL_E_TOM · calendar · easy</span></div>
+    <p class="stem">إذا كان غدًا هو يوم الاثنين، فما اليوم الحالي؟</p>
+    <ol class="opts"><li><span class="l">A</span>الأحد</li><li><span class="l">B</span>الخميس</li><li><span class="l">C</span>الأربعاء</li><li><span class="l">D</span>الثلاثاء</li><li><span class="l">E</span>الجمعة</li><li><span class="l">F</span>السبت</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-20</span><span class="tpl">WORK_H_WORKERS_EFF · work_time · hard</span></div>
+    <p class="stem">يستطيع 10 عمال إنجاز عمل في 15 يومًا. بعد 4 أيام غادر عاملان، ثم ارتفعت كفاءة كل عامل باقٍ بنسبة 25%. كم يومًا إضافيًا يحتاجون لإكمال العمل؟</p>
+    <ol class="opts"><li><span class="l">A</span>22 يومًا</li><li><span class="l">B</span>13.75 يومًا</li><li><span class="l">C</span>12 يومًا</li><li><span class="l">D</span>8.8 يومًا</li><li><span class="l">E</span>11 يومًا</li><li><span class="l">F</span>15 يومًا</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-21</span><span class="tpl">RATE_M_PERCENT · unit_rate · medium</span></div>
+    <p class="stem">تنجز آلة 420 وحدة خلال 6 دقائق. بعد صيانة ارتفع معدلها في الدقيقة بنسبة 50%. كم وحدة تنجز خلال 5 دقائق بالمعدل الجديد؟</p>
+    <ol class="opts"><li><span class="l">A</span>105 وحدة</li><li><span class="l">B</span>945 وحدة</li><li><span class="l">C</span>525 وحدة</li><li><span class="l">D</span>350 وحدة</li><li><span class="l">E</span>787.5 وحدة</li><li><span class="l">F</span>630 وحدة</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-22</span><span class="tpl">PL_E_LOSS · profit_loss · easy</span></div>
+    <p class="stem">اشترى متجر سلعة بـ300 درهمًا وباعها بـ195 درهمًا. ما نسبة الخسارة من سعر الشراء؟</p>
+    <ol class="opts"><li><span class="l">A</span>65%</li><li><span class="l">B</span>153.8%</li><li><span class="l">C</span>70%</li><li><span class="l">D</span>53.8%</li><li><span class="l">E</span>35%</li><li><span class="l">F</span>17.5%</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-23</span><span class="tpl">PROP_M_RECIPE · direct_proportion · medium</span></div>
+    <p class="stem">تحتاج وصفة إلى 6 أكواب من الدقيق لصنع 8 قطع. كم كوبًا تحتاج لصنع 24 قطعة بالمعدل نفسه؟</p>
+    <ol class="opts"><li><span class="l">A</span>18 كوبًا</li><li><span class="l">B</span>4 أكواب</li><li><span class="l">C</span>12 كوبًا</li><li><span class="l">D</span>24 كوبًا</li><li><span class="l">E</span>22 كوبًا</li><li><span class="l">F</span>9 أكواب</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-24</span><span class="tpl">PCT_E_REVERSE_ONE · percentages · easy</span></div>
+    <p class="stem">بعد زيادة قيمة بنسبة 25% أصبحت 150. فما القيمة الأصلية؟</p>
+    <ol class="opts"><li><span class="l">A</span>125</li><li><span class="l">B</span>112.5</li><li><span class="l">C</span>150</li><li><span class="l">D</span>175</li><li><span class="l">E</span>600</li><li><span class="l">F</span>120</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-25</span><span class="tpl">RAT_M_ADD_SIDE · ratios · medium</span></div>
+    <p class="stem">النسبة بين أ : ب = 5 : 1. أُضيفت 3 وحدات إلى ب فأصبحت النسبة أ : ب = 5 : 2. فما مجموع أ + ب قبل الإضافة؟</p>
+    <ol class="opts"><li><span class="l">A</span>12</li><li><span class="l">B</span>21</li><li><span class="l">C</span>18</li><li><span class="l">D</span>15</li><li><span class="l">E</span>6</li><li><span class="l">F</span>3</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-26</span><span class="tpl">AGE_M_FUT_SUM_DIFF · ages · medium</span></div>
+    <p class="stem">سارة أكبر من مريم بـ4 سنوات. بعد 3 سنوات سيكون مجموع عمريهما 32 سنة. كم عمر سارة الآن؟</p>
+    <ol class="opts"><li><span class="l">A</span>15 سنة</li><li><span class="l">B</span>18 سنة</li><li><span class="l">C</span>19.5 سنة</li><li><span class="l">D</span>12 سنة</li><li><span class="l">E</span>16.5 سنة</li><li><span class="l">F</span>26 سنة</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-27</span><span class="tpl">SPD_E_TIME · speed · easy</span></div>
+    <p class="stem">قطعت سيارة 720 كيلومترًا بسرعة 120 كم/ساعة. كم ساعة استغرقت؟</p>
+    <ol class="opts"><li><span class="l">A</span>3 ساعات</li><li><span class="l">B</span>7 ساعات</li><li><span class="l">C</span>600 ساعة</li><li><span class="l">D</span>12 ساعة</li><li><span class="l">E</span>6 ساعات</li><li><span class="l">F</span>5.76 ساعة</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-28</span><span class="tpl">FRAC_M_3 · fractions · medium</span></div>
+    <p class="stem">ما قيمة ثلث ربع ثُمن العدد 1152؟</p>
+    <ol class="opts"><li><span class="l">A</span>24</li><li><span class="l">B</span>12</li><li><span class="l">C</span>1152</li><li><span class="l">D</span>96</li><li><span class="l">E</span>48</li><li><span class="l">F</span>144</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-29</span><span class="tpl">COMB_M_SOLO_THEN · combined_rate · medium</span></div>
+    <p class="stem">ينجز العامل أ 25 وحدة/ساعة، والعامل ب 10 وحدة/ساعة. عمل أ وحده 4 ساعات، ثم عملا معًا حتى بلغ الإنجاز 380 وحدة. كم ساعة عملا معًا؟</p>
+    <ol class="opts"><li><span class="l">A</span>4 ساعات</li><li><span class="l">B</span>1.52 ساعة</li><li><span class="l">C</span>100 ساعة</li><li><span class="l">D</span>38 ساعة</li><li><span class="l">E</span>28 ساعة</li><li><span class="l">F</span>8 ساعات</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-30</span><span class="tpl">SEQ_M_ALT_OPS · sequences · medium</span></div>
+    <p class="stem">ما العدد التالي في المتتالية؟</p>
+    <ol class="opts"><li><span class="l">A</span>380</li><li><span class="l">B</span>5</li><li><span class="l">C</span>2280</li><li><span class="l">D</span>385</li><li><span class="l">E</span>384</li><li><span class="l">F</span>375</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-31</span><span class="tpl">REL_M_CONFIRM · relational · medium</span></div>
+    <p class="stem">سارة أسرع من ناصر. علي أسرع من ريم. علي أسرع من سالم. ريم أسرع من مريم. مريم أسرع من ناصر. علي أسرع من سارة. سالم أسرع من ناصر. أي عبارة مؤكدة؟</p>
+    <ol class="opts"><li><span class="l">A</span>ناصر أسرع من علي</li><li><span class="l">B</span>سارة أسرع من سالم</li><li><span class="l">C</span>مريم أسرع من سالم</li><li><span class="l">D</span>ريم أسرع من سارة</li><li><span class="l">E</span>سارة أسرع من علي</li><li><span class="l">F</span>ريم أسرع من ناصر</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-32</span><span class="tpl">MACH_M_STOP · machines · medium</span></div>
+    <p class="stem">تنتج كل آلة من 4 آلات 15 قطعة/ساعة. عملت الآلات كلها 5 ساعات، ثم توقفت آلتان وعملت البقية 3 ساعات إضافية. كم قطعة أُنتجت؟</p>
+    <ol class="opts"><li><span class="l">A</span>300 قطعة</li><li><span class="l">B</span>150 قطعة</li><li><span class="l">C</span>120 قطعة</li><li><span class="l">D</span>390 قطعة</li><li><span class="l">E</span>90 قطعة</li><li><span class="l">F</span>330 قطعة</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-33</span><span class="tpl">REL_H_GUARANTEE · relational · hard</span></div>
+    <p class="stem">بدر أسرع من نورة. فهد أسرع من سارة. بدر أسرع من علي. علي أسرع من سارة. مريم أسرع من سارة. نورة أسرع من مريم. بدر أسرع من فهد. أي عبارة يجب أن تكون صحيحة مهما كان ترتيب فهد ومريم؟</p>
+    <ol class="opts"><li><span class="l">A</span>فهد أسرع من علي</li><li><span class="l">B</span>نورة أسرع من سارة</li><li><span class="l">C</span>علي أسرع من فهد</li><li><span class="l">D</span>سارة أسرع من علي</li><li><span class="l">E</span>سارة أسرع من نورة</li><li><span class="l">F</span>سارة أسرع من فهد</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-34</span><span class="tpl">COMB_H_STAGED · combined_rate · hard</span></div>
+    <p class="stem">ينجز أ 15 وحدة/ساعة وب 12 وحدة/ساعة. عمل أ وحده ساعتين، ثم عملا معًا 5 ساعات، ثم استمر ب وحده حتى بلغ الإنجاز 261 وحدة. كم ساعة عمل ب وحده في المرحلة الأخيرة؟</p>
+    <ol class="opts"><li><span class="l">A</span>16 ساعة</li><li><span class="l">B</span>7 ساعات</li><li><span class="l">C</span>8 ساعات</li><li><span class="l">D</span>10.5 ساعة</li><li><span class="l">E</span>21.75 ساعة</li><li><span class="l">F</span>4 ساعات</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-35</span><span class="tpl">SPD_M_AVG · speed · medium</span></div>
+    <p class="stem">سارت سيارة 1.5 ساعة بسرعة 70 كم/ساعة، ثم 3 ساعات بسرعة 100 كم/ساعة. ما متوسط سرعتها في الرحلة كلها؟</p>
+    <ol class="opts"><li><span class="l">A</span>70 كم/ساعة</li><li><span class="l">B</span>85 كم/ساعة</li><li><span class="l">C</span>100 كم/ساعة</li><li><span class="l">D</span>45 كم/ساعة</li><li><span class="l">E</span>405 كم/ساعة</li><li><span class="l">F</span>90 كم/ساعة</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-36</span><span class="tpl">FRAC_H_4 · fractions · hard</span></div>
+    <p class="stem">ما قيمة ربع نصف ثلث سُدس العدد 864؟</p>
+    <ol class="opts"><li><span class="l">A</span>24</li><li><span class="l">B</span>864</li><li><span class="l">C</span>6</li><li><span class="l">D</span>36</li><li><span class="l">E</span>144</li><li><span class="l">F</span>18</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-37</span><span class="tpl">PCT_E_OF · percentages · easy</span></div>
+    <p class="stem">ما قيمة 20% من 100؟</p>
+    <ol class="opts"><li><span class="l">A</span>1</li><li><span class="l">B</span>5</li><li><span class="l">C</span>80</li><li><span class="l">D</span>10</li><li><span class="l">E</span>20</li><li><span class="l">F</span>100</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-38</span><span class="tpl">AVG_E_ADD · averages · easy</span></div>
+    <p class="stem">متوسط 7 قيم هو 16. أضيفت قيمة جديدة مقدارها 24. فما متوسط القيم بعد الإضافة؟</p>
+    <ol class="opts"><li><span class="l">A</span>3</li><li><span class="l">B</span>16</li><li><span class="l">C</span>14</li><li><span class="l">D</span>11</li><li><span class="l">E</span>136</li><li><span class="l">F</span>17</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-39</span><span class="tpl">ODD_M_PRIME2 · odd_one_out · medium</span></div>
+    <p class="stem">أي عدد لا ينتمي إلى المجموعة الآتية؟</p>
+    <ol class="opts"><li><span class="l">A</span>14</li><li><span class="l">B</span>22</li><li><span class="l">C</span>26</li><li><span class="l">D</span>12</li><li><span class="l">E</span>6</li><li><span class="l">F</span>10</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-40</span><span class="tpl">RATE_E_DIRECT · unit_rate · easy</span></div>
+    <p class="stem">تنجز آلة 240 وحدة خلال 6 دقائق بمعدل ثابت. كم وحدة تنجز خلال 5 دقائق؟</p>
+    <ol class="opts"><li><span class="l">A</span>30 وحدة</li><li><span class="l">B</span>200 وحدة</li><li><span class="l">C</span>40 وحدة</li><li><span class="l">D</span>160 وحدة</li><li><span class="l">E</span>440 وحدة</li><li><span class="l">F</span>240 وحدة</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-41</span><span class="tpl">SEQ_M_DOUBLE_DIFF · sequences · medium</span></div>
+    <p class="stem">ما العدد التالي في المتتالية؟</p>
+    <ol class="opts"><li><span class="l">A</span>48</li><li><span class="l">B</span>49</li><li><span class="l">C</span>145</li><li><span class="l">D</span>73</li><li><span class="l">E</span>98</li><li><span class="l">F</span>97</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-42</span><span class="tpl">PL_M_DISC_MARK · profit_loss · medium</span></div>
+    <p class="stem">سعر السلعة المعلن 300 درهمًا. حصل المتجر عليها بخصم 20% من هذا السعر، ثم أراد ربحًا قدره 20% من تكلفة الشراء الفعلية. فما سعر البيع؟</p>
+    <ol class="opts"><li><span class="l">A</span>288 درهمًا</li><li><span class="l">B</span>360 درهمًا</li><li><span class="l">C</span>280 درهمًا</li><li><span class="l">D</span>300 درهمًا</li><li><span class="l">E</span>320 درهمًا</li><li><span class="l">F</span>260 درهمًا</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-43</span><span class="tpl">WORK_M_TARGET · work_time · medium</span></div>
+    <p class="stem">يستطيع 12 عاملًا إنجاز عمل كامل في 15 يومًا. عملوا 3 أيام، ثم تقرر إنهاء ما تبقى خلال 4 أيام فقط. كم عاملًا يجب أن يعمل خلال المدة الأخيرة؟</p>
+    <ol class="opts"><li><span class="l">A</span>9 عمال</li><li><span class="l">B</span>9.6 عاملًا</li><li><span class="l">C</span>3.2 عاملًا</li><li><span class="l">D</span>36 عاملًا</li><li><span class="l">E</span>45 عاملًا</li><li><span class="l">F</span>48 عاملًا</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-44</span><span class="tpl">MACH_M_SUBSET_UP · machines · medium</span></div>
+    <p class="stem">تعمل 5 آلات بمعدل 25 قطعة/ساعة لكل آلة. طُورت آلتان منها فزادت إنتاجيتها بنسبة 20% وبقيت البقية كما هي. كم قطعة تنتج المجموعة خلال 4 ساعات؟</p>
+    <ol class="opts"><li><span class="l">A</span>500 قطعة</li><li><span class="l">B</span>240 قطعة</li><li><span class="l">C</span>675 قطعة</li><li><span class="l">D</span>540 قطعة</li><li><span class="l">E</span>600 قطعة</li><li><span class="l">F</span>135 قطعة</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-45</span><span class="tpl">PROP_E_ITEMS · direct_proportion · easy</span></div>
+    <p class="stem">تحتوي كل علبة على العدد نفسه من القطع. إذا كانت 4 صناديق تحتوي على 48 قطعة، فكم علبة نحتاج للحصول على 144 قطعة؟</p>
+    <ol class="opts"><li><span class="l">A</span>12 صندوقًا</li><li><span class="l">B</span>4 صناديق</li><li><span class="l">C</span>8 صناديق</li><li><span class="l">D</span>3 صناديق</li><li><span class="l">E</span>24 صندوقًا</li><li><span class="l">F</span>6 صناديق</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-46</span><span class="tpl">AGE_M_FUT_RATIO · ages · medium</span></div>
+    <p class="stem">عمر الأم أكبر من عمر ابنتها بـ30 سنة. بعد 5 سنوات سيكون عمر الأم ثلاثة أمثال عمر ابنتها. كم عمر الابنة الآن؟</p>
+    <ol class="opts"><li><span class="l">A</span>15 سنة</li><li><span class="l">B</span>30 سنة</li><li><span class="l">C</span>8 سنوات</li><li><span class="l">D</span>10 سنوات</li><li><span class="l">E</span>40 سنة</li><li><span class="l">F</span>45 سنة</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-47</span><span class="tpl">RAT_M_ADD_SIDE · ratios · medium</span></div>
+    <p class="stem">النسبة بين أ : ب = 5 : 2. أُضيفت 5 وحدات إلى ب فأصبحت النسبة أ : ب = 5 : 3. فما مجموع أ + ب قبل الإضافة؟</p>
+    <ol class="opts"><li><span class="l">A</span>10</li><li><span class="l">B</span>42</li><li><span class="l">C</span>15</li><li><span class="l">D</span>35</li><li><span class="l">E</span>40</li><li><span class="l">F</span>5</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-48</span><span class="tpl">CAL_M_COMPOUND · calendar · medium</span></div>
+    <p class="stem">اليوم الذي يأتي بعد 3 أيام من غد هو الأحد. فما اليوم الحالي؟</p>
+    <ol class="opts"><li><span class="l">A</span>الاثنين</li><li><span class="l">B</span>الجمعة</li><li><span class="l">C</span>الأربعاء</li><li><span class="l">D</span>الأحد</li><li><span class="l">E</span>الثلاثاء</li><li><span class="l">F</span>الخميس</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-49</span><span class="tpl">PCT_E_REVERSE_ONE · percentages · easy</span></div>
+    <p class="stem">بعد زيادة قيمة بنسبة 50% أصبحت 120. فما القيمة الأصلية؟</p>
+    <ol class="opts"><li><span class="l">A</span>240</li><li><span class="l">B</span>120</li><li><span class="l">C</span>170</li><li><span class="l">D</span>180</li><li><span class="l">E</span>80</li><li><span class="l">F</span>70</li></ol>
+  </article>
+
+  <article class="q">
+    <div class="hd"><span class="id">H-S1-50</span><span class="tpl">COMB_M_TOGETHER_SOLO · combined_rate · medium</span></div>
+    <p class="stem">يعمل أ بمعدل 15 وحدة/ساعة وب بمعدل 24 وحدة/ساعة. عملا معًا 4 ساعات، ثم توقف ب واستمر أ وحده حتى بلغ الإنجاز 276 وحدة. كم ساعة عمل أ وحده؟</p>
+    <ol class="opts"><li><span class="l">A</span>9 ساعات</li><li><span class="l">B</span>10 ساعات</li><li><span class="l">C</span>11.5 ساعة</li><li><span class="l">D</span>18.4 ساعة</li><li><span class="l">E</span>8 ساعات</li><li><span class="l">F</span>2.5 ساعة</li></ol>
+  </article>
+<footer>SESSION-1 — 50 questions — blind — AUDIT-2026-09-12-B</footer>
+</body></html>
