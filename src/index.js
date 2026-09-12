@@ -52,7 +52,8 @@ const GENERATORS = {
 
 const PIPELINE_STAGES = [
   'text_matches_params', 'mathematics_oracle', 'unique_answer', 'ambiguity',
-  'pedagogy', 'misconception_context', 'language', 'explanation', 'distractors', 'fingerprint'
+  'pedagogy', 'misconception_context', 'feedback_truthfulness', 'language', 'explanation',
+  'distractors', 'fingerprint'
 ];
 
 const now = () => (typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now());

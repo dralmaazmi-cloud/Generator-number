@@ -276,7 +276,10 @@ function threeRates(ctx) {
     mk(sum * (h + 1), 'OFF_BY_ONE_STEP', `${sum} × (${h} + 1)`),
     mk(sum * (h - 1), 'OFF_BY_ONE_STEP', `${sum} × (${h} − 1)`),
     mk(sum * h + sum, 'APPLIED_STEP_TWICE', `${sum} × ${h} + ${sum}`),
-    mk(Math.round(sum / 3) * h, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${sum} ÷ 3) × ${h}`),
+    // RC2-014: the mean is rounded before it is used, so the derivation shows the
+    // rounded figure. Written as «(38 ÷ 3) × 3» it evaluated to 38 while the
+    // option read 39, and a learner following it would not arrive at the option.
+    mk(Math.round(sum / 3) * h, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `${Math.round(sum / 3)} × ${h}`),
     mk(sum * h + rates[0] * h, 'RATE_APPLIED_TO_WRONG_COUNT', `${sum} × ${h} + ${rates[0]} × ${h}`),
     mk(sum * (h + 2), 'OFF_BY_ONE_STEP', `${sum} × (${h} + 2)`)
   ]);

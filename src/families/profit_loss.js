@@ -222,11 +222,10 @@ function reverseSellingPrice(ctx) {
     mk(sell - cost, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${sell} − ${cost}`),
     mk(approx(sell * 100 / percent), 'USED_SALE_PRICE_AS_DENOMINATOR', `${sell} × 100 ÷ ${percent}`),
     mk(sell * 100 / (100 + 2 * percent), 'APPLIED_STEP_TWICE', `${sell} × 100 ÷ (100 + 2 × ${percent})`),
-    mk(sell * (100 - percent) / 100, 'SUBTRACTED_PERCENTAGE_DIRECTLY', `${sell} × (100 − ${percent}) ÷ 100`),
     mk(sell - percent, 'TREATED_PERCENT_AS_AMOUNT', `${sell} − ${percent}`),
     mk(sell * 100 / (100 - percent), 'APPLIED_OPERATION_IN_REVERSE', `${sell} × 100 ÷ (100 − ${percent})`),
     mk(sell, 'USED_GIVEN_VALUE_AS_ANSWER', `سعر البيع ${sell}`),
-    mk(sell - percent, 'TREATED_PERCENT_AS_AMOUNT', `${sell} − ${percent}`)
+    mk(approx(sell * (100 + percent) / 100), 'APPLIED_OPERATION_IN_REVERSE', `${sell} × (100 + ${percent}) ÷ 100`)
   ]);
   return buildBase(ctx, {
     templateId: 'PL_H_REVERSE',

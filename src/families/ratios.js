@@ -37,7 +37,7 @@ function splitTotal(ctx) {
     mk(k, 'USED_PART_VALUE_AS_ANSWER', `${total} ÷ (${a} + ${b})`),
     mk(total - correct, 'USED_WRONG_SIDE_OF_RATIO', `${total} − ${correct}`),
     mk(total / (a + b) * (mine + 1), 'RATE_APPLIED_TO_WRONG_COUNT', `${k} × (${mine} + 1)`),
-    mk(total / (a + b) * Math.max(1, mine - 1), 'MISSED_ONE_STAGE', `${k} × (${mine} − 1)`),
+    mk(total / (a + b) * (mine - 1), 'MISSED_ONE_STAGE', `${k} × (${mine} − 1)`),
     mk(total / mine, 'REVERSED_DIRECT_PROPORTION', `${total} ÷ ${mine}`),
     mk(total, 'USED_ORIGINAL_TOTAL', `المجموع المعطى ${total}`),
     mk(mine * other, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${mine} × ${other}`),

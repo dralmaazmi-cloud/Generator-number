@@ -12,6 +12,7 @@ import {validateTextMatchesParams} from './text-params.js';
 import {validatePedagogy} from './pedagogy.js';
 import {validateMisconceptionContext} from './misconception-context.js';
 import {validateDistractorProvenance} from './distractor-provenance.js';
+import {validateFeedbackTruthfulness} from './feedback-metrics.js';
 import {validateDisplayedEquations, validateExplanationSourcing, numbersIn} from './equations.js';
 import {checkArabicNumberUnitsDeep} from '../arabic/units.js';
 import {classifyQuestionConstructions, STATUS as AR_STATUS} from '../arabic/constructions.js';
@@ -323,6 +324,8 @@ export function validateCandidate(base, q) {
   const contextVerdict = validateMisconceptionContext(base);
   // RC2-012: a wrong option must be the product of a mistake, not of the answer.
   const provenanceVerdict = validateDistractorProvenance(base);
+  // RC2-014: the derivation a wrong option shows must actually produce it.
+  const feedbackVerdict = validateFeedbackTruthfulness(q);
 
   return mergeVerdicts(
     structuralVerdict,
@@ -334,6 +337,7 @@ export function validateCandidate(base, q) {
     explanationVerdict,
     distractorVerdict,
     contextVerdict,
-    provenanceVerdict
+    provenanceVerdict,
+    feedbackVerdict
   );
 }

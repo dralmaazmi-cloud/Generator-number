@@ -76,7 +76,11 @@ function reverseOneChange(ctx) {
     mk(final, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة النهائية ${final}`),
     mk(Fraction.from(final).mul(factorLine(pct, inc ? 'down' : 'up').factor).toNumber(), 'SUBTRACTED_PERCENTAGE_DIRECTLY', `${final} × ${factorLine(pct, inc ? 'down' : 'up').factor.toDecimalString()}`),
     mk(final + pct, 'TREATED_PERCENT_AS_AMOUNT', `${final} + ${pct}`),
-    mk(Math.max(1, final - pct), 'TREATED_PERCENT_AS_AMOUNT', `${final} − ${pct}`),
+    // RC2-014: the clamp used to turn a negative result into 1 while the
+    // derivation still read «40 − 50», so the sentence pointed at a number the
+    // arithmetic does not produce. The value is left as the subtraction gives
+    // it, and usable() drops it when it is not a usable quantity.
+    mk(final - pct, 'TREATED_PERCENT_AS_AMOUNT', `${final} − ${pct}`),
     mk(final * 100 / pct, 'APPLIED_PERCENT_TO_WRONG_TOTAL', `${final} × 100 ÷ ${pct}`),
     mk(final + final * pct / 100, 'TREATED_PERCENT_AS_AMOUNT', `${final} + ${final} × ${pct} ÷ 100`),
     mk(Fraction.from(original).mul(factor).mul(factor).toNumber(), 'APPLIED_STEP_TWICE', `${original} × ${factor.toDecimalString()} × ${factor.toDecimalString()}`)
@@ -132,7 +136,11 @@ function successiveChange(ctx) {
   const distractors = usable(ctx, [
     mk(signed, 'ADDED_PERCENTAGES', `${upFirst ? p1 : p2} − ${upFirst ? p2 : p1}`),
     mk(-signed, 'SUBTRACTED_PERCENTAGES', `${upFirst ? p2 : p1} − ${upFirst ? p1 : p2}`),
-    mk(upFirst ? p1 + p2 : -(p1 + p2), 'ADDED_PERCENTAGES', `${p1} + ${p2}`),
+    // RC2-014: when both changes are decreases the sum is negative, and the
+    // derivation has to carry the sign. Written «25 + 25» it evaluated to 50
+    // while the option read −50.
+    mk(upFirst ? p1 + p2 : -(p1 + p2), 'ADDED_PERCENTAGES',
+      upFirst ? `${p1} + ${p2}` : `(−${p1}) + (−${p2})`),
     mk(-correct, 'APPLIED_OPERATION_IN_REVERSE', `عكس إشارة ${num(correct)}`),
     mk((f1 * f2 - 10000) / 200, 'APPLIED_STEP_TWICE', `(${f1} × ${f2} − 10000) ÷ 200`),
     mk((f1 * f2 - 10000) / 50, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `(${f1} × ${f2} − 10000) ÷ 50`),
