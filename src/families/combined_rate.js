@@ -62,9 +62,10 @@ function togetherOutput(ctx) {
 
 function togetherTime(ctx) {
   const {rng} = ctx;
-  const a = rng.pick([10, 12, 15, 18]);
-  const b = rng.pick([15, 18, 20, 24].filter(v => v !== a));
-  const correct = rng.pick([4, 5, 6, 8]);
+  // RC2-011. The hours asked for came from four values.
+  const a = rng.pick([8, 10, 12, 14, 15, 16, 18, 20]);
+  const b = rng.pick([12, 15, 18, 20, 21, 24, 25, 28].filter(v => v !== a));
+  const correct = rng.pick([2, 3, 4, 5, 6, 7, 8, 9, 10, 12]);
   const target = (a + b) * correct;
   const params = {rateA: a, rateB: b, targetAmount: target};
   const distractors = usable(ctx, [
@@ -111,10 +112,14 @@ function togetherTime(ctx) {
 
 function soloThenTogether(ctx) {
   const {rng} = ctx;
-  const a = rng.pick([12, 15, 18, 20]);
-  const b = rng.pick([8, 10, 12, 15].filter(v => v !== a));
-  const solo = rng.pick([3, 4, 5]);
-  const correct = rng.pick([3, 4, 5, 6].filter(v => v !== solo));
+  // RC2-011. The solo stretch and the joint stretch are the two spans the
+  // question states; both were drawn from three or four values, so the number of
+  // hours the item could ask for was three or four however many times it ran.
+  // The pools are widened at design time. Nothing here looks at an answer.
+  const a = rng.pick([12, 15, 18, 20, 24, 25]);
+  const b = rng.pick([6, 8, 9, 10, 12, 15, 16].filter(v => v !== a));
+  const solo = rng.pick([2, 3, 4, 5, 6]);
+  const correct = rng.pick([2, 3, 4, 5, 6, 7, 8, 9].filter(v => v !== solo));
   const target = a * solo + (a + b) * correct;
   const params = {rateA: a, rateB: b, soloHours: solo, targetAmount: target};
   const distractors = usable(ctx, [
@@ -161,10 +166,11 @@ function soloThenTogether(ctx) {
 
 function togetherThenSolo(ctx) {
   const {rng} = ctx;
-  const a = rng.pick([10, 12, 15]);
-  const b = rng.pick([15, 18, 20].filter(v => v !== a));
-  const bothH = rng.pick([3, 4, 5]);
-  const correct = rng.pick([3, 4, 5, 6].filter(v => v !== bothH));
+  // RC2-011, as above: widen the two stated spans and the two stated rates.
+  const a = rng.pick([8, 10, 12, 14, 15, 16, 18]);
+  const b = rng.pick([12, 15, 18, 20, 21, 24, 25].filter(v => v !== a));
+  const bothH = rng.pick([2, 3, 4, 5, 6]);
+  const correct = rng.pick([2, 3, 4, 5, 6, 7, 8, 9].filter(v => v !== bothH));
   // Section 10: with these numbers, dividing the whole target by the combined
   // rate would also land on the key, so the item would stop measuring the
   // staging skill it exists for.
@@ -214,11 +220,15 @@ function togetherThenSolo(ctx) {
 
 function stagedTarget(ctx) {
   const {rng} = ctx;
-  const a = rng.pick([12, 15, 18]);
-  const b = rng.pick([8, 10, 12].filter(v => v !== a));
-  const soloA = rng.pick([3, 4]);
-  const togetherH = rng.pick([3, 4, 5]);
-  const correct = rng.pick([3, 4, 5].filter(v => v !== soloA && v !== togetherH));
+  // RC2-011. This was the narrowest draw in the engine: three candidate spans
+  // with two of them excluded by the filter, so the third stretch had at most
+  // one or two values to take and the answer space was three across the whole
+  // corpus. All four stated quantities are widened.
+  const a = rng.pick([12, 15, 16, 18, 20, 24]);
+  const b = rng.pick([6, 8, 9, 10, 12, 14].filter(v => v !== a));
+  const soloA = rng.pick([2, 3, 4, 5]);
+  const togetherH = rng.pick([2, 3, 4, 5, 6]);
+  const correct = rng.pick([2, 3, 4, 5, 6, 7, 8, 9].filter(v => v !== soloA && v !== togetherH));
   // Same guard as above: keep the combined-rate shortcut genuinely wrong.
   if ((a + b) * togetherH === correct * a) return resample(ctx, stagedTarget);
   const target = a * soloA + (a + b) * togetherH + b * correct;

@@ -283,7 +283,9 @@ function squareMinusOne(ctx) {
  */
 function triangularPattern(ctx) {
   return attempt(ctx, ({rng}) => {
-    const start = rng.int(3, 7);
+    // RC2-011. Five starting indices gave five possible runs, so the intruder
+    // the item could ask for took five values across the whole corpus.
+    const start = rng.int(3, 14);
     const tri = n => (n * (n + 1)) / 2;
     const valid = Array.from({length: 5}, (_, i) => tri(start + i));
     const outlier = placeOutlier(rng, valid, n => !isTriangular(n));

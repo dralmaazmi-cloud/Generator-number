@@ -686,10 +686,12 @@ function recurrence(ctx) {
 
 function powersPlusIndex(ctx) {
   const {rng} = ctx;
-  const basePow = rng.pick([2, 3]);
+  // RC2-011. Two bases and three starting indices meant the next term could
+  // take only a handful of values.
+  const basePow = rng.pick([2, 3, 5]);
   // Vary how far into the powers the run starts and how many terms are shown,
   // so the template is not two questions repeated forever.
-  const startIndex = rng.pick(basePow === 2 ? [1, 2, 3] : [1, 2]);
+  const startIndex = rng.pick(basePow === 2 ? [1, 2, 3, 4, 5] : basePow === 3 ? [1, 2, 3] : [1, 2]);
   const shown = rng.pick([4, 5]);
   const n = startIndex + shown - 1;
   const seq = [];

@@ -268,7 +268,11 @@ function branchUnresolved(ctx) {
 
 function countAbove(ctx) {
   const {rng} = ctx;
-  const {nodes, edges, shape} = branchedGraph(rng, 6);
+  // RC2-011. The graph was always built at size six, so the number of people
+  // provably above the target clustered on one or two counts. The size varies
+  // now; the target is still picked blind and the count is still read off the
+  // graph, so nothing here consults the answer.
+  const {nodes, edges, shape} = branchedGraph(rng, rng.pick([5, 6, 6, 7, 7, 8]));
   if (nodes.length < 5) return resample(ctx, countAbove);
   const oracle = buildOrderOracle(nodes, edges);
   const target = rng.pick(nodes);

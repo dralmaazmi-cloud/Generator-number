@@ -13,8 +13,9 @@ const kmh = v => `${num(v)} كم/ساعة`;
 
 function simpleTime(ctx) {
   const {rng} = ctx;
-  const speed = rng.pick([40, 50, 60, 70, 80, 90]);
-  const hours = rng.pick([1.5, 2, 2.5, 3, 4]);
+  // RC2-011. The answer is the number of hours, and it came from five values.
+  const speed = rng.pick([30, 40, 45, 50, 60, 70, 75, 80, 90, 100, 120]);
+  const hours = rng.pick([1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8]);
   const distance = speed * hours;
   const correct = hours;
   const params = {speed, distance};
@@ -217,10 +218,12 @@ function averageSpeedUnequalTime(ctx) {
 
 function equalDistanceTotalTime(ctx) {
   const {rng} = ctx;
-  const s1 = rng.pick([60, 80, 90]);
-  const s2 = rng.pick([30, 40, 45, 60]);
+  // RC2-011. The answer is twice the half-distance, so the answer space was the
+  // length of the half-distance list: four values. Widened at design time.
+  const s1 = rng.pick([50, 60, 70, 75, 80, 90, 100, 120]);
+  const s2 = rng.pick([25, 30, 35, 40, 45, 50, 60, 70]);
   if (s1 === s2) return resample(ctx, equalDistanceTotalTime);
-  const half = rng.pick([120, 180, 240, 360]);
+  const half = rng.pick([120, 140, 150, 175, 180, 210, 240, 280, 300, 350, 360, 420, 450, 480, 540, 600]);
   if (half % s1 || half % s2) return resample(ctx, equalDistanceTotalTime);
   const t1 = half / s1, t2 = half / s2;
   const total = t1 + t2;
@@ -388,9 +391,10 @@ function catchupDelayed(ctx) {
 
 function sameDistanceTimeDifference(ctx) {
   const {rng} = ctx;
-  const s1 = rng.pick([40, 50, 60]);
-  const s2 = rng.pick([80, 90, 100]);
-  const distance = rng.pick([120, 180, 240, 300, 360]);
+  // RC2-011. The answer is the distance, drawn from five values.
+  const s1 = rng.pick([30, 40, 45, 50, 60, 70, 75]);
+  const s2 = rng.pick([80, 90, 100, 105, 120, 125, 140, 150]);
+  const distance = rng.pick([120, 150, 180, 210, 240, 270, 300, 350, 360, 420, 450, 480, 525, 540, 600, 630, 700, 720]);
   if (distance % s1 || distance % s2) return resample(ctx, sameDistanceTimeDifference);
   const diff = distance / s1 - distance / s2;
   if (diff <= 0) return resample(ctx, sameDistanceTimeDifference);

@@ -1,7 +1,7 @@
 {
   "schema": "rc2-degeneracy-coverage-v1",
   "scopeItem": "RC2-005",
-  "generatedAt": "2026-09-12T10:10:34.447Z",
+  "generatedAt": "2026-09-12T10:21:04.190Z",
   "drawsPerFamilyPerBand": 400,
   "totals": {
     "templates": 107,
@@ -11,8 +11,8 @@
       "COVERED_BY_OTHER_INVARIANT": 8
     },
     "rc1TemplatesWithNoModel": 23,
-    "publishedSampled": 18717,
-    "publishedWithDeclaredModel": 16795,
+    "publishedSampled": 18598,
+    "publishedWithDeclaredModel": 16676,
     "publishedModelCoverage": 0.897,
     "rc1PublishedModelCoverage": 0.793,
     "unclassified": [],
@@ -345,8 +345,8 @@
         "band": "A_MODELLED",
         "declaresModelOnDraws": 144,
         "modelCoverageOfDraws": 1,
-        "degenerateDraws": 23,
-        "degenerateRate": 0.16,
+        "degenerateDraws": 21,
+        "degenerateRate": 0.146,
         "justification": "Two wrong methods are modelled — counting only the stated sentences, and counting everyone not provably below — and the item is degenerate only when both land on the key. Requiring the first alone rejected 56.7% of draws and removed the answers «لا أحد» and «شخص واحد» from the template entirely, trading a measurement defect for a larger statistical leak."
       }
     ]
@@ -1756,8 +1756,8 @@
       "drawn": 144,
       "declaresModelOnDraws": 144,
       "modelCoverageOfDraws": 1,
-      "degenerateDraws": 23,
-      "degenerateRate": 0.16,
+      "degenerateDraws": 21,
+      "degenerateRate": 0.146,
       "rc1Classification": "MISSING_DEGENERACY_MODEL",
       "rc2Classification": "MODELLED",
       "justification": "Two wrong methods are modelled — counting only the stated sentences, and counting everyone not provably below — and the item is degenerate only when both land on the key. Requiring the first alone rejected 56.7% of draws and removed the answers «لا أحد» and «شخص واحد» from the template entirely, trading a measurement defect for a larger statistical leak.",

@@ -55,10 +55,11 @@ function directRate(ctx) {
 
 function rateToTime(ctx) {
   const {rng} = ctx;
-  const minutes = rng.pick([20, 25, 30, 40]);
-  const rate = rng.pick([20, 25, 30, 40].filter(v => v !== minutes));
+  // RC2-011. The minutes asked for came from four values.
+  const minutes = rng.pick([15, 20, 24, 25, 30, 36, 40, 45]);
+  const rate = rng.pick([12, 15, 20, 24, 25, 30, 40, 45].filter(v => v !== minutes));
   const total = minutes * rate;
-  const correct = rng.pick([45, 50, 60, 75].filter(v => v !== minutes));
+  const correct = rng.pick([35, 40, 45, 50, 55, 60, 70, 75, 80, 90, 100, 120].filter(v => v !== minutes));
   const targetWords = correct * rate;
   const params = {baseAmount: total, baseMinutes: minutes, targetAmount: targetWords};
   const distractors = usable(ctx, [

@@ -136,7 +136,9 @@ test('RC2-005 MUST_ACCEPT: an off-centre position in the same template passes', 
 });
 
 test('RC2-005 MUST_REJECT: a count question where neither modelled error differs from the key', () => {
-  const {base, verdict} = draw(generateRelational, 'medium', 'fx-relm-7');
+  // The seed moved when RC2-011 widened the graph-size draw; the fixture pins
+  // the CONDITION (neither modelled error differs from the key), not the draw.
+  const {base, verdict} = draw(generateRelational, 'medium', 'fx-relm-3');
   assert.equal(base.template_id, 'REL_M_COUNT');
   assert.equal(base.metadata.transitive_step_required, false);
   assert.equal(base.metadata.undetermined_step_required, false);

@@ -170,8 +170,10 @@ function changeWorkers(ctx) {
 
 function efficiencyChange(ctx) {
   const {rng} = ctx;
-  const days = rng.pick([10, 12, 15, 18, 20]);
-  const pct = rng.pick([20, 25, 50]);
+  // RC2-011. The answer is days ÷ the efficiency factor, and both pools were
+  // short, so the quotient took few values.
+  const days = rng.pick([8, 10, 12, 14, 15, 16, 18, 20, 24, 25, 27, 30, 32, 36]);
+  const pct = rng.pick([20, 25, 50, 60, 75, 80, 100, 125, 150]);
   const {factor, text: factorText} = factorLine(pct, 'up', 'معامل الكفاءة');
   const answer = Fraction.from(days).div(factor);
   if (!answer.isInteger) return resample(ctx, efficiencyChange);

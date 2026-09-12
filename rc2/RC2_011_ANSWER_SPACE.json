@@ -1,0 +1,1518 @@
+{
+  "schema": "rc2-011-answer-space-v1",
+  "scopeItem": "RC2-011",
+  "generatedAt": "2026-09-12T10:19:53.080Z",
+  "corpus": {
+    "questions": 12000,
+    "exhausted": 0,
+    "seedPrefix": "rc2-011",
+    "minSamplePerTemplate": 40
+  },
+  "interpretation": {
+    "metric": "advantagePoints = modal share − 1/6, the gain over a blind guess on a six-option paper",
+    "note": "Answer-space SIZE is not a defect and no threshold rule is adopted. REL_M_COUNT has the largest space in the RC1 table and still leaks the most, because a count question has six possible answers by construction and the leak lives in their distribution, not their number."
+  },
+  "constraint": {
+    "name": "OBSERVE_NEVER_TARGET",
+    "remediation": "design-time width of the pools the stem draws its stated numbers from",
+    "prohibited": "any runtime mechanism that reads a generated answer — resampling on a recurring value, weighting a draw by observed frequency, or choosing parameters to land on a wanted key",
+    "staticScanOffenders": [],
+    "expectedAnswerReads": {
+      "validityGuards": [
+        {
+          "file": "averages.js",
+          "line": 20,
+          "text": "if (!Number.isInteger(correct) || correct === avg) return resample(ctx, addOne);",
+          "kind": "VALIDITY_GUARD"
+        },
+        {
+          "file": "averages.js",
+          "line": 77,
+          "text": "if (correct === avg) return resample(ctx, removeOne);",
+          "kind": "DEGENERACY_OR_COLLISION_GUARD"
+        },
+        {
+          "file": "averages.js",
+          "line": 364,
+          "text": "if (correct <= 0) return resample(ctx, missingValueForTarget);",
+          "kind": "VALIDITY_GUARD"
+        },
+        {
+          "file": "combined_rate.js",
+          "line": 177,
+          "text": "if (bothH * (a + b) === correct * b) return resample(ctx, togetherThenSolo);",
+          "kind": "DEGENERACY_OR_COLLISION_GUARD"
+        },
+        {
+          "file": "combined_rate.js",
+          "line": 233,
+          "text": "if ((a + b) * togetherH === correct * a) return resample(ctx, stagedTarget);",
+          "kind": "DEGENERACY_OR_COLLISION_GUARD"
+        },
+        {
+          "file": "percentages.js",
+          "line": 129,
+          "text": "if (correct === 0) return resample(ctx, successiveChange);",
+          "kind": "VALIDITY_GUARD"
+        },
+        {
+          "file": "relational.js",
+          "line": 133,
+          "text": "if (!correct) return resample(ctx, fullChainPosition);",
+          "kind": "VALIDITY_GUARD"
+        },
+        {
+          "file": "relational.js",
+          "line": 181,
+          "text": "if (!correct) return resample(ctx, betweenRelation);",
+          "kind": "VALIDITY_GUARD"
+        },
+        {
+          "file": "relational.js",
+          "line": 282,
+          "text": "if (!correct) return resample(ctx, countAbove);",
+          "kind": "VALIDITY_GUARD"
+        },
+        {
+          "file": "sequences.js",
+          "line": 146,
+          "text": "if (seq.at(-1) + (divide ? -factor : factor) === correct) return resample(ctx, geometric);",
+          "kind": "DEGENERACY_OR_COLLISION_GUARD"
+        },
+        {
+          "file": "work_time.js",
+          "line": 21,
+          "text": "if (correct === d1) return resample(ctx, inverseDirect);",
+          "kind": "DEGENERACY_OR_COLLISION_GUARD"
+        },
+        {
+          "file": "work_time.js",
+          "line": 69,
+          "text": "if (!Number.isInteger(correct)) return resample(ctx, workVolume);",
+          "kind": "VALIDITY_GUARD"
+        },
+        {
+          "file": "work_time.js",
+          "line": 122,
+          "text": "if (correct === totalDays - initialDays) return resample(ctx, changeWorkers);",
+          "kind": "DEGENERACY_OR_COLLISION_GUARD"
+        },
+        {
+          "file": "work_time.js",
+          "line": 229,
+          "text": "if (correct === w) return resample(ctx, targetDeadline);",
+          "kind": "DEGENERACY_OR_COLLISION_GUARD"
+        }
+      ],
+      "backwardConstruction": [
+        {
+          "file": "combined_rate.js",
+          "line": 68,
+          "text": "const correct = rng.pick([2, 3, 4, 5, 6, 7, 8, 9, 10, 12]);",
+          "uniform": true,
+          "kind": "BACKWARD_CONSTRUCTION"
+        },
+        {
+          "file": "combined_rate.js",
+          "line": 122,
+          "text": "const correct = rng.pick([2, 3, 4, 5, 6, 7, 8, 9].filter(v => v !== solo));",
+          "uniform": true,
+          "kind": "BACKWARD_CONSTRUCTION"
+        },
+        {
+          "file": "combined_rate.js",
+          "line": 173,
+          "text": "const correct = rng.pick([2, 3, 4, 5, 6, 7, 8, 9].filter(v => v !== bothH));",
+          "uniform": true,
+          "kind": "BACKWARD_CONSTRUCTION"
+        },
+        {
+          "file": "combined_rate.js",
+          "line": 231,
+          "text": "const correct = rng.pick([2, 3, 4, 5, 6, 7, 8, 9].filter(v => v !== soloA && v !== togetherH));",
+          "uniform": true,
+          "kind": "BACKWARD_CONSTRUCTION"
+        },
+        {
+          "file": "machines.js",
+          "line": 73,
+          "text": "const correct = rng.pick([3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 15, 16].filter(v => v !== machines));",
+          "uniform": true,
+          "kind": "BACKWARD_CONSTRUCTION"
+        },
+        {
+          "file": "unit_rate.js",
+          "line": 62,
+          "text": "const correct = rng.pick([35, 40, 45, 50, 55, 60, 70, 75, 80, 90, 100, 120].filter(v => v !== minutes));",
+          "uniform": true,
+          "kind": "BACKWARD_CONSTRUCTION"
+        }
+      ],
+      "note": "A validity guard redraws when the answer is not a usable quantity; backward construction draws the answer uniformly from a declared list and computes the stem from it. Neither consults a statistical property of any answer, and the second is how a flat distribution is obtained in the first place."
+    }
+  },
+  "worst": [
+    {
+      "templateId": "REL_M_COUNT",
+      "family": "relational",
+      "difficulty": "medium",
+      "n": 74,
+      "space": 6,
+      "modal": 0.365,
+      "entropyBits": 2.14,
+      "advantagePoints": 19.8
+    },
+    {
+      "templateId": "ODD_E_MULT",
+      "family": "odd_one_out",
+      "difficulty": "easy",
+      "n": 121,
+      "space": 9,
+      "modal": 0.298,
+      "entropyBits": 2.76,
+      "advantagePoints": 13.1
+    },
+    {
+      "templateId": "WORK_E_VOLUME",
+      "family": "work_time",
+      "difficulty": "easy",
+      "n": 146,
+      "space": 9,
+      "modal": 0.288,
+      "entropyBits": 2.91,
+      "advantagePoints": 12.1
+    },
+    {
+      "templateId": "REL_H_POSITION",
+      "family": "relational",
+      "difficulty": "hard",
+      "n": 134,
+      "space": 17,
+      "modal": 0.284,
+      "entropyBits": 3.6,
+      "advantagePoints": 11.7
+    },
+    {
+      "templateId": "SPD_M_EQUAL_DIST",
+      "family": "speed",
+      "difficulty": "medium",
+      "n": 77,
+      "space": 13,
+      "modal": 0.273,
+      "entropyBits": 3.27,
+      "advantagePoints": 10.6
+    },
+    {
+      "templateId": "RATE_H_TARGET",
+      "family": "unit_rate",
+      "difficulty": "hard",
+      "n": 128,
+      "space": 8,
+      "modal": 0.258,
+      "entropyBits": 2.7,
+      "advantagePoints": 9.1
+    },
+    {
+      "templateId": "AGE_H_TWO_TIME",
+      "family": "ages",
+      "difficulty": "hard",
+      "n": 136,
+      "space": 6,
+      "modal": 0.235,
+      "entropyBits": 2.49,
+      "advantagePoints": 6.9
+    },
+    {
+      "templateId": "WORK_M_CHANGE",
+      "family": "work_time",
+      "difficulty": "medium",
+      "n": 111,
+      "space": 13,
+      "modal": 0.234,
+      "entropyBits": 3.29,
+      "advantagePoints": 6.8
+    },
+    {
+      "templateId": "SPD_M_TWO_TIME",
+      "family": "speed",
+      "difficulty": "medium",
+      "n": 54,
+      "space": 7,
+      "modal": 0.222,
+      "entropyBits": 2.59,
+      "advantagePoints": 5.6
+    },
+    {
+      "templateId": "ODD_M_CUBES",
+      "family": "odd_one_out",
+      "difficulty": "medium",
+      "n": 92,
+      "space": 9,
+      "modal": 0.217,
+      "entropyBits": 2.92,
+      "advantagePoints": 5.1
+    },
+    {
+      "templateId": "PCT_M_SUCCESSIVE",
+      "family": "percentages",
+      "difficulty": "medium",
+      "n": 76,
+      "space": 8,
+      "modal": 0.211,
+      "entropyBits": 2.82,
+      "advantagePoints": 4.4
+    },
+    {
+      "templateId": "ODD_M_PRIME2",
+      "family": "odd_one_out",
+      "difficulty": "medium",
+      "n": 83,
+      "space": 8,
+      "modal": 0.205,
+      "entropyBits": 2.91,
+      "advantagePoints": 3.8
+    },
+    {
+      "templateId": "SPD_H_TIME_DIFF",
+      "family": "speed",
+      "difficulty": "hard",
+      "n": 79,
+      "space": 15,
+      "modal": 0.203,
+      "entropyBits": 3.57,
+      "advantagePoints": 3.6
+    },
+    {
+      "templateId": "SPD_H_CATCH",
+      "family": "speed",
+      "difficulty": "hard",
+      "n": 69,
+      "space": 15,
+      "modal": 0.203,
+      "entropyBits": 3.4,
+      "advantagePoints": 3.6
+    },
+    {
+      "templateId": "ODD_E_SQUARES",
+      "family": "odd_one_out",
+      "difficulty": "easy",
+      "n": 95,
+      "space": 17,
+      "modal": 0.2,
+      "entropyBits": 3.72,
+      "advantagePoints": 3.3
+    },
+    {
+      "templateId": "COMB_E_TIME",
+      "family": "combined_rate",
+      "difficulty": "easy",
+      "n": 75,
+      "space": 10,
+      "modal": 0.2,
+      "entropyBits": 3.15,
+      "advantagePoints": 3.3
+    },
+    {
+      "templateId": "CAL_E_AFTER",
+      "family": "calendar",
+      "difficulty": "easy",
+      "n": 145,
+      "space": 7,
+      "modal": 0.2,
+      "entropyBits": 2.77,
+      "advantagePoints": 3.3
+    },
+    {
+      "templateId": "ODD_H_SQ_MINUS",
+      "family": "odd_one_out",
+      "difficulty": "hard",
+      "n": 106,
+      "space": 11,
+      "modal": 0.198,
+      "entropyBits": 3.23,
+      "advantagePoints": 3.1
+    },
+    {
+      "templateId": "PL_H_CHAIN",
+      "family": "profit_loss",
+      "difficulty": "hard",
+      "n": 147,
+      "space": 7,
+      "modal": 0.197,
+      "entropyBits": 2.74,
+      "advantagePoints": 3.1
+    },
+    {
+      "templateId": "AVG_H_COMB_ADD",
+      "family": "averages",
+      "difficulty": "hard",
+      "n": 118,
+      "space": 11,
+      "modal": 0.195,
+      "entropyBits": 3.18,
+      "advantagePoints": 2.8
+    }
+  ],
+  "rc1Comparison": [
+    {
+      "templateId": "SPD_M_EQUAL_DIST",
+      "rc1": {
+        "space": 4,
+        "modal": 0.444,
+        "entropyBits": 1.81,
+        "advantagePoints": 27.8
+      },
+      "rc2": {
+        "space": 13,
+        "modal": 0.273,
+        "entropyBits": 3.27,
+        "advantagePoints": 10.6
+      },
+      "advantageDelta": -17.2
+    },
+    {
+      "templateId": "PL_M_TOTAL_COST",
+      "rc1": {
+        "space": 3,
+        "modal": 0.439,
+        "entropyBits": 1.51,
+        "advantagePoints": 27.2
+      },
+      "rc2": {
+        "space": 12,
+        "modal": 0.172,
+        "entropyBits": 3.29,
+        "advantagePoints": 0.5
+      },
+      "advantageDelta": -26.7
+    },
+    {
+      "templateId": "PL_E_LOSS",
+      "rc1": {
+        "space": 3,
+        "modal": 0.404,
+        "entropyBits": 1.55,
+        "advantagePoints": 23.7
+      },
+      "rc2": {
+        "space": 13,
+        "modal": 0.156,
+        "entropyBits": 3.52,
+        "advantagePoints": -1.1
+      },
+      "advantageDelta": -24.8
+    },
+    {
+      "templateId": "SPD_H_TIME_DIFF",
+      "rc1": {
+        "space": 4,
+        "modal": 0.37,
+        "entropyBits": 1.92,
+        "advantagePoints": 20.3
+      },
+      "rc2": {
+        "space": 15,
+        "modal": 0.203,
+        "entropyBits": 3.57,
+        "advantagePoints": 3.6
+      },
+      "advantageDelta": -16.7
+    },
+    {
+      "templateId": "COMB_H_STAGED",
+      "rc1": {
+        "space": 3,
+        "modal": 0.36,
+        "entropyBits": 1.58,
+        "advantagePoints": 19.3
+      },
+      "rc2": {
+        "space": 8,
+        "modal": 0.162,
+        "entropyBits": 2.95,
+        "advantagePoints": -0.5
+      },
+      "advantageDelta": -19.8
+    }
+  ],
+  "summary": {
+    "templatesMeasured": 107,
+    "maxAdvantagePoints": 19.8,
+    "templatesAbove20Points": 0,
+    "templatesAbove15Points": 1,
+    "medianAdvantagePoints": -3.8,
+    "medianEntropyBits": 3.86
+  },
+  "templates": [
+    {
+      "templateId": "REL_M_COUNT",
+      "family": "relational",
+      "difficulty": "medium",
+      "n": 74,
+      "space": 6,
+      "modal": 0.365,
+      "entropyBits": 2.14,
+      "advantagePoints": 19.8
+    },
+    {
+      "templateId": "ODD_E_MULT",
+      "family": "odd_one_out",
+      "difficulty": "easy",
+      "n": 121,
+      "space": 9,
+      "modal": 0.298,
+      "entropyBits": 2.76,
+      "advantagePoints": 13.1
+    },
+    {
+      "templateId": "WORK_E_VOLUME",
+      "family": "work_time",
+      "difficulty": "easy",
+      "n": 146,
+      "space": 9,
+      "modal": 0.288,
+      "entropyBits": 2.91,
+      "advantagePoints": 12.1
+    },
+    {
+      "templateId": "REL_H_POSITION",
+      "family": "relational",
+      "difficulty": "hard",
+      "n": 134,
+      "space": 17,
+      "modal": 0.284,
+      "entropyBits": 3.6,
+      "advantagePoints": 11.7
+    },
+    {
+      "templateId": "SPD_M_EQUAL_DIST",
+      "family": "speed",
+      "difficulty": "medium",
+      "n": 77,
+      "space": 13,
+      "modal": 0.273,
+      "entropyBits": 3.27,
+      "advantagePoints": 10.6
+    },
+    {
+      "templateId": "RATE_H_TARGET",
+      "family": "unit_rate",
+      "difficulty": "hard",
+      "n": 128,
+      "space": 8,
+      "modal": 0.258,
+      "entropyBits": 2.7,
+      "advantagePoints": 9.1
+    },
+    {
+      "templateId": "AGE_H_TWO_TIME",
+      "family": "ages",
+      "difficulty": "hard",
+      "n": 136,
+      "space": 6,
+      "modal": 0.235,
+      "entropyBits": 2.49,
+      "advantagePoints": 6.9
+    },
+    {
+      "templateId": "WORK_M_CHANGE",
+      "family": "work_time",
+      "difficulty": "medium",
+      "n": 111,
+      "space": 13,
+      "modal": 0.234,
+      "entropyBits": 3.29,
+      "advantagePoints": 6.8
+    },
+    {
+      "templateId": "SPD_M_TWO_TIME",
+      "family": "speed",
+      "difficulty": "medium",
+      "n": 54,
+      "space": 7,
+      "modal": 0.222,
+      "entropyBits": 2.59,
+      "advantagePoints": 5.6
+    },
+    {
+      "templateId": "ODD_M_CUBES",
+      "family": "odd_one_out",
+      "difficulty": "medium",
+      "n": 92,
+      "space": 9,
+      "modal": 0.217,
+      "entropyBits": 2.92,
+      "advantagePoints": 5.1
+    },
+    {
+      "templateId": "PCT_M_SUCCESSIVE",
+      "family": "percentages",
+      "difficulty": "medium",
+      "n": 76,
+      "space": 8,
+      "modal": 0.211,
+      "entropyBits": 2.82,
+      "advantagePoints": 4.4
+    },
+    {
+      "templateId": "ODD_M_PRIME2",
+      "family": "odd_one_out",
+      "difficulty": "medium",
+      "n": 83,
+      "space": 8,
+      "modal": 0.205,
+      "entropyBits": 2.91,
+      "advantagePoints": 3.8
+    },
+    {
+      "templateId": "SPD_H_TIME_DIFF",
+      "family": "speed",
+      "difficulty": "hard",
+      "n": 79,
+      "space": 15,
+      "modal": 0.203,
+      "entropyBits": 3.57,
+      "advantagePoints": 3.6
+    },
+    {
+      "templateId": "SPD_H_CATCH",
+      "family": "speed",
+      "difficulty": "hard",
+      "n": 69,
+      "space": 15,
+      "modal": 0.203,
+      "entropyBits": 3.4,
+      "advantagePoints": 3.6
+    },
+    {
+      "templateId": "ODD_E_SQUARES",
+      "family": "odd_one_out",
+      "difficulty": "easy",
+      "n": 95,
+      "space": 17,
+      "modal": 0.2,
+      "entropyBits": 3.72,
+      "advantagePoints": 3.3
+    },
+    {
+      "templateId": "COMB_E_TIME",
+      "family": "combined_rate",
+      "difficulty": "easy",
+      "n": 75,
+      "space": 10,
+      "modal": 0.2,
+      "entropyBits": 3.15,
+      "advantagePoints": 3.3
+    },
+    {
+      "templateId": "CAL_E_AFTER",
+      "family": "calendar",
+      "difficulty": "easy",
+      "n": 145,
+      "space": 7,
+      "modal": 0.2,
+      "entropyBits": 2.77,
+      "advantagePoints": 3.3
+    },
+    {
+      "templateId": "ODD_H_SQ_MINUS",
+      "family": "odd_one_out",
+      "difficulty": "hard",
+      "n": 106,
+      "space": 11,
+      "modal": 0.198,
+      "entropyBits": 3.23,
+      "advantagePoints": 3.1
+    },
+    {
+      "templateId": "PL_H_CHAIN",
+      "family": "profit_loss",
+      "difficulty": "hard",
+      "n": 147,
+      "space": 7,
+      "modal": 0.197,
+      "entropyBits": 2.74,
+      "advantagePoints": 3.1
+    },
+    {
+      "templateId": "AVG_H_COMB_ADD",
+      "family": "averages",
+      "difficulty": "hard",
+      "n": 118,
+      "space": 11,
+      "modal": 0.195,
+      "entropyBits": 3.18,
+      "advantagePoints": 2.8
+    },
+    {
+      "templateId": "CAL_M_COMPOUND",
+      "family": "calendar",
+      "difficulty": "medium",
+      "n": 126,
+      "space": 7,
+      "modal": 0.19,
+      "entropyBits": 2.75,
+      "advantagePoints": 2.4
+    },
+    {
+      "templateId": "PCT_H_REVERSE_CHAIN",
+      "family": "percentages",
+      "difficulty": "hard",
+      "n": 121,
+      "space": 7,
+      "modal": 0.19,
+      "entropyBits": 2.77,
+      "advantagePoints": 2.3
+    },
+    {
+      "templateId": "RAT_M_ADD_SIDE",
+      "family": "ratios",
+      "difficulty": "medium",
+      "n": 79,
+      "space": 17,
+      "modal": 0.19,
+      "entropyBits": 3.7,
+      "advantagePoints": 2.3
+    },
+    {
+      "templateId": "RATE_M_PERCENT",
+      "family": "unit_rate",
+      "difficulty": "medium",
+      "n": 138,
+      "space": 17,
+      "modal": 0.188,
+      "entropyBits": 3.78,
+      "advantagePoints": 2.2
+    },
+    {
+      "templateId": "CAL_H_NESTED",
+      "family": "calendar",
+      "difficulty": "hard",
+      "n": 133,
+      "space": 7,
+      "modal": 0.188,
+      "entropyBits": 2.79,
+      "advantagePoints": 2.1
+    },
+    {
+      "templateId": "PL_H_REVERSE",
+      "family": "profit_loss",
+      "difficulty": "hard",
+      "n": 134,
+      "space": 7,
+      "modal": 0.187,
+      "entropyBits": 2.77,
+      "advantagePoints": 2
+    },
+    {
+      "templateId": "COMB_M_TOGETHER_SOLO",
+      "family": "combined_rate",
+      "difficulty": "medium",
+      "n": 108,
+      "space": 8,
+      "modal": 0.185,
+      "entropyBits": 2.94,
+      "advantagePoints": 1.9
+    },
+    {
+      "templateId": "AVG_M_COMBINE",
+      "family": "averages",
+      "difficulty": "medium",
+      "n": 97,
+      "space": 14,
+      "modal": 0.186,
+      "entropyBits": 3.65,
+      "advantagePoints": 1.9
+    },
+    {
+      "templateId": "CAL_E_TOM",
+      "family": "calendar",
+      "difficulty": "easy",
+      "n": 134,
+      "space": 7,
+      "modal": 0.179,
+      "entropyBits": 2.77,
+      "advantagePoints": 1.2
+    },
+    {
+      "templateId": "CAL_H_LONG",
+      "family": "calendar",
+      "difficulty": "hard",
+      "n": 85,
+      "space": 7,
+      "modal": 0.176,
+      "entropyBits": 2.78,
+      "advantagePoints": 1
+    },
+    {
+      "templateId": "PROP_M_FRAC_UNIT",
+      "family": "direct_proportion",
+      "difficulty": "medium",
+      "n": 74,
+      "space": 22,
+      "modal": 0.176,
+      "entropyBits": 4.03,
+      "advantagePoints": 0.9
+    },
+    {
+      "templateId": "WORK_M_EFF",
+      "family": "work_time",
+      "difficulty": "medium",
+      "n": 81,
+      "space": 12,
+      "modal": 0.173,
+      "entropyBits": 3.3,
+      "advantagePoints": 0.6
+    },
+    {
+      "templateId": "PL_M_TOTAL_COST",
+      "family": "profit_loss",
+      "difficulty": "medium",
+      "n": 122,
+      "space": 12,
+      "modal": 0.172,
+      "entropyBits": 3.29,
+      "advantagePoints": 0.5
+    },
+    {
+      "templateId": "CAL_M_TWO_SHIFT",
+      "family": "calendar",
+      "difficulty": "medium",
+      "n": 140,
+      "space": 7,
+      "modal": 0.164,
+      "entropyBits": 2.8,
+      "advantagePoints": -0.2
+    },
+    {
+      "templateId": "ODD_M_PRONIC",
+      "family": "odd_one_out",
+      "difficulty": "medium",
+      "n": 98,
+      "space": 9,
+      "modal": 0.163,
+      "entropyBits": 3.07,
+      "advantagePoints": -0.3
+    },
+    {
+      "templateId": "COMB_H_STAGED",
+      "family": "combined_rate",
+      "difficulty": "hard",
+      "n": 216,
+      "space": 8,
+      "modal": 0.162,
+      "entropyBits": 2.95,
+      "advantagePoints": -0.5
+    },
+    {
+      "templateId": "PCT_M_REMAIN",
+      "family": "percentages",
+      "difficulty": "medium",
+      "n": 111,
+      "space": 16,
+      "modal": 0.162,
+      "entropyBits": 3.72,
+      "advantagePoints": -0.5
+    },
+    {
+      "templateId": "COMB_M_SOLO_THEN",
+      "family": "combined_rate",
+      "difficulty": "medium",
+      "n": 106,
+      "space": 8,
+      "modal": 0.16,
+      "entropyBits": 2.98,
+      "advantagePoints": -0.6
+    },
+    {
+      "templateId": "SPD_E_TIME",
+      "family": "speed",
+      "difficulty": "easy",
+      "n": 125,
+      "space": 11,
+      "modal": 0.16,
+      "entropyBits": 3.38,
+      "advantagePoints": -0.7
+    },
+    {
+      "templateId": "PL_E_LOSS",
+      "family": "profit_loss",
+      "difficulty": "easy",
+      "n": 122,
+      "space": 13,
+      "modal": 0.156,
+      "entropyBits": 3.52,
+      "advantagePoints": -1.1
+    },
+    {
+      "templateId": "PCT_E_REVERSE_ONE",
+      "family": "percentages",
+      "difficulty": "easy",
+      "n": 123,
+      "space": 8,
+      "modal": 0.154,
+      "entropyBits": 2.98,
+      "advantagePoints": -1.2
+    },
+    {
+      "templateId": "SEQ_H_POW_INDEX",
+      "family": "sequences",
+      "difficulty": "hard",
+      "n": 79,
+      "space": 11,
+      "modal": 0.152,
+      "entropyBits": 3.38,
+      "advantagePoints": -1.5
+    },
+    {
+      "templateId": "PROP_M_RECIPE",
+      "family": "direct_proportion",
+      "difficulty": "medium",
+      "n": 87,
+      "space": 20,
+      "modal": 0.149,
+      "entropyBits": 4.07,
+      "advantagePoints": -1.7
+    },
+    {
+      "templateId": "WORK_H_WORKERS_EFF",
+      "family": "work_time",
+      "difficulty": "hard",
+      "n": 107,
+      "space": 12,
+      "modal": 0.15,
+      "entropyBits": 3.38,
+      "advantagePoints": -1.7
+    },
+    {
+      "templateId": "MACH_M_NEW_FAST",
+      "family": "machines",
+      "difficulty": "medium",
+      "n": 75,
+      "space": 18,
+      "modal": 0.147,
+      "entropyBits": 3.89,
+      "advantagePoints": -2
+    },
+    {
+      "templateId": "MACH_E_REQUIRED",
+      "family": "machines",
+      "difficulty": "easy",
+      "n": 98,
+      "space": 12,
+      "modal": 0.143,
+      "entropyBits": 3.44,
+      "advantagePoints": -2.4
+    },
+    {
+      "templateId": "RATE_E_DIRECT",
+      "family": "unit_rate",
+      "difficulty": "easy",
+      "n": 133,
+      "space": 21,
+      "modal": 0.143,
+      "entropyBits": 4.12,
+      "advantagePoints": -2.4
+    },
+    {
+      "templateId": "WORK_M_TARGET",
+      "family": "work_time",
+      "difficulty": "medium",
+      "n": 50,
+      "space": 16,
+      "modal": 0.14,
+      "entropyBits": 3.67,
+      "advantagePoints": -2.7
+    },
+    {
+      "templateId": "MACH_E_HOURS",
+      "family": "machines",
+      "difficulty": "easy",
+      "n": 143,
+      "space": 30,
+      "modal": 0.14,
+      "entropyBits": 4.49,
+      "advantagePoints": -2.7
+    },
+    {
+      "templateId": "REL_E_CHAIN",
+      "family": "relational",
+      "difficulty": "easy",
+      "n": 105,
+      "space": 16,
+      "modal": 0.133,
+      "entropyBits": 3.76,
+      "advantagePoints": -3.3
+    },
+    {
+      "templateId": "AVG_M_ADD_PAIR",
+      "family": "averages",
+      "difficulty": "medium",
+      "n": 82,
+      "space": 12,
+      "modal": 0.134,
+      "entropyBits": 3.52,
+      "advantagePoints": -3.3
+    },
+    {
+      "templateId": "SPD_H_MEET_DELAY",
+      "family": "speed",
+      "difficulty": "hard",
+      "n": 69,
+      "space": 18,
+      "modal": 0.13,
+      "entropyBits": 3.84,
+      "advantagePoints": -3.6
+    },
+    {
+      "templateId": "RATE_E_TIME",
+      "family": "unit_rate",
+      "difficulty": "easy",
+      "n": 123,
+      "space": 12,
+      "modal": 0.13,
+      "entropyBits": 3.53,
+      "advantagePoints": -3.7
+    },
+    {
+      "templateId": "WORK_H_TWO_STAGE",
+      "family": "work_time",
+      "difficulty": "hard",
+      "n": 148,
+      "space": 23,
+      "modal": 0.128,
+      "entropyBits": 4.21,
+      "advantagePoints": -3.8
+    },
+    {
+      "templateId": "FRAC_M_3",
+      "family": "fractions",
+      "difficulty": "medium",
+      "n": 259,
+      "space": 41,
+      "modal": 0.127,
+      "entropyBits": 4.69,
+      "advantagePoints": -3.9
+    },
+    {
+      "templateId": "AGE_M_RATIO_FUT_SUM",
+      "family": "ages",
+      "difficulty": "medium",
+      "n": 86,
+      "space": 15,
+      "modal": 0.128,
+      "entropyBits": 3.78,
+      "advantagePoints": -3.9
+    },
+    {
+      "templateId": "PL_E_PROFIT",
+      "family": "profit_loss",
+      "difficulty": "easy",
+      "n": 111,
+      "space": 14,
+      "modal": 0.126,
+      "entropyBits": 3.68,
+      "advantagePoints": -4.1
+    },
+    {
+      "templateId": "RATE_M_SCALE",
+      "family": "unit_rate",
+      "difficulty": "medium",
+      "n": 120,
+      "space": 25,
+      "modal": 0.125,
+      "entropyBits": 4.28,
+      "advantagePoints": -4.2
+    },
+    {
+      "templateId": "SEQ_H_ALT_DIV",
+      "family": "sequences",
+      "difficulty": "hard",
+      "n": 73,
+      "space": 16,
+      "modal": 0.123,
+      "entropyBits": 3.79,
+      "advantagePoints": -4.3
+    },
+    {
+      "templateId": "WORK_E_INVERSE",
+      "family": "work_time",
+      "difficulty": "easy",
+      "n": 132,
+      "space": 19,
+      "modal": 0.121,
+      "entropyBits": 3.78,
+      "advantagePoints": -4.5
+    },
+    {
+      "templateId": "SPD_M_AVG",
+      "family": "speed",
+      "difficulty": "medium",
+      "n": 91,
+      "space": 21,
+      "modal": 0.121,
+      "entropyBits": 4.15,
+      "advantagePoints": -4.6
+    },
+    {
+      "templateId": "RAT_M_COMMON_SUM",
+      "family": "ratios",
+      "difficulty": "medium",
+      "n": 91,
+      "space": 23,
+      "modal": 0.121,
+      "entropyBits": 4.24,
+      "advantagePoints": -4.6
+    },
+    {
+      "templateId": "PROP_H_COMPOUND",
+      "family": "direct_proportion",
+      "difficulty": "hard",
+      "n": 127,
+      "space": 23,
+      "modal": 0.118,
+      "entropyBits": 4.21,
+      "advantagePoints": -4.9
+    },
+    {
+      "templateId": "AGE_E_MULT_DIFF",
+      "family": "ages",
+      "difficulty": "easy",
+      "n": 146,
+      "space": 17,
+      "modal": 0.116,
+      "entropyBits": 3.86,
+      "advantagePoints": -5
+    },
+    {
+      "templateId": "AVG_M_REPLACE",
+      "family": "averages",
+      "difficulty": "medium",
+      "n": 96,
+      "space": 17,
+      "modal": 0.115,
+      "entropyBits": 3.86,
+      "advantagePoints": -5.2
+    },
+    {
+      "templateId": "AGE_M_FUT_RATIO",
+      "family": "ages",
+      "difficulty": "medium",
+      "n": 79,
+      "space": 32,
+      "modal": 0.114,
+      "entropyBits": 4.73,
+      "advantagePoints": -5.3
+    },
+    {
+      "templateId": "PROP_E_COST",
+      "family": "direct_proportion",
+      "difficulty": "easy",
+      "n": 124,
+      "space": 27,
+      "modal": 0.113,
+      "entropyBits": 4.33,
+      "advantagePoints": -5.4
+    },
+    {
+      "templateId": "PL_M_DISC_MARK",
+      "family": "profit_loss",
+      "difficulty": "medium",
+      "n": 127,
+      "space": 28,
+      "modal": 0.11,
+      "entropyBits": 4.46,
+      "advantagePoints": -5.6
+    },
+    {
+      "templateId": "ODD_H_TRIANGULAR",
+      "family": "odd_one_out",
+      "difficulty": "hard",
+      "n": 127,
+      "space": 25,
+      "modal": 0.11,
+      "entropyBits": 4.28,
+      "advantagePoints": -5.6
+    },
+    {
+      "templateId": "SEQ_M_ALT_OPS",
+      "family": "sequences",
+      "difficulty": "medium",
+      "n": 54,
+      "space": 31,
+      "modal": 0.111,
+      "entropyBits": 4.72,
+      "advantagePoints": -5.6
+    },
+    {
+      "templateId": "AGE_M_FUT_SUM_DIFF",
+      "family": "ages",
+      "difficulty": "medium",
+      "n": 100,
+      "space": 19,
+      "modal": 0.11,
+      "entropyBits": 3.91,
+      "advantagePoints": -5.7
+    },
+    {
+      "templateId": "SPD_E_DISTANCE",
+      "family": "speed",
+      "difficulty": "easy",
+      "n": 129,
+      "space": 22,
+      "modal": 0.109,
+      "entropyBits": 4.25,
+      "advantagePoints": -5.8
+    },
+    {
+      "templateId": "AVG_E_ADD",
+      "family": "averages",
+      "difficulty": "easy",
+      "n": 120,
+      "space": 19,
+      "modal": 0.108,
+      "entropyBits": 4.03,
+      "advantagePoints": -5.8
+    },
+    {
+      "templateId": "RAT_E_SPLIT",
+      "family": "ratios",
+      "difficulty": "easy",
+      "n": 132,
+      "space": 36,
+      "modal": 0.106,
+      "entropyBits": 4.77,
+      "advantagePoints": -6.1
+    },
+    {
+      "templateId": "RAT_H_TWO_COMB",
+      "family": "ratios",
+      "difficulty": "hard",
+      "n": 143,
+      "space": 26,
+      "modal": 0.105,
+      "entropyBits": 4.39,
+      "advantagePoints": -6.2
+    },
+    {
+      "templateId": "FRAC_E_2",
+      "family": "fractions",
+      "difficulty": "easy",
+      "n": 231,
+      "space": 35,
+      "modal": 0.1,
+      "entropyBits": 4.31,
+      "advantagePoints": -6.7
+    },
+    {
+      "templateId": "PCT_H_CHAIN_VALUE",
+      "family": "percentages",
+      "difficulty": "hard",
+      "n": 126,
+      "space": 26,
+      "modal": 0.095,
+      "entropyBits": 4.5,
+      "advantagePoints": -7.1
+    },
+    {
+      "templateId": "AVG_E_REMOVE",
+      "family": "averages",
+      "difficulty": "easy",
+      "n": 147,
+      "space": 25,
+      "modal": 0.095,
+      "entropyBits": 4.45,
+      "advantagePoints": -7.1
+    },
+    {
+      "templateId": "PROP_M_MAP",
+      "family": "direct_proportion",
+      "difficulty": "medium",
+      "n": 74,
+      "space": 39,
+      "modal": 0.095,
+      "entropyBits": 5.01,
+      "advantagePoints": -7.2
+    },
+    {
+      "templateId": "SEQ_M_INTERLEAVED",
+      "family": "sequences",
+      "difficulty": "medium",
+      "n": 74,
+      "space": 30,
+      "modal": 0.095,
+      "entropyBits": 4.62,
+      "advantagePoints": -7.2
+    },
+    {
+      "templateId": "REL_E_BETWEEN",
+      "family": "relational",
+      "difficulty": "easy",
+      "n": 97,
+      "space": 16,
+      "modal": 0.093,
+      "entropyBits": 3.92,
+      "advantagePoints": -7.4
+    },
+    {
+      "templateId": "FRAC_H_4",
+      "family": "fractions",
+      "difficulty": "hard",
+      "n": 259,
+      "space": 40,
+      "modal": 0.093,
+      "entropyBits": 4.58,
+      "advantagePoints": -7.4
+    },
+    {
+      "templateId": "RAT_H_TRANSFER",
+      "family": "ratios",
+      "difficulty": "hard",
+      "n": 155,
+      "space": 23,
+      "modal": 0.09,
+      "entropyBits": 4.23,
+      "advantagePoints": -7.6
+    },
+    {
+      "templateId": "SEQ_M_INC_DIFF",
+      "family": "sequences",
+      "difficulty": "medium",
+      "n": 55,
+      "space": 34,
+      "modal": 0.091,
+      "entropyBits": 4.88,
+      "advantagePoints": -7.6
+    },
+    {
+      "templateId": "AGE_E_SUM_DIFF",
+      "family": "ages",
+      "difficulty": "easy",
+      "n": 122,
+      "space": 23,
+      "modal": 0.09,
+      "entropyBits": 4.37,
+      "advantagePoints": -7.7
+    },
+    {
+      "templateId": "SEQ_E_GEO",
+      "family": "sequences",
+      "difficulty": "easy",
+      "n": 124,
+      "space": 33,
+      "modal": 0.089,
+      "entropyBits": 4.78,
+      "advantagePoints": -7.8
+    },
+    {
+      "templateId": "PCT_E_OF",
+      "family": "percentages",
+      "difficulty": "easy",
+      "n": 129,
+      "space": 26,
+      "modal": 0.085,
+      "entropyBits": 4.48,
+      "advantagePoints": -8.1
+    },
+    {
+      "templateId": "PROP_H_COST_PLUS",
+      "family": "direct_proportion",
+      "difficulty": "hard",
+      "n": 129,
+      "space": 33,
+      "modal": 0.085,
+      "entropyBits": 4.69,
+      "advantagePoints": -8.1
+    },
+    {
+      "templateId": "AVG_H_TARGET",
+      "family": "averages",
+      "difficulty": "hard",
+      "n": 130,
+      "space": 40,
+      "modal": 0.085,
+      "entropyBits": 4.95,
+      "advantagePoints": -8.2
+    },
+    {
+      "templateId": "PROP_E_ITEMS",
+      "family": "direct_proportion",
+      "difficulty": "easy",
+      "n": 123,
+      "space": 24,
+      "modal": 0.081,
+      "entropyBits": 4.37,
+      "advantagePoints": -8.5
+    },
+    {
+      "templateId": "RAT_E_KNOWN",
+      "family": "ratios",
+      "difficulty": "easy",
+      "n": 135,
+      "space": 34,
+      "modal": 0.081,
+      "entropyBits": 4.76,
+      "advantagePoints": -8.5
+    },
+    {
+      "templateId": "PCT_M_UNIT_PRICE",
+      "family": "percentages",
+      "difficulty": "medium",
+      "n": 87,
+      "space": 34,
+      "modal": 0.08,
+      "entropyBits": 4.74,
+      "advantagePoints": -8.6
+    },
+    {
+      "templateId": "AGE_H_PAST_FUT",
+      "family": "ages",
+      "difficulty": "hard",
+      "n": 116,
+      "space": 27,
+      "modal": 0.078,
+      "entropyBits": 4.49,
+      "advantagePoints": -8.9
+    },
+    {
+      "templateId": "SEQ_M_DOUBLE_DIFF",
+      "family": "sequences",
+      "difficulty": "medium",
+      "n": 64,
+      "space": 37,
+      "modal": 0.078,
+      "entropyBits": 5.04,
+      "advantagePoints": -8.9
+    },
+    {
+      "templateId": "SEQ_H_RECURRENCE",
+      "family": "sequences",
+      "difficulty": "hard",
+      "n": 81,
+      "space": 32,
+      "modal": 0.062,
+      "entropyBits": 4.81,
+      "advantagePoints": -10.5
+    },
+    {
+      "templateId": "MACH_M_STOP",
+      "family": "machines",
+      "difficulty": "medium",
+      "n": 88,
+      "space": 51,
+      "modal": 0.057,
+      "entropyBits": 5.42,
+      "advantagePoints": -11
+    },
+    {
+      "templateId": "COMB_E_OUTPUT",
+      "family": "combined_rate",
+      "difficulty": "easy",
+      "n": 106,
+      "space": 39,
+      "modal": 0.057,
+      "entropyBits": 5.06,
+      "advantagePoints": -11
+    },
+    {
+      "templateId": "RATE_H_TWO_PHASE",
+      "family": "unit_rate",
+      "difficulty": "hard",
+      "n": 144,
+      "space": 45,
+      "modal": 0.056,
+      "entropyBits": 5.35,
+      "advantagePoints": -11.1
+    },
+    {
+      "templateId": "MACH_H_STAGE_UP",
+      "family": "machines",
+      "difficulty": "hard",
+      "n": 115,
+      "space": 64,
+      "modal": 0.052,
+      "entropyBits": 5.82,
+      "advantagePoints": -11.4
+    },
+    {
+      "templateId": "COMB_E_THREE",
+      "family": "combined_rate",
+      "difficulty": "easy",
+      "n": 78,
+      "space": 45,
+      "modal": 0.051,
+      "entropyBits": 5.33,
+      "advantagePoints": -11.5
+    },
+    {
+      "templateId": "RAT_M_COMMON_DIFF",
+      "family": "ratios",
+      "difficulty": "medium",
+      "n": 80,
+      "space": 48,
+      "modal": 0.05,
+      "entropyBits": 5.43,
+      "advantagePoints": -11.7
+    },
+    {
+      "templateId": "SEQ_E_ARITH",
+      "family": "sequences",
+      "difficulty": "easy",
+      "n": 126,
+      "space": 67,
+      "modal": 0.048,
+      "entropyBits": 5.81,
+      "advantagePoints": -11.9
+    },
+    {
+      "templateId": "MACH_H_TWO_TYPES",
+      "family": "machines",
+      "difficulty": "hard",
+      "n": 134,
+      "space": 73,
+      "modal": 0.045,
+      "entropyBits": 5.97,
+      "advantagePoints": -12.2
+    },
+    {
+      "templateId": "REL_M_BRANCH_UNRES",
+      "family": "relational",
+      "difficulty": "medium",
+      "n": 74,
+      "space": 65,
+      "modal": 0.041,
+      "entropyBits": 5.96,
+      "advantagePoints": -12.6
+    },
+    {
+      "templateId": "MACH_M_SUBSET_UP",
+      "family": "machines",
+      "difficulty": "medium",
+      "n": 74,
+      "space": 46,
+      "modal": 0.041,
+      "entropyBits": 5.36,
+      "advantagePoints": -12.6
+    },
+    {
+      "templateId": "REL_M_CONFIRM",
+      "family": "relational",
+      "difficulty": "medium",
+      "n": 86,
+      "space": 75,
+      "modal": 0.023,
+      "entropyBits": 6.17,
+      "advantagePoints": -14.3
+    },
+    {
+      "templateId": "REL_H_GUARANTEE",
+      "family": "relational",
+      "difficulty": "hard",
+      "n": 132,
+      "space": 105,
+      "modal": 0.023,
+      "entropyBits": 6.62,
+      "advantagePoints": -14.4
+    }
+  ]
+}

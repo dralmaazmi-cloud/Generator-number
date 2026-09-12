@@ -14,8 +14,11 @@ const money = unitFormat('dirham');
 
 function simpleProfit(ctx) {
   const {rng} = ctx;
-  const buy = rng.pick([100, 120, 160, 200, 240, 300, 400]);
-  const percent = rng.pick([10, 15, 20, 25, 30]);
+  // RC2-011. The percentage the stem states IS the answer here, so the answer
+  // space was the length of this list. Widened at design time; the integrality
+  // guard below still decides which draws survive.
+  const buy = rng.pick([100, 120, 125, 150, 160, 180, 200, 240, 250, 300, 320, 400, 450, 500]);
+  const percent = rng.pick([5, 8, 10, 12, 15, 16, 20, 24, 25, 30, 35, 40, 45, 50]);
   const profit = buy * percent / 100;
   if (!Number.isInteger(profit)) return resample(ctx, simpleProfit);
   const sell = buy + profit;
@@ -60,8 +63,9 @@ function simpleProfit(ctx) {
 
 function simpleLoss(ctx) {
   const {rng} = ctx;
-  const buy = rng.pick([100, 120, 160, 200, 240, 300, 400]);
-  const percent = rng.pick([10, 20, 25]);
+  // RC2-011, as simpleProfit: the stated percentage is the answer.
+  const buy = rng.pick([100, 120, 125, 150, 160, 180, 200, 240, 250, 300, 320, 400, 450, 500]);
+  const percent = rng.pick([4, 5, 8, 10, 12, 15, 16, 20, 24, 25, 30, 35, 40]);
   const loss = buy * percent / 100;
   if (!Number.isInteger(loss)) return resample(ctx, simpleLoss);
   const sell = buy - loss;
@@ -105,10 +109,12 @@ function simpleLoss(ctx) {
 
 function totalCostProfit(ctx) {
   const {rng} = ctx;
-  const buy = rng.pick([160, 180, 200, 240, 300]);
-  const shipping = rng.pick([10, 20, 30, 40]);
+  // RC2-011. Three stated percentages meant three possible answers, and one of
+  // them took 51.6% of the corpus on its own.
+  const buy = rng.pick([120, 140, 160, 180, 200, 210, 240, 260, 300, 320, 360, 400]);
+  const shipping = rng.pick([10, 15, 20, 24, 25, 30, 40, 50, 60]);
   const total = buy + shipping;
-  const percent = rng.pick([10, 20, 25]);
+  const percent = rng.pick([5, 8, 10, 12, 15, 16, 20, 24, 25, 30, 35, 40]);
   const profit = total * percent / 100;
   if (!Number.isInteger(profit)) return resample(ctx, totalCostProfit);
   const sell = total + profit;

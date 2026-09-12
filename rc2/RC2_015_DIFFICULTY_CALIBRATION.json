@@ -1,7 +1,7 @@
 {
   "schema": "rc2-015-difficulty-calibration-v1",
   "scopeItem": "RC2-015",
-  "generatedAt": "2026-09-12T10:10:52.916Z",
+  "generatedAt": "2026-09-12T10:20:53.065Z",
   "corpus": {
     "questions": 4500,
     "seedPrefix": "rc2-015"
@@ -64,17 +64,17 @@
     "ruleSearchDepth": 1.4
   },
   "agreement": {
-    "declaredVsComputed": 0.66,
+    "declaredVsComputed": 0.6589,
     "rc1Agreement": 0.528,
     "grid": {
       "easy->easy": 1268,
-      "medium->hard": 407,
-      "hard->medium": 473,
+      "medium->hard": 411,
+      "hard->medium": 471,
       "medium->easy": 300,
-      "hard->hard": 909,
-      "medium->medium": 793,
+      "hard->hard": 908,
+      "medium->medium": 789,
       "easy->medium": 232,
-      "hard->easy": 118
+      "hard->easy": 121
     }
   },
   "disagreementIsNotAutomaticallyADefect": {
@@ -97,10 +97,10 @@
     },
     "now": {
       "declared": "hard",
-      "n": 50,
+      "n": 51,
       "agreementRate": 1,
       "computed": {
-        "hard": 50
+        "hard": 51
       },
       "medianScore": 17.9,
       "determinedShare": 0.649,
@@ -228,10 +228,10 @@
       "declared": "medium",
       "computedAlways": "hard",
       "computed": {
-        "hard": 31
+        "hard": 32
       },
       "medianScore": 11.7,
-      "n": 31,
+      "n": 32,
       "direction": null
     },
     {
@@ -240,10 +240,10 @@
       "declared": "hard",
       "computedAlways": "medium",
       "computed": {
-        "medium": 45
+        "medium": 44
       },
       "medianScore": 11.1,
-      "n": 45,
+      "n": 44,
       "direction": null
     },
     {
@@ -252,10 +252,10 @@
       "declared": "hard",
       "computedAlways": "medium",
       "computed": {
-        "medium": 44
+        "medium": 45
       },
       "medianScore": 10.2,
-      "n": 44,
+      "n": 45,
       "direction": null
     },
     {
@@ -264,10 +264,10 @@
       "declared": "medium",
       "computedAlways": "easy",
       "computed": {
-        "easy": 38
+        "easy": 33
       },
       "medianScore": 7.6,
-      "n": 38,
+      "n": 33,
       "direction": null
     },
     {
@@ -300,10 +300,10 @@
       "declared": "easy",
       "computedAlways": "medium",
       "computed": {
-        "medium": 36
+        "medium": 37
       },
       "medianScore": 9.1,
-      "n": 36,
+      "n": 37,
       "direction": null
     },
     {
@@ -336,10 +336,10 @@
       "declared": "easy",
       "computedAlways": "medium",
       "computed": {
-        "medium": 38
+        "medium": 39
       },
       "medianScore": 10.9,
-      "n": 38,
+      "n": 39,
       "direction": null
     },
     {
@@ -348,10 +348,10 @@
       "declared": "medium",
       "computedAlways": "easy",
       "computed": {
-        "easy": 55
+        "easy": 56
       },
       "medianScore": 6.4,
-      "n": 55,
+      "n": 56,
       "direction": null
     },
     {
@@ -360,10 +360,10 @@
       "declared": "medium",
       "computedAlways": "easy",
       "computed": {
-        "easy": 39
+        "easy": 40
       },
       "medianScore": 5.9,
-      "n": 39,
+      "n": 40,
       "direction": null
     },
     {
@@ -384,8 +384,8 @@
       "declared": "hard",
       "computedAlways": null,
       "computed": {
-        "easy": 38,
-        "medium": 20
+        "easy": 41,
+        "medium": 17
       },
       "medianScore": 7.5,
       "n": 58,
@@ -397,10 +397,10 @@
       "declared": "medium",
       "computedAlways": "hard",
       "computed": {
-        "hard": 98
+        "hard": 100
       },
       "medianScore": 11.4,
-      "n": 98,
+      "n": 100,
       "direction": null
     },
     {
@@ -409,10 +409,10 @@
       "declared": "hard",
       "computedAlways": "medium",
       "computed": {
-        "medium": 49
+        "medium": 50
       },
       "medianScore": 10.9,
-      "n": 49,
+      "n": 50,
       "direction": null
     },
     {
@@ -457,10 +457,10 @@
       "declared": "medium",
       "computedAlways": "hard",
       "computed": {
-        "hard": 32
+        "hard": 33
       },
       "medianScore": 12.3,
-      "n": 32,
+      "n": 33,
       "direction": null
     },
     {
@@ -541,10 +541,10 @@
       "declared": "medium",
       "computedAlways": "hard",
       "computed": {
-        "hard": 25
+        "hard": 23
       },
       "medianScore": 16.6,
-      "n": 25,
+      "n": 23,
       "direction": null
     },
     {
@@ -565,10 +565,10 @@
       "declared": "medium",
       "computedAlways": "easy",
       "computed": {
-        "easy": 30
+        "easy": 32
       },
       "medianScore": 6.9,
-      "n": 30,
+      "n": 32,
       "direction": null
     },
     {
@@ -577,10 +577,10 @@
       "declared": "easy",
       "computedAlways": "medium",
       "computed": {
-        "medium": 36
+        "medium": 34
       },
       "medianScore": 8.2,
-      "n": 36,
+      "n": 34,
       "direction": null
     },
     {
@@ -601,10 +601,10 @@
       "declared": "medium",
       "computedAlways": "hard",
       "computed": {
-        "hard": 31
+        "hard": 32
       },
       "medianScore": 14.7,
-      "n": 31,
+      "n": 32,
       "direction": null
     },
     {
@@ -625,10 +625,10 @@
       "declared": "medium",
       "computedAlways": "hard",
       "computed": {
-        "hard": 35
+        "hard": 36
       },
       "medianScore": 11.8,
-      "n": 35,
+      "n": 36,
       "direction": null
     }
   ],
@@ -637,10 +637,10 @@
       "templateId": "MACH_M_NEW_FAST",
       "family": "machines",
       "declared": "medium",
-      "n": 31,
+      "n": 32,
       "agree": 0,
       "computed": {
-        "hard": 31
+        "hard": 32
       },
       "medianScore": 11.7,
       "agreementRate": 0
@@ -649,10 +649,10 @@
       "templateId": "CAL_H_NESTED",
       "family": "calendar",
       "declared": "hard",
-      "n": 45,
+      "n": 44,
       "agree": 0,
       "computed": {
-        "medium": 45
+        "medium": 44
       },
       "medianScore": 11.1,
       "agreementRate": 0
@@ -661,10 +661,10 @@
       "templateId": "PROP_H_COMPOUND",
       "family": "direct_proportion",
       "declared": "hard",
-      "n": 44,
+      "n": 45,
       "agree": 0,
       "computed": {
-        "medium": 44
+        "medium": 45
       },
       "medianScore": 10.2,
       "agreementRate": 0
@@ -673,10 +673,10 @@
       "templateId": "WORK_M_EFF",
       "family": "work_time",
       "declared": "medium",
-      "n": 38,
+      "n": 33,
       "agree": 0,
       "computed": {
-        "easy": 38
+        "easy": 33
       },
       "medianScore": 7.6,
       "agreementRate": 0
@@ -709,10 +709,10 @@
       "templateId": "MACH_E_HOURS",
       "family": "machines",
       "declared": "easy",
-      "n": 36,
+      "n": 37,
       "agree": 0,
       "computed": {
-        "medium": 36
+        "medium": 37
       },
       "medianScore": 9.1,
       "agreementRate": 0
@@ -745,10 +745,10 @@
       "templateId": "MACH_E_REQUIRED",
       "family": "machines",
       "declared": "easy",
-      "n": 38,
+      "n": 39,
       "agree": 0,
       "computed": {
-        "medium": 38
+        "medium": 39
       },
       "medianScore": 10.9,
       "agreementRate": 0
@@ -757,10 +757,10 @@
       "templateId": "RATE_M_SCALE",
       "family": "unit_rate",
       "declared": "medium",
-      "n": 55,
+      "n": 56,
       "agree": 0,
       "computed": {
-        "easy": 55
+        "easy": 56
       },
       "medianScore": 6.4,
       "agreementRate": 0
@@ -769,10 +769,10 @@
       "templateId": "CAL_M_COMPOUND",
       "family": "calendar",
       "declared": "medium",
-      "n": 39,
+      "n": 40,
       "agree": 0,
       "computed": {
-        "easy": 39
+        "easy": 40
       },
       "medianScore": 5.9,
       "agreementRate": 0
@@ -796,8 +796,8 @@
       "n": 58,
       "agree": 0,
       "computed": {
-        "easy": 38,
-        "medium": 20
+        "easy": 41,
+        "medium": 17
       },
       "medianScore": 7.5,
       "agreementRate": 0
@@ -806,10 +806,10 @@
       "templateId": "FRAC_M_3",
       "family": "fractions",
       "declared": "medium",
-      "n": 98,
+      "n": 100,
       "agree": 0,
       "computed": {
-        "hard": 98
+        "hard": 100
       },
       "medianScore": 11.4,
       "agreementRate": 0
@@ -818,10 +818,10 @@
       "templateId": "PROP_H_COST_PLUS",
       "family": "direct_proportion",
       "declared": "hard",
-      "n": 49,
+      "n": 50,
       "agree": 0,
       "computed": {
-        "medium": 49
+        "medium": 50
       },
       "medianScore": 10.9,
       "agreementRate": 0
@@ -866,10 +866,10 @@
       "templateId": "RAT_M_COMMON_DIFF",
       "family": "ratios",
       "declared": "medium",
-      "n": 32,
+      "n": 33,
       "agree": 0,
       "computed": {
-        "hard": 32
+        "hard": 33
       },
       "medianScore": 12.3,
       "agreementRate": 0
@@ -950,10 +950,10 @@
       "templateId": "REL_M_COUNT",
       "family": "relational",
       "declared": "medium",
-      "n": 25,
+      "n": 23,
       "agree": 0,
       "computed": {
-        "hard": 25
+        "hard": 23
       },
       "medianScore": 16.6,
       "agreementRate": 0
@@ -974,10 +974,10 @@
       "templateId": "PROP_M_FRAC_UNIT",
       "family": "direct_proportion",
       "declared": "medium",
-      "n": 30,
+      "n": 32,
       "agree": 0,
       "computed": {
-        "easy": 30
+        "easy": 32
       },
       "medianScore": 6.9,
       "agreementRate": 0
@@ -986,10 +986,10 @@
       "templateId": "RATE_E_TIME",
       "family": "unit_rate",
       "declared": "easy",
-      "n": 36,
+      "n": 34,
       "agree": 0,
       "computed": {
-        "medium": 36
+        "medium": 34
       },
       "medianScore": 8.2,
       "agreementRate": 0
@@ -1010,10 +1010,10 @@
       "templateId": "REL_M_BRANCH_UNRES",
       "family": "relational",
       "declared": "medium",
-      "n": 31,
+      "n": 32,
       "agree": 0,
       "computed": {
-        "hard": 31
+        "hard": 32
       },
       "medianScore": 14.7,
       "agreementRate": 0
@@ -1034,10 +1034,10 @@
       "templateId": "RAT_M_ADD_SIDE",
       "family": "ratios",
       "declared": "medium",
-      "n": 35,
+      "n": 36,
       "agree": 0,
       "computed": {
-        "hard": 35
+        "hard": 36
       },
       "medianScore": 11.8,
       "agreementRate": 0
@@ -1046,14 +1046,14 @@
       "templateId": "ODD_M_PRONIC",
       "family": "odd_one_out",
       "declared": "medium",
-      "n": 37,
+      "n": 38,
       "agree": 5,
       "computed": {
-        "easy": 32,
+        "easy": 33,
         "medium": 5
       },
       "medianScore": 5.6,
-      "agreementRate": 0.135
+      "agreementRate": 0.132
     },
     {
       "templateId": "ODD_M_PRIME2",
@@ -1072,14 +1072,14 @@
       "templateId": "REL_E_CHAIN",
       "family": "relational",
       "declared": "easy",
-      "n": 35,
-      "agree": 14,
+      "n": 36,
+      "agree": 15,
       "computed": {
-        "medium": 21,
-        "easy": 14
+        "easy": 15,
+        "medium": 21
       },
       "medianScore": 8.4,
-      "agreementRate": 0.4
+      "agreementRate": 0.417
     },
     {
       "templateId": "ODD_M_CUBES",
@@ -1149,10 +1149,10 @@
       "templateId": "WORK_H_TWO_STAGE",
       "family": "work_time",
       "declared": "hard",
-      "n": 50,
-      "agree": 50,
+      "n": 51,
+      "agree": 51,
       "computed": {
-        "hard": 50
+        "hard": 51
       },
       "medianScore": 13.3,
       "agreementRate": 1
@@ -1161,10 +1161,10 @@
       "templateId": "PCT_M_REMAIN",
       "family": "percentages",
       "declared": "medium",
-      "n": 28,
-      "agree": 28,
+      "n": 29,
+      "agree": 29,
       "computed": {
-        "medium": 28
+        "medium": 29
       },
       "medianScore": 9.1,
       "agreementRate": 1
@@ -1185,10 +1185,10 @@
       "templateId": "AVG_M_ADD_PAIR",
       "family": "averages",
       "declared": "medium",
-      "n": 34,
-      "agree": 34,
+      "n": 33,
+      "agree": 33,
       "computed": {
-        "medium": 34
+        "medium": 33
       },
       "medianScore": 9.1,
       "agreementRate": 1
@@ -1197,10 +1197,10 @@
       "templateId": "CAL_E_TOM",
       "family": "calendar",
       "declared": "easy",
-      "n": 59,
-      "agree": 59,
+      "n": 60,
+      "agree": 60,
       "computed": {
-        "easy": 59
+        "easy": 60
       },
       "medianScore": 3.3,
       "agreementRate": 1
@@ -1233,10 +1233,10 @@
       "templateId": "AGE_E_SUM_DIFF",
       "family": "ages",
       "declared": "easy",
-      "n": 51,
-      "agree": 51,
+      "n": 49,
+      "agree": 49,
       "computed": {
-        "easy": 51
+        "easy": 49
       },
       "medianScore": 6.4,
       "agreementRate": 1
@@ -1245,10 +1245,10 @@
       "templateId": "WORK_M_TARGET",
       "family": "work_time",
       "declared": "medium",
-      "n": 29,
-      "agree": 29,
+      "n": 30,
+      "agree": 30,
       "computed": {
-        "medium": 29
+        "medium": 30
       },
       "medianScore": 10.9,
       "agreementRate": 1
@@ -1293,10 +1293,10 @@
       "templateId": "WORK_E_VOLUME",
       "family": "work_time",
       "declared": "easy",
-      "n": 65,
-      "agree": 65,
+      "n": 64,
+      "agree": 64,
       "computed": {
-        "easy": 65
+        "easy": 64
       },
       "medianScore": 6,
       "agreementRate": 1
@@ -1305,10 +1305,10 @@
       "templateId": "REL_H_POSITION",
       "family": "relational",
       "declared": "hard",
-      "n": 50,
-      "agree": 50,
+      "n": 51,
+      "agree": 51,
       "computed": {
-        "hard": 50
+        "hard": 51
       },
       "medianScore": 17.9,
       "agreementRate": 1
@@ -1317,10 +1317,10 @@
       "templateId": "COMB_H_STAGED",
       "family": "combined_rate",
       "declared": "hard",
-      "n": 91,
-      "agree": 91,
+      "n": 80,
+      "agree": 80,
       "computed": {
-        "hard": 91
+        "hard": 80
       },
       "medianScore": 15.1,
       "agreementRate": 1
@@ -1386,13 +1386,25 @@
       "agreementRate": 1
     },
     {
+      "templateId": "SEQ_H_RECURRENCE",
+      "family": "sequences",
+      "declared": "hard",
+      "n": 35,
+      "agree": 35,
+      "computed": {
+        "hard": 35
+      },
+      "medianScore": 13,
+      "agreementRate": 1
+    },
+    {
       "templateId": "SPD_M_TWO_TIME",
       "family": "speed",
       "declared": "medium",
-      "n": 29,
-      "agree": 29,
+      "n": 30,
+      "agree": 30,
       "computed": {
-        "medium": 29
+        "medium": 30
       },
       "medianScore": 10.1,
       "agreementRate": 1
@@ -1401,10 +1413,10 @@
       "templateId": "COMB_E_OUTPUT",
       "family": "combined_rate",
       "declared": "easy",
-      "n": 26,
-      "agree": 26,
+      "n": 27,
+      "agree": 27,
       "computed": {
-        "easy": 26
+        "easy": 27
       },
       "medianScore": 5.3,
       "agreementRate": 1
@@ -1461,10 +1473,10 @@
       "templateId": "AVG_E_REMOVE",
       "family": "averages",
       "declared": "easy",
-      "n": 45,
-      "agree": 45,
+      "n": 46,
+      "agree": 46,
       "computed": {
-        "easy": 45
+        "easy": 46
       },
       "medianScore": 6.4,
       "agreementRate": 1
@@ -1473,10 +1485,10 @@
       "templateId": "SPD_H_TIME_DIFF",
       "family": "speed",
       "declared": "hard",
-      "n": 30,
-      "agree": 30,
+      "n": 31,
+      "agree": 31,
       "computed": {
-        "hard": 30
+        "hard": 31
       },
       "medianScore": 12.8,
       "agreementRate": 1
@@ -1545,10 +1557,10 @@
       "templateId": "WORK_E_INVERSE",
       "family": "work_time",
       "declared": "easy",
-      "n": 48,
-      "agree": 48,
+      "n": 49,
+      "agree": 49,
       "computed": {
-        "easy": 48
+        "easy": 49
       },
       "medianScore": 5.3,
       "agreementRate": 1
@@ -1569,10 +1581,10 @@
       "templateId": "PL_E_LOSS",
       "family": "profit_loss",
       "declared": "easy",
-      "n": 44,
-      "agree": 44,
+      "n": 45,
+      "agree": 45,
       "computed": {
-        "easy": 44
+        "easy": 45
       },
       "medianScore": 7.6,
       "agreementRate": 1
@@ -1581,10 +1593,10 @@
       "templateId": "MACH_M_SUBSET_UP",
       "family": "machines",
       "declared": "medium",
-      "n": 29,
-      "agree": 29,
+      "n": 30,
+      "agree": 30,
       "computed": {
-        "medium": 29
+        "medium": 30
       },
       "medianScore": 10.3,
       "agreementRate": 1
@@ -1605,10 +1617,10 @@
       "templateId": "MACH_M_STOP",
       "family": "machines",
       "declared": "medium",
-      "n": 35,
-      "agree": 35,
+      "n": 36,
+      "agree": 36,
       "computed": {
-        "medium": 35
+        "medium": 36
       },
       "medianScore": 9.1,
       "agreementRate": 1
@@ -1653,24 +1665,12 @@
       "templateId": "AGE_H_TWO_TIME",
       "family": "ages",
       "declared": "hard",
-      "n": 47,
-      "agree": 47,
+      "n": 48,
+      "agree": 48,
       "computed": {
-        "hard": 47
+        "hard": 48
       },
       "medianScore": 13.9,
-      "agreementRate": 1
-    },
-    {
-      "templateId": "SEQ_H_RECURRENCE",
-      "family": "sequences",
-      "declared": "hard",
-      "n": 33,
-      "agree": 33,
-      "computed": {
-        "hard": 33
-      },
-      "medianScore": 13,
       "agreementRate": 1
     },
     {
@@ -1689,10 +1689,10 @@
       "templateId": "RAT_H_TRANSFER",
       "family": "ratios",
       "declared": "hard",
-      "n": 49,
-      "agree": 49,
+      "n": 53,
+      "agree": 53,
       "computed": {
-        "hard": 49
+        "hard": 53
       },
       "medianScore": 17.2,
       "agreementRate": 1
@@ -1737,10 +1737,10 @@
       "templateId": "PL_M_TOTAL_COST",
       "family": "profit_loss",
       "declared": "medium",
-      "n": 37,
-      "agree": 37,
+      "n": 39,
+      "agree": 39,
       "computed": {
-        "medium": 37
+        "medium": 39
       },
       "medianScore": 10.2,
       "agreementRate": 1
@@ -1761,24 +1761,12 @@
       "templateId": "AGE_E_MULT_DIFF",
       "family": "ages",
       "declared": "easy",
-      "n": 50,
-      "agree": 50,
+      "n": 49,
+      "agree": 49,
       "computed": {
-        "easy": 50
+        "easy": 49
       },
       "medianScore": 7.6,
-      "agreementRate": 1
-    },
-    {
-      "templateId": "SPD_E_TIME",
-      "family": "speed",
-      "declared": "easy",
-      "n": 39,
-      "agree": 39,
-      "computed": {
-        "easy": 39
-      },
-      "medianScore": 3.8,
       "agreementRate": 1
     },
     {
@@ -1797,12 +1785,24 @@
       "templateId": "COMB_M_TOGETHER_SOLO",
       "family": "combined_rate",
       "declared": "medium",
-      "n": 44,
-      "agree": 44,
+      "n": 33,
+      "agree": 33,
       "computed": {
-        "medium": 44
+        "medium": 33
       },
       "medianScore": 10.9,
+      "agreementRate": 1
+    },
+    {
+      "templateId": "SPD_E_TIME",
+      "family": "speed",
+      "declared": "easy",
+      "n": 37,
+      "agree": 37,
+      "computed": {
+        "easy": 37
+      },
+      "medianScore": 3.8,
       "agreementRate": 1
     },
     {
@@ -1833,10 +1833,10 @@
       "templateId": "SEQ_H_POW_INDEX",
       "family": "sequences",
       "declared": "hard",
-      "n": 27,
-      "agree": 27,
+      "n": 24,
+      "agree": 24,
       "computed": {
-        "hard": 27
+        "hard": 24
       },
       "medianScore": 11.8,
       "agreementRate": 1
@@ -1845,10 +1845,10 @@
       "templateId": "WORK_H_WORKERS_EFF",
       "family": "work_time",
       "declared": "hard",
-      "n": 43,
-      "agree": 43,
+      "n": 45,
+      "agree": 45,
       "computed": {
-        "hard": 43
+        "hard": 45
       },
       "medianScore": 14.5,
       "agreementRate": 1
@@ -1869,10 +1869,10 @@
       "templateId": "AVG_M_COMBINE",
       "family": "averages",
       "declared": "medium",
-      "n": 32,
-      "agree": 32,
+      "n": 33,
+      "agree": 33,
       "computed": {
-        "medium": 32
+        "medium": 33
       },
       "medianScore": 9.1,
       "agreementRate": 1
@@ -1893,10 +1893,10 @@
       "templateId": "PCT_H_REVERSE_CHAIN",
       "family": "percentages",
       "declared": "hard",
-      "n": 31,
-      "agree": 31,
+      "n": 32,
+      "agree": 32,
       "computed": {
-        "hard": 31
+        "hard": 32
       },
       "medianScore": 12.4,
       "agreementRate": 1

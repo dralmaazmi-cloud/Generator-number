@@ -63,12 +63,14 @@ function machineHours(ctx) {
 
 function requiredMachines(ctx) {
   const {rng} = ctx;
-  const machines = rng.pick([4, 5, 6]);
-  const hours = rng.pick([4, 5, 6]);
-  const rate = rng.pick([10, 12, 15, 20]);
+  // RC2-011. The number of machines asked for was drawn from four values, one
+  // of which the filter often removed.
+  const machines = rng.pick([3, 4, 5, 6, 8, 9, 10]);
+  const hours = rng.pick([3, 4, 5, 6, 8]);
+  const rate = rng.pick([8, 10, 12, 15, 16, 20, 24, 25]);
   const total = machines * hours * rate;
-  const targetHours = rng.pick([2, 3, 4].filter(v => v !== hours));
-  const correct = rng.pick([6, 8, 10, 12].filter(v => v !== machines));
+  const targetHours = rng.pick([2, 3, 4, 5, 6].filter(v => v !== hours));
+  const correct = rng.pick([3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 15, 16].filter(v => v !== machines));
   const target = correct * targetHours * rate;
   const params = {machines, hours, totalOutput: total, targetOutput: target, targetHours};
   const distractors = usable(ctx, [

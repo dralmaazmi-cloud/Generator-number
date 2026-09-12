@@ -1,7 +1,7 @@
 {
   "schema": "rc2-014-feedback-metrics-v1",
   "scopeItem": "RC2-014",
-  "generatedAt": "2026-09-12T10:10:49.282Z",
+  "generatedAt": "2026-09-12T10:20:49.480Z",
   "corpus": {
     "questions": 4000,
     "wrongOptions": 20000,
@@ -16,14 +16,14 @@
   "metrics": {
     "M1_derivationTruthfulness": {
       "description": "Of the wrong options that make an arithmetic claim, the share whose claim produces the number on the paper.",
-      "checked": 13902,
-      "exact": 13581,
-      "roundsToDisplayedValue": 321,
+      "checked": 13846,
+      "exact": 13511,
+      "roundsToDisplayedValue": 335,
       "mismatches": 0,
       "value": 1,
       "notCheckable": {
-        "prose": 3203,
-        "nonNumericAnswer": 2895,
+        "prose": 3234,
+        "nonNumericAnswer": 2920,
         "absent": 0
       }
     },
@@ -36,9 +36,9 @@
     "M3_discrimination": {
       "description": "Whether a question's five wrong options say five different things. Measured on the misconception and on the derivation, NOT on the rendered sentence: the rendered sentence carries the option's own value in its head and is therefore unique by construction — that is the error the retired metric made, and it is not repeated here.",
       "byMisconception": {
-        "meanDistinctPerQuestion": 3.951,
-        "questionsWithAllFiveDistinct": 1716,
-        "shareWithAllFiveDistinct": 0.429,
+        "meanDistinctPerQuestion": 3.941,
+        "questionsWithAllFiveDistinct": 1687,
+        "shareWithAllFiveDistinct": 0.4218,
         "minDistinct": 1,
         "note": "A single misconception across all five is correct where the family admits only one kind of error: every wrong option in an odd-one-out question is wrong because it satisfies the shared rule. Those questions still discriminate through the derivation, which names WHICH property each number satisfies."
       },
@@ -52,8 +52,8 @@
     "M4_questionSpecificity": {
       "description": "Wrong options whose derivation quotes at least one number from this question's own stem.",
       "specifiable": 20000,
-      "specific": 13300,
-      "value": 0.665
+      "specific": 13240,
+      "value": 0.662
     },
     "M5_vacuity": {
       "description": "Wrong options falling back to the neutral sentence, or carrying no derivation at all.",
@@ -65,11 +65,11 @@
   "wordingDuplication": {
     "note": "Reported because the RC1 sample counted it. It is NOT a defect: two questions that produce the same error deserve the same sentence. Duplication that coincides with a real failure is counted under RC2-012 (vacuous) or RC2-013 (misattributed).",
     "classification": "OBSERVATION",
-    "questionsWithDuplicateSentence": 1958,
-    "shareOfQuestions": 0.4895,
-    "optionsWithNonUniqueSentence": 19052,
-    "shareOfWrongOptions": 0.9526,
-    "distinctSentences": 1558,
+    "questionsWithDuplicateSentence": 2009,
+    "shareOfQuestions": 0.5022,
+    "optionsWithNonUniqueSentence": 18720,
+    "shareOfWrongOptions": 0.936,
+    "distinctSentences": 1745,
     "rc1Reported": {
       "questionsWithDuplicateExplanatorySentence": 6117,
       "ofQuestions": 10000,
