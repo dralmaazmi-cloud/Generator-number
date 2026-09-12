@@ -1,15 +1,14 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-12T19:58:55.890Z",
+  "evaluatedAt": "2026-09-12T20:03:54.008Z",
   "engineVersion": "1.4.0",
-  "headCommit": "546fbafaa54b8b87dbe3c7a76834474c41d0bf1a",
+  "headCommit": "498fed74fd9f77fdbc4b53d5cafb5f2ab30f2390",
   "branch": "claude/rc2-implementation",
   "holdoutSeed": "AUDIT-2026-09-12-B",
   "verdict": "FAIL",
   "conditions": 39,
   "failedConditions": [
-    "SUITE_GREEN",
     "STRUCTURE_ADJUDICATION_COMPLETE",
     "TREE_CLEAN"
   ],
@@ -41,10 +40,10 @@
     {
       "id": "SUITE_GREEN",
       "requirement": "The whole test suite passes",
-      "pass": false,
+      "pass": true,
       "detail": {
-        "passed": 394,
-        "failed": 3
+        "passed": 390,
+        "failed": 0
       }
     },
     {
@@ -84,10 +83,10 @@
         "offenders": [],
         "filesMentioningIt": [
           "rc2/DEVELOPMENT_CORPUS.json",
-          "rc2/FREEZE.json",
           "rc2/FREEZE_RC2.json",
           "rc2/FREEZE_RC2_1.json",
           "rc2/FREEZE_RC2_2.json",
+          "rc2/FREEZE_RC2_3.json",
           "rc2/HOLDOUT.json",
           "rc2/HOLDOUT_C.json",
           "rc2/HOLDOUT_D.json",
@@ -97,6 +96,7 @@
           "rc2/RC21_REMEDIATION_REPORT.md",
           "rc2/RC22_DEVELOPMENT_CORPUS.json",
           "rc2/RC23_DEVELOPMENT_CORPUS.json",
+          "rc2/RC24_DEVELOPMENT_CORPUS.json",
           "rc2/RC2_IMPLEMENTATION_REPORT.md",
           "rc2/SUPERSEDED_FREEZES.json",
           "rc2/holdout-c-package/MANIFEST.json",
@@ -538,16 +538,7 @@
       "requirement": "§23 — the candidate is not still moving",
       "pass": false,
       "detail": [
-        "M package.json",
-        " M src/families/averages.js",
-        " M src/families/combined_rate.js",
-        " M src/families/machines.js",
-        " M src/families/profit_loss.js",
-        " M src/families/work_time.js",
-        " M src/index.js",
-        " M src/qa/complexity.js",
-        " M tests/rc2-degeneracy.test.mjs",
-        " M tests/rc2-distractor-provenance.test.mjs"
+        "M rc2/INTERNAL_GATE.json"
       ]
     }
   ]
