@@ -40,11 +40,18 @@ whenFrozen('§24: the freeze records everything the scope asks it to', () => {
   // RC2.1 froze against its own unused sign-off holdout. Holdout B is carried
   // forward as a failed diagnostic holdout and must NOT be the frozen one — a
   // holdout an engine has been remediated against is no longer a holdout.
-  assert.equal(f.holdoutSeed, f.release === 'RC2.1' ? 'AUDIT-2026-09-12-C' : 'AUDIT-2026-09-12-B');
+  // Each release freezes against its OWN unused sign-off holdout; every earlier
+  // one is recorded as spent and explicitly not reused. A holdout an engine has
+  // already been remediated against cannot test it.
+  const EXPECTED = {'RC2.2': 'AUDIT-2026-09-12-D', 'RC2.1': 'AUDIT-2026-09-12-C'};
+  assert.equal(f.holdoutSeed, EXPECTED[f.release] ?? 'AUDIT-2026-09-12-B');
   if (f.release === 'RC2.1') {
-    assert.equal(f.previousHoldout.seed, 'AUDIT-2026-09-12-B');
-    assert.equal(f.previousHoldout.status, 'FAILED_DIAGNOSTIC_HOLDOUT');
-    assert.equal(f.previousHoldout.reused, false);
+    assert.equal(f.previousHoldouts.length, 1);
+    assert.equal(f.previousHoldouts[0].seed, 'AUDIT-2026-09-12-B');
+  }
+  if (f.release === 'RC2.2') {
+    assert.deepEqual(f.previousHoldouts.map(h => h.seed), ['AUDIT-2026-09-12-B', 'AUDIT-2026-09-12-C']);
+    for (const h of f.previousHoldouts) assert.equal(h.reused, false);
   }
   assert.equal(f.holdoutGenerated, false, 'the freeze precedes the holdout');
 });
