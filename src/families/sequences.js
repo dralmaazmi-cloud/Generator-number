@@ -55,14 +55,28 @@ function arithmetic(ctx) {
     : askPrevious ? `؟، ${seq.join('، ')}`
     : `${seq.join('، ')}، ؟`;
   const known = askMiddle ? seq.filter((_, i) => i !== hiddenIndex) : seq;
+  // RC2-012. Every wrong option here used to be written as the answer plus or
+  // minus something, which is not a derivation: a learner has no access to the
+  // answer. The values below are what the named slip produces when applied to
+  // the term the learner actually steps from, and each says which step of the
+  // published explanation it corrupts.
+  //   step 1  reading the differences
+  //   step 2  concluding the constant difference
+  //   step 3  applying it once from the anchor term
+  const anchor = askMiddle ? seq[hiddenIndex - 1] : askPrevious ? seq[0] : seq.at(-1);
+  const dir = askPrevious ? -1 : 1;
+  const applied = dir * step;
+  const sign = v => (v < 0 ? `(${v})` : `${v}`);
+  const misreadStep = step + (step > 0 ? 1 : -1);
   const distractors = usable(ctx, [
-    mk(correct + step, 'APPLIED_STEP_TWICE', `${correct} + ${step > 0 ? step : `(${step})`}`),
-    mk(correct - step, 'APPLIED_PREVIOUS_STEP', `${correct} − ${step > 0 ? step : `(${step})`}`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
-    mk(correct + 2 * step, 'APPLIED_STEP_TWICE', `${correct} + 2 × ${step > 0 ? step : `(${step})`}`),
-    mk(correct - 2 * step, 'APPLIED_PREVIOUS_STEP', `${correct} − 2 × ${step > 0 ? step : `(${step})`}`),
-    mk(correct * 2, 'USED_WRONG_OPERATION_IN_ALTERNATION', `${correct} × 2`)
+    mk(anchor + 2 * applied, 'APPLIED_STEP_TWICE', `${anchor} + 2 × ${sign(applied)}`, 3),
+    mk(anchor - applied, 'APPLIED_OPERATION_IN_REVERSE', `${anchor} − ${sign(applied)}`, 3),
+    mk(anchor, 'USED_GIVEN_VALUE_AS_ANSWER', `إعادة الحد ${anchor} كما هو`, 3),
+    mk(step, 'USED_DIFFERENCE_AS_ANSWER', `الفرق الثابت ${sign(step)}`, 2),
+    mk(anchor + dir * misreadStep, 'MISREAD_THE_STEP', `${anchor} + ${sign(dir * misreadStep)}`, 1),
+    mk(anchor * 2, 'TREATED_AS_GEOMETRIC', `${anchor} × 2`, 2),
+    mk(seq.at(-1) + seq.at(-2), 'USED_WRONG_OPERATION_IN_ALTERNATION', `${seq.at(-1)} + ${seq.at(-2)}`, 2),
+    mk(anchor + 3 * applied, 'APPLIED_STEP_TWICE', `${anchor} + 3 × ${sign(applied)}`, 3)
   ], {allowNegative: true});
   return buildBase(ctx, {
     templateId: 'SEQ_E_ARITH',
@@ -102,7 +116,7 @@ function arithmetic(ctx) {
     askedUnknown: direction, stageCount: 1,
     pedagogy: {
       targetSkill: 'CONSTANT_DIFFERENCE', targetMisconception: 'APPLIED_STEP_TWICE',
-      wrongMethodValue: correct + step
+      wrongMethodValue: anchor + 2 * applied
     },
     complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 1, arithmeticBurden: 2},
     textParams: false
@@ -147,18 +161,26 @@ function geometric(ctx) {
     ? seq.map((v, i) => (i === hiddenIndex ? '؟' : v)).join('، ')
     : askPrevious ? `؟، ${seq.join('، ')}`
     : `${seq.join('، ')}، ؟`;
+  // RC2-012, as SEQ_E_ARITH: expressed from the term the learner steps from.
+  //   step 1  reading the ratios
+  //   step 2  concluding the constant factor
+  //   step 3  applying it once from the anchor term
+  const anchor = askMiddle ? seq[hiddenIndex - 1] : askPrevious ? seq[0] : seq.at(-1);
+  // Forward through the run the operation is ÷ when the run divides, and the
+  // "previous term" direction reverses it again.
+  const forwardDivides = askPrevious ? !divide : divide;
+  const stepOnce = v => (forwardDivides ? v / factor : v * factor);
+  const stepBack = v => (forwardDivides ? v * factor : v / factor);
   const distractors = usable(ctx, [
-    mk(correct * factor, 'APPLIED_STEP_TWICE', `${correct} × ${factor}`),
-    mk(correct / factor, 'APPLIED_PREVIOUS_STEP', `${correct} ÷ ${factor}`),
-    mk(correct + factor, 'USED_WRONG_OPERATION_IN_ALTERNATION', `${correct} + ${factor}`),
-    mk(correct - factor, 'USED_WRONG_OPERATION_IN_ALTERNATION', `${correct} − ${factor}`),
-    mk(seq.at(-1) + (divide ? -factor : factor), 'APPLIED_OPERATION_IN_REVERSE', `${seq.at(-1)} ${divide ? '−' : '+'} ${factor}`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
-    mk(seq.at(-1), 'TREATED_PATTERN_AS_CONSTANT', `إعادة الحد الأخير ${seq.at(-1)}`),
-    mk(correct * factor * factor, 'APPLIED_STEP_TWICE', `${correct} × ${factor} × ${factor}`),
-    mk(seq.at(-1) + seq.at(-2), 'USED_WRONG_OPERATION_IN_ALTERNATION', `${seq.at(-1)} + ${seq.at(-2)}`)
+    mk(stepOnce(stepOnce(anchor)), 'APPLIED_STEP_TWICE', `${anchor} ${forwardDivides ? '÷' : '×'} ${factor} ${forwardDivides ? '÷' : '×'} ${factor}`, 3),
+    mk(stepBack(anchor), 'APPLIED_OPERATION_IN_REVERSE', `${anchor} ${forwardDivides ? '×' : '÷'} ${factor}`, 3),
+    mk(anchor + (forwardDivides ? -factor : factor), 'TREATED_AS_ARITHMETIC', `${anchor} ${forwardDivides ? '−' : '+'} ${factor}`, 2),
+    mk(anchor, 'TREATED_PATTERN_AS_CONSTANT', `إعادة الحد ${anchor} كما هو`, 3),
+    // Reading the constant factor as 2 only says anything when it is not 2.
+    ...(factor === 2 ? [] : [mk(anchor * 2, 'MISREAD_THE_STEP', `${anchor} × 2 بقراءة المعامل 2 بدل ${factor}`, 1)]),
+    mk(factor, 'USED_DIFFERENCE_AS_ANSWER', `المعامل الثابت ${factor} وحده`, 2),
+    mk(seq.at(-1) + seq.at(-2), 'USED_WRONG_OPERATION_IN_ALTERNATION', `${seq.at(-1)} + ${seq.at(-2)}`, 2),
+    mk(stepBack(stepBack(anchor)), 'APPLIED_OPERATION_IN_REVERSE', `${anchor} ${forwardDivides ? '×' : '÷'} ${factor} ${forwardDivides ? '×' : '÷'} ${factor}`, 3)
   ]);
   return buildBase(ctx, {
     templateId: 'SEQ_E_GEO',
@@ -227,14 +249,23 @@ function increasingDifferences(ctx) {
   const shown = askMiddle
     ? seq.map((v, i) => (i === hiddenIndex ? '؟' : v)).join('، ')
     : `${seq.join('، ')}، ؟`;
+  // RC2-012. The anchor is the term the learner steps from, which differs
+  // between the two directions; the old pool stepped from the last term even
+  // when the gap was in the middle, and padded the rest off the answer.
+  //   step 1  reading the differences
+  //   step 2  finding the difference that belongs before the unknown
+  //   step 3  adding it to the anchor
+  const anchor = askMiddle ? seq[hiddenIndex - 1] : seq.at(-1);
+  const gap = askMiddle ? diffStart + diffStep * (hiddenIndex - 1) : d;
   const distractors = usable(ctx, [
-    mk(seq.at(-1) + d - diffStep, 'APPLIED_PREVIOUS_STEP', `${seq.at(-1)} + ${d - diffStep}`),
-    mk(seq.at(-1) + d + diffStep, 'APPLIED_STEP_TWICE', `${seq.at(-1)} + ${d + diffStep}`),
-    mk(correct + diffStep, 'OFF_BY_ONE_STEP', `${correct} + ${diffStep}`),
-    mk(correct - diffStep, 'OFF_BY_ONE_STEP', `${correct} − ${diffStep}`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(seq.at(-1) + diffStart, 'TREATED_PATTERN_AS_CONSTANT', `${seq.at(-1)} + ${diffStart}`),
-    mk(seq.at(-1) * 2, 'USED_WRONG_OPERATION_IN_ALTERNATION', `${seq.at(-1)} × 2`)
+    mk(anchor + gap - diffStep, 'APPLIED_PREVIOUS_STEP', `${anchor} + ${gap - diffStep}`, 2),
+    mk(anchor + gap + diffStep, 'APPLIED_STEP_TWICE', `${anchor} + ${gap + diffStep}`, 2),
+    mk(anchor + diffStart, 'TREATED_PATTERN_AS_CONSTANT', `${anchor} + ${diffStart}`, 1),
+    mk(anchor + gap + 1, 'MISREAD_THE_STEP', `${anchor} + ${gap + 1}`, 1),
+    mk(gap, 'USED_DIFFERENCE_AS_ANSWER', `الفرق ${gap} وحده`, 2),
+    mk(anchor, 'USED_GIVEN_VALUE_AS_ANSWER', `إعادة الحد ${anchor} كما هو`, 3),
+    mk(anchor * 2, 'TREATED_AS_GEOMETRIC', `${anchor} × 2`, 1),
+    mk(anchor + 2 * gap, 'APPLIED_STEP_TWICE', `${anchor} + 2 × ${gap}`, 3)
   ]);
   return buildBase(ctx, {
     templateId: 'SEQ_M_INC_DIFF',
@@ -276,7 +307,7 @@ function increasingDifferences(ctx) {
     askedUnknown: askMiddle ? 'missingMiddleTerm' : 'nextTerm', stageCount: 2,
     pedagogy: {
       targetSkill: 'SECOND_DIFFERENCE', targetMisconception: 'APPLIED_PREVIOUS_STEP',
-      wrongMethodValue: seq.at(-1) + d - diffStep
+      wrongMethodValue: anchor + gap - diffStep
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 3},
     textParams: false
@@ -297,14 +328,20 @@ function alternatingOps(ctx) {
   }
   const nextAdd = addStart + 3;
   const correct = current + nextAdd;
+  // RC2-012. All of these start from the last shown term, which is where a
+  // learner starts.
+  //   step 1  reading the alternation
+  //   step 2  deciding which operation and which number come next
+  //   step 3  applying it to the last term
   const distractors = usable(ctx, [
-    mk(current * (multStart + 3), 'USED_WRONG_OPERATION_IN_ALTERNATION', `${current} × ${multStart + 3}`),
-    mk(current + nextAdd - 1, 'OFF_BY_ONE_STEP', `${current} + ${nextAdd - 1}`),
-    mk(current + nextAdd + 1, 'OFF_BY_ONE_STEP', `${current} + ${nextAdd + 1}`),
-    mk(current + addStart + 2, 'APPLIED_PREVIOUS_STEP', `${current} + ${addStart + 2}`),
-    mk(current * 2, 'USED_WRONG_OPERATION_IN_ALTERNATION', `${current} × 2`),
-    mk(correct + nextAdd, 'APPLIED_STEP_TWICE', `${correct} + ${nextAdd}`),
-    mk(current + addStart, 'TREATED_PATTERN_AS_CONSTANT', `${current} + ${addStart}`)
+    mk(current * (multStart + 3), 'USED_WRONG_OPERATION_IN_ALTERNATION', `${current} × ${multStart + 3}`, 2),
+    mk(current + addStart + 2, 'APPLIED_PREVIOUS_STEP', `${current} + ${addStart + 2}`, 2),
+    mk(current * 2, 'USED_WRONG_OPERATION_IN_ALTERNATION', `${current} × 2`, 2),
+    mk(current + addStart, 'TREATED_PATTERN_AS_CONSTANT', `${current} + ${addStart}`, 1),
+    mk(current + 2 * nextAdd, 'APPLIED_STEP_TWICE', `${current} + 2 × ${nextAdd}`, 3),
+    mk(current, 'USED_GIVEN_VALUE_AS_ANSWER', `إعادة الحد الأخير ${current} كما هو`, 3),
+    mk(current - nextAdd, 'APPLIED_OPERATION_IN_REVERSE', `${current} − ${nextAdd}`, 3),
+    mk(nextAdd, 'USED_DIFFERENCE_AS_ANSWER', `رقم الجمع التالي ${nextAdd} وحده`, 2)
   ]);
   return buildBase(ctx, {
     templateId: 'SEQ_M_ALT_OPS',
@@ -361,17 +398,24 @@ function interleaved(ctx) {
   const correct = b0 + 3 * db;
   const oddRun = [0, 2, 4, 6].map(i => seq[i]);
   const evenRun = [1, 3, 5].map(i => seq[i]);
+  // RC2-012. The learner steps from the last term of the run they are following,
+  // so every wrong option is expressed from one of the two run ends.
+  //   step 1  separating the odd-position run
+  //   step 2  separating the even-position run
+  //   step 3  taking the next turn of the even run
+  const oddEnd = oddRun.at(-1);
+  const evenEnd = evenRun.at(-1);
+  const dbAbs = Math.abs(db);
+  const dbSign = db < 0 ? '−' : '+';
   const distractors = usable(ctx, [
-    mk(a0 + 4 * da, 'CONTINUED_WRONG_SUBSEQUENCE', `${oddRun.at(-1)} + ${da}`),
-    mk(b0 + 2 * db, 'APPLIED_PREVIOUS_STEP', `${evenRun.at(-2)} ${db < 0 ? '−' : '+'} ${Math.abs(db)}`),
-    mk(b0 + 4 * db, 'APPLIED_STEP_TWICE', `${correct} ${db < 0 ? '−' : '+'} ${Math.abs(db)}`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
-    mk(correct + Math.abs(db), 'APPLIED_PREVIOUS_STEP', `${correct} + ${Math.abs(db)}`),
-    mk(seq.at(-1) + da, 'CONTINUED_WRONG_SUBSEQUENCE', `${seq.at(-1)} + ${da}`),
-    mk(correct + 2 * Math.abs(db), 'APPLIED_PREVIOUS_STEP', `${correct} + ${2 * Math.abs(db)}`),
-    mk(correct - Math.abs(db), 'APPLIED_STEP_TWICE', `${correct} − ${Math.abs(db)}`),
-    mk(oddRun.at(-1) + da, 'CONTINUED_WRONG_SUBSEQUENCE', `${oddRun.at(-1)} + ${da}`)
+    mk(oddEnd + da, 'CONTINUED_WRONG_SUBSEQUENCE', `${oddEnd} + ${da}`, 3),
+    mk(evenRun.at(-2) + db, 'APPLIED_PREVIOUS_STEP', `${evenRun.at(-2)} ${dbSign} ${dbAbs}`, 3),
+    mk(evenEnd + 2 * db, 'APPLIED_STEP_TWICE', `${evenEnd} ${dbSign} 2 × ${dbAbs}`, 3),
+    mk(evenEnd - db, 'APPLIED_OPERATION_IN_REVERSE', `${evenEnd} ${db < 0 ? '+' : '−'} ${dbAbs}`, 3),
+    mk(evenEnd + da, 'CONTINUED_WRONG_SUBSEQUENCE', `${evenEnd} + ${da} بفرق السلسلة الأخرى`, 2),
+    mk(evenEnd, 'TREATED_PATTERN_AS_CONSTANT', `إعادة آخر حد زوجي ${evenEnd} كما هو`, 3),
+    mk(oddEnd + 2 * da, 'APPLIED_STEP_TWICE', `${oddEnd} + 2 × ${da}`, 1),
+    mk(evenEnd + db + 1, 'MISREAD_THE_STEP', `${evenEnd} ${dbSign} ${dbAbs - 1}`, 2)
   ], {allowNegative: true});
   return buildBase(ctx, {
     templateId: 'SEQ_M_INTERLEAVED',
@@ -402,7 +446,11 @@ function interleaved(ctx) {
     askedUnknown: 'nextTermOfSecondRun', stageCount: 2,
     pedagogy: {
       targetSkill: 'SEPARATE_INTERLEAVED_RUNS', targetMisconception: 'CONTINUED_WRONG_SUBSEQUENCE',
-      wrongMethodValue: a0 + 4 * da
+      wrongMethodValue: a0 + 4 * da,
+      // RC2-012. When the rising run's last term happens to equal the answer,
+      // "repeat a shown term" and "continue the right run" give the same value
+      // and the item stops separating the two runs.
+      degenerateWhen: [{when: oddEnd === correct, note: 'the odd run ends on the answer'}]
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 3},
     textParams: false
@@ -423,14 +471,21 @@ function doublingDifferences(ctx) {
   const shown = askMiddle
     ? seq.map((v, i) => (i === hiddenIndex ? '؟' : v)).join('، ')
     : `${seq.join('، ')}، ؟`;
+  // RC2-012, expressed from the term the learner steps from.
+  //   step 1  noticing that the differences double
+  //   step 2  finding the difference that belongs before the unknown
+  //   step 3  adding it to the anchor
+  const anchor = askMiddle ? seq[hiddenIndex - 1] : seq.at(-1);
+  const gap = askMiddle ? d0 * 2 ** (hiddenIndex - 1) : d;
   const distractors = usable(ctx, [
-    mk(seq.at(-1) + d / 2, 'APPLIED_PREVIOUS_STEP', `${seq.at(-1)} + ${d / 2}`),
-    mk(correct + d / 2, 'OFF_BY_ONE_STEP', `${correct} + ${d / 2}`),
-    mk(correct - d / 2, 'OFF_BY_ONE_STEP', `${correct} − ${d / 2}`),
-    mk(seq.at(-1) * 2, 'TREATED_PATTERN_AS_CONSTANT', `${seq.at(-1)} × 2`),
-    mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
-    mk(correct - 2, 'OFF_BY_ONE_STEP', `${correct} − 2`),
-    mk(seq.at(-1) + d0, 'TREATED_PATTERN_AS_CONSTANT', `${seq.at(-1)} + ${d0}`)
+    mk(anchor + gap / 2, 'APPLIED_PREVIOUS_STEP', `${anchor} + ${gap / 2}`, 2),
+    mk(anchor + gap * 2, 'APPLIED_STEP_TWICE', `${anchor} + ${gap * 2}`, 2),
+    mk(anchor * 2, 'TREATED_AS_GEOMETRIC', `${anchor} × 2 بمضاعفة الحد بدل الفرق`, 1),
+    mk(anchor + d0, 'TREATED_PATTERN_AS_CONSTANT', `${anchor} + ${d0}`, 1),
+    mk(gap, 'USED_DIFFERENCE_AS_ANSWER', `الفرق ${gap} وحده`, 2),
+    mk(anchor, 'USED_GIVEN_VALUE_AS_ANSWER', `إعادة الحد ${anchor} كما هو`, 3),
+    mk(anchor - gap, 'APPLIED_OPERATION_IN_REVERSE', `${anchor} − ${gap}`, 3),
+    mk(anchor + gap + d0, 'MISREAD_THE_STEP', `${anchor} + ${gap + d0}`, 2)
   ]);
   return buildBase(ctx, {
     templateId: 'SEQ_M_DOUBLE_DIFF',
@@ -472,7 +527,7 @@ function doublingDifferences(ctx) {
     askedUnknown: askMiddle ? 'missingMiddleTerm' : 'nextTerm', stageCount: 2,
     pedagogy: {
       targetSkill: 'DOUBLING_DIFFERENCE', targetMisconception: 'APPLIED_PREVIOUS_STEP',
-      wrongMethodValue: seq.at(-1) + d / 2
+      wrongMethodValue: anchor + gap / 2
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 3},
     textParams: false
@@ -495,18 +550,20 @@ function alternateDivide(ctx) {
     if (f > 1) { seq = [x, a, b, c, d, e]; correct = f; break; }
   }
   if (!seq) return resample(ctx, alternateDivide);
+  // RC2-012. Every option divides or subtracts from a term that is on the page.
+  //   step 1  reading the alternation
+  //   step 2  seeing that the divisor climbs 2, 3, 4
+  //   step 3  dividing the last term by 4
+  const last = seq.at(-1);
   const distractors = usable(ctx, [
-    mk(seq.at(-1) - subtract, 'USED_WRONG_OPERATION_IN_ALTERNATION', `${seq.at(-1)} − ${subtract}`),
-    mk(seq.at(-1) / 3, 'APPLIED_PREVIOUS_STEP', `${seq.at(-1)} ÷ 3`),
-    mk(seq.at(-1) / 2, 'APPLIED_PREVIOUS_STEP', `${seq.at(-1)} ÷ 2`),
-    mk(correct + subtract, 'OFF_BY_ONE_STEP', `${correct} + ${subtract}`),
-    mk(correct - subtract, 'OFF_BY_ONE_STEP', `${correct} − ${subtract}`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
-    mk(seq.at(-1) / 5, 'OFF_BY_ONE_STEP', `${seq.at(-1)} ÷ 5`),
-    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
-    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
-    mk(seq.at(-1), 'TREATED_PATTERN_AS_CONSTANT', `إعادة الحد الأخير ${seq.at(-1)}`),
-    mk(seq.at(-2) / 4, 'APPLIED_PREVIOUS_STEP', `${seq.at(-2)} ÷ 4`)
+    mk(last - subtract, 'USED_WRONG_OPERATION_IN_ALTERNATION', `${last} − ${subtract}`, 1),
+    mk(last / 3, 'APPLIED_PREVIOUS_STEP', `${last} ÷ 3`, 2),
+    mk(last / 2, 'APPLIED_PREVIOUS_STEP', `${last} ÷ 2`, 2),
+    mk(last / 5, 'MISREAD_THE_STEP', `${last} ÷ 5 بقراءة القاسم التالي 5`, 2),
+    mk(last, 'TREATED_PATTERN_AS_CONSTANT', `إعادة الحد الأخير ${last}`, 3),
+    mk(seq.at(-2) / 4, 'APPLIED_PREVIOUS_STEP', `${seq.at(-2)} ÷ 4`, 3),
+    mk((last - subtract) / 4, 'APPLIED_STEP_TWICE', `(${last} − ${subtract}) ÷ 4`, 1),
+    mk(last / 4 - subtract, 'APPLIED_STEP_TWICE', `${last} ÷ 4 − ${subtract}`, 1)
   ]);
   return buildBase(ctx, {
     templateId: 'SEQ_H_ALT_DIV',
@@ -542,7 +599,7 @@ function alternateDivide(ctx) {
     askedUnknown: 'nextTerm', stageCount: 3,
     pedagogy: {
       targetSkill: 'ALTERNATING_WITH_PROGRESSING_DIVISOR', targetMisconception: 'USED_WRONG_OPERATION_IN_ALTERNATION',
-      wrongMethodValue: seq.at(-1) - subtract
+      wrongMethodValue: last - subtract
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, stageCount: 3, arithmeticBurden: 4, dependencyDepth: 3},
     textParams: false
@@ -561,14 +618,22 @@ function recurrence(ctx) {
   const shown = askMiddle
     ? seq.map((v, i) => (i === hiddenIndex ? '؟' : v)).join('، ')
     : `${seq.join('، ')}، ؟`;
+  // RC2-012. The two terms the rule reads are prev and prev2, whichever
+  // direction the gap sits in, so every option is built from those.
+  //   step 1  stating the rule
+  //   step 2  verifying it on the shown terms
+  //   step 3  applying it to the two terms before the unknown
+  const prev = askMiddle ? seq[hiddenIndex - 1] : seq.at(-1);
+  const prev2 = askMiddle ? seq[hiddenIndex - 2] : seq.at(-2);
   const distractors = usable(ctx, [
-    mk(seq.at(-1) + seq.at(-2), 'TREATED_PATTERN_AS_CONSTANT', `${seq.at(-1)} + ${seq.at(-2)}`),
-    mk(2 * seq.at(-1), 'MISSED_ONE_STAGE', `2 × ${seq.at(-1)}`),
-    mk(2 * seq.at(-2) + seq.at(-1), 'USED_WRONG_OPERATION_IN_ALTERNATION', `2 × ${seq.at(-2)} + ${seq.at(-1)}`),
-    mk(correct - seq.at(-2), 'MISSED_ONE_STAGE', `${correct} − ${seq.at(-2)}`),
-    mk(correct + seq.at(-2), 'APPLIED_STEP_TWICE', `${correct} + ${seq.at(-2)}`),
-    mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
-    mk(3 * seq.at(-1), 'USED_WRONG_OPERATION_IN_ALTERNATION', `3 × ${seq.at(-1)}`)
+    mk(prev + prev2, 'TREATED_PATTERN_AS_CONSTANT', `${prev} + ${prev2}`, 1),
+    mk(2 * prev, 'MISSED_ONE_STAGE', `2 × ${prev}`, 3),
+    mk(2 * prev2 + prev, 'USED_WRONG_OPERATION_IN_ALTERNATION', `2 × ${prev2} + ${prev}`, 3),
+    mk(3 * prev, 'USED_WRONG_OPERATION_IN_ALTERNATION', `3 × ${prev}`, 1),
+    mk(2 * prev + 2 * prev2, 'APPLIED_STEP_TWICE', `2 × ${prev} + 2 × ${prev2}`, 3),
+    mk(2 * (prev + prev2), 'APPLIED_STEP_TWICE', `2 × (${prev} + ${prev2})`, 3),
+    mk(prev * prev2, 'USED_WRONG_OPERATION_IN_ALTERNATION', `${prev} × ${prev2}`, 1),
+    mk(2 * prev - prev2, 'APPLIED_OPERATION_IN_REVERSE', `2 × ${prev} − ${prev2}`, 3)
   ]);
   return buildBase(ctx, {
     templateId: 'SEQ_H_RECURRENCE',
@@ -610,7 +675,7 @@ function recurrence(ctx) {
     askedUnknown: askMiddle ? 'missingMiddleTerm' : 'nextTerm', stageCount: 2,
     pedagogy: {
       targetSkill: 'TWO_TERM_RECURRENCE', targetMisconception: 'TREATED_PATTERN_AS_CONSTANT',
-      wrongMethodValue: seq.at(-1) + seq.at(-2)
+      wrongMethodValue: prev + prev2
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 2, stageCount: 2, arithmeticBurden: 4, dependencyDepth: 3},
     textParams: false
@@ -629,14 +694,20 @@ function powersPlusIndex(ctx) {
   for (let i = startIndex; i <= n; i++) seq.push(basePow ** i + i);
   const correct = basePow ** (n + 1) + (n + 1);
   const p = basePow ** (n + 1);
+  // RC2-012. Built from the power and the position index, which are the two
+  // quantities the solution actually handles.
+  //   step 1  subtracting the position index from each term
+  //   step 2  identifying the next power
+  //   step 3  adding the next position index back
   const distractors = usable(ctx, [
-    mk(p, 'MISSED_ONE_STAGE', `${basePow} أُس 6 = ${p} دون إضافة رقم الترتيب`),
-    mk(p + n, 'OFF_BY_ONE_STEP', `${p} + ${n}`),
-    mk(p + n + 2, 'OFF_BY_ONE_STEP', `${p} + ${n + 2}`),
-    mk(basePow ** n + (n + 1), 'APPLIED_PREVIOUS_STEP', `${basePow ** n} + ${n + 1}`),
-    mk(correct - basePow, 'OFF_BY_ONE_STEP', `${correct} − ${basePow}`),
-    mk(correct + basePow, 'OFF_BY_ONE_STEP', `${correct} + ${basePow}`),
-    mk(p * basePow + n + 2, 'APPLIED_STEP_TWICE', `${p} × ${basePow} + ${n + 2}`)
+    mk(p, 'MISSED_ONE_STAGE', `${basePow} مرفوعًا للقوة التالية = ${p} دون إضافة رقم الترتيب`, 3),
+    mk(p + n, 'MISREAD_THE_STEP', `${p} + ${n} برقم الموضع السابق`, 3),
+    mk(p + n + 2, 'MISREAD_THE_STEP', `${p} + ${n + 2} برقم موضع متقدم`, 3),
+    mk(basePow ** n + (n + 1), 'APPLIED_PREVIOUS_STEP', `${basePow ** n} + ${n + 1}`, 2),
+    mk(p * basePow + n + 2, 'APPLIED_STEP_TWICE', `${p} × ${basePow} + ${n + 2}`, 2),
+    mk(seq.at(-1) * basePow, 'TREATED_AS_GEOMETRIC', `${seq.at(-1)} × ${basePow} بضرب الحد كاملًا`, 1),
+    mk(p - (n + 1), 'APPLIED_OPERATION_IN_REVERSE', `${p} − ${n + 1}`, 3),
+    mk(seq.at(-1) + basePow ** (n + 1) - basePow ** n, 'APPLIED_PREVIOUS_STEP', `${seq.at(-1)} + (${p} − ${basePow ** n})`, 2)
   ]);
   const powerLine = seq.map((v, i) => `${v} − ${startIndex + i} = ${v - (startIndex + i)}`).join('، ');
   return buildBase(ctx, {

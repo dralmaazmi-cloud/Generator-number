@@ -51,6 +51,13 @@ export const MISCONCEPTIONS = Object.freeze({
   USED_RATE_BEFORE_CHANGE: 'حسبت بالمعدل قبل تغيّره رغم أن السؤال ينص على تغيّره.',
   USED_COUNT_BEFORE_CHANGE: 'حسبت بعدد العمال أو الآلات قبل تغيّره رغم أن السؤال ينص على تغيّره.',
   USED_ORIGINAL_SCHEDULE: 'حسبت وفق المدة الأصلية رغم أن السؤال يطلب إنهاء ما تبقى في مدة أقصر.',
+  // RC2-012. Named slips that replace the key-neighbour padding. Each one is
+  // something a learner does to a STEP of the solution, so its value can be
+  // derived from the question's own quantities instead of from the answer.
+  USED_DIFFERENCE_AS_ANSWER: 'أعطيت مقدار الفرق بين الحدين بدل الحد المطلوب نفسه.',
+  MISREAD_THE_STEP: 'قرأت مقدار الخطوة خطأً بوحدة واحدة، فخرج الحد الذي بعدها خطأً.',
+  TREATED_AS_GEOMETRIC: 'عاملت المتتالية كأن بين حدودها ضربًا ثابتًا بينما الفرق بينها هو الثابت.',
+  TREATED_AS_ARITHMETIC: 'عاملت المتتالية كأن بين حدودها فرقًا ثابتًا بينما النسبة بينها هي الثابتة.',
 
   // --- percentages ---
   ADDED_PERCENTAGES: 'جمعت النسبتين مباشرة، والنسب المتتابعة لا تُجمع.',

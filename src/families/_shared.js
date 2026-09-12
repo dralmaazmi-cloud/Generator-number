@@ -11,12 +11,19 @@ import {Fraction} from '../qa/fraction.js';
 import {isKnownMisconception} from '../qa/misconceptions.js';
 import {REASON} from '../qa/reasons.js';
 
-/** Distractor with provenance. Anything else is rejected by makeOptionSet. */
-export function mk(value, misconceptionId, derivation) {
+/**
+ * Distractor with provenance. Anything else is rejected by makeOptionSet.
+ *
+ * RC2-012. `reasoningStepAffected` is the 1-based index of the step in the
+ * published explanation that this mistake corrupts. It is required of any
+ * distractor whose derivation starts from the answer — those have to say which
+ * step went wrong, because "key + 1" says nothing — and is welcome on the rest.
+ */
+export function mk(value, misconceptionId, derivation, reasoningStepAffected = null) {
   if (!isKnownMisconception(misconceptionId)) {
     throw new Error(`Unknown misconception id: ${misconceptionId}`);
   }
-  return {value, misconceptionId, derivation: derivation ?? null};
+  return {value, misconceptionId, derivation: derivation ?? null, reasoningStepAffected};
 }
 
 /**

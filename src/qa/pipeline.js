@@ -11,6 +11,7 @@ import {buildOrderOracle} from './relational-oracle.js';
 import {validateTextMatchesParams} from './text-params.js';
 import {validatePedagogy} from './pedagogy.js';
 import {validateMisconceptionContext} from './misconception-context.js';
+import {validateDistractorProvenance} from './distractor-provenance.js';
 import {validateDisplayedEquations, validateExplanationSourcing, numbersIn} from './equations.js';
 import {checkArabicNumberUnitsDeep} from '../arabic/units.js';
 import {classifyQuestionConstructions, STATUS as AR_STATUS} from '../arabic/constructions.js';
@@ -320,6 +321,8 @@ export function validateCandidate(base, q) {
   // RC2-013: a misconception that names a situation must be attached to a stem
   // that has that situation in it.
   const contextVerdict = validateMisconceptionContext(base);
+  // RC2-012: a wrong option must be the product of a mistake, not of the answer.
+  const provenanceVerdict = validateDistractorProvenance(base);
 
   return mergeVerdicts(
     structuralVerdict,
@@ -330,6 +333,7 @@ export function validateCandidate(base, q) {
     languageVerdict,
     explanationVerdict,
     distractorVerdict,
-    contextVerdict
+    contextVerdict,
+    provenanceVerdict
   );
 }
