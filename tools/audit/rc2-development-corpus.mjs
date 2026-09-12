@@ -26,6 +26,15 @@ export const DEVELOPMENT_SEEDS = Object.freeze([
   'RC2-DEV-ALPHA', 'RC2-DEV-BETA', 'RC2-DEV-GAMMA', 'RC2-DEV-DELTA', 'RC2-DEV-EPSILON'
 ]);
 
+/**
+ * RC2.1 draws its corpus on seeds the RC2 corpus never used. Re-measuring on the
+ * same five would report how the engine behaves on questions its remediation was
+ * developed against, which is not what a development corpus is for.
+ */
+export const RC21_DEVELOPMENT_SEEDS = Object.freeze([
+  'RC21-DEV-ZETA', 'RC21-DEV-ETA', 'RC21-DEV-THETA', 'RC21-DEV-IOTA', 'RC21-DEV-KAPPA'
+]);
+
 const BANDS = ['easy', 'medium', 'hard'];
 const CHANCE = 1 / 6;
 
@@ -41,9 +50,14 @@ const entropyOf = counts => {
 };
 
 export async function build({questions = 10000, seeds = DEVELOPMENT_SEEDS} = {}) {
+  // Both holdout seeds are refused. B is preserved diagnostic evidence and C is
+  // the unused sign-off holdout; a development corpus that has touched either is
+  // no longer independent of it.
   for (const s of seeds) {
-    if (String(s).includes(HOLDOUT_SEED)) {
-      throw new Error(`§22 forbids the holdout seed in development: ${HOLDOUT_SEED}`);
+    for (const forbidden of [HOLDOUT_SEED, 'AUDIT-2026-09-12-C']) {
+      if (String(s).includes(forbidden)) {
+        throw new Error(`a development corpus must not use the holdout seed ${forbidden}`);
+      }
     }
   }
 

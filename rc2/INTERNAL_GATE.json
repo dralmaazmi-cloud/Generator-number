@@ -1,14 +1,17 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-12T11:36:23.926Z",
+  "evaluatedAt": "2026-09-12T13:54:13.964Z",
   "engineVersion": "1.4.0",
-  "headCommit": "fa6cc617f3cfc69ea8baf8cc49eab5d5a0baba0d",
+  "headCommit": "970a8f34dffcb61b20a23723e7c6a0525ed5960d",
   "branch": "claude/rc2-implementation",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "PASS",
-  "conditions": 15,
-  "failedConditions": [],
+  "verdict": "FAIL",
+  "conditions": 22,
+  "failedConditions": [
+    "SUITE_GREEN",
+    "TREE_CLEAN"
+  ],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -37,10 +40,10 @@
     {
       "id": "SUITE_GREEN",
       "requirement": "The whole test suite passes",
-      "pass": true,
+      "pass": false,
       "detail": {
-        "passed": 297,
-        "failed": 0
+        "passed": 331,
+        "failed": 1
       }
     },
     {
@@ -80,7 +83,22 @@
         "offenders": [],
         "filesMentioningIt": [
           "rc2/DEVELOPMENT_CORPUS.json",
-          "rc2/INTERNAL_GATE.json"
+          "rc2/FREEZE_RC2.json",
+          "rc2/HOLDOUT.json",
+          "rc2/HOLDOUT_FINDINGS.json",
+          "rc2/INTERNAL_GATE.json",
+          "rc2/RC2_IMPLEMENTATION_REPORT.md",
+          "rc2/SUPERSEDED_FREEZES.json",
+          "rc2/holdout-package/MANIFEST.json",
+          "rc2/holdout-package/README.md",
+          "rc2/holdout-package/blind/blind-questions.txt",
+          "rc2/holdout-package/blind/session-1.html",
+          "rc2/holdout-package/blind/session-2.html",
+          "rc2/holdout-package/blind/session-3.html",
+          "rc2/holdout-package/blind/session-4.html",
+          "rc2/holdout-package/blind/session-5.html",
+          "rc2/holdout-package/keys/item-metadata.jsonl",
+          "rc2/holdout-package/telemetry/HOLDOUT_TELEMETRY_EVIDENCE.json"
         ]
       }
     },
@@ -118,9 +136,9 @@
       "requirement": "RC2-002/016/017 — no invalid or unclassified Arabic construction is published",
       "pass": true,
       "detail": {
-        "constructionsClassified": 90271,
-        "valid": 71616,
-        "exempt": 18655,
+        "constructionsClassified": 90761,
+        "valid": 72124,
+        "exempt": 18637,
         "invalid": 0,
         "unclassified": 0,
         "invalidSamples": []
@@ -131,10 +149,10 @@
       "requirement": "RC2-007/008/009 — nothing ambiguous or undiscoverable is published",
       "pass": true,
       "detail": {
-        "oddOneOutPublished": 702,
+        "oddOneOutPublished": 634,
         "verdicts": {
-          "CLEAN": 567,
-          "BORDERLINE": 135
+          "BORDERLINE": 142,
+          "CLEAN": 492
         },
         "publishedAmbiguous": 0,
         "publishedUndiscoverable": 0
@@ -145,15 +163,15 @@
       "requirement": "RC2-003 — every proposal is accounted for exactly once",
       "pass": true,
       "detail": {
-        "proposals": 10289,
-        "accountedFor": 10289,
+        "proposals": 10306,
+        "accountedFor": 10306,
         "balanced": true,
         "difference": 0,
         "breakdown": {
           "published": 10000,
-          "samplerFailures": 6,
-          "finalizationFailures": 203,
-          "pipelineRejectedCandidates": 80
+          "samplerFailures": 3,
+          "finalizationFailures": 218,
+          "pipelineRejectedCandidates": 85
         }
       }
     },
@@ -175,10 +193,82 @@
       }
     },
     {
+      "id": "SESSION_TELEMETRY_RECONCILES",
+      "requirement": "RC2.1-1 — every published candidate a session sees is delivered or dispositioned",
+      "pass": true,
+      "detail": {
+        "publishedToSessions": 325,
+        "delivered": 250,
+        "sessionDiscards": 75,
+        "accountedFor": 325,
+        "balanced": true,
+        "difference": 0,
+        "note": "published candidates offered to sessions = delivered + every recorded session-level discard",
+        "anonymousDiscards": 0
+      }
+    },
+    {
+      "id": "SESSION_PATH_EXERCISED",
+      "requirement": "RC2.1 — generatePractice is exercised, not only generateQuestion",
+      "pass": true,
+      "detail": {
+        "questions": 600,
+        "exhausted": 0
+      }
+    },
+    {
+      "id": "NO_CROSS_SESSION_DUPLICATES",
+      "requirement": "RC2.1-5 — one multi-session batch repeats no mathematical instance",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "id": "DIFFICULTY_CALIBRATED",
+      "requirement": "RC2.1-2 — declared/computed agreement improved on the RC2 baseline",
+      "pass": true,
+      "detail": {
+        "agreement": 0.7288,
+        "rc2Baseline": 0.6495
+      }
+    },
+    {
+      "id": "DECLARED_BOUNDS_RESPECTED",
+      "requirement": "RC2.1-3 — a template that declares answer bounds never ships an option outside them",
+      "pass": true,
+      "detail": {
+        "count": 0,
+        "note": "templates that declare answerBounds must never ship an option outside them"
+      }
+    },
+    {
+      "id": "REPRODUCIBLE",
+      "requirement": "RC2.1 — the same seed replays identically through both APIs",
+      "pass": true,
+      "detail": {
+        "singleQuestion": true,
+        "batch": true
+      }
+    },
+    {
+      "id": "HOLDOUT_C_UNTOUCHED",
+      "requirement": "RC2.1 — the sign-off holdout seed appears in no development evidence",
+      "pass": true,
+      "detail": {
+        "offenders": []
+      }
+    },
+    {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": true,
-      "detail": "clean"
+      "pass": false,
+      "detail": [
+        "M tools/audit/rc2-development-corpus.mjs",
+        " M tools/audit/rc2-internal-gate.mjs",
+        "?? rc2/RC21_DEVELOPMENT_CORPUS.json",
+        "?? rc2/rc21-development-corpus.jsonl.gz",
+        "?? tests/rc21-holdout-capture.test.mjs",
+        "?? tools/audit/rc21-holdout.mjs"
+      ]
     }
   ]
 }

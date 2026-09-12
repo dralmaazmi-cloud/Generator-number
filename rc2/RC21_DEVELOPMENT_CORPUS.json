@@ -1,0 +1,260 @@
+{
+  "schema": "rc2-development-corpus-v1",
+  "section": "§22",
+  "generatedAt": "2026-09-12T13:52:28.984Z",
+  "engineVersion": "1.4.0",
+  "seeds": [
+    "RC21-DEV-ZETA",
+    "RC21-DEV-ETA",
+    "RC21-DEV-THETA",
+    "RC21-DEV-IOTA",
+    "RC21-DEV-KAPPA"
+  ],
+  "holdoutSeedUsed": false,
+  "holdoutSeed": "AUDIT-2026-09-12-B",
+  "corpus": {
+    "requested": 10000,
+    "published": 10000,
+    "exhausted": 0,
+    "families": 16,
+    "templates": 107,
+    "byBand": {
+      "easy": 3335,
+      "medium": 3335,
+      "hard": 3330
+    },
+    "byFamily": {
+      "ratios": 621,
+      "direct_proportion": 635,
+      "speed": 633,
+      "combined_rate": 616,
+      "odd_one_out": 634,
+      "ages": 630,
+      "machines": 630,
+      "unit_rate": 635,
+      "averages": 599,
+      "profit_loss": 656,
+      "relational": 591,
+      "work_time": 624,
+      "fractions": 615,
+      "calendar": 625,
+      "percentages": 609,
+      "sequences": 647
+    },
+    "sha256": "73cad0c730a2a680ef42ab9b7cadce8a375ab5b2f06622acecf26de8465f13d5",
+    "gzipBytes": 1196674
+  },
+  "mathematics": {
+    "note": "§20 — the RC1 gains. Any non-zero figure here is an RC2 blocker.",
+    "ORACLE_DISAGREEMENT": 0,
+    "oracleDisagreementSamples": [],
+    "oracleComparedThroughALabelMap": 208,
+    "postShuffleKeyMismatch": 0,
+    "zeroCorrectOption": 0,
+    "multipleCorrectOptions": 0,
+    "correctValueMismatch": 0,
+    "metaKeyMismatch": 0
+  },
+  "ambiguity": {
+    "oddOneOutPublished": 634,
+    "verdicts": {
+      "BORDERLINE": 142,
+      "CLEAN": 492
+    },
+    "publishedAmbiguous": 0,
+    "publishedUndiscoverable": 0
+  },
+  "language": {
+    "constructionsClassified": 90761,
+    "valid": 72124,
+    "exempt": 18637,
+    "invalid": 0,
+    "unclassified": 0,
+    "invalidSamples": []
+  },
+  "distractors": {
+    "wrongOptions": 50000,
+    "answerDerived": 834,
+    "answerDerivedShare": 0.01668,
+    "unattributedAnswerDerived": 0,
+    "perQuestionDistribution": {
+      "0": 9542,
+      "1": 153,
+      "2": 234,
+      "3": 71
+    },
+    "rc1Baseline": {
+      "answerDerivedShare": 0.249,
+      "questionsWithThreeOrMoreShare": 0.156
+    }
+  },
+  "feedback": {
+    "verdicts": {
+      "EXACT": 33658,
+      "PROSE": 8364,
+      "ROUNDS_TO_VALUE": 858,
+      "NON_NUMERIC": 7120
+    },
+    "derivationMismatches": 0,
+    "questionsWithInapplicableMisconception": 0,
+    "questionsWithDuplicateDerivation": 0
+  },
+  "statisticalLeakage": {
+    "distinctAnswersAcrossCorpus": 1180,
+    "corpusModalShare": 0.0121,
+    "templatesMeasured": 104,
+    "templatesAbove20Points": 0,
+    "templatesAbove15Points": 1,
+    "medianAdvantagePoints": -2.6,
+    "worst": [
+      {
+        "templateId": "REL_M_COUNT",
+        "n": 76,
+        "space": 6,
+        "modal": 0.355,
+        "entropyBits": 2.15,
+        "advantagePoints": 18.9
+      },
+      {
+        "templateId": "REL_H_POSITION",
+        "n": 83,
+        "space": 17,
+        "modal": 0.289,
+        "entropyBits": 3.58,
+        "advantagePoints": 12.2
+      },
+      {
+        "templateId": "AGE_H_TWO_TIME",
+        "n": 61,
+        "space": 6,
+        "modal": 0.279,
+        "entropyBits": 2.41,
+        "advantagePoints": 11.2
+      },
+      {
+        "templateId": "RATE_H_TARGET",
+        "n": 109,
+        "space": 8,
+        "modal": 0.275,
+        "entropyBits": 2.73,
+        "advantagePoints": 10.9
+      },
+      {
+        "templateId": "SPD_M_TWO_TIME",
+        "n": 70,
+        "space": 7,
+        "modal": 0.271,
+        "entropyBits": 2.51,
+        "advantagePoints": 10.5
+      },
+      {
+        "templateId": "PCT_H_REVERSE_CHAIN",
+        "n": 102,
+        "space": 7,
+        "modal": 0.255,
+        "entropyBits": 2.7,
+        "advantagePoints": 8.8
+      },
+      {
+        "templateId": "ODD_E_MULT",
+        "n": 63,
+        "space": 9,
+        "modal": 0.238,
+        "entropyBits": 2.99,
+        "advantagePoints": 7.1
+      },
+      {
+        "templateId": "PL_M_TOTAL_COST",
+        "n": 106,
+        "space": 12,
+        "modal": 0.236,
+        "entropyBits": 3.1,
+        "advantagePoints": 6.9
+      },
+      {
+        "templateId": "WORK_E_VOLUME",
+        "n": 120,
+        "space": 9,
+        "modal": 0.225,
+        "entropyBits": 2.96,
+        "advantagePoints": 5.8
+      },
+      {
+        "templateId": "ODD_M_PRIME2",
+        "n": 113,
+        "space": 8,
+        "modal": 0.221,
+        "entropyBits": 2.94,
+        "advantagePoints": 5.5
+      }
+    ]
+  },
+  "difficulty": {
+    "declaredVsComputed": {
+      "easy->easy": 2904,
+      "medium->easy": 710,
+      "hard->hard": 2452,
+      "medium->medium": 1932,
+      "medium->hard": 693,
+      "hard->medium": 618,
+      "easy->medium": 333,
+      "hard->easy": 260,
+      "easy->hard": 98
+    },
+    "agreement": 0.7288,
+    "rc1Agreement": 0.528
+  },
+  "rejectionTelemetry": {
+    "reconciliation": {
+      "proposals": 10306,
+      "accountedFor": 10306,
+      "balanced": true,
+      "difference": 0,
+      "breakdown": {
+        "published": 10000,
+        "samplerFailures": 3,
+        "finalizationFailures": 218,
+        "pipelineRejectedCandidates": 85
+      }
+    },
+    "byStage": {
+      "proposal": 10306,
+      "published": 10000,
+      "family_sampler": 9952,
+      "distractor_filter": 6315,
+      "distractor_plausibility": 731,
+      "finalization": 218,
+      "pipeline": 85,
+      "sampler_failure": 3
+    },
+    "byReason": {
+      "SAMPLER_CONSTRAINT": 9003,
+      "DISTRACTOR_IMPOSSIBLE": 6315,
+      "IMPLAUSIBLE_DISTRACTOR_DEMOTED": 731,
+      "DISTRACTOR_NO_MISCONCEPTION": 218,
+      "AMBIGUOUS_ODD_ONE_OUT": 952,
+      "DEGENERATE_PARAMETERS": 20,
+      "DEGENERATE_WRONG_METHOD_EQUALS_KEY": 62,
+      "EXPLANATION_UNSOURCED_VALUE": 3
+    },
+    "internalResamplesPerProposal": 0.966,
+    "exhaustions": 0
+  },
+  "diversity": {
+    "exactFingerprints": 6254,
+    "semanticFingerprints": 5652,
+    "structuralReasoningSignatures": 94,
+    "exactPerPublished": 0.6254,
+    "semanticCollapseRatio": 0.9037
+  },
+  "performance": {
+    "meanAttemptsPerPublished": 1.0306,
+    "p95Attempts": 1,
+    "maxAttempts": 3,
+    "latencyP50Ms": 0.64,
+    "latencyP95Ms": 1.17,
+    "latencyP99Ms": 1.6,
+    "wallClockSeconds": 8.6,
+    "questionsPerSecond": 1156.2
+  }
+}

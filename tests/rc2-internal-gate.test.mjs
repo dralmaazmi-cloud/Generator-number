@@ -25,13 +25,20 @@ test('§22: no development seed is the holdout seed', () => {
 test('§22 meta: the corpus builder refuses the holdout seed', async () => {
   // A corpus that has touched the holdout is no longer a holdout, so the refusal
   // has to be in the code and not only in the instructions.
+  // RC2.1 widened the refusal to cover the C seed as well as B, and the message
+  // changed with it.
   await assert.rejects(
     () => build({questions: 10, seeds: [HOLDOUT_SEED]}),
-    /forbids the holdout seed/
+    /must not use the holdout seed/
   );
   await assert.rejects(
     () => build({questions: 10, seeds: ['RC2-DEV-ALPHA', `${HOLDOUT_SEED}-extra`]}),
-    /forbids the holdout seed/
+    /must not use the holdout seed/
+  );
+  // RC2.1: the sign-off holdout is refused too, and for the same reason.
+  await assert.rejects(
+    () => build({questions: 10, seeds: ['AUDIT-2026-09-12-C']}),
+    /must not use the holdout seed AUDIT-2026-09-12-C/
   );
 });
 
