@@ -1,0 +1,74 @@
+{
+  "schema": "rc2-holdout-findings-v1",
+  "section": "§25/§26",
+  "holdoutSeed": "AUDIT-2026-09-12-B",
+  "holdoutSha256": "2c0ceb13c002f78f49cc2436a615378850e88ce25a0bb75d9f01ebf2640c4a42",
+  "RC2_COMMIT": "56565ec4e1be4ace34dff60a0b5b6368e6177cf0",
+  "note": "The holdout was generated exactly once and is preserved exactly as generated. Nothing below was fixed in production: §24 forbids a production change after the freeze, and §25 requires that a problem the holdout exposes be preserved rather than re-rolled.",
+  "findings": [
+    {
+      "id": "HOLDOUT-F1",
+      "severity": "BLOCKER",
+      "bearsOn": "RC2-003",
+      "title": "The session path discards already-published questions without a telemetry disposition",
+      "whatTheHoldoutShowed": {
+        "engineProposals": 373,
+        "enginePublished": 359,
+        "deliveredToSessions": 250,
+        "publishedButNotDelivered": 109,
+        "diversityRejectionsRecordedInTelemetry": 5,
+        "recordedReasons": {"REPEATED_REASONING_PATTERN": 4, "DUPLICATE_FINGERPRINT": 1},
+        "unrecordedDiscards": 104,
+        "unrecordedShareOfPublished": 0.2897
+      },
+      "independentlyReproduced": {
+        "how": "Five sessions of the same shape on development seed RC2-DEV-ALPHA, so the finding does not rest on the holdout alone and the holdout did not need a second generation to confirm it.",
+        "enginePublished": 328,
+        "deliveredToSessions": 250,
+        "diversityRejectionsRecorded": 4,
+        "unrecordedDiscards": 74,
+        "unrecordedShareOfPublished": 0.2256
+      },
+      "mechanism": "generatePractice retries until a question satisfies the session's repetition preferences. Two of those rejection branches record a telemetry disposition and three do not. src/index.js:379 (DUPLICATE_FINGERPRINT) and src/index.js:389 (REPEATED_REASONING_PATTERN) call telemetry.diversityRejection. src/index.js:381 (recent-session memory, stateful mode only), src/index.js:402 (per-session template cap) and src/index.js:403 (sliding-window cap) discard an already-published question with a bare continue.",
+      "whyItMatters": "The engine-level reconciliation identity still holds exactly — proposals = published + samplerFailures + finalizationFailures + pipelineRejectedCandidates, 373 = 359 + 0 + 13 + 1, difference 0 — so RC2-003's gated claim is not false. But it was only ever measured on generateQuestion. generatePractice is the path that produces every exam and every training session, and on that path roughly a quarter to a third of everything the engine builds is thrown away with no recorded reason. That is internal rejection cost that telemetry does not show, which is the specific thing RC2-003 exists to prevent.",
+      "whyTheGateMissedIt": "The §22 development corpus and the §23 TELEMETRY_RECONCILES condition both drive generateQuestion directly. Neither exercised generatePractice. The §25 holdout is the first measurement taken through the session API, which is why this surfaced here and not earlier.",
+      "notMeasured": "The split between the src/index.js:402 cap predicate and the src/index.js:403 window predicate was not measured. Separating them requires instrumenting frozen production code, which §24 forbids.",
+      "notFixed": "Correct. A fix changes src/index.js, which is inside the frozen production bundle. The finding is carried into an independent audit as a finding."
+    },
+    {
+      "id": "HOLDOUT-F2",
+      "severity": "EVIDENCE_DEFECT",
+      "bearsOn": "§25 evidence quality",
+      "title": "Per-question latency reads 0 ms in HOLDOUT.json when it was in fact not measured",
+      "detail": "rc2/HOLDOUT.json records latencyP50Ms, latencyP95Ms and latencyP99Ms as 0. They are not 0; they are unmeasured. Questions are generated inside generatePractice and cannot be timed individually without changing frozen production code, so the holdout tool passed an empty latency list and the percentile helper returned 0 for an empty list.",
+      "whatIsReal": "The per-session wall-clock figures in HOLDOUT.json are real: 1.076 to 2.624 ms per question across the five sessions, slowest on the All-Hard session. Attempt counts are also real — mean 1.04, p95 1, max 4.",
+      "disposition": "rc2/HOLDOUT.json is preserved exactly as generated rather than corrected in place, because it is holdout evidence. The tool was corrected so that an unmeasured percentile reports null and carries perQuestionLatencyMeasured:false. A replay of the holdout with the corrected tool produces byte-identical questions — the corpus sha256 above is reproducible — and differs only in these three fields."
+    },
+    {
+      "id": "HOLDOUT-F3",
+      "severity": "OBSERVATION",
+      "bearsOn": "RC2-022/RC2-023",
+      "title": "All fingerprint collisions are cross-session; within-session uniqueness holds",
+      "detail": "250 questions carry 247 distinct exact fingerprints and 246 distinct semantic fingerprints. Every collision is between two different sessions — AVG_M_COMBINE across SESSION-1 and SESSION-4, REL_M_CONFIRM and SPD_M_AVG across SESSION-1 and SESSION-2. No session repeats a reasoning instance within itself, which is the guarantee the engine actually makes. Sessions are independent seeds and are not deduplicated against one another in DETERMINISTIC_SINGLE_GENERATION mode, by design, so this is expected rather than a defect. It is recorded because a reader comparing 247 against 250 should not have to guess."
+    }
+  ],
+  "gainsHeldOnTheHoldout": {
+    "note": "§20 — every RC1 gain, re-measured on 250 unseen questions.",
+    "ORACLE_DISAGREEMENT": 0,
+    "postShuffleKeyMismatch": 0,
+    "zeroCorrectOption": 0,
+    "multipleCorrectOptions": 0,
+    "correctValueMismatch": 0,
+    "metaKeyMismatch": 0,
+    "publishedAmbiguous": 0,
+    "publishedUndiscoverable": 0,
+    "arabicInvalid": 0,
+    "arabicUnclassified": 0,
+    "unattributedAnswerDerivedDistractors": 0,
+    "feedbackDerivationMismatches": 0,
+    "inapplicableMisconceptions": 0,
+    "duplicateDistractorDerivations": 0,
+    "sessionExhaustions": 0,
+    "diversityWarnings": 0
+  }
+}

@@ -1,0 +1,616 @@
+{
+  "schema": "rc2-holdout-v1",
+  "section": "§25",
+  "generatedAt": "2026-09-12T11:41:16.331Z",
+  "engineVersion": "1.4.0",
+  "holdoutSeed": "AUDIT-2026-09-12-B",
+  "sessionSeedRule": "`${HOLDOUT_SEED}-${sessionId}` — stated so the holdout is replayable",
+  "generatedExactlyOnce": true,
+  "frozenAt": {
+    "RC2_COMMIT": "56565ec4e1be4ace34dff60a0b5b6368e6177cf0",
+    "treeHash": "43515585d1901495df4607472cf637d0349f9295",
+    "productionBundleSha256": "69e39e737a0347ae5edd890011b6cb1161fcc1edc5482fdf98b9669fcf0e3c53",
+    "internalGate": {
+      "verdict": "PASS",
+      "conditions": 15,
+      "evaluatedAt": "2026-09-12T11:36:23.926Z",
+      "headCommit": "fa6cc617f3cfc69ea8baf8cc49eab5d5a0baba0d"
+    }
+  },
+  "plan": {
+    "mixedSessions": 4,
+    "allHardSessions": 1,
+    "questionsPerSession": 50,
+    "totalRequested": 250
+  },
+  "sessions": [
+    {
+      "id": "SESSION-1",
+      "kind": "MIXED",
+      "requestedDifficulty": "mixed",
+      "requestedCount": 50,
+      "seed": "AUDIT-2026-09-12-B-SESSION-1",
+      "delivered": 50,
+      "generationMode": "DETERMINISTIC_SINGLE_GENERATION",
+      "diversityWarnings": [],
+      "validationValid": true,
+      "validationIssues": [],
+      "bands": {
+        "medium": 29,
+        "easy": 13,
+        "hard": 8
+      },
+      "answerLetters": {
+        "E": 9,
+        "B": 8,
+        "A": 9,
+        "C": 8,
+        "F": 8,
+        "D": 8
+      },
+      "wallMs": 99.6
+    },
+    {
+      "id": "SESSION-2",
+      "kind": "MIXED",
+      "requestedDifficulty": "mixed",
+      "requestedCount": 50,
+      "seed": "AUDIT-2026-09-12-B-SESSION-2",
+      "delivered": 50,
+      "generationMode": "DETERMINISTIC_SINGLE_GENERATION",
+      "diversityWarnings": [],
+      "validationValid": true,
+      "validationIssues": [],
+      "bands": {
+        "easy": 13,
+        "hard": 8,
+        "medium": 29
+      },
+      "answerLetters": {
+        "F": 9,
+        "D": 9,
+        "A": 8,
+        "C": 8,
+        "E": 8,
+        "B": 8
+      },
+      "wallMs": 59.5
+    },
+    {
+      "id": "SESSION-3",
+      "kind": "MIXED",
+      "requestedDifficulty": "mixed",
+      "requestedCount": 50,
+      "seed": "AUDIT-2026-09-12-B-SESSION-3",
+      "delivered": 50,
+      "generationMode": "DETERMINISTIC_SINGLE_GENERATION",
+      "diversityWarnings": [],
+      "validationValid": true,
+      "validationIssues": [],
+      "bands": {
+        "hard": 8,
+        "medium": 29,
+        "easy": 13
+      },
+      "answerLetters": {
+        "A": 8,
+        "F": 8,
+        "D": 9,
+        "C": 9,
+        "E": 8,
+        "B": 8
+      },
+      "wallMs": 74.9
+    },
+    {
+      "id": "SESSION-4",
+      "kind": "MIXED",
+      "requestedDifficulty": "mixed",
+      "requestedCount": 50,
+      "seed": "AUDIT-2026-09-12-B-SESSION-4",
+      "delivered": 50,
+      "generationMode": "DETERMINISTIC_SINGLE_GENERATION",
+      "diversityWarnings": [],
+      "validationValid": true,
+      "validationIssues": [],
+      "bands": {
+        "medium": 29,
+        "easy": 13,
+        "hard": 8
+      },
+      "answerLetters": {
+        "E": 9,
+        "A": 8,
+        "F": 8,
+        "B": 8,
+        "C": 8,
+        "D": 9
+      },
+      "wallMs": 53.8
+    },
+    {
+      "id": "SESSION-5",
+      "kind": "ALL_HARD",
+      "requestedDifficulty": "hard",
+      "requestedCount": 50,
+      "seed": "AUDIT-2026-09-12-B-SESSION-5",
+      "delivered": 50,
+      "generationMode": "DETERMINISTIC_SINGLE_GENERATION",
+      "diversityWarnings": [],
+      "validationValid": true,
+      "validationIssues": [],
+      "bands": {
+        "hard": 50
+      },
+      "answerLetters": {
+        "B": 9,
+        "D": 9,
+        "E": 8,
+        "A": 8,
+        "F": 8,
+        "C": 8
+      },
+      "wallMs": 131.2
+    }
+  ],
+  "totals": {
+    "requested": 250,
+    "delivered": 250,
+    "sha256": "2c0ceb13c002f78f49cc2436a615378850e88ce25a0bb75d9f01ebf2640c4a42",
+    "gzipBytes": 32046
+  },
+  "counts": {
+    "published": 250,
+    "families": 16,
+    "templates": 100,
+    "byBand": {
+      "easy": 52,
+      "medium": 116,
+      "hard": 82
+    },
+    "byFamily": {
+      "relational": 15,
+      "work_time": 15,
+      "ages": 16,
+      "combined_rate": 16,
+      "averages": 17,
+      "unit_rate": 15,
+      "calendar": 16,
+      "profit_loss": 16,
+      "speed": 15,
+      "odd_one_out": 15,
+      "sequences": 15,
+      "fractions": 15,
+      "percentages": 17,
+      "machines": 16,
+      "direct_proportion": 16,
+      "ratios": 15
+    }
+  },
+  "mathematics": {
+    "note": "§20 — the RC1 gains. Any non-zero figure here is an RC2 blocker.",
+    "ORACLE_DISAGREEMENT": 0,
+    "oracleDisagreementSamples": [],
+    "oracleComparedThroughALabelMap": 5,
+    "postShuffleKeyMismatch": 0,
+    "zeroCorrectOption": 0,
+    "multipleCorrectOptions": 0,
+    "correctValueMismatch": 0,
+    "metaKeyMismatch": 0
+  },
+  "ambiguity": {
+    "oddOneOutPublished": 15,
+    "verdicts": {
+      "CLEAN": 12,
+      "BORDERLINE": 3
+    },
+    "publishedAmbiguous": 0,
+    "publishedUndiscoverable": 0
+  },
+  "language": {
+    "constructionsClassified": 2325,
+    "valid": 1782,
+    "exempt": 543,
+    "invalid": 0,
+    "unclassified": 0,
+    "invalidSamples": []
+  },
+  "distractors": {
+    "wrongOptions": 1250,
+    "answerDerived": 30,
+    "answerDerivedShare": 0.024,
+    "unattributedAnswerDerived": 0,
+    "perQuestionDistribution": {
+      "0": 234,
+      "1": 5,
+      "2": 8,
+      "3": 3
+    },
+    "answerDerivedSamples": [
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-1",
+        "templateId": "AGE_M_FUT_SUM_DIFF",
+        "option": "A",
+        "value": 25,
+        "derivation": "21 + 4",
+        "misconceptionId": "ANSWERED_FUTURE_AGE",
+        "reasoningStepAffected": 3
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-1",
+        "templateId": "AGE_M_FUT_SUM_DIFF",
+        "option": "F",
+        "value": 17,
+        "derivation": "21 − 4",
+        "misconceptionId": "ANSWERED_PAST_AGE",
+        "reasoningStepAffected": 3
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-1",
+        "templateId": "AGE_M_FUT_SUM_DIFF",
+        "option": "B",
+        "value": 18,
+        "derivation": "15 + 3",
+        "misconceptionId": "ANSWERED_FUTURE_AGE",
+        "reasoningStepAffected": 3
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-1",
+        "templateId": "AGE_M_FUT_SUM_DIFF",
+        "option": "D",
+        "value": 12,
+        "derivation": "15 − 3",
+        "misconceptionId": "ANSWERED_PAST_AGE",
+        "reasoningStepAffected": 3
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-1",
+        "templateId": "WORK_M_TARGET",
+        "option": "A",
+        "value": 9,
+        "derivation": "36 ÷ 4",
+        "misconceptionId": "USED_TOTAL_INSTEAD_OF_REMAINDER",
+        "reasoningStepAffected": 3
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-1",
+        "templateId": "AGE_M_FUT_RATIO",
+        "option": "A",
+        "value": 15,
+        "derivation": "10 + 5",
+        "misconceptionId": "ANSWERED_FUTURE_AGE",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-1",
+        "templateId": "AGE_M_FUT_RATIO",
+        "option": "E",
+        "value": 40,
+        "derivation": "10 + 30",
+        "misconceptionId": "ANSWERED_OTHER_PERSON",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-2",
+        "templateId": "AGE_M_FUT_RATIO",
+        "option": "B",
+        "value": 50,
+        "derivation": "25 × 2",
+        "misconceptionId": "MULTIPLIED_INSTEAD_OF_DIVIDED",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-2",
+        "templateId": "AGE_M_FUT_RATIO",
+        "option": "D",
+        "value": 57,
+        "derivation": "25 + 32",
+        "misconceptionId": "ANSWERED_OTHER_PERSON",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-3",
+        "templateId": "RAT_H_TRANSFER",
+        "option": "C",
+        "value": 6,
+        "derivation": "12 − 6",
+        "misconceptionId": "USED_PRE_TRANSFER_VALUE",
+        "reasoningStepAffected": 4
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-3",
+        "templateId": "AGE_M_FUT_SUM_DIFF",
+        "option": "B",
+        "value": 26,
+        "derivation": "20 + 6",
+        "misconceptionId": "ANSWERED_FUTURE_AGE",
+        "reasoningStepAffected": 3
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-3",
+        "templateId": "AGE_M_FUT_RATIO",
+        "option": "D",
+        "value": 21,
+        "derivation": "17 + 4",
+        "misconceptionId": "ANSWERED_FUTURE_AGE",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-3",
+        "templateId": "AGE_M_FUT_RATIO",
+        "option": "E",
+        "value": 34,
+        "derivation": "17 × 2",
+        "misconceptionId": "MULTIPLIED_INSTEAD_OF_DIVIDED",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-3",
+        "templateId": "AGE_M_FUT_RATIO",
+        "option": "F",
+        "value": 38,
+        "derivation": "17 + 21",
+        "misconceptionId": "ANSWERED_OTHER_PERSON",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-4",
+        "templateId": "AGE_M_RATIO_FUT_SUM",
+        "option": "A",
+        "value": 24,
+        "derivation": "22 + 2",
+        "misconceptionId": "ANSWERED_FUTURE_AGE",
+        "reasoningStepAffected": 4
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-4",
+        "templateId": "AGE_M_RATIO_FUT_SUM",
+        "option": "D",
+        "value": 11,
+        "derivation": "22 ÷ 2",
+        "misconceptionId": "ANSWERED_OTHER_PERSON",
+        "reasoningStepAffected": 4
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-4",
+        "templateId": "AGE_H_PAST_FUT",
+        "option": "B",
+        "value": 33,
+        "derivation": "36 − 3",
+        "misconceptionId": "ANSWERED_PAST_AGE",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-4",
+        "templateId": "AGE_H_PAST_FUT",
+        "option": "E",
+        "value": 40,
+        "derivation": "36 + 4",
+        "misconceptionId": "ANSWERED_FUTURE_AGE",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-5",
+        "templateId": "AGE_H_TWO_TIME",
+        "option": "C",
+        "value": 18,
+        "derivation": "12 + 6",
+        "misconceptionId": "ANSWERED_FUTURE_AGE",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-5",
+        "templateId": "AGE_H_TWO_TIME",
+        "option": "D",
+        "value": 30,
+        "derivation": "12 + 18",
+        "misconceptionId": "ANSWERED_OTHER_PERSON",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-5",
+        "templateId": "AGE_H_TWO_TIME",
+        "option": "F",
+        "value": 24,
+        "derivation": "12 × 2",
+        "misconceptionId": "MULTIPLIED_INSTEAD_OF_DIVIDED",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-5",
+        "templateId": "RAT_H_TRANSFER",
+        "option": "F",
+        "value": 8,
+        "derivation": "12 − 4",
+        "misconceptionId": "USED_PRE_TRANSFER_VALUE",
+        "reasoningStepAffected": 4
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-5",
+        "templateId": "AGE_H_PAST_FUT",
+        "option": "A",
+        "value": 44,
+        "derivation": "41 + 3",
+        "misconceptionId": "ANSWERED_FUTURE_AGE",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-5",
+        "templateId": "AGE_H_PAST_FUT",
+        "option": "B",
+        "value": 36,
+        "derivation": "41 − 5",
+        "misconceptionId": "ANSWERED_PAST_AGE",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-5",
+        "templateId": "RAT_H_TRANSFER",
+        "option": "A",
+        "value": 14,
+        "derivation": "8 + 6",
+        "misconceptionId": "USED_POST_TRANSFER_VALUE",
+        "reasoningStepAffected": 4
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-5",
+        "templateId": "AGE_H_TWO_TIME",
+        "option": "A",
+        "value": 34,
+        "derivation": "14 + 20",
+        "misconceptionId": "ANSWERED_OTHER_PERSON",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-5",
+        "templateId": "AGE_H_TWO_TIME",
+        "option": "B",
+        "value": 20,
+        "derivation": "14 + 6",
+        "misconceptionId": "ANSWERED_FUTURE_AGE",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-5",
+        "templateId": "AGE_H_TWO_TIME",
+        "option": "F",
+        "value": 28,
+        "derivation": "14 × 2",
+        "misconceptionId": "MULTIPLIED_INSTEAD_OF_DIVIDED",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-5",
+        "templateId": "AGE_H_PAST_FUT",
+        "option": "A",
+        "value": 29,
+        "derivation": "24 + 5",
+        "misconceptionId": "ANSWERED_FUTURE_AGE",
+        "reasoningStepAffected": 5
+      },
+      {
+        "seed": "AUDIT-2026-09-12-B-SESSION-5",
+        "templateId": "AGE_H_PAST_FUT",
+        "option": "F",
+        "value": 22,
+        "derivation": "24 − 2",
+        "misconceptionId": "ANSWERED_PAST_AGE",
+        "reasoningStepAffected": 5
+      }
+    ],
+    "unattributedSamples": [],
+    "rc1Baseline": {
+      "answerDerivedShare": 0.249,
+      "questionsWithThreeOrMoreShare": 0.156
+    }
+  },
+  "feedback": {
+    "verdicts": {
+      "NON_NUMERIC": 180,
+      "EXACT": 846,
+      "PROSE": 201,
+      "ROUNDS_TO_VALUE": 23
+    },
+    "derivationMismatches": 0,
+    "derivationMismatchSamples": [],
+    "questionsWithInapplicableMisconception": 0,
+    "inapplicableMisconceptionSamples": [],
+    "questionsWithDuplicateDerivation": 0
+  },
+  "statisticalLeakage": {
+    "note": "A 250-question holdout is far too small to judge per-template leakage; the §22 corpus is what measures that. These figures are reported for completeness only.",
+    "distinctAnswersAcrossCorpus": 189,
+    "corpusModalShare": 0.032,
+    "templatesMeasured": 0,
+    "templatesAbove20Points": 0,
+    "templatesAbove15Points": 0,
+    "medianAdvantagePoints": null,
+    "worst": []
+  },
+  "difficulty": {
+    "declaredVsComputed": {
+      "medium->hard": 34,
+      "easy->easy": 43,
+      "medium->medium": 59,
+      "hard->medium": 26,
+      "medium->easy": 23,
+      "easy->medium": 9,
+      "hard->easy": 8,
+      "hard->hard": 48
+    },
+    "agreement": 0.6,
+    "rc1Agreement": 0.528
+  },
+  "diversity": {
+    "exactFingerprints": 247,
+    "semanticFingerprints": 246,
+    "structuralReasoningSignatures": 13,
+    "exactPerPublished": 0.988,
+    "semanticCollapseRatio": 0.996
+  },
+  "performance": {
+    "meanAttemptsPerPublished": 1.04,
+    "p95Attempts": 1,
+    "maxAttempts": 4,
+    "latencyP50Ms": 0,
+    "latencyP95Ms": 0,
+    "latencyP99Ms": 0,
+    "latencyPerQuestionMsBySession": [
+      {
+        "id": "SESSION-1",
+        "msPerQuestion": 1.992
+      },
+      {
+        "id": "SESSION-2",
+        "msPerQuestion": 1.19
+      },
+      {
+        "id": "SESSION-3",
+        "msPerQuestion": 1.498
+      },
+      {
+        "id": "SESSION-4",
+        "msPerQuestion": 1.076
+      },
+      {
+        "id": "SESSION-5",
+        "msPerQuestion": 2.624
+      }
+    ]
+  },
+  "rejectionTelemetry": {
+    "reconciliation": {
+      "proposals": 373,
+      "accountedFor": 373,
+      "balanced": true,
+      "difference": 0,
+      "breakdown": {
+        "published": 359,
+        "samplerFailures": 0,
+        "finalizationFailures": 13,
+        "pipelineRejectedCandidates": 1
+      }
+    },
+    "byStage": {
+      "proposal": 373,
+      "published": 359,
+      "distractor_filter": 315,
+      "family_sampler": 295,
+      "finalization": 13,
+      "diversity": 5,
+      "pipeline": 1
+    },
+    "byReason": {
+      "DISTRACTOR_IMPOSSIBLE": 315,
+      "SAMPLER_CONSTRAINT": 284,
+      "AMBIGUOUS_ODD_ONE_OUT": 11,
+      "DISTRACTOR_NO_MISCONCEPTION": 13,
+      "REPEATED_REASONING_PATTERN": 4,
+      "DUPLICATE_FINGERPRINT": 1,
+      "DEGENERATE_WRONG_METHOD_EQUALS_KEY": 1
+    },
+    "internalResamplesPerProposal": 0.791,
+    "exhaustions": 0
+  },
+  "declaration": "Generated once from the frozen engine. If a problem appears above it is preserved, not re-rolled."
+}

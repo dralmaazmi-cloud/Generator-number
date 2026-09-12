@@ -303,9 +303,16 @@ export function measure(questions, {latencies = [], attempts = []} = {}) {
       meanAttemptsPerPublished: Number(mean(attempts).toFixed(4)),
       p95Attempts: pct(attempts, 95),
       maxAttempts: attempts.length ? Math.max(...attempts) : 0,
-      latencyP50Ms: Number(pct(latencies, 50).toFixed(2)),
-      latencyP95Ms: Number(pct(latencies, 95).toFixed(2)),
-      latencyP99Ms: Number(pct(latencies, 99).toFixed(2))
+      // null, not zero, when no per-question timing was supplied. The session
+      // path generates inside generatePractice and cannot be timed per question
+      // without changing frozen production code, so on the holdout these are
+      // genuinely unmeasured and must not read as "0 ms". As first generated,
+      // rc2/HOLDOUT.json carries 0 here; that file is preserved as generated and
+      // rc2/HOLDOUT_FINDINGS.json records the defect.
+      latencyP50Ms: latencies.length ? Number(pct(latencies, 50).toFixed(2)) : null,
+      latencyP95Ms: latencies.length ? Number(pct(latencies, 95).toFixed(2)) : null,
+      latencyP99Ms: latencies.length ? Number(pct(latencies, 99).toFixed(2)) : null,
+      perQuestionLatencyMeasured: latencies.length > 0
     }
   };
 }
