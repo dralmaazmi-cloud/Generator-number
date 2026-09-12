@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine, resample} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine, resample, risePercentPhrase} from './_shared.js';
 
 export function generateUnitRate({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'unit_rate', family_ar: 'المعدل الوحدوي', category: 'المعدل الوحدوي'};
@@ -129,7 +129,7 @@ function rateThenPercent(ctx) {
     templateId: 'RATE_M_PERCENT',
     subskill: 'معدل وحدوي ثم زيادة مئوية',
     difficulty: 'medium',
-    question: `تنجز آلة ${u(total, 'unit')} خلال ${u(minutes, 'minute', 'oblique')}. بعد صيانة ارتفع معدلها في الدقيقة بنسبة ${pct}%. كم وحدة تنجز خلال ${u(targetMin, 'minute', 'oblique')} بالمعدل الجديد؟`,
+    question: `تنجز آلة ${u(total, 'unit')} خلال ${u(minutes, 'minute', 'oblique')}. بعد صيانة ارتفع معدلها في الدقيقة ${risePercentPhrase(pct)}. كم وحدة تنجز خلال ${u(targetMin, 'minute', 'oblique')} بالمعدل الجديد؟`,
     correct, distractors, format: unitFormat('unit'),
     steps: [
       `المعدل الأصلي في الدقيقة = ${total} ÷ ${minutes} = ${rate}.`,
@@ -233,7 +233,7 @@ function rateChangeTarget(ctx) {
     templateId: 'RATE_H_TARGET',
     subskill: 'معدل محسن ثم زمن لهدف جديد',
     difficulty: 'hard',
-    question: `تنجز آلة ${u(initial, 'unit')} خلال ${u(oldMinutes, 'minute', 'oblique')}. ارتفع معدلها في الدقيقة بعد تطوير بنسبة ${pct}%. كم دقيقة تحتاج بالمعدل الجديد لإنجاز ${u(target, 'unit')}؟`,
+    question: `تنجز آلة ${u(initial, 'unit')} خلال ${u(oldMinutes, 'minute', 'oblique')}. ارتفع معدلها في الدقيقة بعد تطوير ${risePercentPhrase(pct)}. كم دقيقة تحتاج بالمعدل الجديد لإنجاز ${u(target, 'unit')}؟`,
     correct, distractors, format: unitFormat('minute'),
     steps: [
       `المعدل الأصلي في الدقيقة = ${initial} ÷ ${oldMinutes} = ${oldRate}.`,
@@ -285,7 +285,7 @@ function twoPhaseRate(ctx) {
     templateId: 'RATE_H_TWO_PHASE',
     subskill: 'معدل يتغير بين مرحلتين',
     difficulty: 'hard',
-    question: `يعمل جهاز بمعدل ${r1} وحدة/ساعة لمدة ${u(h1, 'hour', 'oblique')}، ثم ارتفع معدله بنسبة ${pct}% وعمل ${u(h2, 'hour', 'oblique')} أخرى. كم وحدة أنجز إجمالًا؟`,
+    question: `يعمل جهاز بمعدل ${r1} وحدة/ساعة لمدة ${u(h1, 'hour', 'oblique')}، ثم ارتفع معدله ${risePercentPhrase(pct)} وعمل ${u(h2, 'hour', 'oblique')} أخرى. كم وحدة أنجز إجمالًا؟`,
     correct, distractors, format: unitFormat('unit'),
     steps: [
       `إنتاج المرحلة الأولى = ${r1} × ${h1} = ${r1 * h1}.`,

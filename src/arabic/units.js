@@ -97,6 +97,93 @@ export function formatNumberWithUnit(n, unitId, grammaticalContext = 'nominative
   return `${displayNumber(num)} ${u.accSing}`;
 }
 
+// ---------------------------------------------------------------------------
+// RC2.1-4. Agreement helpers.
+//
+// The independent review of holdout B found «يومين إضافية»: a dual noun carrying
+// a feminine-singular adjective. The cause was renderers appending a fixed
+// adjective string next to a counted noun whose form varies with the count, so
+// the two agreed only by luck. These helpers derive the correct form instead.
+//
+// Gender is read off the `one` form already in the table rather than added as a
+// new field, so it cannot drift out of step with the noun it describes.
+// ---------------------------------------------------------------------------
+
+const isFeminine = u => u.one.endsWith('واحدة');
+
+/**
+ * An attributive adjective agreeing with a counted noun, e.g.
+ * `${u(2,'day','oblique')} ${adj(2,'day','إضافي')}` -> «يومين إضافيين».
+ *
+ * Arabic agreement for counted things:
+ *   1        the noun is singular      -> masculine/feminine singular
+ *   2        the noun is dual          -> dual, matching the case of the noun
+ *   3..10    a broken plural of a non-human is treated as feminine singular
+ *   11+      the noun returns to the accusative singular
+ *
+ * @param {number} n     the count the noun was rendered for
+ * @param {string} unitId
+ * @param {string} stem  masculine singular base, e.g. 'إضافي'
+ * @param {'nominative'|'oblique'} [ctx] case of the dual, matching the noun
+ */
+export function agreeingAdjective(n, unitId, stem, ctx = 'oblique') {
+  const id = resolveUnitId(unitId);
+  if (!id) throw new Error(`Unknown unit id: ${unitId}`);
+  const fem = isFeminine(UNITS[id]);
+  const num = Number(n);
+  if (Number.isInteger(num)) {
+    if (num === 1) return fem ? `${stem}ة` : stem;
+    if (num === 2) {
+      if (ctx === 'nominative') return fem ? `${stem}تان` : `${stem}ان`;
+      return fem ? `${stem}تين` : `${stem}ين`;
+    }
+    if (num >= 3 && num <= 10) return `${stem}ة`;
+  }
+  // 11 and above, and any non-integer, take the accusative singular noun.
+  return fem ? `${stem}ة` : `${stem}ًا`;
+}
+
+/**
+ * The definite singular of a unit («الصندوق»), and the same with «الواحد»
+ * agreeing («الصندوق الواحد», «القطعة الواحدة»).
+ *
+ * RC2.1-4. Prose that names an entity must take the name from this table, which
+ * is the single source of truth for what that entity is called. Holdout B
+ * shipped a stem that said «علبة» while the formatter rendered «صندوق» for the
+ * very same object, because the prose hardcoded a second noun of its own.
+ */
+export function definiteSingular(unitId) {
+  const id = resolveUnitId(unitId);
+  if (!id) throw new Error(`Unknown unit id: ${unitId}`);
+  return `ال${UNITS[id].singular}`;
+}
+
+/** Bare indefinite singular («صندوق»), the form «كل» takes. */
+export function singularOf(unitId) {
+  const id = resolveUnitId(unitId);
+  if (!id) throw new Error(`Unknown unit id: ${unitId}`);
+  return UNITS[id].singular;
+}
+
+/** Accusative singular («صندوقًا»), the form the tamyiz after «كم» takes. */
+export function accusativeSingularOf(unitId) {
+  const id = resolveUnitId(unitId);
+  if (!id) throw new Error(`Unknown unit id: ${unitId}`);
+  return UNITS[id].accSing;
+}
+
+export function definitePlural(unitId) {
+  const id = resolveUnitId(unitId);
+  if (!id) throw new Error(`Unknown unit id: ${unitId}`);
+  return `ال${UNITS[id].plural}`;
+}
+
+export function theSingleUnit(unitId) {
+  const id = resolveUnitId(unitId);
+  if (!id) throw new Error(`Unknown unit id: ${unitId}`);
+  return `ال${UNITS[id].singular} ${isFeminine(UNITS[id]) ? 'الواحدة' : 'الواحد'}`;
+}
+
 /** Bare unit word for a count, without the numeral (used in mid-sentence prose). */
 export function unitWordFor(n, unitId) {
   const id = resolveUnitId(unitId);

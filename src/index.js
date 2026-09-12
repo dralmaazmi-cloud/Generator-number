@@ -307,6 +307,12 @@ export class NumericalQuestionGeneratorEngine {
       ? Array(count).fill(null)
       : buildBalancedLetterSchedule(count, rng.fork('letters'));
 
+    // RC2.1-5. A caller generating several sessions as one batch (a mock exam)
+    // passes a shared Set so the same mathematical instance cannot appear twice
+    // across it. Omitted, behaviour is exactly as before: a lone session is
+    // still a pure function of its own seed.
+    const batchFingerprints = options.batchFingerprints ?? null;
+    let sessionCandidates = 0;
     const questions = [];
     const fingerprints = new Set();
     // Section 41: a template asked in a genuinely different direction counts as
@@ -369,23 +375,42 @@ export class NumericalQuestionGeneratorEngine {
           if (err.code === 'QUESTION_GENERATION_EXHAUSTED' && retry < this.config.diversityAttempts - 1) continue;
           throw err;
         }
+        // RC2.1-1. Counted here, where the session builder actually receives a
+        // published candidate, so the session identity below has an independent
+        // witness rather than being derived from its own operands.
+        this.telemetry.sessionCandidate();
+        sessionCandidates++;
         const fingerprint = questionSignature(q);
         // Absolute rules: never publish the same reasoning twice in a session,
         // however the choices happen to be ordered.
         // RC2-022: `fingerprint` here is the semantic fingerprint, so two
         // display permutations of one mathematical instance collide.
         if (fingerprints.has(fingerprint)) {
-          this.telemetry.diversityRejection({family: q.family, templateId: q.generator_id, reasonCode: REASON.DUPLICATE_FINGERPRINT, seed, attempt: retry + 1});
+          this.telemetry.sessionDiscard({family: q.family, templateId: q.generator_id, reasonCode: REASON.DUPLICATE_FINGERPRINT, seed, attempt: retry + 1});
           continue;
         }
-        if (useRecentMemory && this._recentFingerprints.includes(fingerprint)) continue;
+        // RC2.1-5. The batch set, when one is supplied, is the same semantic
+        // fingerprint compared across every session of one multi-session batch.
+        // It is the mathematical instance that must not repeat, not the display
+        // order — holdout B shipped three pairs that were the same question with
+        // the options shuffled. Ordinary template reuse is untouched: two
+        // different instances of one template collide on neither fingerprint.
+        if (batchFingerprints && batchFingerprints.has(fingerprint)) {
+          this.telemetry.sessionDiscard({family: q.family, templateId: q.generator_id, reasonCode: REASON.SESSION_BATCH_DUPLICATE, seed, attempt: retry + 1});
+          continue;
+        }
+        // RC2.1-1. Was a bare `continue` before RC2.1.
+        if (useRecentMemory && this._recentFingerprints.includes(fingerprint)) {
+          this.telemetry.sessionDiscard({family: q.family, templateId: q.generator_id, reasonCode: REASON.SESSION_RECENT_MEMORY, seed, attempt: retry + 1});
+          continue;
+        }
         // RC2-023: and never publish the same reasoning *pattern* twice in a
         // session either. A template that declares no pattern has a null
         // signature and is governed by the semantic check alone, so unrelated
         // questions are not collapsed together.
         const structural = q.metadata?.structural_reasoning_signature ?? null;
         if (structural && reasoningSignatures.has(structural)) {
-          this.telemetry.diversityRejection({family: q.family, templateId: q.generator_id, reasonCode: REASON.REPEATED_REASONING_PATTERN, seed, attempt: retry + 1});
+          this.telemetry.sessionDiscard({family: q.family, templateId: q.generator_id, reasonCode: REASON.REPEATED_REASONING_PATTERN, seed, attempt: retry + 1});
           continue;
         }
 
@@ -396,11 +421,25 @@ export class NumericalQuestionGeneratorEngine {
         // Keep the best fallback seen so far: one that still respects the hard
         // ceiling is preferred over one that does not.
         if (!relaxed || (relaxed.used >= this.config.maxTemplateRepeatsPerSession && used < this.config.maxTemplateRepeatsPerSession)) {
-          relaxed = {q, fingerprint, used, variant};
+          relaxed = {q, fingerprint, used, variant, discardEvent: null};
         }
         // Preferences: honoured when the stock allows, relaxed in stages when not.
-        if (count <= 50 && used >= stage.cap) continue;
-        if (inWindow >= stage.window) continue;
+        // RC2.1-1. Both were bare `continue`s before RC2.1, and between them they
+        // accounted for most of the 104 undispositioned discards on holdout B.
+        // A candidate rejected here may still be delivered later as the relaxed
+        // fallback, so its event is remembered and withdrawn if that happens —
+        // otherwise it would be counted as discarded AND delivered, and the
+        // session identity would over-count by exactly the number of fallbacks.
+        if (count <= 50 && used >= stage.cap) {
+          const ev = this.telemetry.sessionDiscard({family: q.family, templateId: q.generator_id, reasonCode: REASON.SESSION_TEMPLATE_CAP, seed, attempt: retry + 1});
+          if (relaxed && relaxed.q === q) relaxed.discardEvent = ev;
+          continue;
+        }
+        if (inWindow >= stage.window) {
+          const ev = this.telemetry.sessionDiscard({family: q.family, templateId: q.generator_id, reasonCode: REASON.SESSION_WINDOW_CAP, seed, attempt: retry + 1});
+          if (relaxed && relaxed.q === q) relaxed.discardEvent = ev;
+          continue;
+        }
         chosen = {q, fingerprint, variant};
         break;
       }
@@ -412,6 +451,7 @@ export class NumericalQuestionGeneratorEngine {
           });
         }
         chosen = relaxed;
+        this.telemetry.withdrawSessionDiscard(relaxed.discardEvent);
         diversityWarnings.push({
           index: i + 1,
           template_id: chosen.q.generator_id,
@@ -426,6 +466,8 @@ export class NumericalQuestionGeneratorEngine {
       }
       variantCounts.set(chosen.variant, (variantCounts.get(chosen.variant) || 0) + 1);
       recentVariants.push(chosen.variant);
+      this.telemetry.deliveredToSession({family: chosen.q.family, templateId: chosen.q.generator_id, seed});
+      if (batchFingerprints) batchFingerprints.add(chosen.fingerprint);
       questions.push({...chosen.q, practice_number: i + 1});
     }
 
@@ -438,6 +480,15 @@ export class NumericalQuestionGeneratorEngine {
     const validation = this.validateBatch(questions);
     validation.generation_mode = mode;
     validation.diversity_warnings = diversityWarnings;
+    // RC2.1-1. What this session cost, on the session's own terms: how many
+    // published candidates it was handed, how many it delivered, and how many it
+    // refused. Reported per session so a high-cost session cannot be averaged
+    // away inside a batch.
+    validation.session_cost = {
+      published_candidates: sessionCandidates,
+      delivered: questions.length,
+      discarded: sessionCandidates - questions.length
+    };
     return {
       engine_version: this.version,
       seed,
@@ -451,6 +502,49 @@ export class NumericalQuestionGeneratorEngine {
       summary: this.summarizeBatch(questions),
       validation,
       questions
+    };
+  }
+
+  /**
+   * RC2.1-5. Several sessions generated as one batch — a mock exam — sharing a
+   * single semantic-fingerprint set, so the same mathematical instance cannot
+   * appear in two of them. Holdout B shipped three such pairs (the same
+   * averages, speed and odd-one-out questions with the options shuffled)
+   * because each session deduplicated only against itself.
+   *
+   * The batch is a pure function of its seed: session k is seeded
+   * `${seed}|S${k}`. Within a batch a session additionally depends on the
+   * sessions before it, which is the point — that dependency is what removes
+   * the duplicates — so a session pulled out of a batch and regenerated alone
+   * is not guaranteed to match. Generating the batch again from the same seed
+   * always is.
+   *
+   * @param {object} options
+   * @param {Array<{count?: number, difficulty?: string, family?: string}>} options.sessions
+   */
+  generateMockBatch(options = {}) {
+    const specs = Array.isArray(options.sessions) ? options.sessions : [];
+    if (!specs.length) throw new Error('generateMockBatch: at least one session is required');
+    const seed = options.seed ?? makeSeed('NUMBATCH');
+    const batchFingerprints = new Set();
+    const sessions = specs.map((spec, k) => this.generatePractice({
+      ...options.defaults,
+      ...spec,
+      seed: `${seed}|S${k + 1}`,
+      batchFingerprints
+    }));
+    return {
+      engine_version: this.version,
+      seed,
+      generated_at: new Date().toISOString(),
+      sessions,
+      batch_summary: {
+        sessions: sessions.length,
+        questions: sessions.reduce((a, s) => a + s.questions.length, 0),
+        distinct_semantic_fingerprints: batchFingerprints.size,
+        published_candidates: sessions.reduce((a, s) => a + s.validation.session_cost.published_candidates, 0),
+        discarded: sessions.reduce((a, s) => a + s.validation.session_cost.discarded, 0)
+      }
     };
   }
 

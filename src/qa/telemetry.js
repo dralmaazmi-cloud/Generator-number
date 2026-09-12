@@ -43,6 +43,9 @@ export class GenerationTelemetry {
       pipelineRejections: 0,
       pipelineRejectedCandidates: 0,
       diversityRejections: 0,
+      sessionCandidates: 0,
+      sessionDiscards: 0,
+      delivered: 0,
       published: 0,
       exhaustions: 0,
       exhaustedProposals: 0
@@ -101,6 +104,43 @@ export class GenerationTelemetry {
   pipelineRejection(meta) { this.counts.pipelineRejections++; return this.record({...meta, stage: 'pipeline', publishedBoundaryReached: true}); }
   pipelineRejectedCandidate() { this.counts.pipelineRejectedCandidates++; }
   diversityRejection(meta) { this.counts.diversityRejections++; return this.record({...meta, stage: 'diversity', publishedBoundaryReached: true}); }
+  /**
+   * RC2.1-1. A candidate the engine PUBLISHED that the session builder then
+   * declined to deliver. This is a real cost — the work was done and thrown
+   * away — and it is counted separately from engine-level sampler and
+   * finalization cost so neither can hide inside the other.
+   */
+  sessionDiscard(meta) {
+    this.counts.sessionDiscards++;
+    return this.record({...meta, stage: 'session_discard', publishedBoundaryReached: true});
+  }
+  /**
+   * A published candidate handed to the session builder. Counted where it is
+   * received, so it is an independent witness to the two terms below rather
+   * than their sum.
+   */
+  sessionCandidate() { this.counts.sessionCandidates++; }
+  /** A published candidate that actually reached the learner. */
+  deliveredToSession(meta) {
+    this.counts.delivered++;
+    return this.record({...meta, stage: 'delivered', publishedBoundaryReached: true});
+  }
+  /**
+   * A session discard that was later withdrawn: the candidate hit a repetition
+   * preference, was kept as the relaxed fallback, and ended up delivered after
+   * all. Without this the same candidate would be counted as both discarded and
+   * delivered, and the session identity would over-count by exactly the number
+   * of relaxed fallbacks used.
+   */
+  withdrawSessionDiscard(event) {
+    if (!event) return;
+    this.counts.sessionDiscards--;
+    this.byStage.session_discard--;
+    if (event.reasonCode) this.byReason[event.reasonCode]--;
+    if (event.templateId && this.byTemplate[event.templateId]) this.byTemplate[event.templateId].rejected--;
+    const i = this.events.lastIndexOf(event);
+    if (i >= 0) this.events.splice(i, 1);
+  }
   published(meta) { this.counts.published++; return this.record({...meta, stage: 'published', publishedBoundaryReached: true}); }
   exhaustion(meta) {
     this.counts.exhaustions++;
@@ -129,6 +169,24 @@ export class GenerationTelemetry {
           finalizationFailures: c.finalizationFailures,
           pipelineRejectedCandidates: c.pipelineRejectedCandidates
         }
+      },
+      // RC2.1-1. The session-level identity, kept separate from the engine-level
+      // one above. Engine cost is what it took to publish a candidate; session
+      // cost is how many published candidates the session layer then refused.
+      // Only sessions contribute here, so a run that never calls
+      // generatePractice reports zeroes and still balances.
+      // `sessionCandidates` is counted independently, at the moment the session
+      // builder receives a published candidate — NOT derived from the two terms
+      // it is checked against. An identity computed from its own operands proves
+      // nothing; this one can fail, and it must be able to.
+      sessionReconciliation: {
+        publishedToSessions: c.sessionCandidates,
+        delivered: c.delivered,
+        sessionDiscards: c.sessionDiscards,
+        accountedFor: c.delivered + c.sessionDiscards,
+        balanced: c.sessionCandidates === c.delivered + c.sessionDiscards,
+        difference: c.sessionCandidates - (c.delivered + c.sessionDiscards),
+        note: 'published candidates offered to sessions = delivered + every recorded session-level discard'
       },
       // Work discarded inside proposals, which is not a disposition.
       internalResamplesPerProposal: c.proposals ? Number((c.familyResamples / c.proposals).toFixed(3)) : 0,

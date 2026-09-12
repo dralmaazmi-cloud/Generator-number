@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, adj, risePercentPhrase} from './_shared.js';
 
 export function generateWorkTime({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'work_time', family_ar: 'العمال والزمن', category: 'العمال والزمن'};
@@ -192,7 +192,7 @@ function efficiencyChange(ctx) {
     templateId: 'WORK_M_EFF',
     subskill: 'زيادة كفاءة العمال مع ثبات العدد',
     difficulty: 'medium',
-    question: `فريق ينجز عملًا في ${u(days, 'day', 'oblique')}. بعد تدريب ارتفعت كفاءة الفريق بنسبة ${pct}% مع بقاء عدد العمال نفسه. كم يومًا يحتاج للعمل نفسه؟`,
+    question: `فريق ينجز عملًا في ${u(days, 'day', 'oblique')}. بعد تدريب ارتفعت كفاءة الفريق ${risePercentPhrase(pct)} مع بقاء عدد العمال نفسه. كم يومًا يحتاج للعمل نفسه؟`,
     correct, distractors, format: unitFormat('day'),
     steps: [
       factorText,
@@ -304,7 +304,7 @@ function twoStageWorkers(ctx) {
     templateId: 'WORK_H_TWO_STAGE',
     subskill: 'تغير العمال عبر مرحلتين قبل حساب المتبقي',
     difficulty: 'hard',
-    question: `يستطيع ${u(w1, 'worker')} إنجاز عمل في ${u(totalDays, 'day', 'oblique')}. عمل الجميع ${u(firstDays, 'day', 'oblique')}، ثم غادر ${u(left, 'worker')} وعمل الباقون ${u(secondDays, 'day', 'oblique')} إضافية. كم يومًا آخر يحتاج العمال الباقون لإكمال العمل؟`,
+    question: `يستطيع ${u(w1, 'worker')} إنجاز عمل في ${u(totalDays, 'day', 'oblique')}. عمل الجميع ${u(firstDays, 'day', 'oblique')}، ثم غادر ${u(left, 'worker')} وعمل الباقون ${u(secondDays, 'day', 'oblique')} ${adj(secondDays, 'day', 'إضافي')}. كم يومًا آخر يحتاج العمال الباقون لإكمال العمل؟`,
     correct, distractors, format: unitFormat('day'),
     steps: [
       `العمل الكامل بوحدة عامل-يوم = ${w1} × ${totalDays} = ${total}.`,
@@ -364,7 +364,7 @@ function workersAndEfficiency(ctx) {
     templateId: 'WORK_H_WORKERS_EFF',
     subskill: 'تغير عدد العمال والكفاءة بعد بدء العمل',
     difficulty: 'hard',
-    question: `يستطيع ${u(w, 'worker')} إنجاز عمل في ${u(totalDays, 'day', 'oblique')}. بعد ${u(initial, 'day', 'oblique')} غادر ${u(left, 'worker')}، ثم ارتفعت كفاءة كل عامل باقٍ بنسبة ${pct}%. كم يومًا إضافيًا يحتاجون لإكمال العمل؟`,
+    question: `يستطيع ${u(w, 'worker')} إنجاز عمل في ${u(totalDays, 'day', 'oblique')}. بعد ${u(initial, 'day', 'oblique')} غادر ${u(left, 'worker')}، ثم ارتفعت كفاءة كل عامل باقٍ ${risePercentPhrase(pct)}. كم يومًا إضافيًا يحتاجون لإكمال العمل؟`,
     correct, distractors, format: unitFormat('day'),
     steps: [
       `العمل الكامل بوحدة عامل-يوم = ${w} × ${totalDays} = ${total}.`,

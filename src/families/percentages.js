@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, risePercentPhrase} from './_shared.js';
 
 export function generatePercentages({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'percentages', family_ar: 'النسب المئوية', category: 'النسب المئوية'};
@@ -260,7 +260,7 @@ function unitPriceChange(ctx) {
     templateId: 'PCT_M_UNIT_PRICE',
     subskill: 'معدل وحدوي ثم زيادة مئوية',
     difficulty: 'medium',
-    question: `ثمن ${u(qty1, 'unit')} هو ${u(total1, 'dirham')}. إذا ارتفع سعر الوحدة بنسبة ${pct}%، فما ثمن ${u(qty2, 'unit')} بعد الزيادة؟`,
+    question: `ثمن ${u(qty1, 'unit')} هو ${u(total1, 'dirham')}. إذا ارتفع سعر الوحدة ${risePercentPhrase(pct)}، فما ثمن ${u(qty2, 'unit')} بعد الزيادة؟`,
     correct, distractors, format: unitFormat('dirham'),
     steps: [
       `سعر الوحدة الأصلي = ${total1} ÷ ${qty1} = ${unitPrice}.`,

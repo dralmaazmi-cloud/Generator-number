@@ -7,10 +7,7 @@
 // satisfy the stated proportion. Nothing is announced without being derived.
 
 import {Fraction} from '../qa/fraction.js';
-import {
-  mk, usable, u, num, unitFormat, buildBase,
-  eq, X, add, sub, mul, div, factorLine
-, resample} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, div, factorLine, resample, unitWord, unitWordKam, theSingle, defPlural} from './_shared.js';
 
 export function generateDirectProportion({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {
@@ -158,12 +155,12 @@ function unitItems(ctx) {
       templateId: 'PROP_E_ITEMS',
       subskill: 'معدل ثابت بين عدد وحدات وكمية',
       difficulty: 'easy',
-      question: `تحتوي كل علبة على العدد نفسه من القطع. إذا كانت ${u(boxes, 'box')} تحتوي على ${u(total, 'piece')}، فكم قطعة تحتوي عليها ${u(targetCount, 'box')}؟`,
+      question: `يحتوي كل ${unitWord('box')} على العدد نفسه من القطع. إذا كانت ${u(boxes, 'box')} تحتوي على ${u(total, 'piece')}، فكم قطعة يحتوي عليها ${u(targetCount, 'box')}؟`,
       correct,
       distractors,
       format: unitFormat('piece'),
       steps: [
-        `عدد القطع في العلبة الواحدة = ${total} ÷ ${boxes} = ${per}.`,
+        `عدد القطع في ${theSingle('box')} = ${total} ÷ ${boxes} = ${per}.`,
         `عدد القطع في ${u(targetCount, 'box')} = ${targetCount} × ${per} = ${correct}.`
       ],
       howToStart: 'احسب قيمة الوحدة الواحدة أولًا.',
@@ -207,15 +204,15 @@ function unitItems(ctx) {
     templateId: 'PROP_E_ITEMS',
     subskill: 'معدل ثابت بين عدد وحدات وكمية — إيجاد عدد الوحدات',
     difficulty: 'easy',
-    question: `تحتوي كل علبة على العدد نفسه من القطع. إذا كانت ${u(boxes, 'box')} تحتوي على ${u(total, 'piece')}، فكم علبة نحتاج للحصول على ${u(targetAmount, 'piece')}؟`,
+    question: `يحتوي كل ${unitWord('box')} على العدد نفسه من القطع. إذا كانت ${u(boxes, 'box')} تحتوي على ${u(total, 'piece')}، فكم ${unitWordKam('box')} نحتاج للحصول على ${u(targetAmount, 'piece')}؟`,
     correct,
     distractors,
     format: unitFormat('box'),
     steps: [
-      `عدد القطع في العلبة الواحدة = ${total} ÷ ${boxes} = ${per}.`,
-      `عدد العلب المطلوبة = ${targetAmount} ÷ ${per} = ${correct}.`
+      `عدد القطع في ${theSingle('box')} = ${total} ÷ ${boxes} = ${per}.`,
+      `عدد ${defPlural('box')} المطلوبة = ${targetAmount} ÷ ${per} = ${correct}.`
     ],
-    howToStart: 'احسب محتوى العلبة الواحدة ثم اقسم الكمية المطلوبة عليه.',
+    howToStart: `احسب محتوى ${theSingle('box')} ثم اقسم الكمية المطلوبة عليه.`,
     remember: 'عند ثبات المعدل: عدد الوحدات = الكمية المطلوبة ÷ قيمة الوحدة.',
     // RC2-019: a reusable rule first, then this instance.
     fastMethod: `اقسم الكمية المطلوبة على نصيب الوحدة الواحدة — هنا ${targetAmount} ÷ (${total} ÷ ${boxes}).`,

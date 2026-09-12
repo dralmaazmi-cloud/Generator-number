@@ -1,5 +1,5 @@
 import {DAYS_AR, dayShift} from '../utils.js';
-import {mk, usable, u, buildBase, eq, X, add, mod, resample} from './_shared.js';
+import {mk, usable, u, buildBase, eq, X, add, mod, resample, adj} from './_shared.js';
 import {grid} from '../qa/oracle-engine.js';
 
 export function generateCalendar({difficulty, rng, seed, engineVersion, telemetry}) {
@@ -151,10 +151,14 @@ function compoundForward(ctx) {
     templateId: 'CAL_M_COMPOUND',
     subskill: 'إزاحة مركبة أمامية من الغد',
     difficulty: 'medium',
-    question: `اليوم الذي يأتي بعد ${aheadWord} من غد هو ${DAYS_AR[target]}. فما اليوم الحالي؟`,
+    // RC2.1-4. Was «اليوم الذي يأتي بعد X من غد هو Y». The nesting is the point of
+    // the item and is kept; only the wording is straightened. «بعد غدٍ بـX» is
+    // deliberately NOT used: «بعد غد» is itself an idiom for today+2, so that
+    // phrasing would read as (today+2)+X and change the question.
+    question: `اليوم الذي يلي غدًا بمقدار ${aheadWord} هو ${DAYS_AR[target]}. فما اليوم الحالي؟`,
     correct, distractors, format: v => String(v),
     steps: [
-      `«غد» إزاحة قدرها 1، ثم ${u(ahead, 'day', 'oblique')} إضافية.`,
+      `«غد» إزاحة قدرها 1، ثم ${u(ahead, 'day', 'oblique')} ${adj(ahead, 'day', 'إضافي')}.`,
       `الإزاحة الصافية = 1 + ${ahead} = ${netOffset}.`,
       `نرجع ${u(netOffset, 'day', 'oblique')} من ${DAYS_AR[target]} فنصل إلى ${correct}.`
     ],
@@ -256,7 +260,10 @@ function nestedOffset(ctx) {
     templateId: 'CAL_H_NESTED',
     subskill: 'إزاحة زمنية مركبة أمامية وخلفية',
     difficulty: 'hard',
-    question: `اليوم الذي يسبق بمقدار ${behindWord} اليومَ الواقع بعد ${aheadWord} من الغد هو ${DAYS_AR[target]}. فما اليوم الحالي؟`,
+    // RC2.1-4. Was a triple-nested relative clause. Same arithmetic —
+    // today +1 +ahead −behind = target — stated as the sequence of moves it
+    // actually is, rather than as one sentence the reader must unpick.
+    question: `ابدأ من غدٍ، ثم تقدّم بمقدار ${aheadWord}، ثم تراجع بمقدار ${behindWord}، فتصل إلى ${DAYS_AR[target]}. فما اليوم الحالي؟`,
     correct, distractors, format: v => String(v),
     steps: [
       `«بعد ${aheadWord} من الغد» يعني إزاحة قدرها 1 + ${ahead} = ${1 + ahead} من اليوم الحالي.`,

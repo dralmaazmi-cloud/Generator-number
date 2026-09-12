@@ -6,7 +6,7 @@
 //   * a number and an Arabic unit only ever meet inside `u` / `plain`, which
 //     delegate to the central lexicon (Section 12).
 
-import {formatNumberWithUnit, unitWordFor, displayNumber} from '../arabic/units.js';
+import {agreeingAdjective, singularOf, accusativeSingularOf, definitePlural, theSingleUnit, formatNumberWithUnit, unitWordFor, displayNumber} from '../arabic/units.js';
 import {Fraction} from '../qa/fraction.js';
 import {isKnownMisconception} from '../qa/misconceptions.js';
 import {REASON} from '../qa/reasons.js';
@@ -76,6 +76,38 @@ export function approx(value, decimals = 1) {
 
 /** `12 يومًا`, `يومان`, `3 أيام` — the only way a count meets a unit. */
 export const u = (n, unitId, ctx = 'nominative') => formatNumberWithUnit(n, unitId, ctx);
+
+export const adj = (n, unitId, stem, ctx = 'oblique') => agreeingAdjective(n, unitId, stem, ctx);
+export const unitWord = unitId => singularOf(unitId);
+export const unitWordKam = unitId => accusativeSingularOf(unitId);
+export const theSingle = unitId => theSingleUnit(unitId);
+export const defPlural = unitId => definitePlural(unitId);
+
+/**
+ * RC2.1-4. «ارتفعت الكفاءة بنسبة 150%» is ambiguous in a way «بنسبة 20%» is not.
+ *
+ * Below 100% the two readings are not both viable: "rose by 20%" and "rose to
+ * 20%" cannot both be a rise, so the sentence resolves itself. At 100% and above
+ * both readings remain increases — "rose by 150%" (to 250% of before) and "rose
+ * to 150%" are each plausible — and the reader has no way to choose. The
+ * independent review flagged exactly that case.
+ *
+ * So the resulting level is stated outright once the ambiguity is real. The rule
+ * is on the number, not on a template name: widen any percentage pool later and
+ * the clarification follows automatically.
+ */
+export function risePercentPhrase(pct) {
+  // The clarification must not introduce a numeral the stem cannot source. An
+  // earlier attempt appended «(أي صارت 250% مما كانت عليه)», and the text-params
+  // guard correctly rejected every candidate with pct >= 100 — silently removing
+  // 38% of this template's parameter space. Naming the base instead of computing
+  // a second percentage says the same thing and adds no number:
+  // «بنسبة 150% من القيمة السابقة» can only mean an increase OF 150% OF the
+  // previous value.
+  return pct >= 100
+    ? `بنسبة ${pct}% من القيمة السابقة`
+    : `بنسبة ${pct}%`;
+}
 export const word = (n, unitId) => unitWordFor(n, unitId);
 export const num = n => displayNumber(n);
 

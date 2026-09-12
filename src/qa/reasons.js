@@ -27,6 +27,14 @@ export const REASON = Object.freeze({
   DUPLICATE_FINGERPRINT: 'DUPLICATE_FINGERPRINT',
   REPEATED_REASONING_PATTERN: 'REPEATED_REASONING_PATTERN',
   TEMPLATE_OVERUSE: 'TEMPLATE_OVERUSE',
+  // RC2.1-1. Session-level dispositions. Before RC2.1 three of the session
+  // builder's rejection branches discarded an already-published candidate with
+  // a bare `continue`, so 104 of 359 published candidates on holdout B vanished
+  // from the accounting. A discard without a name is a discard nobody can cost.
+  SESSION_RECENT_MEMORY: 'SESSION_RECENT_MEMORY',
+  SESSION_TEMPLATE_CAP: 'SESSION_TEMPLATE_CAP',
+  SESSION_WINDOW_CAP: 'SESSION_WINDOW_CAP',
+  SESSION_BATCH_DUPLICATE: 'SESSION_BATCH_DUPLICATE',
   INVALID_ARABIC_NUMBER_UNIT: 'INVALID_ARABIC_NUMBER_UNIT',
   RETRY_EXHAUSTED: 'RETRY_EXHAUSTED',
   // RC2-003. The default reason a family sampler discards its own draw. It is a

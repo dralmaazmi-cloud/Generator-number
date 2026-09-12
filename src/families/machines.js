@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine, resample} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, mul, factorLine, resample, adj, risePercentPhrase} from './_shared.js';
 
 export function generateMachines({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'machines', family_ar: 'الآلات والإنتاج', category: 'الآلات والإنتاج'};
@@ -142,7 +142,7 @@ function newMachineFaster(ctx) {
     templateId: 'MACH_M_NEW_FAST',
     subskill: 'آلة قديمة وآلة أسرع بنسبة معلومة',
     difficulty: 'medium',
-    question: `تنتج ${u(machines, 'machine')} متطابقة في الإنتاجية ${u(total, 'piece')} خلال ${u(hours, 'hour', 'oblique')}. آلة جديدة تنتج في الساعة أكثر من الآلة القديمة بنسبة ${pct}%. كم قطعة تنتج آلة قديمة واحدة وآلة جديدة واحدة معًا خلال ${u(targetH, 'hour', 'oblique')}؟`,
+    question: `تنتج ${u(machines, 'machine')} متطابقة في الإنتاجية ${u(total, 'piece')} خلال ${u(hours, 'hour', 'oblique')}. آلة جديدة تنتج في الساعة أكثر من الآلة القديمة ${risePercentPhrase(pct)}. كم قطعة تنتج آلة قديمة واحدة وآلة جديدة واحدة معًا خلال ${u(targetH, 'hour', 'oblique')}؟`,
     correct, distractors, format: unitFormat('piece'),
     steps: [
       `معدل الآلة القديمة في الساعة = ${total} ÷ (${machines} × ${hours}) = ${oldRate}.`,
@@ -195,7 +195,7 @@ function oneStops(ctx) {
     templateId: 'MACH_M_STOP',
     subskill: 'توقف آلات أثناء جزء من زمن العمل',
     difficulty: 'medium',
-    question: `تنتج كل آلة من ${u(machines, 'machine')} ${rate} قطعة/ساعة. عملت الآلات كلها ${u(h1, 'hour', 'oblique')}، ثم توقفت ${u(stopped, 'machine')} وعملت البقية ${u(h2, 'hour', 'oblique')} إضافية. كم قطعة أُنتجت؟`,
+    question: `تنتج كل آلة من ${u(machines, 'machine')} ${rate} قطعة/ساعة. عملت الآلات كلها ${u(h1, 'hour', 'oblique')}، ثم توقفت ${u(stopped, 'machine')} وعملت البقية ${u(h2, 'hour', 'oblique')} ${adj(h2, 'hour', 'إضافي')}. كم قطعة أُنتجت؟`,
     correct, distractors, format: unitFormat('piece'),
     steps: [
       `إنتاج المرحلة الأولى = ${machines} × ${rate} × ${h1} = ${machines * rate * h1}.`,
@@ -248,7 +248,7 @@ function subsetUpgrade(ctx) {
     templateId: 'MACH_M_SUBSET_UP',
     subskill: 'زيادة إنتاجية بعض الآلات فقط',
     difficulty: 'medium',
-    question: `تعمل ${u(machines, 'machine')} بمعدل ${rate} قطعة/ساعة لكل آلة. طُورت ${u(upgraded, 'machine')} منها فزادت إنتاجيتها بنسبة ${pct}% وبقيت البقية كما هي. كم قطعة تنتج المجموعة خلال ${u(hours, 'hour', 'oblique')}؟`,
+    question: `تعمل ${u(machines, 'machine')} بمعدل ${rate} قطعة/ساعة لكل آلة. طُورت ${u(upgraded, 'machine')} منها فزادت إنتاجيتها ${risePercentPhrase(pct)} وبقيت البقية كما هي. كم قطعة تنتج المجموعة خلال ${u(hours, 'hour', 'oblique')}؟`,
     correct, distractors, format: unitFormat('piece'),
     steps: [
       factorText,
@@ -358,7 +358,7 @@ function stageChange(ctx) {
     templateId: 'MACH_H_STAGE_UP',
     subskill: 'مرحلتان مع تطوير جزء من الآلات',
     difficulty: 'hard',
-    question: `عملت ${u(machines, 'machine')} بمعدل ${rate} قطعة/ساعة لمدة ${u(h1, 'hour', 'oblique')}. ثم طُورت ${u(upgraded, 'machine')} فزادت إنتاجيتها ${pct}%، وعملت المجموعة كلها ${u(h2, 'hour', 'oblique')} إضافية. كم بلغ الإنتاج الكلي؟`,
+    question: `عملت ${u(machines, 'machine')} بمعدل ${rate} قطعة/ساعة لمدة ${u(h1, 'hour', 'oblique')}. ثم طُورت ${u(upgraded, 'machine')} فزادت إنتاجيتها ${pct}%، وعملت المجموعة كلها ${u(h2, 'hour', 'oblique')} ${adj(h2, 'hour', 'إضافي')}. كم بلغ الإنتاج الكلي؟`,
     correct, distractors, format: unitFormat('piece'),
     steps: [
       `إنتاج المرحلة الأولى = ${machines} × ${rate} × ${h1} = ${stage1}.`,

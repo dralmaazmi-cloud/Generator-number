@@ -1,13 +1,22 @@
 {
-  "schema": "rc2-superseded-freezes-v1",
-  "note": "Freezes taken before the candidate had stopped moving. Kept so the record shows what was frozen and why it did not hold, rather than the earlier attempt being erased.",
-  "entries": [
-    {
-      "RC2_COMMIT": "ddc2c9016a9ff68106a18182605e0a20a603f158",
-      "treeHash": "aa7b51f9b329a0b1341419a199a4c55e09adecd7",
-      "frozenAt": "2026-09-12T11:15:12.650Z",
-      "productionBundleSha256": "3d2d668d6455193453692723801ee6cab359969d82fc383e4386179657b42dd3",
-      "reason": "superseded: package.json moved when the freeze's own tests were registered, and package.json is in the production bundle"
-    }
-  ]
+ "schema": "rc2-superseded-freezes-v1",
+ "note": "Freezes taken before the candidate had stopped moving. Kept so the record shows what was frozen and why it did not hold, rather than the earlier attempt being erased.",
+ "entries": [
+  {
+   "RC2_COMMIT": "ddc2c9016a9ff68106a18182605e0a20a603f158",
+   "treeHash": "aa7b51f9b329a0b1341419a199a4c55e09adecd7",
+   "frozenAt": "2026-09-12T11:15:12.650Z",
+   "productionBundleSha256": "3d2d668d6455193453692723801ee6cab359969d82fc383e4386179657b42dd3",
+   "reason": "superseded: package.json moved when the freeze's own tests were registered, and package.json is in the production bundle"
+  },
+  {
+   "RC2_COMMIT": "56565ec4e1be4ace34dff60a0b5b6368e6177cf0",
+   "treeHash": "43515585d1901495df4607472cf637d0349f9295",
+   "frozenAt": "2026-09-12T11:37:09.472Z",
+   "productionBundleSha256": "69e39e737a0347ae5edd890011b6cb1161fcc1edc5482fdf98b9669fcf0e3c53",
+   "reason": "archived, not invalidated: this freeze was sound and holdout AUDIT-2026-09-12-B was generated from exactly this production state. RC2.1 remediates defects the holdout exposed, so production necessarily moves past it and a new freeze must be taken. The full record is kept at rc2/FREEZE_RC2.json so holdout B's provenance stays checkable.",
+   "archivedRecord": "rc2/FREEZE_RC2.json",
+   "holdoutGeneratedFromIt": "AUDIT-2026-09-12-B"
+  }
+ ]
 }
