@@ -386,6 +386,11 @@ export function buildBase(ctx, spec) {
     // is. `answerCountUnit` is null for a rate, which is exactly the case the
     // rate-unit rule has to inspect, so the raw id is published too.
     answerUnitId: format?.unitId ?? null,
+    // RC2.6-3. What SITUATION this template tells and which way its reasoning
+    // runs. Declared by the template because only the template knows; defaulted
+    // so an undeclared template is still measurable rather than invisible.
+    scenario: spec.scenario ?? templateId,
+    direction: spec.direction ?? 'forward',
     textParams,
     allowedConstants,
     commutative,

@@ -25,7 +25,9 @@ export function generateDirectProportion({difficulty, rng, seed, engineVersion, 
     ['PROP_M_MAP', mapScale],
     ['PROP_H_COMPOUND', compoundScale],
     ['PROP_H_COST_PLUS', multiUnitCost],
-    ['PROP_H_TWO_ITEM_SYSTEM', twoItemPrices]
+    ['PROP_H_TWO_ITEM_SYSTEM', twoItemPrices],
+    ['PROP_H_REPLACE', mixtureReplacement],
+    ['PROP_H_CAPITAL_TIME', investmentTimeShare]
   ])(ctx);
 }
 
@@ -787,5 +789,184 @@ function twoItemPrices(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, stageCount: 3, arithmeticBurden: 5},
     textParams: {essentialParams: ['boxesA', 'piecesA', 'totalA', 'boxesB', 'piecesB', 'totalB']}
+  });
+}
+
+/**
+ * RC2.6-1. SIMULTANEOUS_CONSTRAINTS + COMPOSED_INVERSION.
+ *
+ * Part of a mixture is drawn off and replaced by one of its own components. The
+ * total never changes, so the before and after ratios are two conditions on one
+ * unknown, and the unknown sits inside a proportion that has to be inverted. A
+ * solver who applies the removed amount to the new quantity rather than the
+ * original — the natural reading — lands on a number that is on the paper.
+ */
+function mixtureReplacement(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 400; t++) {
+    const total = rng.pick([40, 45, 48, 50, 54, 60, 63, 70, 72, 80, 90]);
+    const p = rng.int(2, 7), q = rng.int(1, 6);
+    if (p <= q) continue;
+    // A ratio that is not in lowest terms reads as an unreduced fraction.
+    const gcd = (x, y) => (y ? gcd(y, x % y) : x);
+    if (gcd(p, q) !== 1) continue;
+    if ((total * p) % (p + q) !== 0) continue;
+    const before = (total * p) / (p + q);
+    const p2 = rng.int(1, 6), q2 = rng.int(1, 7);
+    if (p2 >= q2) continue;
+    if (gcd(p2, q2) !== 1) continue;
+    if ((total * p2) % (p2 + q2) !== 0) continue;
+    const after = (total * p2) / (p2 + q2);
+    if (after >= before) continue;
+    // The drawn-off amount removes the first component in its own proportion.
+    const removedNum = (before - after) * total;
+    if (removedNum % before !== 0) continue;
+    const removed = removedNum / before;
+    if (removed <= 0 || removed >= total) continue;
+    if (removed === before || removed === after) continue;
+    found = {total, p, q, p2, q2, before, after, removed};
+    break;
+  }
+  if (!found) return resample(ctx, mixtureReplacement);
+  const {total, p, q, p2, q2, before, after, removed} = found;
+  const correct = removed;
+  const params = {totalLitres: total, beforeFirst: p, beforeSecond: q, afterFirst: p2, afterSecond: q2};
+
+  const distractors = usable(ctx, [
+    mk(before - after, 'REPLACED_FROM_THE_WRONG_BASE', `${before} − ${after}`),
+    mk(before, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} × ${p} ÷ ${p + q}`, 1),
+    mk(after, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} × ${p2} ÷ ${p2 + q2}`, 2),
+    mk(total - removed, 'SWAPPED_THE_TWO_UNKNOWNS', `${total} − ${removed}`, 3),
+    mk(total / 2, 'ASSUMED_EQUAL_SHARES', `${total} ÷ 2`),
+    mk((before - after) * 2, 'APPLIED_STEP_TWICE', `(${before} − ${after}) × 2`),
+    mk(total - before, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} − ${before}`, 1),
+    mk((before - after) * total / after, 'REPLACED_FROM_THE_WRONG_BASE',
+      `(${before} − ${after}) × ${total} ÷ ${after}`),
+    mk(total - after, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} − ${after}`, 2),
+    mk(removed + (before - after), 'APPLIED_STEP_TWICE', `${removed} + (${before} − ${after})`),
+    mk(Math.round(total * (before - after) / total), 'REPLACED_FROM_THE_WRONG_BASE',
+      `(${before} − ${after}) بدل نسبتها من الخليط`),
+    mk(before + after, 'ADDED_INSTEAD_OF_SUBTRACTED', `${before} + ${after}`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'PROP_H_REPLACE',
+    scenario: 'mixture_drawn_off_and_replaced',
+    direction: 'reverse',
+    subskill: 'كمية مستبدلة من نسبة قبل وبعد',
+    difficulty: 'hard',
+    question: `في وعاء ${u(total, 'liter')} من خليط، نسبة المادة الأولى إلى الثانية ${p} : ${q}. سُحب مقدار من الخليط واستُبدل بالمادة الثانية وحدها، فصارت النسبة ${p2} : ${q2}. كم لترًا سُحب؟`,
+    correct, distractors, format: unitFormat('liter'),
+    steps: [
+      `مجموع أجزاء النسبة الأولى = ${p} + ${q} = ${p + q}.`,
+      `المادة الأولى قبل السحب = ${total} × ${p} ÷ ${p + q} = ${before}.`,
+      `الحجم الكلي لم يتغير لأن المسحوب عُوّض بالكامل. ومجموع أجزاء النسبة الثانية = ${p2} + ${q2} = ${p2 + q2}.`,
+      `المادة الأولى بعد السحب = ${total} × ${p2} ÷ ${p2 + q2} = ${after}.`,
+      `نقص المادة الأولى = ${before} − ${after} = ${before - after}.`,
+      `المسحوب خليط بالنسبة الأولى، ففيه من المادة الأولى ${before} من كل ${total}.`,
+      `إذن المسحوب = ${before - after} × ${total} ÷ ${before} = ${correct}.`
+    ],
+    howToStart: 'احسب كمية المادة الأولى قبل السحب وبعده، ولاحظ أن الحجم الكلي لم يتغير.',
+    remember: 'المسحوب خليط لا مادة نقية، فنقص المادة الأولى جزء من المسحوب لا كله.',
+    fastMethod: 'نقص المادة الأولى مقسومًا على نسبتها في الخليط الأصلي.',
+    estimatedSteps: 6, conceptTags: ['ratio', 'mixture', 'replacement'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, before), mul(sub(before, after), total))]
+    },
+    askedUnknown: 'replacedVolume', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'REPLACEMENT_FROM_TWO_RATIOS', targetMisconception: 'REPLACED_FROM_THE_WRONG_BASE',
+      wrongMethodValue: before - after,
+      degenerateWhen: [{when: before === total, note: 'the mixture is pure, so the ratio says nothing'}]
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, stageCount: 3, arithmeticBurden: 6},
+    textParams: {essentialParams: ['totalLitres', 'beforeFirst', 'beforeSecond', 'afterFirst', 'afterSecond']}
+  });
+}
+
+/**
+ * RC2.6-1. CROSS_PART_INTEGRATION + STRATEGY_SELECTION.
+ *
+ * A profit shared between two partners who put in different amounts for
+ * different lengths of time. Neither dimension decides the split on its own —
+ * the shares are proportional to the PRODUCT — and the stem never says so. A
+ * solver who splits by money alone, or by months alone, has a number on the
+ * paper both times.
+ */
+function investmentTimeShare(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 400; t++) {
+    const capA = rng.pick([2000, 2400, 3000, 3600, 4000, 4500, 5000, 6000]);
+    const capB = rng.pick([2000, 2400, 3000, 3600, 4000, 4500, 5000, 6000]);
+    if (capA === capB) continue;
+    const monA = rng.int(3, 12), monB = rng.int(3, 12);
+    if (monA === monB) continue;
+    // Splitting by money alone, or by time alone, must give a different answer
+    // or the item stops measuring the product.
+    if (capA * monA === capB * monB) continue;
+    const wA = capA * monA, wB = capB * monB;
+    const g = (x, y) => (y ? g(y, x % y) : x);
+    const d = g(wA, wB);
+    const rA = wA / d, rB = wB / d;
+    if (rA + rB > 40) continue;
+    const unit = rng.pick([100, 150, 200, 250, 300]);
+    const profit = (rA + rB) * unit;
+    if (profit > 40000) continue;
+    const shareA = rA * unit;
+    if (shareA === profit - shareA) continue;
+    found = {capA, capB, monA, monB, rA, rB, profit, shareA};
+    break;
+  }
+  if (!found) return resample(ctx, investmentTimeShare);
+  const {capA, capB, monA, monB, rA, rB, profit, shareA} = found;
+  const correct = shareA;
+  const params = {capitalA: capA, monthsA: monA, capitalB: capB, monthsB: monB, totalProfit: profit};
+  const byMoney = Math.round(profit * capA / (capA + capB));
+  const byTime = Math.round(profit * monA / (monA + monB));
+
+  const distractors = usable(ctx, [
+    mk(profit - shareA, 'SWAPPED_THE_TWO_UNKNOWNS', `نصيب الشريك الثاني ${profit - shareA}`, 3),
+    mk(byMoney, 'SOLVED_ONE_CONDITION_ONLY', `${profit} × ${capA} ÷ (${capA} + ${capB})`),
+    mk(byTime, 'SOLVED_ONE_CONDITION_ONLY', `${profit} × ${monA} ÷ (${monA} + ${monB})`),
+    mk(profit / 2, 'ASSUMED_EQUAL_SHARES', `${profit} ÷ 2`),
+    mk(profit, 'USED_GIVEN_VALUE_AS_ANSWER', `الربح الكلي ${profit}`),
+    mk(Math.round(profit * capA * monB / (capA * monB + capB * monA)), 'SWAPPED_THE_TWO_UNKNOWNS',
+      `خلط رأس مال الأول بمدة الثاني`),
+    mk(Math.abs(byMoney - byTime), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(byMoney, byTime)} − ${Math.min(byMoney, byTime)}`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'PROP_H_CAPITAL_TIME',
+    scenario: 'partnership_capital_times_duration',
+    direction: 'forward',
+    subskill: 'اقتسام ربح بحسب رأس المال والمدة معًا',
+    difficulty: 'hard',
+    question: `شارك أحمد بمبلغ ${u(capA, 'dirham')} لمدة ${u(monA, 'month', 'oblique')}، وشارك سالم بمبلغ ${u(capB, 'dirham')} لمدة ${u(monB, 'month', 'oblique')}. فإذا بلغ الربح ${u(profit, 'dirham')}، فكم نصيب أحمد؟`,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `نصيب كل شريك يتناسب مع المبلغ مضروبًا في المدة.`,
+      `حصة أحمد = ${capA} × ${monA} = ${capA * monA}، وحصة سالم = ${capB} × ${monB} = ${capB * monB}.`,
+      `مجموع الحصتين = ${capA * monA} + ${capB * monB} = ${capA * monA + capB * monB}.`,
+      `نصيب أحمد = ${profit} × ${capA * monA} = ${profit * capA * monA}، ثم ${profit * capA * monA} ÷ ${capA * monA + capB * monB} = ${correct}.`
+    ],
+    howToStart: 'اضرب مبلغ كل شريك في مدته قبل أي مقارنة.',
+    remember: 'المال وحده لا يحدد النصيب، والمدة وحدها لا تحدده؛ حاصل ضربهما هو ما يحدده.',
+    fastMethod: 'كوّن نسبة حاصلي الضرب ثم اقسم الربح عليها.',
+    estimatedSteps: 5, conceptTags: ['ratio', 'partnership', 'two-dimensions'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, add(mul(capA, monA), mul(capB, monB))), mul(profit, mul(capA, monA)))]
+    },
+    askedUnknown: 'firstPartnerShare', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'WEIGHT_BY_TWO_DIMENSIONS', targetMisconception: 'SOLVED_ONE_CONDITION_ONLY',
+      wrongMethodValue: byMoney,
+      degenerateWhen: [{when: capA * monA === capB * monB, note: 'the two contributions are equal, so halving is correct'}]
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, conditionCount: 2, stageCount: 3, arithmeticBurden: 6},
+    textParams: {essentialParams: ['capitalA', 'monthsA', 'capitalB', 'monthsB', 'totalProfit']}
   });
 }

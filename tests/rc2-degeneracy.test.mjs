@@ -252,9 +252,9 @@ test('RC2-005: every template in the engine is classified, and every classificat
   // can no longer be orphaned by a pool it fails to qualify for.
   // RC2.5-2: 126. The relational count question was split into its routine and
   // its branch-combining form, which is one template more than RC2.4 had.
-  // RC2.5: 127. REL_M_CHAIN6 — the six-person chain, split from REL_E_CHAIN by
-  // the length that separated the reviewers' verdicts.
-  assert.equal(report.totals.templates, 127, 'every declared template is reachable');
+  // RC2.6: 137. Ten new HARD structures in the five families the RC2.5
+  // calibration left with none.
+  assert.equal(report.totals.templates, 137, 'every declared template is reachable');
   assert.deepEqual(report.totals.unclassified, []);
   assert.deepEqual(report.totals.declaredButAbsentFromEngine, []);
   assert.equal(report.totals.rc1TemplatesWithNoModel, 23, 'the RC1 gap was 23 templates');

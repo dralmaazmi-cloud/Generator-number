@@ -421,6 +421,11 @@ function twoConfigurations(ctx) {
     if (rateA === rateB) continue;
     const a = rng.int(2, 5), b = rng.int(1, 4);
     const c = rng.int(1, 5), d = rng.int(2, 5);
+    // RC2.6. With a === c (or b === d) the two statements differ in one machine
+    // and the system collapses to a single subtraction, so the cross-multiplying
+    // the explanation performs is unnecessary and the item is easier than it
+    // reads. Direct sampling found the template drawing exactly that.
+    if (a === c || b === d) continue;
     // The determinant is kept positive so the elimination step and the option
     // derived from it both read as plain subtractions. A negative one is
     // arithmetically fine and presentationally poor, and it made the

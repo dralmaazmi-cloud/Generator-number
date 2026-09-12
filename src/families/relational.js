@@ -349,12 +349,46 @@ function branchUnresolved(ctx) {
   const chosen = rng.pick(undetermined);
   const label = pair => `${pair[0]} و${pair[1]}`;
   const correct = label(chosen);
-  const distractors = usable(ctx, rng.shuffle(determined).slice(0, 6).map(p => {
+  // RC2.6-4. Every wrong option is a pair the solver mistook for open, and the
+  // reason differs by HOW that pair is actually settled. One diagnosis repeated
+  // six times told a candidate nothing; these four say which reading failed.
+  const stated = new Set(edges.map(([x, y]) => `${x}>${y}`));
+  const pathLength = (from, to) => {
+    const out = new Map(nodes.map(n => [n, []]));
+    for (const [x, y] of edges) out.get(x)?.push(y);
+    let frontier = [from], depth = 0, seen = new Set([from]);
+    while (frontier.length && depth < nodes.length) {
+      depth++;
+      const next = [];
+      for (const n of frontier) for (const m of out.get(n) || []) {
+        if (m === to) return depth;
+        if (!seen.has(m)) { seen.add(m); next.push(m); }
+      }
+      frontier = next;
+    }
+    return null;
+  };
+  const diagnose = p => {
     const [a, b] = p;
     const above = oracle.definitelyAbove(a, b) ? a : b;
     const below = above === a ? b : a;
-    return mk(label(p), 'RELATION_REQUIRES_UNSTATED_ASSUMPTION', `هذه المقارنة محسومة: ${above} أعلى من ${below} عبر سلسلة واضحة`);
-  }));
+    if (stated.has(`${above}>${below}`)) {
+      return [label(p), 'RELATION_CONTRADICTS_STATEMENT',
+        `هذه المقارنة منصوصة صراحةً في السؤال: ${above} أعلى من ${below}`];
+    }
+    const d = pathLength(above, below);
+    if (d === 2) {
+      return [label(p), 'COUNTED_DIRECT_RELATIONS_ONLY',
+        `لا توجد جملة مباشرة تربطهما، لكن خطوة انتقالية واحدة تحسمها: ${above} أعلى من ${below}`];
+    }
+    if (d && d >= 3) {
+      return [label(p), 'MISCOUNTED_THE_CONFIRMED_PATHS',
+        `المسار بينهما أطول من خطوتين فسهل إغفاله، لكنه يحسمها: ${above} أعلى من ${below}`];
+    }
+    return [label(p), 'COUNTED_ONE_BRANCH_ONLY',
+      `الاثنان في فرع واحد، والفرع نفسه يرتبهما: ${above} أعلى من ${below}`];
+  };
+  const distractors = usable(ctx, rng.shuffle(determined).slice(0, 6).map(p => mk(...diagnose(p))));
   const {reasoningGraph, parameters} = graphMeta(nodes, edges);
   // RC2.5-2. Every offered pair needs its paths traced before it can be ruled
   // in or out, so no partial reading narrows the answer space: null, not a
@@ -719,13 +753,24 @@ function partialOrderPosition(ctx) {
   const correct = determined ? who : UNDETERMINED;
   const candidates = [...new Set(oracle.extensions.map(ext => ext[targetPos - 1]))];
 
-  const wrongNames = nodes.filter(n => n !== correct).map(n => mk(
-    n,
-    candidates.includes(n) ? 'RESOLVED_AN_UNRESOLVED_PAIR' : 'RELATION_CONTRADICTS_STATEMENT',
-    candidates.includes(n)
-      ? `${n} أحد المرشحين للمركز ${positionWord(targetPos)}، لكنه ليس الوحيد`
-      : `${n} لا يمكن أن يشغل المركز ${positionWord(targetPos)} في أي ترتيب متوافق`
-  ));
+  // RC2.6-4. A name that can hold the position NEXT to the one asked is a
+  // different mistake from one that can hold no relevant position at all —
+  // reading the rank off by one, rather than misreading the order.
+  const neighbours = new Set([targetPos - 1, targetPos + 1]
+    .filter(k => k >= 1 && k <= nodes.length)
+    .flatMap(k => oracle.extensions.map(ext => ext[k - 1])));
+  const wrongNames = nodes.filter(n => n !== correct).map(n => {
+    if (candidates.includes(n)) {
+      return mk(n, 'RESOLVED_AN_UNRESOLVED_PAIR',
+        `${n} أحد المرشحين للمركز ${positionWord(targetPos)}، لكنه ليس الوحيد`);
+    }
+    if (neighbours.has(n)) {
+      return mk(n, 'OFF_BY_ONE_STEP',
+        `${n} يمكن أن يشغل مركزًا مجاورًا للمركز ${positionWord(targetPos)}، لا المركز نفسه`);
+    }
+    return mk(n, 'RELATION_CONTRADICTS_STATEMENT',
+      `${n} لا يمكن أن يشغل المركز ${positionWord(targetPos)} في أي ترتيب متوافق`);
+  });
   // When the position IS pinned down, "cannot be determined" is the misconception
   // the item exists to catch — stopping before the order is fully derived — so it
   // must actually be on the paper. Distractor selection is rank-blind (RC2-001),

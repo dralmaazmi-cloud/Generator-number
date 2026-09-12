@@ -86,12 +86,16 @@ test('RC2.5-4 MUST_REJECT: a rate answer rendered as a bare quantity', () => {
 });
 
 test('RC2.5-4: the two rate-answer templates now carry a per-hour unit', () => {
+  // RC2.6 demoted MACH_H_TWO_CONFIG to medium, so the sweep draws from both
+  // bands. The rate-unit guarantee is about what the options say, not about
+  // which band the template sits in.
   const engine = new Engine();
   const want = {RATE_H_RATE_FROM_GAP: 'unitPerHour', MACH_H_TWO_CONFIG: 'piecePerHour'};
   const seen = new Set();
-  for (let i = 0; i < 1200 && seen.size < 2; i++) {
+  for (let i = 0; i < 2400 && seen.size < 2; i++) {
     let q;
-    try { q = engine.generateQuestion({family: 'random', difficulty: 'hard', seed: `rc25-rate-${i}`}); }
+    const band = i % 2 ? 'hard' : 'medium';
+    try { q = engine.generateQuestion({family: 'random', difficulty: band, seed: `rc25-rate-${i}`}); }
     catch { continue; }
     const id = q.metadata.template_id;
     if (!want[id]) continue;

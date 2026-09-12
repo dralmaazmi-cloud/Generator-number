@@ -14,7 +14,9 @@ export function generateProfitLoss({difficulty, rng, seed, engineVersion, teleme
     ['PL_M_DISC_MARK', discountThenSale],
     ['PL_H_CHAIN', discountMarkupChain],
     ['PL_H_TWO_OUTCOMES', costFromTwoOutcomes],
-    ['PL_H_MARKUP_DISCOUNT', costFromMarkupThenDiscount]
+    ['PL_H_MARKUP_DISCOUNT', costFromMarkupThenDiscount],
+    ['PL_H_SAME_PRICE_PAIR', samePriceGainAndLoss],
+    ['PL_H_REST_MARGIN', remainderMarginToTarget]
   ])(ctx);
 }
 
@@ -379,7 +381,7 @@ function costFromTwoOutcomes(ctx) {
     question: `لو بيعت سلعة بسعر معين لتحقق ربح قدره ${gain}% من تكلفتها. ولو بيعت بسعر أقل من ذلك بـ${u(gap, 'dirham', 'oblique')} لكانت الخسارة ${loss}% من التكلفة. فما تكلفة السلعة؟`,
     correct, distractors, format: unitFormat('dirham'),
     steps: [
-      `سعر الحالة الأولى يزيد على التكلفة بمقدار ${gain}% منها، وسعر الحالة الثانية يقل عنها بمقدار ${loss}% منها.`,
+      `سعر الحالة الأولى يزيد على التكلفة بمقدار ${gain}% من التكلفة، وسعر الحالة الثانية يقل عنها بمقدار ${loss}% من التكلفة.`,
       `إذن الفرق بين السعرين يمثل مجموع النسبتين من التكلفة، ومجموعهما = ${gain} + ${loss} = ${sum}.`,
       `التكلفة = ${gap} × 100 ÷ ${sum} = ${correct}.`
     ],
@@ -473,5 +475,188 @@ function costFromMarkupThenDiscount(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, reverseReasoning: 1, stageCount: 3, arithmeticBurden: 5},
     textParams: {essentialParams: ['markupPercent', 'discountPercent', 'profit']}
+  });
+}
+
+/**
+ * RC2.6-1. SIMULTANEOUS_CONSTRAINTS + STRATEGY_SELECTION.
+ *
+ * Two articles sold for the SAME price, one at a gain of g% and the other at a
+ * loss of g%. The percentages look symmetric and are not: they are taken on two
+ * different costs, so the gain and the loss do not cancel. "No gain and no
+ * loss" is the answer almost everyone writes, and it is on the paper.
+ */
+function samePriceGainAndLoss(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 300; t++) {
+    const g = rng.pick([10, 20, 25, 40, 50]);
+    const price = rng.pick([120, 180, 240, 300, 360, 420, 480, 540, 600, 720]);
+    if ((price * 100) % (100 + g) !== 0) continue;
+    if ((price * 100) % (100 - g) !== 0) continue;
+    const costGain = (price * 100) / (100 + g);
+    const costLoss = (price * 100) / (100 - g);
+    const totalCost = costGain + costLoss, totalPrice = 2 * price;
+    const loss = totalCost - totalPrice;
+    if (loss <= 0 || !Number.isInteger(loss)) continue;
+    if (loss === g || loss === price) continue;
+    found = {g, price, costGain, costLoss, totalCost, totalPrice, loss};
+    break;
+  }
+  if (!found) return resample(ctx, samePriceGainAndLoss);
+  const {g, price, costGain, costLoss, totalCost, totalPrice, loss} = found;
+  // RC2.6-3. Two constructions: the NET LOSS on the pair, or the TOTAL COST the
+  // two articles were bought for. Both rest on the same insight — the equal
+  // percentages sit on unequal bases — and neither is reachable without it.
+  const askCost = rng.bool(0.5);
+  const correct = askCost ? totalCost : loss;
+  const params = {salePrice: price, percent: g};
+
+  const distractors = usable(ctx, askCost ? [
+    mk(totalPrice, 'ASSUMED_THE_TWO_CANCEL_OUT', `${g}% ربحًا و${g}% خسارة يُلغي أحدهما الآخر، فالتكلفة = ${totalPrice}`),
+    mk(2 * costGain, 'ASSUMED_EQUAL_SHARES', `${costGain} × 2`),
+    mk(2 * costLoss, 'ASSUMED_EQUAL_SHARES', `${costLoss} × 2`),
+    mk(costGain + price, 'SOLVED_ONE_CONDITION_ONLY', `${costGain} + ${price}`),
+    mk(costLoss + price, 'SOLVED_ONE_CONDITION_ONLY', `${costLoss} + ${price}`),
+    mk(price, 'USED_GIVEN_VALUE_AS_ANSWER', `سعر القطعة الواحدة ${price}`),
+    mk(totalPrice + loss * 2, 'APPLIED_STEP_TWICE', `${totalPrice} + ${loss} × 2`)
+  ] : [
+    mk(0, 'ASSUMED_THE_TWO_CANCEL_OUT', `${g}% ربحًا و${g}% خسارة يُلغي أحدهما الآخر`),
+    mk(Math.round(price * g / 100), 'MARGIN_TAKEN_ON_THE_WRONG_BASE', `${price} × ${g} ÷ 100`),
+    mk(Math.round(2 * price * g / 100), 'MARGIN_TAKEN_ON_THE_WRONG_BASE', `${totalPrice} × ${g} ÷ 100`),
+    mk(costLoss - costGain, 'USED_DIFFERENCE_AS_ANSWER', `${costLoss} − ${costGain}`),
+    mk(totalCost, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${costGain} + ${costLoss}`, 1),
+    mk(loss * 2, 'APPLIED_STEP_TWICE', `${loss} × 2`),
+    mk(price - costGain, 'SOLVED_ONE_CONDITION_ONLY', `${price} − ${costGain}`),
+    mk(costLoss - price, 'SOLVED_ONE_CONDITION_ONLY', `${costLoss} − ${price}`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'PL_H_SAME_PRICE_PAIR',
+    scenario: 'two_articles_same_price_equal_percentages',
+    direction: 'reverse',
+    subskill: 'ربح وخسارة بنسبتين متساويتين وسعرَي بيع متساويين',
+    difficulty: 'hard',
+    question: `باع تاجر قطعتين بسعر ${u(price, 'dirham')} لكل واحدة. ربح في الأولى ${g}% من تكلفتها وخسر في الثانية ${g}% من تكلفتها. `
+      + (askCost ? 'فكم كانت تكلفة القطعتين معًا؟' : 'ما مقدار خسارته الكلية في الصفقتين معًا؟'),
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `في القطعة الرابحة السعر = التكلفة + ${g}% من التكلفة، أي ${100} + ${g} = ${100 + g} جزءًا من كل 100.`,
+      `تكلفة القطعة الرابحة = ${price} × 100 ÷ ${100 + g} = ${costGain}.`,
+      `وفي القطعة الخاسرة السعر = التكلفة − ${g}% من التكلفة، أي ${100} − ${g} = ${100 - g} جزءًا من كل 100.`,
+      `تكلفة القطعة الخاسرة = ${price} × 100 ÷ ${100 - g} = ${costLoss}.`,
+      `التكلفة الكلية = ${costGain} + ${costLoss} = ${totalCost}، ومجموع سعري البيع = ${price} × 2 = ${totalPrice}.`,
+      `النسبتان متساويتان لكنهما محسوبتان من تكلفتين مختلفتين، فلا يُلغي أحدهما الآخر.`,
+      askCost
+        ? `التكلفة الكلية = ${totalCost}، وهي أكبر من مجموع سعري البيع ${totalPrice}.`
+        : `الخسارة = ${totalCost} − ${totalPrice} = ${correct}.`
+    ],
+    howToStart: 'ارجع من سعر البيع إلى التكلفة في كل قطعة على حدة؛ التكلفتان ليستا متساويتين.',
+    remember: 'النسبة المئوية تُحسب من أساسها؛ نسبتان متساويتان من أساسين مختلفين لا تتساويان.',
+    fastMethod: 'اجمع التكلفتين وقارنهما بمجموع سعري البيع.',
+    estimatedSteps: 6, conceptTags: ['profit-loss', 'percentage-base', 'two-items'], parameters: params,
+    allowedConstants: [0, 1, 2, 100],
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: askCost
+        ? [eq(X, add(costGain, costLoss))]
+        : [eq(add(X, mul(2, price)), add(costGain, costLoss))]
+    },
+    askedUnknown: askCost ? 'totalCostOfPair' : 'netLossOnPair', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'PERCENT_BASE_AWARENESS', targetMisconception: 'ASSUMED_THE_TWO_CANCEL_OUT',
+      wrongMethodValue: askCost ? totalPrice : 0
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, reverseReasoning: 1, stageCount: 3, arithmeticBurden: 6},
+    textParams: {essentialParams: ['salePrice', 'percent']}
+  });
+}
+
+/**
+ * RC2.6-1. CROSS_PART_INTEGRATION + COMPOSED_INVERSION.
+ *
+ * Part of a consignment is already sold at a known margin and the OVERALL
+ * target margin is given; what the remainder must earn is the unknown. The
+ * target applies to the whole, so the two parts have to be brought onto one
+ * footing before the remainder's own rate can be recovered — and the recovery
+ * is an inversion, not a subtraction. Averaging the two percentages, and taking
+ * the difference between them, are both on the paper.
+ */
+function remainderMarginToTarget(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 400; t++) {
+    const total = rng.pick([200, 240, 300, 320, 400, 480, 500, 600]);
+    const soldParts = rng.int(1, 4), allParts = rng.pick([5, 6, 8]);
+    if (soldParts >= allParts) continue;
+    if ((total * soldParts) % allParts !== 0) continue;
+    const soldCost = (total * soldParts) / allParts;
+    const restCost = total - soldCost;
+    const firstPct = rng.pick([10, 15, 20, 25, 30]);
+    const targetPct = rng.pick([12, 16, 18, 20, 24, 25, 30, 32]);
+    if (targetPct === firstPct) continue;
+    // What the rest must earn, in dirhams and then as a whole percentage.
+    const totalGain = (total * targetPct) / 100;
+    const firstGain = (soldCost * firstPct) / 100;
+    if (!Number.isInteger(totalGain) || !Number.isInteger(firstGain)) continue;
+    const restGain = totalGain - firstGain;
+    if (restGain <= 0) continue;
+    if ((restGain * 100) % restCost !== 0) continue;
+    const restPct = (restGain * 100) / restCost;
+    if (restPct > 80 || restPct === firstPct || restPct === targetPct) continue;
+    found = {total, soldParts, allParts, soldCost, restCost, firstPct, targetPct, totalGain, firstGain, restGain, restPct};
+    break;
+  }
+  if (!found) return resample(ctx, remainderMarginToTarget);
+  const {total, soldParts, allParts, soldCost, restCost, firstPct, targetPct, totalGain, firstGain, restGain, restPct} = found;
+  const correct = restPct;
+  const params = {totalCost: total, soldCost, firstPercent: firstPct, targetPercent: targetPct};
+
+  const distractors = usable(ctx, [
+    mk(2 * targetPct - firstPct, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `${targetPct} × 2 − ${firstPct}`),
+    mk(targetPct + (targetPct - firstPct), 'ASSUMED_EQUAL_SHARES', `${targetPct} + (${targetPct} − ${firstPct})`),
+    mk(Math.abs(targetPct - firstPct), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(targetPct, firstPct)} − ${Math.min(targetPct, firstPct)}`),
+    mk(targetPct, 'USED_GIVEN_VALUE_AS_ANSWER', `النسبة المطلوبة للكل ${targetPct}`),
+    mk(firstPct, 'USED_GIVEN_VALUE_AS_ANSWER', `نسبة الجزء المباع ${firstPct}`),
+    mk(firstPct + targetPct, 'ADDED_INSTEAD_OF_SUBTRACTED', `${firstPct} + ${targetPct}`),
+    mk(Math.round(restGain * 100 / total), 'MARGIN_TAKEN_ON_THE_WRONG_BASE', `${restGain} × 100 ÷ ${total}`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'PL_H_REST_MARGIN',
+    scenario: 'consignment_part_sold_target_overall_margin',
+    direction: 'reverse',
+    subskill: 'نسبة ربح الجزء الباقي لبلوغ ربح كلي مطلوب',
+    difficulty: 'hard',
+    // «باع ${soldParts} من ${allParts} منها» put a bare numeral in front of
+    // «منها», which the construction classifier cannot read. The part is named
+    // by its cost instead, which says the same thing and parses.
+    question: `اشترى تاجر بضاعة بمبلغ ${u(total, 'dirham')}. باع منها ما تكلفته ${u(soldCost, 'dirham')} بربح ${firstPct}% من تكلفة ذلك الجزء. بكم في المئة من تكلفة الباقي يجب أن يبيع الباقي ليكون ربحه الكلي ${targetPct}% من التكلفة الكلية؟`,
+    correct, distractors, format: v => `${num(v)}%`,
+    steps: [
+      `تكلفة الباقي = ${total} − ${soldCost} = ${restCost}.`,
+      `الربح الكلي المطلوب = ${total} × ${targetPct} ÷ 100 = ${totalGain}.`,
+      `ربح الجزء المباع = ${soldCost} × ${firstPct} ÷ 100 = ${firstGain}.`,
+      `الربح المطلوب من الباقي = ${totalGain} − ${firstGain} = ${restGain}.`,
+      `نسبته من تكلفة الباقي = ${restGain} × 100 ÷ ${restCost} = ${correct}.`
+    ],
+    howToStart: 'حوّل النسب إلى مبالغ أولًا؛ النسب المحسوبة من أساسين مختلفين لا تُجمع ولا تُتوسَّط.',
+    remember: 'النسبة المطلوبة للباقي تُحسب من تكلفة الباقي وحدها، لا من التكلفة الكلية.',
+    fastMethod: 'اطرح ربح الجزء المباع من الربح الكلي المطلوب، ثم انسب الناتج إلى تكلفة الباقي.',
+    estimatedSteps: 5, conceptTags: ['profit-loss', 'weighted-parts', 'percentage-base'], parameters: params,
+    allowedConstants: [0, 1, 2, 100],
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(add(mul(X, restCost), mul(firstPct, soldCost)), mul(targetPct, total))]
+    },
+    askedUnknown: 'remainderMarginPercent', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'WEIGHTED_MARGIN_RECOVERY', targetMisconception: 'USED_ARITHMETIC_MEAN_OF_AVERAGES',
+      wrongMethodValue: 2 * targetPct - firstPct,
+      degenerateWhen: [{when: 2 * soldParts === allParts && 2 * targetPct - firstPct === restPct,
+        note: 'at half the consignment the doubling slip is correct'}]
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, reverseReasoning: 1, stageCount: 3, arithmeticBurden: 6},
+    textParams: {essentialParams: ['totalCost', 'soldCost', 'firstPercent', 'targetPercent']}
   });
 }

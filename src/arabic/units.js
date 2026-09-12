@@ -46,7 +46,9 @@ export const UNITS = Object.freeze({
   person:  {singular:'شخص',      one:'شخص واحد',      dual:'شخصان',      dualOblique:'شخصين',      plural:'أشخاص',     accSing:'شخصًا'},
   item:    {singular:'عنصر',     one:'عنصر واحد',     dual:'عنصران',     dualOblique:'عنصرين',     plural:'عناصر',     accSing:'عنصرًا'},
   cm:      {singular:'سنتيمتر',  one:'سنتيمتر واحد',  dual:'سنتيمتران',  dualOblique:'سنتيمترين',  plural:'سنتيمترات', accSing:'سنتيمترًا'},
-  week:    {singular:'أسبوع',    one:'أسبوع واحد',    dual:'أسبوعان',    dualOblique:'أسبوعين',    plural:'أسابيع',    accSing:'أسبوعًا'}
+  week:    {singular:'أسبوع',    one:'أسبوع واحد',    dual:'أسبوعان',    dualOblique:'أسبوعين',    plural:'أسابيع',    accSing:'أسبوعًا'},
+  // RC2.6: partnership questions are stated in months.
+  month:   {singular:'شهر',      one:'شهر واحد',      dual:'شهران',      dualOblique:'شهرين',      plural:'أشهر',      accSing:'شهرًا'}
 });
 
 /** Units that never inflect: symbols, rates and percentages. */
@@ -67,7 +69,7 @@ export const UNIT_ALIASES = Object.freeze({
   machines:'machine', units:'unit', pieces:'piece', dirhams:'dirham', cups:'cup',
   boxes:'box', tasks:'task', parts:'part', kilometers:'km', liters:'liter',
   kilograms:'kg', words:'word', persons:'person', people:'person', items:'item',
-  centimeters:'cm', weeks:'week'
+  centimeters:'cm', weeks:'week', months:'month'
 });
 
 export function resolveUnitId(unitId) {

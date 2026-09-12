@@ -14,7 +14,9 @@ export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry})
     ['SPD_H_CATCH', catchupDelayed],
     ['SPD_H_MEET_DELAY', meetingDelayed],
     ['SPD_M_EQUAL_DIST', equalDistanceTotalTime],
-    ['SPD_H_TIME_DIFF', sameDistanceTimeDifference]
+    ['SPD_H_TIME_DIFF', sameDistanceTimeDifference],
+    ['SPD_H_CURRENT', boatAgainstCurrent],
+    ['SPD_H_LEG_SPLIT', twoLegSplit]
   ])(ctx);
 }
 
@@ -470,5 +472,179 @@ function sameDistanceTimeDifference(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 2, equationSolving: 1, stageCount: 2, arithmeticBurden: 4},
     textParams: {essentialParams: ['speedA', 'speedB']}
+  });
+}
+
+/**
+ * RC2.6-1. SIMULTANEOUS_CONSTRAINTS + COMPOSED_INVERSION.
+ *
+ * A boat covers the same distance downstream and upstream in different times.
+ * Neither the boat's own speed nor the current is stated, and neither can be
+ * read off one of the two journeys: the pair of them is what fixes the two
+ * unknowns. The solver has to see that adding the two speeds cancels the
+ * current and subtracting them isolates it — a strategy the stem does not give.
+ */
+function boatAgainstCurrent(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 300; t++) {
+    const boat = rng.pick([12, 15, 16, 18, 20, 24, 25, 30]);
+    const current = rng.pick([2, 3, 4, 5, 6]);
+    if (current >= boat / 2) continue;
+    const down = boat + current, up = boat - current;
+    // Both journeys must come out in whole hours from one whole distance.
+    const distance = down * up;
+    if (distance > 600) continue;
+    const tDown = distance / down, tUp = distance / up;
+    if (tDown === tUp || tUp - tDown < 1) continue;
+    found = {boat, current, down, up, distance, tDown, tUp};
+    break;
+  }
+  if (!found) return resample(ctx, boatAgainstCurrent);
+  const {boat, current, down, up, distance, tDown, tUp} = found;
+  // Which of the two unknowns is asked is drawn, not chosen for its value.
+  const askCurrent = rng.bool(0.5);
+  const correct = askCurrent ? current : boat;
+  const params = {distance, downstreamHours: tDown, upstreamHours: tUp};
+
+  const distractors = usable(ctx, [
+    mk(askCurrent ? boat : current, 'SWAPPED_THE_TWO_UNKNOWNS',
+      askCurrent ? `سرعة القارب ${boat}` : `سرعة التيار ${current}`, 3),
+    mk(down, 'SOLVED_ONE_CONDITION_ONLY', `${distance} ÷ ${tDown}`),
+    mk(up, 'SOLVED_ONE_CONDITION_ONLY', `${distance} ÷ ${tUp}`),
+    mk(down - up, 'FORGOT_TO_HALVE_THE_DIFFERENCE', `${down} − ${up}`),
+    mk(down + up, 'ADDED_INSTEAD_OF_SUBTRACTED', `${down} + ${up}`),
+    mk(distance / (tDown + tUp), 'ADDED_TIMES_INSTEAD_OF_RATES', `${distance} ÷ (${tDown} + ${tUp})`),
+    mk(Math.abs(tUp - tDown), 'USED_GIVEN_VALUE_AS_ANSWER', `${tUp} − ${tDown}`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'SPD_H_CURRENT',
+    scenario: 'boat_with_and_against_current',
+    direction: askCurrent ? 'reverse' : 'forward',
+    subskill: askCurrent ? 'سرعة التيار من رحلتي ذهاب وعودة' : 'سرعة القارب من رحلتي ذهاب وعودة',
+    difficulty: 'hard',
+    question: `قطع قارب ${u(distance, 'km')} مع التيار في ${u(tDown, 'hour', 'oblique')}، وقطع المسافة نفسها ضد التيار في ${u(tUp, 'hour', 'oblique')}. `
+      + (askCurrent ? 'فما سرعة التيار؟' : 'فما سرعة القارب في الماء الساكن؟'),
+    correct, distractors, format: v => `${num(v)} كم/ساعة`,
+    steps: [
+      `السرعة مع التيار = ${distance} ÷ ${tDown} = ${down}.`,
+      `السرعة ضد التيار = ${distance} ÷ ${tUp} = ${up}.`,
+      `السرعة مع التيار هي سرعة القارب زائد التيار، وضد التيار هي سرعة القارب ناقص التيار.`,
+      askCurrent
+        ? `بطرح العبارتين تختفي سرعة القارب: ${down} − ${up} = ${down - up}، وهذا ضعف سرعة التيار، إذن سرعة التيار = ${down - up} ÷ 2 = ${current}.`
+        : `بجمع العبارتين يختفي التيار: ${down} + ${up} = ${down + up}، وهذا ضعف سرعة القارب، إذن سرعة القارب = ${down + up} ÷ 2 = ${boat}.`
+    ],
+    howToStart: 'احسب السرعتين أولًا، ثم لاحظ أن إحداهما سرعة القارب زائد التيار والأخرى ناقصه.',
+    remember: 'الجمع يلغي التيار، والطرح يلغي سرعة القارب؛ اختر العملية التي تحذف المجهول الذي لا تريده.',
+    fastMethod: askCurrent ? 'نصف الفرق بين السرعتين.' : 'نصف مجموع السرعتين.',
+    estimatedSteps: 4, conceptTags: ['speed', 'two-unknowns', 'elimination'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, 2), askCurrent ? sub(down, up) : add(down, up))]
+    },
+    askedUnknown: askCurrent ? 'currentSpeed' : 'boatSpeed', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'ELIMINATE_ONE_UNKNOWN', targetMisconception: 'SOLVED_ONE_CONDITION_ONLY',
+      wrongMethodValue: askCurrent ? down - up : down,
+      degenerateWhen: [{when: tDown === tUp, note: 'the two journeys take the same time, so there is no current to find'}]
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, stageCount: 3, arithmeticBurden: 5},
+    textParams: {essentialParams: ['distance', 'downstreamHours', 'upstreamHours']}
+  });
+}
+
+/**
+ * RC2.6-1. SIMULTANEOUS_CONSTRAINTS + STRATEGY_SELECTION.
+ *
+ * A journey in two legs. The total distance and the total time are given and
+ * both leg speeds are given, but neither leg's LENGTH is — so the split has to
+ * be recovered from the pair of conditions together. A solver who averages the
+ * two speeds, or who divides the total distance by the total time, gets a
+ * number that is on the paper and is wrong.
+ */
+function twoLegSplit(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 300; t++) {
+    const s1 = rng.pick([30, 40, 45, 50, 60]);
+    const s2 = rng.pick([60, 70, 75, 80, 90, 100]);
+    if (s2 <= s1) continue;
+    const t1 = rng.int(1, 4), t2 = rng.int(1, 4);
+    if (t1 === t2) continue;
+    const d1 = s1 * t1, d2 = s2 * t2;
+    const total = d1 + d2, hours = t1 + t2;
+    // A trip whose legs are equal in length is answerable without the split.
+    if (d1 === d2) continue;
+    found = {s1, s2, t1, t2, d1, d2, total, hours};
+    break;
+  }
+  if (!found) return resample(ctx, twoLegSplit);
+  const {s1, s2, t1, t2, d1, d2, total, hours} = found;
+  // RC2.6-3. Two constructions over the same relation: the LENGTH of the first
+  // leg, or the TIME spent on the second. Different unknown, different final
+  // step, same two conditions — which is what makes it a different construction
+  // rather than the same question with new numbers.
+  const askHours = rng.bool(0.5);
+  const correct = askHours ? t2 : d1;
+  const params = {totalDistance: total, totalHours: hours, firstSpeed: s1, secondSpeed: s2};
+
+  const distractors = usable(ctx, askHours ? [
+    mk(t1, 'SWAPPED_THE_TWO_UNKNOWNS', `ساعات السرعة الأولى ${t1}`, 3),
+    mk(hours / 2, 'ASSUMED_EQUAL_SHARES', `${hours} ÷ 2`),
+    mk(hours, 'USED_GIVEN_VALUE_AS_ANSWER', `الزمن الكلي ${hours}`),
+    mk(total / s2, 'SOLVED_ONE_CONDITION_ONLY', `${total} ÷ ${s2}`),
+    mk(total / s1, 'SOLVED_ONE_CONDITION_ONLY', `${total} ÷ ${s1}`),
+    mk(hours + t2, 'ADDED_INSTEAD_OF_SUBTRACTED', `${hours} + ${t2}`),
+    mk(d2, 'STOPPED_AT_INTERMEDIATE_TOTAL', `طول الجزء الثاني ${d2}`, 2),
+    mk(total / hours, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} ÷ ${hours}`, 1)
+  ] : [
+    mk(d2, 'SWAPPED_THE_TWO_UNKNOWNS', `طول المرحلة الثانية ${d2}`, 3),
+    mk(total / 2, 'ASSUMED_EQUAL_SHARES', `${total} ÷ 2`),
+    mk(s1 * hours, 'SOLVED_ONE_CONDITION_ONLY', `${s1} × ${hours}`),
+    mk(s2 * hours, 'SOLVED_ONE_CONDITION_ONLY', `${s2} × ${hours}`),
+    mk(total / hours, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} ÷ ${hours}`, 1),
+    mk(s1 * t2, 'SWAPPED_THE_TWO_UNKNOWNS', `${s1} × ${t2}`),
+    mk((s1 + s2) / 2 * hours, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${s1} + ${s2}) ÷ 2 × ${hours}`),
+    mk(total - s1 * hours, 'SOLVED_ONE_CONDITION_ONLY', `${total} − ${s1} × ${hours}`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'SPD_H_LEG_SPLIT',
+    scenario: 'journey_split_between_two_speeds',
+    direction: 'reverse',
+    subskill: askHours ? 'زمن مرحلة من مسافة كلية وزمن كلي وسرعتين' : 'طول مرحلة من مسافة كلية وزمن كلي وسرعتين',
+    difficulty: 'hard',
+    question: `قطعت سيارة ${u(total, 'km')} في ${u(hours, 'hour', 'oblique')}. سارت جزءًا من الرحلة بسرعة ${s1} كم/ساعة والجزء الباقي بسرعة ${s2} كم/ساعة. `
+      + (askHours ? 'فكم ساعة سارت بالسرعة الثانية؟' : 'فما طول الجزء الأول؟'),
+    correct, distractors, format: askHours ? unitFormat('hour') : unitFormat('km'),
+    steps: [
+      `لو كانت الرحلة كلها بالسرعة الأولى لقطعت ${s1} × ${hours} = ${s1 * hours}.`,
+      `الفارق عن المسافة الحقيقية = ${total} − ${s1 * hours} = ${total - s1 * hours}.`,
+      `كل ساعة تُنقل إلى السرعة الثانية تضيف ${s2} − ${s1} = ${s2 - s1}.`,
+      `عدد ساعات الجزء الثاني = ${total - s1 * hours} ÷ ${s2 - s1} = ${t2}، فساعات الجزء الأول = ${hours} − ${t2} = ${t1}.`,
+      askHours
+        ? `إذن ساعات السرعة الثانية = ${t2}.`
+        : `طول الجزء الأول = ${s1} × ${t1} = ${correct}.`
+    ],
+    howToStart: 'افترض أن الرحلة كلها بالسرعة الأصغر، ثم انظر كم تنقص المسافة عن الحقيقة.',
+    remember: 'عند وجود سرعتين ومسافة كلية وزمن كلي، الشرطان معًا هما ما يحدد التقسيم؛ أي شرط وحده لا يكفي.',
+    fastMethod: 'الفارق عن الحالة الافتراضية مقسومًا على فرق السرعتين يعطي زمن الجزء الآخر.',
+    estimatedSteps: 4, conceptTags: ['speed', 'two-unknowns', 'weighted-split'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      // d1/s1 + (total - d1)/s2 = hours, cleared of denominators.
+      constraints: askHours
+        ? [eq(add(mul(X, s2), mul(sub(hours, X), s1)), total)]
+        : [eq(add(mul(X, s2), mul(sub(total, X), s1)), mul(hours, s1 * s2))]
+    },
+    askedUnknown: askHours ? 'secondLegHours' : 'firstLegDistance', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'SPLIT_FROM_TWO_TOTALS', targetMisconception: 'ASSUMED_EQUAL_SHARES',
+      wrongMethodValue: askHours ? hours / 2 : total / 2,
+      degenerateWhen: [{when: d1 === d2, note: 'the two legs are equal, so halving the distance is correct'}]
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, stageCount: 3, arithmeticBurden: 5},
+    textParams: {essentialParams: ['totalDistance', 'totalHours', 'firstSpeed', 'secondSpeed']}
   });
 }

@@ -133,6 +133,20 @@ export const MISCONCEPTIONS = Object.freeze({
   COUNTED_ONE_BRANCH_ONLY: 'تتبعت الفرع الذي يقع فيه الهدف وحده ولم تضم إليه الفرع الآخر.',
   COUNTED_FROM_ONE_ORDERING: 'رتبت الجميع في ترتيب واحد ممكن ثم عددت من سبق الهدف فيه، والمعطيات تسمح بأكثر من ترتيب.',
   MISCOUNTED_THE_CONFIRMED_PATHS: 'أخطأت في عدّ أصحاب المسارات المؤكدة، فزاد العدد أو نقص عن عددهم.',
+
+  // --- RC2.6: the slips the new hard structures actually produce ---
+  FORGOT_TO_HALVE_THE_DIFFERENCE: 'وجدت ضعف المقدار المطلوب ثم نسيت قسمته على 2.',
+  ASSUMED_EQUAL_SHARES: 'افترضت أن الجزأين متساويان، والمعطيات لا تقول ذلك.',
+  USED_ONE_PAIR_AS_THE_WHOLE: 'استخدمت معدل زوج واحد كأنه معدل المجموعة كلها.',
+  AVERAGED_THE_PAIRED_TIMES: 'حسبت متوسط الأزمنة المعطاة بدل جمع المعدلات.',
+  IGNORED_THE_PARTIAL_LAST_DAY: 'أكملت اليوم الأخير كاملًا رغم أن العمل ينتهي في جزء منه.',
+  COUNTED_THE_TURNS_AS_DAYS: 'عددت الأدوار بدل الأيام، والدور الواحد يغطي يومين.',
+  REPLACED_FROM_THE_WRONG_BASE: 'حسبت الكمية المستبدلة من الكمية الجديدة بدل الكمية الأصلية.',
+  APPLIED_ONE_SCALE_TO_BOTH: 'طبّقت مقياسًا واحدًا على الخريطتين رغم اختلاف مقياسيهما.',
+  MARGIN_TAKEN_ON_THE_WRONG_BASE: 'حسبت النسبة من سعر البيع بينما تُحسب من التكلفة، أو العكس.',
+  ASSUMED_THE_TWO_CANCEL_OUT: 'افترضت أن ربحًا ونسبة خسارة متساويتين يلغي أحدهما الآخر، وهما محسوبان من أساسين مختلفين.',
+  USED_ONE_ANCHOR_ONLY: 'استخدمت أحد التاريخين المعطيين وأهملت الآخر، والشرطان معًا هما ما يحدد الطول.',
+  IGNORED_THE_OFFSET_BETWEEN_STARTS: 'اعتمدت المضاعف المشترك للدورتين وأهملت فارق البداية بينهما.',
   SATISFIES_SHARED_PROPERTY: 'هذا العدد يحقق الخاصية المشتركة، فهو ينتمي إلى المجموعة.',
 
   // --- generic arithmetic-direction errors (must still be derivable) ---

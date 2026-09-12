@@ -1,5 +1,5 @@
 import {DAYS_AR, dayShift} from '../utils.js';
-import {mk, usable, u, buildBase, eq, X, add, mod, resample, adj, bandPool} from './_shared.js';
+import {mk, usable, u, unitFormat, buildBase, eq, X, add, sub, mod, resample, adj, bandPool} from './_shared.js';
 import {grid} from '../qa/oracle-engine.js';
 
 export function generateCalendar({difficulty, rng, seed, engineVersion, telemetry}) {
@@ -14,7 +14,9 @@ export function generateCalendar({difficulty, rng, seed, engineVersion, telemetr
     ['CAL_M_TWO_SHIFT', forwardThenBack],
     ['CAL_H_LONG', longOffset],
     ['CAL_H_NESTED', nestedOffset],
-    ['CAL_H_CYCLE_MEET', twoCyclesMeet]
+    ['CAL_H_CYCLE_MEET', twoCyclesMeet],
+    ['CAL_H_MONTH_LENGTH', monthLengthFromTwoDates],
+    ['CAL_H_OFFSET_CYCLES', offsetCyclesMeet]
   ])(ctx);
 }
 
@@ -440,6 +442,192 @@ function twoCyclesMeet(ctx) {
       wrongMethodValue: dayName(today + (first + second) % 7)
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, conditionCount: 2, stageCount: 3, arithmeticBurden: 4},
+    textParams: false
+  });
+}
+
+/**
+ * RC2.6-1. SIMULTANEOUS_CONSTRAINTS + STRATEGY_SELECTION.
+ *
+ * Two dated weekdays, one in each of two consecutive months, and the LENGTH of
+ * the first month is what is asked. Neither date fixes it: the gap between them
+ * is (length − first date + second date), so the two together pin the length
+ * only modulo seven, and the answer is then the one candidate month length that
+ * fits. Counting forward from one date is the natural move and settles nothing.
+ */
+function monthLengthFromTwoDates(ctx) {
+  const {rng} = ctx;
+  const LENGTHS = [28, 29, 30, 31];
+  let found = null;
+  for (let t = 0; t < 300; t++) {
+    const length = rng.pick(LENGTHS);
+    const d1 = rng.int(2, 20), d2 = rng.int(2, 20);
+    const w1 = rng.int(0, 6);
+    const gap = length - d1 + d2;
+    const w2 = ((w1 + gap) % 7 + 7) % 7;
+    // Exactly one candidate length must fit, or the question has no answer.
+    const fits = LENGTHS.filter(L => ((w1 + (L - d1 + d2)) % 7 + 7) % 7 === w2);
+    if (fits.length !== 1) continue;
+    found = {length, d1, d2, w1, w2, gap};
+    break;
+  }
+  if (!found) return resample(ctx, monthLengthFromTwoDates);
+  const {length, d1, d2, w1, w2, gap} = found;
+  // The ask is the NUMBER OF DAYS between the two dates, not the month length.
+  // The reasoning is the same — the length has to be pinned by the congruence
+  // first — but the answer space is not the four possible month lengths, which
+  // would make six options impossible to fill honestly.
+  const correct = gap;
+  const params = {firstDate: d1, secondDate: d2, firstWeekdayIndex: w1, secondWeekdayIndex: w2,
+    weekdayGap: ((w2 - w1) % 7 + 7) % 7, monthLength: length};
+
+  const distractors = usable(ctx, [
+    ...LENGTHS.filter(L => L !== length).map(L => mk(L - d1 + d2, 'USED_ONE_ANCHOR_ONLY',
+      `افتراض أن الشهر ${L} يومًا، وهو لا يوافق يوم ${DAYS_AR[w2]}`)),
+    mk(d2 - d1, 'IGNORED_NET_OFFSET', `${d2} − ${d1}`),
+    mk(d1 + d2, 'ADDED_INSTEAD_OF_SUBTRACTED', `${d1} + ${d2}`),
+    mk(length, 'STOPPED_AT_INTERMEDIATE_TOTAL', `طول الشهر ${length} وحده`, 1),
+    mk(28 - d1 + d2 + 7, 'USED_ONE_ANCHOR_ONLY', 'افتراض أربعة أسابيع ثم إضافة أسبوع')
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'CAL_H_MONTH_LENGTH',
+    scenario: 'two_dated_weekdays_across_a_month_boundary',
+    direction: 'reverse',
+    subskill: 'طول شهر من يومين معلومين في شهرين متتاليين',
+    difficulty: 'hard',
+    question: `كان اليوم ${d1} من شهرٍ ما يوم ${DAYS_AR[w1]}، وكان اليوم ${d2} من الشهر الذي يليه يوم ${DAYS_AR[w2]}. كم يومًا بين التاريخين؟`,
+    correct, distractors, format: unitFormat('day'),
+    steps: [
+      `عدد الأيام بين التاريخين = طول الشهر الأول − ${d1} + ${d2}، وطول الشهر غير معطى.`,
+      `فرق أيام الأسبوع بين ${DAYS_AR[w1]} و${DAYS_AR[w2]} هو ${((w2 - w1) % 7 + 7) % 7}، فعدد الأيام بينهما يترك هذا الباقي عند القسمة على 7.`,
+      `الأطوال الممكنة للشهر هي 28 و29 و30 و31، ونجرّبها واحدًا واحدًا.`,
+      `الطول الوحيد الذي يعطي هذا الباقي هو ${length}.`,
+      `إذن عدد الأيام = ${length} − ${d1} + ${d2} = ${correct}.`
+    ],
+    howToStart: 'اكتب عدد الأيام بين التاريخين بدلالة طول الشهر الأول، ثم انظر إلى باقي القسمة على 7.',
+    remember: 'أيام الأسبوع لا تحدد العدد بل باقيه على 7؛ والأطوال الممكنة للشهر هي ما يحسم الاختيار.',
+    fastMethod: 'جرّب الأطوال الأربعة الممكنة واختر ما يوافق اليوم الثاني.',
+    estimatedSteps: 5, conceptTags: ['calendar', 'modular', 'candidate-selection'], parameters: params,
+    // The answer lies in the four-wide window the possible month lengths allow,
+    // and inside that window the congruence picks exactly one value. Without the
+    // window the congruence has a solution every seven days.
+    oracle: {
+      kind: 'search', answerKind: 'number',
+      domain: grid(28 - d1 + d2, 31 - d1 + d2),
+      constraints: [eq(mod(add(w1, X), 7), w2)]
+    },
+    askedUnknown: 'daysBetweenDates', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'SOLVE_WEEKDAY_CONGRUENCE', targetMisconception: 'USED_ONE_ANCHOR_ONLY',
+      wrongMethodValue: d2 - d1
+    },
+    metadata: {candidate_lengths: LENGTHS.length},
+    allowedConstants: [0, 1, 2, 7, 28, 29, 30, 31, 100],
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, conditionCount: 2, stageCount: 3, arithmeticBurden: 4},
+    textParams: false
+  });
+}
+
+/**
+ * RC2.6-1. SIMULTANEOUS_CONSTRAINTS + STRATEGY_SELECTION.
+ *
+ * Two recurring events that do NOT start on the same day. Because the starts
+ * differ, the first shared day is not the LCM of the two cycles — it is the
+ * first solution of a congruence, and there may be none at all. A solver who
+ * takes the LCM, the natural move, has a number on the paper and it is wrong.
+ */
+function offsetCyclesMeet(ctx) {
+  const {rng} = ctx;
+  let found = null;
+  for (let t = 0; t < 400; t++) {
+    const p = rng.pick([3, 4, 5, 6, 8, 9, 10, 12]);
+    const q = rng.pick([3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 15]);
+    if (p >= q) continue;
+    const offset = rng.int(1, q - 1);
+    const start = rng.int(0, 6);
+    // First day k (counted from the first event's start) with k % p === 0 and
+    // (k - offset) % q === 0.
+    let meet = null;
+    for (let k = offset; k <= 400; k++) {
+      if (k % p === 0 && (k - offset) % q === 0) { meet = k; break; }
+    }
+    if (meet === null || meet === 0) continue;
+    const lcm = (() => { const g = (x, y) => (y ? g(y, x % y) : x); return p * q / g(p, q); })();
+    // The LCM answer must differ, or the item stops measuring the offset.
+    if (meet === lcm) continue;
+    if (meet > 200) continue;
+    // The LCM slip must land on a DIFFERENT weekday, or the wrong method scores.
+    if ((start + meet) % 7 === (start + lcm) % 7) continue;
+    found = {p, q, offset, start, meet, lcm};
+    break;
+  }
+  if (!found) return resample(ctx, offsetCyclesMeet);
+  const {p, q, offset, start, meet, lcm} = found;
+  const correct = DAYS_AR[(start + meet) % 7];
+  const params = {firstCycle: p, secondCycle: q, offsetDays: offset, startWeekdayIndex: start,
+    firstSharedDay: meet, wholeWeeks: Math.floor(meet / 7), lcmOfCycles: lcm};
+
+  // Each wrong weekday is attached to the slip that actually lands on it, so
+  // the option set carries five different diagnoses rather than one repeated.
+  const named = [
+    [(start + lcm) % 7, 'IGNORED_THE_OFFSET_BETWEEN_STARTS',
+      `اعتماد المضاعف المشترك ${lcm}، مع تجاهل فارق البداية ${offset}`],
+    [(start + offset) % 7, 'USED_ONE_CYCLE_ONLY', `التوقف عند بداية الحدث الثاني بعد ${offset}`],
+    [(start + p) % 7, 'USED_ONE_CYCLE_ONLY', `التحرك بدورة الحدث الأول ${p} وحدها`],
+    [(start + q) % 7, 'USED_ONE_CYCLE_ONLY', `التحرك بدورة الحدث الثاني ${q} وحدها`],
+    [(start + p + q) % 7, 'USED_SUM_OF_CYCLES', `التحرك بمجموع الدورتين ${p} + ${q}`],
+    [start, 'IGNORED_NET_OFFSET', 'البقاء على يوم البداية دون تحرك']
+  ];
+  const claimed = new Set([(start + meet) % 7]);
+  const distractors = usable(ctx, [
+    ...named.flatMap(([idx, id, why]) => {
+      if (claimed.has(idx)) return [];
+      claimed.add(idx);
+      return [mk(DAYS_AR[idx], id, why)];
+    }),
+    // Any weekday still unused is offered as what it is: a day no reading of the
+    // two cycles reaches.
+    ...DAYS_AR.map((d, i) => [d, i]).flatMap(([d, i]) => {
+      if (claimed.has(i)) return [];
+      claimed.add(i);
+      return [mk(d, 'RESOLVED_AN_UNRESOLVED_PAIR', `${d} لا يصل إليه أي قراءة للدورتين`)];
+    })
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'CAL_H_OFFSET_CYCLES',
+    scenario: 'two_cycles_with_offset_starts',
+    direction: 'forward',
+    subskill: 'أول يوم يجتمع فيه حدثان دوريان مختلفا البداية',
+    difficulty: 'hard',
+    question: `يتكرر الحدث الأول كل ${u(p, 'day', 'oblique')} ابتداءً من يوم ${DAYS_AR[start]}، ويتكرر الحدث الثاني كل ${u(q, 'day', 'oblique')} ابتداءً بعد ${u(offset, 'day', 'oblique')} من بداية الأول. ما اليوم الذي يجتمع فيه الحدثان لأول مرة؟`,
+    correct, distractors, format: v => String(v),
+    steps: [
+      `الحدث الأول يقع في الأيام التي تقبل القسمة على ${p} من يوم البداية.`,
+      `والحدث الثاني يقع بعد ${offset} ثم كل ${q}، أي في الأيام التي يترك عددها الباقي ${offset % q}، أي عند القسمة على ${q}.`,
+      `المضاعف المشترك للدورتين وحده لا يكفي لأن البدايتين مختلفتان.`,
+      `أول عدد يحقق الشرطين معًا هو ${meet}.`,
+      `نطرح الأسابيع الكاملة: ${Math.floor(meet / 7)} × 7 = ${Math.floor(meet / 7) * 7}، ثم ${meet} − ${Math.floor(meet / 7) * 7} = ${meet % 7}.`,
+      `بالتقدم ${u(meet % 7, 'day', 'oblique')} من يوم ${DAYS_AR[start]} نصل إلى يوم ${correct}.`
+    ],
+    howToStart: 'اكتب شرطي الحدثين على عدد الأيام من البداية، ثم ابحث عن أول عدد يحقق الشرطين معًا.',
+    remember: 'عند اختلاف البدايتين لا يكفي المضاعف المشترك؛ فارق البداية جزء من الشرط.',
+    fastMethod: 'تقدّم بمضاعفات الدورة الأولى وافحص أيها يوافق شرط الثانية.',
+    estimatedSteps: 5, conceptTags: ['calendar', 'modular', 'congruence'], parameters: params,
+    oracle: {
+      kind: 'search', answerKind: 'dayIndex', domain: grid(0, 6),
+      constraints: [eq(mod(add(start, meet), 7), X)]
+    },
+    askedUnknown: 'firstSharedWeekday', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'SOLVE_TWO_CONGRUENCES', targetMisconception: 'IGNORED_THE_OFFSET_BETWEEN_STARTS',
+      wrongMethodValue: DAYS_AR[(start + lcm) % 7],
+      degenerateWhen: [{when: meet === lcm, note: 'the offset happens to vanish, so the LCM answer is correct'}]
+    },
+    metadata: {first_shared_day: meet, lcm_of_cycles: lcm},
+    allowedConstants: [0, 1, 2, 7, 100],
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, conditionCount: 2, stageCount: 3, arithmeticBurden: 5},
     textParams: false
   });
 }

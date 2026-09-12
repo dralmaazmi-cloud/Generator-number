@@ -175,7 +175,7 @@ test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs ou
   // its job, not failing.
   const engine = new Engine({maxGenerationAttempts: 1});
   assert.throws(
-    () => engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-58'}),
+    () => engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-25'}),
     err => err.code === 'QUESTION_GENERATION_EXHAUSTED'
   );
   const s = engine.getTelemetry();
@@ -189,7 +189,7 @@ test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs ou
 
 test('RC2-003 meta: a budget that does not run out emits no exhaustion', () => {
   const engine = new Engine();
-  engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-58'});
+  engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-25'});
   assert.equal(engine.getTelemetry().exhaustions, 0);
 });
 
@@ -252,7 +252,12 @@ test('RC2-003 cost: the rejection activity is cheap, and the cheapness is measur
 
   // The activity really is large — if it were not, this report would be moot.
   assert.ok(report.activity.distractorDrops > 200, 'the drops must actually be happening');
-  assert.ok(report.activity.samplerResamples > 300);
+  // RC2.6 lowered from 300 to 250: ten new hard structures changed the template
+  // mix, and this fixed-size corpus now records 296 rather than ~340. The bar
+  // exists to show the activity is substantial enough for the cost report to
+  // mean something, not to pin a particular number.
+  assert.ok(report.activity.samplerResamples > 250,
+    `only ${report.activity.samplerResamples} sampler resamples`);
 
   // ...and it really is cheap, because a drop costs no attempt until it pushes a
   // pool below five.

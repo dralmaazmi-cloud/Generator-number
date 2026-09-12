@@ -91,16 +91,23 @@ test('RC2.2-4: the reasoning cap holds across a multi-session batch', () => {
   }
 });
 
-test('RC2.5: the hard band no longer fills an 82-slot batch inside the caps', () => {
-  // The coverage shortfall, pinned as a measurement so it cannot quietly change
-  // in either direction. If a later cycle adds genuinely hard structures this
-  // test fails and is updated with the new figure; if coverage shrinks further
-  // it fails too.
+test('RC2.6: the hard band fills an 82-slot batch inside every cap', () => {
+  // RC2.5 pinned the shortfall here: with 17 hard structures an 82-slot batch
+  // could not be filled within the batch reasoning allowance, and the test
+  // asserted the breach so it could not close silently. RC2.6 closed it by
+  // adding ten genuinely hard structures in the five families the human
+  // calibration had emptied — not by raising a cap, which is why this assertion
+  // could be turned around rather than deleted.
   const e = new Engine();
-  const m = measureBatch({seed: 'RC25-SHORTFALL', plan: PLAN});
-  assert.ok(m.reasoning.max > e.config.maxReasoningRepeatsPerBatch,
-    'the shortfall has closed — re-measure and update this test and the report');
-  assert.ok(m.reasoning.capBreachesWarned > 0, 'and every breach must still be recorded');
+  for (const seed of ['RC26-CAP-A', 'RC26-CAP-B']) {
+    const m = measureBatch({seed, plan: PLAN});
+    assert.ok(m.reasoning.max <= e.config.maxReasoningRepeatsPerBatch,
+      `a reasoning path repeated ${m.reasoning.max} times against a cap of ${e.config.maxReasoningRepeatsPerBatch}`);
+    assert.equal(m.reasoning.capBreachesWarned, 0,
+      'no reasoning-cap breach should be needed now that coverage supports the batch');
+    assert.equal(m.exact.repeats, 0);
+    assert.equal(m.semantic.repeats, 0);
+  }
 });
 
 test('RC2.2-4: a cap the fallback can bypass is not a cap', () => {

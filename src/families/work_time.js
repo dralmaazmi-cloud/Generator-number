@@ -15,7 +15,9 @@ export function generateWorkTime({difficulty, rng, seed, engineVersion, telemetr
     ['WORK_H_TWO_STAGE', twoStageWorkers],
     ['WORK_H_WORKERS_EFF', workersAndEfficiency],
     ['WORK_H_JOINT_SOLO', jointThenSoloTime],
-    ['WORK_H_EXTRA_WORKERS', extraWorkersSaveDays]
+    ['WORK_H_EXTRA_WORKERS', extraWorkersSaveDays],
+    ['WORK_H_THREE_PAIRS', threePairwiseRates],
+    ['WORK_H_SOLO_GAP', pairWithSoloGap]
   ])(ctx);
 }
 
@@ -565,5 +567,172 @@ function extraWorkersSaveDays(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, reverseReasoning: 1, equationSolving: 1, stageCount: 3, arithmeticBurden: 4},
     textParams: {essentialParams: ['workers', 'plannedDays', 'daysSaved']}
+  });
+}
+
+/**
+ * RC2.6-1. CROSS_PART_INTEGRATION + STRATEGY_SELECTION.
+ *
+ * Three workers, and only the three PAIRS are timed — no individual rate is
+ * given and none can be read off a single pair. The step that unlocks it is not
+ * in the stem: adding the three pair rates counts every worker exactly twice, so
+ * half that sum is the rate of all three together. A solver who averages the
+ * three times, or who adds them, has a number on the paper.
+ */
+function threePairwiseRates(ctx) {
+  const {rng} = ctx;
+  // The three PAIR times are the given data, so they are what is drawn. The
+  // individual solo times never appear in the question and are not required to
+  // be whole; what must come out whole is the answer. Searching the pair space
+  // directly rather than the solo space is what keeps the parameter set wide —
+  // the solo-first search admits only two essentially different triples.
+  const POOL = [9, 10, 12, 14, 15, 16, 18, 20, 21, 24, 28, 30, 36, 40, 45];
+  let found = null;
+  for (let t = 0; t < 400; t++) {
+    const ab = rng.pick(POOL), bc = rng.pick(POOL), ac = rng.pick(POOL);
+    if (new Set([ab, bc, ac]).size !== 3) continue;
+    // 1/ab + 1/bc + 1/ac = 2/all
+    const num = 2 * ab * bc * ac;
+    const den = bc * ac + ab * ac + ab * bc;
+    if (num % den !== 0) continue;
+    const all = num / den;
+    // Every worker must have a positive rate, or the three times contradict.
+    const twice = (x, y, z) => 1 / x + 1 / y - 1 / z;
+    if (twice(ab, ac, bc) <= 0 || twice(ab, bc, ac) <= 0 || twice(bc, ac, ab) <= 0) continue;
+    // An answer equal to one of the three given times is answerable by copying
+    // a number off the page.
+    if (all === ab || all === bc || all === ac) continue;
+    found = {ab, bc, ac, all};
+    break;
+  }
+  if (!found) return resample(ctx, threePairwiseRates);
+  const {ab, bc, ac, all} = found;
+  const prod = ab * bc * ac;
+  const sum = bc * ac + ab * ac + ab * bc;
+  const correct = all;
+  const params = {firstPairDays: ab, secondPairDays: bc, thirdPairDays: ac};
+
+  const distractors = usable(ctx, [
+    mk((ab + bc + ac) / 3, 'AVERAGED_THE_PAIRED_TIMES', `(${ab} + ${bc} + ${ac}) ÷ 3`),
+    mk(ab + bc + ac, 'ADDED_TIMES_INSTEAD_OF_RATES', `${ab} + ${bc} + ${ac}`),
+    mk(Math.min(ab, bc, ac), 'USED_ONE_PAIR_AS_THE_WHOLE', `أسرع زوج ${Math.min(ab, bc, ac)}`),
+    mk(2 * correct, 'FORGOT_TO_HALVE_THE_DIFFERENCE', `${correct} × 2`),
+    mk(Math.round(2 / (1 / ab + 1 / ac - 1 / bc)), 'USED_ONE_PAIR_AS_THE_WHOLE',
+      'زمن عامل واحد وحده بدل الثلاثة معًا', 3),
+    mk(Math.max(ab, bc, ac) - Math.min(ab, bc, ac), 'USED_DIFFERENCE_AS_ANSWER',
+      `${Math.max(ab, bc, ac)} − ${Math.min(ab, bc, ac)}`),
+    mk((ab + bc + ac) / 2, 'FORGOT_TO_HALVE_THE_DIFFERENCE', `(${ab} + ${bc} + ${ac}) ÷ 2`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'WORK_H_THREE_PAIRS',
+    scenario: 'three_workers_timed_in_pairs',
+    direction: 'forward',
+    subskill: 'زمن ثلاثة معًا من أزمنة الأزواج',
+    difficulty: 'hard',
+    question: `ينجز العاملان الأول والثاني عملًا معًا في ${u(ab, 'day', 'oblique')}، والثاني والثالث في ${u(bc, 'day', 'oblique')}، والأول والثالث في ${u(ac, 'day', 'oblique')}. كم ${unitWordKam('day')} يحتاج الثلاثة معًا لإنجاز العمل نفسه؟`,
+    correct, distractors, format: unitFormat('day'),
+    steps: [
+      `معدل كل زوج في اليوم: 1 ÷ ${ab}، و1 ÷ ${bc}، و1 ÷ ${ac}.`,
+      `المقام الموحد = ${ab} × ${bc} × ${ac} = ${prod}.`,
+      `والبسوط: ${bc} × ${ac} = ${bc * ac}، و${ab} × ${ac} = ${ab * ac}، و${ab} × ${bc} = ${ab * bc}.`,
+      `مجموع البسوط = ${bc * ac} + ${ab * ac} + ${ab * bc} = ${sum}.`,
+      `جمع معدلات الأزواج يُدخل كل عامل مرتين، فهذا المجموع ضعف معدل الثلاثة معًا.`,
+      `إذن الزمن = ${prod} × 2 ÷ ${sum} = ${2 * prod} ÷ ${sum} = ${correct}.`
+    ],
+    howToStart: 'اجمع معدلات الأزواج الثلاثة ولاحظ كم مرة دخل كل عامل في المجموع.',
+    remember: 'الأزمنة لا تُجمع ولا تُتوسَّط؛ المعدلات هي ما يُجمع.',
+    fastMethod: 'اجمع معدلات الأزواج ثم خذ النصف.',
+    estimatedSteps: 6, conceptTags: ['work-rate', 'three-unknowns', 'reciprocal'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, add(add(mul(bc, ac), mul(ab, ac)), mul(ab, bc))), mul(2, mul(ab, mul(bc, ac))))]
+    },
+    askedUnknown: 'threeTogetherDays', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'SUM_PAIR_RATES_THEN_HALVE', targetMisconception: 'AVERAGED_THE_PAIRED_TIMES',
+      wrongMethodValue: (ab + bc + ac) / 3
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 3, stageCount: 3, arithmeticBurden: 6},
+    textParams: {essentialParams: ['firstPairDays', 'secondPairDays', 'thirdPairDays']}
+  });
+}
+
+/**
+ * RC2.6-1. SIMULTANEOUS_CONSTRAINTS + COMPOSED_INVERSION.
+ *
+ * The joint time is given and the two solo times are related only by a stated
+ * DIFFERENCE. Neither solo time is recoverable on its own; the relation has to
+ * be written with one unknown and inverted through the reciprocal sum, which is
+ * a quadratic in disguise. Subtracting the joint time from the difference — the
+ * shape a solver reaches for — is on the paper and wrong.
+ */
+function pairWithSoloGap(ctx) {
+  const {rng} = ctx;
+  // Both solo times are drawn and the joint time is their consequence. Drawing
+  // the gap from a short list instead admits only three parameter sets — the
+  // joint time has to come out whole, and that is a Pythagorean condition on
+  // (gap, 2 x joint), not a free choice.
+  let found = null;
+  for (let t = 0; t < 400; t++) {
+    const fast = rng.int(3, 40);
+    const slow = rng.int(fast + 2, 80);
+    const num = fast * slow, den = fast + slow;
+    if (num % den !== 0) continue;
+    const joint = num / den;
+    if (joint >= fast) continue;
+    const gap = slow - fast;
+    // A gap equal to the answer, or to the joint time, lets a number be copied.
+    if (gap === fast || gap === joint) continue;
+    found = {fast, slow, gap, joint};
+    break;
+  }
+  if (!found) return resample(ctx, pairWithSoloGap);
+  const {fast, slow, gap, joint} = found;
+  const correct = fast;
+  const params = {jointDays: joint, gapDays: gap};
+
+  const distractors = usable(ctx, [
+    mk(slow, 'SWAPPED_THE_TWO_UNKNOWNS', `زمن الأبطأ وحده ${slow}`, 3),
+    mk(joint + gap, 'ADDED_TIMES_INSTEAD_OF_RATES', `${joint} + ${gap}`),
+    mk(2 * joint, 'APPLIED_STEP_TWICE', `${joint} × 2`),
+    mk(2 * joint + gap, 'ADDED_TIMES_INSTEAD_OF_RATES', `${joint} × 2 + ${gap}`),
+    mk(gap, 'USED_GIVEN_VALUE_AS_ANSWER', `الفرق المعطى ${gap}`),
+    mk(slow - joint, 'SUBTRACTED_TIMES_INSTEAD_OF_RATES', `${slow} − ${joint}`),
+    mk(joint, 'USED_JOINT_TIME_AS_SOLO', `الزمن المشترك ${joint}`),
+    mk(fast + slow, 'ADDED_TIMES_INSTEAD_OF_RATES', `${fast} + ${slow}`)
+  ]);
+
+  return buildBase(ctx, {
+    templateId: 'WORK_H_SOLO_GAP',
+    scenario: 'pair_joint_time_with_solo_gap',
+    direction: 'reverse',
+    subskill: 'زمن كل عامل وحده من زمن مشترك وفرق بين الزمنين',
+    difficulty: 'hard',
+    question: `ينجز عاملان عملًا معًا في ${u(joint, 'day', 'oblique')}. ولو عمل كل منهما وحده لاحتاج الأبطأ ${u(gap, 'day', 'oblique')} أكثر من الأسرع. كم ${unitWordKam('day')} يحتاج الأسرع وحده؟`,
+    correct, distractors, format: unitFormat('day'),
+    steps: [
+      `نفرض زمن الأسرع = س، فزمن الأبطأ = س + ${gap}.`,
+      `معدلاهما معًا: 1 ÷ س + 1 ÷ (س + ${gap}) = 1 ÷ ${joint}.`,
+      `بتوحيد المقامات: ${joint} × (س + س + ${gap}) = س × (س + ${gap}).`,
+      `نبحث عن عددين فرقهما ${gap}، وحاصل ضربهما يساوي ${joint} في مجموعهما؛ وهما ${fast} و${slow}، لأن ${fast} × ${slow} = ${fast * slow} و${joint} × ${fast + slow} = ${joint * (fast + slow)}.`,
+      `إذن زمن الأسرع = ${correct}.`
+    ],
+    howToStart: 'اكتب الزمنين بمجهول واحد، ثم اجمع المعدلين لا الزمنين.',
+    remember: 'الفرق بين زمنين منفردين لا يُطرح من الزمن المشترك؛ العلاقة تمر عبر المعدلات.',
+    fastMethod: 'ابحث عن عددين فرقهما معلوم وحاصل ضربهما يساوي الزمن المشترك في مجموعهما.',
+    estimatedSteps: 5, conceptTags: ['work-rate', 'two-unknowns', 'reciprocal'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, add(X, gap)), mul(joint, add(mul(2, X), gap)))]
+    },
+    askedUnknown: 'fasterSoloDays', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'RATE_SUM_WITH_ONE_UNKNOWN', targetMisconception: 'ADDED_TIMES_INSTEAD_OF_RATES',
+      wrongMethodValue: joint + gap,
+      degenerateWhen: [{when: gap === 0, note: 'the two workers are equally fast, so the gap says nothing'}]
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, reverseReasoning: 1, stageCount: 3, arithmeticBurden: 6},
+    textParams: {essentialParams: ['jointDays', 'gapDays']}
   });
 }

@@ -56,7 +56,7 @@ test('RC2.3-1: every template is adjudicated, and every adjudication is reachabl
   // RC2.4 added eighteen HARD templates across eleven families; RC2.5 split the
   // relational count question into its routine and its branch-combining form,
   // making 126. The count is pinned so a silent loss is still caught.
-  assert.equal(adjudicated.length, 127, 'the engine holds 127 templates');
+  assert.equal(adjudicated.length, 137, 'the engine holds 137 templates');
 });
 
 test('RC2.3-1: a hard template names a structural criterion, and nothing else may', () => {
@@ -107,7 +107,13 @@ test('RC2.3-1: family capability is derived, never asserted twice', () => {
   // so the two families that genuinely cannot reach hard still do not.
   assert.deepEqual(FAMILY_MAP.fractions.difficulties, ['easy']);
   assert.ok(!FAMILY_MAP.odd_one_out.difficulties.includes('hard'));
-  assert.ok(FAMILY_MAP.machines.difficulties.includes('hard'), 'RC2.4 gave machines two hard structures');
+  // RC2.6: machines no longer reaches hard. Its one hard structure,
+  // MACH_H_TWO_CONFIG, was demoted after direct sampling showed it drawing a
+  // 2x2 linear system — the shape the Holdout E reviewers judged medium 4 of 4
+  // in another family — and sometimes a degenerate one. A family being narrow is
+  // the intended outcome of calibrating honestly, not a defect to repair.
+  assert.ok(!FAMILY_MAP.machines.difficulties.includes('hard'),
+    'machines reaches hard again — re-check whether that structure was re-adjudicated on evidence');
   assert.ok(FAMILY_MAP.percentages.difficulties.includes('hard'), 'RC2.4 gave percentages two hard structures');
 });
 

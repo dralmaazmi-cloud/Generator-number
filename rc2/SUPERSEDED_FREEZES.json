@@ -53,6 +53,15 @@
    "reason": "archived, not invalidated: holdout AUDIT-2026-09-13-E was generated from exactly this production state, and its sealed blind review is the evidence RC2.5 calibrates against. The review found 53 of 82 delivered HARD items overclassified and 37 of 116 MEDIUM items easy, so production necessarily moves past it: nineteen structures demoted out of HARD, ten out of MEDIUM, one promotion correcting a factually wrong rationale, and two splits. Kept so Holdout E's provenance stays checkable.",
    "archivedRecord": "rc2/FREEZE_RC2_4.json",
    "holdoutGeneratedFromIt": "AUDIT-2026-09-13-E"
+  },
+  {
+   "RC2_COMMIT": "09e57e8b6158000c4ef7bdad1f4896d6c69a8566",
+   "treeHash": "7e5e48d5cdc67117227a56dbb68a5e022a1e19d0",
+   "frozenAt": "2026-09-12T22:45:51.427Z",
+   "productionBundleSha256": "1976eaebf2cbed499d155c215198d09279bc1627cb89c7abb6a9a10f898107eb",
+   "reason": "archived, not invalidated: this is the RC2.5 human-calibrated engine, sound and frozen after the Holdout E verdicts were applied. It reported an honest coverage shortfall — 17 hard structures could not fill an 82-slot batch inside the diversity caps — and RC2.6 closes that by ADDING ten genuinely hard structures in the five families the calibration had emptied, plus one further demotion (MACH_H_TWO_CONFIG) resolved by direct sampling. Production necessarily moves past it.",
+   "archivedRecord": "rc2/FREEZE_RC2_5.json",
+   "holdoutGeneratedFromIt": null
   }
  ]
 }

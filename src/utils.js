@@ -1,7 +1,16 @@
 import {isKnownMisconception, buildOptionFeedback, CORRECT_FEEDBACK} from './qa/misconceptions.js';
 import {REASON} from './qa/reasons.js';
+
+// RC2.6-3. Every personal name the generators draw from, so the stem skeleton
+// can take names out without guessing which Arabic words are names.
+const NAME_POOL = Object.freeze([
+  'خالد', 'سالم', 'ماجد', 'راشد', 'ناصر', 'فهد', 'علي', 'بدر', 'حمد', 'سامي',
+  'نورة', 'سارة', 'هند', 'ريم', 'ليان', 'مريم', 'أحمد', 'محمد', 'عمر', 'يوسف',
+  'ليلى', 'فاطمة', 'عائشة', 'زينب'
+]);
 import {deriveOperationProfile, computeComplexity} from './qa/complexity.js';
 import {structuralBandOf, criteriaOf} from './qa/structure.js';
+import {stemSkeleton, scenarioSignature, constructionSignature} from './qa/construction.js';
 import {buildFingerprint, buildSemanticFingerprint, buildStructuralSignature, questionFingerprint} from './qa/fingerprint.js';
 
 export const LETTERS = ['A','B','C','D','E','F'];
@@ -343,6 +352,16 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
       structural_band: structuralBand,
       answer_count_unit: base.answerCountUnit ?? null,
       answer_unit_id: base.answerUnitId ?? null,
+      // RC2.6-3. Construction diversity evidence: the sentence shape with its
+      // numerals and names removed, the situation being told, and the
+      // construction (situation + asked unknown + direction) that identifies a
+      // genuinely different telling.
+      stem_skeleton: stemSkeleton(base.question, NAME_POOL),
+      scenario_signature: scenarioSignature({family: base.family, scenario: base.scenario}),
+      construction_signature: constructionSignature({
+        family: base.family, scenario: base.scenario,
+        askedUnknown: base.askedUnknown, direction: base.direction
+      }),
       structural_criteria: criteriaOf(base.template_id),
       band_source: 'structural_adjudication',
       score_agrees_with_structure: complexity.band === structuralBand,
