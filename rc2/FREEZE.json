@@ -1,0 +1,890 @@
+{
+  "schema": "rc2-freeze-v1",
+  "supersedes": [
+    {
+      "RC2_COMMIT": "ddc2c9016a9ff68106a18182605e0a20a603f158",
+      "treeHash": "aa7b51f9b329a0b1341419a199a4c55e09adecd7",
+      "frozenAt": "2026-09-12T11:15:12.650Z",
+      "productionBundleSha256": "3d2d668d6455193453692723801ee6cab359969d82fc383e4386179657b42dd3",
+      "reason": "superseded: package.json moved when the freeze's own tests were registered, and package.json is in the production bundle"
+    },
+    {
+      "RC2_COMMIT": "56565ec4e1be4ace34dff60a0b5b6368e6177cf0",
+      "treeHash": "43515585d1901495df4607472cf637d0349f9295",
+      "frozenAt": "2026-09-12T11:37:09.472Z",
+      "productionBundleSha256": "69e39e737a0347ae5edd890011b6cb1161fcc1edc5482fdf98b9669fcf0e3c53",
+      "reason": "archived, not invalidated: this freeze was sound and holdout AUDIT-2026-09-12-B was generated from exactly this production state. RC2.1 remediates defects the holdout exposed, so production necessarily moves past it and a new freeze must be taken. The full record is kept at rc2/FREEZE_RC2.json so holdout B's provenance stays checkable.",
+      "archivedRecord": "rc2/FREEZE_RC2.json",
+      "holdoutGeneratedFromIt": "AUDIT-2026-09-12-B"
+    },
+    {
+      "RC2_COMMIT": "489a2570a56de32b39ee6c50061dc6a203c3113f",
+      "treeHash": "6656abc3fb98356735a09336a61a028e96a1b40b",
+      "frozenAt": "2026-09-12T14:02:30.478Z",
+      "productionBundleSha256": "fd0db212b5ef871561e66ac55f92381be3bc59cb7fd8dad67eef1743458f092a",
+      "reason": "archived, not invalidated: holdout AUDIT-2026-09-12-C was generated from exactly this production state, and its independent review is the diagnosis RC2.2 remediates. Production necessarily moves past it.",
+      "archivedRecord": "rc2/FREEZE_RC2_1.json",
+      "holdoutGeneratedFromIt": "AUDIT-2026-09-12-C"
+    },
+    {
+      "RC2_COMMIT": "11a6f79cf8c6ecb507898a42952fdcf3b26b5df0",
+      "treeHash": "f8eb425b02e9dcdf09f87648ca26960e31adc74c",
+      "frozenAt": "2026-09-12T16:57:31.844Z",
+      "productionBundleSha256": "c52637038ff26a15d48dc107e7cd114a12c321709e0d0064c6ffd4aa4549978a",
+      "reason": "archived, not invalidated: holdout AUDIT-2026-09-12-D was generated from exactly this production state, and its independent review — 250 correct keys, one ambiguous item, 44 of 82 hard items not hard — is the diagnosis RC2.3 remediates. Production necessarily moves past it.",
+      "archivedRecord": "rc2/FREEZE_RC2_2.json",
+      "holdoutGeneratedFromIt": "AUDIT-2026-09-12-D"
+    },
+    {
+      "RC2_COMMIT": "337cff336558b8cf254b754f5b5c10c4f7f7b6cc",
+      "treeHash": "eebff6d88f614a6f11b11d3b76d9ebcd87d0ab60",
+      "frozenAt": "2026-09-12T19:15:56.390Z",
+      "productionBundleSha256": "56a6d34171136b7c3cbefbf519383bafb117c4d42d7402c560cb290c85c65abf",
+      "reason": "archived, not invalidated: RC2.3 was frozen with no holdout generated, because its own validation reported that 19 hard structures across 5 of 16 families could not fill repeated ALL_HARD sessions. RC2.4 answers exactly that finding by adding structures, so production necessarily moves past it.",
+      "archivedRecord": "rc2/FREEZE_RC2_3.json",
+      "holdoutGeneratedFromIt": null
+    },
+    {
+      "RC2_COMMIT": "ac99d2a5968451b45fdb4978abfcf0588d1f49ee",
+      "treeHash": "19b209884f2c9785324dec22004261b44d0e01b0",
+      "frozenAt": "2026-09-12T20:10:10.115Z",
+      "productionBundleSha256": "c2571fff9a15357f30648d9d8f40f14487d42d56db4224a715cb515e59369d99",
+      "reason": "archived, not invalidated: holdout AUDIT-2026-09-13-E was generated from exactly this production state, and its sealed blind review is the evidence RC2.5 calibrates against. The review found 53 of 82 delivered HARD items overclassified and 37 of 116 MEDIUM items easy, so production necessarily moves past it: nineteen structures demoted out of HARD, ten out of MEDIUM, one promotion correcting a factually wrong rationale, and two splits. Kept so Holdout E's provenance stays checkable.",
+      "archivedRecord": "rc2/FREEZE_RC2_4.json",
+      "holdoutGeneratedFromIt": "AUDIT-2026-09-13-E"
+    },
+    {
+      "RC2_COMMIT": "09e57e8b6158000c4ef7bdad1f4896d6c69a8566",
+      "treeHash": "7e5e48d5cdc67117227a56dbb68a5e022a1e19d0",
+      "frozenAt": "2026-09-12T22:45:51.427Z",
+      "productionBundleSha256": "1976eaebf2cbed499d155c215198d09279bc1627cb89c7abb6a9a10f898107eb",
+      "reason": "archived, not invalidated: this is the RC2.5 human-calibrated engine, sound and frozen after the Holdout E verdicts were applied. It reported an honest coverage shortfall — 17 hard structures could not fill an 82-slot batch inside the diversity caps — and RC2.6 closes that by ADDING ten genuinely hard structures in the five families the calibration had emptied, plus one further demotion (MACH_H_TWO_CONFIG) resolved by direct sampling. Production necessarily moves past it.",
+      "archivedRecord": "rc2/FREEZE_RC2_5.json",
+      "holdoutGeneratedFromIt": null
+    }
+  ],
+  "section": "§24",
+  "frozenAt": "2026-09-12T23:50:39.066Z",
+  "RC2_COMMIT": "1d5e25c27ad907eb33c81eaf0f5a3afcbff1c472",
+  "treeHash": "cb6e159a911c3d588dd375476411d5ad3f2bf756",
+  "branch": "claude/rc2-implementation",
+  "engineVersion": "1.4.0",
+  "testCount": 438,
+  "frozenRC1Baseline": "7b5d4617295c98a8ed0f87d204f4745dd5db05dd",
+  "scopeCommit": "af61d28d6fd6797288ad767832f354dd91a0d400",
+  "scopeSchema": "rc2-scope-frozen-v2",
+  "release": "RC2.4",
+  "developmentSeeds": [
+    "RC24-DEV-PHI",
+    "RC24-DEV-CHI",
+    "RC24-DEV-PSI",
+    "RC24-DEV-OMEGA",
+    "RC24-DEV-KOPPA"
+  ],
+  "holdoutSeed": "AUDIT-2026-09-12-E",
+  "previousHoldouts": [
+    {
+      "seed": "AUDIT-2026-09-12-B",
+      "status": "FAILED_DIAGNOSTIC_HOLDOUT",
+      "reused": false
+    },
+    {
+      "seed": "AUDIT-2026-09-12-C",
+      "status": "REVIEWED_AND_SPENT",
+      "reused": false
+    },
+    {
+      "seed": "AUDIT-2026-09-12-D",
+      "status": "REVIEWED_AND_SPENT",
+      "reused": false
+    }
+  ],
+  "holdoutGenerated": false,
+  "developmentCorpus": {
+    "published": 10000,
+    "templates": 125,
+    "families": 16,
+    "sha256": "6d69409eeddf42643ccd9c07573bad725c85a98bbac751c7b60bea55bc254a21",
+    "path": "rc2/RC24_DEVELOPMENT_CORPUS.json",
+    "gzipSha256": "21d6c20f2dab4536a656699f6c6fddc8ca10c808970bf09363bba528ab5038f3"
+  },
+  "internalGate": {
+    "verdict": "PASS",
+    "conditions": 39,
+    "evaluatedAt": "2026-09-12T23:49:21.436Z",
+    "headCommit": "fb1e1ba6a29d2f829c339649ba349759d4bf1556"
+  },
+  "productionFileCount": 50,
+  "productionFiles": [
+    {
+      "path": "app.js",
+      "bytes": 40101,
+      "sha256": "6efee939b6114069d3d88b650667f57991023b16039d17f2d4cce225c0af21d6"
+    },
+    {
+      "path": "generator_manifest.json",
+      "bytes": 17920,
+      "sha256": "db5a3b5dd70b5c99cc0639ea08e1d3a5e61bdb262f6ed1e2b3d1350993fbfd47"
+    },
+    {
+      "path": "index.html",
+      "bytes": 14166,
+      "sha256": "c278260b3799a2b7ff8f9735047f113ed0ccdb113936e949d197de3cfd89667b"
+    },
+    {
+      "path": "package.json",
+      "bytes": 1599,
+      "sha256": "0ceb1221f1414ab93f293768badc323274e4e169c999d5612288e7baf0003885"
+    },
+    {
+      "path": "report.js",
+      "bytes": 10870,
+      "sha256": "1eb2f37977b6a29d213ed75a719a9e4672bde7fc6d5a257f23cd763d10f6e515"
+    },
+    {
+      "path": "src/arabic/constructions.js",
+      "bytes": 10945,
+      "sha256": "9f142b67c92193c2962989597284632663560a10a567803711910ea3e78b3832"
+    },
+    {
+      "path": "src/arabic/units.js",
+      "bytes": 14502,
+      "sha256": "cd04e2af3e5a844d6ac8cbe0b872e7e4d602f78243f70a030c8da21d7ddedba6"
+    },
+    {
+      "path": "src/families/_shared.js",
+      "bytes": 19430,
+      "sha256": "c2a61d22d7e5c65f18cd8bd98fd22e2033d6b55010d88447c84c1a379667f2c6"
+    },
+    {
+      "path": "src/families/ages.js",
+      "bytes": 29804,
+      "sha256": "6f7c91bca9604bbb8b95b12b003e46c3e51c6c602199289642d05f196fe6cb64"
+    },
+    {
+      "path": "src/families/averages.js",
+      "bytes": 35274,
+      "sha256": "1a8b12cfc4262d9f5560667f435ce8b9eb0ebbf316490bddaa3a3ae8f0df20c4"
+    },
+    {
+      "path": "src/families/calendar.js",
+      "bytes": 35928,
+      "sha256": "1feaa3ac4201383a69963225bc8fe8ab2032a195dc75777ca89c869ef5afd5ee"
+    },
+    {
+      "path": "src/families/combined_rate.js",
+      "bytes": 32826,
+      "sha256": "5176a1080b2e38e53d23ecebd9403e2982cbe56e99e36f7e823f0f40a1a25a51"
+    },
+    {
+      "path": "src/families/direct_proportion.js",
+      "bytes": 54237,
+      "sha256": "4e82719483dc8e8b73331979d57c0b3d7bf6ce3089bca0b73946d50dd009b575"
+    },
+    {
+      "path": "src/families/fractions.js",
+      "bytes": 11928,
+      "sha256": "95bb009b6b24a71c5170209dd28bd477bb0a7c3a75c22d8cb6b7b9ca3735f3d1"
+    },
+    {
+      "path": "src/families/machines.js",
+      "bytes": 37025,
+      "sha256": "2c59d122296da561c117eb0026e8596b75f564ec5fe5ff8da721afa532b3572c"
+    },
+    {
+      "path": "src/families/odd_one_out.js",
+      "bytes": 14524,
+      "sha256": "d95046c99e157ffb886becb18194c96a7ba47bbe2238c48f39cddafe570a9407"
+    },
+    {
+      "path": "src/families/percentages.js",
+      "bytes": 36184,
+      "sha256": "829a4f4c377c4f94dc857bd975ee49fc4ff6fc3e26017f5814400ad86a4f6c26"
+    },
+    {
+      "path": "src/families/profit_loss.js",
+      "bytes": 40465,
+      "sha256": "ad4a8f8fb0233f46e815a5a47e1e152524590dbaef542fe6d83f0f0640f6dc87"
+    },
+    {
+      "path": "src/families/ratios.js",
+      "bytes": 27505,
+      "sha256": "e19e8b2eb38a7f0293ef564a0354ce34b8337da3fd99428db82df47dea142283"
+    },
+    {
+      "path": "src/families/relational.js",
+      "bytes": 44325,
+      "sha256": "c41d0d63a320254bd7f9c2277e6544d24232e25a81a8eb4e1b280fa3a2d96d56"
+    },
+    {
+      "path": "src/families/sequences.js",
+      "bytes": 50955,
+      "sha256": "e3b1d865c5d4bea20673a5cb42e66ccad8e07866003cea3b476344e30730cd53"
+    },
+    {
+      "path": "src/families/speed.js",
+      "bytes": 40035,
+      "sha256": "8efe3356a6e3372b7ba81308d64fb49425765db3a54fccddd215ef48946a5060"
+    },
+    {
+      "path": "src/families/unit_rate.js",
+      "bytes": 25611,
+      "sha256": "86c9d2acf42e83a9ac2035c4a7278dc097c0d1c96a2277f80483df5a21833e29"
+    },
+    {
+      "path": "src/families/work_time.js",
+      "bytes": 45002,
+      "sha256": "dc09f8d1b6b52ebe0f1c6a7818d863d72585b3ee817a4678951ecd669e871251"
+    },
+    {
+      "path": "src/index.js",
+      "bytes": 46372,
+      "sha256": "0192a3971f1d7d8248894ae6d02004814d3cb437173e951e9145717ee51cafe4"
+    },
+    {
+      "path": "src/qa/ambiguity.js",
+      "bytes": 10562,
+      "sha256": "643fc6adfa6f2174515949af325f321aa61490ebc19c014b1cfd147a0a30082e"
+    },
+    {
+      "path": "src/qa/analytics.js",
+      "bytes": 3954,
+      "sha256": "0e67b1a9d21fa59e99237e158175211e06a5dc35040647d531351fb3ea11e69e"
+    },
+    {
+      "path": "src/qa/complexity.js",
+      "bytes": 14101,
+      "sha256": "6fc0b56e91ed96b7508f1aa521f5ce09de960b306425cfdbd15ba7ee9ba71f26"
+    },
+    {
+      "path": "src/qa/construction.js",
+      "bytes": 5660,
+      "sha256": "e532116607310fb987e7c445f6c9498549901872d55346163f95218c9841162e"
+    },
+    {
+      "path": "src/qa/distractor-plausibility.js",
+      "bytes": 6405,
+      "sha256": "d04345fed39aee83842a6a48ae760b44db3d22947a3d24296c6aa7cdaf0e00ad"
+    },
+    {
+      "path": "src/qa/distractor-provenance.js",
+      "bytes": 6550,
+      "sha256": "0d2f87a1e8cfdb938eabd1cbfcb9f642771411587b94868d04c287451d1f4f61"
+    },
+    {
+      "path": "src/qa/equations.js",
+      "bytes": 10355,
+      "sha256": "e493667fd25cdaebe070c4a106fc4a95539507a11b85ec20108000df23811a30"
+    },
+    {
+      "path": "src/qa/feedback-metrics.js",
+      "bytes": 6613,
+      "sha256": "24185c779be698848c3a3787a8d1ba45597fafa462f69d107d87654d208e6dd5"
+    },
+    {
+      "path": "src/qa/fingerprint.js",
+      "bytes": 7793,
+      "sha256": "3213eda924af1587260d8a5d546a50a772ca24324166a0eca92516eb574e9c0f"
+    },
+    {
+      "path": "src/qa/fraction.js",
+      "bytes": 5470,
+      "sha256": "33fb98995d3bffe83eccb7965f54e00497504448bbbec6239dd18fa69c186520"
+    },
+    {
+      "path": "src/qa/misconception-context.js",
+      "bytes": 5933,
+      "sha256": "901d421b3b4a833a0e495414dd770032998a4b3d7ab3ad4ce9a3c8c382e1cf5b"
+    },
+    {
+      "path": "src/qa/misconceptions.js",
+      "bytes": 20447,
+      "sha256": "d0f9f632787ef24ee74711202cf288f7020fb51ee0f9f6a0bcf5ea309ca21a04"
+    },
+    {
+      "path": "src/qa/oracle-engine.js",
+      "bytes": 4140,
+      "sha256": "a7fa43d3093ad3131518aab738fe57501bb107012bd494831e403efd50044a85"
+    },
+    {
+      "path": "src/qa/partial-order.js",
+      "bytes": 9853,
+      "sha256": "63c52b43469aee5aff3cfdf7b58fd2384c6f8a1cc0839e04e0a096247c149198"
+    },
+    {
+      "path": "src/qa/pedagogy.js",
+      "bytes": 5555,
+      "sha256": "437aeb709bc4194e1417f1d8b036467f5f1fa416e33dac6309768227d6f51687"
+    },
+    {
+      "path": "src/qa/pipeline.js",
+      "bytes": 14419,
+      "sha256": "ad19f9da42ba416924b16de3e6fc6e4e4a03093be2b67d5f0d5d34b66242e663"
+    },
+    {
+      "path": "src/qa/reasons.js",
+      "bytes": 5066,
+      "sha256": "34f2e070528fa5dd668c13ff38c26e99d5410912846aecda3325fda5f8f2171f"
+    },
+    {
+      "path": "src/qa/relational-oracle.js",
+      "bytes": 3187,
+      "sha256": "eae51805f1a45ab1be0bacadb658d4a1266c2a5bd0ec4d696d1ff99b52da91f8"
+    },
+    {
+      "path": "src/qa/structure.js",
+      "bytes": 41583,
+      "sha256": "f06476a7dbd5b80768647ef00fbbb9e89d6f105df740808de62063a654b966db"
+    },
+    {
+      "path": "src/qa/telemetry.js",
+      "bytes": 10504,
+      "sha256": "b2b0dd08d92688b877655291e9ebe27794673371c540923b9e819ae8115e2188"
+    },
+    {
+      "path": "src/qa/text-params.js",
+      "bytes": 2271,
+      "sha256": "d83520c38e4aa54377603e29d355232a6e407975bc32cc585229135977ec8d8e"
+    },
+    {
+      "path": "src/qa/wording.js",
+      "bytes": 4872,
+      "sha256": "1c27396576800074437f0336abcb3292543ff2752555780c61801aa0286552d8"
+    },
+    {
+      "path": "src/registry.js",
+      "bytes": 8494,
+      "sha256": "dbd978ca73afd3ab786e80c0b248f1519e372a126c5351987566c99ddbeb2178"
+    },
+    {
+      "path": "src/rng.js",
+      "bytes": 1892,
+      "sha256": "564fd40c853f528dc1fa6cc92aa9ce3f54d41590627ad4e8b45c7030341dd1d9"
+    },
+    {
+      "path": "src/utils.js",
+      "bytes": 20476,
+      "sha256": "09413412474a9022d97fab7bc1215df2a93da31a53a26f5ce4b27cfa4ce720fe"
+    }
+  ],
+  "productionBundleSha256": "aaad3d966b41cf9a5d8760c8449e8b2abad1bcb43c2c6d198226534679a81507",
+  "evidenceArtifacts": [
+    {
+      "path": "rc2/COVERAGE_MATRIX.json",
+      "bytes": 51413,
+      "sha256": "6d47667966658b5290b7338d1510ab4ea367288c65cf36baf42599eece526956"
+    },
+    {
+      "path": "rc2/DEGENERACY_COVERAGE.json",
+      "bytes": 67132,
+      "sha256": "3b38be13ecc2714049152616176de7d820345bb557e48bb1c0034b591924dcec"
+    },
+    {
+      "path": "rc2/DEVELOPMENT_CORPUS.json",
+      "bytes": 6105,
+      "sha256": "e74db85a964e41536e814dc928462149ba690c2948e69dac56e4204ea51059eb"
+    },
+    {
+      "path": "rc2/FREEZE_RC2.json",
+      "bytes": 11172,
+      "sha256": "5ac98cfa0f7b8f6448ae73d40d3be178fe5842cc4263bd1443436c9454f3fa9f"
+    },
+    {
+      "path": "rc2/FREEZE_RC2_1.json",
+      "bytes": 16916,
+      "sha256": "d6b8f90588f265c206096dcd5cb85a62af28621b759ab0b7ad2fe2fb6135e3bd"
+    },
+    {
+      "path": "rc2/FREEZE_RC2_2.json",
+      "bytes": 21711,
+      "sha256": "b3c18c4a21a00d37a042d90dec388fed4d11005e56baa65c8a18b414f59420ec"
+    },
+    {
+      "path": "rc2/FREEZE_RC2_3.json",
+      "bytes": 25378,
+      "sha256": "4edabfc2393634eaa938a2a250f48a6a6248b70e8835f91ba879c1fa6b166b68"
+    },
+    {
+      "path": "rc2/FREEZE_RC2_4.json",
+      "bytes": 26724,
+      "sha256": "ba803f085353483373353ee4493c3c7fc795e02921642a027d38687f049a28e5"
+    },
+    {
+      "path": "rc2/FREEZE_RC2_5.json",
+      "bytes": 31118,
+      "sha256": "6fb39628ec2f5cce5b0497af0e5d02006363eb3020fd6cea0e1f66b1b969d51f"
+    },
+    {
+      "path": "rc2/HOLDOUT.json",
+      "bytes": 16545,
+      "sha256": "4da553b82936ce3bc8cacd6fb2c65fb94463158b7fdef0fadad1e6a756b80145"
+    },
+    {
+      "path": "rc2/HOLDOUT_C.json",
+      "bytes": 5395,
+      "sha256": "fda0ffe03542a32c402d210f6d93885f8f777516b1e33caca975083acdd96975"
+    },
+    {
+      "path": "rc2/HOLDOUT_D.json",
+      "bytes": 5574,
+      "sha256": "0add8b37cf4711331648656b294ef0e01f6a4d87b5085563f6c3d9fb8da4261e"
+    },
+    {
+      "path": "rc2/HOLDOUT_E.json",
+      "bytes": 7540,
+      "sha256": "7baf98539813ec95531a86e318279948a0243b08d72e2222b7ccdc19fcd37578"
+    },
+    {
+      "path": "rc2/HOLDOUT_E_CORRECTIONS.json",
+      "bytes": 1276,
+      "sha256": "d82f754bad4dcc3f0e073ec4011fae9b94211f789105948b4ff30bb212092e7a"
+    },
+    {
+      "path": "rc2/HOLDOUT_FINDINGS.json",
+      "bytes": 6115,
+      "sha256": "a19ada0537d3e182ddba524e0e78d00c26492e0234c9b29e66076e82529413fe"
+    },
+    {
+      "path": "rc2/INTERNAL_GATE.json",
+      "bytes": 15940,
+      "sha256": "96ed3249440eac354f4ceed7850ef4c2819694a7edcfec8f296e78cbccea8092"
+    },
+    {
+      "path": "rc2/RC21_DEVELOPMENT_CORPUS.json",
+      "bytes": 6219,
+      "sha256": "056adb15976bc50002be8e3c8bb64c7b84e8c53996696db6869447ac89b1e943"
+    },
+    {
+      "path": "rc2/RC21_DIFFICULTY.json",
+      "bytes": 110512,
+      "sha256": "ad92448be8e5f2713a4c9e949bca7ee6c3b6ff988dfd80cca866ecdc03fe3d47"
+    },
+    {
+      "path": "rc2/RC21_DISTRACTORS.json",
+      "bytes": 8312,
+      "sha256": "273f3b1e5db959f4b5e59cb834925b39c36fc3b5bd57e0303227479b6b89f3bd"
+    },
+    {
+      "path": "rc2/RC21_REMEDIATION_REPORT.md",
+      "bytes": 11578,
+      "sha256": "5bcd5275a5dbde36cac70c2675d9b858c2f7b4f75d2f15891b3a2c335c2ec577"
+    },
+    {
+      "path": "rc2/RC22_DEVELOPMENT_CORPUS.json",
+      "bytes": 6835,
+      "sha256": "1b6ee4bcbc6ebe516bd9cdcca78712dcfb5ee1224243910d221933f114a2ae00"
+    },
+    {
+      "path": "rc2/RC22_DIFFICULTY.json",
+      "bytes": 49011,
+      "sha256": "3f0186939bb1f77ef94417dd0ae5f74f0bd42294b0bb752d54321c82d81f5740"
+    },
+    {
+      "path": "rc2/RC22_REMEDIATION_REPORT.md",
+      "bytes": 10804,
+      "sha256": "e104d5685c53405fdb2a606cf361f2b5d787bdb7e4913619fc0e37b79ca988fa"
+    },
+    {
+      "path": "rc2/RC22_REPETITION.json",
+      "bytes": 2310,
+      "sha256": "13e6f3b879ddf004aa9cec1a765039f95a45fa6ca5eb59f935103ab1c5026229"
+    },
+    {
+      "path": "rc2/RC23_DEVELOPMENT_CORPUS.json",
+      "bytes": 6991,
+      "sha256": "6279f10f7e9c25c3fce1a203f2be1899f352a7edddb628e7bf7b0f8e63b231c0"
+    },
+    {
+      "path": "rc2/RC23_STRUCTURE.json",
+      "bytes": 45512,
+      "sha256": "ef90b964b088e4c5b0d7817579d20cdb25f5e4b557da8ca5087f40980859346b"
+    },
+    {
+      "path": "rc2/RC23_VALIDATION_REPORT.md",
+      "bytes": 37372,
+      "sha256": "88f9bf692f4a0af285957bc6adaac3d647ecbda31378da297b2e0562c6b655ed"
+    },
+    {
+      "path": "rc2/RC24_DEVELOPMENT_CORPUS.json",
+      "bytes": 6339,
+      "sha256": "3a97ab8154eb18316498b94cf80809187941b0c8a529778598293ec1de7cc74d"
+    },
+    {
+      "path": "rc2/RC24_HARD_COVERAGE.json",
+      "bytes": 36881,
+      "sha256": "ab12b354ea1478c806f6fbcb24e7a09bbb64ace737454248f4d83428d0134b12"
+    },
+    {
+      "path": "rc2/RC24_PREHOLDOUT.json",
+      "bytes": 11983,
+      "sha256": "2aa02d14681a9d903c6d21c1838760ec68adfb7fa880bd3847fef8752da4367c"
+    },
+    {
+      "path": "rc2/RC24_VALIDATION_REPORT.md",
+      "bytes": 24565,
+      "sha256": "2c0750f91b00b299aeb48ee927289643d4d4855cc886023dca5d3e5c2716906a"
+    },
+    {
+      "path": "rc2/RC25_CROSSWALK.json",
+      "bytes": 330510,
+      "sha256": "38202e57cd604ad3b9c5cb26197e0887adb74cb43ba2f2e5a62d15b722fb22bb"
+    },
+    {
+      "path": "rc2/RC25_REPETITION.json",
+      "bytes": 14774,
+      "sha256": "3e6cc0aa11375117773c98cf86978e21c6ce8ca4f89e3714da2eff2cd06f6e3c"
+    },
+    {
+      "path": "rc2/RC25_VALIDATION_REPORT.md",
+      "bytes": 15530,
+      "sha256": "ca51ea41cf4ecc89d93f973ffa7ac3ebb8dd7a5de904d4ed28c9fd2cc4872216"
+    },
+    {
+      "path": "rc2/RC26_ACCEPTANCE.json",
+      "bytes": 79819,
+      "sha256": "c1728ba4c4c20b90e679ba3e10c5e09ed8da96adb5471bff13ac9690a3faa024"
+    },
+    {
+      "path": "rc2/RC2_003_REJECTION_COST.json",
+      "bytes": 51938,
+      "sha256": "738ec6a0b7cb356657ac85183daa15c727b3a3fb7efd0fed716d45ddca56a73a"
+    },
+    {
+      "path": "rc2/RC2_006_PDF_ACCESSIBILITY.json",
+      "bytes": 5233,
+      "sha256": "6905fee30e7367007b257d00f4516cff291559bf2bb5608000f84f43f32237ad"
+    },
+    {
+      "path": "rc2/RC2_011_ANSWER_SPACE.json",
+      "bytes": 35908,
+      "sha256": "58fde7e42b4f1e1504e6c4832b71f4c19f6200d08e4e6e6f7a3e3589cfe327da"
+    },
+    {
+      "path": "rc2/RC2_012_SURVIVOR_AUDIT.json",
+      "bytes": 246905,
+      "sha256": "20049eedc3f92da49c50a6eb69c828fdbe92f02540921f97bbf3389d656ca243"
+    },
+    {
+      "path": "rc2/RC2_014_FEEDBACK_METRICS.json",
+      "bytes": 3524,
+      "sha256": "ce54832653440283ffdca15301105c9f2635d40745b9b14c561b5482d43bea43"
+    },
+    {
+      "path": "rc2/RC2_015_DIFFICULTY_CALIBRATION.json",
+      "bytes": 40832,
+      "sha256": "246b67d297c9b64142d0b7aa425d77b201ca22438d319c43d427632c0d8ac072"
+    },
+    {
+      "path": "rc2/RC2_4_HOLDOUT_E_BLIND.zip",
+      "bytes": 597376,
+      "sha256": "bf372c27301cc0716514fcc124ea2ef44ed7dd4c8f4880f30a7b228c9bbedb03"
+    },
+    {
+      "path": "rc2/RC2_IMPLEMENTATION_REPORT.md",
+      "bytes": 9466,
+      "sha256": "8d44f80ccfe4f0623ea722e00ebfa2c8dd122390d89877eedeb562a0097137d0"
+    },
+    {
+      "path": "rc2/SUPERSEDED_FREEZES.json",
+      "bytes": 4982,
+      "sha256": "f4169b187a53c60cd859688dbec48f4b875a415ced5b69dce2347f4c98ecbf21"
+    },
+    {
+      "path": "rc2/development-corpus.jsonl.gz",
+      "bytes": 1198125,
+      "sha256": "bf27cd60048635b7e180e734096e4cc7c3196e0e8a4b1d419432f6ae926bc1b4"
+    },
+    {
+      "path": "rc2/holdout-c-blind.jsonl.gz",
+      "bytes": 17822,
+      "sha256": "1bbb0369a8c8f4984da7f6c78e2bf2da91c7d9917e01ce38610dbb03ccf4eed1"
+    },
+    {
+      "path": "rc2/holdout-c-full.jsonl.gz",
+      "bytes": 158571,
+      "sha256": "a9e9b424a0f4507b0137adfcb9c867487303ab69328bbab421b65d58f757ab7e"
+    },
+    {
+      "path": "rc2/holdout-c-package/MANIFEST.json",
+      "bytes": 6315,
+      "sha256": "447994ec26baca2f93b853fb4e811874fdf9318aeb6e679f93b9f4a0122a4c3a"
+    },
+    {
+      "path": "rc2/holdout-c-package/blind/blind-questions.txt",
+      "bytes": 80569,
+      "sha256": "b15275a862bb7a07c11f3f482194042f8ef15d9f71b95a9a0da75a6200cdfc02"
+    },
+    {
+      "path": "rc2/holdout-c-package/blind/session-1.pdf",
+      "bytes": 240228,
+      "sha256": "4c3ad2487aa27df11f56a11326015fa3f4663e85f7e597cefb4b1c2a5c94aa4a"
+    },
+    {
+      "path": "rc2/holdout-c-package/blind/session-2.pdf",
+      "bytes": 240865,
+      "sha256": "90eed2fbcefd2c962c13169b20a5c403ddcfe7df41a6d330d847548d6177858f"
+    },
+    {
+      "path": "rc2/holdout-c-package/blind/session-3.pdf",
+      "bytes": 239131,
+      "sha256": "7dcc760bc9088e25dd6c069c23d7e264aa7dcf15ef2cb62cdd9536a9ace315a3"
+    },
+    {
+      "path": "rc2/holdout-c-package/blind/session-4.pdf",
+      "bytes": 240172,
+      "sha256": "3bcc85aaa02b87612f2c59387a6b66ef7db7ab685f50267d7716b055a01d80d7"
+    },
+    {
+      "path": "rc2/holdout-c-package/blind/session-5.pdf",
+      "bytes": 243098,
+      "sha256": "9fa78163eb0864ffac3811d70186bf12c093bb3f40a3ec337eb5f6b155145141"
+    },
+    {
+      "path": "rc2/holdout-c-package/post-reveal/difficulty-evidence.jsonl",
+      "bytes": 88378,
+      "sha256": "19bb32ce11c340a2ca25e5f75443474a052b16ff1cfed14491c8d86309323239"
+    },
+    {
+      "path": "rc2/holdout-c-package/post-reveal/distractor-derivations.jsonl",
+      "bytes": 232517,
+      "sha256": "dc37c0b3d51288be1e4bfab1226ed6632a3fdebe117fe9ff3c6b94880bbc4ef3"
+    },
+    {
+      "path": "rc2/holdout-c-package/post-reveal/explanations.jsonl",
+      "bytes": 162051,
+      "sha256": "ec968d85148213b1eaf2f0f7b2823268cc8c839cb39fe3b8a115364265f36da7"
+    },
+    {
+      "path": "rc2/holdout-c-package/post-reveal/misconception-ids.jsonl",
+      "bytes": 65997,
+      "sha256": "245801c06d1ce4ebfb3b52b788dc32bcb5bed2fa9e727e60e06e331d5cfda3f1"
+    },
+    {
+      "path": "rc2/holdout-c-package/post-reveal/reasoning-signatures.jsonl",
+      "bytes": 29667,
+      "sha256": "0b19230b8256f65b69bed99fe7f507149f9ee1e6419a00786165e7359b51936f"
+    },
+    {
+      "path": "rc2/holdout-c-package/post-reveal/semantic-fingerprints.jsonl",
+      "bytes": 114984,
+      "sha256": "ef03f1b57d0102e03c9d4e535f3f5c76bccdf522cae27bc7100923ea6e6a3224"
+    },
+    {
+      "path": "rc2/holdout-c-package/reveal/answer-key.jsonl",
+      "bytes": 17035,
+      "sha256": "dba3c0c46c93aac2a3274cb207b9ac4dbc63169edb0b1827aed20f0831d90ffd"
+    },
+    {
+      "path": "rc2/holdout-d-blind-package/blind-questions.txt",
+      "bytes": 83795,
+      "sha256": "5cf992bd27a6155c2d1a1ebcecf53d5b64924993d76bf34611b301ce76acf4cc"
+    },
+    {
+      "path": "rc2/holdout-d-blind-package/session-1.pdf",
+      "bytes": 238869,
+      "sha256": "f68357d094c52cfc4caff77258ff509b1250d36dc7aad3ef4ea4255983a3f393"
+    },
+    {
+      "path": "rc2/holdout-d-blind-package/session-2.pdf",
+      "bytes": 238240,
+      "sha256": "53c640b1ec968211a88ae9f4a0ffc787b1b3386eefa296b959a179acbf1fe802"
+    },
+    {
+      "path": "rc2/holdout-d-blind-package/session-3.pdf",
+      "bytes": 238865,
+      "sha256": "4fc0e3fd8c8c54b302d42c54638165b15a8b3af385d088b511a76882ad4cac37"
+    },
+    {
+      "path": "rc2/holdout-d-blind-package/session-4.pdf",
+      "bytes": 238297,
+      "sha256": "152695fb67d43759ff3ac344be6e7456d8a10edc399732ae2060753bc05cf600"
+    },
+    {
+      "path": "rc2/holdout-d-blind-package/session-5.pdf",
+      "bytes": 242193,
+      "sha256": "024b027f881119f38fd8d5fb4d70dbba542aef48060ee8ec20259a425dc9d328"
+    },
+    {
+      "path": "rc2/holdout-d-blind.jsonl.gz",
+      "bytes": 17736,
+      "sha256": "82c5f7b1b100f3088ee167a23369412947e9c17fb71574266ee1c5f248951023"
+    },
+    {
+      "path": "rc2/holdout-d-full.jsonl.gz",
+      "bytes": 156437,
+      "sha256": "4bdf46b22dadc454691e6d370bb32983e80810cbfa388927927dc38626ca7622"
+    },
+    {
+      "path": "rc2/holdout-d-reveal/answer-key.jsonl",
+      "bytes": 17247,
+      "sha256": "ae3ffa8a8686b1e5dffc822c836070ca896a4eac3fe2d5b62763b8a6cb05ff1d"
+    },
+    {
+      "path": "rc2/holdout-e-blind-package/blind-questions.txt",
+      "bytes": 78988,
+      "sha256": "8795297ce9626bb96004b679a5aba87319ad15852836cfa594b0e29430d61a54"
+    },
+    {
+      "path": "rc2/holdout-e-blind-package/session-1.pdf",
+      "bytes": 235220,
+      "sha256": "1286e46f0cec615766015c19f129ab255d81293412a83509d00f5fa05a99c1b9"
+    },
+    {
+      "path": "rc2/holdout-e-blind-package/session-2.pdf",
+      "bytes": 236826,
+      "sha256": "3acc52fb33aab82ab29c5a2da4bf3e6119774f2bf1c2a12963932dab99c184af"
+    },
+    {
+      "path": "rc2/holdout-e-blind-package/session-3.pdf",
+      "bytes": 236084,
+      "sha256": "bcab2d9668901b7cc9d90652ce02d287b5b4b3f09db2fcedd9278cb6b2521966"
+    },
+    {
+      "path": "rc2/holdout-e-blind-package/session-4.pdf",
+      "bytes": 237341,
+      "sha256": "2dd168ed914c491659fc79e82ec9a8c8a759f02b648f81436d238edb8adcae55"
+    },
+    {
+      "path": "rc2/holdout-e-blind-package/session-5.pdf",
+      "bytes": 237361,
+      "sha256": "3d175906788b2b4b3e79fc8a6118fcaf348469b208d44a0774c3fe2f7ac13eeb"
+    },
+    {
+      "path": "rc2/holdout-e-blind.jsonl.gz",
+      "bytes": 16631,
+      "sha256": "9a8ab4ad05f845513b6cadc8c4e4bd6ef35e5662f1d56db63a41ed65707bd67a"
+    },
+    {
+      "path": "rc2/holdout-e-full.jsonl.gz",
+      "bytes": 168913,
+      "sha256": "eb6951df0703a8617b816e4e5f10576ec8f793f1e493aa8551d9452bcdbc794b"
+    },
+    {
+      "path": "rc2/holdout-e-reveal/answer-key.jsonl",
+      "bytes": 17266,
+      "sha256": "bdb6d4eb8777fb0b84654ba5b35c30b190191ab3761c591fe84575a71086162b"
+    },
+    {
+      "path": "rc2/holdout-e-verdicts.jsonl",
+      "bytes": 303467,
+      "sha256": "edf394250bfe8fa57b94f8ff56931fb8188982944290c9432afacf30e5a41d1a"
+    },
+    {
+      "path": "rc2/holdout-package/MANIFEST.json",
+      "bytes": 10095,
+      "sha256": "595ad2be853e66edab3db41404649bf8255ac65f2dcf281b4459335ea6f37003"
+    },
+    {
+      "path": "rc2/holdout-package/README.md",
+      "bytes": 8077,
+      "sha256": "8062bd76e446712bd805849d8a85f8e067990cb4a248b971ce0c8a4399383dd2"
+    },
+    {
+      "path": "rc2/holdout-package/SOLVABILITY.json",
+      "bytes": 74846,
+      "sha256": "25ec130c4dd4deeca414064a9f74d5a8679fb4a56dc5d8d0a24f61c6cdd3425c"
+    },
+    {
+      "path": "rc2/holdout-package/blind/blind-questions.jsonl",
+      "bytes": 138685,
+      "sha256": "ed45cc7b7af41613acc8091b89c1bb20b9d48c9e0d02e0a1b8b570d5ca0a2e5c"
+    },
+    {
+      "path": "rc2/holdout-package/blind/blind-questions.txt",
+      "bytes": 81023,
+      "sha256": "bfd0805304e0db17225587688099cd3ecb5b3d203a1554b4102fcb9552af4e12"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-1.html",
+      "bytes": 52468,
+      "sha256": "de236d8c4d42bdcec538f162e965950398358b7ce530d26cc24977ca55f63515"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-1.pdf",
+      "bytes": 239029,
+      "sha256": "4ec8bbd577ae8c755a634ed6ac99ec1b3d0e5f65bce33cd04048b553cbc92eaa"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-2.html",
+      "bytes": 53286,
+      "sha256": "a433d69f582e1a694a9e1edaecca7cbd6590b72357713cc55ca022f920303749"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-2.pdf",
+      "bytes": 241521,
+      "sha256": "f0f5baf89d0cf87c7303c0c83d11fc180a0296de5cf49b82ba8e036010aebf8e"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-3.html",
+      "bytes": 51835,
+      "sha256": "57745fb52eeeff7d8bb42aee867df4f99a971e0a4a88027f53ea6ded70812b27"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-3.pdf",
+      "bytes": 240233,
+      "sha256": "a2c19ff32375a16c557cba14e7a41abf7ad8e3680ecc33da2be7354eb22b82ac"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-4.html",
+      "bytes": 52932,
+      "sha256": "aaba632c7bcc2d8dde33a4455e5ac5d8994d4b13838b42c3a8ee0ee5f959aff2"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-4.pdf",
+      "bytes": 242559,
+      "sha256": "7c8da225f1130a99790ca93f0ad89a04daa34ccc793f9dda96953fd6b69b6da4"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-5.html",
+      "bytes": 54977,
+      "sha256": "ab4df5ddbaaee0103b118761a87c8dde7f3d8116acebe87704a35429cbe116fc"
+    },
+    {
+      "path": "rc2/holdout-package/blind/session-5.pdf",
+      "bytes": 244367,
+      "sha256": "a9f586b331ec21c36e9a0fe1bfc6d50716f8b8a5ca264d7f1151ed0f3c8f4d09"
+    },
+    {
+      "path": "rc2/holdout-package/keys/answer-key.jsonl",
+      "bytes": 13910,
+      "sha256": "966c523d33e60ebbf53ea7c9cd178875157296d38b46100fd33a41b2fea27bd1"
+    },
+    {
+      "path": "rc2/holdout-package/keys/item-metadata.jsonl",
+      "bytes": 178110,
+      "sha256": "941a7e29c4ef31d01583fd8a75464ec05aeac02d92deac6a2f19f650e10848fd"
+    },
+    {
+      "path": "rc2/holdout-package/telemetry/HOLDOUT_TELEMETRY_EVIDENCE.json",
+      "bytes": 3563,
+      "sha256": "b4d8e242c5b71a65a4a5d1d84f40efc5737ed58c64c0756815d3dd33b3c5bc77"
+    },
+    {
+      "path": "rc2/holdout.jsonl.gz",
+      "bytes": 32046,
+      "sha256": "7bbae0177ec5048b8af3d14cfbc32975e5d72c4fdcb95cb8b148b10a74319c49"
+    },
+    {
+      "path": "rc2/rc21-development-corpus.jsonl.gz",
+      "bytes": 1196674,
+      "sha256": "ddf7490a3a134fc7826bf26e276ced6c3821899ca5cf0ddaf74c18f52a0264a7"
+    },
+    {
+      "path": "rc2/rc22-development-corpus.jsonl.gz",
+      "bytes": 1330750,
+      "sha256": "6614e26bd1a5ad43e25f056d2c0a746031f9fde93ed3fe9e940020625c4456ea"
+    },
+    {
+      "path": "rc2/rc23-development-corpus.jsonl.gz",
+      "bytes": 1316178,
+      "sha256": "e65cdd1683c7d1d46a2598219b84f0102b56142e6ca4d142d8dfdc6577e3c4ee"
+    },
+    {
+      "path": "rc2/rc24-development-corpus.jsonl.gz",
+      "bytes": 1430812,
+      "sha256": "21d6c20f2dab4536a656699f6c6fddc8ca10c808970bf09363bba528ab5038f3"
+    }
+  ],
+  "declaration": "After this point no production file changes. The holdout is generated from this engine and from no other.",
+  "note": "RC2_COMMIT identifies the frozen PRODUCTION state. This file is evidence recorded about that state, so the commit that carries this file is necessarily a later one; what must not change is productionBundleSha256, and verifyFreeze() is what checks that."
+}
