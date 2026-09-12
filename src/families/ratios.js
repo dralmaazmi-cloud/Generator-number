@@ -126,19 +126,48 @@ function scaleKnown(ctx) {
  * Every unified part is then a product of two numbers printed in the stem, so
  * the explanation can derive it instead of announcing it (Section 8-C).
  */
+/**
+ * RC2-003. Both printed ratios must be reduced and two-sided — RC2-020's
+ * invariant, which the pipeline enforces. The draw used to ignore it, so roughly
+ * 69% of every draw of the three templates built on this helper was refused
+ * after the fact: the largest single unabsorbed rejection cost in the engine.
+ *
+ * Drawing a reduced pair directly is not a change of policy and not a change of
+ * what is published — the published corpus already contained only reduced pairs,
+ * because the invariant removed the rest. It removes the waste, and the
+ * invariant stays exactly where it was as the guard.
+ *
+ * This constrains the ratio PRINTED IN THE STEM, which the learner can see. It
+ * is not a property of the answer, and nothing here looks at the answer.
+ */
 function unifyCommonTerm(rng) {
-  const a = rng.int(1, 4), b = rng.int(2, 5);
-  let c = rng.int(2, 6);
+  const coprimePair = (loA, hiA, loB, hiB) => {
+    for (let tries = 0; tries < 60; tries++) {
+      const x = rng.int(loA, hiA), y = rng.int(loB, hiB);
+      if (x !== y && gcd(x, y) === 1) return [x, y];
+    }
+    return null;
+  };
+  const first = coprimePair(1, 4, 2, 5);
+  const second = coprimePair(2, 6, 2, 6);
+  if (!first || !second) return null;
+  const [a, b] = first;
+  let [c, d] = second;
   // Section 10: when b already equals c there is nothing to unify, and the
   // template stops measuring the skill it exists for.
-  if (c === b) c = c === 6 ? 5 : c + 1;
-  const d = rng.int(2, 6);
+  if (c === b) {
+    const alt = coprimePair(2, 6, 2, 6);
+    if (!alt || alt[0] === b) return null;
+    [c, d] = alt;
+  }
   return {a, b, c, d, A: a * c, B: b * c, C: d * b, unified: true};
 }
 
 function commonTermSum(ctx) {
   const {rng} = ctx;
-  const {a, b, c, d, A, B, C} = unifyCommonTerm(rng);
+  const drawn = unifyCommonTerm(rng);
+  if (!drawn) return resample(ctx, commonTermSum);
+  const {a, b, c, d, A, B, C} = drawn;
   const k = rng.int(1, 5);
   const given = (A + C) * k;
   const correct = B * k;
@@ -194,6 +223,7 @@ function commonTermDifference(ctx) {
   let picked = null;
   for (let t = 0; t < 50; t++) {
     const cand = unifyCommonTerm(rng);
+    if (!cand) continue;
     const diffParts = Math.abs(cand.C - cand.A);
     if (diffParts >= 1 && diffParts <= 10) { picked = {...cand, diffParts}; break; }
   }
@@ -399,7 +429,9 @@ function transferBetweenSides(ctx) {
 
 function twoRatiosExternalSum(ctx) {
   const {rng} = ctx;
-  const {a, b, c, d, A, B, C} = unifyCommonTerm(rng);
+  const drawn = unifyCommonTerm(rng);
+  if (!drawn) return resample(ctx, twoRatiosExternalSum);
+  const {a, b, c, d, A, B, C} = drawn;
   const k = rng.int(2, 6);
   const given = (A + B) * k;
   const correct = C * k;

@@ -157,11 +157,17 @@ test('RC2-003 meta: usable() without telemetry still filters, and records nothin
 });
 
 test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs out', () => {
-  // A one-attempt budget on a seed whose single candidate the pipeline rejects.
-  // The rejection is real (REDUCIBLE_RATIO), not injected.
+  // A one-attempt budget on a seed whose single candidate cannot be finalised:
+  // the distractor pool falls below five. The failure is real, not injected.
+  //
+  // This seed replaced an earlier one that exhausted on REDUCIBLE_RATIO. RC2-003's
+  // cost measurement found that rejection was 69% of three ratio templates' draws
+  // and moved the constraint into the sampler, so that rejection no longer
+  // happens and the old fixture stopped exhausting — which is the fixture doing
+  // its job, not failing.
   const engine = new Engine({maxGenerationAttempts: 1});
   assert.throws(
-    () => engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-70'}),
+    () => engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-6'}),
     err => err.code === 'QUESTION_GENERATION_EXHAUSTED'
   );
   const s = engine.getTelemetry();
@@ -175,7 +181,7 @@ test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs ou
 
 test('RC2-003 meta: a budget that does not run out emits no exhaustion', () => {
   const engine = new Engine();
-  engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-70'});
+  engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-6'});
   assert.equal(engine.getTelemetry().exhaustions, 0);
 });
 
@@ -227,4 +233,54 @@ test('RC2-003: reset clears every counter, stage, reason and event', () => {
   assert.deepEqual(s.byReason, {});
   assert.deepEqual(s.byTemplate, {});
   assert.equal(engine.telemetry.events.length, 0);
+});
+
+// --- the cost of the newly visible activity (RC2-003 evidence) --------------
+
+test('RC2-003 cost: the rejection activity is cheap, and the cheapness is measured', async () => {
+  const {measure} = await import('../tools/audit/rc2-003-cost.mjs');
+  const report = await measure({questions: 600, seedPrefix: 'rc2-003-cost-test'});
+  assert.ok(report.corpus.published > 590, `the corpus must be real, got ${report.corpus.published}`);
+
+  // The activity really is large — if it were not, this report would be moot.
+  assert.ok(report.activity.distractorDrops > 200, 'the drops must actually be happening');
+  assert.ok(report.activity.samplerResamples > 300);
+
+  // ...and it really is cheap, because a drop costs no attempt until it pushes a
+  // pool below five.
+  assert.ok(report.cost.meanAttemptsPerPublished < 1.2, `mean attempts ${report.cost.meanAttemptsPerPublished}`);
+  assert.ok(report.cost.p95Attempts <= 2, `p95 attempts ${report.cost.p95Attempts}`);
+  assert.equal(report.cost.retryExhaustions, 0);
+  assert.ok(report.cost.latencyP95Ms < 50, `p95 latency ${report.cost.latencyP95Ms}ms`);
+
+  // The two prices must be reported apart. Folding them together would report a
+  // large number as though it were a large cost.
+  assert.ok(report.activity.attemptsBurnedPerPublished < report.activity.distractorDropsPerPublished,
+    'drops must not be counted as burned attempts');
+});
+
+test('RC2-003 cost: the unabsorbed per-draw rate is reported, not hidden by retries', async () => {
+  const {measure} = await import('../tools/audit/rc2-003-cost.mjs');
+  const report = await measure({questions: 300, seedPrefix: 'rc2-003-unabsorbed-test'});
+  assert.ok(Array.isArray(report.unabsorbed.worstTemplates));
+  for (const t of report.unabsorbed.worstTemplates) {
+    assert.ok(t.draws > 0 && t.combinedFailureRate > 0.05);
+    assert.ok(t.templateId && t.family);
+  }
+  // The ratios templates were the worst offenders, ~69% of draws refused by the
+  // pipeline for an unreduced printed ratio. That constraint now lives in the
+  // sampler, so no ratios template may be refused for it any more. (A residual
+  // finalisation failure is a pool-depth matter, not this one, and is reported
+  // in its own column rather than asserted away here.)
+  const wasted = report.unabsorbed.worstTemplates.filter(t => t.family === 'ratios' && t.pipelineRejectionRate > 0);
+  assert.deepEqual(wasted, [], `ratios draws still refused by the pipeline: ${JSON.stringify(wasted)}`);
+});
+
+test('RC2-003 cost: the published artifact matches the engine', () => {
+  const saved = JSON.parse(readFileSync('rc2/RC2_003_REJECTION_COST.json', 'utf8'));
+  assert.equal(saved.schema, 'rc2-003-rejection-cost-v1');
+  assert.equal(saved.reconciliation.balanced, true);
+  assert.ok(saved.cost.meanAttemptsPerPublished > 1, 'a mean below one would mean the field is not attempts');
+  assert.ok('retryExhaustions' in saved.cost && 'latencyP95Ms' in saved.cost && 'p95Attempts' in saved.cost);
+  assert.ok(saved.unabsorbed.worstTemplates !== undefined);
 });

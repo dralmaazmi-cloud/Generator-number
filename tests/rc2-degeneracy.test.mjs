@@ -246,6 +246,36 @@ test('RC2-005: every template in the engine is classified, and every classificat
   }
 });
 
+test('RC2-005: the RC1 gap is preserved template by template, not only in aggregate', async () => {
+  const report = await measure(120);
+  assert.equal(report.rc1Gap.count, 23, 'the RC1 sign-off reported 23 uncovered templates');
+  assert.equal(report.rc1Gap.rc1ReportedCount, 23);
+  const bands = report.rc1Gap.byBand;
+  assert.equal(
+    (bands.A_MODELLED ?? 0) + (bands.B_COVERED_BY_OTHER_INVARIANT ?? 0) + (bands.C_NOT_APPLICABLE ?? 0),
+    23,
+    'every one of the 23 must land in exactly one band'
+  );
+  for (const r of report.rc1Gap.templates) {
+    assert.ok(['A_MODELLED', 'B_COVERED_BY_OTHER_INVARIANT', 'C_NOT_APPLICABLE'].includes(r.band), r.templateId);
+    assert.ok(r.justification && r.justification.length > 40, `${r.templateId} must carry its own argument`);
+    if (r.band === 'A_MODELLED') {
+      assert.ok(r.modelCoverageOfDraws > 0, `${r.templateId} claims a model but declares none`);
+    }
+  }
+  // The saved artifact must carry the same table, so the evidence survives
+  // without re-running anything.
+  const saved = JSON.parse(readFileSync('rc2/DEGENERACY_COVERAGE.json', 'utf8'));
+  assert.equal(saved.rc1Gap.count, 23);
+  assert.deepEqual(
+    saved.rc1Gap.templates.map(t => t.templateId).sort(),
+    report.rc1Gap.templates.map(t => t.templateId).sort()
+  );
+  for (const t of saved.rc1Gap.templates) {
+    assert.ok(t.band && t.rc1Verdict && t.rc2Verdict && t.justification, t.templateId);
+  }
+});
+
 test('RC2-005: the published artifact matches the engine', () => {
   const saved = JSON.parse(readFileSync('rc2/DEGENERACY_COVERAGE.json', 'utf8'));
   assert.equal(saved.schema, 'rc2-degeneracy-coverage-v1');

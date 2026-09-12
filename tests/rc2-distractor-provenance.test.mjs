@@ -19,6 +19,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 
 import Engine from '../src/index.js';
 import {SeededRNG} from '../src/rng.js';
@@ -229,4 +230,81 @@ test('RC2-012: mk carries the step through to the published option metadata', ()
   const d = mk(8, 'OFF_BY_ONE_STEP', '9 − 1', 3);
   assert.equal(d.reasoningStepAffected, 3);
   assert.equal(mk(8, 'OFF_BY_ONE_STEP', '9 − 1').reasoningStepAffected, null);
+});
+
+// --- the stratified audit of what survived (RC2-012 evidence) ---------------
+
+test('RC2-012 audit: no surviving answer-relative option is unjustified', async () => {
+  const {audit} = await import('../tools/audit/rc2-012-survivors.mjs');
+  const report = await audit({questions: 900, seedPrefix: 'rc2-012-audit-test'});
+  assert.ok(report.corpus.questions > 880, `the corpus must be real, got ${report.corpus.questions}`);
+  assert.ok(report.totals.survivors > 20, 'the audit must actually have survivors to classify');
+  assert.equal(report.totals.unjustified, 0, JSON.stringify(report.totals.byStratum));
+  // The strong stratum must carry the overwhelming majority: a survivor set that
+  // is mostly "it names a step" would be bookkeeping, not mathematics.
+  const strong = (report.totals.byStratum.S1_TASK_PATH ?? 0) + (report.totals.byStratum.S3_GIVEN_COINCIDENCE ?? 0);
+  assert.ok(strong / report.totals.survivors > 0.9,
+    `${strong}/${report.totals.survivors} in S1/S3: ${JSON.stringify(report.totals.byStratum)}`);
+});
+
+test('RC2-012 audit meta: the stratifier convicts a genuine key-neighbour', async () => {
+  // If the classifier cannot separate the RC1 defect from a real task path, the
+  // audit above proves nothing. These are the shapes the RC1 audit reported.
+  const {classifySurvivor} = await import('../tools/audit/rc2-012-survivors.mjs');
+  const givens = [120, 7, 3];          // the stem's own numbers
+  const solutionValues = [120, 7, 3, 40, 17];
+
+  // MUST_CONVICT — "8 ± 5" where 5 is nowhere on the page.
+  for (const value of [17 + 5, 17 - 5, 17 * 5, 17 + 1, 17 - 1, 17 + 2]) {
+    assert.equal(
+      classifySurvivor({value, correct: 17, givens: [999], solutionValues: [999], stepText: null}),
+      'S4_UNJUSTIFIED',
+      `key→${value} with nothing stated must be unjustified`
+    );
+  }
+
+  // ...and naming a step does not launder it into a task path.
+  assert.equal(
+    classifySurvivor({value: 18, correct: 17, givens: [999], solutionValues: [999], stepText: 'a step'}),
+    'S2_STEP_ATTRIBUTED',
+    'naming a step is bookkeeping, and must not reach S1'
+  );
+
+  // MUST_ACQUIT — displaced by a quantity the stem actually states.
+  assert.equal(
+    classifySurvivor({value: 17 + 3, correct: 17, givens, solutionValues, stepText: null}),
+    'S1_TASK_PATH',
+    'the future age, displaced by the stated number of years'
+  );
+  assert.equal(
+    classifySurvivor({value: 17 * 3, correct: 17, givens, solutionValues, stepText: null}),
+    'S1_TASK_PATH',
+    'the other person\'s age, under the stated ratio'
+  );
+  // ...and one displaced only by a value the SOLUTION computes is kept apart.
+  assert.equal(
+    classifySurvivor({value: 17 - 40, correct: 17, givens: [1000], solutionValues: [40], stepText: null}),
+    'S1B_SOLUTION_QUANTITY'
+  );
+  // A key that is itself one of the stated numbers is a coincidence, not a leak.
+  assert.equal(
+    classifySurvivor({value: 240, correct: 120, givens, solutionValues, stepText: null, keyIsAGiven: true}),
+    'S3_GIVEN_COINCIDENCE'
+  );
+});
+
+test('RC2-012 audit: the published artifact matches the engine', () => {
+  const saved = JSON.parse(readFileSync('rc2/RC2_012_SURVIVOR_AUDIT.json', 'utf8'));
+  assert.equal(saved.schema, 'rc2-012-survivor-audit-v1');
+  assert.equal(saved.totals.unjustified, 0);
+  assert.equal(saved.rc1Baseline.answerDerivedShareOfWrongOptions, 0.249);
+  assert.ok(saved.totals.shareOfWrongOptions < 0.05);
+  // Every survivor carries its own evidence, not just a label.
+  for (const s of saved.survivors) {
+    assert.ok(
+      s.reconstructedFromGivens || s.appearsInPublishedSolution || s.displacementFromKey
+        || s.displacementFromKeyBySolutionQuantity || s.keyIsAlsoAGivenNumber || s.stepText,
+      `${s.templateId}/${s.misconceptionId} has no evidence recorded`
+    );
+  }
 });

@@ -39,7 +39,7 @@ export const CLASSIFICATION = {
   CAL_E_TOM: {rc1: 'MISSING_DEGENERACY_MODEL', rc2: 'MODELLED',
     note: 'SHIFTED_WRONG_DIRECTION: advancing from the stated day instead of going back. Never coincides for a net offset of 1, and the check says so rather than the model being absent.'},
   CAL_E_AFTER: {rc1: 'MISSING_DEGENERACY_MODEL', rc2: 'MODELLED',
-    note: 'as CAL_E_TOM at a net offset of 2.'},
+    note: 'Same wrong method as CAL_E_TOM — advancing from the stated day instead of going back — at a net offset of two. Two days forward and two days back coincide only when the offset is a multiple of seven, which this template cannot draw, so the check is present and provably never fires here.'},
   CAL_M_COMPOUND: {rc1: 'MISSING_DEGENERACY_MODEL', rc2: 'MODELLED',
     note: 'IGNORED_NET_OFFSET: going back only the extra days, forgetting that tomorrow is itself a shift of one.'},
   CAL_M_TWO_SHIFT: {rc1: 'MISSING_DEGENERACY_MODEL', rc2: 'MODELLED',
@@ -159,6 +159,34 @@ export async function measure(drawsPerBand = 400) {
   const byClass = {};
   for (const t of templates) byClass[t.rc2Classification] = (byClass[t.rc2Classification] || 0) + 1;
 
+  // The 23 templates the RC1 sign-off left outside the model, each kept with its
+  // own verdict. The aggregate 95/8/4 is the whole engine; this table is the
+  // answer to "what happened to the gap", and it must survive into the evidence
+  // rather than being summarised away.
+  const rc1Gap = templates
+    .filter(t => t.rc1Classification !== 'MODELLED')
+    .map(t => ({
+      templateId: t.templateId,
+      family: t.family,
+      direction: t.direction,
+      answerType: t.answerType,
+      rc1Verdict: t.rc1Classification,
+      rc2Verdict: t.rc2Classification,
+      // A: now carries a model of its own.
+      // B: a different invariant rejects the same failure, and it is named.
+      // C: no modelled wrong method can reach the key, and the argument is given.
+      band: t.rc2Classification === 'MODELLED' ? 'A_MODELLED'
+        : t.rc2Classification === 'COVERED_BY_OTHER_INVARIANT' ? 'B_COVERED_BY_OTHER_INVARIANT'
+          : 'C_NOT_APPLICABLE',
+      declaresModelOnDraws: t.declaresModelOnDraws,
+      modelCoverageOfDraws: t.modelCoverageOfDraws,
+      degenerateDraws: t.degenerateDraws,
+      degenerateRate: t.degenerateRate,
+      justification: t.justification
+    }));
+  const rc1GapByBand = {};
+  for (const r of rc1Gap) rc1GapByBand[r.band] = (rc1GapByBand[r.band] || 0) + 1;
+
   return {
     schema: 'rc2-degeneracy-coverage-v1',
     scopeItem: 'RC2-005',
@@ -175,6 +203,13 @@ export async function measure(drawsPerBand = 400) {
       unclassified: templates.filter(t => t.rc2Classification === 'UNCLASSIFIED').map(t => t.templateId),
       declaredButAbsentFromEngine: Object.keys(CLASSIFICATION).filter(id => !templates.some(t => t.templateId === id))
     },
+    // RC2-005 evidence: the RC1 gap, template by template, not only in aggregate.
+    rc1Gap: {
+      count: rc1Gap.length,
+      rc1ReportedCount: 23,
+      byBand: rc1GapByBand,
+      templates: rc1Gap
+    },
     templates
   };
 }
@@ -184,4 +219,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   mkdirSync('rc2', {recursive: true});
   writeFileSync('rc2/DEGENERACY_COVERAGE.json', JSON.stringify(report, null, 2) + '\n');
   console.log(JSON.stringify(report.totals, null, 2));
+  console.log('\nthe RC1 gap, template by template:');
+  for (const r of report.rc1Gap.templates) {
+    console.log('  ', r.templateId.padEnd(20), r.family.padEnd(14), r.band.padEnd(30),
+      r.direction ? `(${r.direction})` : '', 'degenerateRate', r.degenerateRate);
+  }
+  console.log('  bands:', JSON.stringify(report.rc1Gap.byBand));
 }
