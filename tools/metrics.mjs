@@ -6,6 +6,7 @@
 // report can be checked without trusting the run that produced them.
 
 import {readFileSync, existsSync} from 'node:fs';
+import {gunzipSync} from 'node:zlib';
 
 import {checkArabicNumberUnitsDeep} from '../src/arabic/units.js';
 import {validateDisplayedEquations, validateExplanationSourcing, numbersIn} from '../src/qa/equations.js';
@@ -13,15 +14,23 @@ import {isKnownMisconception, NEUTRAL_FEEDBACK, CORRECT_FEEDBACK} from '../src/q
 import {LETTERS, validateQuestion} from '../src/utils.js';
 
 const ROOT = new URL('../', import.meta.url).pathname;
+
+/** Reads a JSONL file, transparently handling the committed .gz form. */
+function readCorpus(path) {
+  if (existsSync(path)) return readFileSync(path, 'utf8');
+  if (existsSync(`${path}.gz`)) return gunzipSync(readFileSync(`${path}.gz`)).toString('utf8');
+  return null;
+}
 const corpusPath = process.argv[2] || `${ROOT}qa-artifacts/corpus.jsonl`;
 const sessionsPath = process.argv[3] || `${ROOT}qa-artifacts/hard-sessions.jsonl`;
 
-if (!existsSync(corpusPath)) {
-  console.error(`Missing ${corpusPath}. Run: node tools/stress-qa.mjs`);
+const corpusText = readCorpus(corpusPath);
+if (!corpusText) {
+  console.error(`Missing ${corpusPath} (or ${corpusPath}.gz). Run: node tools/stress-qa.mjs`);
   process.exit(1);
 }
 
-const questions = readFileSync(corpusPath, 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l));
+const questions = corpusText.trim().split('\n').filter(Boolean).map(l => JSON.parse(l));
 console.log(`Read ${questions.length} published questions from ${corpusPath}\n`);
 
 const m = {
@@ -106,22 +115,42 @@ for (const q of questions) {
   }
 
   // Distractor provenance and option-specific feedback.
+  //
+  // "Option-specific" is measured objectively: the analysis a learner sees must
+  // differ between the five wrong choices. A single sentence repeated under all
+  // five is a family-level note, not an analysis of the choice they made.
+  const analyses = LETTERS.filter(l => l !== q.correct_option)
+    .map(l => q.explanation?.distractor_analysis?.[l] ?? '');
+  const distinctAnalyses = new Set(analyses.filter(Boolean)).size;
   for (const letter of LETTERS) {
-    const meta = q.metadata?.options_meta?.[letter];
-    if (!meta || meta.correct) continue;
+    if (letter === q.correct_option) continue;
     m.distractors_total++;
-    if (isKnownMisconception(meta.misconceptionId)) m.distractors_with_provenance++;
-    if (meta.derivation) m.distractors_with_derivation++;
-    const feedback = q.explanation.distractor_analysis?.[letter];
-    if (feedback && feedback !== NEUTRAL_FEEDBACK && feedback !== CORRECT_FEEDBACK) m.feedback_option_specific++;
+    const meta = q.metadata?.options_meta?.[letter];
+    if (meta && isKnownMisconception(meta.misconceptionId)) m.distractors_with_provenance++;
+    if (meta?.derivation) m.distractors_with_derivation++;
+    const feedback = q.explanation?.distractor_analysis?.[letter];
+    const specific = Boolean(feedback)
+      && feedback !== NEUTRAL_FEEDBACK && feedback !== CORRECT_FEEDBACK
+      && distinctAnalyses === analyses.length;
+    if (specific) m.feedback_option_specific++;
     else m.feedback_neutral++;
   }
 
-  const fp = q.metadata?.fingerprint;
-  if (fp) fingerprints.set(fp, (fingerprints.get(fp) || 0) + 1);
+  // v1.2.0 published no fingerprint; its own duplicate rule compared the
+  // rendered question text, so that is what is counted for it.
+  const fp = q.metadata?.fingerprint
+    ?? `${q.family}|${q.generator_id}|${q.question}|${q.display_expression || ''}`;
+  fingerprints.set(fp, (fingerprints.get(fp) || 0) + 1);
 
   m.letters[q.correct_option]++;
-  const rank = q.metadata?.correct_numeric_rank;
+  let rank = q.metadata?.correct_numeric_rank;
+  if (!rank) {
+    const values = LETTERS.map(l => parseLeading(q.options[l]));
+    if (values.every(Number.isFinite) && new Set(values).size === 6) {
+      const key = parseLeading(q.options[q.correct_option]);
+      rank = values.filter(v => v < key).length + 1;
+    }
+  }
   if (rank) m.ranks[rank] = (m.ranks[rank] || 0) + 1;
 
   m.asked_unknown_by_family[family] ??= {};
@@ -160,9 +189,10 @@ for (const name of Object.keys(strategies)) guessing[name] = {answered: 0, expec
 
 for (const q of questions) {
   const meta = q.metadata?.options_meta;
-  if (!meta) continue;
-  const opts = LETTERS.map(l => ({letter: l, value: Number(meta[l]?.value)}))
-    .filter(o => Number.isFinite(o.value));
+  const opts = LETTERS.map(l => ({
+    letter: l,
+    value: meta ? Number(meta[l]?.value) : parseLeading(q.options[l])
+  })).filter(o => Number.isFinite(o.value));
   if (opts.length !== 6) continue;
   opts.sort((a, b) => a.value - b.value);
   for (const [name, strategy] of Object.entries(strategies)) {
@@ -203,18 +233,23 @@ const rankChi = chiSquare(m.ranks, 6);
 // --- hard sessions (Sections 17-C, 41) --------------------------------------
 
 let sessionReport = null;
-if (existsSync(sessionsPath)) {
-  const sessionLines = readFileSync(sessionsPath, 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l));
+const sessionText = (readCorpus(sessionsPath) || '').trim();
+if (sessionText) {
+  const sessionLines = sessionText.split('\n').filter(Boolean).map(l => JSON.parse(l));
   const templateTotals = {};
   let totalQuestions = 0;
   const distincts = [];
+  const distinctVariants = [];
   const maxRepeats = [];
+  const maxVariantRepeats = [];
   let invalid = 0;
   let duplicateFingerprintInSession = 0;
   for (const s of sessionLines) {
     if (!s.valid) invalid++;
     distincts.push(s.distinct_templates);
+    if (s.distinct_reasoning_variants) distinctVariants.push(s.distinct_reasoning_variants);
     maxRepeats.push(Math.max(...Object.values(s.template_counts)));
+    if (s.variant_counts) maxVariantRepeats.push(Math.max(...Object.values(s.variant_counts)));
     for (const [t, n] of Object.entries(s.template_counts)) {
       templateTotals[t] = (templateTotals[t] || 0) + n;
       totalQuestions += n;
@@ -225,19 +260,28 @@ if (existsSync(sessionsPath)) {
       seen.add(q.fingerprint);
     }
   }
+  if (!totalQuestions) sessionReport = null;
   const shares = Object.entries(templateTotals)
     .map(([t, n]) => ({template: t, share: n / totalQuestions}))
     .sort((a, b) => b.share - a.share);
-  sessionReport = {
+  if (shares.length) sessionReport = {
     sessions: sessionLines.length,
     invalid_sessions: invalid,
     duplicate_fingerprints_within_sessions: duplicateFingerprintInSession,
     distinct_templates_min: Math.min(...distincts),
     distinct_templates_mean: Number((distincts.reduce((a, b) => a + b, 0) / distincts.length).toFixed(2)),
+    distinct_reasoning_variants_min: distinctVariants.length ? Math.min(...distinctVariants) : null,
     max_repeat_of_any_template: Math.max(...maxRepeats),
+    max_repeat_of_any_reasoning_variant: maxVariantRepeats.length ? Math.max(...maxVariantRepeats) : null,
     top_template_share: Number((100 * shares[0].share).toFixed(2)),
     top_templates: shares.slice(0, 5).map(x => ({template: x.template, share_pct: Number((100 * x.share).toFixed(2))}))
   };
+}
+
+/** Reads the leading number out of a rendered option, for legacy corpora. */
+function parseLeading(text) {
+  const match = /-?\d+(?:\.\d+)?/.exec(String(text ?? ''));
+  return match ? Number(match[0]) : NaN;
 }
 
 function collectNumbers(value, out = []) {

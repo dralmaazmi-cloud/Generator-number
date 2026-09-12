@@ -238,6 +238,8 @@ function unitCost(ctx) {
   const unitPrice = rng.pick([5, 6, 7, 8, 10, 12].filter(v => v !== n));
   const total = n * unitPrice;
   const targetCount = rng.pick([7, 8, 9, 10, 12].filter(v => v !== n));
+  // Section 17-A: the same rate, asked the other way round.
+  if (rng.bool(0.4)) return unitCostReverse(ctx, n, unitPrice, total, targetCount);
   const params = {baseCount: n, baseAmount: total, targetCount};
   const s = solve(params, 'scaledOutput');
   const correct = s.answer;
@@ -287,6 +289,56 @@ function unitCost(ctx) {
   });
 }
 
+
+/** How many units a given budget buys — the reverse of PROP_E_COST. */
+function unitCostReverse(ctx, n, unitPrice, total, targetCount) {
+  const budget = unitPrice * targetCount;
+  const params = {baseCount: n, baseAmount: total, targetAmount: budget};
+  const s = solve(params, 'requiredInput');
+  const correct = s.answer;
+  const distractors = usable([
+    mk(n, 'USED_GIVEN_VALUE_AS_ANSWER', `العدد المعطى ${n}`),
+    mk(unitPrice, 'STOPPED_AT_UNIT_RATE', `${total} ÷ ${n}`),
+    mk(budget / n, 'REVERSED_DIRECT_PROPORTION', `${budget} ÷ ${n}`),
+    mk(budget / total * n * n, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${budget} ÷ ${total} × ${n} × ${n}`),
+    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
+    mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
+    mk(n + correct, 'USED_ORIGINAL_TOTAL', `${n} + ${correct}`),
+    mk((budget - total) / unitPrice, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `(${budget} − ${total}) ÷ ${unitPrice}`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'PROP_E_COST',
+    subskill: 'تكلفة وحدات بالسعر نفسه — إيجاد عدد الوحدات',
+    difficulty: 'easy',
+    question: `تباع الوحدات بالسعر نفسه. إذا كانت ${u(n, 'unit')} تكلف ${u(total, 'dirham')}، فكم وحدة نشتري بمبلغ ${u(budget, 'dirham')}؟`,
+    correct,
+    distractors,
+    format: unitFormat('unit'),
+    steps: [
+      `سعر الوحدة الواحدة بالدرهم = ${total} ÷ ${n} = ${unitPrice}.`,
+      `عدد الوحدات = ${budget} ÷ ${unitPrice} = ${correct}.`
+    ],
+    howToStart: 'احسب سعر الوحدة ثم اقسم المبلغ عليه.',
+    remember: 'عند ثبات السعر: عدد الوحدات = المبلغ ÷ سعر الوحدة.',
+    fastMethod: `${budget} ÷ (${total} ÷ ${n}).`,
+    estimatedSteps: 2,
+    conceptTags: ['direct-proportion', 'unit-value', 'reverse'],
+    parameters: params,
+    oracle: inverseProportionOracle(params),
+    askedUnknown: 'requiredInput',
+    stageCount: 2,
+    pedagogy: {
+      targetSkill: 'UNIT_VALUE_THEN_SCALE',
+      targetMisconception: 'REVERSED_DIRECT_PROPORTION',
+      wrongMethodValue: budget / n,
+      degenerateWhen: [{when: budget === total, note: 'budget equals the stated price'}]
+    },
+    complexityFactors: s.pathComplexity,
+    textParams: {essentialParams: ['baseCount', 'baseAmount', 'targetAmount']}
+  });
+}
+
 function recipeScale(ctx) {
   const {rng} = ctx;
   const pieces = rng.pick([8, 10, 12, 15]);
@@ -294,6 +346,7 @@ function recipeScale(ctx) {
   const factorChoices = [2, 3, 4].filter(f => Number.isInteger(pieces * f) && cups * f <= 40);
   const factor = rng.pick(factorChoices);
   const targetPieces = pieces * factor;
+  if (rng.bool(0.4)) return recipeScaleReverse(ctx, pieces, cups, factor);
   const params = {baseCount: pieces, baseAmount: cups, targetCount: targetPieces};
   const s = solve(params, 'scaledOutput');
   const correct = s.answer;
@@ -333,6 +386,57 @@ function recipeScale(ctx) {
       targetSkill: 'SCALE_FACTOR',
       targetMisconception: 'ADDED_INSTEAD_OF_SCALING',
       wrongMethodValue: cups + (targetPieces - pieces),
+      degenerateWhen: [{when: factor === 1, note: 'scale factor of 1 measures nothing'}]
+    },
+    complexityFactors: {...s.pathComplexity, conceptCount: 2},
+    textParams: {essentialParams: ['baseCount', 'baseAmount', 'targetCount']}
+  });
+}
+
+
+/** How many pieces a given amount of flour makes — the reverse of PROP_M_RECIPE. */
+function recipeScaleReverse(ctx, pieces, cups, factor) {
+  const availableCups = cups * factor;
+  const params = {baseCount: cups, baseAmount: pieces, targetCount: availableCups};
+  const s = solve(params, 'scaledOutput');
+  const correct = s.answer;
+  const perCup = pieces / cups;
+  const distractors = usable([
+    mk(pieces, 'USED_GIVEN_VALUE_AS_ANSWER', `العدد المعطى ${pieces}`),
+    mk(factor, 'STOPPED_AFTER_FIRST_STAGE', `${availableCups} ÷ ${cups}`),
+    mk(pieces + (availableCups - cups), 'ADDED_INSTEAD_OF_SCALING', `${pieces} + (${availableCups} − ${cups})`),
+    mk(pieces * cups / availableCups, 'REVERSED_DIRECT_PROPORTION', `${pieces} × ${cups} ÷ ${availableCups}`),
+    mk(pieces * factor * factor, 'APPLIED_STEP_TWICE', `${pieces} × ${factor} × ${factor}`),
+    mk(pieces + pieces * factor, 'USED_ORIGINAL_TOTAL', `${pieces} + ${pieces} × ${factor}`),
+    mk(pieces * (factor - 1), 'OFF_BY_ONE_STEP', `${pieces} × (${factor} − 1)`),
+    mk(pieces * (factor + 1), 'OFF_BY_ONE_STEP', `${pieces} × (${factor} + 1)`),
+    mk(availableCups * cups, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${availableCups} × ${cups}`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'PROP_M_RECIPE',
+    subskill: 'وصفة بمعدل ثابت — إيجاد عدد القطع',
+    difficulty: 'medium',
+    question: `تحتاج وصفة إلى ${u(cups, 'cup')} من الدقيق لصنع ${u(pieces, 'piece')}. كم قطعة نصنع من ${u(availableCups, 'cup')} بالمعدل نفسه؟`,
+    correct,
+    distractors,
+    format: unitFormat('piece'),
+    steps: [
+      `عامل التكبير = ${availableCups} ÷ ${cups} = ${factor}.`,
+      `عدد القطع = ${pieces} × ${factor} = ${correct}.`
+    ],
+    howToStart: 'احسب كم مرة كبرت كمية الدقيق.',
+    remember: 'في التناسب المباشر، الكمية المقابلة تتغير بعامل التكبير نفسه.',
+    fastMethod: `${pieces} × (${availableCups} ÷ ${cups}).`,
+    estimatedSteps: 2,
+    conceptTags: ['direct-proportion', 'scaling', 'reverse'],
+    parameters: params,
+    oracle: proportionOracle(params),
+    askedUnknown: 'scaledOutputFromResource',
+    stageCount: 2,
+    pedagogy: {
+      targetSkill: 'SCALE_FACTOR',
+      targetMisconception: 'ADDED_INSTEAD_OF_SCALING',
+      wrongMethodValue: pieces + (availableCups - cups),
       degenerateWhen: [{when: factor === 1, note: 'scale factor of 1 measures nothing'}]
     },
     complexityFactors: {...s.pathComplexity, conceptCount: 2},

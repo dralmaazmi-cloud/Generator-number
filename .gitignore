@@ -1,2 +1,8 @@
 node_modules/
-qa-artifacts/*.jsonl
+# The stress corpus is committed in its gzipped form so the report can be
+# checked; the uncompressed copies that tools/stress-qa.mjs writes are not.
+qa-artifacts/corpus.jsonl
+qa-artifacts/baseline-corpus.jsonl
+qa-artifacts/*-corpus.jsonl
+qa-artifacts/*-hard-sessions.jsonl
+qa-artifacts/*-run.json

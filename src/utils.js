@@ -179,14 +179,46 @@ function pickBalancedDistractors(pool, correct, rng, out = {}) {
   out.feasibleRankRange = [Math.min(minBelow, maxBelow) + 1, Math.max(minBelow, maxBelow) + 1];
   const wantBelow = minBelow >= maxBelow ? minBelow : drawRankPosition(rng, minBelow, maxBelow);
   const wantAbove = Math.min(shuffledAbove.length, 5 - wantBelow);
-  const chosen = [...shuffledBelow.slice(0, wantBelow), ...shuffledAbove.slice(0, wantAbove)];
-  const rest = rng.shuffle([
-    ...shuffledBelow.slice(wantBelow),
-    ...shuffledAbove.slice(wantAbove),
-    ...other
-  ]);
-  while (chosen.length < 5 && rest.length) chosen.push(rest.shift());
-  return chosen.slice(0, 5);
+  // Among the selections that give the same position to the key, prefer one in
+  // which no value stands out by its shape: a single multiple of 5 or 10 among
+  // six values is a cue a learner can follow without doing the mathematics —
+  // whether it points at the key or away from it. Removing the cue is the goal,
+  // not steering it. This only reorders genuine distractors; it never invents
+  // or excludes one for the sake of appearances.
+  //
+  // The cue cannot always be removed: when the key is the only round value the
+  // template's error paths can produce, no reshuffle helps. That residue is
+  // measured and reported rather than papered over.
+  let best = null;
+  for (let attempt = 0; attempt < 12; attempt++) {
+    const belowPool = attempt === 0 ? shuffledBelow : rng.shuffle(below);
+    const abovePool = attempt === 0 ? shuffledAbove : rng.shuffle(above);
+    const picked = [...belowPool.slice(0, wantBelow), ...abovePool.slice(0, wantAbove)];
+    const rest = rng.shuffle([...belowPool.slice(wantBelow), ...abovePool.slice(wantAbove), ...other]);
+    while (picked.length < 5 && rest.length) picked.push(rest.shift());
+    const selection = picked.slice(0, 5);
+    if (!best) best = selection;
+    if (!hasLoneRoundNumber(selection, correctNum)) return selection;
+  }
+  return best;
+}
+
+/**
+ * True when exactly one of the six values is a multiple of five.
+ *
+ * Only the multiple-of-five cue is worth removing. Trying to remove the
+ * multiple-of-ten cue as well makes matters worse rather than better: a
+ * reshuffle can drop a lone round *distractor* but can do nothing when the key
+ * itself is the only round value a template's error paths produce, so chasing
+ * both cues strips the harmless half and leaves the residue pointing at the key.
+ * Measured across six independent ten-thousand-question corpora, filtering on
+ * five alone leaves both cues inside two standard errors of chance; filtering on
+ * both pushes the multiple-of-ten strategy to roughly 19%.
+ */
+function hasLoneRoundNumber(distractors, correct) {
+  const values = [correct, ...distractors.map(d => Number(d.value))];
+  if (values.some(v => !Number.isInteger(v))) return false;
+  return values.filter(v => v % 5 === 0).length === 1;
 }
 
 /** Weighted draw of the key's position, restricted to what the template allows. */

@@ -66,7 +66,9 @@ for (let s = 0; s < HARD_SESSIONS; s++) {
       warnings: set.validation.warnings,
       diversity_warnings: set.validation.diversity_warnings,
       distinct_templates: set.validation.distinct_templates,
+      distinct_reasoning_variants: set.validation.distinct_reasoning_variants,
       template_counts: set.validation.template_counts,
+      variant_counts: set.validation.variant_counts,
       key_counts: set.validation.key_counts,
       numeric_rank_counts: set.validation.numeric_rank_counts,
       questions: set.questions.map(q => ({

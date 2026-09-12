@@ -15,9 +15,14 @@
 //
 // Usage:
 //   node tools/calibrate-rank.mjs [probesPerCell]      fit from a fresh probe
-//   node tools/calibrate-rank.mjs --refine [corpus]    correct the current
-//                                                      weights against a corpus
-//                                                      that was actually produced
+//   node tools/calibrate-rank.mjs --refine [corpus...]  correct the current
+//                                                      weights against corpora
+//                                                      that were actually
+//                                                      produced. Pass several
+//                                                      seeds: fitting to one
+//                                                      sample bakes that
+//                                                      sample's noise into the
+//                                                      weights.
 //
 // The refine pass exists because the model is an approximation: a few draws take
 // a fallback path the model does not describe. Measuring the corpus and nudging
@@ -34,23 +39,26 @@ const PROBES = Number((REFINE ? 90 : process.argv[2]) || 90);
 const engine = new Engine();
 
 if (REFINE) {
-  const corpusPath = process.argv[3] || new URL('../qa-artifacts/corpus.jsonl', import.meta.url).pathname;
+  const corpusPaths = process.argv.slice(3);
+  if (!corpusPaths.length) corpusPaths.push(new URL('../qa-artifacts/corpus.jsonl', import.meta.url).pathname);
   const observed = Array(7).fill(0);
   let n = 0;
-  for (const line of readFileSync(corpusPath, 'utf8').trim().split('\n')) {
-    if (!line) continue;
-    const rank = JSON.parse(line).metadata?.correct_numeric_rank;
-    if (rank >= 1 && rank <= 6) { observed[rank]++; n++; }
+  for (const corpusPath of corpusPaths) {
+    for (const line of readFileSync(corpusPath, 'utf8').trim().split('\n')) {
+      if (!line) continue;
+      const rank = JSON.parse(line).metadata?.correct_numeric_rank;
+      if (rank >= 1 && rank <= 6) { observed[rank]++; n++; }
+    }
   }
   const weights = [0, ...RANK_DRAW_WEIGHTS];
   const target = 1 / 6;
   for (let r = 1; r <= 6; r++) {
     const achieved = observed[r] / n;
-    if (achieved > 1e-9) weights[r] *= (target / achieved) ** 0.6;
+    if (achieved > 1e-9) weights[r] *= (target / achieved) ** 0.75;
   }
   const sum = weights.slice(1).reduce((a, b) => a + b, 0);
   const refined = weights.slice(1).map(w => Number((w / sum * 6).toFixed(4)));
-  console.error(`refined against ${n} published questions`);
+  console.error(`refined against ${n} published questions from ${corpusPaths.length} corpus file(s)`);
   console.error('observed %:', observed.slice(1).map(v => (100 * v / n).toFixed(1)).join(' '));
   console.error('refined weights:', refined.join(', '));
   console.log(`// Refined by tools/calibrate-rank.mjs --refine on ${new Date().toISOString().slice(0, 10)}

@@ -74,6 +74,9 @@ export class NumericalQuestionGeneratorEngine {
       // templates cannot meet them the session reports a diversity warning
       // instead of spinning in a retry loop.
       preferredTemplateRepeatsPer50: config.preferredTemplateRepeatsPer50 ?? 2,
+      // The ceiling a single-difficulty session may reach before the engine
+      // reports a diversity limitation rather than quietly repeating further.
+      maxTemplateRepeatsPerSession: config.maxTemplateRepeatsPerSession ?? 3,
       slidingWindow: config.slidingWindow ?? 20,
       preferredRepeatsPerWindow: config.preferredRepeatsPerWindow ?? 1,
       diversityAttempts: config.diversityAttempts ?? 24,
@@ -267,15 +270,30 @@ export class NumericalQuestionGeneratorEngine {
 
     const questions = [];
     const fingerprints = new Set();
-    const templateCounts = new Map();
-    const recentTemplates = [];
+    // Section 41: a template asked in a genuinely different direction counts as
+    // diversity, while changing only the names or the numbers does not. So the
+    // repetition preference is measured on (template, asked unknown), which is
+    // what keeps a family holding a single hard template from filling its slots
+    // with the same reasoning over and over.
+    const variantCounts = new Map();
+    const recentVariants = [];
     const diversityWarnings = [];
     const useRecentMemory = options.useRecentSessionMemory !== false;
 
     for (let i = 0; i < count; i++) {
       let chosen = null;
       let relaxed = null;
+      // Section 13-B / 17-C. The repetition preference is relaxed in stages
+      // rather than abandoned: the sliding window first, then the per-session
+      // cap up to the hard ceiling, and only past that is the item accepted
+      // with a diversity warning.
+      const stages = [
+        {cap: this.config.preferredTemplateRepeatsPer50, window: this.config.preferredRepeatsPerWindow},
+        {cap: this.config.maxTemplateRepeatsPerSession, window: this.config.preferredRepeatsPerWindow},
+        {cap: this.config.maxTemplateRepeatsPerSession, window: Infinity}
+      ];
       for (let retry = 0; retry < this.config.diversityAttempts; retry++) {
+        const stage = stages[Math.min(stages.length - 1, Math.floor(retry / Math.ceil(this.config.diversityAttempts / stages.length)))];
         let q;
         try {
           q = this.generateQuestion({
@@ -295,14 +313,19 @@ export class NumericalQuestionGeneratorEngine {
         if (fingerprints.has(fingerprint)) continue;
         if (useRecentMemory && this._recentFingerprints.includes(fingerprint)) continue;
 
-        relaxed = relaxed || {q, fingerprint};
-        const used = templateCounts.get(q.generator_id) || 0;
-        const inWindow = recentTemplates.slice(-this.config.slidingWindow)
-          .filter(t => t === q.generator_id).length;
-        // Preferences: honoured when the stock allows, relaxed when it cannot.
-        if (used >= this.config.preferredTemplateRepeatsPer50 && count <= 50) continue;
-        if (inWindow >= this.config.preferredRepeatsPerWindow) continue;
-        chosen = {q, fingerprint};
+        const variant = `${q.generator_id}|${q.metadata?.asked_unknown ?? 'default'}`;
+        const used = variantCounts.get(variant) || 0;
+        const inWindow = recentVariants.slice(-this.config.slidingWindow)
+          .filter(t => t === variant).length;
+        // Keep the best fallback seen so far: one that still respects the hard
+        // ceiling is preferred over one that does not.
+        if (!relaxed || (relaxed.used >= this.config.maxTemplateRepeatsPerSession && used < this.config.maxTemplateRepeatsPerSession)) {
+          relaxed = {q, fingerprint, used, variant};
+        }
+        // Preferences: honoured when the stock allows, relaxed in stages when not.
+        if (count <= 50 && used >= stage.cap) continue;
+        if (inWindow >= stage.window) continue;
+        chosen = {q, fingerprint, variant};
         break;
       }
 
@@ -322,8 +345,8 @@ export class NumericalQuestionGeneratorEngine {
       }
 
       fingerprints.add(chosen.fingerprint);
-      templateCounts.set(chosen.q.generator_id, (templateCounts.get(chosen.q.generator_id) || 0) + 1);
-      recentTemplates.push(chosen.q.generator_id);
+      variantCounts.set(chosen.variant, (variantCounts.get(chosen.variant) || 0) + 1);
+      recentVariants.push(chosen.variant);
       questions.push({...chosen.q, practice_number: i + 1});
     }
 
@@ -384,6 +407,7 @@ export class NumericalQuestionGeneratorEngine {
     const rankCounts = {};
     const outlierPositions = [];
     const templateCounts = {};
+    const variantCounts = {};
 
     questions.forEach((q, i) => {
       const check = validateQuestion(q);
@@ -393,9 +417,14 @@ export class NumericalQuestionGeneratorEngine {
       if (fingerprints.has(fingerprint)) errors.push({index: i + 1, errors: [REASON.DUPLICATE_FINGERPRINT]});
       fingerprints.add(fingerprint);
 
-      // Section 31: the same parameters under the same reasoning graph are the
-      // same question even if the fingerprint fields were to drift apart.
-      const paramKey = `${q.family}|${q.metadata?.reasoning_graph ?? ''}|${JSON.stringify(q.metadata?.parameters ?? {})}`;
+      // Section 31: the same parameters under the same reasoning graph and the
+      // same asked unknown are the same question, even if the fingerprint fields
+      // were to drift apart. Two different templates that happen to share a
+      // parameter shape are not duplicates, so the template is part of the key.
+      const paramKey = [
+        q.family, q.generator_id, q.metadata?.asked_unknown ?? '',
+        q.metadata?.reasoning_graph ?? '', JSON.stringify(q.metadata?.parameters ?? {})
+      ].join('|');
       if (paramGraphKeys.has(paramKey)) errors.push({index: i + 1, errors: [REASON.DUPLICATE_FINGERPRINT]});
       paramGraphKeys.add(paramKey);
 
@@ -403,6 +432,8 @@ export class NumericalQuestionGeneratorEngine {
       const rank = q.metadata?.correct_numeric_rank;
       if (rank) rankCounts[rank] = (rankCounts[rank] || 0) + 1;
       templateCounts[q.generator_id] = (templateCounts[q.generator_id] || 0) + 1;
+      const variant = `${q.generator_id}|${q.metadata?.asked_unknown ?? 'default'}`;
+      variantCounts[variant] = (variantCounts[variant] || 0) + 1;
       if (q.family === 'odd_one_out' && q.metadata?.outlier_display_position) {
         outlierPositions.push(q.metadata.outlier_display_position);
       }
@@ -412,7 +443,7 @@ export class NumericalQuestionGeneratorEngine {
     const spread = Math.max(...counts) - Math.min(...counts);
     if (questions.length >= 6 && spread > 3) warnings.push('answer_key_distribution_spread_gt_3');
     if (outlierPositions.length >= 4 && new Set(outlierPositions).size === 1) warnings.push('odd_one_out_position_leak');
-    const overused = Object.entries(templateCounts)
+    const overused = Object.entries(variantCounts)
       .filter(([, n]) => n > this.config.preferredTemplateRepeatsPer50 && questions.length <= 50);
     if (overused.length) warnings.push(`template_repetition_above_target:${overused.map(([t, n]) => `${t}x${n}`).join(',')}`);
 
@@ -423,7 +454,9 @@ export class NumericalQuestionGeneratorEngine {
       key_counts: keyCounts,
       numeric_rank_counts: rankCounts,
       distinct_templates: Object.keys(templateCounts).length,
+      distinct_reasoning_variants: Object.keys(variantCounts).length,
       template_counts: templateCounts,
+      variant_counts: variantCounts,
       odd_one_out_positions: outlierPositions
     };
   }

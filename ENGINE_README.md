@@ -1,4 +1,4 @@
-# Numerical Question Generator Engine v1.2.1
+# Numerical Question Generator Engine v1.3.0
 
 محرك مستقل للتدريب العددي المتجدد، مصمم للدمج لاحقًا داخل التطبيق الأساسي دون المساس بالمحاكيات الثابتة.
 
@@ -25,7 +25,7 @@
 - 16 عائلة.
 - 107 قوالب/مولدات فرعية.
 - 6 خيارات لكل سؤال.
-- Solver + distractor generation + explanation + Quality Gate.
+- Solver + independent oracle + validation pipeline + distractor provenance + explanation derivation.
 - يعمل بالكامل داخل المتصفح دون API أو اتصال إنترنت بعد تحميل الملفات.
 
 ## تشغيل محلي
@@ -39,7 +39,9 @@ python3 -m http.server 8765
 ## فحص المحرك
 
 ```bash
-node tests/stress.mjs
+npm run qa          # بوابة اللغة + 88 اختبارًا + فحص الإجهاد القديم
+npm run qa:corpus   # يولّد 10,000 سؤال + 100 جلسة صعبة كبيانات خام
+node tools/metrics.mjs   # يعيد حساب كل مقاييس الجودة من البيانات الخام
 ```
 
 ## ملفات الدمج الأساسية لاحقًا
@@ -55,3 +57,52 @@ node tests/stress.mjs
 - القيمة الافتراضية: **مختلط**، وتوزّع الأسئلة على جميع العائلات بصورة متوازنة.
 - يمكن اختيار عائلة واحدة مباشرة من القائمة، أو «نقاط ضعفي»، أو «تخصيص عدة عائلات…» لفتح نافذة اختيار خفيفة.
 - لا توجد قائمة عائلات طويلة ظاهرة في الصفحة الرئيسية.
+
+
+## تحديث v1.3.0 — ترقية الموثوقية والجودة القياسية
+
+نطاق الترقية المولّد وحده: لم تتغير الواجهة ولا التصميم ولا التنقل ولا وضعا
+التدريب والامتحان ولا النتائج ولا تصدير PDF ولا أسماء العائلات ولا عدد الخيارات
+ولا أي حقل قائم في عقد السؤال.
+
+### ما أُضيف داخل `metadata` (كله اختياري)
+
+```
+fingerprint · asked_unknown · stage_count · reasoning_graph
+complexity_score · complexity_band · complexity_factors · empirical_difficulty
+correct_numeric_rank · feasible_rank_range · options_meta
+target_skill · target_misconception · validation_meta
+```
+
+`options_meta[letter]` يحمل `{correct, value, misconceptionId, derivation}` لكل
+خيار، و`explanation.distractor_analysis[letter]` صار نصًا خاصًا بذلك الخيار
+مبنيًا من الخطأ الذي أنتجه ومن أرقام السؤال نفسه.
+
+### طبقات التحقق
+
+```
+generateCandidate()
+→ validateTextMatchesParams()   مطابقة أرقام النص لمعطيات الحل
+→ validateMathematics()         أوراكل مستقل: بحث شامل أو تحقق من قيد
+→ validateUniqueAnswer()        خيار صحيح واحد لا أكثر ولا أقل
+→ validateAmbiguity()           مسح مكتبة القواعد في «العدد الذي لا ينتمي»
+→ validatePedagogy()            انحلال، نسب، واقعية تحريرية
+→ validateLanguage()            العدد والمعدود عبر معجم مركزي
+→ validateExplanation()         إعادة تقييم كل معادلة + مصدر كل قيمة
+→ validateDistractors()         أصل معرفي لكل مشتت
+→ validateFingerprint()         منع التكرار داخل الجلسة
+→ publish()
+```
+
+عند الرفض يُعاد التوليد حتى 50 محاولة، وعند الاستنفاد يُرفع خطأ بنيوي
+(`QUESTION_GENERATION_EXHAUSTED`) ولا يُنشر سؤال معطوب.
+
+### واجهات جديدة على المحرك
+
+```js
+engine.getAnalytics()                          // معدل الرفض، المحاولات، الزمن
+engine.availableDistinctTemplates(difficulty)  // مخزون القوالب قبل طلب الجلسة
+set.validation.diversity_warnings              // تحذير تنوّع بدل حلقة لا تنتهي
+```
+
+تفاصيل نتائج الفحص في `QA_v1.3.0.md`.

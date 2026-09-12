@@ -40,12 +40,19 @@ function arithmetic(ctx) {
   const step = rng.pick([3, 4, 5, 6, 7, 8, 9]) * (rng.bool(0.25) ? -1 : 1);
   const seq = [start];
   for (let i = 1; i < 5; i++) seq.push(seq.at(-1) + step);
-  // Section 17-A: sometimes the gap is in the middle rather than at the end.
-  const askMiddle = rng.bool(0.3);
+  // Section 17-A / 27: the gap moves — the term after the run, a term inside it,
+  // or the term before it. Changing the numbers is not diversity; changing which
+  // term is unknown is.
+  const direction = rng.pick(['nextTerm', 'missingMiddleTerm', 'previousTerm']);
+  const askMiddle = direction === 'missingMiddleTerm';
+  const askPrevious = direction === 'previousTerm';
   const hiddenIndex = askMiddle ? rng.int(1, 3) : 5;
-  const correct = askMiddle ? seq[hiddenIndex] : seq.at(-1) + step;
+  const correct = askMiddle ? seq[hiddenIndex]
+    : askPrevious ? seq[0] - step
+    : seq.at(-1) + step;
   const shown = askMiddle
     ? seq.map((v, i) => (i === hiddenIndex ? '؟' : v)).join('، ')
+    : askPrevious ? `؟، ${seq.join('، ')}`
     : `${seq.join('، ')}، ؟`;
   const known = askMiddle ? seq.filter((_, i) => i !== hiddenIndex) : seq;
   const distractors = usable([
@@ -59,9 +66,11 @@ function arithmetic(ctx) {
   ], {allowNegative: true});
   return buildBase(ctx, {
     templateId: 'SEQ_E_ARITH',
-    subskill: askMiddle ? 'فرق ثابت مع حد مفقود في الوسط' : 'فرق ثابت',
+    subskill: askMiddle ? 'فرق ثابت مع حد مفقود في الوسط'
+      : askPrevious ? 'فرق ثابت مع الحد السابق' : 'فرق ثابت',
     difficulty: 'easy',
-    question: askMiddle ? 'ما العدد المفقود في المتتالية؟' : 'ما العدد التالي في المتتالية؟',
+    question: askMiddle ? 'ما العدد المفقود في المتتالية؟'
+      : askPrevious ? 'ما العدد السابق في المتتالية؟' : 'ما العدد التالي في المتتالية؟',
     displayExpression: shown,
     correct, distractors, format: v => num(v),
     steps: [
@@ -69,7 +78,9 @@ function arithmetic(ctx) {
       `الفرق ثابت ويساوي ${step}.`,
       askMiddle
         ? `الحد المفقود = ${seq[hiddenIndex - 1]} + ${step} = ${correct}.`
-        : `الحد التالي = ${seq.at(-1)} + ${step} = ${correct}.`
+        : askPrevious
+          ? `الحد السابق = ${seq[0]} − ${step} = ${correct}.`
+          : `الحد التالي = ${seq.at(-1)} + ${step} = ${correct}.`
     ],
     howToStart: 'ابدأ بالفروق بين الحدود.',
     remember: 'إذا كان الفرق ثابتًا، لا تبحث عن قاعدة أعقد.',
@@ -80,9 +91,11 @@ function arithmetic(ctx) {
       kind: 'constraint', answerKind: 'number',
       constraints: askMiddle
         ? [eq(sub(X, seq[hiddenIndex - 1]), step), eq(sub(seq[hiddenIndex + 1], X), step)]
-        : allTermsConstraints(seq, (a, b) => eq(sub(b, a), step), eq(sub(X, seq.at(-1)), step))
+        : askPrevious
+          ? allTermsConstraints(seq, (a, b) => eq(sub(b, a), step), eq(sub(seq[0], X), step))
+          : allTermsConstraints(seq, (a, b) => eq(sub(b, a), step), eq(sub(X, seq.at(-1)), step))
     },
-    askedUnknown: askMiddle ? 'missingMiddleTerm' : 'nextTerm', stageCount: 1,
+    askedUnknown: direction, stageCount: 1,
     pedagogy: {
       targetSkill: 'CONSTANT_DIFFERENCE', targetMisconception: 'APPLIED_STEP_TWICE',
       wrongMethodValue: correct + step
@@ -113,6 +126,23 @@ function geometric(ctx) {
   // Section 10: when subtracting the ratio happens to land on the key, the
   // item stops separating "multiply/divide" from "add/subtract".
   if (seq.at(-1) + (divide ? -factor : factor) === correct) return geometric(ctx);
+  // Section 17-A / 27: rotate which term is unknown.
+  // "The term before" only makes sense when it is a whole number: a run that
+  // starts at 3 and multiplies by 2 has no integer predecessor.
+  const previousIsWhole = divide ? true : seq[0] % factor === 0;
+  const directions = seq.length >= 4
+    ? (previousIsWhole ? ['nextTerm', 'missingMiddleTerm', 'previousTerm'] : ['nextTerm', 'missingMiddleTerm'])
+    : ['nextTerm'];
+  const direction = rng.pick(directions);
+  const askMiddle = direction === 'missingMiddleTerm';
+  const askPrevious = direction === 'previousTerm';
+  const hiddenIndex = askMiddle ? rng.int(1, seq.length - 2) : -1;
+  if (askMiddle) correct = seq[hiddenIndex];
+  else if (askPrevious) correct = divide ? seq[0] * factor : seq[0] / factor;
+  const shown = askMiddle
+    ? seq.map((v, i) => (i === hiddenIndex ? '؟' : v)).join('، ')
+    : askPrevious ? `؟، ${seq.join('، ')}`
+    : `${seq.join('، ')}، ؟`;
   const distractors = usable([
     mk(correct * factor, 'APPLIED_STEP_TWICE', `${correct} × ${factor}`),
     mk(correct / factor, 'APPLIED_PREVIOUS_STEP', `${correct} ÷ ${factor}`),
@@ -128,16 +158,25 @@ function geometric(ctx) {
   ]);
   return buildBase(ctx, {
     templateId: 'SEQ_E_GEO',
-    subskill: divide ? 'قسمة ثابتة' : 'ضرب ثابت',
+    subskill: `${divide ? 'قسمة ثابتة' : 'ضرب ثابت'}${askMiddle ? ' مع حد مفقود' : askPrevious ? ' مع الحد السابق' : ''}`,
     difficulty: 'easy',
-    question: 'ما العدد التالي في المتتالية؟',
-    displayExpression: `${seq.join('، ')}، ؟`,
+    question: askMiddle ? 'ما العدد المفقود في المتتالية؟'
+      : askPrevious ? 'ما العدد السابق في المتتالية؟' : 'ما العدد التالي في المتتالية؟',
+    displayExpression: shown,
     correct, distractors, format: v => num(v),
-    steps: [
-      `نفحص النسبة بين كل حدين: ${seq.slice(1).map((v, i) => divide ? `${seq[i]} ÷ ${v} = ${seq[i] / v}` : `${v} ÷ ${seq[i]} = ${v / seq[i]}`).join('، ')}.`,
-      `العامل ثابت ويساوي ${factor}.`,
-      `الحد التالي = ${seq.at(-1)} ${divide ? '÷' : '×'} ${factor} = ${correct}.`
-    ],
+    steps: askMiddle
+      ? [
+        `نفحص النسبة بين الحدود المعلومة المتجاورة، فنجد عاملًا ثابتًا يساوي ${factor}.`,
+        `الحد المفقود = ${seq[hiddenIndex - 1]} ${divide ? '÷' : '×'} ${factor} = ${correct}.`,
+        `وللتأكد: ${correct} ${divide ? '÷' : '×'} ${factor} = ${seq[hiddenIndex + 1]}.`
+      ]
+      : [
+        `نفحص النسبة بين كل حدين: ${seq.slice(1).map((v, i) => divide ? `${seq[i]} ÷ ${v} = ${seq[i] / v}` : `${v} ÷ ${seq[i]} = ${v / seq[i]}`).join('، ')}.`,
+        `العامل ثابت ويساوي ${factor}.`,
+        askPrevious
+          ? `الحد السابق = ${seq[0]} ${divide ? '×' : '÷'} ${factor} = ${correct}.`
+          : `الحد التالي = ${seq.at(-1)} ${divide ? '÷' : '×'} ${factor} = ${correct}.`
+      ],
     howToStart: 'افحص الضرب أو القسمة إذا لم يكن الفرق ثابتًا.',
     remember: 'في المتتاليات الهندسية، العملية نفسها تتكرر بين كل حدين.',
     fastMethod: `${divide ? 'اقسم' : 'اضرب'} في ${factor} مرة واحدة.`,
@@ -145,13 +184,19 @@ function geometric(ctx) {
     parameters: {firstTerm: seq[0], commonRatio: factor, shownTerms: seq},
     oracle: {
       kind: 'constraint', answerKind: 'number',
-      constraints: allTermsConstraints(
-        seq,
-        (a, b) => divide ? eq(a, mul(b, factor)) : eq(b, mul(a, factor)),
-        divide ? eq(seq.at(-1), mul(X, factor)) : eq(X, mul(seq.at(-1), factor))
-      )
+      constraints: askMiddle
+        ? (divide
+          ? [eq(seq[hiddenIndex - 1], mul(X, factor)), eq(X, mul(seq[hiddenIndex + 1], factor))]
+          : [eq(X, mul(seq[hiddenIndex - 1], factor)), eq(seq[hiddenIndex + 1], mul(X, factor))])
+        : allTermsConstraints(
+          seq,
+          (a, b) => divide ? eq(a, mul(b, factor)) : eq(b, mul(a, factor)),
+          askPrevious
+            ? (divide ? eq(X, mul(seq[0], factor)) : eq(seq[0], mul(X, factor)))
+            : (divide ? eq(seq.at(-1), mul(X, factor)) : eq(X, mul(seq.at(-1), factor)))
+        )
     },
-    askedUnknown: 'nextTerm', stageCount: 1,
+    askedUnknown: direction, stageCount: 1,
     pedagogy: {
       targetSkill: 'CONSTANT_RATIO', targetMisconception: 'APPLIED_OPERATION_IN_REVERSE',
       wrongMethodValue: seq.at(-1) + (divide ? -factor : factor)
@@ -170,7 +215,12 @@ function increasingDifferences(ctx) {
   const diffs = [];
   let d = diffStart;
   for (let i = 0; i < 4; i++) { diffs.push(d); seq.push(seq.at(-1) + d); d += diffStep; }
-  const correct = seq.at(-1) + d;
+  const askMiddle = rng.bool(0.5);
+  const hiddenIndex = askMiddle ? rng.int(1, seq.length - 2) : -1;
+  const correct = askMiddle ? seq[hiddenIndex] : seq.at(-1) + d;
+  const shown = askMiddle
+    ? seq.map((v, i) => (i === hiddenIndex ? '؟' : v)).join('، ')
+    : `${seq.join('، ')}، ؟`;
   const distractors = usable([
     mk(seq.at(-1) + d - diffStep, 'APPLIED_PREVIOUS_STEP', `${seq.at(-1)} + ${d - diffStep}`),
     mk(seq.at(-1) + d + diffStep, 'APPLIED_STEP_TWICE', `${seq.at(-1)} + ${d + diffStep}`),
@@ -182,16 +232,22 @@ function increasingDifferences(ctx) {
   ]);
   return buildBase(ctx, {
     templateId: 'SEQ_M_INC_DIFF',
-    subskill: 'فروق تتزايد بنمط ثابت',
+    subskill: askMiddle ? 'فروق تتزايد مع حد مفقود' : 'فروق تتزايد بنمط ثابت',
     difficulty: 'medium',
-    question: 'ما العدد التالي في المتتالية؟',
-    displayExpression: `${seq.join('، ')}، ؟`,
+    question: askMiddle ? 'ما العدد المفقود في المتتالية؟' : 'ما العدد التالي في المتتالية؟',
+    displayExpression: shown,
     correct, distractors, format: v => num(v),
-    steps: [
-      `نحسب الفروق: ${differenceLine(seq)}.`,
-      `كل فرق يزيد عن سابقه بمقدار ${diffStep}، فالفرق التالي = ${diffs.at(-1)} + ${diffStep} = ${d}.`,
-      `الحد التالي = ${seq.at(-1)} + ${d} = ${correct}.`
-    ],
+    steps: askMiddle
+      ? [
+        `الفروق تبدأ من ${diffStart} وتزيد ${diffStep} في كل خطوة.`,
+        `الفرق الذي يسبق الحد المفقود = ${diffStart} + ${diffStep} × ${hiddenIndex - 1} = ${diffStart + diffStep * (hiddenIndex - 1)}.`,
+        `الحد المفقود = ${seq[hiddenIndex - 1]} + ${diffStart + diffStep * (hiddenIndex - 1)} = ${correct}.`
+      ]
+      : [
+        `نحسب الفروق: ${differenceLine(seq)}.`,
+        `كل فرق يزيد عن سابقه بمقدار ${diffStep}، فالفرق التالي = ${diffs.at(-1)} + ${diffStep} = ${d}.`,
+        `الحد التالي = ${seq.at(-1)} + ${d} = ${correct}.`
+      ],
     howToStart: 'احسب الفروق أولًا، ثم ابحث عن نمط داخل الفروق نفسها.',
     remember: 'قد يكون النمط في الفروق وليس في الحدود مباشرة.',
     fastMethod: `الفروق تزيد ${diffStep} كل مرة؛ خذ الفرق التالي فقط.`,
@@ -199,12 +255,17 @@ function increasingDifferences(ctx) {
     parameters: {firstTerm: start, firstDifference: diffStart, differenceStep: diffStep, shownTerms: seq},
     oracle: {
       kind: 'constraint', answerKind: 'number',
-      constraints: [
-        ...seq.slice(1).map((v, i) => eq(sub(v, seq[i]), diffStart + i * diffStep)),
-        eq(sub(X, seq.at(-1)), d)
-      ]
+      constraints: askMiddle
+        ? [
+          eq(sub(X, seq[hiddenIndex - 1]), diffStart + (hiddenIndex - 1) * diffStep),
+          eq(sub(seq[hiddenIndex + 1], X), diffStart + hiddenIndex * diffStep)
+        ]
+        : [
+          ...seq.slice(1).map((v, i) => eq(sub(v, seq[i]), diffStart + i * diffStep)),
+          eq(sub(X, seq.at(-1)), d)
+        ]
     },
-    askedUnknown: 'nextTerm', stageCount: 2,
+    askedUnknown: askMiddle ? 'missingMiddleTerm' : 'nextTerm', stageCount: 2,
     pedagogy: {
       targetSkill: 'SECOND_DIFFERENCE', targetMisconception: 'APPLIED_PREVIOUS_STEP',
       wrongMethodValue: seq.at(-1) + d - diffStep
@@ -275,7 +336,9 @@ function interleaved(ctx) {
   const a0 = rng.int(2, 9);
   const da = rng.pick([2, 3, 4, 5]);
   const b0 = rng.int(24, 50);
-  const db = -rng.pick([3, 4, 5, 6]);
+  // Section 10: equal step magnitudes make "continue the other run" land on the
+  // same value, and the item stops testing whether the runs were separated.
+  const db = -rng.pick([3, 4, 5, 6].filter(v => v !== da));
   const seq = [];
   for (let i = 0; i < 4; i++) { seq.push(a0 + i * da); seq.push(b0 + i * db); }
   seq.pop(); // 7 terms: odd positions are the rising run, even the falling one
@@ -289,7 +352,10 @@ function interleaved(ctx) {
     mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
     mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
     mk(correct + Math.abs(db), 'APPLIED_PREVIOUS_STEP', `${correct} + ${Math.abs(db)}`),
-    mk(seq.at(-1) + da, 'CONTINUED_WRONG_SUBSEQUENCE', `${seq.at(-1)} + ${da}`)
+    mk(seq.at(-1) + da, 'CONTINUED_WRONG_SUBSEQUENCE', `${seq.at(-1)} + ${da}`),
+    mk(correct + 2 * Math.abs(db), 'APPLIED_PREVIOUS_STEP', `${correct} + ${2 * Math.abs(db)}`),
+    mk(correct - Math.abs(db), 'APPLIED_STEP_TWICE', `${correct} − ${Math.abs(db)}`),
+    mk(oddRun.at(-1) + da, 'CONTINUED_WRONG_SUBSEQUENCE', `${oddRun.at(-1)} + ${da}`)
   ], {allowNegative: true});
   return buildBase(ctx, {
     templateId: 'SEQ_M_INTERLEAVED',
@@ -333,7 +399,12 @@ function doublingDifferences(ctx) {
   let d = d0;
   const diffs = [];
   for (let i = 0; i < 4; i++) { diffs.push(d); seq.push(seq.at(-1) + d); d *= 2; }
-  const correct = seq.at(-1) + d;
+  const askMiddle = rng.bool(0.5);
+  const hiddenIndex = askMiddle ? rng.int(1, seq.length - 2) : -1;
+  const correct = askMiddle ? seq[hiddenIndex] : seq.at(-1) + d;
+  const shown = askMiddle
+    ? seq.map((v, i) => (i === hiddenIndex ? '؟' : v)).join('، ')
+    : `${seq.join('، ')}، ؟`;
   const distractors = usable([
     mk(seq.at(-1) + d / 2, 'APPLIED_PREVIOUS_STEP', `${seq.at(-1)} + ${d / 2}`),
     mk(correct + d / 2, 'OFF_BY_ONE_STEP', `${correct} + ${d / 2}`),
@@ -345,16 +416,22 @@ function doublingDifferences(ctx) {
   ]);
   return buildBase(ctx, {
     templateId: 'SEQ_M_DOUBLE_DIFF',
-    subskill: 'فروق تتضاعف',
+    subskill: askMiddle ? 'فروق تتضاعف مع حد مفقود' : 'فروق تتضاعف',
     difficulty: 'medium',
-    question: 'ما العدد التالي في المتتالية؟',
-    displayExpression: `${seq.join('، ')}، ؟`,
+    question: askMiddle ? 'ما العدد المفقود في المتتالية؟' : 'ما العدد التالي في المتتالية؟',
+    displayExpression: shown,
     correct, distractors, format: v => num(v),
-    steps: [
-      `نحسب الفروق: ${differenceLine(seq)}.`,
-      `كل فرق ضعف السابق، فالفرق التالي = ${diffs.at(-1)} × 2 = ${d}.`,
-      `الحد التالي = ${seq.at(-1)} + ${d} = ${correct}.`
-    ],
+    steps: askMiddle
+      ? [
+        `الفروق بين الحدود تتضاعف، وأول فرق = ${d0}.`,
+        `الفرق الذي يسبق الحد المفقود = ${[d0, ...Array(hiddenIndex - 1).fill(2)].join(' × ')} = ${d0 * 2 ** (hiddenIndex - 1)}.`,
+        `الحد المفقود = ${seq[hiddenIndex - 1]} + ${d0 * 2 ** (hiddenIndex - 1)} = ${correct}.`
+      ]
+      : [
+        `نحسب الفروق: ${differenceLine(seq)}.`,
+        `كل فرق ضعف السابق، فالفرق التالي = ${diffs.at(-1)} × 2 = ${d}.`,
+        `الحد التالي = ${seq.at(-1)} + ${d} = ${correct}.`
+      ],
     howToStart: 'احسب الفروق ولاحظ هل تتضاعف.',
     remember: 'عندما تتضاعف الفروق، أضف الفرق المضاعف إلى الحد الأخير.',
     fastMethod: 'ضاعف آخر فرق فقط، لا الحد الأخير.',
@@ -362,12 +439,17 @@ function doublingDifferences(ctx) {
     parameters: {firstTerm: start, firstDifference: d0, shownTerms: seq},
     oracle: {
       kind: 'constraint', answerKind: 'number',
-      constraints: [
-        ...seq.slice(1).map((v, i) => eq(sub(v, seq[i]), d0 * (2 ** i))),
-        eq(sub(X, seq.at(-1)), d)
-      ]
+      constraints: askMiddle
+        ? [
+          eq(sub(X, seq[hiddenIndex - 1]), d0 * (2 ** (hiddenIndex - 1))),
+          eq(sub(seq[hiddenIndex + 1], X), d0 * (2 ** hiddenIndex))
+        ]
+        : [
+          ...seq.slice(1).map((v, i) => eq(sub(v, seq[i]), d0 * (2 ** i))),
+          eq(sub(X, seq.at(-1)), d)
+        ]
     },
-    askedUnknown: 'nextTerm', stageCount: 2,
+    askedUnknown: askMiddle ? 'missingMiddleTerm' : 'nextTerm', stageCount: 2,
     pedagogy: {
       targetSkill: 'DOUBLING_DIFFERENCE', targetMisconception: 'APPLIED_PREVIOUS_STEP',
       wrongMethodValue: seq.at(-1) + d / 2
@@ -451,7 +533,12 @@ function recurrence(ctx) {
   const b = rng.int(2, 5);
   const seq = [a, b];
   while (seq.length < 5) seq.push(2 * seq.at(-1) + seq.at(-2));
-  const correct = 2 * seq.at(-1) + seq.at(-2);
+  const askMiddle = rng.bool(0.5);
+  const hiddenIndex = askMiddle ? rng.pick([2, 3]) : -1;
+  const correct = askMiddle ? seq[hiddenIndex] : 2 * seq.at(-1) + seq.at(-2);
+  const shown = askMiddle
+    ? seq.map((v, i) => (i === hiddenIndex ? '؟' : v)).join('، ')
+    : `${seq.join('، ')}، ؟`;
   const distractors = usable([
     mk(seq.at(-1) + seq.at(-2), 'TREATED_PATTERN_AS_CONSTANT', `${seq.at(-1)} + ${seq.at(-2)}`),
     mk(2 * seq.at(-1), 'MISSED_ONE_STAGE', `2 × ${seq.at(-1)}`),
@@ -463,16 +550,22 @@ function recurrence(ctx) {
   ]);
   return buildBase(ctx, {
     templateId: 'SEQ_H_RECURRENCE',
-    subskill: 'اعتماد كل حد على الحدين السابقين',
+    subskill: askMiddle ? 'اعتماد كل حد على الحدين السابقين مع حد مفقود' : 'اعتماد كل حد على الحدين السابقين',
     difficulty: 'hard',
-    question: 'ما العدد التالي في المتتالية؟',
-    displayExpression: `${seq.join('، ')}، ؟`,
+    question: askMiddle ? 'ما العدد المفقود في المتتالية؟' : 'ما العدد التالي في المتتالية؟',
+    displayExpression: shown,
     correct, distractors, format: v => num(v),
-    steps: [
-      `ابتداءً من الحد الثالث، كل حد = ضعف الحد السابق + الحد الذي قبله.`,
-      `نتحقق: 2 × ${seq[1]} + ${seq[0]} = ${seq[2]}، و2 × ${seq[2]} + ${seq[1]} = ${seq[3]}، و2 × ${seq[3]} + ${seq[2]} = ${seq[4]}.`,
-      `الحد التالي = 2 × ${seq[4]} + ${seq[3]} = ${correct}.`
-    ],
+    steps: askMiddle
+      ? [
+        `ابتداءً من الحد الثالث، كل حد = ضعف الحد السابق + الحد الذي قبله.`,
+        `الحد المفقود = 2 × ${seq[hiddenIndex - 1]} + ${seq[hiddenIndex - 2]} = ${correct}.`,
+        `وللتأكد: 2 × ${correct} + ${seq[hiddenIndex - 1]} = ${seq[hiddenIndex + 1]}.`
+      ]
+      : [
+        `ابتداءً من الحد الثالث، كل حد = ضعف الحد السابق + الحد الذي قبله.`,
+        `نتحقق: 2 × ${seq[1]} + ${seq[0]} = ${seq[2]}، و2 × ${seq[2]} + ${seq[1]} = ${seq[3]}، و2 × ${seq[3]} + ${seq[2]} = ${seq[4]}.`,
+        `الحد التالي = 2 × ${seq[4]} + ${seq[3]} = ${correct}.`
+      ],
     howToStart: 'إذا فشلت الفروق والتناوب، افحص علاقة الحد بآخر حدين قبله.',
     remember: 'بعض المتتاليات تعتمد على حدين لا على حد واحد.',
     fastMethod: 'ضاعف الحد الأخير ثم أضف الذي قبله.',
@@ -480,12 +573,17 @@ function recurrence(ctx) {
     parameters: {firstTerm: a, secondTerm: b, shownTerms: seq},
     oracle: {
       kind: 'constraint', answerKind: 'number',
-      constraints: [
-        ...[2, 3, 4].map(i => eq(seq[i], add(mul(2, seq[i - 1]), seq[i - 2]))),
-        eq(X, add(mul(2, seq[4]), seq[3]))
-      ]
+      constraints: askMiddle
+        ? [
+          eq(X, add(mul(2, seq[hiddenIndex - 1]), seq[hiddenIndex - 2])),
+          eq(seq[hiddenIndex + 1], add(mul(2, X), seq[hiddenIndex - 1]))
+        ]
+        : [
+          ...[2, 3, 4].map(i => eq(seq[i], add(mul(2, seq[i - 1]), seq[i - 2]))),
+          eq(X, add(mul(2, seq[4]), seq[3]))
+        ]
     },
-    askedUnknown: 'nextTerm', stageCount: 2,
+    askedUnknown: askMiddle ? 'missingMiddleTerm' : 'nextTerm', stageCount: 2,
     pedagogy: {
       targetSkill: 'TWO_TERM_RECURRENCE', targetMisconception: 'TREATED_PATTERN_AS_CONSTANT',
       wrongMethodValue: seq.at(-1) + seq.at(-2)
@@ -498,9 +596,13 @@ function recurrence(ctx) {
 function powersPlusIndex(ctx) {
   const {rng} = ctx;
   const basePow = rng.pick([2, 3]);
-  const n = 5;
+  // Vary how far into the powers the run starts and how many terms are shown,
+  // so the template is not two questions repeated forever.
+  const startIndex = rng.pick(basePow === 2 ? [1, 2, 3] : [1, 2]);
+  const shown = rng.pick([4, 5]);
+  const n = startIndex + shown - 1;
   const seq = [];
-  for (let i = 1; i <= n; i++) seq.push(basePow ** i + i);
+  for (let i = startIndex; i <= n; i++) seq.push(basePow ** i + i);
   const correct = basePow ** (n + 1) + (n + 1);
   const p = basePow ** (n + 1);
   const distractors = usable([
@@ -512,7 +614,7 @@ function powersPlusIndex(ctx) {
     mk(correct + basePow, 'OFF_BY_ONE_STEP', `${correct} + ${basePow}`),
     mk(p * basePow + n + 2, 'APPLIED_STEP_TWICE', `${p} × ${basePow} + ${n + 2}`)
   ]);
-  const powerLine = seq.map((v, i) => `${v} − ${i + 1} = ${v - (i + 1)}`).join('، ');
+  const powerLine = seq.map((v, i) => `${v} − ${startIndex + i} = ${v - (startIndex + i)}`).join('، ');
   return buildBase(ctx, {
     templateId: 'SEQ_H_POW_INDEX',
     subskill: 'قوة عدد مع رقم ترتيب الحد',
@@ -521,24 +623,24 @@ function powersPlusIndex(ctx) {
     displayExpression: `${seq.join('، ')}، ؟`,
     correct, distractors, format: v => num(v),
     steps: [
-      `نطرح من كل حد رقم موضعه: ${powerLine}.`,
+      `نطرح من كل حد رقم موضعه في المتتالية: ${powerLine}.`,
       `النواتج هي قوى العدد ${basePow} بالترتيب، فالقوة التالية = ${basePow ** n} × ${basePow} = ${p}.`,
-      `الحد السادس = ${p} + 6 = ${correct}.`
+      `الحد التالي = ${p} + ${n + 1} = ${correct}.`
     ],
     howToStart: 'افحص هل كل حد يجمع بين قوة معروفة ورقم موضعه.',
     remember: 'قد يكون رقم ترتيب الحد جزءًا من القاعدة.',
-    fastMethod: `احسب ${basePow} مرفوعًا للقوة السادسة ثم أضف 6.`,
+    fastMethod: `احسب ${basePow} مرفوعًا للقوة التالية ثم أضف رقم الموضع.`,
     estimatedSteps: 4, conceptTags: ['sequence', 'powers'],
-    parameters: {powerBase: basePow, shownTerms: seq},
+    parameters: {powerBase: basePow, startIndex, shownTerms: seq},
     oracle: {
       kind: 'constraint', answerKind: 'number',
       constraints: [
-        ...seq.map((v, i) => eq(sub(v, i + 1), basePow ** (i + 1))),
+        ...seq.map((v, i) => eq(sub(v, startIndex + i), basePow ** (startIndex + i))),
         eq(sub(X, n + 1), p)
       ]
     },
     askedUnknown: 'nextTerm', stageCount: 2,
-    allowedConstants: [0, 1, 2, 3, 4, 5, 6, 100],
+    allowedConstants: [0, 1, 2, 3, 4, 5, 6, 7, 8, 100],
     pedagogy: {
       targetSkill: 'POWER_PLUS_INDEX', targetMisconception: 'MISSED_ONE_STAGE',
       wrongMethodValue: p
