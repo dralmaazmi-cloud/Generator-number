@@ -332,8 +332,9 @@ function conditions() {
     const orphans = c.templatesNotInAnyFamily;
     // RC2.4 added eighteen HARD templates; the count stays pinned so a silent
     // loss is still caught.
-    // RC2.5: 127. REL_M_CHAIN6 and REL_H_COUNT_BRANCHED, the two splits.
-    return {pass: c.total === 127 && orphans.length === 0,
+    // RC2.6: 137. Ten new HARD structures in the five families the RC2.5 human
+    // calibration left with none.
+    return {pass: c.total === 137 && orphans.length === 0,
       detail: {templates: c.total, byBand: c.byBand, orphans}};
   });
 
