@@ -1,16 +1,14 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-12T16:47:37.799Z",
+  "evaluatedAt": "2026-09-12T16:51:39.253Z",
   "engineVersion": "1.4.0",
-  "headCommit": "0afb51c3c0228f586e3d68efb2fffc64be33644d",
+  "headCommit": "8118f9828837318bc83e6ae08bd09eee49c3acd0",
   "branch": "claude/rc2-implementation",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "FAIL",
+  "verdict": "PASS",
   "conditions": 27,
-  "failedConditions": [
-    "STRESS_GREEN"
-  ],
+  "failedConditions": [],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -48,8 +46,8 @@
     {
       "id": "STRESS_GREEN",
       "requirement": "The stress suite passes",
-      "pass": false,
-      "detail": "no PASS line"
+      "pass": true,
+      "detail": "PASS: 4000 single questions + 120 mixed sessions + 100 adaptive questions + PDF HTML smoke."
     },
     {
       "id": "RC1_GAINS_PRESERVED",
