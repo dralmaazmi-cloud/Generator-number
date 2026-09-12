@@ -20,10 +20,15 @@ PASSED:
   ok   scope log contains VERSION_TRACEABILITY_MISMATCH
   ok   scope log contains AR_DEFINITENESS_RENDERING
   ok   scope log contains QUICK_METHOD_NOT_GENERAL
-  ok   scope log has 21 numbered items — 21
-  ok   frozen JSON has 21 items — 21
+  ok   scope log has 23 numbered items — 23
+  ok   frozen JSON has 23 items — 23
   ok   Markdown and JSON scope ids agree exactly — same ids in the same order
   ok   every scope item carries a classification
+  ok   scope schema is the amended v2
+  ok   amendment history records both versions
+  ok   RC2-001..021 unchanged in id and defectClass by the amendment
+  ok   the two amendment items are present and typed
+  ok   the scope does not claim families remain under review
   ok   every JSON item is typed with known classifications
   ok   every JSON item carries id, defectClass, source, evidence, measuredScope, rc2Required
   ok   the observe-never-target constraint is stated in both artifacts
@@ -38,4 +43,4 @@ PASSED:
   ok   FEEDBACK metric reclassified as QA_METRIC_DEFECT
   ok   no universal narrow-answer threshold rule is asserted
 
-38 passed, 0 failed
+43 passed, 0 failed

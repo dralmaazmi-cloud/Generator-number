@@ -589,9 +589,11 @@ label, and it is blind to the two defects that most damage the Hard band.
 
 ## J. RC2 SCOPE ADDITIONS
 
-The complete, numbered inventory now lives in `RC2_SCOPE_CANDIDATES.md` — 21
-items, each with an explicit classification, none relying on a cross-reference to
-narrative. The items this review *added* to that inventory are 7–21. No
+The complete, numbered inventory lives in `RC2_SCOPE_CANDIDATES.md` and
+`RC2_SCOPE_FROZEN.json` — **23 items** (`rc2-scope-frozen-v2`), each with an
+explicit classification, none relying on a cross-reference to narrative. The items
+this review *added* to that inventory are RC2-007 to RC2-021; RC2-022 and RC2-023
+were added afterwards by formal amendment (see the addendum below). No
 implementation is proposed here.
 
 | # | Class | Classification |
@@ -611,6 +613,36 @@ implementation is proposed here.
 | 19 | `QUICK_METHOD_NOT_GENERAL` | PEDAGOGICAL_BLOCKER |
 | 20 | `RATIO_INVARIANT_ENFORCEMENT_ESCAPE` | PRODUCTION_BLOCKER |
 | 21 | `VERSION_TRACEABILITY_MISMATCH` | QA_OBSERVABILITY_BLOCKER |
+| 22 | `COMMUTATIVE_FINGERPRINT_CANONICALISATION_ESCAPE` | PRODUCTION_BLOCKER · STATISTICAL_LEAKAGE_RISK |
+| 23 | `STRUCTURAL_SEQUENCE_REASONING_SIGNATURE_GAP` | PRODUCTION_BLOCKER · STATISTICAL_LEAKAGE_RISK |
+
+### Addendum — post-reconciliation inspection (RC2-022, RC2-023)
+
+Added by formal scope amendment after this report was reconciled. **Not an
+unfinished family review**: the manual blind review is complete at 250/250. These
+are two fingerprint-canonicalisation defects found by re-inspecting the same
+frozen sample, and both were verified against it before being added.
+
+**RC2-022.** S2/07 and S2/39 are the same set `{6,10,12,14,22,26}` under
+`ODD_M_PRIME2`, same rule, same outlier `12` — and both were published in session
+S2. Their fingerprints carry an identical canonical
+`commutative:{numberSet:[6,10,12,14,22,26]}` but differ in the order-sensitive
+`named:{numbers:…}`, so the duplicate check did not fire. Corpus-wide, **259 of
+326** semantic groups (79.4%) carry more than one full fingerprint for the same
+canonical value — **875 surplus fingerprints from display order alone**, across 7
+`odd_one_out` and 3 `fractions` templates.
+
+**RC2-023.** S2/05 and S2/41 run the identical chain
+`ADD(4) MUL(2) ADD(5) MUL(3) ADD(6) MUL(4) ADD(7)` and differ only in `firstTerm`
+(7 vs 4) — also both in session S2. `SEQ_M_ALT_OPS` produces **exactly 6 distinct
+operation patterns across all 70** corpus questions; every one shares its pattern
+with another, and `firstTerm` takes 5–6 values per pattern while changing no step
+of the reasoning.
+
+Both collisions fall in **session S2 and nowhere else** in the 250: the five audit
+sessions show exactly one collision of each type, both in S2. Neither changes any
+published key — §A stands at 158/158 intended-rule key match. They are diversity
+and leakage defects, not correctness defects.
 
 ## 11. FINDINGS PRESERVED FROM EARLIER ROUNDS
 

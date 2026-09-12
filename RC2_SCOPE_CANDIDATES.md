@@ -9,6 +9,17 @@ explicitly, with its own classification, rather than by cross-reference to a
 narrative section. Evidence for each is in `MANUAL_REVIEW_RC1.md` and
 `SIGNOFF_RC1.md`.
 
+## Amendment history
+
+| Version | Items | Change |
+|---|---|---|
+| `rc2-scope-frozen-v1` | 21 | initial freeze after the 250/250 review reconciliation |
+| **`rc2-scope-frozen-v2`** | **23** | **formal amendment: adds RC2-022 and RC2-023**, two fingerprint-canonicalisation defects found by post-reconciliation inspection of the same frozen sample. Items RC2-001 to RC2-021 are unchanged in id, wording and classification. |
+
+The amendment is **not** an unfinished family review. The RC1 manual review is
+complete at 250/250; these two findings are a refinement of inspection over the
+already-reviewed sample.
+
 Classifications used: `PRODUCTION_BLOCKER`, `QA_OBSERVABILITY_BLOCKER`,
 `PEDAGOGICAL_BLOCKER`, `LANGUAGE_BLOCKER`, `ACCESSIBILITY_BLOCKER`,
 `STATISTICAL_LEAKAGE_RISK`, `QA_METRIC_DEFECT`. An item may carry more than one.
@@ -224,10 +235,117 @@ correctness: every key is right, the printed ratio is simply not in lowest terms
 prints `v1.2.0` (`report.js:34`) and the UI version pill shows `v1.2.0`
 (`index.html:23`). Two hard-coded literals. The displayed version must eventually
 derive from one authoritative source.
+## RC2-022 · `COMMUTATIVE_FINGERPRINT_CANONICALISATION_ESCAPE`
+**PRODUCTION_BLOCKER · STATISTICAL_LEAKAGE_RISK**
+
+A fingerprint carries a canonical `commutative.*` component *and* an
+order-sensitive copy of the same information under `named.*`. The order-sensitive
+copy defeats the canonicalisation, so two presentations of the same mathematical
+instance hash differently and the session duplicate check does not fire.
+
+**Frozen RC1 evidence — S2/07 and S2/39, both `ODD_M_PRIME2`, both in session S2:**
+
+```
+S2/07  commutative:{numberSet:[6,10,12,14,22,26]}   named:{numbers:[14,12,26,6,10,22], …}
+S2/39  commutative:{numberSet:[6,10,12,14,22,26]}   named:{numbers:[12,10,26,22,14,6], …}
+```
+
+Same set `{6,10,12,14,22,26}`, same templateId, same intended rule, same outlier
+`12`, same reasoning task. The canonical component is byte-identical; the full
+fingerprints differ; the pair was published in one 50-question session.
+
+**Measured scope.** 10 templates declare a non-empty `commutative` component —
+7 in `odd_one_out`, 3 in `fractions`. Across the 10,000-question corpus there are
+**326** semantic groups (template + canonical component + direction); **259 of
+them (79.4%)** carry more than one distinct full fingerprint for the *same*
+canonical value, producing **875 surplus fingerprints created by display order
+alone**. `fractions` is affected identically:
+`commutative:{denominators:[2,3,4]}` alongside `named:{denominators:[3,4,2]}` on
+`FRAC_M_3`, where the fraction chain genuinely is commutative.
+
+**Required remediation.** For structures declared mathematically commutative, a
+second order-sensitive copy of the same semantic information must not change the
+semantic fingerprint. Canonicalise family-specific commutative structures before
+hashing: for odd-one-out the sorted number multiset; for fractions the
+denominator multiset **only where the chain operation is genuinely commutative
+for that template**.
+
+**Do not globally sort every array.** Order must be preserved wherever it carries
+mathematical or pedagogical meaning — `sequences.shownTerms`, `relational.edges`
+and the staged-rate families depend on it. Audit every existing `commutative.*`
+component and verify that no order-sensitive duplicate under `named.*` can defeat
+it.
+
+**Required tests.**
+- MUST_REJECT as the same semantic instance within one session for
+  `ODD_M_PRIME2`: `[14,12,26,6,10,22]` and `[12,10,26,22,14,6]`.
+- MUST_ACCEPT as a different instance: the same rule class with a genuinely
+  different number set.
+- Permutation-invariance property test: for every permutation `P` of a
+  commutative number set, `semanticFingerprint(P(set)) === semanticFingerprint(set)`.
+  Display order in the rendered question may still differ.
+
+## RC2-023 · `STRUCTURAL_SEQUENCE_REASONING_SIGNATURE_GAP`
+**PRODUCTION_BLOCKER · STATISTICAL_LEAKAGE_RISK**
+
+The instance fingerprint cannot detect a repeated *reasoning pattern*, because it
+includes incidental values that do not alter the reasoning.
+
+**Frozen RC1 evidence — S2/05 and S2/41, both `SEQ_M_ALT_OPS`, both in session S2:**
+
+```
+S2/05   7 → 11 → 22 → 27 → 81 → 87 → 348 → ?      firstTerm 7
+S2/41   4 →  8 → 16 → 21 → 63 → 69 → 276 → ?      firstTerm 4
+
+both:   ADD(4) MUL(2) ADD(5) MUL(3) ADD(6) MUL(4) ADD(7)
+        addends [4,5,6,7]   multipliers [2,3,4]   askedUnknown nextTerm
+```
+
+The starting value changes; the reasoning experience does not. The fingerprints
+differ only through `firstTerm` and the `shownTerms` that follow from it, so both
+were published in one 50-question session.
+
+**Measured scope.** Across the corpus `SEQ_M_ALT_OPS` produces **exactly 6
+distinct operation patterns over all 70 questions** — three addend sets
+(`[2,3,4,5]`, `[3,4,5,6]`, `[4,5,6,7]`) crossed with two multiplier sets
+(`[2,3,4]`, `[3,4,5]`). Every one of the 70 shares its pattern with at least one
+other question; the only further variation is `firstTerm`, which takes 5 or 6
+values per pattern and changes no step of the reasoning.
+
+**Required remediation.** Do **not** replace the instance fingerprint with an
+abstract one. Maintain two distinct concepts:
+
+1. **semantic / content fingerprint** — identifies the generated mathematical
+   instance (what RC2-022 repairs);
+2. **structural / reasoning signature** — identifies the reasoning pattern
+   independently of incidental starting values.
+
+For `SEQ_M_ALT_OPS` the structural signature must encode the operation chain —
+conceptually `ADD(4) MUL(2) ADD(5) MUL(3) ADD(6) MUL(4) ADD(7)` — together with
+family, templateId, askedUnknown and reasoning direction, and must exclude
+`firstTerm` and the resulting `shownTerms` where they do not alter the operation
+structure.
+
+**Required session behaviour.** S2/05 and S2/41 must be recognised as
+`SAME_REASONING_PATTERN` even though they are not the same numerical instance.
+The reasoning pattern is **not** banned corpus-wide; the requirement is that the
+same reasoning experience must not appear twice inside one practice or test
+session merely because the starting number changed.
+
+**Required tests.**
+- MUST_REJECT within one session: same template, same askedUnknown, same exact
+  operation pattern, differing only in the start term.
+- MUST_ACCEPT: the same template with a genuinely different operation pattern.
+- Different meaningful sequence rules must never be collapsed merely because
+  their final numerical values happen to coincide.
+
 
 ---
 
 ## Scope status
 
-The RC2 scope is **ready to freeze**: 250/250 manual review is complete and no
-further discovery round is outstanding. Nothing above has been implemented.
+The RC2 scope is **frozen at 23 items** (`rc2-scope-frozen-v2`): 250/250 manual
+review is complete and no further discovery round is outstanding. RC2-022 and
+RC2-023 were added by formal amendment, not silently appended — the version
+marker, the amendment history above and the reconciliation checker all record the
+change from 21 to 23. Nothing above has been implemented.

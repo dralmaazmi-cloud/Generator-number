@@ -61,13 +61,24 @@ for (const id of ['RANK_DRIVEN_DISTRACTOR_SELECTION','AR_DEFINITE_PLURAL_BARE_NU
 }
 const mdIds = (scope.match(/^## (RC2-\d{3}) · /gm)||[]).map(x => x.match(/RC2-\d{3}/)[0]);
 const jsonIds = frozen.items.map(i => i.id);
-check('scope log has 21 numbered items', mdIds.length === 21, String(mdIds.length));
-check('frozen JSON has 21 items', jsonIds.length === 21, String(jsonIds.length));
+check('scope log has 23 numbered items', mdIds.length === 23, String(mdIds.length));
+check('frozen JSON has 23 items', jsonIds.length === 23, String(jsonIds.length));
 check('Markdown and JSON scope ids agree exactly',
   JSON.stringify(mdIds) === JSON.stringify(jsonIds),
   mdIds.length === jsonIds.length ? 'same ids in the same order' : `md=${mdIds.length} json=${jsonIds.length}`);
 check('every scope item carries a classification',
-  (scope.match(/^\*\*(PRODUCTION_BLOCKER|QA_OBSERVABILITY_BLOCKER|PEDAGOGICAL_BLOCKER|LANGUAGE_BLOCKER|ACCESSIBILITY_BLOCKER|STATISTICAL_LEAKAGE_RISK|QA_METRIC_DEFECT)/gm)||[]).length === 21);
+  (scope.match(/^\*\*(PRODUCTION_BLOCKER|QA_OBSERVABILITY_BLOCKER|PEDAGOGICAL_BLOCKER|LANGUAGE_BLOCKER|ACCESSIBILITY_BLOCKER|STATISTICAL_LEAKAGE_RISK|QA_METRIC_DEFECT)/gm)||[]).length === 23);
+check('scope schema is the amended v2', frozen.schema === 'rc2-scope-frozen-v2');
+check('amendment history records both versions',
+  Array.isArray(frozen.amendmentHistory) && frozen.amendmentHistory.length === 2 &&
+  frozen.amendmentHistory[0].items === 21 && frozen.amendmentHistory[1].items === 23);
+check('RC2-001..021 unchanged in id and defectClass by the amendment',
+  jsonIds.slice(0, 21).every((id, i) => id === `RC2-${String(i + 1).padStart(3, '0')}`));
+check('the two amendment items are present and typed',
+  ['RC2-022','RC2-023'].every(id => { const it = frozen.items.find(x => x.id === id);
+    return it && it.rc2Required === true && it.classification.includes('PRODUCTION_BLOCKER') && it.classification.includes('STATISTICAL_LEAKAGE_RISK'); }));
+check('the scope does not claim families remain under review',
+  !/families remain under independent review/i.test(scope) && !/families remain under independent review/i.test(review));
 const VALID = ['PRODUCTION_BLOCKER','QA_OBSERVABILITY_BLOCKER','PEDAGOGICAL_BLOCKER','LANGUAGE_BLOCKER','ACCESSIBILITY_BLOCKER','STATISTICAL_LEAKAGE_RISK','QA_METRIC_DEFECT'];
 check('every JSON item is typed with known classifications',
   frozen.items.every(i => Array.isArray(i.classification) && i.classification.length && i.classification.every(c => VALID.includes(c))));
