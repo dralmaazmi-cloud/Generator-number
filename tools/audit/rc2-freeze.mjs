@@ -14,8 +14,9 @@ import {execFileSync} from 'node:child_process';
 import {join} from 'node:path';
 
 import {ENGINE_VERSION} from '../../src/index.js';
-import {DEVELOPMENT_SEEDS, RC21_DEVELOPMENT_SEEDS, HOLDOUT_SEED} from './rc2-development-corpus.mjs';
+import {DEVELOPMENT_SEEDS, RC21_DEVELOPMENT_SEEDS, RC22_DEVELOPMENT_SEEDS, HOLDOUT_SEED} from './rc2-development-corpus.mjs';
 import {HOLDOUT_SEED as RC21_HOLDOUT_SEED} from './rc21-holdout.mjs';
+import {HOLDOUT_SEED as RC22_HOLDOUT_SEED} from './rc22-holdout.mjs';
 
 const git = args => execFileSync('git', args, {encoding: 'utf8'}).trim();
 
@@ -61,9 +62,12 @@ export function freeze() {
   // RC2.1 froze against its own corpus, drawn on seeds the RC2 corpus never
   // used, and against its own unused sign-off holdout. Recording RC2's would
   // attribute this engine to evidence it was not measured on.
-  const rc21 = existsSync('rc2/RC21_DEVELOPMENT_CORPUS.json');
-  const corpusPath = rc21 ? 'rc2/RC21_DEVELOPMENT_CORPUS.json' : 'rc2/DEVELOPMENT_CORPUS.json';
-  const corpusGzPath = rc21 ? 'rc2/rc21-development-corpus.jsonl.gz' : 'rc2/development-corpus.jsonl.gz';
+  const rc22 = existsSync('rc2/RC22_DEVELOPMENT_CORPUS.json');
+  const rc21 = !rc22 && existsSync('rc2/RC21_DEVELOPMENT_CORPUS.json');
+  const corpusPath = rc22 ? 'rc2/RC22_DEVELOPMENT_CORPUS.json'
+    : rc21 ? 'rc2/RC21_DEVELOPMENT_CORPUS.json' : 'rc2/DEVELOPMENT_CORPUS.json';
+  const corpusGzPath = rc22 ? 'rc2/rc22-development-corpus.jsonl.gz'
+    : rc21 ? 'rc2/rc21-development-corpus.jsonl.gz' : 'rc2/development-corpus.jsonl.gz';
   const corpus = JSON.parse(readFileSync(corpusPath, 'utf8'));
   const matrix = JSON.parse(readFileSync('rc2/COVERAGE_MATRIX.json', 'utf8'));
 
@@ -99,10 +103,13 @@ export function freeze() {
     frozenRC1Baseline: matrix.frozenRC1Baseline,
     scopeCommit: matrix.scopeCommit,
     scopeSchema: matrix.scopeSchema,
-    release: rc21 ? 'RC2.1' : 'RC2',
-    developmentSeeds: [...(rc21 ? RC21_DEVELOPMENT_SEEDS : DEVELOPMENT_SEEDS)],
-    holdoutSeed: rc21 ? RC21_HOLDOUT_SEED : HOLDOUT_SEED,
-    previousHoldout: rc21 ? {seed: HOLDOUT_SEED, status: 'FAILED_DIAGNOSTIC_HOLDOUT', reused: false} : null,
+    release: rc22 ? 'RC2.2' : rc21 ? 'RC2.1' : 'RC2',
+    developmentSeeds: [...(rc22 ? RC22_DEVELOPMENT_SEEDS : rc21 ? RC21_DEVELOPMENT_SEEDS : DEVELOPMENT_SEEDS)],
+    holdoutSeed: rc22 ? RC22_HOLDOUT_SEED : rc21 ? RC21_HOLDOUT_SEED : HOLDOUT_SEED,
+    previousHoldouts: rc22
+      ? [{seed: HOLDOUT_SEED, status: 'FAILED_DIAGNOSTIC_HOLDOUT', reused: false},
+         {seed: RC21_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false}]
+      : rc21 ? [{seed: HOLDOUT_SEED, status: 'FAILED_DIAGNOSTIC_HOLDOUT', reused: false}] : null,
     holdoutGenerated: false,
     developmentCorpus: {
       published: corpus.corpus.published,
