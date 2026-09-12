@@ -1,0 +1,13 @@
+{
+  "schema": "rc2-superseded-freezes-v1",
+  "note": "Freezes taken before the candidate had stopped moving. Kept so the record shows what was frozen and why it did not hold, rather than the earlier attempt being erased.",
+  "entries": [
+    {
+      "RC2_COMMIT": "ddc2c9016a9ff68106a18182605e0a20a603f158",
+      "treeHash": "aa7b51f9b329a0b1341419a199a4c55e09adecd7",
+      "frozenAt": "2026-09-12T11:15:12.650Z",
+      "productionBundleSha256": "3d2d668d6455193453692723801ee6cab359969d82fc383e4386179657b42dd3",
+      "reason": "superseded: package.json moved when the freeze's own tests were registered, and package.json is in the production bundle"
+    }
+  ]
+}

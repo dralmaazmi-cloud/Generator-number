@@ -35,16 +35,16 @@ function productionFiles() {
   }));
 }
 
-/** A freeze taken before the candidate stopped moving, kept rather than erased. */
+/**
+ * Freezes taken before the candidate had stopped moving. They live in their own
+ * file so that FREEZE.json can legitimately be absent when the §23 gate runs —
+ * the gate runs the suite, and the suite cannot require a freeze that does not
+ * exist yet — while the history of what was frozen and why it did not hold is
+ * still kept rather than erased.
+ */
 function priorFreezes() {
   try {
-    const prior = JSON.parse(readFileSync('rc2/FREEZE.json', 'utf8'));
-    const entries = prior.supersedes ?? [];
-    return [...entries, {
-      RC2_COMMIT: prior.RC2_COMMIT, treeHash: prior.treeHash, frozenAt: prior.frozenAt,
-      productionBundleSha256: prior.productionBundleSha256,
-      reason: 'superseded: production moved after it was taken'
-    }];
+    return JSON.parse(readFileSync('rc2/SUPERSEDED_FREEZES.json', 'utf8')).entries ?? [];
   } catch { return []; }
 }
 
@@ -97,7 +97,14 @@ export function freeze() {
       sha256: corpus.corpus.sha256,
       gzipSha256: createHash('sha256').update(readFileSync('rc2/development-corpus.jsonl.gz')).digest('hex')
     },
-    internalGate: {verdict: gate.verdict, conditions: gate.conditions, evaluatedAt: gate.evaluatedAt},
+    // gateHeadCommit is what makes the freeze auditable: it names the commit the
+    // §23 gate actually evaluated. A freeze is only honest if production is
+    // identical between that commit and RC2_COMMIT, and that is checkable with
+    // git rather than on trust. The first freeze failed exactly here.
+    internalGate: {
+      verdict: gate.verdict, conditions: gate.conditions,
+      evaluatedAt: gate.evaluatedAt, headCommit: gate.headCommit
+    },
     productionFileCount: files.length,
     productionFiles: files,
     productionBundleSha256: createHash('sha256')
