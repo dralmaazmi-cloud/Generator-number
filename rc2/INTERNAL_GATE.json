@@ -1,9 +1,9 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-12T13:58:25.781Z",
+  "evaluatedAt": "2026-09-12T14:01:48.656Z",
   "engineVersion": "1.4.0",
-  "headCommit": "f3657b27183f47180ec6a07956944ccfcc1a9ea5",
+  "headCommit": "4687fc84c99e8a2c22b21c46c920b89e5a8b9efa",
   "branch": "claude/rc2-implementation",
   "holdoutSeed": "AUDIT-2026-09-12-B",
   "verdict": "PASS",
