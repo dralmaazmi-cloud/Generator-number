@@ -101,7 +101,7 @@ export function buildBase(ctx, spec) {
     askedUnknown = 'default', stageCount = null, reasoningGraph = null,
     pedagogy = null, ratio = null, realism = null, complexityFactors = {},
     textParams = null, allowedConstants, commutative = null, answerText = null,
-    metadata = null
+    orderInsensitive = null, reasoningPattern = null, metadata = null
   } = spec;
 
   return {
@@ -141,6 +141,13 @@ export function buildBase(ctx, spec) {
     textParams,
     allowedConstants,
     commutative,
+    // RC2-022: named parameters whose ORDER is presentation only. They are
+    // sorted for the semantic fingerprint, never dropped: the content still
+    // distinguishes questions.
+    orderInsensitive,
+    // RC2-023: the reasoning pattern, where the template has one that is
+    // independent of its incidental numeric values.
+    reasoningPattern,
     metadata
   };
 }

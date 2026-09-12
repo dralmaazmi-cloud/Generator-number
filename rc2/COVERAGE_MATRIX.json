@@ -1,0 +1,349 @@
+{
+  "schema": "rc2-coverage-matrix-v1",
+  "scopeSchema": "rc2-scope-frozen-v2",
+  "frozenRC1Baseline": "7b5d4617295c98a8ed0f87d204f4745dd5db05dd",
+  "scopeCommit": "af61d28d6fd6797288ad767832f354dd91a0d400",
+  "terminalStatuses": [
+    "FIXED",
+    "MEASUREMENT_CORRECTED",
+    "RISK_REMEDIATED_AND_MEASURED"
+  ],
+  "forbiddenStatuses": [
+    "IGNORED",
+    "OUT_OF_SCOPE",
+    "DEFERRED_TO_STAGE_1",
+    "UNTESTED",
+    "ASSUMED_FIXED"
+  ],
+  "items": [
+    {
+      "id": "RC2-001",
+      "defectClass": "RANK_DRIVEN_DISTRACTOR_SELECTION",
+      "classification": [
+        "PRODUCTION_BLOCKER",
+        "STATISTICAL_LEAKAGE_RISK"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-002",
+      "defectClass": "AR_DEFINITE_PLURAL_BARE_NUMERAL",
+      "classification": [
+        "LANGUAGE_BLOCKER"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-003",
+      "defectClass": "INCOMPLETE_REJECTION_TELEMETRY",
+      "classification": [
+        "QA_OBSERVABILITY_BLOCKER"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-004",
+      "defectClass": "SEED_REPRODUCIBILITY_QUALIFICATION",
+      "classification": [
+        "QA_OBSERVABILITY_BLOCKER"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-005",
+      "defectClass": "DEGENERACY_MODEL_COVERAGE_GAP",
+      "classification": [
+        "QA_OBSERVABILITY_BLOCKER"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-006",
+      "defectClass": "PDF_VISUAL_ORDER_TEXT_LAYER",
+      "classification": [
+        "ACCESSIBILITY_BLOCKER"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-007",
+      "defectClass": "AMBIGUITY_LONE_SIMPLE_RULE_NEVER_COMPETES",
+      "classification": [
+        "PRODUCTION_BLOCKER",
+        "PEDAGOGICAL_BLOCKER"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-008",
+      "defectClass": "AMBIGUITY_INVERSE_FRAMING_AND_MAGNITUDE_BLIND_SPOT",
+      "classification": [
+        "PRODUCTION_BLOCKER"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-009",
+      "defectClass": "UNDISCOVERABLE_INTENDED_RULE",
+      "classification": [
+        "PEDAGOGICAL_BLOCKER"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-010",
+      "defectClass": "CONSTANT_ANSWER_TEMPLATE",
+      "classification": [
+        "PRODUCTION_BLOCKER",
+        "STATISTICAL_LEAKAGE_RISK"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-011",
+      "defectClass": "NARROW_ANSWER_VALUE_SPACE",
+      "classification": [
+        "STATISTICAL_LEAKAGE_RISK"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-012",
+      "defectClass": "GENERIC_KEY_NEIGHBOR_DISTRACTOR",
+      "classification": [
+        "PEDAGOGICAL_BLOCKER",
+        "STATISTICAL_LEAKAGE_RISK"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-013",
+      "defectClass": "MISATTRIBUTED_MISCONCEPTION_FEEDBACK",
+      "classification": [
+        "PRODUCTION_BLOCKER",
+        "PEDAGOGICAL_BLOCKER"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-014",
+      "defectClass": "FEEDBACK_SPECIFICITY_METRIC_INVALID",
+      "classification": [
+        "QA_METRIC_DEFECT"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-015",
+      "defectClass": "DIFFICULTY_BAND_MISCALIBRATION",
+      "classification": [
+        "QA_METRIC_DEFECT"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-016",
+      "defectClass": "AR_DUAL_WRONG_CASE",
+      "classification": [
+        "LANGUAGE_BLOCKER"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-017",
+      "defectClass": "AR_DEFINITENESS_RENDERING",
+      "classification": [
+        "LANGUAGE_BLOCKER"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-018",
+      "defectClass": "HIDDEN_FRACTION_SEMANTIC_REVERSAL",
+      "classification": [
+        "PEDAGOGICAL_BLOCKER"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-019",
+      "defectClass": "QUICK_METHOD_NOT_GENERAL",
+      "classification": [
+        "PEDAGOGICAL_BLOCKER"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-020",
+      "defectClass": "RATIO_INVARIANT_ENFORCEMENT_ESCAPE",
+      "classification": [
+        "PRODUCTION_BLOCKER"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-021",
+      "defectClass": "VERSION_TRACEABILITY_MISMATCH",
+      "classification": [
+        "QA_OBSERVABILITY_BLOCKER"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-022",
+      "defectClass": "COMMUTATIVE_FINGERPRINT_CANONICALISATION_ESCAPE",
+      "classification": [
+        "PRODUCTION_BLOCKER",
+        "STATISTICAL_LEAKAGE_RISK"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    },
+    {
+      "id": "RC2-023",
+      "defectClass": "STRUCTURAL_SEQUENCE_REASONING_SIGNATURE_GAP",
+      "classification": [
+        "PRODUCTION_BLOCKER",
+        "STATISTICAL_LEAKAGE_RISK"
+      ],
+      "affectedProductionPath": null,
+      "rootCause": null,
+      "plannedRemediation": null,
+      "automatedProof": [],
+      "regressionFixture": [],
+      "developmentCorpusMetric": null,
+      "status": "PLANNED"
+    }
+  ]
+}

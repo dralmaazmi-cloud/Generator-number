@@ -93,4 +93,67 @@ export function questionFingerprint(q) {
   });
 }
 
+/**
+ * RC2-022. The semantic / content fingerprint.
+ *
+ * Identical to the exact-instance fingerprint except that named parameters a
+ * template has declared order-insensitive are sorted into a canonical order.
+ *
+ * Sorting, not dropping. Dropping the key would be wrong wherever its *content*
+ * still distinguishes two questions: in the fractions `hiddenFraction`
+ * direction, `knownDenominators` [3,4] and [2,4] describe different questions
+ * (a different fraction is hidden) even though both sit inside the same
+ * canonical set {2,3,4}. Sorting removes the display order and keeps the
+ * content.
+ *
+ * The frozen RC1 audit showed why this matters: S2/07 and S2/39 are the same
+ * set {6,10,12,14,22,26} under ODD_M_PRIME2, with byte-identical
+ * `commutative.numberSet`, yet their full fingerprints differed because
+ * `named.numbers` kept display order — so both were published in one session.
+ *
+ * Order is dropped ONLY where a template says it is meaningless. Nothing is
+ * sorted globally: sequence terms, relational edges, staged rates and every
+ * other dependency chain keep their order, because there the order is the
+ * mathematics.
+ */
+export function buildSemanticFingerprint(spec) {
+  const named = {...(spec.namedParameters ?? {})};
+  for (const key of spec.orderInsensitive ?? []) {
+    const v = named[key];
+    if (Array.isArray(v)) {
+      named[key] = v.every(x => typeof x === 'number')
+        ? [...v].sort((a, b) => a - b)
+        : [...v].map(String).sort();
+    }
+  }
+  return buildFingerprint({...spec, namedParameters: named});
+}
+
+/**
+ * RC2-023. The structural / reasoning signature.
+ *
+ * Identifies the reasoning pattern independently of incidental values that do
+ * not change the solution method. It does NOT replace the exact-instance
+ * fingerprint; the three live side by side and answer different questions.
+ *
+ * Returns null when a template declares no reasoning pattern. A null signature
+ * means "this template has no structural identity beyond its content", and the
+ * session check falls back to the semantic fingerprint rather than collapsing
+ * unrelated questions together.
+ *
+ * The frozen RC1 audit showed S2/05 and S2/41 running the identical chain
+ * ADD(4) MUL(2) ADD(5) MUL(3) ADD(6) MUL(4) ADD(7), differing only in
+ * firstTerm — the same reasoning experience twice in one session.
+ */
+export function buildStructuralSignature(spec) {
+  if (!spec.reasoningPattern) return null;
+  return stableStringify({
+    family: spec.family,
+    templateId: spec.templateId,
+    askedUnknown: spec.askedUnknown ?? 'default',
+    reasoningDirection: spec.reasoningDirection ?? spec.askedUnknown ?? 'default',
+    pattern: spec.reasoningPattern
+  });
+}
+
 export {stableStringify};

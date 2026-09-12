@@ -87,6 +87,8 @@ function arithmetic(ctx) {
     fastMethod: `طبّق الفرق الثابت ${step} مرة واحدة.`,
     estimatedSteps: 2, conceptTags: ['sequence', 'arithmetic-progression'],
     parameters: {firstTerm: start, commonDifference: step, shownTerms: seq},
+    // RC2-023: the reasoning pattern, free of incidental start values.
+    reasoningPattern: [`ADD(${step})`],
     oracle: {
       kind: 'constraint', answerKind: 'number',
       constraints: askMiddle
@@ -182,6 +184,8 @@ function geometric(ctx) {
     fastMethod: `${divide ? 'اقسم' : 'اضرب'} في ${factor} مرة واحدة.`,
     estimatedSteps: 2, conceptTags: ['sequence', 'geometric-progression'],
     parameters: {firstTerm: seq[0], commonRatio: factor, shownTerms: seq},
+    // RC2-023: the reasoning pattern, free of incidental start values.
+    reasoningPattern: [divide ? `DIV(${factor})` : `MUL(${factor})`],
     oracle: {
       kind: 'constraint', answerKind: 'number',
       constraints: askMiddle
@@ -253,6 +257,8 @@ function increasingDifferences(ctx) {
     fastMethod: `الفروق تزيد ${diffStep} كل مرة؛ خذ الفرق التالي فقط.`,
     estimatedSteps: 3, conceptTags: ['sequence', 'second-difference'],
     parameters: {firstTerm: start, firstDifference: diffStart, differenceStep: diffStep, shownTerms: seq},
+    // RC2-023: the reasoning pattern, free of incidental start values.
+    reasoningPattern: [`DIFF_START(${diffStart})`, `DIFF_STEP(${diffStep})`],
     oracle: {
       kind: 'constraint', answerKind: 'number',
       constraints: askMiddle
@@ -320,6 +326,14 @@ function alternatingOps(ctx) {
       multipliers: [multStart, multStart + 1, multStart + 2],
       shownTerms: seq
     },
+    // RC2-023: the reasoning pattern, free of incidental start values.
+    // The frozen RC1 audit published S2/05 and S2/41 in one session: the same
+    // chain ADD(4) MUL(2) ADD(5) MUL(3) ADD(6) MUL(4) ADD(7), differing only in
+    // firstTerm. That is one reasoning experience, not two.
+    reasoningPattern: [
+      ...ops.map(o => (o.startsWith('+') ? `ADD(${o.slice(1)})` : `MUL(${o.slice(1)})`)),
+      `ADD(${nextAdd})`
+    ],
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(sub(X, seq.at(-1)), nextAdd)]},
     askedUnknown: 'nextTerm', stageCount: 2,
     pedagogy: {
@@ -374,6 +388,8 @@ function interleaved(ctx) {
     fastMethod: 'اقرأ حدود المواضع الزوجية وحدها؛ ستظهر القاعدة فورًا.',
     estimatedSteps: 3, conceptTags: ['sequence', 'interleaved'],
     parameters: {oddStart: a0, oddStep: da, evenStart: b0, evenStep: db, shownTerms: seq},
+    // RC2-023: the reasoning pattern, free of incidental start values.
+    reasoningPattern: [`RUN_A_STEP(${da})`, `RUN_B_STEP(${db})`],
     oracle: {
       kind: 'constraint', answerKind: 'number',
       constraints: [
@@ -437,6 +453,8 @@ function doublingDifferences(ctx) {
     fastMethod: 'ضاعف آخر فرق فقط، لا الحد الأخير.',
     estimatedSteps: 3, conceptTags: ['sequence', 'doubling'],
     parameters: {firstTerm: start, firstDifference: d0, shownTerms: seq},
+    // RC2-023: the reasoning pattern, free of incidental start values.
+    reasoningPattern: [`DIFF_START(${d0})`, 'DIFF_DOUBLES'],
     oracle: {
       kind: 'constraint', answerKind: 'number',
       constraints: askMiddle
@@ -506,6 +524,8 @@ function alternateDivide(ctx) {
     fastMethod: 'الدور التالي قسمة، والقاسم التالي 4.',
     estimatedSteps: 5, conceptTags: ['sequence', 'alternating'],
     parameters: {subtractBy: subtract, divisorSequence: [2, 3, 4], shownTerms: seq},
+    // RC2-023: the reasoning pattern, free of incidental start values.
+    reasoningPattern: [`SUB(${subtract})`, 'DIV_LADDER(2,3,4)'],
     oracle: {
       kind: 'constraint', answerKind: 'number',
       constraints: [
@@ -571,6 +591,8 @@ function recurrence(ctx) {
     fastMethod: 'ضاعف الحد الأخير ثم أضف الذي قبله.',
     estimatedSteps: 5, conceptTags: ['sequence', 'recurrence'],
     parameters: {firstTerm: a, secondTerm: b, shownTerms: seq},
+    // RC2-023: the reasoning pattern, free of incidental start values.
+    reasoningPattern: ['RECUR(2*prev + prev2)'],
     oracle: {
       kind: 'constraint', answerKind: 'number',
       constraints: askMiddle
@@ -632,6 +654,8 @@ function powersPlusIndex(ctx) {
     fastMethod: `احسب ${basePow} مرفوعًا للقوة التالية ثم أضف رقم الموضع.`,
     estimatedSteps: 4, conceptTags: ['sequence', 'powers'],
     parameters: {powerBase: basePow, startIndex, shownTerms: seq},
+    // RC2-023: the reasoning pattern, free of incidental start values.
+    reasoningPattern: [`POW_BASE(${basePow})`, 'PLUS_TERM_INDEX'],
     oracle: {
       kind: 'constraint', answerKind: 'number',
       constraints: [

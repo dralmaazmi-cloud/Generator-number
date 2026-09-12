@@ -276,6 +276,7 @@ export class NumericalQuestionGeneratorEngine {
     // what keeps a family holding a single hard template from filling its slots
     // with the same reasoning over and over.
     const variantCounts = new Map();
+    const reasoningSignatures = new Set();
     const recentVariants = [];
     const diversityWarnings = [];
     const useRecentMemory = options.useRecentSessionMemory !== false;
@@ -310,8 +311,16 @@ export class NumericalQuestionGeneratorEngine {
         const fingerprint = questionSignature(q);
         // Absolute rules: never publish the same reasoning twice in a session,
         // however the choices happen to be ordered.
+        // RC2-022: `fingerprint` here is the semantic fingerprint, so two
+        // display permutations of one mathematical instance collide.
         if (fingerprints.has(fingerprint)) continue;
         if (useRecentMemory && this._recentFingerprints.includes(fingerprint)) continue;
+        // RC2-023: and never publish the same reasoning *pattern* twice in a
+        // session either. A template that declares no pattern has a null
+        // signature and is governed by the semantic check alone, so unrelated
+        // questions are not collapsed together.
+        const structural = q.metadata?.structural_reasoning_signature ?? null;
+        if (structural && reasoningSignatures.has(structural)) continue;
 
         const variant = `${q.generator_id}|${q.metadata?.asked_unknown ?? 'default'}`;
         const used = variantCounts.get(variant) || 0;
@@ -345,6 +354,9 @@ export class NumericalQuestionGeneratorEngine {
       }
 
       fingerprints.add(chosen.fingerprint);
+      if (chosen.q.metadata?.structural_reasoning_signature) {
+        reasoningSignatures.add(chosen.q.metadata.structural_reasoning_signature);
+      }
       variantCounts.set(chosen.variant, (variantCounts.get(chosen.variant) || 0) + 1);
       recentVariants.push(chosen.variant);
       questions.push({...chosen.q, practice_number: i + 1});

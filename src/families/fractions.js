@@ -51,6 +51,11 @@ function buildFractionItem(ctx, count, direction) {
     conceptTags: ['fractions', 'sequential-operations'],
     stageCount: count,
     commutative: {denominators: [...denomList].sort((a, b) => a - b)},
+    // RC2-022: the chain is a product of unit fractions, so the order they are
+    // spoken in is presentation. ثلث ربع نصف and نصف ثلث ربع are one question.
+    // Both parameter shapes are covered: the full chain, and the known part of
+    // it in the hidden-fraction direction.
+    orderInsensitive: ['denominators', 'knownDenominators'],
     complexityFactors: {
       reasoningTransformations: count,
       conceptCount: 1,

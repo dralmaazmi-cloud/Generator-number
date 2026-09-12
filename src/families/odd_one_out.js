@@ -83,6 +83,9 @@ function build(ctx, spec) {
     // Section 13-A: the number set is genuinely commutative, so shuffling the
     // display must land on the same fingerprint.
     commutative: {numberSet: canonicalNumberSet(group)},
+    // RC2-022: `numbers` is the same set again, in display order only, so two
+    // permutations of one set must not look like two different questions.
+    orderInsensitive: ['numbers'],
     oracle: {kind: 'ruleset', numbers: group, intendedOutlier: outlier},
     askedUnknown: 'outlier',
     stageCount: 1,

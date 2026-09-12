@@ -1,8 +1,7 @@
 import {isKnownMisconception, buildOptionFeedback, CORRECT_FEEDBACK} from './qa/misconceptions.js';
 import {REASON} from './qa/reasons.js';
 import {computeComplexity} from './qa/complexity.js';
-import {buildFingerprint, questionFingerprint} from './qa/fingerprint.js';
-import {RANK_DRAW_WEIGHTS} from './qa/rank-calibration.js';
+import {buildFingerprint, buildSemanticFingerprint, buildStructuralSignature, questionFingerprint} from './qa/fingerprint.js';
 
 export const LETTERS = ['A','B','C','D','E','F'];
 
@@ -105,8 +104,10 @@ export function makeOptionSet({
     throw err;
   }
 
-  const spread = {};
-  const picked = pickBalancedDistractors(pool, correct, rng, spread);
+  // RC2-001. The five shown distractors are drawn from the provenance-carrying
+  // pool without reference to the key's numeric rank, to the shape of the
+  // resulting option set, or to any other property of the published answer.
+  const picked = rng.sample(pool, 5);
 
   const correctLetter = preferredCorrectLetter && LETTERS.includes(preferredCorrectLetter)
     ? preferredCorrectLetter
@@ -132,8 +133,12 @@ export function makeOptionSet({
       optionsMeta[letter] = {correct: false, value: item.value, misconceptionId: item.misconceptionId, derivation: item.derivation};
     }
   }
-  // Rank is read off the raw values, not the rendered strings: a count of 1
-  // renders as "كيلومتر واحد" with no numeral, which no text parse can rank.
+  // RC2-001 / OBSERVE_NEVER_TARGET. Both figures below are computed *after* the
+  // pedagogically valid question and its options already exist. They are
+  // observations for QA and are never read back into generation: nothing above
+  // this point consults them, and no retry, acceptance or selection depends on
+  // them. Rank is read off the raw values, not the rendered strings: a count of
+  // 1 renders as "كيلومتر واحد" with no numeral, which no text parse can rank.
   return {
     options,
     correct_option: correctLetter,
@@ -141,101 +146,37 @@ export function makeOptionSet({
     distractor_analysis: distractorAnalysis,
     options_meta: optionsMeta,
     numeric_rank: rankFromRawValues(picked.map(p => p.value), correct),
-    // Which positions this instance's error paths could actually have produced.
-    feasible_rank_range: spread.feasibleRankRange ?? null
+    // Observation only: the span of positions this instance's pool could have
+    // produced. Recorded so leakage can be measured, never used to steer.
+    feasible_rank_range: observedFeasibleRankRange(pool, correct)
   };
 }
 
 /**
- * Section 14-E / 15-C. When mistakes on both sides of the key exist, keep both
- * sides represented so the key does not drift to the middle of the sorted list.
- * This only chooses among distractors that already exist; it never invents one.
- */
-function pickBalancedDistractors(pool, correct, rng, out = {}) {
-  const correctNum = typeof correct === 'number' ? correct : Number(correct);
-  if (!Number.isFinite(correctNum)) return rng.sample(pool, 5);
-
-  const below = pool.filter(p => Number(p.value) < correctNum);
-  const above = pool.filter(p => Number(p.value) > correctNum);
-  const other = pool.filter(p => !Number.isFinite(Number(p.value)) || Number(p.value) === correctNum);
-  if (!below.length || !above.length) return rng.sample(pool, 5);
-
-  const shuffledBelow = rng.shuffle(below);
-  const shuffledAbove = rng.shuffle(above);
-  // Section 15-C / 36. Choose how many of the five sit below the key, and so
-  // where the key lands in the sorted list.
-  //
-  // A template can only reach the positions its real error paths allow, and
-  // those ranges overlap around the middle. Drawing uniformly inside each range
-  // therefore piles the key into ranks three and four across the corpus — the
-  // leak the audit measured. The weights in rank-calibration.js are fitted to
-  // the measured ranges so the corpus comes out flat; here they are clamped to
-  // what this particular template can supply.
-  //
-  // Nothing is invented to achieve this: the weights only decide which of the
-  // already-generated, provenance-carrying distractors are shown.
-  const minBelow = Math.max(0, 5 - shuffledAbove.length);
-  const maxBelow = Math.min(5, shuffledBelow.length);
-  out.feasibleRankRange = [Math.min(minBelow, maxBelow) + 1, Math.max(minBelow, maxBelow) + 1];
-  const wantBelow = minBelow >= maxBelow ? minBelow : drawRankPosition(rng, minBelow, maxBelow);
-  const wantAbove = Math.min(shuffledAbove.length, 5 - wantBelow);
-  // Among the selections that give the same position to the key, prefer one in
-  // which no value stands out by its shape: a single multiple of 5 or 10 among
-  // six values is a cue a learner can follow without doing the mathematics —
-  // whether it points at the key or away from it. Removing the cue is the goal,
-  // not steering it. This only reorders genuine distractors; it never invents
-  // or excludes one for the sake of appearances.
-  //
-  // The cue cannot always be removed: when the key is the only round value the
-  // template's error paths can produce, no reshuffle helps. That residue is
-  // measured and reported rather than papered over.
-  let best = null;
-  for (let attempt = 0; attempt < 12; attempt++) {
-    const belowPool = attempt === 0 ? shuffledBelow : rng.shuffle(below);
-    const abovePool = attempt === 0 ? shuffledAbove : rng.shuffle(above);
-    const picked = [...belowPool.slice(0, wantBelow), ...abovePool.slice(0, wantAbove)];
-    const rest = rng.shuffle([...belowPool.slice(wantBelow), ...abovePool.slice(wantAbove), ...other]);
-    while (picked.length < 5 && rest.length) picked.push(rest.shift());
-    const selection = picked.slice(0, 5);
-    if (!best) best = selection;
-    if (!hasLoneRoundNumber(selection, correctNum)) return selection;
-  }
-  return best;
-}
-
-/**
- * True when exactly one of the six values is a multiple of five.
+ * RC2-001, observation only.
  *
- * Only the multiple-of-five cue is worth removing. Trying to remove the
- * multiple-of-ten cue as well makes matters worse rather than better: a
- * reshuffle can drop a lone round *distractor* but can do nothing when the key
- * itself is the only round value a template's error paths produce, so chasing
- * both cues strips the harmless half and leaves the residue pointing at the key.
- * Measured across six independent ten-thousand-question corpora, filtering on
- * five alone leaves both cues inside two standard errors of chance; filtering on
- * both pushes the multiple-of-ten strategy to roughly 19%.
+ * The span of key positions this instance's distractor pool *could* have
+ * produced, had a chooser existed. Nothing chooses: this is computed after the
+ * options are built so that answer-position leakage can be measured across a
+ * corpus. It is never consulted during generation.
+ *
+ * The function that used to live here — pickBalancedDistractors — drew a target
+ * rank from a fitted weight table and then sliced the below-key and above-key
+ * pools to land the key on it, excluding valid provenance-carrying distractors
+ * to do so. It also re-sampled up to twelve times to avoid a lone multiple of
+ * five among the six values. Both behaviours selected among pedagogically valid
+ * distractors on the strength of a property of the published answer, and both
+ * are gone. See RC2_SCOPE_FROZEN.json, constraint OBSERVE_NEVER_TARGET.
  */
-function hasLoneRoundNumber(distractors, correct) {
-  const values = [correct, ...distractors.map(d => Number(d.value))];
-  if (values.some(v => !Number.isInteger(v))) return false;
-  return values.filter(v => v % 5 === 0).length === 1;
-}
-
-/** Weighted draw of the key's position, restricted to what the template allows. */
-function drawRankPosition(rng, minBelow, maxBelow) {
-  const weights = [];
-  let total = 0;
-  for (let below = minBelow; below <= maxBelow; below++) {
-    const w = RANK_DRAW_WEIGHTS[below] ?? 1;
-    weights.push(w);
-    total += w;
-  }
-  let r = rng.float(0, total);
-  for (let i = 0; i < weights.length; i++) {
-    r -= weights[i];
-    if (r <= 0) return minBelow + i;
-  }
-  return maxBelow;
+function observedFeasibleRankRange(pool, correct) {
+  const correctNum = typeof correct === 'number' ? correct : Number(correct);
+  if (!Number.isFinite(correctNum)) return null;
+  const below = pool.filter(p => Number(p.value) < correctNum).length;
+  const above = pool.filter(p => Number(p.value) > correctNum).length;
+  if (!below || !above) return null;
+  const minBelow = Math.max(0, 5 - above);
+  const maxBelow = Math.min(5, below);
+  return [Math.min(minBelow, maxBelow) + 1, Math.max(minBelow, maxBelow) + 1];
 }
 
 /** Section 15-B: 1-based position of the key among the raw option values. */
@@ -271,7 +212,11 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
   });
 
   const complexity = computeComplexity(base.complexityFactors || {});
-  const fingerprint = buildFingerprint({
+  // RC2-022 / RC2-023. Three fingerprints, three purposes, kept distinct:
+  //   fingerprint  — this exact generated instance
+  //   semantic     — mathematically equivalent content, display order removed
+  //   structural   — the reasoning pattern, incidental values removed
+  const fingerprintSpec = {
     family: base.family,
     templateId: base.template_id,
     askedUnknown: base.askedUnknown,
@@ -279,6 +224,17 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
     reasoningGraph: base.reasoningGraph,
     namedParameters: base.parameters || {},
     commutative: base.commutative
+  };
+  const fingerprint = buildFingerprint(fingerprintSpec);
+  const semanticFingerprint = buildSemanticFingerprint({
+    ...fingerprintSpec,
+    orderInsensitive: base.orderInsensitive
+  });
+  const structuralSignature = buildStructuralSignature({
+    family: base.family,
+    templateId: base.template_id,
+    askedUnknown: base.askedUnknown,
+    reasoningPattern: base.reasoningPattern
   });
 
   const q = {
@@ -313,6 +269,11 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
       concept_tags: base.concept_tags || [],
       // --- optional QA fields added in v1.3.0; no existing field is removed ---
       fingerprint,
+      semantic_fingerprint: semanticFingerprint,
+      structural_reasoning_signature: structuralSignature,
+      // RC2-022: which named parameters the template declares order-insensitive,
+      // so the canonicalisation can be checked from outside the engine.
+      order_insensitive_params: base.orderInsensitive ?? null,
       asked_unknown: base.askedUnknown ?? 'default',
       stage_count: base.stageCount ?? null,
       reasoning_graph: base.reasoningGraph ?? null,
@@ -328,8 +289,10 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
       ...base.metadata
     }
   };
-  // Kept outside metadata spread so a template cannot overwrite it.
+  // Kept outside the metadata spread so a template cannot overwrite them.
   q.metadata.fingerprint = fingerprint;
+  q.metadata.semantic_fingerprint = semanticFingerprint;
+  q.metadata.structural_reasoning_signature = structuralSignature;
   return q;
 }
 
@@ -357,7 +320,14 @@ export function validateQuestion(q) {
  * Section 13-B. Identity is the reasoning the question asks for, so the same
  * item with its choices shuffled collides with the original.
  */
+/**
+ * RC2-022. Session identity is the *semantic* fingerprint: two presentations of
+ * the same mathematical content are one question, however their values happen
+ * to be ordered on the page.
+ */
 export function questionSignature(q) {
+  const semantic = q?.metadata?.semantic_fingerprint;
+  if (semantic) return semantic;
   return questionFingerprint(q);
 }
 
