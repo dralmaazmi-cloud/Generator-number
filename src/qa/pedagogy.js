@@ -14,12 +14,27 @@ const EPS = 1e-9;
 const same = (a, b) => Number.isFinite(a) && Number.isFinite(b) && Math.abs(a - b) < EPS;
 
 /**
+ * RC2-005. Answer equality across the types this engine actually publishes:
+ * numbers compare within epsilon, everything else (a day name, a person, an
+ * Arabic statement, a fraction name) compares as the string it is published as.
+ * A numeric string and the number it denotes are the same answer.
+ */
+function sameAnswer(a, b) {
+  const an = typeof a === 'number' ? a : Number(a);
+  const bn = typeof b === 'number' ? b : Number(b);
+  if (Number.isFinite(an) && Number.isFinite(bn) && String(a).trim() !== '' && String(b).trim() !== '') {
+    return same(an, bn);
+  }
+  return String(a) === String(b);
+}
+
+/**
  * @param {object} spec
  * @param {number|string} spec.correct
  * @param {object} [spec.pedagogy]
  * @param {string} [spec.pedagogy.targetSkill]
  * @param {string} [spec.pedagogy.targetMisconception]
- * @param {number} [spec.pedagogy.wrongMethodValue]  what the target misconception yields
+ * @param {number|string} [spec.pedagogy.wrongMethodValue]  what the target misconception yields
  * @param {Array<{when:boolean, code?:string, note:string}>} [spec.pedagogy.degenerateWhen]
  * @param {object} [spec.ratio]    {a, b, requireReduced, requireDistinctSides, label}
  * @param {object} [spec.realism]  {parentAgeAtBirth, ages:[...], siblingGap}
@@ -29,9 +44,13 @@ export function validatePedagogy(spec) {
   const details = {};
   const ped = spec.pedagogy || {};
 
-  if (ped.targetMisconception && Number.isFinite(ped.wrongMethodValue)) {
-    const correctNum = typeof spec.correct === 'number' ? spec.correct : Number(spec.correct);
-    if (same(ped.wrongMethodValue, correctNum)) {
+  // RC2-005. The check used to require a finite NUMBER, so every template whose
+  // answer is a day name, a person, a statement or a fraction name was outside
+  // the model entirely — 23 of 107 templates, and with them the two families
+  // where the degeneracy is easiest to produce. A wrong method that lands on the
+  // key is the same defect whatever type the key has.
+  if (ped.targetMisconception && ped.wrongMethodValue !== undefined && ped.wrongMethodValue !== null) {
+    if (sameAnswer(ped.wrongMethodValue, spec.correct)) {
       reasons.push(REASON.DEGENERATE_WRONG_METHOD_EQUALS_KEY);
       details.wrongMethod = {misconception: ped.targetMisconception, value: ped.wrongMethodValue};
     }

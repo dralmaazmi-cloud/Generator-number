@@ -90,6 +90,11 @@ function tomorrowKnown(ctx) {
     estimatedSteps: 1, conceptTags: ['calendar'], parameters: {targetDayIndex: target, netOffset: 1},
     oracle: daySearchOracle(1, target),
     askedUnknown: 'todayFromOffset', stageCount: 1,
+    // RC2-005. Moving forward from the stated day instead of back.
+    pedagogy: {
+      targetSkill: 'DAY_OFFSET_DIRECTION', targetMisconception: 'SHIFTED_WRONG_DIRECTION',
+      wrongMethodValue: dayName(target + 1)
+    },
     complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1},
     textParams: false
   });
@@ -120,6 +125,10 @@ function afterTomorrow(ctx) {
     estimatedSteps: 2, conceptTags: ['calendar'], parameters: {targetDayIndex: target, netOffset: 2},
     oracle: daySearchOracle(2, target),
     askedUnknown: 'todayFromOffset', stageCount: 1,
+    pedagogy: {
+      targetSkill: 'DAY_OFFSET_DIRECTION', targetMisconception: 'SHIFTED_WRONG_DIRECTION',
+      wrongMethodValue: dayName(target + 2)
+    },
     complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
     textParams: false
   });
@@ -155,6 +164,12 @@ function compoundForward(ctx) {
     estimatedSteps: 2, conceptTags: ['calendar'], parameters: {aheadDays: ahead, targetDayIndex: target, netOffset},
     oracle: daySearchOracle(netOffset, target),
     askedUnknown: 'todayFromCompoundOffset', stageCount: 2,
+    // RC2-005. The headline slip: going back only the extra days and forgetting
+    // that "tomorrow" is itself a shift of one.
+    pedagogy: {
+      targetSkill: 'COMPOUND_NET_OFFSET', targetMisconception: 'IGNORED_NET_OFFSET',
+      wrongMethodValue: dayName(target - ahead)
+    },
     complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 1},
     textParams: false
   });
@@ -194,6 +209,11 @@ function forwardThenBack(ctx) {
     parameters: {backDays: back, afterTomorrowIndex: afterTom, netOffset},
     oracle: daySearchOracle(netOffset, afterTom),
     askedUnknown: 'pastDayFromFutureAnchor', stageCount: 2,
+    // RC2-005. Stopping at "today" instead of carrying out the second shift.
+    pedagogy: {
+      targetSkill: 'CHAINED_DAY_SHIFTS', targetMisconception: 'STOPPED_AFTER_FIRST_STAGE',
+      wrongMethodValue: dayName(today)
+    },
     complexityFactors: {reasoningTransformations: 2, conceptCount: 2, stageCount: 2, arithmeticBurden: 1},
     textParams: false
   });
@@ -252,6 +272,9 @@ function nestedOffset(ctx) {
     askedUnknown: 'todayFromNestedOffset', stageCount: 3,
     pedagogy: {
       targetSkill: 'COMPOUND_NET_OFFSET', targetMisconception: 'IGNORED_NET_OFFSET',
+      // RC2-005. The declared target now carries the value it actually yields,
+      // so the check is a measurement and not a name.
+      wrongMethodValue: dayName(target - (ahead - behind)),
       degenerateWhen: [{when: ((netOffset % 7) + 7) % 7 === 0, note: 'net offset of zero: the answer is the stated day'}]
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 3, conditionCount: 2, arithmeticBurden: 2},
@@ -305,6 +328,16 @@ function longOffset(ctx) {
       constraints: [eq(mod(add(today, n), 7), X)]
     },
     askedUnknown: 'dayAfterLongOffset', stageCount: 2,
+    // RC2-005. The slip this template teaches against is moving by the number of
+    // whole WEEKS instead of by the remainder. For n = 16 those are both 2, so
+    // the wrong method lands exactly on the key and the item measures nothing —
+    // and the coincident distractor was silently dropped by the uniqueness
+    // check, so the misconception was not even shown. The draw of n is blind;
+    // the rejection is on the wrong method's value, never on the answer's.
+    pedagogy: {
+      targetSkill: 'MODULAR_DAY_OFFSET', targetMisconception: 'IGNORED_NET_OFFSET',
+      wrongMethodValue: dayName(today + weeks)
+    },
     allowedConstants: [0, 1, 2, 7, 100],
     complexityFactors: {reasoningTransformations: 2, conceptCount: 2, stageCount: 2, arithmeticBurden: 2},
     textParams: false

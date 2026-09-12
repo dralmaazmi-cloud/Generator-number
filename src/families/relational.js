@@ -156,6 +156,16 @@ function fullChainPosition(ctx) {
     reasoningGraph,
     oracle: orderOracleSpec(nodes, edges, {type: 'position', position: targetPos}, correct, correct),
     askedUnknown: `position${targetPos}`, stageCount: 1,
+    // RC2-005. The slip this template teaches against is counting the position
+    // from the wrong end of the chain. In a five-person chain the third place is
+    // the same from either end, so the item measures nothing — a learner who
+    // reads the direction backwards still answers correctly. The chain size and
+    // the target position are drawn blind; only the wrong method's value is
+    // examined.
+    pedagogy: {
+      targetSkill: 'READ_POSITION_IN_TOTAL_ORDER', targetMisconception: 'COUNTED_DIRECT_RELATIONS_ONLY',
+      wrongMethodValue: oracle.whoAtPosition(size + 1 - targetPos)
+    },
     complexityFactors: {reasoningTransformations: 1, conceptCount: 1, graphDepth: size, dependencyDepth: 1},
     textParams: false
   });
@@ -195,6 +205,11 @@ function betweenRelation(ctx) {
     reasoningGraph,
     oracle: orderOracleSpec(nodes, edges, {type: 'position', position: targetPos}, correct, correct),
     askedUnknown: `position${targetPos}`, stageCount: 1,
+    // RC2-005, as REL_E_CHAIN: reading the position from the wrong end.
+    pedagogy: {
+      targetSkill: 'READ_POSITION_IN_TOTAL_ORDER', targetMisconception: 'COUNTED_DIRECT_RELATIONS_ONLY',
+      wrongMethodValue: oracle.whoAtPosition(size + 1 - targetPos)
+    },
     complexityFactors: {reasoningTransformations: 1, conceptCount: 1, graphDepth: size, dependencyDepth: 1},
     textParams: false
   });
@@ -261,6 +276,9 @@ function countAbove(ctx) {
   const count = above.length;
   const correct = COUNT_LABELS[count];
   if (!correct) return resample(ctx, countAbove);
+  // RC2-005: the two modelled wrong methods, measured on the graph as drawn.
+  const directlyAbove = edges.filter(([, below]) => below === target).length;
+  const couldBeAbove = nodes.filter(n => n !== target && !oracle.definitelyAbove(target, n)).length;
   const distractors = usable(ctx, 
     COUNT_LABELS.filter((_, i) => i !== count).map((labelText, i) => mk(
       labelText,
@@ -288,7 +306,33 @@ function countAbove(ctx) {
     oracle: orderOracleSpec(nodes, edges, {type: 'countAbove', target}, count, correct,
       Object.fromEntries(COUNT_LABELS.map((labelText, i) => [String(i), labelText]))),
     askedUnknown: 'countAbove', stageCount: 2,
-    metadata: {graph_shape: shape},
+    // RC2-005. Two wrong methods are modelled here, because modelling only one
+    // of them is what made the first version of this rule wrong.
+    //
+    //   COUNTED_DIRECT_RELATIONS_ONLY  counts the stated sentences that name the
+    //                                  target, skipping the transitive step.
+    //   COUNTED_EVERYONE               counts everyone not provably below the
+    //                                  target, skipping the undetermined step.
+    //
+    // The item is degenerate only when BOTH land on the key, because then no
+    // modelled error is distinguishable from correct reasoning. Requiring the
+    // first alone rejected 56.7% of draws and, worse, removed the answers
+    // «لا أحد» and «شخص واحد» from the template entirely — trading a measurement
+    // defect for a much larger statistical leak (RC2-011). Which misconception
+    // is the live discriminator is recorded rather than used to steer the draw.
+    pedagogy: {
+      targetSkill: 'COUNT_PROVABLY_ABOVE',
+      targetMisconception: 'COUNTED_DIRECT_RELATIONS_ONLY',
+      degenerateWhen: [{
+        when: directlyAbove === count && couldBeAbove === count,
+        note: 'neither counting only the stated sentences nor counting everyone not provably below differs from the key'
+      }]
+    },
+    metadata: {
+      graph_shape: shape,
+      transitive_step_required: directlyAbove !== count,
+      undetermined_step_required: couldBeAbove !== count
+    },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, graphDepth: nodes.length, conditionCount: edges.length, dependencyDepth: 2},
     textParams: false
   });
@@ -347,6 +391,18 @@ function confirmedStatement(ctx) {
       statements: [{id: correct, above: pick.a, below: pick.b}]
     }, [correct], correct),
     askedUnknown: 'guaranteedStatement', stageCount: 2,
+    // RC2-005. The item is only a reasoning item while the guaranteed statement
+    // has to be derived. A statement copied verbatim from the stem is answerable
+    // by matching text. The sampler already prefers an indirect statement; this
+    // declares the same requirement so the pipeline enforces it too, rather than
+    // it living only inside the sampler where nothing could see it.
+    pedagogy: {
+      targetSkill: 'DERIVE_GUARANTEED_RELATION', targetMisconception: 'RELATION_REQUIRES_UNSTATED_ASSUMPTION',
+      degenerateWhen: [{
+        when: edges.some(([x, y]) => x === pick.a && y === pick.b),
+        note: 'the guaranteed statement is a sentence of the stem: no derivation is needed'
+      }]
+    },
     metadata: {graph_shape: shape},
     complexityFactors: {reasoningTransformations: 2, conceptCount: 2, graphDepth: nodes.length, conditionCount: edges.length, dependencyDepth: 2},
     textParams: false
@@ -393,6 +449,21 @@ function branchGuaranteed(ctx) {
       statements: [{id: correct, above: pick.a, below: pick.b}]
     }, [correct], correct),
     askedUnknown: 'guaranteedDespiteBranches', stageCount: 3,
+    // RC2-005, as REL_M_CONFIRM, and one more: the guaranteed statement must not
+    // be about the open pair the question names, or the question answers itself.
+    pedagogy: {
+      targetSkill: 'DERIVE_GUARANTEED_RELATION', targetMisconception: 'RESOLVED_AN_UNRESOLVED_PAIR',
+      degenerateWhen: [
+        {
+          when: edges.some(([x, y]) => x === pick.a && y === pick.b),
+          note: 'the guaranteed statement is a sentence of the stem: no derivation is needed'
+        },
+        {
+          when: [pick.a, pick.b].includes(openPair[0]) && [pick.a, pick.b].includes(openPair[1]),
+          note: 'the guaranteed statement is about the open pair the question declares open'
+        }
+      ]
+    },
     metadata: {graph_shape: shape},
     complexityFactors: {reasoningTransformations: 3, conceptCount: 3, graphDepth: nodes.length, conditionCount: edges.length, dependencyDepth: 3},
     textParams: false

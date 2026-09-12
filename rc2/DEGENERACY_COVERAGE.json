@@ -1,0 +1,1842 @@
+{
+  "schema": "rc2-degeneracy-coverage-v1",
+  "scopeItem": "RC2-005",
+  "generatedAt": "2026-09-12T09:06:25.315Z",
+  "drawsPerFamilyPerBand": 400,
+  "totals": {
+    "templates": 107,
+    "byRc2Classification": {
+      "MODELLED": 95,
+      "NOT_APPLICABLE": 4,
+      "COVERED_BY_OTHER_INVARIANT": 8
+    },
+    "rc1TemplatesWithNoModel": 23,
+    "publishedSampled": 18686,
+    "publishedWithDeclaredModel": 16764,
+    "publishedModelCoverage": 0.897,
+    "rc1PublishedModelCoverage": 0.793,
+    "unclassified": [],
+    "declaredButAbsentFromEngine": []
+  },
+  "templates": [
+    {
+      "templateId": "AGE_E_MULT_DIFF",
+      "family": "ages",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 206,
+      "declaresModelOnDraws": 206,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "AGE_E_SUM_DIFF",
+      "family": "ages",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 194,
+      "declaresModelOnDraws": 194,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "AGE_H_PAST_FUT",
+      "family": "ages",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 201,
+      "declaresModelOnDraws": 201,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "AGE_H_TWO_TIME",
+      "family": "ages",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 199,
+      "declaresModelOnDraws": 199,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "AGE_M_FUT_RATIO",
+      "family": "ages",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 125,
+      "declaresModelOnDraws": 125,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "AGE_M_FUT_SUM_DIFF",
+      "family": "ages",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 131,
+      "declaresModelOnDraws": 131,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "AGE_M_RATIO_FUT_SUM",
+      "family": "ages",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 144,
+      "declaresModelOnDraws": 144,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "AVG_E_ADD",
+      "family": "averages",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 215,
+      "declaresModelOnDraws": 215,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "AVG_E_REMOVE",
+      "family": "averages",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 185,
+      "declaresModelOnDraws": 185,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "AVG_H_COMB_ADD",
+      "family": "averages",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 211,
+      "declaresModelOnDraws": 211,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "AVG_H_TARGET",
+      "family": "averages",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 189,
+      "declaresModelOnDraws": 189,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "AVG_M_ADD_PAIR",
+      "family": "averages",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 141,
+      "declaresModelOnDraws": 141,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "AVG_M_COMBINE",
+      "family": "averages",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 129,
+      "declaresModelOnDraws": 129,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "AVG_M_REPLACE",
+      "family": "averages",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 130,
+      "declaresModelOnDraws": 130,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "CAL_E_AFTER",
+      "family": "calendar",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "string",
+      "drawn": 187,
+      "declaresModelOnDraws": 187,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MISSING_DEGENERACY_MODEL",
+      "rc2Classification": "MODELLED",
+      "justification": "as CAL_E_TOM at a net offset of 2.",
+      "direction": null
+    },
+    {
+      "templateId": "CAL_E_TOM",
+      "family": "calendar",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "string",
+      "drawn": 213,
+      "declaresModelOnDraws": 213,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MISSING_DEGENERACY_MODEL",
+      "rc2Classification": "MODELLED",
+      "justification": "SHIFTED_WRONG_DIRECTION: advancing from the stated day instead of going back. Never coincides for a net offset of 1, and the check says so rather than the model being absent.",
+      "direction": null
+    },
+    {
+      "templateId": "CAL_H_LONG",
+      "family": "calendar",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "string",
+      "drawn": 192,
+      "declaresModelOnDraws": 192,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 47,
+      "degenerateRate": 0.245,
+      "rc1Classification": "MISSING_DEGENERACY_MODEL",
+      "rc2Classification": "MODELLED",
+      "justification": "IGNORED_NET_OFFSET: moving by the number of whole weeks instead of the remainder. For n = 16 and n = 24 those are equal, so a quarter of this template measured nothing and the coincident distractor was silently dropped by the uniqueness check.",
+      "direction": null
+    },
+    {
+      "templateId": "CAL_H_NESTED",
+      "family": "calendar",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "string",
+      "drawn": 208,
+      "declaresModelOnDraws": 208,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MISSING_DEGENERACY_MODEL",
+      "rc2Classification": "MODELLED",
+      "justification": "carried a degenerateWhen rule but no value for its declared target; both are now present.",
+      "direction": null
+    },
+    {
+      "templateId": "CAL_M_COMPOUND",
+      "family": "calendar",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "string",
+      "drawn": 212,
+      "declaresModelOnDraws": 212,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MISSING_DEGENERACY_MODEL",
+      "rc2Classification": "MODELLED",
+      "justification": "IGNORED_NET_OFFSET: going back only the extra days, forgetting that tomorrow is itself a shift of one.",
+      "direction": null
+    },
+    {
+      "templateId": "CAL_M_TWO_SHIFT",
+      "family": "calendar",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "string",
+      "drawn": 188,
+      "declaresModelOnDraws": 188,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MISSING_DEGENERACY_MODEL",
+      "rc2Classification": "MODELLED",
+      "justification": "STOPPED_AFTER_FIRST_STAGE: answering with today instead of carrying out the second shift.",
+      "direction": null
+    },
+    {
+      "templateId": "COMB_E_OUTPUT",
+      "family": "combined_rate",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 191,
+      "declaresModelOnDraws": 191,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "COMB_E_TIME",
+      "family": "combined_rate",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 209,
+      "declaresModelOnDraws": 209,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "COMB_H_STAGED",
+      "family": "combined_rate",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 210,
+      "declaresModelOnDraws": 210,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "COMB_H_THREE",
+      "family": "combined_rate",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 190,
+      "declaresModelOnDraws": 190,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "COMB_M_SOLO_THEN",
+      "family": "combined_rate",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 186,
+      "declaresModelOnDraws": 186,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "COMB_M_TOGETHER_SOLO",
+      "family": "combined_rate",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 214,
+      "declaresModelOnDraws": 214,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "FRAC_E_2",
+      "family": "fractions",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "string",
+      "drawn": 400,
+      "declaresModelOnDraws": 255,
+      "modelCoverageOfDraws": 0.637,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "NOT_APPLICABLE",
+      "rc2Classification": "NOT_APPLICABLE",
+      "justification": "The forward and find-number directions declare a numeric wrongMethodValue. In the find-fraction direction the key is a name drawn from a six-element lexicon by sampling without replacement, so the misconception MISSED_ONE_FRACTION_STAGE necessarily names a different denominator, and the RC2-018 confusion (previous ÷ next) yields an integer denominator, never a fraction name. No modelled wrong method can reach the key.",
+      "direction": "findFraction"
+    },
+    {
+      "templateId": "FRAC_H_4",
+      "family": "fractions",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 400,
+      "declaresModelOnDraws": 270,
+      "modelCoverageOfDraws": 0.675,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "NOT_APPLICABLE",
+      "rc2Classification": "NOT_APPLICABLE",
+      "justification": "Same argument as FRAC_E_2, over four fractions: the hidden denominator is drawn without replacement from the same six-element lexicon, so no skipped stage can name it.",
+      "direction": "findFraction"
+    },
+    {
+      "templateId": "FRAC_M_3",
+      "family": "fractions",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 400,
+      "declaresModelOnDraws": 274,
+      "modelCoverageOfDraws": 0.685,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "NOT_APPLICABLE",
+      "rc2Classification": "NOT_APPLICABLE",
+      "justification": "Same argument as FRAC_E_2, over three fractions instead of two: the hidden denominator is drawn without replacement from the same six-element lexicon, so no skipped stage can name it.",
+      "direction": "findFraction"
+    },
+    {
+      "templateId": "MACH_E_HOURS",
+      "family": "machines",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 202,
+      "declaresModelOnDraws": 202,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "MACH_E_REQUIRED",
+      "family": "machines",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 198,
+      "declaresModelOnDraws": 198,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "MACH_H_STAGE_UP",
+      "family": "machines",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 206,
+      "declaresModelOnDraws": 206,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "MACH_H_TWO_TYPES",
+      "family": "machines",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 194,
+      "declaresModelOnDraws": 194,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "MACH_M_NEW_FAST",
+      "family": "machines",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 128,
+      "declaresModelOnDraws": 128,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "MACH_M_STOP",
+      "family": "machines",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 139,
+      "declaresModelOnDraws": 139,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "MACH_M_SUBSET_UP",
+      "family": "machines",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 133,
+      "declaresModelOnDraws": 133,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "ODD_E_MULT",
+      "family": "odd_one_out",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 166,
+      "declaresModelOnDraws": 0,
+      "modelCoverageOfDraws": 0,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "COVERED_BY_OTHER_INVARIANT",
+      "rc2Classification": "COVERED_BY_OTHER_INVARIANT",
+      "justification": "The wrong method here is applying a competing rule. AMBIGUOUS_ODD_ONE_OUT / UNDISCOVERABLE_INTENDED_RULE reject a run in which ANY approved rule other than the intended one singles out a number — strictly stronger than rejecting only when a competing rule happens to land on the key.",
+      "direction": null
+    },
+    {
+      "templateId": "ODD_E_SQUARES",
+      "family": "odd_one_out",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 220,
+      "declaresModelOnDraws": 0,
+      "modelCoverageOfDraws": 0,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "COVERED_BY_OTHER_INVARIANT",
+      "rc2Classification": "COVERED_BY_OTHER_INVARIANT",
+      "justification": "Same argument as ODD_E_MULT: the ambiguity classifier rejects any run in which an approved rule other than the intended one singles out a number, which subsumes the case where such a rule singles out the key itself.",
+      "direction": null
+    },
+    {
+      "templateId": "ODD_H_SQ_MINUS",
+      "family": "odd_one_out",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 204,
+      "declaresModelOnDraws": 0,
+      "modelCoverageOfDraws": 0,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "COVERED_BY_OTHER_INVARIANT",
+      "rc2Classification": "COVERED_BY_OTHER_INVARIANT",
+      "justification": "Same argument as ODD_E_MULT, and the template the RC1 audit found ambiguous twice; both of those runs are now regression fixtures under RC2-007.",
+      "direction": null
+    },
+    {
+      "templateId": "ODD_H_TRIANGULAR",
+      "family": "odd_one_out",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 196,
+      "declaresModelOnDraws": 0,
+      "modelCoverageOfDraws": 0,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "COVERED_BY_OTHER_INVARIANT",
+      "rc2Classification": "COVERED_BY_OTHER_INVARIANT",
+      "justification": "Same argument as ODD_E_MULT. This template replaced ODD_H_PRIME_OFFSET, whose intended rule was undiscoverable; discoverability is enforced by UNDISCOVERABLE_INTENDED_RULE, not by a degeneracy model.",
+      "direction": null
+    },
+    {
+      "templateId": "ODD_M_CUBES",
+      "family": "odd_one_out",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 140,
+      "declaresModelOnDraws": 0,
+      "modelCoverageOfDraws": 0,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "COVERED_BY_OTHER_INVARIANT",
+      "rc2Classification": "COVERED_BY_OTHER_INVARIANT",
+      "justification": "Same argument as ODD_E_MULT. This template is also the one whose cube sampler now chooses a square intruder whenever the run holds a lone square, so the competing rule is removed at the source rather than tolerated.",
+      "direction": null
+    },
+    {
+      "templateId": "ODD_M_PRIME2",
+      "family": "odd_one_out",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 130,
+      "declaresModelOnDraws": 0,
+      "modelCoverageOfDraws": 0,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "COVERED_BY_OTHER_INVARIANT",
+      "rc2Classification": "COVERED_BY_OTHER_INVARIANT",
+      "justification": "Same argument as ODD_E_MULT: a competing approved rule that singles out any number, key or not, is already a rejection under AMBIGUOUS_ODD_ONE_OUT.",
+      "direction": null
+    },
+    {
+      "templateId": "ODD_M_PRONIC",
+      "family": "odd_one_out",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 130,
+      "declaresModelOnDraws": 0,
+      "modelCoverageOfDraws": 0,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "COVERED_BY_OTHER_INVARIANT",
+      "rc2Classification": "COVERED_BY_OTHER_INVARIANT",
+      "justification": "Same argument as ODD_E_MULT: a competing approved rule that singles out any number, key or not, is already a rejection under AMBIGUOUS_ODD_ONE_OUT.",
+      "direction": null
+    },
+    {
+      "templateId": "PCT_E_OF",
+      "family": "percentages",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 203,
+      "declaresModelOnDraws": 203,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PCT_E_REVERSE_ONE",
+      "family": "percentages",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 197,
+      "declaresModelOnDraws": 197,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PCT_H_CHAIN_VALUE",
+      "family": "percentages",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 210,
+      "declaresModelOnDraws": 210,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PCT_H_REVERSE_CHAIN",
+      "family": "percentages",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 190,
+      "declaresModelOnDraws": 190,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PCT_M_REMAIN",
+      "family": "percentages",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 130,
+      "declaresModelOnDraws": 130,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PCT_M_SUCCESSIVE",
+      "family": "percentages",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 134,
+      "declaresModelOnDraws": 134,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PCT_M_UNIT_PRICE",
+      "family": "percentages",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 136,
+      "declaresModelOnDraws": 136,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PL_E_LOSS",
+      "family": "profit_loss",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 192,
+      "declaresModelOnDraws": 192,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PL_E_PROFIT",
+      "family": "profit_loss",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 208,
+      "declaresModelOnDraws": 208,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PL_H_CHAIN",
+      "family": "profit_loss",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 182,
+      "declaresModelOnDraws": 182,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PL_H_REVERSE",
+      "family": "profit_loss",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 218,
+      "declaresModelOnDraws": 218,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PL_M_DISC_MARK",
+      "family": "profit_loss",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 200,
+      "declaresModelOnDraws": 200,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PL_M_TOTAL_COST",
+      "family": "profit_loss",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 200,
+      "declaresModelOnDraws": 200,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PROP_E_COST",
+      "family": "direct_proportion",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 209,
+      "declaresModelOnDraws": 209,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PROP_E_ITEMS",
+      "family": "direct_proportion",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 191,
+      "declaresModelOnDraws": 191,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PROP_H_COMPOUND",
+      "family": "direct_proportion",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 196,
+      "declaresModelOnDraws": 196,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PROP_H_COST_PLUS",
+      "family": "direct_proportion",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 204,
+      "declaresModelOnDraws": 204,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PROP_M_FRAC_UNIT",
+      "family": "direct_proportion",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 133,
+      "declaresModelOnDraws": 133,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PROP_M_MAP",
+      "family": "direct_proportion",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 125,
+      "declaresModelOnDraws": 125,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "PROP_M_RECIPE",
+      "family": "direct_proportion",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 142,
+      "declaresModelOnDraws": 142,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "RATE_E_DIRECT",
+      "family": "unit_rate",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 202,
+      "declaresModelOnDraws": 202,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "RATE_E_TIME",
+      "family": "unit_rate",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 198,
+      "declaresModelOnDraws": 198,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "RATE_H_TARGET",
+      "family": "unit_rate",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 188,
+      "declaresModelOnDraws": 188,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "RATE_H_TWO_PHASE",
+      "family": "unit_rate",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 212,
+      "declaresModelOnDraws": 212,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "RATE_M_PERCENT",
+      "family": "unit_rate",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 177,
+      "declaresModelOnDraws": 177,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "RATE_M_SCALE",
+      "family": "unit_rate",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 223,
+      "declaresModelOnDraws": 223,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "RAT_E_KNOWN",
+      "family": "ratios",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 217,
+      "declaresModelOnDraws": 217,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "RAT_E_SPLIT",
+      "family": "ratios",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 183,
+      "declaresModelOnDraws": 183,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "RAT_H_TRANSFER",
+      "family": "ratios",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 200,
+      "declaresModelOnDraws": 200,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "RAT_H_TWO_COMB",
+      "family": "ratios",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 200,
+      "declaresModelOnDraws": 200,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "RAT_M_ADD_SIDE",
+      "family": "ratios",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 134,
+      "declaresModelOnDraws": 134,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "RAT_M_COMMON_DIFF",
+      "family": "ratios",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 134,
+      "declaresModelOnDraws": 134,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "RAT_M_COMMON_SUM",
+      "family": "ratios",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 132,
+      "declaresModelOnDraws": 132,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "REL_E_BETWEEN",
+      "family": "relational",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "string",
+      "drawn": 200,
+      "declaresModelOnDraws": 200,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 29,
+      "degenerateRate": 0.145,
+      "rc1Classification": "MISSING_DEGENERACY_MODEL",
+      "rc2Classification": "MODELLED",
+      "justification": "Same wrong method as REL_E_CHAIN — reading the position from the wrong end — over a chain of four or five people.",
+      "direction": null
+    },
+    {
+      "templateId": "REL_E_CHAIN",
+      "family": "relational",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "string",
+      "drawn": 200,
+      "declaresModelOnDraws": 200,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 29,
+      "degenerateRate": 0.145,
+      "rc1Classification": "MISSING_DEGENERACY_MODEL",
+      "rc2Classification": "MODELLED",
+      "justification": "Counting the position from the wrong end of the chain. In a five-person chain the third place is the same from either end, so a learner who reads the direction backwards still answers correctly.",
+      "direction": null
+    },
+    {
+      "templateId": "REL_H_GUARANTEE",
+      "family": "relational",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "string",
+      "drawn": 197,
+      "declaresModelOnDraws": 197,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MISSING_DEGENERACY_MODEL",
+      "rc2Classification": "MODELLED",
+      "justification": "as REL_M_CONFIRM, plus: the guaranteed statement must not be about the very pair the question declares open, or the question answers itself.",
+      "direction": null
+    },
+    {
+      "templateId": "REL_H_POSITION",
+      "family": "relational",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "string",
+      "drawn": 203,
+      "declaresModelOnDraws": 0,
+      "modelCoverageOfDraws": 0,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "COVERED_BY_OTHER_INVARIANT",
+      "rc2Classification": "COVERED_BY_OTHER_INVARIANT",
+      "justification": "The degeneracy of concern — answering «cannot be determined» without reasoning — is an answer-distribution property, not a per-item coincidence. It is measured and remediated under RC2-010 (the template answered UNDETERMINED in 91 of 91 RC1 instances; it now answers 17 distinct values) and its difficulty consequence is recorded under RC2-015.",
+      "direction": null
+    },
+    {
+      "templateId": "REL_M_BRANCH_UNRES",
+      "family": "relational",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "string",
+      "drawn": 132,
+      "declaresModelOnDraws": 0,
+      "modelCoverageOfDraws": 0,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "NOT_APPLICABLE",
+      "rc2Classification": "NOT_APPLICABLE",
+      "justification": "The key is a pair the order enumeration leaves undetermined. Every modelled wrong method resolves a pair, and a resolved pair is by construction a member of the determined set, which is disjoint from the key set. No modelled wrong method can reach the key.",
+      "direction": null
+    },
+    {
+      "templateId": "REL_M_CONFIRM",
+      "family": "relational",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "string",
+      "drawn": 124,
+      "declaresModelOnDraws": 124,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MISSING_DEGENERACY_MODEL",
+      "rc2Classification": "MODELLED",
+      "justification": "A guaranteed statement copied verbatim from the stem is answerable by text matching. The sampler already preferred an indirect statement; the rule declares the same requirement so the pipeline enforces it instead of it living only inside the sampler.",
+      "direction": null
+    },
+    {
+      "templateId": "REL_M_COUNT",
+      "family": "relational",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "string",
+      "drawn": 144,
+      "declaresModelOnDraws": 144,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 23,
+      "degenerateRate": 0.16,
+      "rc1Classification": "MISSING_DEGENERACY_MODEL",
+      "rc2Classification": "MODELLED",
+      "justification": "Two wrong methods are modelled — counting only the stated sentences, and counting everyone not provably below — and the item is degenerate only when both land on the key. Requiring the first alone rejected 56.7% of draws and removed the answers «لا أحد» and «شخص واحد» from the template entirely, trading a measurement defect for a larger statistical leak.",
+      "direction": null
+    },
+    {
+      "templateId": "SEQ_E_ARITH",
+      "family": "sequences",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 208,
+      "declaresModelOnDraws": 208,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SEQ_E_GEO",
+      "family": "sequences",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 192,
+      "declaresModelOnDraws": 192,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SEQ_H_ALT_DIV",
+      "family": "sequences",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 147,
+      "declaresModelOnDraws": 147,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SEQ_H_POW_INDEX",
+      "family": "sequences",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 130,
+      "declaresModelOnDraws": 130,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SEQ_H_RECURRENCE",
+      "family": "sequences",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 123,
+      "declaresModelOnDraws": 123,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SEQ_M_ALT_OPS",
+      "family": "sequences",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 110,
+      "declaresModelOnDraws": 110,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SEQ_M_DOUBLE_DIFF",
+      "family": "sequences",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 91,
+      "declaresModelOnDraws": 91,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SEQ_M_INC_DIFF",
+      "family": "sequences",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 85,
+      "declaresModelOnDraws": 85,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SEQ_M_INTERLEAVED",
+      "family": "sequences",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 114,
+      "declaresModelOnDraws": 114,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 2,
+      "degenerateRate": 0.018,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SPD_E_DISTANCE",
+      "family": "speed",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 219,
+      "declaresModelOnDraws": 219,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SPD_E_TIME",
+      "family": "speed",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 181,
+      "declaresModelOnDraws": 181,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SPD_H_CATCH",
+      "family": "speed",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 135,
+      "declaresModelOnDraws": 135,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SPD_H_MEET_DELAY",
+      "family": "speed",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 140,
+      "declaresModelOnDraws": 140,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SPD_H_TIME_DIFF",
+      "family": "speed",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 125,
+      "declaresModelOnDraws": 125,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SPD_M_AVG",
+      "family": "speed",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 130,
+      "declaresModelOnDraws": 130,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SPD_M_EQUAL_DIST",
+      "family": "speed",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 122,
+      "declaresModelOnDraws": 122,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "SPD_M_TWO_TIME",
+      "family": "speed",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 148,
+      "declaresModelOnDraws": 148,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "WORK_E_INVERSE",
+      "family": "work_time",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 208,
+      "declaresModelOnDraws": 208,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "WORK_E_VOLUME",
+      "family": "work_time",
+      "difficulties": [
+        "easy"
+      ],
+      "answerType": "number",
+      "drawn": 192,
+      "declaresModelOnDraws": 192,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "WORK_H_TWO_STAGE",
+      "family": "work_time",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 201,
+      "declaresModelOnDraws": 201,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "WORK_H_WORKERS_EFF",
+      "family": "work_time",
+      "difficulties": [
+        "hard"
+      ],
+      "answerType": "number",
+      "drawn": 199,
+      "declaresModelOnDraws": 199,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "WORK_M_CHANGE",
+      "family": "work_time",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 148,
+      "declaresModelOnDraws": 148,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "WORK_M_EFF",
+      "family": "work_time",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 133,
+      "declaresModelOnDraws": 133,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    },
+    {
+      "templateId": "WORK_M_TARGET",
+      "family": "work_time",
+      "difficulties": [
+        "medium"
+      ],
+      "answerType": "number",
+      "drawn": 119,
+      "declaresModelOnDraws": 119,
+      "modelCoverageOfDraws": 1,
+      "degenerateDraws": 0,
+      "degenerateRate": 0,
+      "rc1Classification": "MODELLED",
+      "rc2Classification": "MODELLED",
+      "justification": null,
+      "direction": null
+    }
+  ]
+}
