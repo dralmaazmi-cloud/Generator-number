@@ -1,6 +1,9 @@
 import {SeededRNG, makeSeed} from './rng.js';
 import {FAMILY_REGISTRY, FAMILY_MAP, FAMILY_ALIASES} from './registry.js';
 import {finalizeQuestion, validateQuestion, questionSignature, buildBalancedLetterSchedule, LETTERS} from './utils.js';
+import {validateCandidate} from './qa/pipeline.js';
+import {REASON} from './qa/reasons.js';
+import {GenerationAnalytics} from './qa/analytics.js';
 
 import {generateSequences} from './families/sequences.js';
 import {generateRatios} from './families/ratios.js';
@@ -19,7 +22,7 @@ import {generateCalendar} from './families/calendar.js';
 import {generateOddOneOut} from './families/odd_one_out.js';
 import {generateProfitLoss} from './families/profit_loss.js';
 
-export const ENGINE_VERSION = '1.2.0';
+export const ENGINE_VERSION = '1.3.0';
 
 const GENERATORS = {
   sequences: generateSequences,
@@ -40,6 +43,19 @@ const GENERATORS = {
   profit_loss: generateProfitLoss
 };
 
+const PIPELINE_STAGES = [
+  'text_matches_params', 'mathematics_oracle', 'unique_answer', 'ambiguity',
+  'pedagogy', 'language', 'explanation', 'distractors', 'fingerprint'
+];
+
+const now = () => (typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now());
+
+function summarizeReasons(reasons) {
+  const out = {};
+  for (const r of reasons) out[r] = (out[r] || 0) + 1;
+  return out;
+}
+
 const MIXED_DIFFICULTY_WEIGHTS = [
   {value:'easy', weight:0.25},
   {value:'medium', weight:0.60},
@@ -53,8 +69,28 @@ export class NumericalQuestionGeneratorEngine {
       maxGenerationAttempts: config.maxGenerationAttempts ?? 50,
       defaultDifficulty: config.defaultDifficulty ?? 'mixed',
       defaultCount: config.defaultCount ?? 10,
-      targetTimeSeconds: config.targetTimeSeconds ?? {easy:35, medium:55, hard:80}
+      targetTimeSeconds: config.targetTimeSeconds ?? {easy:35, medium:55, hard:80},
+      // Section 13-B: targets, not hard ceilings. When the stock of distinct
+      // templates cannot meet them the session reports a diversity warning
+      // instead of spinning in a retry loop.
+      preferredTemplateRepeatsPer50: config.preferredTemplateRepeatsPer50 ?? 2,
+      slidingWindow: config.slidingWindow ?? 20,
+      preferredRepeatsPerWindow: config.preferredRepeatsPerWindow ?? 1,
+      diversityAttempts: config.diversityAttempts ?? 24,
+      // Section 13-C: a small, non-persistent memory of recent sessions.
+      recentFingerprintMemory: config.recentFingerprintMemory ?? 150
     };
+    this.analytics = new GenerationAnalytics();
+    this._recentFingerprints = [];
+  }
+
+  /** Section 6 / 45: the rejection and latency figures behind the published items. */
+  getAnalytics() {
+    return this.analytics.snapshot();
+  }
+
+  resetAnalytics() {
+    this.analytics = new GenerationAnalytics();
   }
 
   listFamilies() {
@@ -129,72 +165,176 @@ export class NumericalQuestionGeneratorEngine {
     });
   }
 
+  /**
+   * Section 5. Generate, validate, and on rejection regenerate with a fresh
+   * draw — never repair a candidate in place. When the attempts are exhausted
+   * the engine raises a structured error rather than publishing a broken item.
+   */
   generateQuestion(options = {}) {
     const requestedSeed = options.seed ?? makeSeed('NUMQ');
     const familyInput = this.normalizeFamily(options.family ?? 'random');
+    const rejections = [];
+    let lastTemplate = null;
+    let lastFamily = familyInput;
+    const startedAt = now();
 
     for (let attempt = 0; attempt < this.config.maxGenerationAttempts; attempt++) {
       const seed = attempt === 0 ? requestedSeed : `${requestedSeed}|retry:${attempt}`;
       const rng = new SeededRNG(seed);
       const family = familyInput === 'random' ? rng.pick(FAMILY_REGISTRY).id : familyInput;
-      const difficulty = this.resolveDifficulty(options.difficulty ?? this.config.defaultDifficulty, rng.fork('difficulty'), options.adaptiveStats);
+      lastFamily = family;
+      const difficulty = this.resolveDifficulty(
+        options.difficulty ?? this.config.defaultDifficulty,
+        rng.fork('difficulty'),
+        options.adaptiveStats
+      );
       const generator = GENERATORS[family];
+
       let base;
       try {
-        base = generator({difficulty, rng:rng.fork('content'), seed, engineVersion:this.version});
+        base = generator({difficulty, rng: rng.fork('content'), seed, engineVersion: this.version});
       } catch (err) {
-        if (attempt === this.config.maxGenerationAttempts - 1) throw err;
+        rejections.push(err.reason || `GENERATOR_ERROR:${err.message}`);
         continue;
       }
-      const q = finalizeQuestion(base, rng.fork('options'), options.preferredCorrectLetter ?? null);
+      lastTemplate = base.template_id;
+
+      let q;
+      try {
+        q = finalizeQuestion(base, rng.fork('options'), options.preferredCorrectLetter ?? null);
+      } catch (err) {
+        // Not enough distractors with real provenance: reject, do not pad.
+        rejections.push(err.reason || REASON.DISTRACTOR_NO_MISCONCEPTION);
+        this.analytics.record(family, base.template_id, difficulty, {accepted: false, reasons: [err.reason || REASON.DISTRACTOR_NO_MISCONCEPTION]});
+        continue;
+      }
+
       q.metadata.family_description = FAMILY_MAP[family].description;
       q.metadata.blueprint_family = FAMILY_MAP[family].category;
-      q.metadata.quality_gate = 'passed';
-      const check = validateQuestion(q);
-      if (check.valid) return q;
-      if (attempt === this.config.maxGenerationAttempts - 1) {
-        throw new Error(`Failed to generate valid question: ${check.errors.join(', ')}`);
+
+      const verdict = validateCandidate(base, q);
+      this.analytics.record(family, base.template_id, difficulty, {accepted: verdict.valid, reasons: verdict.reasons});
+
+      if (verdict.valid) {
+        q.metadata.quality_gate = 'passed';
+        q.metadata.validation_meta = {
+          attempts: attempt + 1,
+          checks_passed: PIPELINE_STAGES,
+          realism_kind: base.realism ? 'editorial_realism_constraint' : null,
+          realism_warnings: verdict.details.realismSoftWarnings || [],
+          equations_checked: verdict.details.equationsChecked ?? 0,
+          oracle: verdict.details.oracle ?? null,
+          generation_ms: Math.round((now() - startedAt) * 1000) / 1000
+        };
+        this.analytics.recordPublished(family, base.template_id, difficulty, attempt + 1, now() - startedAt);
+        return q;
       }
+      rejections.push(...verdict.reasons);
     }
-    throw new Error('Question generation exhausted attempts');
+
+    const summary = summarizeReasons(rejections);
+    this.analytics.recordExhaustion(lastFamily, lastTemplate);
+    const error = new Error(`QUESTION_GENERATION_EXHAUSTED: ${lastFamily}/${lastTemplate} — ${Object.keys(summary).join(', ')}`);
+    error.code = 'QUESTION_GENERATION_EXHAUSTED';
+    error.family = lastFamily;
+    error.templateId = lastTemplate;
+    error.rejectionReasonsSummary = summary;
+    throw error;
   }
 
+  /**
+   * Section 13-B / 41. Builds a session.
+   *
+   * Duplicate protection is absolute: the same fingerprint, the same item with
+   * its choices shuffled, and the same parameter set under the same reasoning
+   * graph all collide and are refused. Template repetition is a *target* — when
+   * the stock of distinct templates cannot meet it (a fifty-question hard-only
+   * session, say), the session carries a diversity warning instead of spinning
+   * in a retry loop that cannot terminate.
+   */
   generatePractice(options = {}) {
     const count = Math.max(1, Math.min(100, Number(options.count ?? this.config.defaultCount)));
     const seed = options.seed ?? makeSeed('NUMSET');
     const rng = new SeededRNG(seed);
     const selectedFamilies = this._resolveFamilyPool(options);
     const familySchedule = this._buildFamilySchedule(selectedFamilies, count, rng.fork('families'));
-    const difficultySchedule = this._buildDifficultySchedule(options.difficulty ?? this.config.defaultDifficulty, count, rng.fork('difficulty'), options.adaptiveStats);
+    const difficultySchedule = this._buildDifficultySchedule(
+      options.difficulty ?? this.config.defaultDifficulty, count, rng.fork('difficulty'), options.adaptiveStats
+    );
     const letterSchedule = options.balanceAnswerLetters === false
       ? Array(count).fill(null)
       : buildBalancedLetterSchedule(count, rng.fork('letters'));
 
     const questions = [];
-    const signatures = new Set();
+    const fingerprints = new Set();
+    const templateCounts = new Map();
     const recentTemplates = [];
-    for (let i=0;i<count;i++) {
-      let q;
-      for (let retry=0; retry<30; retry++) {
-        q = this.generateQuestion({
-          family: familySchedule[i],
-          difficulty: difficultySchedule[i],
-          seed: `${seed}|Q${i+1}|${retry}`,
-          preferredCorrectLetter: letterSchedule[i],
-          adaptiveStats: options.adaptiveStats
-        });
-        const sig = questionSignature(q);
-        const templateRecent = recentTemplates.slice(-2).includes(q.generator_id);
-        if (!signatures.has(sig) && !templateRecent) {
-          signatures.add(sig);
-          break;
+    const diversityWarnings = [];
+    const useRecentMemory = options.useRecentSessionMemory !== false;
+
+    for (let i = 0; i < count; i++) {
+      let chosen = null;
+      let relaxed = null;
+      for (let retry = 0; retry < this.config.diversityAttempts; retry++) {
+        let q;
+        try {
+          q = this.generateQuestion({
+            family: familySchedule[i],
+            difficulty: difficultySchedule[i],
+            seed: `${seed}|Q${i + 1}|${retry}`,
+            preferredCorrectLetter: letterSchedule[i],
+            adaptiveStats: options.adaptiveStats
+          });
+        } catch (err) {
+          if (err.code === 'QUESTION_GENERATION_EXHAUSTED' && retry < this.config.diversityAttempts - 1) continue;
+          throw err;
         }
+        const fingerprint = questionSignature(q);
+        // Absolute rules: never publish the same reasoning twice in a session,
+        // however the choices happen to be ordered.
+        if (fingerprints.has(fingerprint)) continue;
+        if (useRecentMemory && this._recentFingerprints.includes(fingerprint)) continue;
+
+        relaxed = relaxed || {q, fingerprint};
+        const used = templateCounts.get(q.generator_id) || 0;
+        const inWindow = recentTemplates.slice(-this.config.slidingWindow)
+          .filter(t => t === q.generator_id).length;
+        // Preferences: honoured when the stock allows, relaxed when it cannot.
+        if (used >= this.config.preferredTemplateRepeatsPer50 && count <= 50) continue;
+        if (inWindow >= this.config.preferredRepeatsPerWindow) continue;
+        chosen = {q, fingerprint};
+        break;
       }
-      questions.push({...q, practice_number:i+1});
-      recentTemplates.push(q.generator_id);
+
+      if (!chosen) {
+        if (!relaxed) {
+          throw Object.assign(new Error('SESSION_DIVERSITY_EXHAUSTED: no distinct question available'), {
+            code: 'SESSION_DIVERSITY_EXHAUSTED', index: i + 1
+          });
+        }
+        chosen = relaxed;
+        diversityWarnings.push({
+          index: i + 1,
+          template_id: chosen.q.generator_id,
+          reason: REASON.TEMPLATE_OVERUSE,
+          note: 'template repetition target relaxed: the stock of distinct templates for this difficulty is too small'
+        });
+      }
+
+      fingerprints.add(chosen.fingerprint);
+      templateCounts.set(chosen.q.generator_id, (templateCounts.get(chosen.q.generator_id) || 0) + 1);
+      recentTemplates.push(chosen.q.generator_id);
+      questions.push({...chosen.q, practice_number: i + 1});
+    }
+
+    if (useRecentMemory) {
+      this._recentFingerprints.push(...fingerprints);
+      const overflow = this._recentFingerprints.length - this.config.recentFingerprintMemory;
+      if (overflow > 0) this._recentFingerprints.splice(0, overflow);
     }
 
     const validation = this.validateBatch(questions);
+    validation.diversity_warnings = diversityWarnings;
     return {
       engine_version: this.version,
       seed,
@@ -211,27 +351,81 @@ export class NumericalQuestionGeneratorEngine {
     };
   }
 
+  /**
+   * Section 41. How many genuinely distinct templates exist at a difficulty,
+   * so a caller can see an exhaustion risk before asking for the session.
+   */
+  availableDistinctTemplates(difficulty, families = null, samples = 120) {
+    const pool = families && families.length
+      ? families.map(f => this.normalizeFamily(f))
+      : FAMILY_REGISTRY.map(f => f.id);
+    const seen = new Set();
+    for (const family of pool) {
+      for (let i = 0; i < samples; i++) {
+        try {
+          const q = this.generateQuestion({family, difficulty, seed: `probe-${family}-${difficulty}-${i}`});
+          seen.add(q.generator_id);
+        } catch { /* an exhausted probe is not a template */ }
+      }
+    }
+    return {difficulty, families: pool, distinct_templates: seen.size, template_ids: [...seen].sort()};
+  }
+
   validateQuestion(q) {
     return validateQuestion(q);
   }
 
   validateBatch(questions) {
-    const errors=[]; const warnings=[];
-    const sigs=new Set(); const keyCounts=Object.fromEntries(LETTERS.map(l=>[l,0]));
-    const outlierPositions=[];
-    questions.forEach((q,i)=>{
-      const check=validateQuestion(q);
-      if(!check.valid) errors.push({index:i+1, errors:check.errors});
-      const sig=questionSignature(q);
-      if(sigs.has(sig)) errors.push({index:i+1, errors:['duplicate_question_signature']});
-      sigs.add(sig);
-      keyCounts[q.correct_option]=(keyCounts[q.correct_option]||0)+1;
-      if(q.family==='odd_one_out' && q.metadata?.outlier_display_position) outlierPositions.push(q.metadata.outlier_display_position);
+    const errors = [];
+    const warnings = [];
+    const fingerprints = new Set();
+    const paramGraphKeys = new Set();
+    const keyCounts = Object.fromEntries(LETTERS.map(l => [l, 0]));
+    const rankCounts = {};
+    const outlierPositions = [];
+    const templateCounts = {};
+
+    questions.forEach((q, i) => {
+      const check = validateQuestion(q);
+      if (!check.valid) errors.push({index: i + 1, errors: check.errors});
+
+      const fingerprint = questionSignature(q);
+      if (fingerprints.has(fingerprint)) errors.push({index: i + 1, errors: [REASON.DUPLICATE_FINGERPRINT]});
+      fingerprints.add(fingerprint);
+
+      // Section 31: the same parameters under the same reasoning graph are the
+      // same question even if the fingerprint fields were to drift apart.
+      const paramKey = `${q.family}|${q.metadata?.reasoning_graph ?? ''}|${JSON.stringify(q.metadata?.parameters ?? {})}`;
+      if (paramGraphKeys.has(paramKey)) errors.push({index: i + 1, errors: [REASON.DUPLICATE_FINGERPRINT]});
+      paramGraphKeys.add(paramKey);
+
+      keyCounts[q.correct_option] = (keyCounts[q.correct_option] || 0) + 1;
+      const rank = q.metadata?.correct_numeric_rank;
+      if (rank) rankCounts[rank] = (rankCounts[rank] || 0) + 1;
+      templateCounts[q.generator_id] = (templateCounts[q.generator_id] || 0) + 1;
+      if (q.family === 'odd_one_out' && q.metadata?.outlier_display_position) {
+        outlierPositions.push(q.metadata.outlier_display_position);
+      }
     });
-    const counts=Object.values(keyCounts); const spread=Math.max(...counts)-Math.min(...counts);
-    if(questions.length>=6 && spread>2) warnings.push('answer_key_distribution_spread_gt_2');
-    if(outlierPositions.length>=4 && new Set(outlierPositions).size===1) warnings.push('odd_one_out_position_leak');
-    return {valid:errors.length===0, errors, warnings, key_counts:keyCounts, odd_one_out_positions:outlierPositions};
+
+    const counts = Object.values(keyCounts);
+    const spread = Math.max(...counts) - Math.min(...counts);
+    if (questions.length >= 6 && spread > 3) warnings.push('answer_key_distribution_spread_gt_3');
+    if (outlierPositions.length >= 4 && new Set(outlierPositions).size === 1) warnings.push('odd_one_out_position_leak');
+    const overused = Object.entries(templateCounts)
+      .filter(([, n]) => n > this.config.preferredTemplateRepeatsPer50 && questions.length <= 50);
+    if (overused.length) warnings.push(`template_repetition_above_target:${overused.map(([t, n]) => `${t}x${n}`).join(',')}`);
+
+    return {
+      valid: errors.length === 0,
+      errors,
+      warnings,
+      key_counts: keyCounts,
+      numeric_rank_counts: rankCounts,
+      distinct_templates: Object.keys(templateCounts).length,
+      template_counts: templateCounts,
+      odd_one_out_positions: outlierPositions
+    };
   }
 
   summarizeBatch(questions) {

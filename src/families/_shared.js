@@ -38,6 +38,17 @@ export function usable(distractors, {allowZero = false, allowNegative = false, m
   });
 }
 
+/**
+ * Rounds a distractor to the precision a learner would actually write down.
+ * Only ever applied to a *final* distractor value — never to an intermediate
+ * that feeds another calculation (Section 8-A).
+ */
+export function approx(value, decimals = 1) {
+  if (!Number.isFinite(value)) return value;
+  const p = 10 ** decimals;
+  return Math.round(value * p) / p;
+}
+
 /** `12 يومًا`, `يومان`, `3 أيام` — the only way a count meets a unit. */
 export const u = (n, unitId, ctx = 'nominative') => formatNumberWithUnit(n, unitId, ctx);
 export const word = (n, unitId) => unitWordFor(n, unitId);

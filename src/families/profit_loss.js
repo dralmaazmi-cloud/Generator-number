@@ -1,66 +1,300 @@
-import {makeId, formatNumber} from '../utils.js';
+import {Fraction} from '../qa/fraction.js';
+import {mk, usable, u, num, approx, unitFormat, buildBase, eq, X, add, sub, mul} from './_shared.js';
 
-export function generateProfitLoss({difficulty,rng,seed,engineVersion}){
-  const ctx={difficulty,rng,seed,engineVersion,family:'profit_loss',family_ar:'الربح والخسارة والأسعار',category:'الربح والخسارة والأسعار'};
-  const list=difficulty==='easy'?[simpleProfit,simpleLoss]
-    :difficulty==='medium'?[totalCostProfit,discountThenSale]
-    :[reverseSellingPrice,discountMarkupChain];
+export function generateProfitLoss({difficulty, rng, seed, engineVersion}) {
+  const ctx = {difficulty, rng, seed, engineVersion, family: 'profit_loss', family_ar: 'الربح والخسارة والأسعار', category: 'الربح والخسارة والأسعار'};
+  const list = difficulty === 'easy' ? [simpleProfit, simpleLoss]
+    : difficulty === 'medium' ? [totalCostProfit, discountThenSale]
+    : [reverseSellingPrice, discountMarkupChain];
   return rng.pick(list)(ctx);
 }
 
-function simpleProfit(ctx){
-  const {rng}=ctx; const buy=rng.pick([100,120,160,200,240,300,400]); const pct=rng.pick([10,15,20,25,30]); const profit=buy*pct/100; if(!Number.isInteger(profit)) return simpleProfit(ctx); const sell=buy+profit; const correct=pct;
-  return basePct(ctx,'PL_E_PROFIT','نسبة ربح من سعر الشراء','easy',`اشترى متجر سلعة بـ${buy} درهمًا وباعها بـ${sell} درهمًا. ما نسبة الربح من سعر الشراء؟`,correct,[profit,sell/buy*100,profit/sell*100,pct+5,Math.max(1,pct-5),sell-buy],[
-    `الربح = ${sell}-${buy} = ${profit} درهمًا.`,
-    `نسبة الربح = ${profit} ÷ ${buy} × 100 = ${pct}%.`
-  ],'احسب الربح بالدرهم أولًا ثم قارنه بسعر الشراء.','في نسبة الربح، المقام عادةً سعر الشراء إذا نص السؤال على ذلك.','الربح ÷ الشراء ×100.',2);
+const pct = v => `${num(v)}%`;
+const money = unitFormat('dirham');
+
+function simpleProfit(ctx) {
+  const {rng} = ctx;
+  const buy = rng.pick([100, 120, 160, 200, 240, 300, 400]);
+  const percent = rng.pick([10, 15, 20, 25, 30]);
+  const profit = buy * percent / 100;
+  if (!Number.isInteger(profit)) return simpleProfit(ctx);
+  const sell = buy + profit;
+  const correct = percent;
+  const params = {buyPrice: buy, sellPrice: sell};
+  const distractors = usable([
+    mk(profit, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${sell} − ${buy}`),
+    mk(approx(sell / buy * 100), 'USED_ORIGINAL_TOTAL', `${sell} ÷ ${buy} × 100`),
+    mk(approx(profit / sell * 100), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} ÷ ${sell} × 100`),
+    mk(percent + 5, 'OFF_BY_ONE_STEP', `${percent} + 5`),
+    mk(Math.max(1, percent - 5), 'OFF_BY_ONE_STEP', `${percent} − 5`),
+    mk(100 - percent, 'TOOK_COMPLEMENT_PERCENT', `100 − ${percent}`),
+    mk(percent * 2, 'APPLIED_STEP_TWICE', `${percent} × 2`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'PL_E_PROFIT',
+    subskill: 'نسبة ربح من سعر الشراء',
+    difficulty: 'easy',
+    question: `اشترى متجر سلعة بـ${u(buy, 'dirham', 'oblique')} وباعها بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الربح من سعر الشراء؟`,
+    correct, distractors, format: pct,
+    steps: [
+      `الربح بالدرهم = ${sell} − ${buy} = ${profit}.`,
+      `نسبة الربح = ${profit} ÷ ${buy} × 100 = ${percent}.`
+    ],
+    howToStart: 'احسب الربح بالدرهم أولًا ثم قارنه بسعر الشراء.',
+    remember: 'في نسبة الربح، المقام هو سعر الشراء إذا نص السؤال على ذلك.',
+    fastMethod: 'الربح ÷ الشراء × 100.',
+    estimatedSteps: 2, conceptTags: ['profit-loss', 'percentage'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, buy), mul(sub(sell, buy), 100))]},
+    askedUnknown: 'profitPercent', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'PROFIT_PERCENT_BASE', targetMisconception: 'USED_SALE_PRICE_AS_DENOMINATOR',
+      wrongMethodValue: profit / sell * 100
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 2, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['buyPrice', 'sellPrice']}
+  });
 }
 
-function simpleLoss(ctx){
-  const {rng}=ctx; const buy=rng.pick([100,120,160,200,240,300,400]); const pct=rng.pick([10,20,25]); const loss=buy*pct/100; const sell=buy-loss; const correct=pct;
-  return basePct(ctx,'PL_E_LOSS','نسبة خسارة من سعر الشراء','easy',`اشترى متجر سلعة بـ${buy} درهمًا وباعها بـ${sell} درهمًا. ما نسبة الخسارة من سعر الشراء؟`,correct,[loss,loss/sell*100,pct+5,Math.max(1,pct-5),sell/buy*100,100-pct],[
-    `الخسارة = ${buy}-${sell} = ${loss} درهمًا.`,
-    `نسبة الخسارة = ${loss} ÷ ${buy} ×100 = ${pct}%.`
-  ],'احسب مقدار الخسارة أولًا.','استخدم سعر الشراء كأساس للنسبة عندما يطلب السؤال ذلك.','الخسارة ÷ الشراء ×100.',2);
+function simpleLoss(ctx) {
+  const {rng} = ctx;
+  const buy = rng.pick([100, 120, 160, 200, 240, 300, 400]);
+  const percent = rng.pick([10, 20, 25]);
+  const loss = buy * percent / 100;
+  if (!Number.isInteger(loss)) return simpleLoss(ctx);
+  const sell = buy - loss;
+  const correct = percent;
+  const params = {buyPrice: buy, sellPrice: sell};
+  const distractors = usable([
+    mk(loss, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${buy} − ${sell}`),
+    mk(approx(loss / sell * 100), 'USED_SALE_PRICE_AS_DENOMINATOR', `${loss} ÷ ${sell} × 100`),
+    mk(percent + 5, 'OFF_BY_ONE_STEP', `${percent} + 5`),
+    mk(Math.max(1, percent - 5), 'OFF_BY_ONE_STEP', `${percent} − 5`),
+    mk(approx(sell / buy * 100), 'TOOK_COMPLEMENT_PERCENT', `${sell} ÷ ${buy} × 100`),
+    mk(100 - percent, 'TOOK_COMPLEMENT_PERCENT', `100 − ${percent}`),
+    mk(percent * 2, 'APPLIED_STEP_TWICE', `${percent} × 2`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'PL_E_LOSS',
+    subskill: 'نسبة خسارة من سعر الشراء',
+    difficulty: 'easy',
+    question: `اشترى متجر سلعة بـ${u(buy, 'dirham', 'oblique')} وباعها بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الخسارة من سعر الشراء؟`,
+    correct, distractors, format: pct,
+    steps: [
+      `الخسارة بالدرهم = ${buy} − ${sell} = ${loss}.`,
+      `نسبة الخسارة = ${loss} ÷ ${buy} × 100 = ${percent}.`
+    ],
+    howToStart: 'احسب مقدار الخسارة أولًا.',
+    remember: 'استخدم سعر الشراء كأساس للنسبة عندما يطلب السؤال ذلك.',
+    fastMethod: 'الخسارة ÷ الشراء × 100.',
+    estimatedSteps: 2, conceptTags: ['profit-loss', 'percentage'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, buy), mul(sub(buy, sell), 100))]},
+    askedUnknown: 'lossPercent', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'LOSS_PERCENT_BASE', targetMisconception: 'USED_SALE_PRICE_AS_DENOMINATOR',
+      wrongMethodValue: loss / sell * 100
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 2, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['buyPrice', 'sellPrice']}
+  });
 }
 
-function totalCostProfit(ctx){
-  const {rng}=ctx; const buy=rng.pick([160,180,200,240,300]); const shipping=rng.pick([10,20,30,40]); const total=buy+shipping; const pct=rng.pick([10,20,25]); const profit=total*pct/100; if(!Number.isInteger(profit)) return totalCostProfit(ctx); const sell=total+profit; const correct=pct;
-  return basePct(ctx,'PL_M_TOTAL_COST','ربح كنسبة من التكلفة الكلية','medium',`اشترى متجر سلعة بـ${buy} درهمًا ودفع ${shipping} درهمًا شحنًا وتجهيزًا، ثم باعها بـ${sell} درهمًا. ما نسبة الربح من إجمالي التكلفة؟`,correct,[(sell-buy)/buy*100,profit/buy*100,profit/sell*100,pct+5,Math.max(1,pct-5),shipping/total*100],[
-    `إجمالي التكلفة = ${buy}+${shipping} = ${total}.`,
-    `الربح = ${sell}-${total} = ${profit}.`,
-    `نسبة الربح = ${profit} ÷ ${total} ×100 = ${pct}%.`
-  ],'احسب التكلفة الكلية قبل حساب الربح.','الشحن والتجهيز جزء من التكلفة إذا ذكرهما السؤال.','(سعر البيع - التكلفة الكلية) ÷ التكلفة الكلية.',3);
+function totalCostProfit(ctx) {
+  const {rng} = ctx;
+  const buy = rng.pick([160, 180, 200, 240, 300]);
+  const shipping = rng.pick([10, 20, 30, 40]);
+  const total = buy + shipping;
+  const percent = rng.pick([10, 20, 25]);
+  const profit = total * percent / 100;
+  if (!Number.isInteger(profit)) return totalCostProfit(ctx);
+  const sell = total + profit;
+  const correct = percent;
+  const params = {buyPrice: buy, shipping, sellPrice: sell};
+  const distractors = usable([
+    mk(approx((sell - buy) / buy * 100), 'IGNORED_EXTRA_COST', `(${sell} − ${buy}) ÷ ${buy} × 100`),
+    mk(approx(profit / buy * 100), 'USED_PURCHASE_PRICE_AS_DENOMINATOR', `${profit} ÷ ${buy} × 100`),
+    mk(approx(profit / sell * 100), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} ÷ ${sell} × 100`),
+    mk(percent + 5, 'OFF_BY_ONE_STEP', `${percent} + 5`),
+    mk(Math.max(1, percent - 5), 'OFF_BY_ONE_STEP', `${percent} − 5`),
+    mk(approx(shipping / total * 100), 'TREATED_PERCENT_AS_AMOUNT', `${shipping} ÷ ${total} × 100`),
+    mk(profit, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${sell} − ${total}`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'PL_M_TOTAL_COST',
+    subskill: 'ربح كنسبة من التكلفة الكلية',
+    difficulty: 'medium',
+    question: `اشترى متجر سلعة بـ${u(buy, 'dirham', 'oblique')} ودفع ${u(shipping, 'dirham')} شحنًا وتجهيزًا، ثم باعها بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الربح من إجمالي التكلفة؟`,
+    correct, distractors, format: pct,
+    steps: [
+      `إجمالي التكلفة = ${buy} + ${shipping} = ${total}.`,
+      `الربح = ${sell} − ${total} = ${profit}.`,
+      `نسبة الربح = ${profit} ÷ ${total} × 100 = ${percent}.`
+    ],
+    howToStart: 'احسب التكلفة الكلية قبل حساب الربح.',
+    remember: 'الشحن والتجهيز جزء من التكلفة إذا ذكرهما السؤال.',
+    fastMethod: '(سعر البيع − التكلفة الكلية) ÷ التكلفة الكلية × 100.',
+    estimatedSteps: 3, conceptTags: ['profit-loss', 'percentage'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, add(buy, shipping)), mul(sub(sell, add(buy, shipping)), 100))]
+    },
+    askedUnknown: 'profitPercentOnTotalCost', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'TOTAL_COST_BASE', targetMisconception: 'IGNORED_EXTRA_COST',
+      wrongMethodValue: (sell - buy) / buy * 100,
+      degenerateWhen: [{when: shipping === 0, note: 'no extra cost to fold in'}]
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 3, arithmeticBurden: 3},
+    textParams: {essentialParams: ['buyPrice', 'shipping', 'sellPrice']}
+  });
 }
 
-function discountThenSale(ctx){
-  const {rng}=ctx; const tag=rng.pick([200,240,300,400,500]); const discount=rng.pick([10,20,25]); const cost=tag*(1-discount/100); const markup=rng.pick([10,20,25]); const sell=cost*(1+markup/100); if(!Number.isInteger(sell)) return discountThenSale(ctx); const correct=sell;
-  return baseMoney(ctx,'PL_M_DISC_MARK','خصم على سعر ثم إضافة ربح','medium',`سعر سلعة المعلن ${tag} درهمًا. حصل المتجر عليها بخصم ${discount}% من هذا السعر، ثم أراد ربحًا قدره ${markup}% من تكلفة الشراء الفعلية. فما سعر البيع؟`,correct,[tag*(1+markup/100),tag*(1-discount/100),tag*(1+(markup-discount)/100),sell+20,Math.max(1,sell-20),cost+markup],[
-    `تكلفة الشراء بعد الخصم = ${tag} × ${1-discount/100} = ${formatNumber(cost)}.`,
-    `سعر البيع المطلوب = ${formatNumber(cost)} × ${1+markup/100} = ${formatNumber(sell)}.`
-  ],'احسب تكلفة الشراء الفعلية أولًا ثم الربح منها.','الربح هنا محسوب من التكلفة بعد الخصم لا من السعر المعلن.','طبّق الخصم ثم معامل الربح.',3);
+function discountThenSale(ctx) {
+  const {rng} = ctx;
+  const tag = rng.pick([200, 240, 300, 400, 500]);
+  const discount = rng.pick([10, 20, 25]);
+  const cost = Fraction.from(tag).mul(100 - discount).div(100);
+  const markup = rng.pick([10, 20, 25]);
+  const sell = cost.mul(100 + markup).div(100);
+  if (!cost.isInteger || !sell.isInteger) return discountThenSale(ctx);
+  const correct = sell.toNumber();
+  const costN = cost.toNumber();
+  const params = {listPrice: tag, discountPercent: discount, markupPercent: markup};
+  const distractors = usable([
+    mk(approx(tag * (100 + markup) / 100), 'APPLIED_PERCENT_TO_ORIGINAL', `${tag} × (100 + ${markup}) ÷ 100`),
+    mk(costN, 'STOPPED_AFTER_FIRST_STAGE', `${tag} × (100 − ${discount}) ÷ 100`),
+    mk(approx(tag * (100 + markup - discount) / 100), 'ADDED_PERCENTAGES', `${tag} × (100 + ${markup} − ${discount}) ÷ 100`),
+    mk(correct + 20, 'OFF_BY_ONE_STEP', `${correct} + 20`),
+    mk(Math.max(1, correct - 20), 'OFF_BY_ONE_STEP', `${correct} − 20`),
+    mk(costN + markup, 'TREATED_PERCENT_AS_AMOUNT', `${costN} + ${markup}`),
+    mk(tag, 'USED_ORIGINAL_TOTAL', `السعر المعلن ${tag}`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'PL_M_DISC_MARK',
+    subskill: 'خصم على سعر ثم إضافة ربح',
+    difficulty: 'medium',
+    question: `سعر سلعة المعلن ${u(tag, 'dirham')}. حصل المتجر عليها بخصم ${discount}% من هذا السعر، ثم أراد ربحًا قدره ${markup}% من تكلفة الشراء الفعلية. فما سعر البيع؟`,
+    correct, distractors, format: money,
+    steps: [
+      `تكلفة الشراء بعد الخصم = ${tag} × (100 − ${discount}) ÷ 100 = ${costN}.`,
+      `سعر البيع = ${costN} × (100 + ${markup}) ÷ 100 = ${correct}.`
+    ],
+    howToStart: 'احسب تكلفة الشراء الفعلية أولًا ثم الربح منها.',
+    remember: 'الربح هنا محسوب من التكلفة بعد الخصم لا من السعر المعلن.',
+    fastMethod: 'طبّق الخصم ثم معامل الربح.',
+    estimatedSteps: 3, conceptTags: ['profit-loss', 'percentage'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, 10000), mul(tag, sub(100, discount), add(100, markup)))]
+    },
+    askedUnknown: 'sellPriceAfterDiscountAndMarkup', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'MARKUP_ON_ACTUAL_COST', targetMisconception: 'APPLIED_PERCENT_TO_ORIGINAL',
+      wrongMethodValue: tag * (100 + markup) / 100,
+      degenerateWhen: [{when: discount === 0, note: 'no discount: the two bases coincide'}]
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 3},
+    textParams: {essentialParams: ['listPrice', 'discountPercent', 'markupPercent']}
+  });
 }
 
-function reverseSellingPrice(ctx){
-  const {rng}=ctx; const cost=rng.pick([100,120,160,200,240,300,400]); const pct=rng.pick([20,25,50]); const sell=cost*(1+pct/100); const correct=cost;
-  return baseMoney(ctx,'PL_H_REVERSE','استرجاع التكلفة من سعر بيع وربح معلوم','hard',`باع متجر سلعة بـ${formatNumber(sell)} درهمًا محققًا ربحًا قدره ${pct}% من تكلفة الشراء. فما تكلفة الشراء؟`,correct,[sell*(1-pct/100),sell-cost,pct,sell/(pct/100),cost+20,Math.max(1,cost-20)],[
-    `سعر البيع يمثل ${100+pct}% من التكلفة.`,
-    `التكلفة = ${formatNumber(sell)} ÷ ${1+pct/100} = ${cost} درهمًا.`
-  ],'حوّل سعر البيع إلى نسبة من التكلفة ثم اعكس المعامل.','لا تطرح نسبة الربح مباشرة من سعر البيع.','البيع ÷ (1 + نسبة الربح).',3);
+function reverseSellingPrice(ctx) {
+  const {rng} = ctx;
+  const cost = rng.pick([100, 120, 160, 200, 240, 300, 400]);
+  const percent = rng.pick([20, 25, 50]);
+  const sellF = Fraction.from(cost).mul(100 + percent).div(100);
+  if (!sellF.isInteger) return reverseSellingPrice(ctx);
+  const sell = sellF.toNumber();
+  const correct = cost;
+  const params = {sellPrice: sell, profitPercent: percent};
+  const distractors = usable([
+    mk(approx(sell * (100 - percent) / 100), 'SUBTRACTED_PERCENTAGE_DIRECTLY', `${sell} × (100 − ${percent}) ÷ 100`),
+    mk(sell - cost, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${sell} − ${cost}`),
+    mk(approx(sell * 100 / percent), 'USED_SALE_PRICE_AS_DENOMINATOR', `${sell} × 100 ÷ ${percent}`),
+    mk(cost + 20, 'OFF_BY_ONE_STEP', `${cost} + 20`),
+    mk(Math.max(1, cost - 20), 'OFF_BY_ONE_STEP', `${cost} − 20`),
+    mk(sell, 'USED_GIVEN_VALUE_AS_ANSWER', `سعر البيع ${sell}`),
+    mk(sell - percent, 'TREATED_PERCENT_AS_AMOUNT', `${sell} − ${percent}`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'PL_H_REVERSE',
+    subskill: 'استرجاع التكلفة من سعر بيع وربح معلوم',
+    difficulty: 'hard',
+    question: `باع متجر سلعة بـ${u(sell, 'dirham', 'oblique')} محققًا ربحًا قدره ${percent}% من تكلفة الشراء. فما تكلفة الشراء؟`,
+    correct, distractors, format: money,
+    steps: [
+      `سعر البيع يمثل 100 + ${percent} = ${100 + percent} بالمئة من التكلفة.`,
+      `التكلفة = ${sell} × 100 ÷ ${100 + percent} = ${correct}.`
+    ],
+    howToStart: 'حوّل سعر البيع إلى نسبة من التكلفة ثم اعكس المعامل.',
+    remember: 'لا تطرح نسبة الربح مباشرة من سعر البيع.',
+    fastMethod: 'البيع ÷ (1 + نسبة الربح).',
+    estimatedSteps: 3, conceptTags: ['profit-loss', 'reverse'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, add(100, percent)), mul(sell, 100))]
+    },
+    askedUnknown: 'costFromSellPrice', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'REVERSE_MARKUP', targetMisconception: 'SUBTRACTED_PERCENTAGE_DIRECTLY',
+      wrongMethodValue: sell * (100 - percent) / 100
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, reverseReasoning: 1, stageCount: 2, arithmeticBurden: 3},
+    textParams: {essentialParams: ['sellPrice', 'profitPercent']}
+  });
 }
 
-function discountMarkupChain(ctx){
-  const {rng}=ctx; const list=rng.pick([200,240,300,400,500]); const disc=rng.pick([10,20,25]); const after=list*(1-disc/100); const markup=rng.pick([20,25,50]); const final=after*(1+markup/100); const correct=(final-list)/list*100; if(Math.abs(correct-Math.round(correct))>1e-9) return discountMarkupChain(ctx); const d=[markup-disc,markup+disc,0,correct+5,correct-5,disc-markup];
-  return basePercentChange(ctx,'PL_H_CHAIN','خصم ثم زيادة وحساب التغير النهائي','hard',`كان السعر ${list} درهمًا. خُفّض بنسبة ${disc}%، ثم زيد السعر الجديد بنسبة ${markup}%. ما نسبة التغير النهائية مقارنة بالسعر الأصلي؟`,correct,d,[
-    `بعد الخصم = ${list} × ${1-disc/100} = ${formatNumber(after)}.`,
-    `بعد الزيادة = ${formatNumber(after)} × ${1+markup/100} = ${formatNumber(final)}.`,
-    `التغير = ${formatNumber(final-list)} من أصل ${list} = ${formatNumber(Math.abs(correct))}% ${correct>=0?'زيادة':'انخفاض'}.`
-  ],'طبّق الخصم والزيادة بالتتابع ثم قارن النهائي بالأصل.','الخصم والزيادة المتساويان لا يلغيان بعضهما عادةً.','استخدم معاملي الخصم والزيادة ثم قارن.',4);
-}
-
-function basePct(ctx,template_id,subskill,difficulty,question,correct,distractors,steps,how,remember,fast,estimated_steps){return base(ctx,template_id,subskill,difficulty,question,correct,distractors,v=>`${formatNumber(v)}%`,steps,how,remember,fast,estimated_steps)}
-function baseMoney(ctx,template_id,subskill,difficulty,question,correct,distractors,steps,how,remember,fast,estimated_steps){return base(ctx,template_id,subskill,difficulty,question,correct,distractors,v=>`${formatNumber(v)} درهمًا`,steps,how,remember,fast,estimated_steps)}
-function basePercentChange(ctx,template_id,subskill,difficulty,question,correct,distractors,steps,how,remember,fast,estimated_steps){return base(ctx,template_id,subskill,difficulty,question,correct,distractors,v=>v>0?`زيادة ${formatNumber(v)}%`:v<0?`انخفاض ${formatNumber(Math.abs(v))}%`:'لا يوجد تغير',steps,how,remember,fast,estimated_steps)}
-function base(ctx,template_id,subskill,difficulty,question,correct,distractors,format,steps,how,remember,fast,estimated_steps){
- return {id:makeId(template_id,ctx.seed),generator_id:template_id,template_id,seed:ctx.seed,family:ctx.family,family_ar:ctx.family_ar,category:ctx.category,subskill,difficulty,question,display_expression:null,correct,distractors:distractors.filter(v=>Number.isFinite(v)).map(v=>({value:v,rationale:'خطأ في تحديد أساس نسبة الربح/الخسارة أو في ترتيب الخصم والزيادة.'})),format,explanation:{how_to_start:how,steps,answer:`الإجابة الصحيحة: ${format(correct)}.`,fast_method:fast,remember},estimated_steps,concept_tags:['profit-loss','percentage'],engine_version:ctx.engineVersion};
+function discountMarkupChain(ctx) {
+  const {rng} = ctx;
+  const list = rng.pick([200, 240, 300, 400, 500]);
+  const disc = rng.pick([10, 20, 25]);
+  const markup = rng.pick([20, 25, 50]);
+  const f1 = 100 - disc, f2 = 100 + markup;
+  // Section 13: a net factor of 1 makes the compound change trivial for a
+  // template whose point is that a discount and a mark-up do not cancel.
+  if (f1 * f2 === 10000) return discountMarkupChain(ctx);
+  const afterF = Fraction.from(list).mul(f1).div(100);
+  const finalF = afterF.mul(f2).div(100);
+  if (!afterF.isInteger || !finalF.isInteger) return discountMarkupChain(ctx);
+  const after = afterF.toNumber();
+  const final = finalF.toNumber();
+  const changeTimes100 = f1 * f2 - 10000;
+  const correct = changeTimes100 / 100;
+  const params = {listPrice: list, discountPercent: disc, markupPercent: markup};
+  const distractors = usable([
+    mk(markup - disc, 'ADDED_PERCENTAGES', `${markup} − ${disc}`),
+    mk(markup + disc, 'ADDED_PERCENTAGES', `${markup} + ${disc}`),
+    mk(disc - markup, 'SUBTRACTED_PERCENTAGES', `${disc} − ${markup}`),
+    mk(-correct, 'APPLIED_OPERATION_IN_REVERSE', `عكس إشارة ${num(correct)}`),
+    mk(correct + (correct >= 0 ? 5 : -5), 'OFF_BY_ONE_STEP', `${num(correct)} ± 5`),
+    mk(markup, 'USED_ONLY_LAST_STAGE', `نسبة الزيادة ${markup} وحدها`),
+    mk(-disc, 'STOPPED_AFTER_FIRST_STAGE', `نسبة الخصم ${disc} وحدها`)
+  ], {allowNegative: true, allowZero: true});
+  const format = v => v > 0 ? `زيادة ${num(v)}%` : v < 0 ? `انخفاض ${num(Math.abs(v))}%` : 'لا يوجد تغير';
+  return buildBase(ctx, {
+    templateId: 'PL_H_CHAIN',
+    subskill: 'خصم ثم زيادة وحساب التغير النهائي',
+    difficulty: 'hard',
+    question: `كان السعر ${u(list, 'dirham')}. خُفّض بنسبة ${disc}%، ثم زيد السعر الجديد بنسبة ${markup}%. ما نسبة التغير النهائية مقارنة بالسعر الأصلي؟`,
+    correct, distractors, format,
+    answerText: `الإجابة الصحيحة: ${format(correct)}.`,
+    steps: [
+      `السعر بعد الخصم = ${list} × (100 − ${disc}) ÷ 100 = ${after}.`,
+      `السعر بعد الزيادة = ${after} × (100 + ${markup}) ÷ 100 = ${final}.`,
+      `التغير = ${final} − ${list} = ${final - list}.`,
+      `نسبة التغير = ${final - list} ÷ ${list} × 100 = ${num(correct)}.`
+    ],
+    howToStart: 'طبّق الخصم والزيادة بالتتابع ثم قارن النهائي بالأصل.',
+    remember: 'الخصم والزيادة المتساويان لا يلغيان بعضهما عادةً.',
+    fastMethod: 'استخدم معاملي الخصم والزيادة ثم قارن بالسعر الأصلي.',
+    estimatedSteps: 4, conceptTags: ['profit-loss', 'successive-change'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, 100), sub(mul(f1, f2), 10000))]},
+    askedUnknown: 'netPercentChange', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'SUCCESSIVE_PRICE_CHANGE', targetMisconception: 'ADDED_PERCENTAGES',
+      wrongMethodValue: markup - disc,
+      degenerateWhen: [{when: f1 * f2 === 10000, note: 'the discount and the mark-up cancel exactly'}]
+    },
+    complexityFactors: {reasoningTransformations: 4, conceptCount: 2, stageCount: 2, arithmeticBurden: 4},
+    textParams: {essentialParams: ['listPrice', 'discountPercent', 'markupPercent']}
+  });
 }

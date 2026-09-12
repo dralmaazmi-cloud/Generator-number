@@ -56,7 +56,7 @@ export function runOracle(base, q) {
     let answer;
     const ask = spec.ask || {};
     switch (ask.type) {
-      case 'position': answer = oracle.whoAtPosition(ask.position) ?? spec.undeterminedLabel ?? null; break;
+      case 'position': answer = oracle.whoAtPosition(ask.position) ?? spec.expectedDisplay ?? null; break;
       case 'countAbove': answer = oracle.countDefinitelyAbove(ask.target); break;
       case 'undeterminedPair': {
         const pairs = oracle.allUndeterminedPairs();
@@ -92,10 +92,19 @@ export function runOracle(base, q) {
     return {ran: true, reasons: [REASON.ORACLE_NON_UNIQUE], answer: null, detail: {survivors: unique.map(f => f.toDecimalString())}};
   }
   const oracleAnswer = unique[0];
-  const claimed = spec.answerKind === 'dayIndex'
-    ? dayIndexOf(base.correct)
-    : Number(base.correct);
-  const agrees = Number.isFinite(claimed) && oracleAnswer.eq(Fraction.from(claimed));
+  // A template whose answer is a label rather than a number (a weekday, a
+  // fraction name) supplies the mapping from the searched value to the label,
+  // so the comparison stays between what the statement implies and what the
+  // generator claims.
+  let agrees;
+  let claimed;
+  if (spec.labels) {
+    claimed = String(base.correct);
+    agrees = spec.labels[oracleAnswer.toDecimalString()] === claimed;
+  } else {
+    claimed = spec.answerKind === 'dayIndex' ? dayIndexOf(base.correct) : Number(base.correct);
+    agrees = Number.isFinite(claimed) && oracleAnswer.eq(Fraction.from(claimed));
+  }
   return {
     ran: true,
     reasons: agrees ? [] : [REASON.ORACLE_DISAGREEMENT],
@@ -158,6 +167,9 @@ export function validateUniqueAnswer(base, q, oracleResult) {
       matches = LETTERS.filter(l => String(q.options[l]) === expected
         || parseLeadingNumber(q.options[l]) === Number(expected)).length;
       if (spec.kind === 'order' && spec.expectedDisplay === undefined) matches = equalToKey;
+    } else if (spec.labels) {
+      const label = spec.labels[oracleResult.answer.toDecimalString()];
+      matches = LETTERS.filter(l => q.options[l] === label).length;
     } else if (spec.answerKind === 'dayIndex') {
       const dayName = DAYS_AR[Number(oracleResult.answer.toDecimalString())];
       matches = LETTERS.filter(l => q.options[l] === dayName).length;

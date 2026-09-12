@@ -223,38 +223,45 @@ export function validateExplanationSourcing({
   allowedConstants = [0, 1, 2, 100],
   answerNumbers = []
 }) {
+  // `sourced` is everything a reader may take as given at this point.
+  // `substantive` is the subset that carries real information — stem values,
+  // parameters and results derived from them. Structural constants (0, 1, 2,
+  // 100) are admissible on their own but cannot, by themselves, license a claim:
+  // otherwise "1.25 x 0.8 = 1" would launder both factors into the explanation.
   const sourced = new Set();
-  for (const v of [...stemNumbers, ...paramNumbers, ...allowedConstants]) {
-    if (Number.isFinite(v)) sourced.add(key(v));
+  const substantive = new Set();
+  for (const v of [...stemNumbers, ...paramNumbers]) {
+    if (Number.isFinite(v)) { sourced.add(key(v)); substantive.add(key(v)); }
   }
+  for (const v of allowedConstants) if (Number.isFinite(v)) sourced.add(key(v));
   const unsourced = [];
 
   for (const step of steps) {
     if (typeof step !== 'string') continue;
-    // Derive within the step: any equation chain with one fully-sourced side
-    // makes every other side's value available.
     for (let pass = 0; pass < 4; pass++) {
       for (const run of extractMathRuns(step)) {
         const parts = equalityParts(run);
         if (!parts || parts.length < 2) continue;
         let values;
         try { values = parts.map(p => evaluateExpression(p)); } catch { continue; }
-        const sideSourced = parts.map(p => numbersIn(p).every(n => sourced.has(key(n))));
-        if (!sideSourced.some(Boolean)) continue;
-        // One side is fully derived from known values, so the chain's value —
-        // and any side that is just that single literal — becomes available.
-        for (const v of values) sourced.add(key(v.exact.toDecimalString()));
-        for (const p of parts) {
+        // A side licenses the chain when every literal on it is already
+        // admissible and at least one of them carries information.
+        const licenses = parts.some(p => {
           const ns = numbersIn(p);
-          if (ns.length === 1) sourced.add(key(ns[0]));
-        }
+          return ns.length > 0 && ns.every(n => sourced.has(key(n))) && ns.some(n => substantive.has(key(n)));
+        });
+        if (!licenses) continue;
+        // The identity is separately re-evaluated by validateDisplayedEquations,
+        // so a factorisation like "24 = 6 x 4" demonstrates its operands rather
+        // than announcing them.
+        for (const v of values) { sourced.add(key(v.exact.toDecimalString())); substantive.add(key(v.exact.toDecimalString())); }
+        for (const p of parts) for (const n of numbersIn(p)) { sourced.add(key(n)); substantive.add(key(n)); }
       }
     }
     for (const n of numbersIn(step)) {
       if (!sourced.has(key(n))) unsourced.push({step, value: n});
     }
-    // Anything the step legitimately established stays available downstream.
-    for (const n of numbersIn(step)) sourced.add(key(n));
+    for (const n of numbersIn(step)) { sourced.add(key(n)); substantive.add(key(n)); }
   }
 
   for (const a of answerNumbers) {
