@@ -320,7 +320,9 @@ function conditions() {
   add('STRUCTURE_ADJUDICATION_COMPLETE', 'RC2.3-1 — every template is adjudicated and every adjudication is reachable', () => {
     const c = structuralClassification();
     const orphans = c.templatesNotInAnyFamily;
-    return {pass: c.total === 107 && orphans.length === 0,
+    // RC2.4 added eighteen HARD templates; the count stays pinned so a silent
+    // loss is still caught.
+    return {pass: c.total === 125 && orphans.length === 0,
       detail: {templates: c.total, byBand: c.byBand, orphans}};
   });
 
