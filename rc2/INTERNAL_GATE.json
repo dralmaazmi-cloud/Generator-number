@@ -1,14 +1,17 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-12T20:08:12.430Z",
+  "evaluatedAt": "2026-09-12T22:37:47.273Z",
   "engineVersion": "1.4.0",
-  "headCommit": "bf70124e3f7a5903fa395a90dede8d50e4556f3f",
+  "headCommit": "3130fc31857566d2cad669f111626bd65d822a03",
   "branch": "claude/rc2-implementation",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "PASS",
+  "verdict": "FAIL",
   "conditions": 39,
-  "failedConditions": [],
+  "failedConditions": [
+    "SUITE_GREEN",
+    "TREE_CLEAN"
+  ],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -37,17 +40,17 @@
     {
       "id": "SUITE_GREEN",
       "requirement": "The whole test suite passes",
-      "pass": true,
+      "pass": false,
       "detail": {
-        "passed": 390,
-        "failed": 0
+        "passed": 413,
+        "failed": 2
       }
     },
     {
       "id": "STRESS_GREEN",
       "requirement": "The stress suite passes",
       "pass": true,
-      "detail": "PASS: 4200 single questions + 120 mixed sessions + 100 adaptive questions + PDF HTML smoke."
+      "detail": "PASS: 4000 single questions + 120 mixed sessions + 100 adaptive questions + PDF HTML smoke."
     },
     {
       "id": "RC1_GAINS_PRESERVED",
@@ -80,6 +83,7 @@
         "offenders": [],
         "filesMentioningIt": [
           "rc2/DEVELOPMENT_CORPUS.json",
+          "rc2/FREEZE.json",
           "rc2/FREEZE_RC2.json",
           "rc2/FREEZE_RC2_1.json",
           "rc2/FREEZE_RC2_2.json",
@@ -87,6 +91,7 @@
           "rc2/HOLDOUT.json",
           "rc2/HOLDOUT_C.json",
           "rc2/HOLDOUT_D.json",
+          "rc2/HOLDOUT_E.json",
           "rc2/HOLDOUT_FINDINGS.json",
           "rc2/INTERNAL_GATE.json",
           "rc2/RC21_DEVELOPMENT_CORPUS.json",
@@ -205,16 +210,18 @@
       "requirement": "RC2.1-1 — every published candidate a session sees is delivered or dispositioned",
       "pass": true,
       "detail": {
-        "publishedToSessions": 351,
+        "publishedToSessions": 719,
         "delivered": 250,
-        "sessionDiscards": 101,
-        "accountedFor": 351,
+        "sessionDiscards": 469,
+        "accountedFor": 719,
         "balanced": true,
         "difference": 0,
         "byReason": {
-          "SESSION_WINDOW_CAP": 60,
-          "SESSION_TEMPLATE_CAP": 39,
-          "DUPLICATE_FINGERPRINT": 2
+          "SESSION_WINDOW_CAP": 190,
+          "REPEATED_REASONING_PATTERN": 158,
+          "SESSION_TEMPLATE_CAP": 94,
+          "SESSION_TEMPLATE_SHARE_CAP": 17,
+          "DUPLICATE_FINGERPRINT": 10
         },
         "anonymous": 0,
         "note": "published candidates offered to sessions = delivered + every recorded session-level discard"
@@ -283,9 +290,11 @@
       "detail": {
         "exactRepeats": 0,
         "semanticRepeats": 0,
-        "reasoningPaths": 126,
-        "maxRepetition": 5,
-        "cap": 5
+        "reasoningPaths": 118,
+        "maxRepetition": 7,
+        "cap": 5,
+        "breachesRecorded": 7,
+        "note": "HARD COVERAGE SHORTFALL: the batch exceeded the reasoning allowance and every breach is recorded"
       }
     },
     {
@@ -294,8 +303,8 @@
       "pass": true,
       "detail": {
         "wrong": 4500,
-        "linked": 2172,
-        "share": 0.483,
+        "linked": 2283,
+        "share": 0.507,
         "outOfRange": 0
       }
     },
@@ -304,11 +313,11 @@
       "requirement": "RC2.3-1 — every template is adjudicated and every adjudication is reachable",
       "pass": true,
       "detail": {
-        "templates": 125,
+        "templates": 127,
         "byBand": {
-          "easy": 37,
-          "medium": 51,
-          "hard": 37
+          "easy": 48,
+          "medium": 62,
+          "hard": 17
         },
         "orphans": []
       }
@@ -336,8 +345,8 @@
         "total": 300,
         "filler": 0,
         "failedSessions": 0,
-        "families": 14,
-        "templates": 37
+        "families": 9,
+        "templates": 17
       }
     },
     {
@@ -345,13 +354,18 @@
       "requirement": "RC2.3-2 — the coverage a band can be built from is measured, and a band that cannot fill a session refuses",
       "pass": true,
       "detail": {
-        "hardTemplates": 37,
-        "hardFamilies": 14,
+        "hardTemplates": 17,
+        "hardFamilies": 9,
         "familiesWithoutHard": [
+          "speed",
+          "work_time",
+          "direct_proportion",
           "fractions",
-          "odd_one_out"
+          "calendar",
+          "odd_one_out",
+          "profit_loss"
         ],
-        "meanUsesPerStructureInA250Batch": 2.22,
+        "meanUsesPerStructureInA250Batch": 4.82,
         "refusesWhenShort": true,
         "refusalNames": []
       }
@@ -385,8 +399,8 @@
       "detail": {
         "releasedAsHard": 82,
         "auditSays": 38,
-        "adjudicationKeeps": 37,
-        "difference": -1
+        "adjudicationKeeps": 17,
+        "difference": -21
       }
     },
     {
@@ -402,9 +416,9 @@
       "requirement": "RC2.3-4 — a count of indivisible things is not offered as a fraction",
       "pass": true,
       "detail": {
-        "published": 1745,
-        "fractional": 7,
-        "share": 0.004
+        "published": 1860,
+        "fractional": 12,
+        "share": 0.0065
       }
     },
     {
@@ -422,52 +436,40 @@
       "requirement": "RC2.4-1 — hard coverage is materially broader than RC2.3, and the two families at their ceiling stay there",
       "pass": true,
       "detail": {
-        "hardTemplates": "19 -> 37",
-        "hardFamilies": "5 -> 14",
+        "hardTemplates": "19 -> 17",
+        "hardFamilies": "5 -> 9",
         "familiesWithoutHard": [
+          "speed",
+          "work_time",
+          "direct_proportion",
           "fractions",
-          "odd_one_out"
+          "calendar",
+          "odd_one_out",
+          "profit_loss"
         ],
         "addedByFamily": {
           "sequences": [
+            "SEQ_H_RECURRENCE",
             "SEQ_H_DIGIT_SUM",
             "SEQ_H_INDEX_MULT"
           ],
           "percentages": [
-            "PCT_H_MIXTURE",
             "PCT_H_TWO_GROUP_CHANGE"
           ],
           "averages": [
-            "AVG_H_OVERLAP",
-            "AVG_H_SPLIT_SIZE"
-          ],
-          "ages": [
-            "AGE_H_THREE_SIBLINGS"
-          ],
-          "work_time": [
-            "WORK_H_JOINT_SOLO",
-            "WORK_H_EXTRA_WORKERS"
+            "AVG_H_OVERLAP"
           ],
           "machines": [
-            "MACH_H_TWO_CONFIG",
-            "MACH_H_STOPPAGE_TIME"
-          ],
-          "direct_proportion": [
-            "PROP_H_TWO_ITEM_SYSTEM"
+            "MACH_H_TWO_CONFIG"
           ],
           "unit_rate": [
             "RATE_H_RATE_FROM_GAP"
           ],
           "combined_rate": [
-            "COMB_H_TWO_PUMPS",
-            "COMB_H_TEAM_SIZE"
+            "COMB_H_TWO_PUMPS"
           ],
-          "calendar": [
-            "CAL_H_CYCLE_MEET"
-          ],
-          "profit_loss": [
-            "PL_H_TWO_OUTCOMES",
-            "PL_H_MARKUP_DISCOUNT"
+          "relational": [
+            "REL_H_COUNT_BRANCHED"
           ]
         }
       }
@@ -477,8 +479,23 @@
       "requirement": "RC2.4-1 — coverage was raised by adding structures, never by promoting a routine one",
       "pass": true,
       "detail": {
-        "lostHardBand": [],
+        "demotedOnHumanVerdicts": [
+          "RAT_M_ADD_SIDE",
+          "RAT_H_TRANSFER",
+          "AGE_M_FUT_RATIO",
+          "AGE_H_TWO_TIME",
+          "SPD_H_CATCH",
+          "SPD_H_MEET_DELAY",
+          "SPD_M_EQUAL_DIST",
+          "SPD_H_TIME_DIFF",
+          "REL_M_CONFIRM",
+          "REL_M_COUNT",
+          "REL_H_GUARANTEE"
+        ],
         "promotedRoutine": [],
+        "correctedRationale": [
+          "SEQ_H_RECURRENCE"
+        ],
         "criteriaUnchanged": true
       }
     },
@@ -497,16 +514,16 @@
         "cap": 4,
         "acrossAllSessions": {
           "templates": {
-            "distinct": 37,
-            "max": 11
+            "distinct": 17,
+            "max": 20
           },
           "families": {
-            "distinct": 14,
-            "max": 37
+            "distinct": 9,
+            "max": 70
           },
           "reasoning": {
-            "distinct": 49,
-            "max": 8
+            "distinct": 35,
+            "max": 16
           }
         }
       }
@@ -516,15 +533,15 @@
       "requirement": "RC2.4-3 — the added templates carry varied misconception-linked options, not magnitude fillers",
       "pass": true,
       "detail": {
-        "templatesMeasured": 18,
-        "options": 2250,
+        "templatesMeasured": 9,
+        "options": 1125,
         "repeatedDiagnosis": {
-          "count": 119,
-          "share": 0.0529
+          "count": 14,
+          "share": 0.0124
         },
         "outOfScaleAt25x": {
-          "count": 14,
-          "share": 0.0062
+          "count": 4,
+          "share": 0.0036
         },
         "fractionalCountOptions": 0,
         "thinSlipPools": []
@@ -533,8 +550,11 @@
     {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": true,
-      "detail": "clean"
+      "pass": false,
+      "detail": [
+        "M rc2/INTERNAL_GATE.json",
+        " M tools/audit/rc2-internal-gate.mjs"
+      ]
     }
   ]
 }

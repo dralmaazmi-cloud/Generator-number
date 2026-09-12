@@ -44,6 +44,15 @@
    "reason": "archived, not invalidated: RC2.3 was frozen with no holdout generated, because its own validation reported that 19 hard structures across 5 of 16 families could not fill repeated ALL_HARD sessions. RC2.4 answers exactly that finding by adding structures, so production necessarily moves past it.",
    "archivedRecord": "rc2/FREEZE_RC2_3.json",
    "holdoutGeneratedFromIt": null
+  },
+  {
+   "RC2_COMMIT": "ac99d2a5968451b45fdb4978abfcf0588d1f49ee",
+   "treeHash": "19b209884f2c9785324dec22004261b44d0e01b0",
+   "frozenAt": "2026-09-12T20:10:10.115Z",
+   "productionBundleSha256": "c2571fff9a15357f30648d9d8f40f14487d42d56db4224a715cb515e59369d99",
+   "reason": "archived, not invalidated: holdout AUDIT-2026-09-13-E was generated from exactly this production state, and its sealed blind review is the evidence RC2.5 calibrates against. The review found 53 of 82 delivered HARD items overclassified and 37 of 116 MEDIUM items easy, so production necessarily moves past it: nineteen structures demoted out of HARD, ten out of MEDIUM, one promotion correcting a factually wrong rationale, and two splits. Kept so Holdout E's provenance stays checkable.",
+   "archivedRecord": "rc2/FREEZE_RC2_4.json",
+   "holdoutGeneratedFromIt": "AUDIT-2026-09-13-E"
   }
  ]
 }
