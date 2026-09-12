@@ -1,17 +1,14 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-12T19:07:36.983Z",
+  "evaluatedAt": "2026-09-12T19:14:57.163Z",
   "engineVersion": "1.4.0",
-  "headCommit": "cc113a631b1cd14ac6699e77c0220f84b40799e9",
+  "headCommit": "fede1994bd9cf3ac486c12b32233694639354cf5",
   "branch": "claude/rc2-implementation",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "FAIL",
+  "verdict": "PASS",
   "conditions": 35,
-  "failedConditions": [
-    "SUITE_GREEN",
-    "TREE_CLEAN"
-  ],
+  "failedConditions": [],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -40,10 +37,10 @@
     {
       "id": "SUITE_GREEN",
       "requirement": "The whole test suite passes",
-      "pass": false,
+      "pass": true,
       "detail": {
-        "passed": 384,
-        "failed": 2
+        "passed": 379,
+        "failed": 0
       }
     },
     {
@@ -83,9 +80,9 @@
         "offenders": [],
         "filesMentioningIt": [
           "rc2/DEVELOPMENT_CORPUS.json",
-          "rc2/FREEZE.json",
           "rc2/FREEZE_RC2.json",
           "rc2/FREEZE_RC2_1.json",
+          "rc2/FREEZE_RC2_2.json",
           "rc2/HOLDOUT.json",
           "rc2/HOLDOUT_C.json",
           "rc2/HOLDOUT_D.json",
@@ -94,6 +91,7 @@
           "rc2/RC21_DEVELOPMENT_CORPUS.json",
           "rc2/RC21_REMEDIATION_REPORT.md",
           "rc2/RC22_DEVELOPMENT_CORPUS.json",
+          "rc2/RC23_DEVELOPMENT_CORPUS.json",
           "rc2/RC2_IMPLEMENTATION_REPORT.md",
           "rc2/SUPERSEDED_FREEZES.json",
           "rc2/holdout-c-package/MANIFEST.json",
@@ -431,10 +429,8 @@
     {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": false,
-      "detail": [
-        "M rc2/INTERNAL_GATE.json"
-      ]
+      "pass": true,
+      "detail": "clean"
     }
   ]
 }
