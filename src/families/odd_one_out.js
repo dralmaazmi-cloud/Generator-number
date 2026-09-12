@@ -20,6 +20,34 @@ export function generateOddOneOut({difficulty, rng, seed, engineVersion}) {
   return rng.pick(list)(ctx);
 }
 
+/**
+ * Section 38. The outlier must not be findable by its position in the number
+ * line. Building it as "the largest value plus a bit" made "pick the largest"
+ * a winning strategy on this family, so the intruder is placed at a random
+ * point in the run — above it, below it, or between two of its members.
+ */
+function placeOutlier(rng, valid, fails) {
+  const sorted = [...valid].sort((a, b) => a - b);
+  const span = sorted.at(-1) - sorted[0];
+  const step = Math.max(1, Math.round(span / (sorted.length - 1)));
+  const anchors = [
+    sorted[0] - step,
+    ...sorted.slice(0, -1).map((v, i) => Math.round((v + sorted[i + 1]) / 2)),
+    sorted.at(-1) + step
+  ];
+  for (const anchor of rng.shuffle(anchors)) {
+    for (let delta = 0; delta <= step + 4; delta++) {
+      for (const candidate of [anchor + delta, anchor - delta]) {
+        if (candidate <= 0) continue;
+        if (valid.includes(candidate)) continue;
+        if (!fails(candidate)) continue;
+        return candidate;
+      }
+    }
+  }
+  return null;
+}
+
 function build(ctx, spec) {
   const {rng} = ctx;
   const {templateId, subskill, valid, outlier, propertyText, proofs, remember, ruleId, ruleParams = {}} = spec;
@@ -86,8 +114,8 @@ function multiples(ctx) {
     const m = rng.pick([4, 5, 6, 7, 8, 9]);
     const start = rng.int(2, 5);
     const valid = Array.from({length: 5}, (_, i) => m * (start + i));
-    let outlier = valid.at(-1) + rng.pick([1, 2, 3]);
-    while (outlier % m === 0 || valid.includes(outlier)) outlier++;
+    const outlier = placeOutlier(rng, valid, n => n % m !== 0);
+    if (outlier === null) return null;
     return build(ctx, {
       templateId: 'ODD_E_MULT', ruleId: 'MULTIPLE', ruleParams: {multiple: m},
       subskill: `مضاعفات العدد ${m}`,
@@ -103,8 +131,8 @@ function squares(ctx) {
   return attempt(ctx, ({rng}) => {
     const start = rng.int(2, 6);
     const valid = Array.from({length: 5}, (_, i) => (start + i) ** 2);
-    let outlier = valid.at(-1) + rng.pick([3, 5, 7, 10]);
-    while (Number.isInteger(Math.sqrt(outlier)) || valid.includes(outlier)) outlier++;
+    const outlier = placeOutlier(rng, valid, n => !isSquare(n));
+    if (outlier === null) return null;
     return build(ctx, {
       templateId: 'ODD_E_SQUARES', ruleId: 'SQUARE', ruleParams: {baseStart: start},
       subskill: 'مربعات كاملة',
@@ -120,8 +148,8 @@ function cubes(ctx) {
   return attempt(ctx, ({rng}) => {
     const start = rng.int(2, 4);
     const valid = Array.from({length: 5}, (_, i) => (start + i) ** 3);
-    let outlier = valid.at(-1) - rng.pick([8, 12, 16, 20]);
-    while (isCube(outlier) || outlier <= 0 || valid.includes(outlier)) outlier++;
+    const outlier = placeOutlier(rng, valid, n => !isCube(n));
+    if (outlier === null) return null;
     return build(ctx, {
       templateId: 'ODD_M_CUBES', ruleId: 'CUBE', ruleParams: {baseStart: start},
       subskill: 'مكعبات كاملة',
@@ -140,8 +168,8 @@ function pronic(ctx) {
       const n = start + i;
       return n * (n + 1);
     });
-    let outlier = valid.at(-1) - rng.pick([2, 4, 6, 8]);
-    while (valid.includes(outlier) || isPronic(outlier) || outlier <= 0) outlier++;
+    const outlier = placeOutlier(rng, valid, n => !isPronic(n));
+    if (outlier === null) return null;
     return build(ctx, {
       templateId: 'ODD_M_PRONIC', ruleId: 'PRONIC', ruleParams: {baseStart: start},
       subskill: 'حاصل ضرب عددين صحيحين متتاليين',
@@ -158,8 +186,8 @@ function primeDoubles(ctx) {
     const start = rng.int(1, 3);
     const primes = PRIMES.slice(start, start + 5);
     const valid = primes.map(p => 2 * p);
-    let outlier = 2 * (primes[2] + 2);
-    while (PRIMES.includes(outlier / 2) || valid.includes(outlier)) outlier += 2;
+    const outlier = placeOutlier(rng, valid, n => n % 2 === 0 && !PRIMES.includes(n / 2));
+    if (outlier === null) return null;
     return build(ctx, {
       templateId: 'ODD_M_PRIME2', ruleId: 'PRIME_DOUBLE', ruleParams: {primes},
       subskill: 'ضعف أعداد أولية متتالية',
@@ -175,8 +203,8 @@ function squareMinusOne(ctx) {
   return attempt(ctx, ({rng}) => {
     const start = rng.int(3, 6);
     const valid = Array.from({length: 5}, (_, i) => (start + i) ** 2 - 1);
-    let outlier = valid.at(-1) + rng.pick([2, 4, 6]);
-    while (valid.includes(outlier) || isSquare(outlier + 1)) outlier++;
+    const outlier = placeOutlier(rng, valid, n => !isSquare(n + 1));
+    if (outlier === null) return null;
     return build(ctx, {
       templateId: 'ODD_H_SQ_MINUS', ruleId: 'SQUARE_MINUS_ONE', ruleParams: {baseStart: start},
       subskill: 'أعداد أقل بواحد من مربع كامل',
@@ -193,8 +221,8 @@ function primePlusPattern(ctx) {
     const primes = PRIMES.slice(1, 6);
     const offset = rng.pick([4, 6, 10]);
     const valid = primes.map(p => p + offset);
-    let outlier = valid[2] + 2;
-    while (PRIMES.includes(outlier - offset) || valid.includes(outlier)) outlier++;
+    const outlier = placeOutlier(rng, valid, n => n > offset && !PRIMES.includes(n - offset));
+    if (outlier === null) return null;
     return build(ctx, {
       templateId: 'ODD_H_PRIME_OFFSET', ruleId: 'PRIME_PLUS_OFFSET', ruleParams: {offset, primes},
       subskill: 'عدد أولي مع إزاحة ثابتة',

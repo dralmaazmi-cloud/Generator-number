@@ -43,40 +43,70 @@ export function runOracle(base, q) {
   if (!spec) return {ran: false, reasons: [], detail: 'no oracle declared'};
 
   if (spec.kind === 'ruleset') {
+    // The claim under test is what the generator published, not a copy of it
+    // that the generator also wrote into the oracle spec.
+    const claimed = Number(base.correct);
     const sweep = oracleOddOneOut(spec.numbers);
-    const amb = checkOddOneOutAmbiguity(spec.numbers, spec.intendedOutlier);
+    const amb = checkOddOneOutAmbiguity(spec.numbers, claimed);
     const reasons = [];
     if (!amb.supportsIntended) reasons.push(REASON.ORACLE_DISAGREEMENT);
     if (amb.ambiguous) reasons.push(REASON.AMBIGUOUS_ODD_ONE_OUT);
-    return {ran: true, reasons, answer: spec.intendedOutlier, detail: {outliers: sweep.outliers, competing: amb.competing.length}};
+    return {ran: true, reasons, answer: claimed, detail: {outliers: sweep.outliers, competing: amb.competing.length}};
   }
 
   if (spec.kind === 'order') {
     const oracle = buildOrderOracle(spec.nodes, spec.edges);
-    let answer;
     const ask = spec.ask || {};
+    const claimed = String(base.correct);
+    let answer;
+    let agrees;
+    let display = [];
     switch (ask.type) {
-      case 'position': answer = oracle.whoAtPosition(ask.position) ?? spec.expectedDisplay ?? null; break;
-      case 'countAbove': answer = oracle.countDefinitelyAbove(ask.target); break;
+      case 'position': {
+        // null means the consistent orderings disagree, which the template
+        // reports with its own "cannot be determined" label.
+        const who = oracle.whoAtPosition(ask.position);
+        answer = who ?? spec.expectedDisplay ?? null;
+        display = [String(answer)];
+        agrees = String(answer) === claimed;
+        break;
+      }
+      case 'countAbove': {
+        const count = oracle.countDefinitelyAbove(ask.target);
+        answer = count;
+        // The choices are written in words, so the comparison happens on the
+        // label the count maps to.
+        display = [spec.labels ? spec.labels[String(count)] : String(count)];
+        agrees = display[0] === claimed;
+        break;
+      }
       case 'undeterminedPair': {
-        const pairs = oracle.allUndeterminedPairs();
-        answer = pairs.map(p => p.slice().sort().join('|'));
+        const labels = new Set();
+        for (const [a, b] of oracle.allUndeterminedPairs()) {
+          labels.add(`${a} و${b}`);
+          labels.add(`${b} و${a}`);
+        }
+        answer = [...labels];
+        display = [...labels];
+        agrees = labels.has(claimed);
         break;
       }
       case 'guaranteed': {
-        answer = (ask.statements || []).filter(s => oracle.definitelyAbove(s.above, s.below)).map(s => s.id);
+        const holds = (ask.statements || []).filter(st => oracle.definitelyAbove(st.above, st.below));
+        answer = holds.map(st => st.id);
+        display = answer.map(String);
+        agrees = holds.some(st => String(st.id) === claimed);
         break;
       }
-      default: return {ran: false, reasons: [], detail: `unknown order ask ${ask.type}`};
+      default:
+        return {ran: false, reasons: [], detail: `unknown order ask ${ask.type}`};
     }
-    const agrees = Array.isArray(answer)
-      ? JSON.stringify([...answer].sort()) === JSON.stringify([...(spec.expected || [])].sort())
-      : String(answer) === String(spec.expected);
     return {
       ran: true,
       reasons: agrees ? [] : [REASON.ORACLE_DISAGREEMENT],
       answer,
-      detail: {expected: spec.expected, extensions: oracle.extensions.length}
+      display,
+      detail: {claimed, extensions: oracle.extensions.length}
     };
   }
 
@@ -162,11 +192,11 @@ export function validateUniqueAnswer(base, q, oracleResult) {
       && !oracleResult.reasons.length) {
     const spec = base.oracle;
     let matches;
-    if (spec.kind === 'ruleset' || spec.kind === 'order') {
-      const expected = String(spec.kind === 'ruleset' ? spec.intendedOutlier : spec.expectedDisplay ?? spec.expected);
-      matches = LETTERS.filter(l => String(q.options[l]) === expected
-        || parseLeadingNumber(q.options[l]) === Number(expected)).length;
-      if (spec.kind === 'order' && spec.expectedDisplay === undefined) matches = equalToKey;
+    if (spec.kind === 'ruleset') {
+      matches = LETTERS.filter(l => parseLeadingNumber(q.options[l]) === Number(base.correct)).length;
+    } else if (spec.kind === 'order') {
+      const allowed = new Set((oracleResult.display || []).map(String));
+      matches = LETTERS.filter(l => allowed.has(String(q.options[l]))).length;
     } else if (spec.labels) {
       const label = spec.labels[oracleResult.answer.toDecimalString()];
       matches = LETTERS.filter(l => q.options[l] === label).length;

@@ -1,1 +1,14 @@
-{"type":"module","private":true}
+{
+  "name": "numerical-question-generator-engine",
+  "version": "1.3.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/regression.test.mjs tests/properties.test.mjs tests/metamorphic.test.mjs tests/fault-injection.test.mjs",
+    "test:units": "node tools/check-manual-units.mjs",
+    "test:stress": "node tests/stress.mjs",
+    "qa": "npm run test:units && npm test && npm run test:stress",
+    "qa:corpus": "node tools/stress-qa.mjs",
+    "qa:inventory": "node tools/template-inventory.mjs"
+  }
+}

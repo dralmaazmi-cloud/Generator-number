@@ -170,7 +170,9 @@ function rateThenNewQuantity(ctx) {
     mk(amount + rateNum * targetQty, 'USED_ORIGINAL_TOTAL', `${amount} + ${rateNum} × ${targetQty}`),
     mk(rateNum * (qty + targetQty), 'RATE_APPLIED_TO_WRONG_COUNT', `${rateNum} × (${qty} + ${targetQty})`),
     mk(rateNum * (targetQty - 1), 'OFF_BY_ONE_STEP', `${rateNum} × (${targetQty} − 1)`),
-    mk(rateNum * (targetQty + 1), 'OFF_BY_ONE_STEP', `${rateNum} × (${targetQty} + 1)`)
+    mk(rateNum * (targetQty + 1), 'OFF_BY_ONE_STEP', `${rateNum} × (${targetQty} + 1)`),
+    mk(rateNum * targetQty * 2, 'APPLIED_STEP_TWICE', `${rateNum} × ${targetQty} × 2`),
+    mk(amount + rateNum * (qty + targetQty), 'USED_ORIGINAL_TOTAL', `${amount} + ${rateNum} × (${qty} + ${targetQty})`)
   ]);
   return buildBase(ctx, {
     templateId: 'RATE_M_SCALE',
@@ -221,7 +223,9 @@ function rateChangeTarget(ctx) {
     mk(Math.max(1, correct - 2), 'OFF_BY_ONE_STEP', `${correct} − 2`),
     mk(target / initial * oldMinutes, 'RATE_APPLIED_TO_WRONG_COUNT', `${target} ÷ ${initial} × ${oldMinutes}`),
     mk(correct + oldMinutes, 'USED_ORIGINAL_TOTAL', `${correct} + ${oldMinutes}`),
-    mk(Fraction.from(target).mul(factor).div(oldRate).toNumber(), 'APPLIED_OPERATION_IN_REVERSE', `${target} × ${factor.toDecimalString()} ÷ ${oldRate}`)
+    mk(Fraction.from(target).mul(factor).div(oldRate).toNumber(), 'APPLIED_OPERATION_IN_REVERSE', `${target} × ${factor.toDecimalString()} ÷ ${oldRate}`),
+    mk(Fraction.from(target).div(newRate).div(2).toNumber(), 'APPLIED_STEP_TWICE', `${target} ÷ ${newRateNum} ÷ 2`),
+    mk(Fraction.from(target).div(newRate.mul(factor)).toNumber(), 'APPLIED_STEP_TWICE', `${target} ÷ (${newRateNum} × ${factor.toDecimalString()})`)
   ]);
   return buildBase(ctx, {
     templateId: 'RATE_H_TARGET',

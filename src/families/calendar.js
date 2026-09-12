@@ -132,7 +132,7 @@ function compoundForward(ctx) {
   const today = rng.int(0, 6);
   const target = dayShift(today, netOffset);
   const correct = DAYS_AR[today];
-  const aheadWord = ahead === 2 ? 'يومين' : `${ahead} أيام`;
+  const aheadWord = u(ahead, 'day', 'oblique');
   const distractors = dayDistractors(today, netOffset, [
     {index: target - ahead, misconceptionId: 'IGNORED_NET_OFFSET', derivation: `الرجوع ${u(ahead, 'day', 'oblique')} فقط ونسيان يوم الغد`},
     {index: target + netOffset, misconceptionId: 'SHIFTED_WRONG_DIRECTION', derivation: `التقدم ${u(netOffset, 'day', 'oblique')} بدل الرجوع`},
@@ -222,8 +222,8 @@ function nestedOffset(ctx) {
   const today = rng.int(0, 6);
   const target = dayShift(today, netOffset);
   const correct = DAYS_AR[today];
-  const aheadWord = ahead === 2 ? 'يومين' : `${ahead} أيام`;
-  const behindWord = behind === 1 ? 'يوم واحد' : behind === 2 ? 'يومين' : `${behind} أيام`;
+  const aheadWord = u(ahead, 'day', 'oblique');
+  const behindWord = u(behind, 'day', 'oblique');
   const distractors = dayDistractors(today, netOffset, [
     // The headline slip this template teaches against: treating the net offset
     // as N - M and forgetting that "tomorrow" is itself a shift of one.
@@ -290,12 +290,12 @@ function longOffset(ctx) {
     question: `إذا كان اليوم ${DAYS_AR[today]}، فما اليوم بعد ${u(n, 'day', 'oblique')}؟`,
     correct, distractors, format: v => String(v),
     steps: [
-      `نطرح أسبوعًا كاملًا في كل مرة، لأن 7 أيام تعيدنا إلى اسم اليوم نفسه: ${weekSubtractionLine(n)}.`,
+      `نطرح أسبوعًا كاملًا في كل مرة، لأن ${u(7, 'day')} تعيدنا إلى اسم اليوم نفسه: ${weekSubtractionLine(n)}.`,
       `الباقي هو ${u(rem, 'day')}، فنتحرك بها من ${DAYS_AR[today]}.`,
       `الناتج = ${correct}.`
     ],
     howToStart: 'اختصر العدد باستخدام باقي القسمة على 7.',
-    remember: 'كل 7 أيام تعيدك إلى اسم اليوم نفسه.',
+    remember: `كل ${u(7, 'day')} تعيدك إلى اسم اليوم نفسه.`,
     fastMethod: `احسب باقي قسمة ${n} على 7 وتحرك بهذا الباقي فقط.`,
     estimatedSteps: 3, conceptTags: ['calendar', 'modulo'],
     parameters: {offsetDays: n, todayIndex: today},

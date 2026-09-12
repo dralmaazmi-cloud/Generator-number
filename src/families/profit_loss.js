@@ -28,7 +28,9 @@ function simpleProfit(ctx) {
     mk(percent + 5, 'OFF_BY_ONE_STEP', `${percent} + 5`),
     mk(Math.max(1, percent - 5), 'OFF_BY_ONE_STEP', `${percent} − 5`),
     mk(100 - percent, 'TOOK_COMPLEMENT_PERCENT', `100 − ${percent}`),
-    mk(percent * 2, 'APPLIED_STEP_TWICE', `${percent} × 2`)
+    mk(percent * 2, 'APPLIED_STEP_TWICE', `${percent} × 2`),
+    mk(approx(profit * 100 / (buy + sell)), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} × 100 ÷ (${buy} + ${sell})`),
+    mk(approx(percent / 2), 'APPLIED_STEP_TWICE', `${percent} ÷ 2`)
   ]);
   return buildBase(ctx, {
     templateId: 'PL_E_PROFIT',
@@ -71,7 +73,9 @@ function simpleLoss(ctx) {
     mk(Math.max(1, percent - 5), 'OFF_BY_ONE_STEP', `${percent} − 5`),
     mk(approx(sell / buy * 100), 'TOOK_COMPLEMENT_PERCENT', `${sell} ÷ ${buy} × 100`),
     mk(100 - percent, 'TOOK_COMPLEMENT_PERCENT', `100 − ${percent}`),
-    mk(percent * 2, 'APPLIED_STEP_TWICE', `${percent} × 2`)
+    mk(percent * 2, 'APPLIED_STEP_TWICE', `${percent} × 2`),
+    mk(approx(loss * 100 / (buy + sell)), 'USED_SALE_PRICE_AS_DENOMINATOR', `${loss} × 100 ÷ (${buy} + ${sell})`),
+    mk(approx(percent / 2), 'APPLIED_STEP_TWICE', `${percent} ÷ 2`)
   ]);
   return buildBase(ctx, {
     templateId: 'PL_E_LOSS',

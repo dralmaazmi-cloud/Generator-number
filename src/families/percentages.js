@@ -25,7 +25,10 @@ function simplePercent(ctx) {
     mk(pct, 'USED_GIVEN_VALUE_AS_ANSWER', `النسبة المعطاة ${pct}`),
     mk(baseVal, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة المعطاة ${baseVal}`),
     mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
-    mk(baseVal * pct / 10, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${baseVal} × ${pct} ÷ 10`)
+    mk(baseVal * pct / 10, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${baseVal} × ${pct} ÷ 10`),
+    mk(baseVal / 100, 'MISSED_ONE_STAGE', `${baseVal} ÷ 100 — حساب 1% ونسيان الضرب في ${pct}`),
+    mk(baseVal * pct / 200, 'APPLIED_STEP_TWICE', `${baseVal} × ${pct} ÷ 100 ÷ 2`),
+    mk(correct + baseVal, 'USED_ORIGINAL_TOTAL', `${correct} + ${baseVal}`)
   ]);
   return buildBase(ctx, {
     templateId: 'PCT_E_OF',

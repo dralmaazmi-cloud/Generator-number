@@ -240,7 +240,9 @@ function subsetUpgrade(ctx) {
     mk((machines - upgraded) * rate * hours, 'USED_ONLY_FIRST_RATE', `${machines - upgraded} × ${rate} × ${hours}`),
     mk(correct + rate * hours, 'OFF_BY_ONE_STEP', `${correct} + ${rate * hours}`),
     mk(correct - rate * hours, 'OFF_BY_ONE_STEP', `${correct} − ${rate * hours}`),
-    mk(combined, 'STOPPED_AT_UNIT_RATE', `${upgraded} × ${newRateN} + ${machines - upgraded} × ${rate}`)
+    mk(combined, 'STOPPED_AT_UNIT_RATE', `${upgraded} × ${newRateN} + ${machines - upgraded} × ${rate}`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
+    mk(combined * (hours + 1), 'OFF_BY_ONE_STEP', `${combined} × (${hours} + 1)`)
   ]);
   return buildBase(ctx, {
     templateId: 'MACH_M_SUBSET_UP',

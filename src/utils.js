@@ -2,6 +2,7 @@ import {isKnownMisconception, buildOptionFeedback, CORRECT_FEEDBACK} from './qa/
 import {REASON} from './qa/reasons.js';
 import {computeComplexity} from './qa/complexity.js';
 import {buildFingerprint, questionFingerprint} from './qa/fingerprint.js';
+import {RANK_DRAW_WEIGHTS} from './qa/rank-calibration.js';
 
 export const LETTERS = ['A','B','C','D','E','F'];
 
@@ -104,7 +105,8 @@ export function makeOptionSet({
     throw err;
   }
 
-  const picked = pickBalancedDistractors(pool, correct, rng);
+  const spread = {};
+  const picked = pickBalancedDistractors(pool, correct, rng, spread);
 
   const correctLetter = preferredCorrectLetter && LETTERS.includes(preferredCorrectLetter)
     ? preferredCorrectLetter
@@ -138,7 +140,9 @@ export function makeOptionSet({
     correct_value: correctFormatted,
     distractor_analysis: distractorAnalysis,
     options_meta: optionsMeta,
-    numeric_rank: rankFromRawValues(picked.map(p => p.value), correct)
+    numeric_rank: rankFromRawValues(picked.map(p => p.value), correct),
+    // Which positions this instance's error paths could actually have produced.
+    feasible_rank_range: spread.feasibleRankRange ?? null
   };
 }
 
@@ -147,7 +151,7 @@ export function makeOptionSet({
  * sides represented so the key does not drift to the middle of the sorted list.
  * This only chooses among distractors that already exist; it never invents one.
  */
-function pickBalancedDistractors(pool, correct, rng) {
+function pickBalancedDistractors(pool, correct, rng, out = {}) {
   const correctNum = typeof correct === 'number' ? correct : Number(correct);
   if (!Number.isFinite(correctNum)) return rng.sample(pool, 5);
 
@@ -158,12 +162,22 @@ function pickBalancedDistractors(pool, correct, rng) {
 
   const shuffledBelow = rng.shuffle(below);
   const shuffledAbove = rng.shuffle(above);
-  // Section 15-C: vary how many of the five sit below the key across the whole
-  // feasible range, so the key does not settle into the same sorted position
-  // every time. Only genuine distractors are ever chosen from; none is invented.
+  // Section 15-C / 36. Choose how many of the five sit below the key, and so
+  // where the key lands in the sorted list.
+  //
+  // A template can only reach the positions its real error paths allow, and
+  // those ranges overlap around the middle. Drawing uniformly inside each range
+  // therefore piles the key into ranks three and four across the corpus — the
+  // leak the audit measured. The weights in rank-calibration.js are fitted to
+  // the measured ranges so the corpus comes out flat; here they are clamped to
+  // what this particular template can supply.
+  //
+  // Nothing is invented to achieve this: the weights only decide which of the
+  // already-generated, provenance-carrying distractors are shown.
   const minBelow = Math.max(0, 5 - shuffledAbove.length);
   const maxBelow = Math.min(5, shuffledBelow.length);
-  const wantBelow = minBelow >= maxBelow ? minBelow : rng.int(minBelow, maxBelow);
+  out.feasibleRankRange = [Math.min(minBelow, maxBelow) + 1, Math.max(minBelow, maxBelow) + 1];
+  const wantBelow = minBelow >= maxBelow ? minBelow : drawRankPosition(rng, minBelow, maxBelow);
   const wantAbove = Math.min(shuffledAbove.length, 5 - wantBelow);
   const chosen = [...shuffledBelow.slice(0, wantBelow), ...shuffledAbove.slice(0, wantAbove)];
   const rest = rng.shuffle([
@@ -173,6 +187,23 @@ function pickBalancedDistractors(pool, correct, rng) {
   ]);
   while (chosen.length < 5 && rest.length) chosen.push(rest.shift());
   return chosen.slice(0, 5);
+}
+
+/** Weighted draw of the key's position, restricted to what the template allows. */
+function drawRankPosition(rng, minBelow, maxBelow) {
+  const weights = [];
+  let total = 0;
+  for (let below = minBelow; below <= maxBelow; below++) {
+    const w = RANK_DRAW_WEIGHTS[below] ?? 1;
+    weights.push(w);
+    total += w;
+  }
+  let r = rng.float(0, total);
+  for (let i = 0; i < weights.length; i++) {
+    r -= weights[i];
+    if (r <= 0) return minBelow + i;
+  }
+  return maxBelow;
 }
 
 /** Section 15-B: 1-based position of the key among the raw option values. */
@@ -258,6 +289,7 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
       complexity_factors: complexity.factors,
       empirical_difficulty: null,
       correct_numeric_rank: optionSet.numeric_rank,
+      feasible_rank_range: optionSet.feasible_rank_range,
       options_meta: optionSet.options_meta,
       target_skill: base.pedagogy?.targetSkill ?? null,
       target_misconception: base.pedagogy?.targetMisconception ?? null,

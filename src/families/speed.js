@@ -113,7 +113,9 @@ function twoStageTime(ctx) {
     mk(correct + 30, 'OFF_BY_ONE_STEP', `${correct} + 30`),
     mk(correct - 30, 'OFF_BY_ONE_STEP', `${correct} − 30`),
     mk(t1 + t2, 'MISSED_ONE_STAGE', `${num(t1)} + ${num(t2)}`),
-    mk((d1 + d2) / ((s1 + s2) / 2) * 60, 'USED_ARITHMETIC_MEAN_OF_SPEEDS', `(${d1} + ${d2}) ÷ ((${s1} + ${s2}) ÷ 2) × 60`)
+    mk((d1 + d2) / ((s1 + s2) / 2) * 60, 'USED_ARITHMETIC_MEAN_OF_SPEEDS', `(${d1} + ${d2}) ÷ ((${s1} + ${s2}) ÷ 2) × 60`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
+    mk(correct + 60, 'OFF_BY_ONE_STEP', `${correct} + 60`)
   ]);
   return buildBase(ctx, {
     templateId: 'SPD_M_TWO_TIME',
@@ -284,7 +286,9 @@ function meetingDelayed(ctx) {
     mk(correct + 1, 'OFF_BY_ONE_STEP', `${num(correct)} + 1`),
     mk(Math.max(0.5, correct - 1), 'OFF_BY_ONE_STEP', `${num(correct)} − 1`),
     mk(correct * 2, 'APPLIED_STEP_TWICE', `${num(correct)} × 2`),
-    mk(total / sA - delay, 'DIVIDED_BY_ONE_SPEED', `${total} ÷ ${sA} − ${num(delay)}`)
+    mk(total / sA - delay, 'DIVIDED_BY_ONE_SPEED', `${total} ÷ ${sA} − ${num(delay)}`),
+    mk(remaining / (sA + sB + sA), 'RATE_APPLIED_TO_WRONG_COUNT', `${num(remaining)} ÷ (${sA} + ${sB} + ${sA})`),
+    mk(Math.max(0.5, correct - 1.5), 'OFF_BY_ONE_STEP', `${num(correct)} − 1.5`)
   ]);
   return buildBase(ctx, {
     templateId: 'SPD_H_MEET_DELAY',

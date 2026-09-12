@@ -251,7 +251,9 @@ function unitCost(ctx) {
     mk(unitPrice * (targetCount + 1), 'OFF_BY_ONE_STEP', `${unitPrice} × (${targetCount} + 1)`),
     mk(total + unitPrice, 'OFF_BY_ONE_STEP', `${total} + ${unitPrice}`),
     mk(total + unitPrice * targetCount, 'USED_ORIGINAL_TOTAL', `${total} + ${unitPrice} × ${targetCount}`),
-    mk(unitPrice * (n + targetCount), 'RATE_APPLIED_TO_WRONG_COUNT', `${unitPrice} × (${n} + ${targetCount})`)
+    mk(unitPrice * (n + targetCount), 'RATE_APPLIED_TO_WRONG_COUNT', `${unitPrice} × (${n} + ${targetCount})`),
+    mk(unitPrice * targetCount * 2, 'APPLIED_STEP_TWICE', `${unitPrice} × ${targetCount} × 2`),
+    mk(total * targetCount / 2, 'RATE_APPLIED_TO_WRONG_COUNT', `${total} × ${targetCount} ÷ 2`)
   ]);
   return buildBase(ctx, {
     templateId: 'PROP_E_COST',

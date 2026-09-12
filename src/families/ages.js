@@ -81,7 +81,9 @@ function multipleDifference(ctx) {
     mk(younger - 2, 'OFF_BY_ONE_STEP', `${younger} − 2`),
     mk(diff * mult, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${diff} × ${mult}`),
     mk(diff + mult, 'ADDED_INSTEAD_OF_SCALING', `${diff} + ${mult}`),
-    mk(older + younger, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${older} + ${younger}`)
+    mk(older + younger, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${older} + ${younger}`),
+    mk(Math.round(diff / (mult + 1)), 'OFF_BY_ONE_STEP', `${diff} ÷ (${mult} + 1)`),
+    mk(Math.max(1, younger - 4), 'OFF_BY_ONE_STEP', `${younger} − 4`)
   ]);
   return buildBase(ctx, {
     templateId: 'AGE_E_MULT_DIFF',
@@ -188,7 +190,9 @@ function futureRatio(ctx) {
     mk(diff / (ratio - 1), 'APPLIED_FUTURE_RATIO_NOW', `${diff} ÷ (${ratio} − 1)`),
     mk(young + 2, 'OFF_BY_ONE_STEP', `${young} + 2`),
     mk(young - 2, 'OFF_BY_ONE_STEP', `${young} − 2`),
-    mk(young * ratio, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${young} × ${ratio}`)
+    mk(young * ratio, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${young} × ${ratio}`),
+    mk(Math.round(diff / (ratio + 1)), 'OFF_BY_ONE_STEP', `${diff} ÷ (${ratio} + 1)`),
+    mk(Math.max(1, young - 4), 'OFF_BY_ONE_STEP', `${young} − 4`)
   ]);
   return buildBase(ctx, {
     templateId: 'AGE_M_FUT_RATIO',
@@ -258,7 +262,7 @@ function currentRatioFutureSum(ctx) {
     ],
     howToStart: 'ارجع إلى المجموع الحالي ثم استخدم النسبة الحالية.',
     remember: 'إذا كانت النسبة الآن، طبّقها بعد إرجاع المجموع إلى الآن.',
-    fastMethod: `المجموع الحالي ثم تقسيمه إلى ${ratio + 1} أجزاء.`,
+    fastMethod: `المجموع الحالي ثم تقسيمه إلى ${u(ratio + 1, 'part')}.`,
     estimatedSteps: 4, conceptTags: ['age', 'ratio', 'time-shift'], parameters: params,
     oracle: {
       kind: 'constraint', answerKind: 'number',
@@ -356,7 +360,9 @@ function twoTimeRatio(ctx) {
     mk(gap / (ratio - 1), 'APPLIED_FUTURE_RATIO_NOW', `${gap} ÷ (${ratio} − 1)`),
     mk(nowYoung + 2, 'OFF_BY_ONE_STEP', `${nowYoung} + 2`),
     mk(nowYoung - 2, 'OFF_BY_ONE_STEP', `${nowYoung} − 2`),
-    mk(nowYoung * ratio, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${nowYoung} × ${ratio}`)
+    mk(nowYoung * ratio, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${nowYoung} × ${ratio}`),
+    mk(Math.round(gap / (ratio + 1)), 'OFF_BY_ONE_STEP', `${gap} ÷ (${ratio} + 1)`),
+    mk(Math.max(1, nowYoung - 4), 'OFF_BY_ONE_STEP', `${nowYoung} − 4`)
   ]);
   return buildBase(ctx, {
     templateId: 'AGE_H_TWO_TIME',

@@ -88,8 +88,8 @@ function sentences(rng, edges, verb = 'أسرع من') {
   return rng.shuffle(edges.map(([a, b]) => `${a} ${verb} ${b}`)).join('. ') + '.';
 }
 
-function orderOracleSpec(nodes, edges, ask, expected, expectedDisplay) {
-  return {kind: 'order', nodes, edges, ask, expected, expectedDisplay};
+function orderOracleSpec(nodes, edges, ask, expected, expectedDisplay, labels) {
+  return {kind: 'order', nodes, edges, ask, expected, expectedDisplay, labels};
 }
 
 // --- templates -------------------------------------------------------------
@@ -256,7 +256,8 @@ function countAbove(ctx) {
     fastMethod: 'عدّ كل من يمكن إثبات أنه أعلى من الهدف.',
     estimatedSteps: 4, conceptTags: ['ordering', 'transitivity'], parameters,
     reasoningGraph,
-    oracle: orderOracleSpec(nodes, edges, {type: 'countAbove', target}, count, correct),
+    oracle: orderOracleSpec(nodes, edges, {type: 'countAbove', target}, count, correct,
+      Object.fromEntries(COUNT_LABELS.map((labelText, i) => [String(i), labelText]))),
     askedUnknown: 'countAbove', stageCount: 2,
     metadata: {graph_shape: shape},
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, graphDepth: nodes.length, conditionCount: edges.length, dependencyDepth: 2},

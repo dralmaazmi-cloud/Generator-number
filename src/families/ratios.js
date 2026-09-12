@@ -95,6 +95,7 @@ function scaleKnown(ctx) {
     mk(Math.abs(b - a) * k, 'SUBTRACTED_INSTEAD_OF_ADDED', `|${b} − ${a}| × ${k}`),
     mk(given + wantedParts, 'ADDED_INSTEAD_OF_SCALING', `${given} + ${wantedParts}`),
     mk(given * wantedParts, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${given} × ${wantedParts}`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
     mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
     mk(correct - 1, 'OFF_BY_ONE_STEP', `${correct} − 1`),
     mk(given - wantedParts, 'SUBTRACTED_INSTEAD_OF_ADDED', `${given} − ${wantedParts}`)
@@ -157,7 +158,9 @@ function commonTermSum(ctx) {
     mk(given, 'USED_GIVEN_VALUE_AS_ANSWER', `المجموع المعطى ${given}`),
     mk(correct + k, 'OFF_BY_ONE_STEP', `${correct} + ${k}`),
     mk(correct - k, 'OFF_BY_ONE_STEP', `${correct} − ${k}`),
-    mk(given * b / (a + b), 'MISSED_ONE_STAGE', `${given} × ${b} ÷ (${a} + ${b})`)
+    mk(given * b / (a + b), 'MISSED_ONE_STAGE', `${given} × ${b} ÷ (${a} + ${b})`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
+    mk((A + B + C) * k + given, 'USED_ORIGINAL_TOTAL', `(${A} + ${B} + ${C}) × ${k} + ${given}`)
   ]);
   return buildBase(ctx, {
     templateId: 'RAT_M_COMMON_SUM',
@@ -210,7 +213,9 @@ function commonTermDifference(ctx) {
     mk(correct - k, 'OFF_BY_ONE_STEP', `${correct} − ${k}`),
     mk(correct + k, 'OFF_BY_ONE_STEP', `${correct} + ${k}`),
     mk(given, 'USED_GIVEN_VALUE_AS_ANSWER', `الفرق المعطى ${given}`),
-    mk(k, 'USED_PART_VALUE_AS_ANSWER', `${given} ÷ ${diffParts}`)
+    mk(k, 'USED_PART_VALUE_AS_ANSWER', `${given} ÷ ${diffParts}`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
+    mk(correct + given, 'USED_ORIGINAL_TOTAL', `${correct} + ${given}`)
   ]);
   return buildBase(ctx, {
     templateId: 'RAT_M_COMMON_DIFF',

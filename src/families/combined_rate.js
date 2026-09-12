@@ -23,7 +23,9 @@ function togetherOutput(ctx) {
     mk((a + b) * (h + 1), 'OFF_BY_ONE_STEP', `(${a} + ${b}) × (${h} + 1)`),
     mk((a + b) * (h - 1), 'OFF_BY_ONE_STEP', `(${a} + ${b}) × (${h} − 1)`),
     mk(a * b, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${a} × ${b}`),
-    mk((a + b) * h + a + b, 'APPLIED_STEP_TWICE', `(${a} + ${b}) × ${h} + (${a} + ${b})`)
+    mk((a + b) * h + a + b, 'APPLIED_STEP_TWICE', `(${a} + ${b}) × ${h} + (${a} + ${b})`),
+    mk((a + b) * h * 2, 'APPLIED_STEP_TWICE', `(${a} + ${b}) × ${h} × 2`),
+    mk((a + b + Math.min(a, b)) * h, 'RATE_APPLIED_TO_WRONG_COUNT', `(${a} + ${b} + ${Math.min(a, b)}) × ${h}`)
   ]);
   return buildBase(ctx, {
     templateId: 'COMB_E_OUTPUT',
@@ -66,7 +68,9 @@ function togetherTime(ctx) {
     mk(correct + 2, 'OFF_BY_ONE_STEP', `${correct} + 2`),
     mk(Math.max(1, correct - 2), 'OFF_BY_ONE_STEP', `${correct} − 2`),
     mk(target / Math.abs(b - a), 'SUBTRACTED_INSTEAD_OF_ADDED', `${target} ÷ |${b} − ${a}|`),
-    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`)
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
+    mk(target / (a + b + Math.min(a, b)), 'RATE_APPLIED_TO_WRONG_COUNT', `${target} ÷ (${a} + ${b} + ${Math.min(a, b)})`),
+    mk(target / (2 * (a + b)), 'APPLIED_STEP_TWICE', `${target} ÷ (2 × ${a + b})`)
   ]);
   return buildBase(ctx, {
     templateId: 'COMB_E_TIME',
@@ -112,7 +116,9 @@ function soloThenTogether(ctx) {
     mk(target / a, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${a}`),
     mk(target / b, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${b}`),
     mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`),
-    mk(solo + correct + 1, 'OFF_BY_ONE_STEP', `${solo} + ${correct} + 1`)
+    mk(solo + correct + 1, 'OFF_BY_ONE_STEP', `${solo} + ${correct} + 1`),
+    mk((target - a * solo) / (a + b + Math.min(a, b)), 'RATE_APPLIED_TO_WRONG_COUNT', `${target - a * solo} ÷ (${a} + ${b} + ${Math.min(a, b)})`),
+    mk(Math.max(1, correct - 2), 'OFF_BY_ONE_STEP', `${correct} − 2`)
   ]);
   return buildBase(ctx, {
     templateId: 'COMB_M_SOLO_THEN',
@@ -163,7 +169,9 @@ function togetherThenSolo(ctx) {
     mk((target - (a + b) * bothH) / b, 'USED_ONLY_SECOND_RATE', `(${target} − ${(a + b) * bothH}) ÷ ${b}`),
     mk((target - (a + b) * bothH) / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `${a * correct} ÷ ${a + b}`),
     mk(bothH + correct + 1, 'OFF_BY_ONE_STEP', `${bothH} + ${correct} + 1`),
-    mk(target / b, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${b}`)
+    mk(target / b, 'USED_SINGLE_RATE_ON_FULL_TARGET', `${target} ÷ ${b}`),
+    mk((target - (a + b) * bothH) / (a + b + Math.min(a, b)), 'RATE_APPLIED_TO_WRONG_COUNT', `${a * correct} ÷ (${a} + ${b} + ${Math.min(a, b)})`),
+    mk(Math.max(1, correct - 2), 'OFF_BY_ONE_STEP', `${correct} − 2`)
   ]);
   return buildBase(ctx, {
     templateId: 'COMB_M_TOGETHER_SOLO',
@@ -210,7 +218,9 @@ function stagedTarget(ctx) {
     mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`),
     mk(Math.max(1, correct - 1), 'OFF_BY_ONE_STEP', `${correct} − 1`),
     mk((target - (a + b) * togetherH) / b, 'MISSED_ONE_STAGE', `(${target} − ${(a + b) * togetherH}) ÷ ${b}`),
-    mk((target - a * soloA - (a + b) * togetherH) / a, 'USED_ONLY_FIRST_RATE', `${b * correct} ÷ ${a}`)
+    mk((target - a * soloA - (a + b) * togetherH) / a, 'USED_ONLY_FIRST_RATE', `${b * correct} ÷ ${a}`),
+    mk((target - a * soloA - (a + b) * togetherH) / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `${b * correct} ÷ ${a + b}`),
+    mk(Math.max(1, correct - 2), 'OFF_BY_ONE_STEP', `${correct} − 2`)
   ]);
   return buildBase(ctx, {
     templateId: 'COMB_H_STAGED',
@@ -258,7 +268,9 @@ function threeRates(ctx) {
     mk(sum * (h + 1), 'OFF_BY_ONE_STEP', `${sum} × (${h} + 1)`),
     mk(sum * (h - 1), 'OFF_BY_ONE_STEP', `${sum} × (${h} − 1)`),
     mk(sum * h + sum, 'APPLIED_STEP_TWICE', `${sum} × ${h} + ${sum}`),
-    mk(Math.round(sum / 3) * h, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${sum} ÷ 3) × ${h}`)
+    mk(Math.round(sum / 3) * h, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${sum} ÷ 3) × ${h}`),
+    mk(sum * h + rates[0] * h, 'RATE_APPLIED_TO_WRONG_COUNT', `${sum} × ${h} + ${rates[0]} × ${h}`),
+    mk(sum * (h + 2), 'OFF_BY_ONE_STEP', `${sum} × (${h} + 2)`)
   ]);
   return buildBase(ctx, {
     templateId: 'COMB_H_THREE',
