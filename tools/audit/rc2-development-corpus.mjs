@@ -22,6 +22,16 @@ import {classifyOptionFeedback, FEEDBACK_VERDICT} from '../../src/qa/feedback-me
 import {validateMisconceptionContext} from '../../src/qa/misconception-context.js';
 
 export const HOLDOUT_SEED = 'AUDIT-2026-09-12-B';
+
+/**
+ * RC2.3. The next sign-off holdout, named here and generated nowhere.
+ *
+ * Declaring it is what lets the §23 gate check it has not leaked into
+ * development evidence before it exists. It lives beside the other seeds rather
+ * than inside the gate so that the freeze can name it without importing the
+ * gate, which would make the two mutually dependent.
+ */
+export const RC23_SIGNOFF_SEED = 'AUDIT-2026-09-12-E';
 export const DEVELOPMENT_SEEDS = Object.freeze([
   'RC2-DEV-ALPHA', 'RC2-DEV-BETA', 'RC2-DEV-GAMMA', 'RC2-DEV-DELTA', 'RC2-DEV-EPSILON'
 ]);
@@ -39,6 +49,23 @@ export const RC22_DEVELOPMENT_SEEDS = Object.freeze([
 export const RC21_DEVELOPMENT_SEEDS = Object.freeze([
   'RC21-DEV-ZETA', 'RC21-DEV-ETA', 'RC21-DEV-THETA', 'RC21-DEV-IOTA', 'RC21-DEV-KAPPA'
 ]);
+
+/** RC2.3 draws on seeds no earlier release used. */
+export const RC23_DEVELOPMENT_SEEDS = Object.freeze([
+  'RC23-DEV-PI', 'RC23-DEV-RHO', 'RC23-DEV-SIGMA', 'RC23-DEV-TAU', 'RC23-DEV-UPSILON'
+]);
+
+/**
+ * Which release a corpus run belongs to, and where its evidence lands. The RC2.1
+ * and RC2.2 corpora were built by calling `build` with a seed list by hand and
+ * writing the files by hand, which left no record of how to reproduce them.
+ */
+export const RELEASES = Object.freeze({
+  rc2: {seeds: DEVELOPMENT_SEEDS, json: 'rc2/DEVELOPMENT_CORPUS.json', gz: 'rc2/development-corpus.jsonl.gz'},
+  rc21: {seeds: RC21_DEVELOPMENT_SEEDS, json: 'rc2/RC21_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc21-development-corpus.jsonl.gz'},
+  rc22: {seeds: RC22_DEVELOPMENT_SEEDS, json: 'rc2/RC22_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc22-development-corpus.jsonl.gz'},
+  rc23: {seeds: RC23_DEVELOPMENT_SEEDS, json: 'rc2/RC23_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc23-development-corpus.jsonl.gz'}
+});
 
 const BANDS = ['easy', 'medium', 'hard'];
 const CHANCE = 1 / 6;
@@ -351,10 +378,13 @@ export async function build({questions = 10000, seeds = DEVELOPMENT_SEEDS} = {})
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const {report, corpusGz} = await build({questions: Number(process.argv[2] ?? 10000)});
+  const release = process.argv[3] ?? 'rc2';
+  const target = RELEASES[release];
+  if (!target) throw new Error(`unknown release ${release}; expected one of ${Object.keys(RELEASES)}`);
+  const {report, corpusGz} = await build({questions: Number(process.argv[2] ?? 10000), seeds: target.seeds});
   mkdirSync('rc2', {recursive: true});
-  writeFileSync('rc2/DEVELOPMENT_CORPUS.json', JSON.stringify(report, null, 2) + '\n');
-  writeFileSync('rc2/development-corpus.jsonl.gz', corpusGz);
+  writeFileSync(target.json, JSON.stringify(report, null, 2) + '\n');
+  writeFileSync(target.gz, corpusGz);
   console.log(JSON.stringify({
     corpus: {...report.corpus, byFamily: undefined},
     mathematics: report.mathematics,

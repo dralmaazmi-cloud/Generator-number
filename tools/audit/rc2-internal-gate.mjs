@@ -15,6 +15,7 @@ import {execFileSync} from 'node:child_process';
 
 import Engine, {ENGINE_VERSION} from '../../src/index.js';
 import {FAMILY_MAP} from '../../src/registry.js';
+import {RC23_SIGNOFF_SEED} from './rc2-development-corpus.mjs';
 import {measure as measureDistractors} from './rc21-distractors.mjs';
 import {gated as gatedDifficulty, allHard as allHardEvidence, capabilityCheck} from './rc22-difficulty.mjs';
 import {build as repetitionBuild} from './rc22-repetition.mjs';
@@ -25,14 +26,7 @@ import {
 import {isHardCapable, structuralBandOf, TEMPLATE_STRUCTURE, ADJUDICATED_TEMPLATE_IDS} from '../../src/qa/structure.js';
 
 export const HOLDOUT_SEED = 'AUDIT-2026-09-12-B';
-
-/**
- * RC2.3. The next sign-off holdout, named here and generated nowhere. Declaring
- * it is what lets the gate check it has not leaked into development evidence
- * before it exists; generating it is gated on the RC2.3 validation report being
- * approved, which it is not.
- */
-export const RC23_SIGNOFF_SEED = 'AUDIT-2026-09-12-E';
+export {RC23_SIGNOFF_SEED} from './rc2-development-corpus.mjs';
 
 const read = p => JSON.parse(readFileSync(p, 'utf8'));
 const git = args => {

@@ -1,6 +1,6 @@
 {
   "schema": "rc23-structure-v1",
-  "generatedAt": "2026-09-12T18:56:36.585Z",
+  "generatedAt": "2026-09-12T19:11:02.891Z",
   "engineVersion": "1.4.0",
   "classification": {
     "total": 107,
@@ -10,7 +10,7 @@
       "hard": 19
     },
     "criteriaUse": {
-      "SIMULTANEOUS_CONSTRAINTS": 12,
+      "SIMULTANEOUS_CONSTRAINTS": 11,
       "COMPOSED_INVERSION": 5,
       "CROSS_PART_INTEGRATION": 9,
       "RULE_DISCOVERY": 2,
@@ -439,7 +439,6 @@
         "capability": "HARD_CAPABLE",
         "band": "hard",
         "criteria": [
-          "SIMULTANEOUS_CONSTRAINTS",
           "COMPOSED_INVERSION",
           "CROSS_PART_INTEGRATION"
         ],
@@ -1469,75 +1468,14 @@
       },
       "releasedAtWrongBand": 0,
       "structuralContradictions": {
-        "count": 172,
+        "count": 0,
         "note": "evidence published by the question contradicting the criteria its template claims. One-directional: zero does not confirm the criteria, it fails to refute them.",
-        "examples": [
-          {
-            "templateId": "REL_M_COUNT",
-            "problems": [
-              "REL_M_COUNT: claims PARTIAL_ORDER_BRANCHING but carries no relation graph"
-            ]
-          },
-          {
-            "templateId": "AGE_M_FUT_RATIO",
-            "problems": [
-              "AGE_M_FUT_RATIO: claims SIMULTANEOUS_CONSTRAINTS but solves no equation and declares fewer than two joint conditions"
-            ]
-          },
-          {
-            "templateId": "AGE_H_PAST_FUT",
-            "problems": [
-              "AGE_H_PAST_FUT: claims SIMULTANEOUS_CONSTRAINTS but solves no equation and declares fewer than two joint conditions"
-            ]
-          },
-          {
-            "templateId": "AGE_H_TWO_TIME",
-            "problems": [
-              "AGE_H_TWO_TIME: claims SIMULTANEOUS_CONSTRAINTS but solves no equation and declares fewer than two joint conditions"
-            ]
-          },
-          {
-            "templateId": "SPD_M_EQUAL_DIST",
-            "problems": [
-              "SPD_M_EQUAL_DIST: claims SIMULTANEOUS_CONSTRAINTS but solves no equation and declares fewer than two joint conditions"
-            ]
-          },
-          {
-            "templateId": "AGE_H_TWO_TIME",
-            "problems": [
-              "AGE_H_TWO_TIME: claims SIMULTANEOUS_CONSTRAINTS but solves no equation and declares fewer than two joint conditions"
-            ]
-          },
-          {
-            "templateId": "REL_M_BRANCH_UNRES",
-            "problems": [
-              "REL_M_BRANCH_UNRES: claims PARTIAL_ORDER_BRANCHING but carries no relation graph"
-            ]
-          },
-          {
-            "templateId": "RAT_M_ADD_SIDE",
-            "problems": [
-              "RAT_M_ADD_SIDE: claims SIMULTANEOUS_CONSTRAINTS but solves no equation and declares fewer than two joint conditions"
-            ]
-          },
-          {
-            "templateId": "REL_M_BRANCH_UNRES",
-            "problems": [
-              "REL_M_BRANCH_UNRES: claims PARTIAL_ORDER_BRANCHING but carries no relation graph"
-            ]
-          },
-          {
-            "templateId": "AGE_M_FUT_RATIO",
-            "problems": [
-              "AGE_M_FUT_RATIO: claims SIMULTANEOUS_CONSTRAINTS but solves no equation and declares fewer than two joint conditions"
-            ]
-          }
-        ]
+        "examples": []
       },
       "criteriaDistribution": {
         "CROSS_PART_INTEGRATION": 136,
         "STRATEGY_SELECTION": 128,
-        "SIMULTANEOUS_CONSTRAINTS": 172,
+        "SIMULTANEOUS_CONSTRAINTS": 156,
         "PARTIAL_ORDER_BRANCHING": 63,
         "COMPOSED_INVERSION": 73,
         "RULE_DISCOVERY": 60
@@ -1552,10 +1490,10 @@
       "latencyMs": {
         "p50": 1,
         "p95": 3,
-        "p99": 5,
+        "p99": 4,
         "measured": true
       },
-      "wallMs": 446
+      "wallMs": 463
     },
     "medium": {
       "band": "medium",
@@ -1585,10 +1523,10 @@
       "latencyMs": {
         "p50": 1,
         "p95": 2,
-        "p99": 4,
+        "p99": 3,
         "measured": true
       },
-      "wallMs": 387
+      "wallMs": 365
     },
     "easy": {
       "band": "easy",
@@ -1618,10 +1556,10 @@
       "latencyMs": {
         "p50": 1,
         "p95": 2,
-        "p99": 3,
+        "p99": 2,
         "measured": true
       },
-      "wallMs": 305
+      "wallMs": 260
     }
   },
   "holdoutDRegression": {

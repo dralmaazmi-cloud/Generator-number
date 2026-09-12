@@ -26,6 +26,15 @@
    "reason": "archived, not invalidated: holdout AUDIT-2026-09-12-C was generated from exactly this production state, and its independent review is the diagnosis RC2.2 remediates. Production necessarily moves past it.",
    "archivedRecord": "rc2/FREEZE_RC2_1.json",
    "holdoutGeneratedFromIt": "AUDIT-2026-09-12-C"
+  },
+  {
+   "RC2_COMMIT": "11a6f79cf8c6ecb507898a42952fdcf3b26b5df0",
+   "treeHash": "f8eb425b02e9dcdf09f87648ca26960e31adc74c",
+   "frozenAt": "2026-09-12T16:57:31.844Z",
+   "productionBundleSha256": "c52637038ff26a15d48dc107e7cd114a12c321709e0d0064c6ffd4aa4549978a",
+   "reason": "archived, not invalidated: holdout AUDIT-2026-09-12-D was generated from exactly this production state, and its independent review — 250 correct keys, one ambiguous item, 44 of 82 hard items not hard — is the diagnosis RC2.3 remediates. Production necessarily moves past it.",
+   "archivedRecord": "rc2/FREEZE_RC2_2.json",
+   "holdoutGeneratedFromIt": "AUDIT-2026-09-12-D"
   }
  ]
 }

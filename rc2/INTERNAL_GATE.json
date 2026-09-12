@@ -1,18 +1,15 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-12T19:03:43.434Z",
+  "evaluatedAt": "2026-09-12T19:07:36.983Z",
   "engineVersion": "1.4.0",
-  "headCommit": "b20b38015eb9bf3fc5366c21e4482975ca03be78",
+  "headCommit": "cc113a631b1cd14ac6699e77c0220f84b40799e9",
   "branch": "claude/rc2-implementation",
   "holdoutSeed": "AUDIT-2026-09-12-B",
   "verdict": "FAIL",
   "conditions": 35,
   "failedConditions": [
     "SUITE_GREEN",
-    "SESSION_TELEMETRY_RECONCILES",
-    "SIGNOFF_HOLDOUT_UNTOUCHED",
-    "RISE_WORDING_UNAMBIGUOUS",
     "TREE_CLEAN"
   ],
   "checks": [
@@ -206,7 +203,7 @@
     {
       "id": "SESSION_TELEMETRY_RECONCILES",
       "requirement": "RC2.1-1 — every published candidate a session sees is delivered or dispositioned",
-      "pass": false,
+      "pass": true,
       "detail": {
         "publishedToSessions": 557,
         "delivered": 250,
@@ -214,8 +211,15 @@
         "accountedFor": 557,
         "balanced": true,
         "difference": 0,
-        "note": "published candidates offered to sessions = delivered + every recorded session-level discard",
-        "anonymousDiscards": 3
+        "byReason": {
+          "SESSION_WINDOW_CAP": 184,
+          "SESSION_TEMPLATE_CAP": 79,
+          "REPEATED_REASONING_PATTERN": 22,
+          "DUPLICATE_FINGERPRINT": 19,
+          "SESSION_TEMPLATE_SHARE_CAP": 3
+        },
+        "anonymous": 0,
+        "note": "published candidates offered to sessions = delivered + every recorded session-level discard"
       }
     },
     {
@@ -263,11 +267,9 @@
     {
       "id": "SIGNOFF_HOLDOUT_UNTOUCHED",
       "requirement": "the CURRENT sign-off holdout seed appears in no development evidence",
-      "pass": false,
+      "pass": true,
       "detail": {
-        "offenders": [
-          "RC22_REMEDIATION_REPORT.md"
-        ]
+        "offenders": []
       }
     },
     {
@@ -419,9 +421,10 @@
     {
       "id": "RISE_WORDING_UNAMBIGUOUS",
       "requirement": "RC2.3-6 — a rise of 100% or more says BY how much, never «بنسبة»",
-      "pass": false,
+      "pass": true,
       "detail": {
-        "stemsWithARiseOf100OrMore": 4,
+        "sampled": 3500,
+        "stemsWithARiseOf100OrMore": 83,
         "ambiguous": 0
       }
     },
@@ -430,7 +433,7 @@
       "requirement": "§23 — the candidate is not still moving",
       "pass": false,
       "detail": [
-        "M tools/audit/rc2-internal-gate.mjs"
+        "M rc2/INTERNAL_GATE.json"
       ]
     }
   ]
