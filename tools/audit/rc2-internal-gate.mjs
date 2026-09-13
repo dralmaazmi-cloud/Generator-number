@@ -334,7 +334,11 @@ function conditions() {
     // loss is still caught.
     // RC2.6: 137. Ten new HARD structures in the five families the RC2.5 human
     // calibration left with none.
-    return {pass: c.total === 137 && orphans.length === 0,
+    // RC2.7: 145. Five widen the sequence rule space and its targets; three are
+    // construction FORMS the RC2.6 inventory found the generator had none of —
+    // comparison of two stated alternatives, a largest admissible value, and a
+    // smallest admissible count.
+    return {pass: c.total === 145 && orphans.length === 0,
       detail: {templates: c.total, byBand: c.byBand, orphans}};
   });
 
