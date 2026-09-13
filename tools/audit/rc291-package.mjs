@@ -22,8 +22,8 @@ import {createHash} from 'node:crypto';
 import {readFileSync, rmSync, mkdirSync, cpSync, writeFileSync, existsSync, readdirSync, statSync} from 'node:fs';
 import {join} from 'node:path';
 
-const OUT = 'RC2_9_GENERATOR_READY.zip';
-const STAGE = '.rc29-package';
+const OUT = 'RC2_9_1_GENERATOR_READY.zip';
+const STAGE = '.rc291-package';
 
 /** The engine itself, plus everything needed to run and re-verify it. */
 const INCLUDE = [
@@ -89,11 +89,16 @@ writeFileSync(join(STAGE, 'RELEASE.json'), JSON.stringify({
   excludes: 'every holdout artifact, sealed or spent, and the delivery packages of earlier releases',
   verify: [
     'npm test                                   # the full suite',
-    'node tools/audit/rc29-acceptance.mjs       # three fifties and five journeys, on unused seeds',
-    'node tools/audit/rc29-journey.mjs          # the three regression journeys',
+    'node tools/audit/rc291-acceptance.mjs      # THE PRODUCT: three fifties and five real journeys in a browser',
+    'node tools/audit/rc29-acceptance.mjs       # the engine contract, on unused seeds',
+    'node tools/audit/rc29-journey.mjs          # the three engine regression journeys',
     'node tools/audit/rc2-internal-gate.mjs     # the 39-condition release gate',
     'node -e "import(\\"./tools/audit/rc2-freeze.mjs\\").then(m=>console.log(m.verifyFreeze()))"'
-  ]
+  ],
+  browserJourney: 'tools/audit/rc291-acceptance.mjs and tests/rc291-browser-journey.test.mjs '
+    + 'drive index.html in a real Chromium. They need one: `npm install --no-save playwright-core` '
+    + 'and RC291_CHROME pointing at a Chromium binary. Without it those tests report "skipped" and '
+    + 'say why; everything else in the suite runs with no dependencies at all.'
 }, null, 2) + '\n');
 
 execFileSync('zip', ['-q', '-r', '-X', join('..', OUT), '.'], {cwd: STAGE});
