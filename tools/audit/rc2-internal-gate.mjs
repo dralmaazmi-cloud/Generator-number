@@ -354,7 +354,13 @@ function conditions() {
     // until an age ratio holds, naming a rule, applying a stated one, naming a
     // set's shared property, extending a set by it, and the fraction left after
     // two successive shares.
-    return {pass: c.total === 151 && orphans.length === 0,
+    // RC2.9: 155. Canonicalising the perceptual signature collapsed
+    // constructions that were only parameter variants of each other, and the
+    // breadth the cross-session journeys need had to come from four real
+    // structures rather than from the collapse being undone: a hidden operation
+    // and a membership test in sequences, a past ratio and an invariant
+    // difference in ages.
+    return {pass: c.total === 155 && orphans.length === 0,
       detail: {templates: c.total, byBand: c.byBand, orphans}};
   });
 

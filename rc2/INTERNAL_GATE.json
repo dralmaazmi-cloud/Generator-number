@@ -1,14 +1,16 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-13T16:56:19.359Z",
-  "engineVersion": "1.4.0",
-  "headCommit": "80d22643f24696a12e22562ff573b295cc924265",
+  "evaluatedAt": "2026-09-13T18:51:35.691Z",
+  "engineVersion": "1.5.0",
+  "headCommit": "5962388894e26814371ce2061a8bb5342b8f976c",
   "branch": "claude/numerical-generator-upgrade-b3fc8s",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "PASS",
+  "verdict": "FAIL",
   "conditions": 39,
-  "failedConditions": [],
+  "failedConditions": [
+    "STRUCTURE_ADJUDICATION_COMPLETE"
+  ],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -39,7 +41,7 @@
       "requirement": "The whole test suite passes",
       "pass": true,
       "detail": {
-        "passed": 455,
+        "passed": 478,
         "failed": 0
       }
     },
@@ -82,6 +84,7 @@
           "rc2/DEVELOPMENT_CORPUS.json",
           "rc2/FREEZE.RC2_6.json",
           "rc2/FREEZE.RC2_7.json",
+          "rc2/FREEZE.RC2_8.json",
           "rc2/FREEZE.RC2_8A.json",
           "rc2/FREEZE.RC2_8B.json",
           "rc2/FREEZE.RC2_8_PREVIOUS.json",
@@ -105,6 +108,7 @@
           "rc2/RC24_DEVELOPMENT_CORPUS.json",
           "rc2/RC27_DEVELOPMENT_CORPUS.json",
           "rc2/RC28_DEVELOPMENT_CORPUS.json",
+          "rc2/RC29_DEVELOPMENT_CORPUS.json",
           "rc2/RC2_IMPLEMENTATION_REPORT.md",
           "rc2/SUPERSEDED_FREEZES.json",
           "rc2/holdout-c-package/MANIFEST.json",
@@ -216,14 +220,16 @@
       "requirement": "RC2.1-1 — every published candidate a session sees is delivered or dispositioned",
       "pass": true,
       "detail": {
-        "publishedToSessions": 247,
+        "publishedToSessions": 246,
         "delivered": 230,
-        "sessionDiscards": 17,
-        "accountedFor": 247,
+        "sessionDiscards": 16,
+        "accountedFor": 246,
         "balanced": true,
         "difference": 0,
         "byReason": {
-          "NOVELTY_DIMENSION_DOMINANCE": 17
+          "NOVELTY_DIMENSION_DOMINANCE": 6,
+          "NOVELTY_MULTI_DIMENSION_SIMILARITY": 6,
+          "NOVELTY_CONSECUTIVE_SIMILARITY": 4
         },
         "anonymous": 0,
         "note": "published candidates offered to sessions = delivered + every recorded session-level discard"
@@ -292,7 +298,7 @@
       "detail": {
         "exactRepeats": 0,
         "semanticRepeats": 0,
-        "reasoningPaths": 148,
+        "reasoningPaths": 153,
         "maxRepetition": 3,
         "cap": 5,
         "breachesRecorded": 0,
@@ -305,20 +311,20 @@
       "pass": true,
       "detail": {
         "wrong": 4500,
-        "linked": 2212,
-        "share": 0.492,
+        "linked": 2218,
+        "share": 0.493,
         "outOfRange": 0
       }
     },
     {
       "id": "STRUCTURE_ADJUDICATION_COMPLETE",
       "requirement": "RC2.3-1 — every template is adjudicated and every adjudication is reachable",
-      "pass": true,
+      "pass": false,
       "detail": {
-        "templates": 151,
+        "templates": 155,
         "byBand": {
           "easy": 48,
-          "medium": 73,
+          "medium": 77,
           "hard": 30
         },
         "orphans": []
@@ -536,10 +542,10 @@
           },
           "families": {
             "distinct": 14,
-            "max": 12
+            "max": 16
           },
           "reasoning": {
-            "distinct": 39,
+            "distinct": 44,
             "max": 4
           }
         }
