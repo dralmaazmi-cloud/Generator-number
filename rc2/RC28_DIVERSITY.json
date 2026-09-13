@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-13T15:51:38.177Z",
+  "generatedAt": "2026-09-13T17:00:51.970Z",
   "seeds": [
     "rc28-fresh-50-alpha-3b91d7",
     "rc28-fresh-50-beta-0c4ea2",
@@ -325,9 +325,7 @@
           "task": "REVERSE_RECOVER/DATE",
           "templateId": "CAL_M_TWO_SHIFT",
           "family": "calendar",
-          "subIdea": "eq(#,mod(add(#,X),#))|ratio>add",
-          "question": "إذا كان بعد غد هو الجمعة، فما اليوم الذي كان قبل 3 أيام من اليوم؟",
-          "answer": "D"
+          "subIdea": "eq(#,mod(add(#,X),#))|ratio>add"
         },
         {
           "index": 2,
@@ -336,9 +334,7 @@
           "task": "COMPARE_ALTERNATIVES/DURATION",
           "templateId": "WORK_M_CHANGE",
           "family": "work_time",
-          "subIdea": "eq(add(mul(#,#),mul(#,X)),mul(#,#))|multiply>subtract>divide",
-          "question": "يستطيع 8 عمال إنجاز عمل كامل في 12 يومًا. عملوا 3 أيام، ثم غادر عاملان. كم يومًا إضافيًا يحتاج العدد الجديد لإكمال العمل؟",
-          "answer": "B"
+          "subIdea": "eq(add(mul(#,#),mul(#,X)),mul(#,#))|multiply>subtract>divide"
         },
         {
           "index": 3,
@@ -347,9 +343,7 @@
           "task": "COMBINE_PARTS/QUANTITY",
           "templateId": "MACH_H_TWO_TYPES",
           "family": "machines",
-          "subIdea": "eq(X,add(mul(#,#,#),mul(#,#,#)))|multiply>add",
-          "question": "تنتج آلة من النوع أ 20 زجاجة/ساعة، وآلة من النوع ب 24 زجاجة/ساعة. إذا عملت 3 آلات من أ و4 آلات من ب معًا لمدة 4 ساعات، فكم زجاجة تنتج؟",
-          "answer": "B"
+          "subIdea": "eq(X,add(mul(#,#,#),mul(#,#,#)))|multiply>add"
         },
         {
           "index": 4,
@@ -358,9 +352,7 @@
           "task": "SCALE_PROPORTIONALLY/QUANTITY",
           "templateId": "PROP_H_COMPOUND",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,#,add(#,#)),mul(X,mul(#,#)))|divide>multiply>add",
-          "question": "المعطيات: تحتاج 6 وحدات إلى 30 كيلوجرامًا من مادة؛ نريد تجهيز 10 وحدات، مع إضافة احتياط بنسبة 20% فوق الكمية المحسوبة. كم كيلوجرامًا نحتاج؟",
-          "answer": "E"
+          "subIdea": "eq(mul(#,#,add(#,#)),mul(X,mul(#,#)))|divide>multiply>add"
         },
         {
           "index": 5,
@@ -369,9 +361,7 @@
           "task": "JUDGE_INDETERMINACY/STATEMENT",
           "templateId": "REL_M_BRANCH_UNRES",
           "family": "relational",
-          "subIdea": "order:small/branched/merging/shallow/partial|none",
-          "question": "ريم أسرع من نورة. ليان أسرع من بدر. ليان أسرع من نورة. ريم أسرع من بدر. نورة أسرع من مريم. أي مقارنة لا يمكن حسمها؟",
-          "answer": "B"
+          "subIdea": "order:small/branched/merging/shallow/partial|none"
         },
         {
           "index": 6,
@@ -380,9 +370,7 @@
           "task": "FIND_REMAINDER/NUMBER",
           "templateId": "FRAC_M_REMAIN",
           "family": "fractions",
-          "subIdea": "eq(X,mul(sub(#,#),sub(#,#)))|divide>subtract>multiply",
-          "question": "أُنفق ثلث مبلغٍ من المال، ثم أُنفق ثُمن ما تبقى منه. ما الكسر الذي يمثل ما بقي من المبلغ الأصلي؟",
-          "answer": "A"
+          "subIdea": "eq(X,mul(sub(#,#),sub(#,#)))|divide>subtract>multiply"
         },
         {
           "index": 7,
@@ -391,9 +379,7 @@
           "task": "REQUIRED_INPUT/QUANTITY",
           "templateId": "PROP_E_ITEMS",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,#),mul(#,X))|divide",
-          "question": "يحتوي كل صندوق على العدد نفسه من القطع. إذا كانت 4 صناديق تحتوي على 24 قطعة، فكم صندوقًا نحتاج للحصول على 30 قطعة؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,#),mul(#,X))|divide"
         },
         {
           "index": 8,
@@ -402,9 +388,7 @@
           "task": "MEASURE_INTERVAL/DURATION",
           "templateId": "CAL_H_MONTH_LENGTH",
           "family": "calendar",
-          "subIdea": "eq(#,mod(add(#,X),#))|add>subtract",
-          "question": "كان اليوم 17 من شهرٍ ما يوم الأحد، وكان اليوم 6 من الشهر الذي يليه يوم الأربعاء. كم يومًا بين التاريخين؟",
-          "answer": "F"
+          "subIdea": "eq(#,mod(add(#,X),#))|add>subtract"
         },
         {
           "index": 9,
@@ -413,9 +397,7 @@
           "task": "REQUIRED_INPUT/DURATION",
           "templateId": "RATE_H_TARGET",
           "family": "unit_rate",
-          "subIdea": "eq(mul(#,#,#),mul(#,X,add(#,#)))|divide>add>multiply",
-          "question": "المعطيات: تنجز آلة 320 قميصًا خلال 8 دقائق؛ ارتفع معدلها في الدقيقة بعد تطوير بمقدار 50% من القيمة السابقة. كم دقيقة تحتاج بالمعدل الجديد لإنجاز 600 قميصًا؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,#,#),mul(#,X,add(#,#)))|divide>add>multiply"
         },
         {
           "index": 10,
@@ -424,9 +406,7 @@
           "task": "DECOMPOSE_COMBINED/MEMBER_VALUE",
           "templateId": "AVG_H_OVERLAP",
           "family": "averages",
-          "subIdea": "eq(add(X,mul(#,#)),add(mul(#,#),mul(#,#)))|multiply>add>ratio>subtract",
-          "question": "المعطيات: متوسط أعداد الزوار كلها في سجل عدد الزوار في 5 أيام هو 14 زائرًا؛ متوسط أول 3 أيام في السجل هو 26 زائرًا؛ متوسط آخر 3 أيام فيه هو 14 زائرًا. فما عدد زوار اليوم الذي يقع في الموضع الأوسط من السجل؟",
-          "answer": "F"
+          "subIdea": "eq(add(X,mul(#,#)),add(mul(#,#),mul(#,#)))|multiply>add>ratio>subtract"
         },
         {
           "index": 11,
@@ -435,9 +415,7 @@
           "task": "COMBINE_PARTS/DURATION",
           "templateId": "COMB_M_SOLO_THEN",
           "family": "combined_rate",
-          "subIdea": "eq(#,add(mul(#,#),mul(X,add(#,#))))|multiply>subtract>add>divide",
-          "question": "ينجز العامل أ 20 زجاجة/ساعة، والعامل ب 12 زجاجة/ساعة. عمل أ وحده 4 ساعات، ثم عملا معًا حتى بلغ الإنجاز 144 زجاجة. كم ساعة عملا معًا؟",
-          "answer": "D"
+          "subIdea": "eq(#,add(mul(#,#),mul(X,add(#,#))))|multiply>subtract>add>divide"
         },
         {
           "index": 12,
@@ -446,9 +424,7 @@
           "task": "REVERSE_RECOVER/RATE",
           "templateId": "RATE_H_RATE_FROM_GAP",
           "family": "unit_rate",
-          "subIdea": "eq(mul(#,#),mul(#,X,add(#,X)))|divide>add>multiply>ratio",
-          "question": "ينجز جهاز 504 رغيفًا بمعدل ثابت، ولو زاد معدله بمقدار 4 رغيف/ساعة لأنجز العمل نفسه في 3 ساعات أقل. فما معدله الأصلي؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#),mul(#,X,add(#,X)))|divide>add>multiply>ratio"
         },
         {
           "index": 13,
@@ -457,9 +433,7 @@
           "task": "REVERSE_RECOVER/NUMBER",
           "templateId": "FRAC_H_4",
           "family": "fractions",
-          "subIdea": "eq(X,mul(#,#))|multiply>divide",
-          "question": "أُخذ نصف عدد، ثم ربع الناتج، ثم سُدس الناتج، ثم ثلث الناتج، فكان الناتج 3. فما العدد؟",
-          "answer": "F"
+          "subIdea": "eq(X,mul(#,#))|multiply>divide"
         },
         {
           "index": 14,
@@ -468,9 +442,7 @@
           "task": "JUDGE_ENTAILMENT/STATEMENT",
           "templateId": "REL_H_GUARANTEE",
           "family": "relational",
-          "subIdea": "order:mid/branched/merging/mid/partial|none",
-          "question": "حمد أسرع من ليان. ناصر أسرع من سامي. حمد أسرع من ماجد. ماجد أسرع من ريم. ريم أسرع من سامي. ليان أسرع من ناصر. أي عبارة يجب أن تكون صحيحة مهما كان ترتيب ليان وريم؟",
-          "answer": "E"
+          "subIdea": "order:mid/branched/merging/mid/partial|none"
         },
         {
           "index": 15,
@@ -479,9 +451,7 @@
           "task": "SHARE_PROPORTIONALLY/QUANTITY",
           "templateId": "RAT_E_SPLIT",
           "family": "ratios",
-          "subIdea": "eq(mul(#,#),mul(#,X))|add>divide>multiply",
-          "question": "النسبة بين أ : ب = 4 : 3. إذا كان مجموعهما 21، فما قيمة أ؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#),mul(#,X))|add>divide>multiply"
         },
         {
           "index": 16,
@@ -490,9 +460,7 @@
           "task": "FIND_THRESHOLD/COUNT",
           "templateId": "MACH_H_MIN_SECOND_TYPE",
           "family": "machines",
-          "subIdea": "gt(#,add(#,mul(#,sub(X,#)))) & gte(add(#,mul(#,X)),#) & int(X,#)|multiply>subtract>divide>add>ratio",
-          "question": "المعطيات: مطلوب إنتاج 1505 قميصًا خلال 8 ساعات؛ تتوفر 5 آلات من النوع الأول، وتنتج كل واحدة منها 20 قميص/ساعة؛ آلات النوع الثاني تنتج كل واحدة منها 16 قميص/ساعة. فما أقل عدد من آلات النوع الثاني يكفي لبلوغ المطلوب؟",
-          "answer": "A"
+          "subIdea": "gt(#,add(#,mul(#,sub(X,#)))) & gte(add(#,mul(#,X)),#) & int(X,#)|multiply>subtract>divide>add>ratio"
         },
         {
           "index": 17,
@@ -501,9 +469,7 @@
           "task": "IDENTIFY_RULE/RULE",
           "templateId": "ODD_M_PROPERTY",
           "family": "odd_one_out",
-          "subIdea": "none|ratio",
-          "question": "ما الخاصية التي تشترك فيها كل أعداد المجموعة الآتية؟",
-          "answer": "B"
+          "subIdea": "none|ratio"
         },
         {
           "index": 18,
@@ -512,9 +478,7 @@
           "task": "COMBINE_PARTS/AVERAGE",
           "templateId": "AVG_M_COMBINE",
           "family": "averages",
-          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(#,X))|multiply>add>divide",
-          "question": "متوسط أطوال 3 ألواح هو 17 مترًا، ومتوسط أطوال 5 ألواح أخرى هو 25 مترًا. فما متوسط الأطوال مجتمعة؟",
-          "answer": "A"
+          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(#,X))|multiply>add>divide"
         },
         {
           "index": 19,
@@ -523,9 +487,7 @@
           "task": "DECOMPOSE_COMBINED/MONEY",
           "templateId": "PL_H_TWO_OUTCOMES",
           "family": "profit_loss",
-          "subIdea": "eq(mul(#,#),mul(#,X))|percent>add>multiply>divide",
-          "question": "لو بيع قميص بسعر معين لتحقق ربح قدره 40% من تكلفته، ولو بيع بسعر أقل من ذلك بـ108 درهمًا لكانت الخسارة 5% من التكلفة. فما تكلفة القميص؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,#),mul(#,X))|percent>add>multiply>divide"
         },
         {
           "index": 20,
@@ -534,9 +496,7 @@
           "task": "FORWARD_COMPUTE/TERM",
           "templateId": "SEQ_M_RULE_APPLY",
           "family": "sequences",
-          "subIdea": "eq(#,X)|multiply>add",
-          "question": "متتالية حدها الأول 11، وكل حد بعده يُحسب بضرب الحد السابق في 2 ثم إضافة 5. ما الحد الرابع؟",
-          "answer": "A"
+          "subIdea": "eq(#,X)|multiply>add"
         },
         {
           "index": 21,
@@ -545,9 +505,7 @@
           "task": "REVERSE_RECOVER/QUANTITY",
           "templateId": "RAT_H_TRANSFER",
           "family": "ratios",
-          "subIdea": "eq(#,mod(X,#)) & eq(mul(#,#,sub(X,#)),mul(#,add(mul(#,#),mul(#,X))))|add>subtract>ratio>multiply>divide",
-          "question": "المعطيات: النسبة بين أ : ب = 3 : 2؛ نُقلت وحدتان من أ إلى ب فأصبحت النسبة أ : ب = 8 : 7. فما قيمة أ قبل النقل؟",
-          "answer": "E"
+          "subIdea": "eq(#,mod(X,#)) & eq(mul(#,#,sub(X,#)),mul(#,add(mul(#,#),mul(#,X))))|add>subtract>ratio>multiply>divide"
         },
         {
           "index": 22,
@@ -556,9 +514,7 @@
           "task": "MEASURE_CHANGE/PERCENT",
           "templateId": "PCT_M_SUCCESSIVE",
           "family": "percentages",
-          "subIdea": "eq(mul(#,X),sub(mul(#,#),#))|multiply>divide>subtract>add",
-          "question": "كانت قيمة 800. انخفضت بنسبة 10%، ثم زادت القيمة الجديدة بنسبة 20%. ما نسبة التغير النهائية مقارنة بالأصل؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,X),sub(mul(#,#),#))|multiply>divide>subtract>add"
         },
         {
           "index": 23,
@@ -567,9 +523,7 @@
           "task": "FIND_COINCIDENCE/DURATION",
           "templateId": "SPD_H_MEET_DELAY",
           "family": "speed",
-          "subIdea": "eq(#,add(mul(#,X),mul(#,add(#,X))))|multiply>subtract>add>divide",
-          "question": "مدينتان بينهما 300 كيلومترًا، وانطلقت دراجة أ من الأولى بسرعة 80 كم/ساعة، وبعد 1.5 ساعة انطلقت دراجة ب من الثانية باتجاه أ بسرعة 100 كم/ساعة. بعد كم ساعة من انطلاق ب تلتقي الدراجتان؟",
-          "answer": "E"
+          "subIdea": "eq(#,add(mul(#,X),mul(#,add(#,X))))|multiply>subtract>add>divide"
         },
         {
           "index": 24,
@@ -578,9 +532,7 @@
           "task": "FORWARD_COMPUTE/AGE",
           "templateId": "AGE_H_THREE_SIBLINGS",
           "family": "ages",
-          "subIdea": "eq(#,sub(mul(#,sub(X,#)),#))|add>multiply>subtract>divide",
-          "question": "مجموع أعمار ثلاثة إخوة الآن 64 سنة. الأكبر أكبر من الأوسط بـ5 سنوات، والأوسط أكبر من الأصغر بـ4 سنوات. كم سيكون عمر الأكبر بعد 6 سنوات؟",
-          "answer": "A"
+          "subIdea": "eq(#,sub(mul(#,sub(X,#)),#))|add>multiply>subtract>divide"
         },
         {
           "index": 25,
@@ -589,9 +541,7 @@
           "task": "COMBINE_PARTS/SPEED",
           "templateId": "SPD_M_AVG",
           "family": "speed",
-          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(X,add(#,#)))|multiply>add>divide",
-          "question": "سارت مركبة ساعة واحدة بسرعة 50 كم/ساعة، ثم ساعتين بسرعة 80 كم/ساعة. ما متوسط سرعتها في الرحلة كلها؟",
-          "answer": "A"
+          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(X,add(#,#)))|multiply>add>divide"
         },
         {
           "index": 26,
@@ -600,9 +550,7 @@
           "task": "FORWARD_COMPUTE/DATE",
           "templateId": "CAL_H_LONG",
           "family": "calendar",
-          "subIdea": "eq(X,mod(add(#,#),#))|subtract>ratio",
-          "question": "إذا كان اليوم الجمعة، فما اليوم بعد 18 يومًا؟",
-          "answer": "E"
+          "subIdea": "eq(X,mod(add(#,#),#))|subtract>ratio"
         },
         {
           "index": 27,
@@ -611,9 +559,7 @@
           "task": "REQUIRED_INPUT/COUNT",
           "templateId": "WORK_H_EXTRA_WORKERS",
           "family": "work_time",
-          "subIdea": "eq(mul(#,#),mul(add(#,X),sub(#,#)))|multiply>subtract>divide",
-          "question": "يستطيع 18 عاملًا إنجاز عمل في 12 يومًا، وللانتهاء قبل الموعد بـ6 أيام أُضيف عدد من العمال بالكفاءة نفسها. كم عاملًا أُضيف؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,#),mul(add(#,X),sub(#,#)))|multiply>subtract>divide"
         },
         {
           "index": 28,
@@ -622,9 +568,7 @@
           "task": "FORWARD_COMPUTE/NUMBER",
           "templateId": "FRAC_M_3",
           "family": "fractions",
-          "subIdea": "eq(#,mul(#,X))|divide",
-          "question": "أُخذ نصف العدد 800، ثم خُمس الناتج، ثم ثُمن الناتج. ما الناتج؟",
-          "answer": "D"
+          "subIdea": "eq(#,mul(#,X))|divide"
         },
         {
           "index": 29,
@@ -633,9 +577,7 @@
           "task": "DECOMPOSE_COMBINED/RATE",
           "templateId": "MACH_H_TWO_CONFIG",
           "family": "machines",
-          "subIdea": "eq(mul(#,X),sub(mul(#,#),mul(#,#)))|multiply>ratio>subtract>divide",
-          "question": "تنتج 3 آلات من النوع الأول و3 آلات من النوع الثاني معًا 120 علبة في الساعة، وتنتج آلتان من النوع الأول و5 آلات من النوع الثاني معًا 146 علبة في الساعة. كم علبة تنتج آلة واحدة من النوع الأول في الساعة؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,X),sub(mul(#,#),mul(#,#)))|multiply>ratio>subtract>divide"
         },
         {
           "index": 30,
@@ -644,9 +586,7 @@
           "task": "DECOMPOSE_COMBINED/NUMBER",
           "templateId": "RAT_M_COMMON_SUM",
           "family": "ratios",
-          "subIdea": "eq(mul(#,#),mul(#,X))|multiply>ratio>add>divide",
-          "question": "النسبة أ : ب = 3 : 5، والنسبة ب : ج = 3 : 5. إذا كان أ + ج = 136، فما قيمة ب؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,#),mul(#,X))|multiply>ratio>add>divide"
         },
         {
           "index": 31,
@@ -655,9 +595,7 @@
           "task": "DECOMPOSE_COMBINED/COUNT",
           "templateId": "COMB_H_TEAM_SIZE",
           "family": "combined_rate",
-          "subIdea": "eq(#,add(mul(#,#,X),mul(#,#,add(#,X))))|multiply>add>subtract>divide",
-          "question": "فريق أفراده متساوون في المعدل، ينجز كل فرد 12 علبة/ساعة، وعمل الفريق 3 ساعات، ثم انضم إليه فرد واحد فعمل الجميع 6 ساعات أخرى، فبلغ الإنجاز الكلي 936 علبة. كم فردًا كان في الفريق أولًا؟",
-          "answer": "F"
+          "subIdea": "eq(#,add(mul(#,#,X),mul(#,#,add(#,X))))|multiply>add>subtract>divide"
         },
         {
           "index": 32,
@@ -666,9 +604,7 @@
           "task": "REVERSE_RECOVER/MONEY",
           "templateId": "PL_H_MARKUP_DISCOUNT",
           "family": "profit_loss",
-          "subIdea": "eq(mul(#,#),mul(#,X))|add>subtract>multiply>divide",
-          "question": "وضعت مكتبة سعرًا معلنًا أعلى من تكلفة الكتاب بنسبة 40%، ثم باعه بخصم 20% من السعر المعلن، فحقق ربحًا قدره 60 درهمًا. فما تكلفة الكتاب؟",
-          "answer": "E"
+          "subIdea": "eq(mul(#,#),mul(#,X))|add>subtract>multiply>divide"
         },
         {
           "index": 33,
@@ -677,9 +613,7 @@
           "task": "FORWARD_COMPUTE/QUANTITY",
           "templateId": "PCT_E_OF",
           "family": "percentages",
-          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply",
-          "question": "ما قيمة 30% من 240؟",
-          "answer": "E"
+          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply"
         },
         {
           "index": 34,
@@ -688,9 +622,7 @@
           "task": "REQUIRED_INPUT/MEMBER_VALUE",
           "templateId": "AVG_H_TARGET",
           "family": "averages",
-          "subIdea": "eq(add(X,mul(#,#)),mul(#,#))|multiply>subtract",
-          "question": "المعطيات: متوسط 8 قيم هو 17؛ يُراد أن يصبح متوسط القيم جميعها 20. فما القيمة التي يجب إضافتها؟",
-          "answer": "D"
+          "subIdea": "eq(add(X,mul(#,#)),mul(#,#))|multiply>subtract"
         },
         {
           "index": 35,
@@ -699,9 +631,7 @@
           "task": "DECOMPOSE_COMBINED/VOLUME",
           "templateId": "PCT_H_MIXTURE",
           "family": "percentages",
-          "subIdea": "eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|multiply>divide>percent>subtract",
-          "question": "خُلط محلول تركيزه 30% مع محلول آخر تركيزه 75%، فنتج 60 لترًا من مزيج تركيزه 60%. كم لترًا من المحلول الأول استُخدم؟",
-          "answer": "C"
+          "subIdea": "eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|multiply>divide>percent>subtract"
         },
         {
           "index": 36,
@@ -710,9 +640,7 @@
           "task": "DETECT_PATTERN_FAULT/TERM",
           "templateId": "SEQ_M_WRONG_TERM",
           "family": "sequences",
-          "subIdea": "eq(#,X) & eq(#,mul(#,#))|ratio>multiply",
-          "question": "أي الحدود الآتية لا يتفق مع قاعدة المتتالية؟",
-          "answer": "C"
+          "subIdea": "eq(#,X) & eq(#,mul(#,#))|ratio>multiply"
         },
         {
           "index": 37,
@@ -721,9 +649,7 @@
           "task": "REVERSE_RECOVER/PERCENT",
           "templateId": "PL_H_REST_MARGIN",
           "family": "profit_loss",
-          "subIdea": "eq(add(mul(#,#),mul(#,X)),mul(#,#))|subtract>multiply>divide",
-          "question": "المعطيات: اشترى تاجر بضاعة بمبلغ 400 درهمًا؛ باع منها ما تكلفته 240 درهمًا بربح 10% من تكلفة ذلك الجزء. بكم في المئة من تكلفة الباقي يجب أن يبيع الباقي ليكون ربحه الكلي 18% من التكلفة الكلية؟",
-          "answer": "D"
+          "subIdea": "eq(add(mul(#,#),mul(#,X)),mul(#,#))|subtract>multiply>divide"
         },
         {
           "index": 38,
@@ -732,9 +658,7 @@
           "task": "FORWARD_COMPUTE/DURATION",
           "templateId": "WORK_E_INVERSE",
           "family": "work_time",
-          "subIdea": "eq(mul(#,#),mul(#,X))|multiply>subtract>divide",
-          "question": "يستطيع 8 عمال إنجاز عمل في 15 يومًا. إذا عمل 6 عمال بالكفاءة نفسها، فكم يومًا يحتاجون؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,#),mul(#,X))|multiply>subtract>divide"
         },
         {
           "index": 39,
@@ -743,9 +667,7 @@
           "task": "EXTEND_BY_PROPERTY/NUMBER",
           "templateId": "ODD_M_EXTEND",
           "family": "odd_one_out",
-          "subIdea": "none|none",
-          "question": "أعداد المجموعة الآتية تشترك في خاصية واحدة. أي عدد يمكن ضمّه إليها؟",
-          "answer": "F"
+          "subIdea": "none|none"
         },
         {
           "index": 40,
@@ -754,9 +676,7 @@
           "task": "SCALE_PROPORTIONALLY/MONEY",
           "templateId": "PROP_H_COST_PLUS",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,#),mul(#,sub(X,#)))|divide>multiply>add>ratio",
-          "question": "تكلف 3 وحدات مبلغ 24 درهمًا بالسعر نفسه. إذا اشترينا 9 وحدات وأُضيف رسم ثابت قدره 5 دراهم يُدفع مرة واحدة، فما التكلفة الكلية؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,#),mul(#,sub(X,#)))|divide>multiply>add>ratio"
         },
         {
           "index": 41,
@@ -765,9 +685,7 @@
           "task": "APPLY_SUCCESSIVE_CHANGE/QUANTITY",
           "templateId": "PCT_M_REMAIN",
           "family": "percentages",
-          "subIdea": "eq(mul(#,X),mul(#,sub(#,#),sub(#,#)))|multiply>divide>subtract",
-          "question": "في مجموعة عددها 200، غاب 25% منهم، ثم غادر 10% من الموجودين بعد ذلك. كم بقي؟",
-          "answer": "E"
+          "subIdea": "eq(mul(#,X),mul(#,sub(#,#),sub(#,#)))|multiply>divide>subtract"
         },
         {
           "index": 42,
@@ -776,9 +694,7 @@
           "task": "REVERSE_RECOVER/VOLUME",
           "templateId": "PROP_H_REPLACE",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,X),mul(#,sub(#,#)))|add>multiply>divide>subtract",
-          "question": "في وعاء 45 لترًا من خليط، نسبة المادة الأولى إلى الثانية 5 : 4، وسُحب مقدار من الخليط واستُبدل بالمادة الثانية وحدها، فصارت النسبة 1 : 2. كم لترًا سُحب؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,X),mul(#,sub(#,#)))|add>multiply>divide>subtract"
         },
         {
           "index": 43,
@@ -787,9 +703,7 @@
           "task": "FORWARD_COMPUTE/DISTANCE",
           "templateId": "SPD_E_DISTANCE",
           "family": "speed",
-          "subIdea": "eq(X,mul(#,#))|multiply",
-          "question": "سارت مركبة بسرعة 40 كم/ساعة لمدة ساعتين. ما المسافة التي قطعتها؟",
-          "answer": "C"
+          "subIdea": "eq(X,mul(#,#))|multiply"
         },
         {
           "index": 44,
@@ -798,9 +712,7 @@
           "task": "SCALE_PROPORTIONALLY/QUANTITY",
           "templateId": "RATE_M_SCALE",
           "family": "unit_rate",
-          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply",
-          "question": "قطعت سيارة 300 كيلومترًا باستخدام 15 لترًا من الوقود. إذا استمر المعدل نفسه، فكم كيلومترًا تقطع باستخدام 30 لترًا؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply"
         },
         {
           "index": 45,
@@ -809,9 +721,7 @@
           "task": "COMBINE_PARTS/DISTANCE",
           "templateId": "SPD_M_EQUAL_DIST",
           "family": "speed",
-          "subIdea": "eq(mul(#,#,#,#),mul(X,add(#,#)))|divide>multiply>add>ratio",
-          "question": "قطعت حافلة نصف المسافة بسرعة 60 كم/ساعة، والنصف الآخر بسرعة 30 كم/ساعة. إذا استغرقت الرحلة كاملة 15 ساعة، فما المسافة الكلية؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,#,#,#),mul(X,add(#,#)))|divide>multiply>add>ratio"
         },
         {
           "index": 46,
@@ -820,9 +730,7 @@
           "task": "APPLY_SUCCESSIVE_CHANGE/MONEY",
           "templateId": "PL_M_DISC_MARK",
           "family": "profit_loss",
-          "subIdea": "eq(mul(#,X),mul(#,add(#,#),sub(#,#)))|multiply>divide>subtract>add",
-          "question": "المعطيات: سعر الجهاز المعلن 500 درهمًا؛ حصل المحل عليه بخصم 25% من هذا السعر، ثم أراد ربحًا قدره 20% من تكلفة الشراء الفعلية. فما سعر البيع؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,X),mul(#,add(#,#),sub(#,#)))|multiply>divide>subtract>add"
         },
         {
           "index": 47,
@@ -831,9 +739,7 @@
           "task": "COMBINE_PARTS/QUANTITY",
           "templateId": "COMB_E_OUTPUT",
           "family": "combined_rate",
-          "subIdea": "eq(X,add(mul(#,#),mul(#,#)))|add>multiply",
-          "question": "ينجز العامل أ 12 قطعة/ساعة، وينجز العامل ب 20 قطعة/ساعة. إذا عملا معًا 5 ساعات، فكم قطعة ينجزان؟",
-          "answer": "A"
+          "subIdea": "eq(X,add(mul(#,#),mul(#,#)))|add>multiply"
         },
         {
           "index": 48,
@@ -842,9 +748,7 @@
           "task": "REVERSE_RECOVER/DURATION",
           "templateId": "MACH_H_STOPPAGE_TIME",
           "family": "machines",
-          "subIdea": "eq(#,sub(mul(#,#,#),mul(#,sub(#,X))))|multiply>subtract>divide",
-          "question": "تعمل 6 آلات بمعدل 20 لوح/ساعة لكل آلة لمدة 10 ساعات، وتوقفت آلة واحدة في أثناء العمل ولم تعد، فبلغ الإنتاج الفعلي 1060 لوحًا. بعد كم ساعة من بدء العمل توقفت تلك الآلة؟",
-          "answer": "D"
+          "subIdea": "eq(#,sub(mul(#,#,#),mul(#,sub(#,X))))|multiply>subtract>divide"
         },
         {
           "index": 49,
@@ -853,9 +757,7 @@
           "task": "DECOMPOSE_COMBINED/DURATION",
           "templateId": "COMB_M_TOGETHER_SOLO",
           "family": "combined_rate",
-          "subIdea": "eq(#,add(mul(#,X),mul(#,add(#,#))))|multiply>add>subtract>divide",
-          "question": "المعطيات: يعمل أ بمعدل 8 قميص/ساعة وب بمعدل 18 قميص/ساعة؛ عملا معًا 4 ساعات، ثم توقف ب واستمر أ وحده حتى بلغ الإنجاز 176 قميصًا. كم ساعة عمل أ وحده؟",
-          "answer": "B"
+          "subIdea": "eq(#,add(mul(#,X),mul(#,add(#,#))))|multiply>add>subtract>divide"
         },
         {
           "index": 50,
@@ -864,9 +766,7 @@
           "task": "DECOMPOSE_COMBINED/DISTANCE",
           "templateId": "SPD_H_TIME_DIFF",
           "family": "speed",
-          "subIdea": "eq(mul(#,#,#),mul(X,sub(#,#)))|divide>subtract>ratio>multiply",
-          "question": "المسافة نفسها تُقطع بسرعة 30 كم/ساعة أو بسرعة 120 كم/ساعة. إذا كان الزمن عند السرعة 30 أطول بمقدار 12 ساعة، فما المسافة؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#,#),mul(X,sub(#,#)))|divide>subtract>ratio>multiply"
         }
       ]
     },
@@ -1187,9 +1087,7 @@
           "task": "REVERSE_RECOVER/DATE",
           "templateId": "CAL_E_TOM",
           "family": "calendar",
-          "subIdea": "eq(#,mod(add(#,X),#))|none",
-          "question": "إذا كان غدًا هو يوم الجمعة، فما اليوم الحالي؟",
-          "answer": "C"
+          "subIdea": "eq(#,mod(add(#,X),#))|none"
         },
         {
           "index": 2,
@@ -1198,9 +1096,7 @@
           "task": "JUDGE_ENTAILMENT/STATEMENT",
           "templateId": "REL_M_CONFIRM",
           "family": "relational",
-          "subIdea": "order:mid/branched/simple/mid/partial|none",
-          "question": "سارة أسرع من فهد. ريم أسرع من مريم. راشد أسرع من سالم. ريم أسرع من سارة. مريم أسرع من راشد. أي عبارة مؤكدة؟",
-          "answer": "F"
+          "subIdea": "order:mid/branched/simple/mid/partial|none"
         },
         {
           "index": 3,
@@ -1209,9 +1105,7 @@
           "task": "FORWARD_COMPUTE/NUMBER",
           "templateId": "FRAC_E_2",
           "family": "fractions",
-          "subIdea": "eq(#,mul(#,X))|divide",
-          "question": "أُخذ ثُمن العدد 960، ثم سُدس الناتج. ما الناتج؟",
-          "answer": "C"
+          "subIdea": "eq(#,mul(#,X))|divide"
         },
         {
           "index": 4,
@@ -1220,9 +1114,7 @@
           "task": "DECOMPOSE_COMBINED/MONEY",
           "templateId": "PROP_H_TWO_ITEM_SYSTEM",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,X),sub(mul(#,#),mul(#,#)))|multiply>ratio>subtract>divide",
-          "question": "المعطيات: ثمن صندوقين وقطعتين معًا 46 درهمًا؛ وثمن 4 صناديق و5 قطع معًا 95 درهمًا. فما ثمن الصندوق الواحد؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,X),sub(mul(#,#),mul(#,#)))|multiply>ratio>subtract>divide"
         },
         {
           "index": 5,
@@ -1231,9 +1123,7 @@
           "task": "JUDGE_INDETERMINACY/STATEMENT",
           "templateId": "REL_M_BRANCH_UNRES",
           "family": "relational",
-          "subIdea": "order:small/branched/merging/shallow/partial|none",
-          "question": "ليان أسرع من سامي. سالم أسرع من سامي. ماجد أسرع من سالم. ريم أسرع من سامي. ماجد أسرع من ريم. ماجد أسرع من ليان. أي مقارنة لا يمكن حسمها؟",
-          "answer": "E"
+          "subIdea": "order:small/branched/merging/shallow/partial|none"
         },
         {
           "index": 6,
@@ -1242,9 +1132,7 @@
           "task": "IDENTIFY_RULE/RULE",
           "templateId": "ODD_M_PROPERTY",
           "family": "odd_one_out",
-          "subIdea": "none|ratio",
-          "question": "ما الخاصية التي تشترك فيها كل أعداد المجموعة الآتية؟",
-          "answer": "E"
+          "subIdea": "none|ratio"
         },
         {
           "index": 7,
@@ -1253,9 +1141,7 @@
           "task": "APPLY_SUCCESSIVE_CHANGE/MONEY",
           "templateId": "PL_M_DISC_MARK",
           "family": "profit_loss",
-          "subIdea": "eq(mul(#,X),mul(#,add(#,#),sub(#,#)))|multiply>divide>subtract>add",
-          "question": "سعر الشتلة المعلن 240 درهمًا. حصل المشتل عليها بخصم 25% من هذا السعر، ثم أراد ربحًا قدره 10% من تكلفة الشراء الفعلية. فما سعر البيع؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,X),mul(#,add(#,#),sub(#,#)))|multiply>divide>subtract>add"
         },
         {
           "index": 8,
@@ -1264,9 +1150,7 @@
           "task": "DETECT_PATTERN_FAULT/TERM",
           "templateId": "SEQ_M_WRONG_TERM",
           "family": "sequences",
-          "subIdea": "eq(#,X) & eq(#,add(#,#))|ratio>add",
-          "question": "أي الحدود الآتية لا يتفق مع قاعدة المتتالية؟",
-          "answer": "E"
+          "subIdea": "eq(#,X) & eq(#,add(#,#))|ratio>add"
         },
         {
           "index": 9,
@@ -1275,9 +1159,7 @@
           "task": "REVERSE_RECOVER/QUANTITY",
           "templateId": "RAT_M_ADD_SIDE",
           "family": "ratios",
-          "subIdea": "eq(#,mod(mul(#,X),#)) & eq(mul(#,#,#,X),mul(#,#,add(mul(#,#),mul(#,X))))|add>ratio>multiply>subtract>divide",
-          "question": "النسبة بين أ : ب = 3 : 2، وأُضيفت 6 وحدات إلى ب فأصبحت النسبة أ : ب = 3 : 5. فما مجموع أ + ب قبل الإضافة؟",
-          "answer": "A"
+          "subIdea": "eq(#,mod(mul(#,X),#)) & eq(mul(#,#,#,X),mul(#,#,add(mul(#,#),mul(#,X))))|add>ratio>multiply>subtract>divide"
         },
         {
           "index": 10,
@@ -1286,9 +1168,7 @@
           "task": "MEASURE_INTERVAL/DURATION",
           "templateId": "CAL_H_MONTH_LENGTH",
           "family": "calendar",
-          "subIdea": "eq(#,mod(add(#,X),#))|add>subtract",
-          "question": "كان اليوم 10 من شهرٍ ما يوم الأحد، وكان اليوم 9 من الشهر الذي يليه يوم الأحد. كم يومًا بين التاريخين؟",
-          "answer": "F"
+          "subIdea": "eq(#,mod(add(#,X),#))|add>subtract"
         },
         {
           "index": 11,
@@ -1297,9 +1177,7 @@
           "task": "DECOMPOSE_COMBINED/VOLUME",
           "templateId": "PCT_H_MIXTURE",
           "family": "percentages",
-          "subIdea": "eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|multiply>divide>percent>subtract",
-          "question": "خُلط محلول تركيزه 15% مع محلول آخر تركيزه 75%، فنتج 60 لترًا من مزيج تركيزه 50%. كم لترًا من المحلول الأول استُخدم؟",
-          "answer": "F"
+          "subIdea": "eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|multiply>divide>percent>subtract"
         },
         {
           "index": 12,
@@ -1308,9 +1186,7 @@
           "task": "COMBINE_PARTS/AVERAGE",
           "templateId": "AVG_M_COMBINE",
           "family": "averages",
-          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(#,X))|multiply>add>divide",
-          "question": "متوسط عدد الزوار في 4 أيام أخرى هو 24 زائرًا، ومتوسط عدد الزوار في 6 أيام هو 19 زائرًا. فما متوسط أعداد الزوار مجتمعة؟",
-          "answer": "F"
+          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(#,X))|multiply>add>divide"
         },
         {
           "index": 13,
@@ -1319,9 +1195,7 @@
           "task": "FORWARD_COMPUTE/AGE",
           "templateId": "AGE_H_THREE_SIBLINGS",
           "family": "ages",
-          "subIdea": "eq(#,sub(mul(#,sub(X,#)),#))|add>multiply>subtract>divide",
-          "question": "مجموع أعمار ثلاثة إخوة الآن 37 سنة. الأكبر أكبر من الأوسط بـ7 سنوات، والأوسط أكبر من الأصغر بـ6 سنوات. كم سيكون عمر الأكبر بعد 4 سنوات؟",
-          "answer": "C"
+          "subIdea": "eq(#,sub(mul(#,sub(X,#)),#))|add>multiply>subtract>divide"
         },
         {
           "index": 14,
@@ -1330,9 +1204,7 @@
           "task": "COMBINE_PARTS/DISTANCE",
           "templateId": "SPD_M_EQUAL_DIST",
           "family": "speed",
-          "subIdea": "eq(mul(#,#,#,#),mul(X,add(#,#)))|divide>multiply>add>ratio",
-          "question": "قطعت شاحنة نصف المسافة بسرعة 75 كم/ساعة، والنصف الآخر بسرعة 50 كم/ساعة. إذا استغرقت الرحلة كاملة 10 ساعات، فما المسافة الكلية؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,#,#,#),mul(X,add(#,#)))|divide>multiply>add>ratio"
         },
         {
           "index": 15,
@@ -1341,9 +1213,7 @@
           "task": "FORWARD_COMPUTE/DURATION",
           "templateId": "WORK_E_INVERSE",
           "family": "work_time",
-          "subIdea": "eq(mul(#,#),mul(#,X))|multiply>subtract>divide",
-          "question": "يستطيع 6 عمال إنجاز عمل في 18 يومًا. إذا عمل 12 عاملًا بالكفاءة نفسها، فكم يومًا يحتاجون؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,#),mul(#,X))|multiply>subtract>divide"
         },
         {
           "index": 16,
@@ -1352,9 +1222,7 @@
           "task": "SHARE_PROPORTIONALLY/QUANTITY",
           "templateId": "RAT_E_SPLIT",
           "family": "ratios",
-          "subIdea": "eq(mul(#,#),mul(#,X))|add>divide>multiply",
-          "question": "النسبة بين أ : ب = 5 : 4. إذا كان مجموعهما 45، فما قيمة ب؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,#),mul(#,X))|add>divide>multiply"
         },
         {
           "index": 17,
@@ -1363,9 +1231,7 @@
           "task": "COMPARE_ALTERNATIVES/DURATION",
           "templateId": "WORK_H_WORKERS_EFF",
           "family": "work_time",
-          "subIdea": "eq(add(mul(#,#,#),mul(#,X,add(#,#))),mul(#,#,#))|multiply>subtract>divide>add",
-          "question": "المعطيات: يستطيع 12 عاملًا إنجاز عمل في 12 يومًا؛ بعد 3 أيام غادر عاملان، ثم ارتفعت كفاءة كل عامل باقٍ بمقدار 20% من القيمة السابقة. كم يومًا إضافيًا يحتاجون لإكمال العمل؟",
-          "answer": "C"
+          "subIdea": "eq(add(mul(#,#,#),mul(#,X,add(#,#))),mul(#,#,#))|multiply>subtract>divide>add"
         },
         {
           "index": 18,
@@ -1374,9 +1240,7 @@
           "task": "COMBINE_PARTS/QUANTITY",
           "templateId": "MACH_H_TWO_TYPES",
           "family": "machines",
-          "subIdea": "eq(X,add(mul(#,#,#),mul(#,#,#)))|multiply>add",
-          "question": "تنتج آلة من النوع أ 15 لوح/ساعة، وآلة من النوع ب 30 لوح/ساعة. إذا عملت 3 آلات من أ و5 آلات من ب معًا لمدة 4 ساعات، فكم لوحًا تنتج؟",
-          "answer": "E"
+          "subIdea": "eq(X,add(mul(#,#,#),mul(#,#,#)))|multiply>add"
         },
         {
           "index": 19,
@@ -1385,9 +1249,7 @@
           "task": "FORWARD_COMPUTE/DATE",
           "templateId": "CAL_H_LONG",
           "family": "calendar",
-          "subIdea": "eq(X,mod(add(#,#),#))|subtract>ratio",
-          "question": "إذا كان اليوم الثلاثاء، فما اليوم بعد 18 يومًا؟",
-          "answer": "E"
+          "subIdea": "eq(X,mod(add(#,#),#))|subtract>ratio"
         },
         {
           "index": 20,
@@ -1396,9 +1258,7 @@
           "task": "REVERSE_RECOVER/NUMBER",
           "templateId": "FRAC_M_3",
           "family": "fractions",
-          "subIdea": "eq(#,mul(X,mul(#,#)))|multiply>divide",
-          "question": "أُخذ ثُمن العدد 2400، ثم خُمس الناتج، ثم كسرٌ مجهول من الناتج الأخير، فكان الناتج 10. فما هذا الكسر؟",
-          "answer": "A"
+          "subIdea": "eq(#,mul(X,mul(#,#)))|multiply>divide"
         },
         {
           "index": 21,
@@ -1407,9 +1267,7 @@
           "task": "SCALE_PROPORTIONALLY/MONEY",
           "templateId": "PROP_H_COST_PLUS",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,#),mul(#,sub(X,#)))|divide>multiply>add>ratio",
-          "question": "تكلف 5 وحدات مبلغ 30 درهمًا بالسعر نفسه. إذا اشترينا 12 وحدة وأُضيف رسم ثابت قدره 15 درهمًا يُدفع مرة واحدة، فما التكلفة الكلية؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,#),mul(#,sub(X,#)))|divide>multiply>add>ratio"
         },
         {
           "index": 22,
@@ -1418,9 +1276,7 @@
           "task": "DECOMPOSE_COMBINED/DURATION",
           "templateId": "COMB_H_STAGED",
           "family": "combined_rate",
-          "subIdea": "eq(#,add(mul(#,#),mul(#,X),mul(#,add(#,#))))|multiply>add>subtract>divide",
-          "question": "ينجز أ 12 صفحة/ساعة وب 8 صفحة/ساعة، وعمل أ وحده ساعتين، ثم عملا معًا 4 ساعات، ثم استمر ب وحده حتى بلغ الإنجاز 160 صفحة. كم ساعة عمل ب وحده في المرحلة الأخيرة؟",
-          "answer": "D"
+          "subIdea": "eq(#,add(mul(#,#),mul(#,X),mul(#,add(#,#))))|multiply>add>subtract>divide"
         },
         {
           "index": 23,
@@ -1429,9 +1285,7 @@
           "task": "FIND_REMAINDER/NUMBER",
           "templateId": "FRAC_M_REMAIN",
           "family": "fractions",
-          "subIdea": "eq(X,mul(sub(#,#),sub(#,#)))|divide>subtract>multiply",
-          "question": "أُنفق سُدس مبلغٍ من المال، ثم أُنفق ثلث ما تبقى منه. ما الكسر الذي يمثل ما بقي من المبلغ الأصلي؟",
-          "answer": "B"
+          "subIdea": "eq(X,mul(sub(#,#),sub(#,#)))|divide>subtract>multiply"
         },
         {
           "index": 24,
@@ -1440,9 +1294,7 @@
           "task": "REQUIRED_INPUT/DURATION",
           "templateId": "RATE_H_TARGET",
           "family": "unit_rate",
-          "subIdea": "eq(mul(#,#,#),mul(#,X,add(#,#)))|divide>add>multiply",
-          "question": "المعطيات: تنجز آلة 400 قميصًا خلال 10 دقائق؛ ارتفع معدلها في الدقيقة بعد تطوير بمقدار 25% من القيمة السابقة. كم دقيقة تحتاج بالمعدل الجديد لإنجاز 1000 قميصًا؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,#,#),mul(#,X,add(#,#)))|divide>add>multiply"
         },
         {
           "index": 25,
@@ -1451,9 +1303,7 @@
           "task": "DECOMPOSE_COMBINED/NUMBER",
           "templateId": "RAT_H_TWO_COMB",
           "family": "ratios",
-          "subIdea": "eq(mul(#,#),mul(#,X))|multiply>ratio>add>divide",
-          "question": "النسبة أ : ب = 1 : 4، والنسبة ب : ج = 3 : 2. إذا كان أ + ب = 45، فما قيمة ج؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,#),mul(#,X))|multiply>ratio>add>divide"
         },
         {
           "index": 26,
@@ -1462,9 +1312,7 @@
           "task": "REVERSE_RECOVER/RATE",
           "templateId": "RATE_H_RATE_FROM_GAP",
           "family": "unit_rate",
-          "subIdea": "eq(mul(#,#),mul(#,X,add(#,X)))|divide>add>multiply>ratio",
-          "question": "ينجز جهاز 60 صفحة بمعدل ثابت، ولو زاد معدله بمقدار 20 صفحة/ساعة لأنجز العمل نفسه في 4 ساعات أقل. فما معدله الأصلي؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,#),mul(#,X,add(#,X)))|divide>add>multiply>ratio"
         },
         {
           "index": 27,
@@ -1473,9 +1321,7 @@
           "task": "FORWARD_COMPUTE/QUANTITY",
           "templateId": "PCT_E_OF",
           "family": "percentages",
-          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply",
-          "question": "ما قيمة 50% من 120؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply"
         },
         {
           "index": 28,
@@ -1484,9 +1330,7 @@
           "task": "COMBINE_PARTS/DURATION",
           "templateId": "COMB_M_SOLO_THEN",
           "family": "combined_rate",
-          "subIdea": "eq(#,add(mul(#,#),mul(X,add(#,#))))|multiply>subtract>add>divide",
-          "question": "ينجز العامل أ 20 قميص/ساعة، والعامل ب 12 قميص/ساعة. عمل أ وحده ساعتين، ثم عملا معًا حتى بلغ الإنجاز 232 قميصًا. كم ساعة عملا معًا؟",
-          "answer": "A"
+          "subIdea": "eq(#,add(mul(#,#),mul(X,add(#,#))))|multiply>subtract>add>divide"
         },
         {
           "index": 29,
@@ -1495,9 +1339,7 @@
           "task": "REQUIRED_INPUT/QUANTITY",
           "templateId": "PROP_E_ITEMS",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,#),mul(#,X))|divide",
-          "question": "يحتوي كل صندوق على العدد نفسه من القطع. إذا كانت 4 صناديق تحتوي على 40 قطعة، فكم صندوقًا نحتاج للحصول على 90 قطعة؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#),mul(#,X))|divide"
         },
         {
           "index": 30,
@@ -1506,9 +1348,7 @@
           "task": "MEASURE_CHANGE/PERCENT",
           "templateId": "PCT_M_SUCCESSIVE",
           "family": "percentages",
-          "subIdea": "eq(mul(#,X),sub(mul(#,#),#))|multiply>divide>add>subtract",
-          "question": "المعطيات: كانت قيمة 800؛ زادت بنسبة 10%، ثم انخفضت القيمة الجديدة بنسبة 20%. ما نسبة التغير النهائية مقارنة بالأصل؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,X),sub(mul(#,#),#))|multiply>divide>add>subtract"
         },
         {
           "index": 31,
@@ -1517,9 +1357,7 @@
           "task": "COMBINE_PARTS/SPEED",
           "templateId": "SPD_M_AVG",
           "family": "speed",
-          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(X,add(#,#)))|multiply>add>divide",
-          "question": "سارت مركبة 1.5 ساعة بسرعة 50 كم/ساعة، ثم ساعتين بسرعة 120 كم/ساعة. ما متوسط سرعتها في الرحلة كلها؟",
-          "answer": "F"
+          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(X,add(#,#)))|multiply>add>divide"
         },
         {
           "index": 32,
@@ -1528,9 +1366,7 @@
           "task": "EXTEND_BY_PROPERTY/NUMBER",
           "templateId": "ODD_M_EXTEND",
           "family": "odd_one_out",
-          "subIdea": "none|none",
-          "question": "أعداد المجموعة الآتية تشترك في خاصية واحدة. أي عدد يمكن ضمّه إليها؟",
-          "answer": "A"
+          "subIdea": "none|none"
         },
         {
           "index": 33,
@@ -1539,9 +1375,7 @@
           "task": "APPLY_SUCCESSIVE_CHANGE/QUANTITY",
           "templateId": "PCT_M_REMAIN",
           "family": "percentages",
-          "subIdea": "eq(mul(#,X),mul(#,sub(#,#),sub(#,#)))|multiply>divide>subtract",
-          "question": "في مجموعة عددها 200، غاب 40% منهم، ثم غادر 10% من الموجودين بعد ذلك. كم بقي؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,X),mul(#,sub(#,#),sub(#,#)))|multiply>divide>subtract"
         },
         {
           "index": 34,
@@ -1550,9 +1384,7 @@
           "task": "FORWARD_COMPUTE/DISTANCE",
           "templateId": "SPD_E_DISTANCE",
           "family": "speed",
-          "subIdea": "eq(X,mul(#,#))|multiply",
-          "question": "سارت حافلة بسرعة 70 كم/ساعة لمدة 3 ساعات. ما المسافة التي قطعتها؟",
-          "answer": "C"
+          "subIdea": "eq(X,mul(#,#))|multiply"
         },
         {
           "index": 35,
@@ -1561,9 +1393,7 @@
           "task": "REVERSE_RECOVER/MONEY",
           "templateId": "PL_H_MARKUP_DISCOUNT",
           "family": "profit_loss",
-          "subIdea": "eq(mul(#,#),mul(#,X))|add>subtract>multiply>divide",
-          "question": "وضع مشتل سعرًا معلنًا أعلى من تكلفة الشتلة بنسبة 50%، ثم باعها بخصم 20% من السعر المعلن، فحقق ربحًا قدره 120 درهمًا. فما تكلفة الشتلة؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,#),mul(#,X))|add>subtract>multiply>divide"
         },
         {
           "index": 36,
@@ -1572,9 +1402,7 @@
           "task": "FORWARD_COMPUTE/TERM",
           "templateId": "SEQ_M_RULE_APPLY",
           "family": "sequences",
-          "subIdea": "eq(#,X)|multiply>add",
-          "question": "متتالية حدها الأول 12، وكل حد بعده يُحسب بضرب الحد السابق في 2 ثم إضافة 5. ما الحد الخامس؟",
-          "answer": "D"
+          "subIdea": "eq(#,X)|multiply>add"
         },
         {
           "index": 37,
@@ -1583,9 +1411,7 @@
           "task": "SCALE_PROPORTIONALLY/QUANTITY",
           "templateId": "RATE_E_DIRECT",
           "family": "unit_rate",
-          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply",
-          "question": "تنجز آلة 150 لوحًا خلال 5 دقائق بمعدل ثابت. كم لوحًا تنجز خلال 7 دقائق؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply"
         },
         {
           "index": 38,
@@ -1594,9 +1420,7 @@
           "task": "REQUIRED_INPUT/COUNT",
           "templateId": "MACH_E_REQUIRED",
           "family": "machines",
-          "subIdea": "eq(mul(#,#,#),mul(#,#,X))|multiply>divide",
-          "question": "تنتج 6 آلات متطابقة في الإنتاجية 768 علبة خلال 8 ساعات. كم آلة نحتاج لإنتاج 800 علبة خلال 5 ساعات؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#,#),mul(#,#,X))|multiply>divide"
         },
         {
           "index": 39,
@@ -1605,9 +1429,7 @@
           "task": "SCALE_PROPORTIONALLY/QUANTITY",
           "templateId": "PROP_H_COMPOUND",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,#,add(#,#)),mul(X,mul(#,#)))|divide>multiply>add",
-          "question": "تحتاج 4 وحدات إلى 20 كيلوجرامًا من مادة، ونريد تجهيز 12 وحدة، مع إضافة احتياط بنسبة 25% فوق الكمية المحسوبة. كم كيلوجرامًا نحتاج؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,#,add(#,#)),mul(X,mul(#,#)))|divide>multiply>add"
         },
         {
           "index": 40,
@@ -1616,9 +1438,7 @@
           "task": "DECOMPOSE_COMBINED/COUNT",
           "templateId": "AVG_H_SPLIT_SIZE",
           "family": "averages",
-          "subIdea": "eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|multiply>subtract>divide",
-          "question": "متوسط أطوال 12 شتلة هو 13 سنتيمترًا. قُسموا إلى مجموعتين: متوسط الأولى 15 سنتيمترًا، ومتوسط الثانية 9 سنتيمترات. كم شتلة في المجموعة الأولى؟",
-          "answer": "B"
+          "subIdea": "eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|multiply>subtract>divide"
         },
         {
           "index": 41,
@@ -1627,9 +1447,7 @@
           "task": "REVERSE_RECOVER/DURATION",
           "templateId": "MACH_H_STOPPAGE_TIME",
           "family": "machines",
-          "subIdea": "eq(#,sub(mul(#,#,#),mul(#,sub(#,X))))|multiply>subtract>divide",
-          "question": "المعطيات: تعمل 4 آلات بمعدل 25 صفحة/ساعة لكل آلة لمدة 9 ساعات؛ توقفت آلة واحدة في أثناء العمل ولم تعد، فبلغ الإنتاج الفعلي 875 صفحة. بعد كم ساعة من بدء العمل توقفت تلك الآلة؟",
-          "answer": "B"
+          "subIdea": "eq(#,sub(mul(#,#,#),mul(#,sub(#,X))))|multiply>subtract>divide"
         },
         {
           "index": 42,
@@ -1638,9 +1456,7 @@
           "task": "FIND_COINCIDENCE/DURATION",
           "templateId": "SPD_H_MEET_DELAY",
           "family": "speed",
-          "subIdea": "eq(#,add(mul(#,X),mul(#,add(#,X))))|multiply>subtract>add>divide",
-          "question": "مدينتان بينهما 480 كيلومترًا، وانطلقت سيارة أ من الأولى بسرعة 60 كم/ساعة، وبعد ساعة واحدة انطلقت سيارة ب من الثانية باتجاه أ بسرعة 80 كم/ساعة. بعد كم ساعة من انطلاق ب تلتقي السيارتان؟",
-          "answer": "D"
+          "subIdea": "eq(#,add(mul(#,X),mul(#,add(#,X))))|multiply>subtract>add>divide"
         },
         {
           "index": 43,
@@ -1649,9 +1465,7 @@
           "task": "DECOMPOSE_COMBINED/MEMBER_VALUE",
           "templateId": "AVG_H_OVERLAP",
           "family": "averages",
-          "subIdea": "eq(add(X,mul(#,#)),add(mul(#,#),mul(#,#)))|multiply>add>ratio>subtract",
-          "question": "متوسط أعداد الزوار كلها في سجل عدد الزوار في 7 أيام هو 24 زائرًا. متوسط أول 4 أيام في السجل هو 17 زائرًا. متوسط آخر 4 أيام فيه هو 28 زائرًا. فما عدد زوار اليوم الذي يقع في الموضع الأوسط من السجل؟",
-          "answer": "F"
+          "subIdea": "eq(add(X,mul(#,#)),add(mul(#,#),mul(#,#)))|multiply>add>ratio>subtract"
         },
         {
           "index": 44,
@@ -1660,9 +1474,7 @@
           "task": "COMBINE_PARTS/MONEY",
           "templateId": "PL_H_SAME_PRICE_PAIR",
           "family": "profit_loss",
-          "subIdea": "eq(add(#,#),add(X,mul(#,#)))|add>percent>multiply>divide>subtract",
-          "question": "المعطيات: باع تاجر قطعتين بسعر 540 درهمًا لكل واحدة؛ ربح في الأولى 50% من تكلفتها وخسر في الثانية 50% من تكلفتها. ما مقدار خسارته الكلية في الصفقتين معًا؟",
-          "answer": "E"
+          "subIdea": "eq(add(#,#),add(X,mul(#,#)))|add>percent>multiply>divide>subtract"
         },
         {
           "index": 45,
@@ -1671,9 +1483,7 @@
           "task": "REQUIRED_INPUT/MEMBER_VALUE",
           "templateId": "AVG_H_TARGET",
           "family": "averages",
-          "subIdea": "eq(add(X,mul(#,#)),mul(#,#))|multiply>subtract",
-          "question": "المطلوب: القيمة التي يجب إضافتها. المعطيات: يُراد أن يصبح متوسط القيم جميعها 23؛ متوسط 5 قيم هو 18.",
-          "answer": "E"
+          "subIdea": "eq(add(X,mul(#,#)),mul(#,#))|multiply>subtract"
         },
         {
           "index": 46,
@@ -1682,9 +1492,7 @@
           "task": "FIND_THRESHOLD/QUANTITY",
           "templateId": "RAT_H_MAX_PART",
           "family": "ratios",
-          "subIdea": "eq(#,mod(X,#)) & eq(mul(#,#),mul(#,X))|add>ratio>multiply",
-          "question": "تُقسم كمية من الوحدات بين طرفين بنسبة 5 : 8، ونصيب كل طرف عدد صحيح من الوحدات، ومجموع النصيبين أقل من 48 وحدة. فما أكبر عدد ممكن من الوحدات لنصيب الطرف الثاني؟",
-          "answer": "D"
+          "subIdea": "eq(#,mod(X,#)) & eq(mul(#,#),mul(#,X))|add>ratio>multiply"
         },
         {
           "index": 47,
@@ -1693,9 +1501,7 @@
           "task": "SHARE_PROPORTIONALLY/MONEY",
           "templateId": "PROP_H_CAPITAL_TIME",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,mul(#,#)),mul(X,add(mul(#,#),mul(#,#))))|multiply>add>divide",
-          "question": "شارك أحمد بمبلغ 2000 درهمًا لمدة 5 أشهر، وشارك سالم بمبلغ 6000 درهمًا لمدة 3 أشهر. فإذا بلغ الربح 3500 درهمًا، فكم نصيب أحمد؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,mul(#,#)),mul(X,add(mul(#,#),mul(#,#))))|multiply>add>divide"
         },
         {
           "index": 48,
@@ -1704,9 +1510,7 @@
           "task": "MEASURE_CHANGE/PERCENT",
           "templateId": "PL_E_PROFIT",
           "family": "profit_loss",
-          "subIdea": "eq(mul(#,X),mul(#,sub(#,#)))|subtract>multiply>divide",
-          "question": "اشترت مكتبة كتابًا بـ180 درهمًا وباعه بـ189 درهمًا. ما نسبة الربح من سعر الشراء؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,X),mul(#,sub(#,#)))|subtract>multiply>divide"
         },
         {
           "index": 49,
@@ -1715,9 +1519,7 @@
           "task": "DECOMPOSE_COMBINED/RATE",
           "templateId": "MACH_H_TWO_CONFIG",
           "family": "machines",
-          "subIdea": "eq(mul(#,X),sub(mul(#,#),mul(#,#)))|multiply>ratio>subtract>divide",
-          "question": "تنتج 5 آلات من النوع الأول وآلتان من النوع الثاني معًا 130 قميصًا في الساعة. وتنتج 4 آلات من النوع الأول و5 آلات من النوع الثاني معًا 172 قميصًا في الساعة. كم قميصًا تنتج آلة واحدة من النوع الأول في الساعة؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,X),sub(mul(#,#),mul(#,#)))|multiply>ratio>subtract>divide"
         },
         {
           "index": 50,
@@ -1726,9 +1528,7 @@
           "task": "DECOMPOSE_COMBINED/DISTANCE",
           "templateId": "SPD_H_TIME_DIFF",
           "family": "speed",
-          "subIdea": "eq(mul(#,#,#),mul(X,sub(#,#)))|divide>subtract>ratio>multiply",
-          "question": "المسافة نفسها تُقطع بسرعة 60 كم/ساعة أو بسرعة 90 كم/ساعة. إذا كان الزمن عند السرعة 60 أطول بمقدار 3 ساعات، فما المسافة؟",
-          "answer": "E"
+          "subIdea": "eq(mul(#,#,#),mul(X,sub(#,#)))|divide>subtract>ratio>multiply"
         }
       ]
     },
@@ -2049,9 +1849,7 @@
           "task": "REQUIRED_INPUT/DURATION",
           "templateId": "RATE_H_TARGET",
           "family": "unit_rate",
-          "subIdea": "eq(mul(#,#,#),mul(#,X,add(#,#)))|divide>add>multiply",
-          "question": "المعطيات: تنجز آلة 240 زجاجة خلال 6 دقائق؛ ارتفع معدلها في الدقيقة بعد تطوير بمقدار 25% من القيمة السابقة. كم دقيقة تحتاج بالمعدل الجديد لإنجاز 900 زجاجة؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,#,#),mul(#,X,add(#,#)))|divide>add>multiply"
         },
         {
           "index": 2,
@@ -2060,9 +1858,7 @@
           "task": "JUDGE_INDETERMINACY/STATEMENT",
           "templateId": "REL_M_BRANCH_UNRES",
           "family": "relational",
-          "subIdea": "order:small/branched/simple/shallow/partial|none",
-          "question": "علي أسرع من مريم. راشد أسرع من بدر. علي أسرع من راشد. علي أسرع من ريم. أي مقارنة لا يمكن حسمها؟",
-          "answer": "F"
+          "subIdea": "order:small/branched/simple/shallow/partial|none"
         },
         {
           "index": 3,
@@ -2071,9 +1867,7 @@
           "task": "COMBINE_PARTS/DURATION",
           "templateId": "COMB_M_SOLO_THEN",
           "family": "combined_rate",
-          "subIdea": "eq(#,add(mul(#,#),mul(X,add(#,#))))|multiply>subtract>add>divide",
-          "question": "المعطيات: ينجز العامل أ 20 قطعة/ساعة، والعامل ب 6 قطعة/ساعة؛ عمل أ وحده 3 ساعات، ثم عملا معًا حتى بلغ الإنجاز 164 قطعة. كم ساعة عملا معًا؟",
-          "answer": "C"
+          "subIdea": "eq(#,add(mul(#,#),mul(X,add(#,#))))|multiply>subtract>add>divide"
         },
         {
           "index": 4,
@@ -2082,9 +1876,7 @@
           "task": "JUDGE_ENTAILMENT/STATEMENT",
           "templateId": "REL_H_GUARANTEE",
           "family": "relational",
-          "subIdea": "order:mid/branched/merging/mid/partial|none",
-          "question": "ليان أسرع من علي. ناصر أسرع من بدر. ناصر أسرع من فهد. بدر أسرع من ليان. نورة أسرع من فهد. نورة أسرع من بدر. أي عبارة يجب أن تكون صحيحة مهما كان ترتيب بدر وفهد؟",
-          "answer": "D"
+          "subIdea": "order:mid/branched/merging/mid/partial|none"
         },
         {
           "index": 5,
@@ -2093,9 +1885,7 @@
           "task": "FIND_COINCIDENCE/DURATION",
           "templateId": "SPD_H_MEET_DELAY",
           "family": "speed",
-          "subIdea": "eq(#,add(mul(#,X),mul(#,add(#,X))))|multiply>subtract>add>divide",
-          "question": "مدينتان بينهما 480 كيلومترًا، وانطلقت دراجة أ من الأولى بسرعة 80 كم/ساعة، وبعد 1.5 ساعة انطلقت دراجة ب من الثانية باتجاه أ بسرعة 70 كم/ساعة. بعد كم ساعة من انطلاق ب تلتقي الدراجتان؟",
-          "answer": "A"
+          "subIdea": "eq(#,add(mul(#,X),mul(#,add(#,X))))|multiply>subtract>add>divide"
         },
         {
           "index": 6,
@@ -2104,9 +1894,7 @@
           "task": "REVERSE_RECOVER/DATE",
           "templateId": "CAL_M_TWO_SHIFT",
           "family": "calendar",
-          "subIdea": "eq(#,mod(add(#,X),#))|ratio>add",
-          "question": "إذا كان بعد غد هو الاثنين، فما اليوم الذي كان قبل 4 أيام من اليوم؟",
-          "answer": "A"
+          "subIdea": "eq(#,mod(add(#,X),#))|ratio>add"
         },
         {
           "index": 7,
@@ -2115,9 +1903,7 @@
           "task": "EXTEND_BY_PROPERTY/NUMBER",
           "templateId": "ODD_M_EXTEND",
           "family": "odd_one_out",
-          "subIdea": "none|none",
-          "question": "أعداد المجموعة الآتية تشترك في خاصية واحدة. أي عدد يمكن ضمّه إليها؟",
-          "answer": "F"
+          "subIdea": "none|none"
         },
         {
           "index": 8,
@@ -2126,9 +1912,7 @@
           "task": "APPLY_SUCCESSIVE_CHANGE/MONEY",
           "templateId": "PL_M_DISC_MARK",
           "family": "profit_loss",
-          "subIdea": "eq(mul(#,X),mul(#,add(#,#),sub(#,#)))|multiply>divide>subtract>add",
-          "question": "المعطيات: سعر الشتلة المعلن 300 درهمًا؛ حصل المشتل عليها بخصم 10% من هذا السعر، ثم أراد ربحًا قدره 20% من تكلفة الشراء الفعلية. فما سعر البيع؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,X),mul(#,add(#,#),sub(#,#)))|multiply>divide>subtract>add"
         },
         {
           "index": 9,
@@ -2137,9 +1921,7 @@
           "task": "REVERSE_RECOVER/RATE",
           "templateId": "RATE_H_RATE_FROM_GAP",
           "family": "unit_rate",
-          "subIdea": "eq(mul(#,#),mul(#,X,add(#,X)))|divide>add>multiply>ratio",
-          "question": "ينجز جهاز 180 قميصًا بمعدل ثابت. ولو زاد معدله بمقدار 10 قميص/ساعة لأنجز العمل نفسه في 3 ساعات أقل. فما معدله الأصلي؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,#),mul(#,X,add(#,X)))|divide>add>multiply>ratio"
         },
         {
           "index": 10,
@@ -2148,9 +1930,7 @@
           "task": "COMBINE_PARTS/MONEY",
           "templateId": "PL_H_SAME_PRICE_PAIR",
           "family": "profit_loss",
-          "subIdea": "eq(X,add(#,#))|add>percent>multiply>divide>subtract",
-          "question": "باع تاجر قطعتين بسعر 600 درهمًا لكل واحدة، وربح في الأولى 50% من تكلفتها وخسر في الثانية 50% من تكلفتها. فكم كانت تكلفة القطعتين معًا؟",
-          "answer": "B"
+          "subIdea": "eq(X,add(#,#))|add>percent>multiply>divide>subtract"
         },
         {
           "index": 11,
@@ -2159,9 +1939,7 @@
           "task": "FORWARD_COMPUTE/TERM",
           "templateId": "SEQ_M_RULE_APPLY",
           "family": "sequences",
-          "subIdea": "eq(#,X)|multiply>add",
-          "question": "متتالية حدها الأول 3، وكل حد بعده يُحسب بضرب الحد السابق في 3 ثم إضافة 7. ما الحد الخامس؟",
-          "answer": "D"
+          "subIdea": "eq(#,X)|multiply>add"
         },
         {
           "index": 12,
@@ -2170,9 +1948,7 @@
           "task": "REVERSE_RECOVER/QUANTITY",
           "templateId": "RAT_M_ADD_SIDE",
           "family": "ratios",
-          "subIdea": "eq(#,mod(mul(#,X),#)) & eq(mul(#,#,#,X),mul(#,#,add(mul(#,#),mul(#,X))))|add>ratio>multiply>subtract>divide",
-          "question": "النسبة بين أ : ب = 5 : 1، وأُضيفت وحدتان إلى ب فأصبحت النسبة أ : ب = 5 : 2. فما مجموع أ + ب قبل الإضافة؟",
-          "answer": "E"
+          "subIdea": "eq(#,mod(mul(#,X),#)) & eq(mul(#,#,#,X),mul(#,#,add(mul(#,#),mul(#,X))))|add>ratio>multiply>subtract>divide"
         },
         {
           "index": 13,
@@ -2181,9 +1957,7 @@
           "task": "MEASURE_CHANGE/PERCENT",
           "templateId": "PCT_M_SUCCESSIVE",
           "family": "percentages",
-          "subIdea": "eq(mul(#,X),sub(mul(#,#),#))|multiply>divide>subtract>add",
-          "question": "كانت قيمة 100، وانخفضت بنسبة 20%، ثم زادت القيمة الجديدة بنسبة 20%. ما نسبة التغير النهائية مقارنة بالأصل؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,X),sub(mul(#,#),#))|multiply>divide>subtract>add"
         },
         {
           "index": 14,
@@ -2192,9 +1966,7 @@
           "task": "DECOMPOSE_COMBINED/COUNT",
           "templateId": "AVG_H_SPLIT_SIZE",
           "family": "averages",
-          "subIdea": "eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|multiply>subtract>divide",
-          "question": "المعطيات: متوسط أطوال 18 لوحًا هو 13 مترًا؛ قُسموا إلى مجموعتين: متوسط الأولى 18 مترًا، ومتوسط الثانية 12 مترًا. كم لوحًا في المجموعة الأولى؟",
-          "answer": "E"
+          "subIdea": "eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|multiply>subtract>divide"
         },
         {
           "index": 15,
@@ -2203,9 +1975,7 @@
           "task": "FORWARD_COMPUTE/AGE",
           "templateId": "AGE_H_THREE_SIBLINGS",
           "family": "ages",
-          "subIdea": "eq(#,sub(mul(#,sub(X,#)),#))|add>multiply>subtract>divide",
-          "question": "مجموع أعمار ثلاثة إخوة الآن 49 سنة، والأكبر أكبر من الأوسط بـ7 سنوات، والأوسط أكبر من الأصغر بـ6 سنوات. كم سيكون عمر الأكبر بعد 4 سنوات؟",
-          "answer": "D"
+          "subIdea": "eq(#,sub(mul(#,sub(X,#)),#))|add>multiply>subtract>divide"
         },
         {
           "index": 16,
@@ -2214,9 +1984,7 @@
           "task": "REQUIRED_INPUT/COUNT",
           "templateId": "MACH_E_REQUIRED",
           "family": "machines",
-          "subIdea": "eq(mul(#,#,#),mul(#,#,X))|multiply>divide",
-          "question": "تنتج 3 آلات متطابقة في الإنتاجية 480 زجاجة خلال 8 ساعات. كم آلة نحتاج لإنتاج 1600 زجاجة خلال 5 ساعات؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#,#),mul(#,#,X))|multiply>divide"
         },
         {
           "index": 17,
@@ -2225,9 +1993,7 @@
           "task": "FORWARD_COMPUTE/DURATION",
           "templateId": "WORK_M_EFF",
           "family": "work_time",
-          "subIdea": "eq(mul(#,#),mul(X,add(#,#)))|divide>add",
-          "question": "المعطيات: فريق ينجز عملًا في 30 يومًا؛ بعد تدريب ارتفعت كفاءة الفريق بمقدار 20% من القيمة السابقة مع بقاء عدد العمال نفسه. كم يومًا يحتاج للعمل نفسه؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,#),mul(X,add(#,#)))|divide>add"
         },
         {
           "index": 18,
@@ -2236,9 +2002,7 @@
           "task": "SCALE_PROPORTIONALLY/MONEY",
           "templateId": "PROP_H_COST_PLUS",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,#),mul(#,sub(X,#)))|divide>multiply>add>ratio",
-          "question": "تكلف 5 وحدات مبلغ 24 درهمًا بالسعر نفسه. إذا اشترينا 15 وحدة وأُضيف رسم ثابت قدره 5 دراهم يُدفع مرة واحدة، فما التكلفة الكلية؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,#),mul(#,sub(X,#)))|divide>multiply>add>ratio"
         },
         {
           "index": 19,
@@ -2247,9 +2011,7 @@
           "task": "FORWARD_COMPUTE/NUMBER",
           "templateId": "FRAC_M_3",
           "family": "fractions",
-          "subIdea": "eq(#,mul(#,X))|divide",
-          "question": "أُخذ نصف العدد 300، ثم خُمس الناتج، ثم ثلث الناتج. ما الناتج؟",
-          "answer": "A"
+          "subIdea": "eq(#,mul(#,X))|divide"
         },
         {
           "index": 20,
@@ -2258,9 +2020,7 @@
           "task": "FORWARD_COMPUTE/DATE",
           "templateId": "CAL_H_LONG",
           "family": "calendar",
-          "subIdea": "eq(X,mod(add(#,#),#))|subtract>ratio",
-          "question": "إذا كان اليوم الخميس، فما اليوم بعد 18 يومًا؟",
-          "answer": "B"
+          "subIdea": "eq(X,mod(add(#,#),#))|subtract>ratio"
         },
         {
           "index": 21,
@@ -2269,9 +2029,7 @@
           "task": "SHARE_PROPORTIONALLY/QUANTITY",
           "templateId": "RAT_E_KNOWN",
           "family": "ratios",
-          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply",
-          "question": "النسبة أ : ب = 1 : 2. إذا كانت ب = 18، فما قيمة أ؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply"
         },
         {
           "index": 22,
@@ -2280,9 +2038,7 @@
           "task": "COMPARE_ALTERNATIVES/DURATION",
           "templateId": "WORK_H_TWO_STAGE",
           "family": "work_time",
-          "subIdea": "eq(add(mul(#,#),mul(#,#),mul(#,X)),mul(#,#))|multiply>subtract>divide",
-          "question": "يستطيع 8 عمال إنجاز عمل في 18 يومًا، وعمل الجميع 4 أيام، ثم غادر 4 عمال وعمل الباقون 4 أيام إضافية. كم يومًا آخر يحتاج العمال الباقون لإكمال العمل؟",
-          "answer": "B"
+          "subIdea": "eq(add(mul(#,#),mul(#,#),mul(#,X)),mul(#,#))|multiply>subtract>divide"
         },
         {
           "index": 23,
@@ -2291,9 +2047,7 @@
           "task": "REVERSE_RECOVER/NUMBER",
           "templateId": "FRAC_E_2",
           "family": "fractions",
-          "subIdea": "eq(X,mul(#,#))|multiply>divide",
-          "question": "أُخذ نصف عدد، ثم خُمس الناتج، فكان الناتج 12. فما العدد؟",
-          "answer": "C"
+          "subIdea": "eq(X,mul(#,#))|multiply>divide"
         },
         {
           "index": 24,
@@ -2302,9 +2056,7 @@
           "task": "DECOMPOSE_COMBINED/NUMBER",
           "templateId": "RAT_M_COMMON_SUM",
           "family": "ratios",
-          "subIdea": "eq(mul(#,#),mul(#,X))|multiply>ratio>add>divide",
-          "question": "النسبة أ : ب = 3 : 4، والنسبة ب : ج = 2 : 3. إذا كان أ + ج = 18، فما قيمة ب؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,#),mul(#,X))|multiply>ratio>add>divide"
         },
         {
           "index": 25,
@@ -2313,9 +2065,7 @@
           "task": "SCALE_PROPORTIONALLY/QUANTITY",
           "templateId": "PROP_H_COMPOUND",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,#,add(#,#)),mul(X,mul(#,#)))|divide>multiply>add",
-          "question": "تحتاج 6 وحدات إلى 30 كيلوجرامًا من مادة. نريد تجهيز 8 وحدات، مع إضافة احتياط بنسبة 10% فوق الكمية المحسوبة. كم كيلوجرامًا نحتاج؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#,add(#,#)),mul(X,mul(#,#)))|divide>multiply>add"
         },
         {
           "index": 26,
@@ -2324,9 +2074,7 @@
           "task": "FIND_REMAINDER/NUMBER",
           "templateId": "FRAC_M_REMAIN",
           "family": "fractions",
-          "subIdea": "eq(X,mul(sub(#,#),sub(#,#)))|divide>subtract>multiply",
-          "question": "أُنفق ثلث مبلغٍ من المال، ثم أُنفق سُدس ما تبقى منه. ما الكسر الذي يمثل ما بقي من المبلغ الأصلي؟",
-          "answer": "F"
+          "subIdea": "eq(X,mul(sub(#,#),sub(#,#)))|divide>subtract>multiply"
         },
         {
           "index": 27,
@@ -2335,9 +2083,7 @@
           "task": "COMBINE_PARTS/QUANTITY",
           "templateId": "MACH_H_STAGE_UP",
           "family": "machines",
-          "subIdea": "eq(add(mul(#,#,#,#),mul(#,add(mul(#,#,#),mul(#,#,add(#,#))))),mul(#,X))|multiply>divide>add>subtract",
-          "question": "عملت 4 آلات بمعدل 20 علبة/ساعة لمدة 4 ساعات، ثم طُورت آلتان فزادت إنتاجيتها بمقدار 50% من القيمة السابقة، وعملت المجموعة كلها 3 ساعات إضافية. كم بلغ الإنتاج الكلي؟",
-          "answer": "F"
+          "subIdea": "eq(add(mul(#,#,#,#),mul(#,add(mul(#,#,#),mul(#,#,add(#,#))))),mul(#,X))|multiply>divide>add>subtract"
         },
         {
           "index": 28,
@@ -2346,9 +2092,7 @@
           "task": "MEASURE_INTERVAL/DURATION",
           "templateId": "CAL_H_MONTH_LENGTH",
           "family": "calendar",
-          "subIdea": "eq(#,mod(add(#,X),#))|add>subtract",
-          "question": "كان اليوم 6 من شهرٍ ما يوم الثلاثاء، وكان اليوم 4 من الشهر الذي يليه يوم الأحد. كم يومًا بين التاريخين؟",
-          "answer": "E"
+          "subIdea": "eq(#,mod(add(#,X),#))|add>subtract"
         },
         {
           "index": 29,
@@ -2357,9 +2101,7 @@
           "task": "COMBINE_PARTS/AVERAGE",
           "templateId": "AVG_M_COMBINE",
           "family": "averages",
-          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(#,X))|multiply>add>divide",
-          "question": "المعطيات: متوسط درجات 4 طلاب هو 20 درجة؛ متوسط درجات 6 طلاب آخرين هو 25 درجة. فما متوسط الدرجات مجتمعة؟",
-          "answer": "D"
+          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(#,X))|multiply>add>divide"
         },
         {
           "index": 30,
@@ -2368,9 +2110,7 @@
           "task": "DECOMPOSE_COMBINED/DURATION",
           "templateId": "COMB_H_STAGED",
           "family": "combined_rate",
-          "subIdea": "eq(#,add(mul(#,#),mul(#,X),mul(#,add(#,#))))|multiply>add>subtract>divide",
-          "question": "المعطيات: ينجز أ 12 قميص/ساعة وب 8 قميص/ساعة؛ عمل أ وحده ساعتين، ثم عملا معًا 5 ساعات، ثم استمر ب وحده حتى بلغ الإنجاز 156 قميصًا. كم ساعة عمل ب وحده في المرحلة الأخيرة؟",
-          "answer": "E"
+          "subIdea": "eq(#,add(mul(#,#),mul(#,X),mul(#,add(#,#))))|multiply>add>subtract>divide"
         },
         {
           "index": 31,
@@ -2379,9 +2119,7 @@
           "task": "REVERSE_RECOVER/PERCENT",
           "templateId": "PL_H_REST_MARGIN",
           "family": "profit_loss",
-          "subIdea": "eq(add(mul(#,#),mul(#,X)),mul(#,#))|subtract>multiply>divide",
-          "question": "المعطيات: اشترى تاجر بضاعة بمبلغ 600 درهمًا؛ باع منها ما تكلفته 120 درهمًا بربح 30% من تكلفة ذلك الجزء. بكم في المئة من تكلفة الباقي يجب أن يبيع الباقي ليكون ربحه الكلي 18% من التكلفة الكلية؟",
-          "answer": "B"
+          "subIdea": "eq(add(mul(#,#),mul(#,X)),mul(#,#))|subtract>multiply>divide"
         },
         {
           "index": 32,
@@ -2390,9 +2128,7 @@
           "task": "REVERSE_RECOVER/MONEY",
           "templateId": "PCT_E_REVERSE_ONE",
           "family": "percentages",
-          "subIdea": "eq(mul(#,#),mul(#,X))|divide>subtract>multiply",
-          "question": "انخفضت قيمة سلعة بمقدار 25% من القيمة السابقة فأصبحت 150. فما قيمتها الأصلية؟",
-          "answer": "E"
+          "subIdea": "eq(mul(#,#),mul(#,X))|divide>subtract>multiply"
         },
         {
           "index": 33,
@@ -2401,9 +2137,7 @@
           "task": "REQUIRED_INPUT/QUANTITY",
           "templateId": "PROP_E_COST",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,#),mul(#,X))|divide",
-          "question": "تباع الوحدات بالسعر نفسه. إذا كانت 6 وحدات تكلف 42 درهمًا، فكم وحدة نشتري بمبلغ 70 درهمًا؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,#),mul(#,X))|divide"
         },
         {
           "index": 34,
@@ -2412,9 +2146,7 @@
           "task": "DETECT_PATTERN_FAULT/TERM",
           "templateId": "SEQ_M_WRONG_TERM",
           "family": "sequences",
-          "subIdea": "eq(#,X) & eq(#,mul(#,#))|ratio>multiply",
-          "question": "أي الحدود الآتية لا يتفق مع قاعدة المتتالية؟",
-          "answer": "A"
+          "subIdea": "eq(#,X) & eq(#,mul(#,#))|ratio>multiply"
         },
         {
           "index": 35,
@@ -2423,9 +2155,7 @@
           "task": "IDENTIFY_RULE/RULE",
           "templateId": "ODD_M_PROPERTY",
           "family": "odd_one_out",
-          "subIdea": "none|ratio",
-          "question": "ما الخاصية التي تشترك فيها كل أعداد المجموعة الآتية؟",
-          "answer": "A"
+          "subIdea": "none|ratio"
         },
         {
           "index": 36,
@@ -2434,9 +2164,7 @@
           "task": "DECOMPOSE_COMBINED/MONEY",
           "templateId": "PL_H_TWO_OUTCOMES",
           "family": "profit_loss",
-          "subIdea": "eq(mul(#,#),mul(#,X))|percent>add>multiply>divide",
-          "question": "لو بيعت سلعة بسعر معين لتحقق ربح قدره 25% من تكلفتها، ولو بيعت بسعر أقل من ذلك بـ81 درهمًا لكانت الخسارة 20% من التكلفة. فما تكلفة السلعة؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#),mul(#,X))|percent>add>multiply>divide"
         },
         {
           "index": 37,
@@ -2445,9 +2173,7 @@
           "task": "COMBINE_PARTS/DISTANCE",
           "templateId": "SPD_M_EQUAL_DIST",
           "family": "speed",
-          "subIdea": "eq(mul(#,#,#,#),mul(X,add(#,#)))|divide>multiply>add>ratio",
-          "question": "قطعت عبّارة نصف المسافة بسرعة 120 كم/ساعة، والنصف الآخر بسرعة 30 كم/ساعة. إذا استغرقت الرحلة كاملة 20 ساعة، فما المسافة الكلية؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,#,#,#),mul(X,add(#,#)))|divide>multiply>add>ratio"
         },
         {
           "index": 38,
@@ -2456,9 +2182,7 @@
           "task": "DECOMPOSE_COMBINED/RATE",
           "templateId": "MACH_H_TWO_CONFIG",
           "family": "machines",
-          "subIdea": "eq(mul(#,X),sub(mul(#,#),mul(#,#)))|multiply>ratio>subtract>divide",
-          "question": "تنتج 5 آلات من النوع الأول و3 آلات من النوع الثاني معًا 173 زجاجة في الساعة، وتنتج آلة واحدة من النوع الأول وآلتان من النوع الثاني معًا 57 زجاجة في الساعة. كم زجاجة تنتج آلة واحدة من النوع الأول في الساعة؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,X),sub(mul(#,#),mul(#,#)))|multiply>ratio>subtract>divide"
         },
         {
           "index": 39,
@@ -2467,9 +2191,7 @@
           "task": "DECOMPOSE_COMBINED/VOLUME",
           "templateId": "PCT_H_MIXTURE",
           "family": "percentages",
-          "subIdea": "eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|multiply>divide>percent>subtract",
-          "question": "خُلط محلول تركيزه 15% مع محلول آخر تركيزه 75%، فنتج 60 لترًا من مزيج تركيزه 60%. كم لترًا من المحلول الأول استُخدم؟",
-          "answer": "E"
+          "subIdea": "eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|multiply>divide>percent>subtract"
         },
         {
           "index": 40,
@@ -2478,9 +2200,7 @@
           "task": "REQUIRED_INPUT/MEMBER_VALUE",
           "templateId": "AVG_H_TARGET",
           "family": "averages",
-          "subIdea": "eq(add(X,mul(#,#)),mul(#,#))|multiply>subtract",
-          "question": "المعطيات: متوسط أوزان 8 صناديق هو 19 كيلوجرامًا؛ يُراد أن يصبح متوسط الأوزان جميعها 22 كيلوجرامًا. فما الوزن الذي يجب إضافته؟",
-          "answer": "E"
+          "subIdea": "eq(add(X,mul(#,#)),mul(#,#))|multiply>subtract"
         },
         {
           "index": 41,
@@ -2489,9 +2209,7 @@
           "task": "COMBINE_PARTS/SPEED",
           "templateId": "SPD_M_AVG",
           "family": "speed",
-          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(X,add(#,#)))|multiply>add>divide",
-          "question": "سارت مركبة ساعة واحدة بسرعة 60 كم/ساعة، ثم 3 ساعات بسرعة 80 كم/ساعة. ما متوسط سرعتها في الرحلة كلها؟",
-          "answer": "E"
+          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(X,add(#,#)))|multiply>add>divide"
         },
         {
           "index": 42,
@@ -2500,9 +2218,7 @@
           "task": "REVERSE_RECOVER/DURATION",
           "templateId": "MACH_H_STOPPAGE_TIME",
           "family": "machines",
-          "subIdea": "eq(#,sub(mul(#,#,#),mul(#,sub(#,X))))|multiply>subtract>divide",
-          "question": "المعطيات: تعمل 8 آلات بمعدل 15 قميص/ساعة لكل آلة لمدة 10 ساعات؛ توقفت آلة واحدة في أثناء العمل ولم تعد، فبلغ الإنتاج الفعلي 1170 قميصًا. بعد كم ساعة من بدء العمل توقفت تلك الآلة؟",
-          "answer": "D"
+          "subIdea": "eq(#,sub(mul(#,#,#),mul(#,sub(#,X))))|multiply>subtract>divide"
         },
         {
           "index": 43,
@@ -2511,9 +2227,7 @@
           "task": "FIND_THRESHOLD/QUANTITY",
           "templateId": "RAT_H_MAX_PART",
           "family": "ratios",
-          "subIdea": "eq(#,mod(X,#)) & eq(mul(#,#),mul(#,X))|add>ratio>multiply",
-          "question": "المطلوب: أكبر عدد ممكن من الوحدات لنصيب الطرف الثاني. المعطيات: تُقسم كمية من الوحدات بين طرفين بنسبة 5 : 9؛ نصيب كل طرف عدد صحيح من الوحدات، ومجموع النصيبين أقل من 133 وحدة.",
-          "answer": "C"
+          "subIdea": "eq(#,mod(X,#)) & eq(mul(#,#),mul(#,X))|add>ratio>multiply"
         },
         {
           "index": 44,
@@ -2522,9 +2236,7 @@
           "task": "DECOMPOSE_COMBINED/DISTANCE",
           "templateId": "SPD_H_TIME_DIFF",
           "family": "speed",
-          "subIdea": "eq(mul(#,#,#),mul(X,sub(#,#)))|divide>subtract>ratio>multiply",
-          "question": "المسافة نفسها تُقطع بسرعة 50 كم/ساعة أو بسرعة 150 كم/ساعة. إذا كان الزمن عند السرعة 50 أطول بمقدار 8 ساعات، فما المسافة؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,#,#),mul(X,sub(#,#)))|divide>subtract>ratio>multiply"
         },
         {
           "index": 45,
@@ -2533,9 +2245,7 @@
           "task": "APPLY_SUCCESSIVE_CHANGE/QUANTITY",
           "templateId": "PCT_M_REMAIN",
           "family": "percentages",
-          "subIdea": "eq(mul(#,X),mul(#,sub(#,#),sub(#,#)))|multiply>divide>subtract",
-          "question": "في مجموعة عددها 80، غاب 25% منهم، ثم غادر 10% من الموجودين بعد ذلك. كم بقي؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,X),mul(#,sub(#,#),sub(#,#)))|multiply>divide>subtract"
         },
         {
           "index": 46,
@@ -2544,9 +2254,7 @@
           "task": "SCALE_PROPORTIONALLY/QUANTITY",
           "templateId": "RATE_E_DIRECT",
           "family": "unit_rate",
-          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply",
-          "question": "تنجز آلة 250 لوحًا خلال 10 دقائق بمعدل ثابت. كم لوحًا تنجز خلال 9 دقائق؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply"
         },
         {
           "index": 47,
@@ -2555,9 +2263,7 @@
           "task": "FORWARD_COMPUTE/DISTANCE",
           "templateId": "SPD_E_DISTANCE",
           "family": "speed",
-          "subIdea": "eq(X,mul(#,#))|multiply",
-          "question": "سارت شاحنة بسرعة 50 كم/ساعة لمدة 1.5 ساعة. ما المسافة التي قطعتها؟",
-          "answer": "D"
+          "subIdea": "eq(X,mul(#,#))|multiply"
         },
         {
           "index": 48,
@@ -2566,9 +2272,7 @@
           "task": "SHARE_PROPORTIONALLY/MONEY",
           "templateId": "PROP_H_CAPITAL_TIME",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,mul(#,#)),mul(X,add(mul(#,#),mul(#,#))))|multiply>add>divide",
-          "question": "شارك أحمد بمبلغ 3600 درهمًا لمدة 4 أشهر، وشارك سالم بمبلغ 6000 درهمًا لمدة 6 أشهر. فإذا بلغ الربح 2100 درهمًا، فكم نصيب سالم؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,mul(#,#)),mul(X,add(mul(#,#),mul(#,#))))|multiply>add>divide"
         },
         {
           "index": 49,
@@ -2577,9 +2281,7 @@
           "task": "FORWARD_COMPUTE/QUANTITY",
           "templateId": "PCT_E_OF",
           "family": "percentages",
-          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply",
-          "question": "ما قيمة 20% من 80؟",
-          "answer": "E"
+          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply"
         },
         {
           "index": 50,
@@ -2588,9 +2290,7 @@
           "task": "REQUIRED_INPUT/COUNT",
           "templateId": "WORK_E_VOLUME",
           "family": "work_time",
-          "subIdea": "eq(mul(#,#),mul(#,X))|multiply>divide",
-          "question": "يستطيع 6 عمال إنجاز مهمتين خلال 8 أيام. كم عاملًا نحتاج لإنجاز 3 مهام خلال 8 أيام بالكفاءة نفسها؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#),mul(#,X))|multiply>divide"
         }
       ]
     },
@@ -2930,9 +2630,7 @@
           "task": "DECOMPOSE_COMBINED/MONEY",
           "templateId": "PROP_H_TWO_ITEM_SYSTEM",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,X),sub(mul(#,#),mul(#,#)))|multiply>ratio>subtract>divide",
-          "question": "المعطيات: ثمن صندوقين و3 قطع معًا 57 درهمًا؛ وثمن صندوق واحد وقطعتين معًا 34 درهمًا. فما ثمن الصندوق الواحد؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,X),sub(mul(#,#),mul(#,#)))|multiply>ratio>subtract>divide"
         },
         {
           "index": 2,
@@ -2941,9 +2639,7 @@
           "task": "REVERSE_RECOVER/DATE",
           "templateId": "CAL_M_TWO_SHIFT",
           "family": "calendar",
-          "subIdea": "eq(#,mod(add(#,X),#))|ratio>add",
-          "question": "إذا كان بعد غد هو الأربعاء، فما اليوم الذي كان قبل 3 أيام من اليوم؟",
-          "answer": "F"
+          "subIdea": "eq(#,mod(add(#,X),#))|ratio>add"
         },
         {
           "index": 3,
@@ -2952,9 +2648,7 @@
           "task": "FIND_REMAINDER/NUMBER",
           "templateId": "FRAC_M_REMAIN",
           "family": "fractions",
-          "subIdea": "eq(X,mul(sub(#,#),sub(#,#)))|divide>subtract>multiply",
-          "question": "أُنفق سُدس مبلغٍ من المال، ثم أُنفق ربع ما تبقى منه. ما الكسر الذي يمثل ما بقي من المبلغ الأصلي؟",
-          "answer": "D"
+          "subIdea": "eq(X,mul(sub(#,#),sub(#,#)))|divide>subtract>multiply"
         },
         {
           "index": 4,
@@ -2963,9 +2657,7 @@
           "task": "COMBINE_PARTS/QUANTITY",
           "templateId": "RATE_H_TWO_PHASE",
           "family": "unit_rate",
-          "subIdea": "eq(add(mul(#,#,#),mul(#,#,add(#,#))),mul(#,X))|multiply>divide>add",
-          "question": "يعمل جهاز بمعدل 20 صفحة/ساعة لمدة 5 ساعات، ثم ارتفع معدله بمقدار 25% من القيمة السابقة وعمل 3 ساعات أخرى. كم صفحة أنجز إجمالًا؟",
-          "answer": "A"
+          "subIdea": "eq(add(mul(#,#,#),mul(#,#,add(#,#))),mul(#,X))|multiply>divide>add"
         },
         {
           "index": 5,
@@ -2974,9 +2666,7 @@
           "task": "SHARE_PROPORTIONALLY/QUANTITY",
           "templateId": "RAT_E_KNOWN",
           "family": "ratios",
-          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply",
-          "question": "النسبة أ : ب = 4 : 7. إذا كانت أ = 36، فما قيمة ب؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply"
         },
         {
           "index": 6,
@@ -2985,9 +2675,7 @@
           "task": "REVERSE_RECOVER/NUMBER",
           "templateId": "FRAC_E_2",
           "family": "fractions",
-          "subIdea": "eq(X,mul(#,#))|multiply>divide",
-          "question": "أُخذ ثُمن عدد، ثم سُدس الناتج، فكان الناتج 24. فما العدد؟",
-          "answer": "C"
+          "subIdea": "eq(X,mul(#,#))|multiply>divide"
         },
         {
           "index": 7,
@@ -2996,9 +2684,7 @@
           "task": "DECOMPOSE_COMBINED/COUNT",
           "templateId": "COMB_H_TEAM_SIZE",
           "family": "combined_rate",
-          "subIdea": "eq(#,add(mul(#,#,X),mul(#,#,add(#,X))))|multiply>add>subtract>divide",
-          "question": "فريق أفراده متساوون في المعدل، ينجز كل فرد 12 لوح/ساعة. عمل الفريق ساعتين، ثم انضم إليه فرد واحد فعمل الجميع 4 ساعات أخرى، فبلغ الإنجاز الكلي 336 لوحًا. كم فردًا كان في الفريق أولًا؟",
-          "answer": "E"
+          "subIdea": "eq(#,add(mul(#,#,X),mul(#,#,add(#,X))))|multiply>add>subtract>divide"
         },
         {
           "index": 8,
@@ -3007,9 +2693,7 @@
           "task": "JUDGE_ENTAILMENT/STATEMENT",
           "templateId": "REL_H_GUARANTEE",
           "family": "relational",
-          "subIdea": "order:mid/branched/merging/mid/partial|none",
-          "question": "ريم أسرع من سامي. خالد أسرع من حمد. ريم أسرع من بدر. سارة أسرع من حمد. سامي أسرع من سارة. ريم أسرع من خالد. بدر أسرع من حمد. أي عبارة يجب أن تكون صحيحة مهما كان ترتيب بدر وسارة؟",
-          "answer": "B"
+          "subIdea": "order:mid/branched/merging/mid/partial|none"
         },
         {
           "index": 9,
@@ -3018,9 +2702,7 @@
           "task": "REVERSE_RECOVER/RATE",
           "templateId": "RATE_H_RATE_FROM_GAP",
           "family": "unit_rate",
-          "subIdea": "eq(mul(#,#),mul(#,X,add(#,X)))|divide>add>multiply>ratio",
-          "question": "ينجز جهاز 192 وحدة بمعدل ثابت، ولو زاد معدله بمقدار 4 وحدة/ساعة لأنجز العمل نفسه في 4 ساعات أقل. فما معدله الأصلي؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,#),mul(#,X,add(#,X)))|divide>add>multiply>ratio"
         },
         {
           "index": 10,
@@ -3029,9 +2711,7 @@
           "task": "COMBINE_PARTS/AVERAGE",
           "templateId": "AVG_M_COMBINE",
           "family": "averages",
-          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(#,X))|multiply>add>divide",
-          "question": "متوسط 6 قيم هو 20، ومتوسط 4 قيم أخرى هو 25. فما متوسط القيم مجتمعة؟",
-          "answer": "E"
+          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(#,X))|multiply>add>divide"
         },
         {
           "index": 11,
@@ -3040,9 +2720,7 @@
           "task": "FIND_THRESHOLD/QUANTITY",
           "templateId": "RAT_H_MAX_PART",
           "family": "ratios",
-          "subIdea": "eq(#,mod(X,#)) & eq(mul(#,#),mul(#,X))|add>ratio>multiply",
-          "question": "المطلوب: أكبر عدد ممكن من الوحدات لنصيب الطرف الثاني. المعطيات: تُقسم كمية من الوحدات بين طرفين بنسبة 4 : 5؛ نصيب كل طرف عدد صحيح من الوحدات، ومجموع النصيبين أقل من 80 وحدة.",
-          "answer": "E"
+          "subIdea": "eq(#,mod(X,#)) & eq(mul(#,#),mul(#,X))|add>ratio>multiply"
         },
         {
           "index": 12,
@@ -3051,9 +2729,7 @@
           "task": "FORWARD_COMPUTE/DATE",
           "templateId": "CAL_H_LONG",
           "family": "calendar",
-          "subIdea": "eq(X,mod(add(#,#),#))|subtract>ratio",
-          "question": "إذا كان اليوم الأحد، فما اليوم بعد 10 أيام؟",
-          "answer": "E"
+          "subIdea": "eq(X,mod(add(#,#),#))|subtract>ratio"
         },
         {
           "index": 13,
@@ -3062,9 +2738,7 @@
           "task": "REQUIRED_INPUT/QUANTITY",
           "templateId": "PROP_E_ITEMS",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,#),mul(#,X))|divide",
-          "question": "يحتوي كل صندوق على العدد نفسه من القطع. إذا كانت 3 صناديق تحتوي على 30 قطعة، فكم صندوقًا نحتاج للحصول على 90 قطعة؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,#),mul(#,X))|divide"
         },
         {
           "index": 14,
@@ -3073,9 +2747,7 @@
           "task": "IDENTIFY_RULE/RULE",
           "templateId": "ODD_M_PROPERTY",
           "family": "odd_one_out",
-          "subIdea": "none|ratio",
-          "question": "ما الخاصية التي تشترك فيها كل أعداد المجموعة الآتية؟",
-          "answer": "F"
+          "subIdea": "none|ratio"
         },
         {
           "index": 15,
@@ -3084,9 +2756,7 @@
           "task": "FORWARD_COMPUTE/NUMBER",
           "templateId": "FRAC_M_3",
           "family": "fractions",
-          "subIdea": "eq(#,mul(#,X))|divide",
-          "question": "أُخذ ثُمن العدد 576، ثم ثلث الناتج، ثم ربع الناتج. ما الناتج؟",
-          "answer": "F"
+          "subIdea": "eq(#,mul(#,X))|divide"
         },
         {
           "index": 16,
@@ -3095,9 +2765,7 @@
           "task": "MEASURE_CHANGE/PERCENT",
           "templateId": "PL_M_TOTAL_COST",
           "family": "profit_loss",
-          "subIdea": "eq(mul(#,sub(#,add(#,#))),mul(X,add(#,#)))|add>subtract>multiply>divide",
-          "question": "اشترى متجر ملابس قميصًا بـ400 درهمًا ودفع 25 درهمًا شحنًا وتجهيزًا، ثم باعه بـ527 درهمًا. ما نسبة الربح من إجمالي التكلفة؟",
-          "answer": "E"
+          "subIdea": "eq(mul(#,sub(#,add(#,#))),mul(X,add(#,#)))|add>subtract>multiply>divide"
         },
         {
           "index": 17,
@@ -3106,9 +2774,7 @@
           "task": "DETECT_PATTERN_FAULT/TERM",
           "templateId": "SEQ_M_WRONG_TERM",
           "family": "sequences",
-          "subIdea": "eq(#,X) & eq(#,mul(#,#))|ratio>multiply",
-          "question": "أي الحدود الآتية لا يتفق مع قاعدة المتتالية؟",
-          "answer": "E"
+          "subIdea": "eq(#,X) & eq(#,mul(#,#))|ratio>multiply"
         },
         {
           "index": 18,
@@ -3117,9 +2783,7 @@
           "task": "SCALE_PROPORTIONALLY/MONEY",
           "templateId": "PROP_H_COST_PLUS",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,#),mul(#,sub(X,#)))|divide>multiply>add>ratio",
-          "question": "تكلف 5 وحدات مبلغ 20 درهمًا بالسعر نفسه. إذا اشترينا 12 وحدة وأُضيف رسم ثابت قدره 15 درهمًا يُدفع مرة واحدة، فما التكلفة الكلية؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,#),mul(#,sub(X,#)))|divide>multiply>add>ratio"
         },
         {
           "index": 19,
@@ -3128,9 +2792,7 @@
           "task": "JUDGE_INDETERMINACY/STATEMENT",
           "templateId": "REL_M_BRANCH_UNRES",
           "family": "relational",
-          "subIdea": "order:mid/branched/simple/mid/partial|none",
-          "question": "فهد أسرع من نورة. ناصر أسرع من حمد. فهد أسرع من هند. حمد أسرع من سامي. نورة أسرع من ناصر. أي مقارنة لا يمكن حسمها؟",
-          "answer": "E"
+          "subIdea": "order:mid/branched/simple/mid/partial|none"
         },
         {
           "index": 20,
@@ -3139,9 +2801,7 @@
           "task": "REVERSE_RECOVER/QUANTITY",
           "templateId": "RAT_M_ADD_SIDE",
           "family": "ratios",
-          "subIdea": "eq(#,mod(mul(#,X),#)) & eq(mul(#,#,#,X),mul(#,#,add(mul(#,#),mul(#,X))))|add>ratio>multiply>subtract>divide",
-          "question": "النسبة بين أ : ب = 5 : 1، وأُضيفت 6 وحدات إلى ب فأصبحت النسبة أ : ب = 5 : 3. فما مجموع أ + ب قبل الإضافة؟",
-          "answer": "B"
+          "subIdea": "eq(#,mod(mul(#,X),#)) & eq(mul(#,#,#,X),mul(#,#,add(mul(#,#),mul(#,X))))|add>ratio>multiply>subtract>divide"
         },
         {
           "index": 21,
@@ -3150,9 +2810,7 @@
           "task": "FORWARD_COMPUTE/DURATION",
           "templateId": "WORK_M_EFF",
           "family": "work_time",
-          "subIdea": "eq(mul(#,#),mul(X,add(#,#)))|divide>add",
-          "question": "المعطيات: فريق ينجز عملًا في 24 يومًا؛ بعد تدريب ارتفعت كفاءة الفريق بمقدار 100% من القيمة السابقة مع بقاء عدد العمال نفسه. كم يومًا يحتاج للعمل نفسه؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,#),mul(X,add(#,#)))|divide>add"
         },
         {
           "index": 22,
@@ -3161,9 +2819,7 @@
           "task": "REVERSE_RECOVER/MONEY",
           "templateId": "PCT_H_REVERSE_CHAIN",
           "family": "percentages",
-          "subIdea": "eq(mul(#,#),mul(X,add(#,#),sub(#,#)))|divide>add>subtract>multiply",
-          "question": "زادت قيمة بنسبة 50%، ثم انخفضت القيمة الجديدة بنسبة 20%. إذا أصبحت القيمة النهائية 240، فما القيمة الأصلية؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,#),mul(X,add(#,#),sub(#,#)))|divide>add>subtract>multiply"
         },
         {
           "index": 23,
@@ -3172,9 +2828,7 @@
           "task": "REQUIRED_INPUT/COUNT",
           "templateId": "WORK_H_EXTRA_WORKERS",
           "family": "work_time",
-          "subIdea": "eq(mul(#,#),mul(add(#,X),sub(#,#)))|multiply>subtract>divide",
-          "question": "يستطيع 12 عاملًا إنجاز عمل في 12 يومًا، وللانتهاء قبل الموعد بـ4 أيام أُضيف عدد من العمال بالكفاءة نفسها. كم عاملًا أُضيف؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#),mul(add(#,X),sub(#,#)))|multiply>subtract>divide"
         },
         {
           "index": 24,
@@ -3183,9 +2837,7 @@
           "task": "REQUIRED_INPUT/DURATION",
           "templateId": "AGE_M_WHEN_RATIO",
           "family": "ages",
-          "subIdea": "eq(add(#,X),mul(#,add(#,X)))|add>multiply>ratio>subtract>divide",
-          "question": "عمر الأب الآن 32 سنة وعمر ابنه 6 سنوات. بعد كم سنة يصبح عمر الأب ثلاثة أمثال عمر ابنه؟",
-          "answer": "C"
+          "subIdea": "eq(add(#,X),mul(#,add(#,X)))|add>multiply>ratio>subtract>divide"
         },
         {
           "index": 25,
@@ -3194,9 +2846,7 @@
           "task": "COMBINE_PARTS/SPEED",
           "templateId": "SPD_M_AVG",
           "family": "speed",
-          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(X,add(#,#)))|multiply>add>divide",
-          "question": "سارت دراجة ساعة واحدة بسرعة 50 كم/ساعة، ثم 3 ساعات بسرعة 90 كم/ساعة. ما متوسط سرعتها في الرحلة كلها؟",
-          "answer": "D"
+          "subIdea": "eq(add(mul(#,#),mul(#,#)),mul(X,add(#,#)))|multiply>add>divide"
         },
         {
           "index": 26,
@@ -3205,9 +2855,7 @@
           "task": "FORWARD_COMPUTE/QUANTITY",
           "templateId": "PCT_E_OF",
           "family": "percentages",
-          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply",
-          "question": "ما قيمة 50% من 300؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,#),mul(#,X))|divide>multiply"
         },
         {
           "index": 27,
@@ -3216,9 +2864,7 @@
           "task": "MEASURE_INTERVAL/DURATION",
           "templateId": "CAL_H_MONTH_LENGTH",
           "family": "calendar",
-          "subIdea": "eq(#,mod(add(#,X),#))|add>subtract",
-          "question": "كان اليوم 17 من شهرٍ ما يوم الجمعة، وكان اليوم 4 من الشهر الذي يليه يوم الاثنين. كم يومًا بين التاريخين؟",
-          "answer": "B"
+          "subIdea": "eq(#,mod(add(#,X),#))|add>subtract"
         },
         {
           "index": 28,
@@ -3227,9 +2873,7 @@
           "task": "REVERSE_RECOVER/DURATION",
           "templateId": "MACH_H_STOPPAGE_TIME",
           "family": "machines",
-          "subIdea": "eq(#,sub(mul(#,#,#),mul(#,sub(#,X))))|multiply>subtract>divide",
-          "question": "تعمل 6 آلات بمعدل 25 صفحة/ساعة لكل آلة لمدة 6 ساعات، وتوقفت آلة واحدة في أثناء العمل ولم تعد، فبلغ الإنتاج الفعلي 775 صفحة. بعد كم ساعة من بدء العمل توقفت تلك الآلة؟",
-          "answer": "F"
+          "subIdea": "eq(#,sub(mul(#,#,#),mul(#,sub(#,X))))|multiply>subtract>divide"
         },
         {
           "index": 29,
@@ -3238,9 +2882,7 @@
           "task": "SHARE_PROPORTIONALLY/MONEY",
           "templateId": "PROP_H_CAPITAL_TIME",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,mul(#,#)),mul(X,add(mul(#,#),mul(#,#))))|multiply>add>divide",
-          "question": "شارك أحمد بمبلغ 5000 درهمًا لمدة 12 شهرًا، وشارك سالم بمبلغ 2400 درهمًا لمدة 7 أشهر. فإذا بلغ الربح 3200 درهمًا، فكم نصيب سالم؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,mul(#,#)),mul(X,add(mul(#,#),mul(#,#))))|multiply>add>divide"
         },
         {
           "index": 30,
@@ -3249,9 +2891,7 @@
           "task": "FORWARD_COMPUTE/DISTANCE",
           "templateId": "SPD_E_DISTANCE",
           "family": "speed",
-          "subIdea": "eq(X,mul(#,#))|multiply",
-          "question": "سارت سيارة بسرعة 50 كم/ساعة لمدة 4 ساعات. ما المسافة التي قطعتها؟",
-          "answer": "A"
+          "subIdea": "eq(X,mul(#,#))|multiply"
         },
         {
           "index": 31,
@@ -3260,9 +2900,7 @@
           "task": "DECOMPOSE_COMBINED/RATE",
           "templateId": "MACH_H_TWO_CONFIG",
           "family": "machines",
-          "subIdea": "eq(mul(#,X),sub(mul(#,#),mul(#,#)))|multiply>ratio>subtract>divide",
-          "question": "المعطيات: تنتج 4 آلات من النوع الأول و3 آلات من النوع الثاني معًا 90 صفحة في الساعة؛ وتنتج 5 آلات من النوع الأول و5 آلات من النوع الثاني معًا 130 صفحة في الساعة. كم صفحة تنتج آلة واحدة من النوع الأول في الساعة؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,X),sub(mul(#,#),mul(#,#)))|multiply>ratio>subtract>divide"
         },
         {
           "index": 32,
@@ -3271,9 +2909,7 @@
           "task": "APPLY_SUCCESSIVE_CHANGE/QUANTITY",
           "templateId": "PCT_M_REMAIN",
           "family": "percentages",
-          "subIdea": "eq(mul(#,X),mul(#,sub(#,#),sub(#,#)))|multiply>divide>subtract",
-          "question": "في مجموعة عددها 120، غاب 40% منهم، ثم غادر 25% من الموجودين بعد ذلك. كم بقي؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,X),mul(#,sub(#,#),sub(#,#)))|multiply>divide>subtract"
         },
         {
           "index": 33,
@@ -3282,9 +2918,7 @@
           "task": "SCALE_PROPORTIONALLY/QUANTITY",
           "templateId": "PROP_H_COMPOUND",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,#,add(#,#)),mul(X,mul(#,#)))|divide>multiply>add",
-          "question": "تحتاج 5 وحدات إلى 30 كيلوجرامًا من مادة، ونريد تجهيز 12 وحدة، مع إضافة احتياط بنسبة 25% فوق الكمية المحسوبة. كم كيلوجرامًا نحتاج؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,#,add(#,#)),mul(X,mul(#,#)))|divide>multiply>add"
         },
         {
           "index": 34,
@@ -3293,9 +2927,7 @@
           "task": "DECOMPOSE_COMBINED/MEMBER_VALUE",
           "templateId": "AVG_H_OVERLAP",
           "family": "averages",
-          "subIdea": "eq(add(X,mul(#,#)),add(mul(#,#),mul(#,#)))|multiply>add>ratio>subtract",
-          "question": "المعطيات: متوسط أعداد الزوار كلها في سجل عدد الزوار في 11 يومًا هو 18 زائرًا؛ متوسط أول 6 أيام في السجل هو 10 زوار؛ متوسط آخر 6 أيام فيه هو 25 زائرًا. فما عدد زوار اليوم الذي يقع في الموضع الأوسط من السجل؟",
-          "answer": "E"
+          "subIdea": "eq(add(X,mul(#,#)),add(mul(#,#),mul(#,#)))|multiply>add>ratio>subtract"
         },
         {
           "index": 35,
@@ -3304,9 +2936,7 @@
           "task": "SCALE_PROPORTIONALLY/QUANTITY",
           "templateId": "RATE_M_PERCENT",
           "family": "unit_rate",
-          "subIdea": "eq(mul(#,#,X),mul(#,#,add(#,#)))|divide>add>multiply",
-          "question": "تنجز آلة 400 وحدة خلال 8 دقائق، وبعد صيانة ارتفع معدلها في الدقيقة بمقدار 25% من القيمة السابقة. كم وحدة تنجز خلال 6 دقائق بالمعدل الجديد؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#,X),mul(#,#,add(#,#)))|divide>add>multiply"
         },
         {
           "index": 36,
@@ -3315,9 +2945,7 @@
           "task": "FORWARD_COMPUTE/AGE",
           "templateId": "AGE_H_THREE_SIBLINGS",
           "family": "ages",
-          "subIdea": "eq(#,sub(mul(#,sub(X,#)),#))|add>multiply>subtract>divide",
-          "question": "المعطيات: مجموع أعمار ثلاثة إخوة الآن 35 سنة؛ الأكبر أكبر من الأوسط بـ5 سنوات، والأوسط أكبر من الأصغر بـ3 سنوات. كم سيكون عمر الأكبر بعد 3 سنوات؟",
-          "answer": "D"
+          "subIdea": "eq(#,sub(mul(#,sub(X,#)),#))|add>multiply>subtract>divide"
         },
         {
           "index": 37,
@@ -3326,9 +2954,7 @@
           "task": "DECOMPOSE_COMBINED/NUMBER",
           "templateId": "RAT_M_COMMON_SUM",
           "family": "ratios",
-          "subIdea": "eq(mul(#,#),mul(#,X))|multiply>ratio>add>divide",
-          "question": "النسبة أ : ب = 2 : 5، والنسبة ب : ج = 2 : 3. إذا كان أ + ج = 76، فما قيمة ب؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,#),mul(#,X))|multiply>ratio>add>divide"
         },
         {
           "index": 38,
@@ -3337,9 +2963,7 @@
           "task": "FORWARD_COMPUTE/DURATION",
           "templateId": "SPD_E_TIME",
           "family": "speed",
-          "subIdea": "eq(#,mul(#,X))|divide",
-          "question": "قطعت حافلة 600 كيلومترًا بسرعة 120 كم/ساعة. كم ساعة استغرقت؟",
-          "answer": "B"
+          "subIdea": "eq(#,mul(#,X))|divide"
         },
         {
           "index": 39,
@@ -3348,9 +2972,7 @@
           "task": "SCALE_PROPORTIONALLY/MONEY",
           "templateId": "PCT_M_UNIT_PRICE",
           "family": "percentages",
-          "subIdea": "eq(mul(#,#,X),mul(#,#,add(#,#)))|divide>add>multiply",
-          "question": "ثمن 8 وحدات هو 96 درهمًا. إذا ارتفع سعر الوحدة بمقدار 20% من القيمة السابقة، فما ثمن 5 وحدات بعد الزيادة؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,#,X),mul(#,#,add(#,#)))|divide>add>multiply"
         },
         {
           "index": 40,
@@ -3359,9 +2981,7 @@
           "task": "COMBINE_PARTS/DURATION",
           "templateId": "COMB_M_SOLO_THEN",
           "family": "combined_rate",
-          "subIdea": "eq(#,add(mul(#,#),mul(X,add(#,#))))|multiply>subtract>add>divide",
-          "question": "المعطيات: ينجز العامل أ 20 علبة/ساعة، والعامل ب 16 علبة/ساعة؛ عمل أ وحده 6 ساعات، ثم عملا معًا حتى بلغ الإنجاز 372 علبة. كم ساعة عملا معًا؟",
-          "answer": "B"
+          "subIdea": "eq(#,add(mul(#,#),mul(X,add(#,#))))|multiply>subtract>add>divide"
         },
         {
           "index": 41,
@@ -3370,9 +2990,7 @@
           "task": "SCALE_PROPORTIONALLY/QUANTITY",
           "templateId": "MACH_E_HOURS",
           "family": "machines",
-          "subIdea": "eq(mul(#,#,#),mul(#,#,X))|multiply>subtract>divide",
-          "question": "تنتج 5 آلات متطابقة في الإنتاجية 450 زجاجة خلال 6 ساعات. كم زجاجة تنتج 6 آلات من النوع نفسه خلال 3 ساعات؟",
-          "answer": "E"
+          "subIdea": "eq(mul(#,#,#),mul(#,#,X))|multiply>subtract>divide"
         },
         {
           "index": 42,
@@ -3381,9 +2999,7 @@
           "task": "COMPARE_ALTERNATIVES/DURATION",
           "templateId": "WORK_H_TWO_STAGE",
           "family": "work_time",
-          "subIdea": "eq(add(mul(#,#),mul(#,#),mul(#,X)),mul(#,#))|multiply>subtract>divide",
-          "question": "يستطيع 8 عمال إنجاز عمل في 18 يومًا. عمل الجميع 3 أيام، ثم غادر 4 عمال وعمل الباقون 3 أيام إضافية. كم يومًا آخر يحتاج العمال الباقون لإكمال العمل؟",
-          "answer": "F"
+          "subIdea": "eq(add(mul(#,#),mul(#,#),mul(#,X)),mul(#,#))|multiply>subtract>divide"
         },
         {
           "index": 43,
@@ -3392,9 +3008,7 @@
           "task": "REVERSE_RECOVER/VOLUME",
           "templateId": "PROP_H_REPLACE",
           "family": "direct_proportion",
-          "subIdea": "eq(mul(#,X),mul(#,sub(#,#)))|add>multiply>divide>subtract",
-          "question": "المعطيات: في وعاء 60 لترًا من خليط، نسبة المادة الأولى إلى الثانية 5 : 1؛ سُحب مقدار من الخليط واستُبدل بالمادة الثانية وحدها، فصارت النسبة 1 : 5. كم لترًا سُحب؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,X),mul(#,sub(#,#)))|add>multiply>divide>subtract"
         },
         {
           "index": 44,
@@ -3403,9 +3017,7 @@
           "task": "REQUIRED_INPUT/MEMBER_VALUE",
           "templateId": "AVG_H_TARGET",
           "family": "averages",
-          "subIdea": "eq(add(X,mul(#,#)),mul(#,#))|multiply>subtract",
-          "question": "يُراد أن يصبح متوسط الدرجات جميعها 28 درجة، ومتوسط درجات 8 طلاب هو 24 درجة. فما الدرجة التي يجب إضافتها؟",
-          "answer": "C"
+          "subIdea": "eq(add(X,mul(#,#)),mul(#,#))|multiply>subtract"
         },
         {
           "index": 45,
@@ -3414,9 +3026,7 @@
           "task": "COMBINE_PARTS/QUANTITY",
           "templateId": "COMB_E_THREE",
           "family": "combined_rate",
-          "subIdea": "eq(X,add(mul(#,#),mul(#,#),mul(#,#)))|add>multiply",
-          "question": "تعمل ثلاث آلات بمعدلات 12 و6 و10 زجاجة/ساعة. إذا عملت معًا 3 ساعات، فكم زجاجة تنتج؟",
-          "answer": "A"
+          "subIdea": "eq(X,add(mul(#,#),mul(#,#),mul(#,#)))|add>multiply"
         },
         {
           "index": 46,
@@ -3425,9 +3035,7 @@
           "task": "FORWARD_COMPUTE/TERM",
           "templateId": "SEQ_M_RULE_APPLY",
           "family": "sequences",
-          "subIdea": "eq(#,X)|multiply>add",
-          "question": "متتالية حدها الأول 8، وكل حد بعده يُحسب بضرب الحد السابق في 2 ثم إضافة 2. ما الحد الخامس؟",
-          "answer": "B"
+          "subIdea": "eq(#,X)|multiply>add"
         },
         {
           "index": 47,
@@ -3436,9 +3044,7 @@
           "task": "EXTEND_BY_PROPERTY/NUMBER",
           "templateId": "ODD_M_EXTEND",
           "family": "odd_one_out",
-          "subIdea": "none|none",
-          "question": "أعداد المجموعة الآتية تشترك في خاصية واحدة. أي عدد يمكن ضمّه إليها؟",
-          "answer": "D"
+          "subIdea": "none|none"
         },
         {
           "index": 48,
@@ -3447,9 +3053,7 @@
           "task": "APPLY_SUCCESSIVE_CHANGE/MONEY",
           "templateId": "PL_M_DISC_MARK",
           "family": "profit_loss",
-          "subIdea": "eq(mul(#,X),mul(#,add(#,#),sub(#,#)))|multiply>divide>subtract>add",
-          "question": "سعر الكتاب المعلن 400 درهمًا، وحصلت المكتبة عليه بخصم 10% من هذا السعر، ثم أراد ربحًا قدره 10% من تكلفة الشراء الفعلية. فما سعر البيع؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,X),mul(#,add(#,#),sub(#,#)))|multiply>divide>subtract>add"
         },
         {
           "index": 49,
@@ -3458,9 +3062,7 @@
           "task": "FIND_THRESHOLD/COUNT",
           "templateId": "MACH_H_MIN_SECOND_TYPE",
           "family": "machines",
-          "subIdea": "gt(#,add(#,mul(#,sub(X,#)))) & gte(add(#,mul(#,X)),#) & int(X,#)|multiply>subtract>divide>add>ratio",
-          "question": "المعطيات: مطلوب إنتاج 653 قطعة خلال 6 ساعات؛ تتوفر 3 آلات من النوع الأول، وتنتج كل واحدة منها 24 قطعة/ساعة؛ آلات النوع الثاني تنتج كل واحدة منها 10 قطعة/ساعة. فما أقل عدد من آلات النوع الثاني يكفي لبلوغ المطلوب؟",
-          "answer": "B"
+          "subIdea": "gt(#,add(#,mul(#,sub(X,#)))) & gte(add(#,mul(#,X)),#) & int(X,#)|multiply>subtract>divide>add>ratio"
         },
         {
           "index": 50,
@@ -3469,9 +3071,7 @@
           "task": "REVERSE_RECOVER/MONEY",
           "templateId": "PL_H_REVERSE",
           "family": "profit_loss",
-          "subIdea": "eq(mul(#,#),mul(X,add(#,#)))|add>multiply>divide",
-          "question": "باع معرض أثاث مقعدًا بـ500 درهمًا محققًا ربحًا قدره 25% من تكلفة الشراء. فما تكلفة الشراء؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,#),mul(X,add(#,#)))|add>multiply>divide"
         },
         {
           "index": 51,
@@ -3480,9 +3080,7 @@
           "task": "FIND_COINCIDENCE/DURATION",
           "templateId": "SPD_H_CATCH",
           "family": "speed",
-          "subIdea": "eq(mul(#,X),mul(#,add(#,X)))|multiply>subtract>divide",
-          "question": "انطلقت عربة أ بسرعة 60 كم/ساعة، وبعد ساعة واحدة انطلقت عربة ب من المكان نفسه وفي الاتجاه نفسه بسرعة 100 كم/ساعة. بعد كم ساعة من انطلاق ب تلحق بعربة أ؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,X),mul(#,add(#,X)))|multiply>subtract>divide"
         },
         {
           "index": 52,
@@ -3491,9 +3089,7 @@
           "task": "REVERSE_RECOVER/NUMBER",
           "templateId": "FRAC_H_4",
           "family": "fractions",
-          "subIdea": "eq(#,mul(X,mul(#,#)))|multiply>divide",
-          "question": "أُخذ ثُمن العدد 2304، ثم نصف الناتج، ثم سُدس الناتج، ثم كسرٌ مجهول من الناتج الأخير، فكان الناتج 6. فما هذا الكسر؟",
-          "answer": "C"
+          "subIdea": "eq(#,mul(X,mul(#,#)))|multiply>divide"
         },
         {
           "index": 53,
@@ -3502,9 +3098,7 @@
           "task": "DECOMPOSE_COMBINED/VOLUME",
           "templateId": "PCT_H_MIXTURE",
           "family": "percentages",
-          "subIdea": "eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|multiply>divide>percent>subtract",
-          "question": "خُلط محلول تركيزه 20% مع محلول آخر تركيزه 40%، فنتج 40 لترًا من مزيج تركيزه 25%. كم لترًا من المحلول الأول استُخدم؟",
-          "answer": "A"
+          "subIdea": "eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|multiply>divide>percent>subtract"
         },
         {
           "index": 54,
@@ -3513,9 +3107,7 @@
           "task": "DECOMPOSE_COMBINED/DURATION",
           "templateId": "WORK_H_JOINT_SOLO",
           "family": "work_time",
-          "subIdea": "eq(mul(#,#),mul(X,sub(#,#)))|divide>ratio>multiply>subtract",
-          "question": "ينجز عاملان العمل نفسه معًا في 10 أيام. ولو عمل الأول وحده لأنجزه في 12 يومًا. كم يومًا يحتاج الثاني وحده لإنجاز العمل نفسه؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,#),mul(X,sub(#,#)))|divide>ratio>multiply>subtract"
         },
         {
           "index": 55,
@@ -3524,9 +3116,7 @@
           "task": "DECOMPOSE_COMBINED/DISTANCE",
           "templateId": "SPD_H_TIME_DIFF",
           "family": "speed",
-          "subIdea": "eq(mul(#,#,#),mul(X,sub(#,#)))|divide>subtract>ratio>multiply",
-          "question": "المسافة نفسها تُقطع بسرعة 40 كم/ساعة أو بسرعة 120 كم/ساعة. إذا كان الزمن عند السرعة 40 أطول بمقدار 10 ساعات، فما المسافة؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#,#),mul(X,sub(#,#)))|divide>subtract>ratio>multiply"
         },
         {
           "index": 56,
@@ -3535,9 +3125,7 @@
           "task": "REQUIRED_INPUT/DURATION",
           "templateId": "RATE_E_TIME",
           "family": "unit_rate",
-          "subIdea": "eq(mul(#,#),mul(#,X))|divide",
-          "question": "يكتب شخص 1800 كلمة خلال 40 دقيقة بمعدل ثابت. كم دقيقة يحتاج لكتابة 5400 كلمة؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,#),mul(#,X))|divide"
         },
         {
           "index": 57,
@@ -3546,9 +3134,7 @@
           "task": "COMBINE_PARTS/DISTANCE",
           "templateId": "SPD_M_EQUAL_DIST",
           "family": "speed",
-          "subIdea": "eq(mul(#,#,#,#),mul(X,add(#,#)))|divide>multiply>add>ratio",
-          "question": "قطعت عبّارة نصف المسافة بسرعة 60 كم/ساعة، والنصف الآخر بسرعة 50 كم/ساعة. إذا استغرقت الرحلة كاملة 11 ساعة، فما المسافة الكلية؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,#,#,#),mul(X,add(#,#)))|divide>multiply>add>ratio"
         },
         {
           "index": 58,
@@ -3557,9 +3143,7 @@
           "task": "DECOMPOSE_COMBINED/DURATION",
           "templateId": "COMB_H_STAGED",
           "family": "combined_rate",
-          "subIdea": "eq(#,add(mul(#,#),mul(#,X),mul(#,add(#,#))))|multiply>add>subtract>divide",
-          "question": "المعطيات: ينجز أ 18 قميص/ساعة وب 10 قميص/ساعة؛ عمل أ وحده 4 ساعات، ثم عملا معًا ساعتين، ثم استمر ب وحده حتى بلغ الإنجاز 198 قميصًا. كم ساعة عمل ب وحده في المرحلة الأخيرة؟",
-          "answer": "C"
+          "subIdea": "eq(#,add(mul(#,#),mul(#,X),mul(#,add(#,#))))|multiply>add>subtract>divide"
         },
         {
           "index": 59,
@@ -3568,9 +3152,7 @@
           "task": "COMBINE_PARTS/QUANTITY",
           "templateId": "MACH_H_STAGE_UP",
           "family": "machines",
-          "subIdea": "eq(add(mul(#,#,#,#),mul(#,add(mul(#,#,#),mul(#,#,add(#,#))))),mul(#,X))|multiply>divide>add>subtract",
-          "question": "عملت 5 آلات بمعدل 12 علبة/ساعة لمدة 4 ساعات. ثم طُورت آلتان فزادت إنتاجيتها بمقدار 25% من القيمة السابقة، وعملت المجموعة كلها 3 ساعات إضافية. كم بلغ الإنتاج الكلي؟",
-          "answer": "B"
+          "subIdea": "eq(add(mul(#,#,#,#),mul(#,add(mul(#,#,#),mul(#,#,add(#,#))))),mul(#,X))|multiply>divide>add>subtract"
         },
         {
           "index": 60,
@@ -3579,9 +3161,7 @@
           "task": "DECOMPOSE_COMBINED/AGE",
           "templateId": "AGE_H_TWO_TIME",
           "family": "ages",
-          "subIdea": "eq(add(#,#,X),mul(#,add(#,X)))|add>ratio>multiply>subtract>divide",
-          "question": "عمر الأب أكبر من عمر ابنه بـ20 سنة. بعد 7 سنوات سيصبح عمر الأب ضعف عمر الابن. كم عمر الابن الآن؟",
-          "answer": "F"
+          "subIdea": "eq(add(#,#,X),mul(#,add(#,X)))|add>ratio>multiply>subtract>divide"
         },
         {
           "index": 61,
@@ -3590,9 +3170,7 @@
           "task": "DECOMPOSE_COMBINED/DURATION",
           "templateId": "COMB_M_TOGETHER_SOLO",
           "family": "combined_rate",
-          "subIdea": "eq(#,add(mul(#,X),mul(#,add(#,#))))|multiply>add>subtract>divide",
-          "question": "يعمل أ بمعدل 12 زجاجة/ساعة وب بمعدل 20 زجاجة/ساعة. عملا معًا ساعتين، ثم توقف ب واستمر أ وحده حتى بلغ الإنجاز 112 زجاجة. كم ساعة عمل أ وحده؟",
-          "answer": "D"
+          "subIdea": "eq(#,add(mul(#,X),mul(#,add(#,#))))|multiply>add>subtract>divide"
         },
         {
           "index": 62,
@@ -3601,9 +3179,7 @@
           "task": "MEASURE_CHANGE/PERCENT",
           "templateId": "PCT_M_SUCCESSIVE",
           "family": "percentages",
-          "subIdea": "eq(mul(#,X),sub(mul(#,#),#))|multiply>divide>subtract>add",
-          "question": "المعطيات: كانت قيمة 800؛ انخفضت بنسبة 10%، ثم زادت القيمة الجديدة بنسبة 10%. ما نسبة التغير النهائية مقارنة بالأصل؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,X),sub(mul(#,#),#))|multiply>divide>subtract>add"
         },
         {
           "index": 63,
@@ -3612,9 +3188,7 @@
           "task": "REVERSE_RECOVER/PERCENT",
           "templateId": "PL_H_REST_MARGIN",
           "family": "profit_loss",
-          "subIdea": "eq(add(mul(#,#),mul(#,X)),mul(#,#))|subtract>multiply>divide",
-          "question": "اشترى تاجر بضاعة بمبلغ 600 درهمًا، وباع منها ما تكلفته 400 درهمًا بربح 15% من تكلفة ذلك الجزء. بكم في المئة من تكلفة الباقي يجب أن يبيع الباقي ليكون ربحه الكلي 25% من التكلفة الكلية؟",
-          "answer": "E"
+          "subIdea": "eq(add(mul(#,#),mul(#,X)),mul(#,#))|subtract>multiply>divide"
         },
         {
           "index": 64,
@@ -3623,9 +3197,7 @@
           "task": "IDENTIFY_RULE/RULE",
           "templateId": "SEQ_M_RULE_ID",
           "family": "sequences",
-          "subIdea": "none|subtract>multiply>add>ratio",
-          "question": "أيُّ القواعد الآتية تولّد كل حد من الحد الذي قبله في هذه المتتالية؟",
-          "answer": "C"
+          "subIdea": "none|subtract>multiply>add>ratio"
         },
         {
           "index": 65,
@@ -3634,9 +3206,7 @@
           "task": "DECOMPOSE_COMBINED/COUNT",
           "templateId": "AVG_H_SPLIT_SIZE",
           "family": "averages",
-          "subIdea": "eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|multiply>subtract>divide",
-          "question": "متوسط أطوال 12 لوحًا هو 11 مترًا، وقُسموا إلى مجموعتين: متوسط الأولى 17 مترًا، ومتوسط الثانية 9 أمتار. كم لوحًا في المجموعة الأولى؟",
-          "answer": "E"
+          "subIdea": "eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|multiply>subtract>divide"
         },
         {
           "index": 66,
@@ -3645,9 +3215,7 @@
           "task": "DECOMPOSE_COMBINED/SPEED",
           "templateId": "SPD_H_CURRENT",
           "family": "speed",
-          "subIdea": "eq(mul(#,X),sub(#,#))|divide>subtract>ratio",
-          "question": "قطع قارب 119 كيلومترًا مع التيار في 7 ساعات، وقطع المسافة نفسها ضد التيار في 17 ساعة. فما سرعة التيار؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,X),sub(#,#))|divide>subtract>ratio"
         },
         {
           "index": 67,
@@ -3656,9 +3224,7 @@
           "task": "DECOMPOSE_COMBINED/MONEY",
           "templateId": "PL_H_TWO_OUTCOMES",
           "family": "profit_loss",
-          "subIdea": "eq(mul(#,#),mul(#,X))|percent>add>multiply>divide",
-          "question": "لو بيع مقعد بسعر معين لتحقق ربح قدره 30% من تكلفته، ولو بيع بسعر أقل من ذلك بـ99 درهمًا لكانت الخسارة 25% من التكلفة. فما تكلفة المقعد؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,#),mul(#,X))|percent>add>multiply>divide"
         },
         {
           "index": 68,
@@ -3667,9 +3233,7 @@
           "task": "APPLY_SUCCESSIVE_CHANGE/MONEY",
           "templateId": "PCT_H_CHAIN_VALUE",
           "family": "percentages",
-          "subIdea": "eq(mul(#,X),mul(#,add(#,#),sub(#,#)))|multiply>divide>subtract>add",
-          "question": "قيمة أصلية مقدارها 200، وخُفّضت بنسبة 10%، ثم زيدت القيمة الجديدة بنسبة 20%. ما القيمة النهائية؟",
-          "answer": "C"
+          "subIdea": "eq(mul(#,X),mul(#,add(#,#),sub(#,#)))|multiply>divide>subtract>add"
         },
         {
           "index": 69,
@@ -3678,9 +3242,7 @@
           "task": "REQUIRED_INPUT/COUNT",
           "templateId": "MACH_E_REQUIRED",
           "family": "machines",
-          "subIdea": "eq(mul(#,#,#),mul(#,#,X))|multiply>divide",
-          "question": "تنتج 5 آلات متطابقة في الإنتاجية 225 علبة خلال 3 ساعات. كم آلة نحتاج لإنتاج 270 علبة خلال ساعتين؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,#,#),mul(#,#,X))|multiply>divide"
         },
         {
           "index": 70,
@@ -3689,9 +3251,7 @@
           "task": "COMBINE_PARTS/MONEY",
           "templateId": "PL_H_SAME_PRICE_PAIR",
           "family": "profit_loss",
-          "subIdea": "eq(X,add(#,#))|add>percent>multiply>divide>subtract",
-          "question": "المعطيات: باع تاجر قطعتين بسعر 480 درهمًا لكل واحدة؛ ربح في الأولى 25% من تكلفتها وخسر في الثانية 25% من تكلفتها. فكم كانت تكلفة القطعتين معًا؟",
-          "answer": "A"
+          "subIdea": "eq(X,add(#,#))|add>percent>multiply>divide>subtract"
         },
         {
           "index": 71,
@@ -3700,9 +3260,7 @@
           "task": "COMBINE_PARTS/DURATION",
           "templateId": "SPD_M_TWO_TIME",
           "family": "speed",
-          "subIdea": "eq(mul(#,#,X),mul(#,add(mul(#,#),mul(#,#))))|divide>add>multiply",
-          "question": "قطعت دراجة 125 كيلومترًا بسرعة 50 كم/ساعة، ثم قطعت 80 كيلومترًا بسرعة 40 كم/ساعة دون توقف. كم دقيقة استغرقت الرحلة كاملة؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,#,X),mul(#,add(mul(#,#),mul(#,#))))|divide>add>multiply"
         },
         {
           "index": 72,
@@ -3711,9 +3269,7 @@
           "task": "FIND_COINCIDENCE/DATE",
           "templateId": "CAL_H_CYCLE_MEET",
           "family": "calendar",
-          "subIdea": "eq(X,mod(add(#,#),#))|multiply>subtract>ratio",
-          "question": "المعطيات: يزور أحدهما المكتبة كل 6 أيام ويزورها الآخر كل 9 أيام؛ التقيا فيها اليوم، وكان يوم الأحد. في أي يوم من أيام الأسبوع يلتقيان فيها مرة أخرى؟",
-          "answer": "E"
+          "subIdea": "eq(X,mod(add(#,#),#))|multiply>subtract>ratio"
         },
         {
           "index": 73,
@@ -3722,9 +3278,7 @@
           "task": "COMBINE_PARTS/DURATION",
           "templateId": "COMB_E_TIME",
           "family": "combined_rate",
-          "subIdea": "eq(#,add(mul(#,X),mul(#,X)))|add>divide",
-          "question": "تنجز آلة أ 10 قميص/ساعة، وآلة ب 21 قميص/ساعة. إذا عملتا معًا، فكم ساعة تحتاجان لإنتاج 248 قميصًا؟",
-          "answer": "D"
+          "subIdea": "eq(#,add(mul(#,X),mul(#,X)))|add>divide"
         },
         {
           "index": 74,
@@ -3733,9 +3287,7 @@
           "task": "COUNT_SATISFYING/COUNT",
           "templateId": "REL_M_COUNT",
           "family": "relational",
-          "subIdea": "order:mid/branched/simple/mid/partial|ratio",
-          "question": "هند أسرع من ناصر. فهد أسرع من ماجد. هند أسرع من ليان. علي أسرع من فهد. ليان أسرع من علي. كم شخصًا نعرف يقينًا أنهم أسرع من ماجد؟",
-          "answer": "A"
+          "subIdea": "order:mid/branched/simple/mid/partial|ratio"
         },
         {
           "index": 75,
@@ -3744,9 +3296,7 @@
           "task": "MEASURE_CHANGE/PERCENT",
           "templateId": "PL_E_LOSS",
           "family": "profit_loss",
-          "subIdea": "eq(mul(#,X),mul(#,sub(#,#)))|subtract>multiply>divide",
-          "question": "اشترى مشتل شتلة بـ300 درهمًا وباعها بـ276 درهمًا. ما نسبة الخسارة من سعر الشراء؟",
-          "answer": "F"
+          "subIdea": "eq(mul(#,X),mul(#,sub(#,#)))|subtract>multiply>divide"
         },
         {
           "index": 76,
@@ -3755,9 +3305,7 @@
           "task": "DECOMPOSE_COMBINED/AGE",
           "templateId": "AGE_M_RATIO_FUT_SUM",
           "family": "ages",
-          "subIdea": "eq(add(X,mul(#,#,#),mul(#,X)),mul(#,#))|multiply>subtract>add>divide",
-          "question": "عمر سالم الآن ثلاثة أمثال عمر أخيه. بعد سنتين سيكون مجموع عمريهما 60 سنة. كم عمر سالم الآن؟",
-          "answer": "D"
+          "subIdea": "eq(add(X,mul(#,#,#),mul(#,X)),mul(#,#))|multiply>subtract>add>divide"
         },
         {
           "index": 77,
@@ -3766,9 +3314,7 @@
           "task": "IDENTIFY_MEMBER/NUMBER",
           "templateId": "ODD_H_SQ_MINUS",
           "family": "odd_one_out",
-          "subIdea": "ruleset:SQUARE_MINUS_ONE|multiply>add",
-          "question": "أي عدد لا ينتمي إلى المجموعة الآتية؟",
-          "answer": "C"
+          "subIdea": "ruleset:SQUARE_MINUS_ONE|multiply>add"
         },
         {
           "index": 78,
@@ -3777,9 +3323,7 @@
           "task": "FORWARD_COMPUTE/AVERAGE",
           "templateId": "AVG_E_ADD",
           "family": "averages",
-          "subIdea": "eq(add(#,mul(#,#)),mul(#,X))|multiply>add>divide",
-          "question": "متوسط 7 قيم هو 16، وأُضيفت قيمة جديدة مقدارها 24. فما متوسط القيم بعد الإضافة؟",
-          "answer": "C"
+          "subIdea": "eq(add(#,mul(#,#)),mul(#,X))|multiply>add>divide"
         },
         {
           "index": 79,
@@ -3788,9 +3332,7 @@
           "task": "REVERSE_RECOVER/MONEY",
           "templateId": "PL_H_MARKUP_DISCOUNT",
           "family": "profit_loss",
-          "subIdea": "eq(mul(#,#),mul(#,X))|add>subtract>multiply>divide",
-          "question": "وضع محل إلكترونيات سعرًا معلنًا أعلى من تكلفة الجهاز بنسبة 75%، ثم باعه بخصم 20% من السعر المعلن، فحقق ربحًا قدره 200 درهمًا. فما تكلفة الجهاز؟",
-          "answer": "E"
+          "subIdea": "eq(mul(#,#),mul(#,X))|add>subtract>multiply>divide"
         },
         {
           "index": 80,
@@ -3799,9 +3341,7 @@
           "task": "DECOMPOSE_COMBINED/AGE",
           "templateId": "AGE_E_MULT_DIFF",
           "family": "ages",
-          "subIdea": "eq(#,sub(mul(#,X),X))|subtract>divide",
-          "question": "عمر الأب يساوي أربعة أمثال عمر ابنه، والفرق بين عمريهما 27 سنة. كم عمر الابن؟",
-          "answer": "E"
+          "subIdea": "eq(#,sub(mul(#,X),X))|subtract>divide"
         },
         {
           "index": 81,
@@ -3810,9 +3350,7 @@
           "task": "LOCATE_IN_ORDER/PERSON",
           "templateId": "REL_M_CHAIN6",
           "family": "relational",
-          "subIdea": "order:mid/linear/simple/deep/total|ratio",
-          "question": "خالد أسرع من سامي. علي أسرع من خالد. مريم أسرع من علي. سامي أسرع من هند. بدر أسرع من مريم. من صاحب المركز الثاني من الأسرع إلى الأبطأ؟",
-          "answer": "D"
+          "subIdea": "order:mid/linear/simple/deep/total|ratio"
         },
         {
           "index": 82,
@@ -3821,9 +3359,7 @@
           "task": "CONTINUE_PATTERN/TERM",
           "templateId": "SEQ_M_CYCLE3",
           "family": "sequences",
-          "subIdea": "eq(#,add(#,#)) & eq(#,add(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(X,add(#,#))|multiply>add>subtract>ratio",
-          "question": "ما العدد التالي في المتتالية؟",
-          "answer": "F"
+          "subIdea": "eq(#,add(#,#)) & eq(#,add(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(X,add(#,#))|multiply>add>subtract>ratio"
         },
         {
           "index": 83,
@@ -3832,9 +3368,7 @@
           "task": "REVERSE_RECOVER/DATE",
           "templateId": "CAL_M_COMPOUND",
           "family": "calendar",
-          "subIdea": "eq(#,mod(add(#,X),#))|add",
-          "question": "اليوم الذي يلي غدًا بمقدار يومين هو الثلاثاء. فما اليوم الحالي؟",
-          "answer": "A"
+          "subIdea": "eq(#,mod(add(#,X),#))|add"
         },
         {
           "index": 84,
@@ -3843,9 +3377,7 @@
           "task": "CONTINUE_PATTERN/TERM",
           "templateId": "SEQ_M_LINEAR_RECUR",
           "family": "sequences",
-          "subIdea": "eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(X,add(#,mul(#,#)))|multiply>add>subtract>ratio",
-          "question": "ما العدد الذي يشغل موضع علامة الاستفهام؟",
-          "answer": "F"
+          "subIdea": "eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(X,add(#,mul(#,#)))|multiply>add>subtract>ratio"
         },
         {
           "index": 85,
@@ -3854,9 +3386,7 @@
           "task": "COMBINE_PARTS/QUANTITY",
           "templateId": "MACH_H_TWO_TYPES",
           "family": "machines",
-          "subIdea": "eq(X,add(mul(#,#,#),mul(#,#,#)))|multiply>add",
-          "question": "تنتج آلة من النوع أ 12 قميص/ساعة، وآلة من النوع ب 25 قميص/ساعة. إذا عملت 3 آلات من أ و4 آلات من ب معًا لمدة 3 ساعات، فكم قميصًا تنتج؟",
-          "answer": "F"
+          "subIdea": "eq(X,add(mul(#,#,#),mul(#,#,#)))|multiply>add"
         },
         {
           "index": 86,
@@ -3865,9 +3395,7 @@
           "task": "DECOMPOSE_COMBINED/AGE",
           "templateId": "AGE_M_FUT_SUM_DIFF",
           "family": "ages",
-          "subIdea": "eq(#,add(add(#,X),add(#,sub(X,#))))|multiply>subtract>divide>add",
-          "question": "المعطيات: سارة أكبر من مريم بـ6 سنوات؛ بعد سنتين سيكون مجموع عمريهما 28 سنة. كم عمر سارة الآن؟",
-          "answer": "D"
+          "subIdea": "eq(#,add(add(#,X),add(#,sub(X,#))))|multiply>subtract>divide>add"
         },
         {
           "index": 87,
@@ -3876,9 +3404,7 @@
           "task": "DECOMPOSE_COMBINED/RATE",
           "templateId": "RATE_H_RATE_FROM_GAP",
           "family": "unit_rate",
-          "subIdea": "eq(mul(#,#),mul(#,X,sub(X,#)))|divide>add>multiply>ratio",
-          "question": "ينجز جهاز 510 صفحة بمعدل ثابت. ولو زاد معدله بمقدار 2 صفحة/ساعة لأنجز العمل نفسه في 4 ساعات أقل. فما معدله بعد الزيادة؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,#),mul(#,X,sub(X,#)))|divide>add>multiply>ratio"
         },
         {
           "index": 88,
@@ -3887,9 +3413,7 @@
           "task": "RECOVER_PATTERN_TERM/TERM",
           "templateId": "SEQ_M_INC_DIFF",
           "family": "sequences",
-          "subIdea": "eq(#,sub(#,X)) & eq(#,sub(X,#))|multiply>add",
-          "question": "ما العدد المفقود في المتتالية؟",
-          "answer": "C"
+          "subIdea": "eq(#,sub(#,X)) & eq(#,sub(X,#))|multiply>add"
         },
         {
           "index": 89,
@@ -3898,9 +3422,7 @@
           "task": "REQUIRED_INPUT/DURATION",
           "templateId": "RATE_H_TARGET",
           "family": "unit_rate",
-          "subIdea": "eq(mul(#,#,#),mul(#,X,add(#,#)))|divide>add>multiply",
-          "question": "تنجز آلة 400 وحدة خلال 8 دقائق، وارتفع معدلها في الدقيقة بعد تطوير بمقدار 50% من القيمة السابقة. كم دقيقة تحتاج بالمعدل الجديد لإنجاز 600 وحدة؟",
-          "answer": "D"
+          "subIdea": "eq(mul(#,#,#),mul(#,X,add(#,#)))|divide>add>multiply"
         },
         {
           "index": 90,
@@ -3909,9 +3431,7 @@
           "task": "FORWARD_COMPUTE/AVERAGE",
           "templateId": "AVG_E_REMOVE",
           "family": "averages",
-          "subIdea": "eq(mul(#,X),sub(mul(#,#),#))|multiply>subtract>divide",
-          "question": "المعطيات: متوسط عدد صفحات 8 كتب هو 19 صفحة؛ أُخرج من الرف كتاب عدد صفحاته 33. فما متوسط الصفحات الباقية؟",
-          "answer": "B"
+          "subIdea": "eq(mul(#,X),sub(mul(#,#),#))|multiply>subtract>divide"
         },
         {
           "index": 91,
@@ -3920,9 +3440,7 @@
           "task": "FIND_THRESHOLD/QUANTITY",
           "templateId": "PROP_H_BREAK_EVEN",
           "family": "direct_proportion",
-          "subIdea": "eq(#,mul(#,sub(X,#)))|subtract>multiply>divide>add>ratio",
-          "question": "الخطة الأولى رسم ثابت 40 درهمًا وسعر 15 درهمًا للوحدة الواحدة، والخطة الثانية رسم ثابت 55 درهمًا وسعر 12 درهمًا للوحدة الواحدة، وتعرض شركة خطتين لشراء الوحدة نفسها. ما أقل عدد صحيح من الوحدات تصبح عنده تكلفة الخطة الثانية أقل من تكلفة الأولى؟",
-          "answer": "E"
+          "subIdea": "eq(#,mul(#,sub(X,#)))|subtract>multiply>divide>add>ratio"
         },
         {
           "index": 92,
@@ -3931,9 +3449,7 @@
           "task": "CONTINUE_PATTERN/TERM",
           "templateId": "SEQ_M_ALT_OPS",
           "family": "sequences",
-          "subIdea": "eq(#,sub(X,#))|multiply>add>ratio",
-          "question": "ما العدد التالي في المتتالية؟",
-          "answer": "B"
+          "subIdea": "eq(#,sub(X,#))|multiply>add>ratio"
         },
         {
           "index": 93,
@@ -3942,9 +3458,7 @@
           "task": "JUDGE_ENTAILMENT/STATEMENT",
           "templateId": "REL_M_CONFIRM",
           "family": "relational",
-          "subIdea": "order:small/linear/simple/mid/total|none",
-          "question": "حمد أسرع من ناصر. ماجد أسرع من علي. علي أسرع من حمد. هند أسرع من ماجد. أي عبارة مؤكدة؟",
-          "answer": "D"
+          "subIdea": "order:small/linear/simple/mid/total|none"
         },
         {
           "index": 94,
@@ -3953,9 +3467,7 @@
           "task": "RECOVER_PATTERN_TERM/TERM",
           "templateId": "SEQ_M_PAIR_RULE",
           "family": "sequences",
-          "subIdea": "eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(X,mul(#,#))|ratio>subtract>multiply",
-          "question": "ما العدد التالي في المتتالية؟",
-          "answer": "F"
+          "subIdea": "eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(X,mul(#,#))|ratio>subtract>multiply"
         },
         {
           "index": 95,
@@ -3964,9 +3476,7 @@
           "task": "COMBINE_PARTS/AVERAGE",
           "templateId": "AVG_H_COMB_ADD",
           "family": "averages",
-          "subIdea": "eq(add(#,mul(#,#),mul(#,#)),mul(#,X))|multiply>add>divide",
-          "question": "المعطيات: متوسط درجات 3 طلاب هو 14 درجة؛ متوسط درجات 5 طلاب آخرين هو 18 درجة؛ بعد ذلك انضم إلى الاختبار طالب درجته 30. فما متوسط الدرجات جميعها؟",
-          "answer": "E"
+          "subIdea": "eq(add(#,mul(#,#),mul(#,#)),mul(#,X))|multiply>add>divide"
         },
         {
           "index": 96,
@@ -3975,9 +3485,7 @@
           "task": "DECOMPOSE_COMBINED/DURATION",
           "templateId": "SPD_H_LEG_SPLIT",
           "family": "speed",
-          "subIdea": "eq(#,add(mul(#,X),mul(#,sub(#,X))))|multiply>subtract>divide",
-          "question": "قطعت سيارة 330 كيلومترًا في 5 ساعات. سارت جزءًا من الرحلة بسرعة 50 كم/ساعة والجزء الباقي بسرعة 70 كم/ساعة. فكم ساعة سارت بالسرعة الثانية؟",
-          "answer": "C"
+          "subIdea": "eq(#,add(mul(#,X),mul(#,sub(#,X))))|multiply>subtract>divide"
         },
         {
           "index": 97,
@@ -3986,9 +3494,7 @@
           "task": "COMBINE_PARTS/QUANTITY",
           "templateId": "MACH_M_SUBSET_UP",
           "family": "machines",
-          "subIdea": "eq(mul(#,X),mul(#,add(mul(#,#,#),mul(#,#,add(#,#)))))|divide>add>multiply>subtract",
-          "question": "المعطيات: تعمل 5 آلات بمعدل 20 علبة/ساعة لكل آلة؛ طُورت آلة واحدة منها فزادت إنتاجيتها بمقدار 50% من القيمة السابقة وبقيت البقية كما هي. كم علبة تنتج المجموعة خلال 4 ساعات؟",
-          "answer": "A"
+          "subIdea": "eq(mul(#,X),mul(#,add(mul(#,#,#),mul(#,#,add(#,#)))))|divide>add>multiply>subtract"
         },
         {
           "index": 98,
@@ -3997,9 +3503,7 @@
           "task": "FIND_COINCIDENCE/DURATION",
           "templateId": "SPD_H_MEET_DELAY",
           "family": "speed",
-          "subIdea": "eq(#,add(mul(#,X),mul(#,add(#,X))))|multiply>subtract>add>divide",
-          "question": "مدينتان بينهما 300 كيلومترًا، وانطلقت دراجة أ من الأولى بسرعة 60 كم/ساعة، وبعد 1.5 ساعة انطلقت دراجة ب من الثانية باتجاه أ بسرعة 90 كم/ساعة. بعد كم ساعة من انطلاق ب تلتقي الدراجتان؟",
-          "answer": "A"
+          "subIdea": "eq(#,add(mul(#,X),mul(#,add(#,X))))|multiply>subtract>add>divide"
         },
         {
           "index": 99,
@@ -4008,9 +3512,7 @@
           "task": "COMBINE_PARTS/QUANTITY",
           "templateId": "MACH_M_STOP",
           "family": "machines",
-          "subIdea": "eq(X,add(mul(#,#,#),mul(#,#,#)))|multiply>subtract>add",
-          "question": "المعطيات: تنتج كل آلة من 5 آلات 15 رغيف/ساعة؛ عملت الآلات كلها 4 ساعات، ثم توقفت آلتان وعملت البقية 5 ساعات إضافية. كم رغيفًا أُنتج؟",
-          "answer": "A"
+          "subIdea": "eq(X,add(mul(#,#,#),mul(#,#,#)))|multiply>subtract>add"
         },
         {
           "index": 100,
@@ -4019,9 +3521,7 @@
           "task": "DECOMPOSE_COMBINED/AGE",
           "templateId": "AGE_E_SUM_DIFF",
           "family": "ages",
-          "subIdea": "eq(#,add(X,sub(X,#)))|divide>ratio>add",
-          "question": "شخص أكبر من الآخر بـ4 سنوات، ومجموع عمريهما 32 سنة. كم عمر الأكبر؟",
-          "answer": "C"
+          "subIdea": "eq(#,add(X,sub(X,#)))|divide>ratio>add"
         }
       ]
     }

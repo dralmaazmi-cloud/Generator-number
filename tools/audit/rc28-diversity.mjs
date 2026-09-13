@@ -172,8 +172,17 @@ function main(argv) {
     const r = report(sh.label, m, sh.limits);
     if (!argv.includes('--quiet')) console.log(r.text);
     allPass = allPass && r.pass;
-    out.push({shape: sh.label, measurement: {...m, labelled: undefined}, grade: r.grade,
-      labelled: m.labelled});
+    out.push({
+      shape: sh.label, measurement: {...m, labelled: undefined}, grade: r.grade,
+      // The rendered stem and its key are NOT written to disk. Validation samples
+      // are drawn from the same space a sealed holdout was drawn from, so an item
+      // here can coincide with one there — measured on this release, ten of them
+      // did — and a stem printed beside its answer is that holdout's answer key
+      // for those items. The labels and signatures are what the file is for; the
+      // verbatim questions belong in a report a person reads, not in an artefact
+      // that ships.
+      labelled: m.labelled.map(({question, answer, ...row}) => row)
+    });
   }
   console.log(`\nOVERALL: ${allPass ? 'PASS' : 'FAIL'}`);
   if (jsonAt) {
