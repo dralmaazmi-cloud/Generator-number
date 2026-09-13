@@ -115,3 +115,64 @@ test('RC2-002/016/017: the pipeline rejects a question carrying an invalid const
   assert.equal(v.valid, false, 'the language stage must reject the historical construction');
   assert.ok(v.details.arabicInvalidConstructions.length > 0);
 });
+
+// --- RC2.9-6: the three renderer defects the review named --------------------
+//
+// Each is asserted on the RENDERED text of a wide sample, because each was
+// invisible in the template source: the defect was that one authored string was
+// reused across scenarios it did not fit.
+
+/** Every published question of a family, across the bands, for a wide sweep. */
+function sweepFamily(engine, family, runs = 150) {
+  const out = [];
+  for (let i = 0; i < runs; i++) {
+    for (const d of ['easy', 'medium', 'hard']) {
+      try { out.push(engine.generateQuestion({family, difficulty: d, seed: `rc29-ar|${family}|${i}|${d}`})); }
+      catch { /* band gap */ }
+    }
+  }
+  return out;
+}
+
+test('RC2.9-6: a rate answer is rendered in the output the stem names', () => {
+  // MACH_H_TWO_CONFIG formatted every answer as «قطعة/ساعة» whatever the
+  // scenario produced, so a stem counting علب was answered in قطع.
+  const engine = new Engine();
+  const offenders = [];
+  for (const q of sweepFamily(engine, 'machines')) {
+    for (const opt of Object.values(q.options ?? {})) {
+      const text = String(opt);
+      if (!text.includes('/')) continue;
+      const noun = text.split('/')[0].replace(/[\d.,\s]/g, '').trim();
+      if (noun && !q.question.includes(noun)) offenders.push(`${q.generator_id}: «${text}» against «${q.question}»`);
+    }
+  }
+  assert.deepEqual(offenders.slice(0, 3), [], `${offenders.length} answers in a unit the stem never names`);
+});
+
+test('RC2.9-6: a plural subject takes the agreement its noun calls for', () => {
+  // «قُسموا» — the sound masculine plural — was said of boards, seedlings and
+  // books. A plural of non-human things agrees as a feminine singular.
+  const engine = new Engine();
+  const offenders = [];
+  for (const q of sweepFamily(engine, 'averages')) {
+    if (!/قُسموا/.test(q.question)) continue;
+    // The only human subject in the aggregate scenes is the exam-scores one.
+    if (!/طالب|طلاب|طالبًا/.test(q.question)) offenders.push(`${q.generator_id}: ${q.question}`);
+  }
+  assert.deepEqual(offenders.slice(0, 3), [], `${offenders.length} non-human subjects with a human verb`);
+  assert.ok(sweepFamily(engine, 'averages').some(q => /قُسمت/.test(q.question)),
+    'the non-human form must actually be reachable, or this test proves nothing');
+});
+
+test('RC2.9-6: the compound calendar offset is said, not transliterated', () => {
+  // «اليوم الذي يلي غدًا بمقدار 3 أيام» is the arithmetic written out in Arabic
+  // words, not a sentence. The nesting it tests is kept; the wording is not.
+  const engine = new Engine();
+  const compound = sweepFamily(engine, 'calendar').filter(q => q.generator_id === 'CAL_M_COMPOUND');
+  assert.ok(compound.length > 0, 'CAL_M_COMPOUND must be reachable for this to mean anything');
+  assert.deepEqual(compound.filter(q => /يلي غدًا بمقدار/.test(q.question)).map(q => q.question).slice(0, 3), []);
+  // And «بعد غد» stays out of it: it is itself an idiom for today+2 and would
+  // silently change the question.
+  assert.deepEqual(compound.filter(q => /بعد غدٍ? بـ/.test(q.question)).map(q => q.question).slice(0, 3), []);
+});

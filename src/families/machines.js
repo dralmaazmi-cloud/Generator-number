@@ -510,8 +510,11 @@ function twoConfigurations(ctx) {
     difficulty: 'hard',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
-    // RC2.5-4. Pieces PER HOUR, as the stem asks; `piece` alone read as a count.
-    correct, distractors, format: unitFormat('piecePerHour'),
+    // RC2.5-4. Per HOUR, as the stem asks; the bare output noun read as a count.
+    // RC2.9-6. And in the OUTPUT THE STEM NAMES: this said «قطعة/ساعة» whatever
+    // the scene was producing, so a stem counting علب was answered in قطع. The
+    // unit is the scene's, which is the same one the stem was rendered from.
+    correct, distractors, format: unitFormat(sc.rateUnitId),
     steps: [
       `نضرب العبارة الأولى في ${d} والثانية في ${b} ليتساوى عدد آلات النوع الثاني: ${out1} × ${d} = ${out1 * d}، و${out2} × ${b} = ${out2 * b}.`,
       `بالطرح يختفي النوع الثاني ويبقى الفرق في الإنتاج = ${out1 * d} − ${out2 * b} = ${lhs}.`,

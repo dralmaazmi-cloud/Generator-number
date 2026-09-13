@@ -29,7 +29,7 @@ const num = n => displayNumber(n);
  */
 export const AGGREGATE = Object.freeze([
   {
-    key: 'abstract_values', unit: 'value', measure: null, fmtUnit: null,
+    key: 'abstract_values', human: false, unit: 'value', measure: null, fmtUnit: null,
     measurePron: 'ها', listPron: 'فيها',
     measureNoun: 'القيمة', measureRel: 'التي', measureAdded: 'قيمة',
     listOf: n => `قائمة من ${u(n, 'value')}`, listDef: 'القائمة',
@@ -45,7 +45,7 @@ export const AGGREGATE = Object.freeze([
     pairAdded: v => `أُضيفت قيمتان متوسطهما ${num(v)}`
   },
   {
-    key: 'exam_scores', unit: 'student', measure: 'degree', fmtUnit: 'degree',
+    key: 'exam_scores', human: true, unit: 'student', measure: 'degree', fmtUnit: 'degree',
     measurePron: 'ها', listPron: 'فيه',
     measureNoun: 'الدرجة', measureRel: 'التي', measureAdded: 'درجة',
     listOf: n => `كشف درجات ${u(n, 'student')}`, listDef: 'الكشف',
@@ -63,7 +63,7 @@ export const AGGREGATE = Object.freeze([
     pairAdded: v => `انضم طالبان متوسط درجتيهما ${num(v)}`
   },
   {
-    key: 'warehouse_weights', unit: 'box', measure: 'kg', fmtUnit: 'kg',
+    key: 'warehouse_weights', human: false, unit: 'box', measure: 'kg', fmtUnit: 'kg',
     measurePron: 'ه', listPron: 'فيه',
     measureNoun: 'الوزن', measureRel: 'الذي', measureAdded: 'وزن',
     listOf: n => `سجل أوزان ${u(n, 'box')}`, listDef: 'السجل',
@@ -79,7 +79,7 @@ export const AGGREGATE = Object.freeze([
     pairAdded: v => `أُدخل صندوقان متوسط وزنهما ${u(v, 'kg')}`
   },
   {
-    key: 'workshop_lengths', unit: 'panel', measure: 'meter', fmtUnit: 'meter',
+    key: 'workshop_lengths', human: false, unit: 'panel', measure: 'meter', fmtUnit: 'meter',
     measurePron: 'ه', listPron: 'فيه',
     measureNoun: 'الطول', measureRel: 'الذي', measureAdded: 'طول',
     listOf: n => `سجل أطوال ${u(n, 'panel')}`, listDef: 'السجل',
@@ -95,7 +95,7 @@ export const AGGREGATE = Object.freeze([
     pairAdded: v => `أُضيف لوحان متوسط طولهما ${u(v, 'meter')}`
   },
   {
-    key: 'library_pages', unit: 'book', measure: 'page', fmtUnit: 'page',
+    key: 'library_pages', human: false, unit: 'book', measure: 'page', fmtUnit: 'page',
     measurePron: 'ه', listPron: 'فيه',
     measureNoun: 'عدد الصفحات', measureRel: 'الذي', measureAdded: 'عدد صفحات',
     listOf: n => `سجل عدد صفحات ${u(n, 'book')}`, listDef: 'السجل',
@@ -111,7 +111,7 @@ export const AGGREGATE = Object.freeze([
     pairAdded: v => `أُضيف كتابان متوسط عدد صفحاتهما ${num(v)}`
   },
   {
-    key: 'nursery_heights', unit: 'seedling', measure: 'cm', fmtUnit: 'cm',
+    key: 'nursery_heights', human: false, unit: 'seedling', measure: 'cm', fmtUnit: 'cm',
     measurePron: 'ه', listPron: 'فيه',
     measureNoun: 'الطول', measureRel: 'الذي', measureAdded: 'طول',
     listOf: n => `سجل أطوال ${u(n, 'seedling')}`, listDef: 'السجل',
@@ -127,7 +127,7 @@ export const AGGREGATE = Object.freeze([
     pairAdded: v => `أُضيفت شتلتان متوسط طولهما ${u(v, 'cm')}`
   },
   {
-    key: 'daily_visitors', unit: 'day', measure: 'visitor', fmtUnit: 'visitor',
+    key: 'daily_visitors', human: false, unit: 'day', measure: 'visitor', fmtUnit: 'visitor',
     measurePron: 'ه', listPron: 'فيه',
     measureNoun: 'عدد الزوار', measureRel: 'الذي', measureAdded: 'عدد زوار',
     listOf: n => `سجل عدد الزوار في ${u(n, 'day')}`, listDef: 'السجل',
@@ -143,6 +143,17 @@ export const AGGREGATE = Object.freeze([
     pairAdded: v => `أُضيف يومان متوسط عدد زوارهما ${num(v)}`
   }
 ]);
+
+/**
+ * Arabic subject agreement for a plural subject.
+ *
+ * A plural of non-human things agrees as a feminine singular — «الألواح قُسمت»,
+ * never «قُسموا» — while a plural of people takes the sound masculine plural.
+ * Which one a scene is, the scene says; templates ask rather than write one
+ * form and hope every scenario happens to fit it, which is how «قُسموا» came to
+ * be said of boards, seedlings and books.
+ */
+export const pluralVerb = (scene, {nonHuman, human}) => (scene?.human ? human : nonHuman);
 
 /** «متوسط درجات 6 طلاب آخرين» — the second group of a combine. */
 export const avgOfOther = (sc, n) => `${sc.avgOf(n)} ${sc.otherAdj}`;

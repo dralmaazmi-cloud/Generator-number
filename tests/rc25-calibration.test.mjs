@@ -97,7 +97,11 @@ test('RC2.5-4: the two rate-answer templates now carry a per-hour unit', () => {
   // this test checks is unchanged: the answer is a rate, and every option is one.
   const RATE_UNITS = new Set(['unitPerHour', 'piecePerHour', 'pagePerHour', 'loafPerHour',
     'bottlePerHour', 'shirtPerHour', 'canPerHour', 'panelPerHour']);
-  const want = {RATE_H_RATE_FROM_GAP: RATE_UNITS, MACH_H_TWO_CONFIG: new Set(['piecePerHour'])};
+  // RC2.9-6: and MACH_H_TWO_CONFIG for the same reason — it formatted every
+  // answer as «قطعة/ساعة» whatever its scenario produced, so a stem counting
+  // علب was answered in قطع. Both templates now take the unit from the scene
+  // their stem was rendered from.
+  const want = {RATE_H_RATE_FROM_GAP: RATE_UNITS, MACH_H_TWO_CONFIG: RATE_UNITS};
   const seen = new Set();
   for (let i = 0; i < 2400 && seen.size < 2; i++) {
     let q;

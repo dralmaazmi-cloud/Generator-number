@@ -1,6 +1,6 @@
 import {mk, usable, num, buildBase, eq, X, add, sub, mul, resample, bandPool,
   sceneFor, composeStem, unitFormat} from './_shared.js';
-import {avgOfOther} from '../compose/scenarios.js';
+import {avgOfOther, pluralVerb} from '../compose/scenarios.js';
 
 // RC2.7-3. Every template here draws a SITUATION and has its finished clauses
 // joined by the realization layer. The arithmetic, the oracle, the distractors
@@ -654,7 +654,10 @@ function splitGroupSize(ctx) {
   const stem = composeStem(ctx, {
     facts: [
       `${sc.avgOf(count)} هو ${sc.mval(whole)}`,
-      `قُسموا إلى مجموعتين: متوسط الأولى ${sc.mval(highAvg)}، ومتوسط الثانية ${sc.mval(lowAvg)}`
+      // RC2.9-6. The verb agrees with what the scene is counting: «قُسموا» is
+      // said of students, «قُسمت» of boards, seedlings and books.
+      `${pluralVerb(sc, {nonHuman: 'قُسمت', human: 'قُسموا'})} إلى مجموعتين: `
+        + `متوسط الأولى ${sc.mval(highAvg)}، ومتوسط الثانية ${sc.mval(lowAvg)}`
     ],
     ask: `كم ${sc.countNoun} في المجموعة الأولى؟`,
     askFirst: 'حجم المجموعة الأولى'

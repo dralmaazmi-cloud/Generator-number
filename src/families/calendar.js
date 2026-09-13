@@ -161,7 +161,13 @@ function compoundForward(ctx) {
     {index: target + netOffset, misconceptionId: 'SHIFTED_WRONG_DIRECTION', derivation: `التقدم ${u(netOffset, 'day', 'oblique')} بدل الرجوع`},
     {index: target, misconceptionId: 'USED_GIVEN_VALUE_AS_ANSWER', derivation: `اليوم المذكور نفسه ${DAYS_AR[target]}`}
   ]);
-  const stem = composeSentences(ctx, `اليوم الذي يلي غدًا بمقدار ${aheadWord} هو ${DAYS_AR[target]}. فما اليوم الحالي؟`);
+  // RC2.9-6. Was «اليوم الذي يلي غدًا بمقدار 3 أيام هو الخميس» — a relative
+  // clause with an adverbial of measure hung off it, which is a translation of
+  // the arithmetic rather than a sentence anybody says. The nesting the item is
+  // about is unchanged: start at tomorrow, then move on. «بعد غدٍ بـ3 أيام» is
+  // still not used — «بعد غد» is itself an idiom for today+2 and would read as
+  // (today+2)+3.
+  const stem = composeSentences(ctx, `إذا تقدّمنا من الغد ${aheadWord} وصلنا إلى ${DAYS_AR[target]}. فما اليوم الحالي؟`);
   return buildBase(ctx, {
     templateId: 'CAL_M_COMPOUND',
     subskill: 'إزاحة مركبة أمامية من الغد',
