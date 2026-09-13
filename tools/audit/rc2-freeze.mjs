@@ -130,12 +130,16 @@ export function freeze() {
     // freeze is still the state that holdout would be sealed against, and
     // `holdoutGenerated` below says plainly that it has not been.
     holdoutSeed: rc28 ? RC28_SIGNOFF_SEED : rc27 ? RC27_SIGNOFF_SEED : (rc24 || rc23) ? RC23_SIGNOFF_SEED : rc22 ? RC22_HOLDOUT_SEED : rc21 ? RC21_HOLDOUT_SEED : HOLDOUT_SEED,
-    previousHoldouts: rc27
+    // RC2.8 inherits RC2.7's list unchanged: no holdout was generated between
+    // them, so nothing was spent. G — the seed RC2.7 froze against — is spent by
+    // being frozen against, and RC2.8 names H instead.
+    previousHoldouts: (rc28 || rc27)
       ? [{seed: HOLDOUT_SEED, status: 'FAILED_DIAGNOSTIC_HOLDOUT', reused: false},
          {seed: RC21_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
          {seed: RC22_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
          {seed: RC23_SIGNOFF_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
-         {seed: RC26_HOLDOUT_SEED, status: 'SEALED_AND_SPENT', reused: false}]
+         {seed: RC26_HOLDOUT_SEED, status: 'SEALED_AND_SPENT', reused: false},
+         ...(rc28 ? [{seed: RC27_SIGNOFF_SEED, status: 'FROZEN_AGAINST_AND_SPENT', reused: false}] : [])]
       : (rc24 || rc23)
       ? [{seed: HOLDOUT_SEED, status: 'FAILED_DIAGNOSTIC_HOLDOUT', reused: false},
          {seed: RC21_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
