@@ -61,7 +61,10 @@ test('RC2-017 MUST_REJECT: سعر سلعة المعلن', () => {
 });
 
 test('RC2-017 MUST_ACCEPT: سعر السلعة المعلن', () => {
-  assert.deepEqual(invalid('سعر السلعة المعلن 200 درهمًا.'), []);
+  // RC2.9-6. The fixture said «200 درهمًا». After a round hundred the تمييز is
+  // a singular in the genitive, so the accepted form is «200 درهم» — what this
+  // test is about, the definite adjective on the إضافة, is unchanged.
+  assert.deepEqual(invalid('سعر السلعة المعلن 200 درهم.'), []);
 });
 
 // --- a numeral may not take a definite noun ---------------------------------
@@ -175,4 +178,45 @@ test('RC2.9-6: the compound calendar offset is said, not transliterated', () => 
   // And «بعد غد» stays out of it: it is itself an idiom for today+2 and would
   // silently change the question.
   assert.deepEqual(compound.filter(q => /بعد غدٍ? بـ/.test(q.question)).map(q => q.question).slice(0, 3), []);
+});
+
+test('RC2.9-6: the تمييز agrees with the last element of the number', async () => {
+  // Everything from eleven upwards took the accusative singular, so the engine
+  // published «400 قميصًا» and «4000 درهمًا». After a round hundred or thousand
+  // the تمييز is a singular in the genitive.
+  const {unitWordFor, formatNumberWithUnit, agreeingAdjective} = await import('../src/arabic/units.js');
+  const cases = [
+    [1, 'درهم'], [2, 'درهمان'], [3, 'دراهم'], [10, 'دراهم'],
+    [11, 'درهمًا'], [99, 'درهمًا'], [198, 'درهمًا'],
+    [100, 'درهم'], [400, 'درهم'], [1000, 'درهم'], [4500, 'درهم'],
+    // A compound follows its own last element, not its size.
+    [102, 'درهمان'], [103, 'دراهم'], [110, 'دراهم'], [1001, 'درهم']
+  ];
+  for (const [n, want] of cases) assert.equal(unitWordFor(n, 'dirham'), want, `${n}`);
+  assert.equal(formatNumberWithUnit(400, 'dirham'), '400 درهم');
+  assert.equal(formatNumberWithUnit(45, 'dirham'), '45 درهمًا');
+  // The adjective on a counted noun follows the noun it describes.
+  assert.equal(agreeingAdjective(400, 'day', 'إضافي'), 'إضافي');
+  assert.equal(agreeingAdjective(45, 'day', 'إضافي'), 'إضافيًا');
+});
+
+test('RC2.9-6: no published quantity carries the wrong agreement', () => {
+  // The output-side net, on the rendered corpus rather than on the table.
+  const engine = new Engine();
+  const offenders = [];
+  for (const fam of engine.listFamilies().map(f => f.id)) {
+    for (let i = 0; i < 40; i++) {
+      for (const d of ['easy', 'medium', 'hard']) {
+        let q;
+        try { q = engine.generateQuestion({family: fam, difficulty: d, seed: `rc29-agree|${fam}|${i}|${d}`}); }
+        catch { continue; }
+        for (const t of allRenderedText(q)) {
+          for (const c of classifyQuestionConstructions([t]).invalid) {
+            if (c.id === 'NUMERAL_THEN_UNIT') offenders.push(`${q.generator_id}: ${c.text}`);
+          }
+        }
+      }
+    }
+  }
+  assert.deepEqual(offenders.slice(0, 5), [], `${offenders.length} quantities disagree with their number`);
 });

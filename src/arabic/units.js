@@ -169,8 +169,7 @@ export function formatNumberWithUnit(n, unitId, grammaticalContext = 'nominative
   if (Number.isInteger(num)) {
     if (num === 1) return u.one;
     if (num === 2) return grammaticalContext === 'oblique' ? u.dualOblique : u.dual;
-    if (num >= 3 && num <= 10) return `${num} ${u.plural}`;
-    return `${displayNumber(num)} ${u.accSing}`;
+    return `${displayNumber(num)} ${formOf(u, num)}`;
   }
   return `${displayNumber(num)} ${u.accSing}`;
 }
@@ -235,9 +234,19 @@ export function agreeingAdjective(n, unitId, stem, ctx = 'oblique') {
       if (ctx === 'nominative') return fem ? `${stem}تان` : `${stem}ان`;
       return fem ? `${stem}تين` : `${stem}ين`;
     }
-    if (num >= 3 && num <= 10) return `${stem}ة`;
+    const tail = Math.abs(num) % 100;
+    if (tail >= 3 && tail <= 10) return `${stem}ة`;
+    // RC2.9-6. After a round hundred or thousand the noun is a singular in the
+    // genitive — «أربعمئة يوم» — so its adjective is the plain singular too,
+    // never the accusative «يومًا إضافيًا» that eleven upwards takes.
+    if (tail === 0 && Math.abs(num) >= 100) return fem ? `${stem}ة` : stem;
+    if (tail === 1) return fem ? `${stem}ة` : stem;
+    if (tail === 2) {
+      if (ctx === 'nominative') return fem ? `${stem}تان` : `${stem}ان`;
+      return fem ? `${stem}تين` : `${stem}ين`;
+    }
   }
-  // 11 and above, and any non-integer, take the accusative singular noun.
+  // Eleven to ninety-nine, and any non-integer, take the accusative singular.
   return fem ? `${stem}ة` : `${stem}ًا`;
 }
 
@@ -283,16 +292,38 @@ export function theSingleUnit(unitId) {
 }
 
 /** Bare unit word for a count, without the numeral (used in mid-sentence prose). */
+/**
+ * Which form a counted noun takes after a number.
+ *
+ * RC2.9-6. The تمييز agrees with the LAST element of the number, not with its
+ * size. Before this, everything from eleven upwards took the accusative
+ * singular, so a stem said «400 قميصًا» and «4000 درهمًا» — a form an Arabic
+ * teacher marks. After a round hundred or thousand the تمييز is a singular in
+ * the GENITIVE, which in this lexicon is the bare `singular` form:
+ *
+ *   1               مفرد          درهم واحد / درهم
+ *   2               مثنى          درهمان
+ *   3–10            جمع مجرور     ثلاثة دراهم
+ *   11–99           مفرد منصوب    خمسون درهمًا
+ *   100, 1000, …    مفرد مجرور    أربعمئة درهم، أربعة آلاف درهم
+ *
+ * and a compound follows its own last element: «مئة وثلاثة دراهم»,
+ * «مئة وعشرون درهمًا», «مئة درهم».
+ */
+function formOf(u, n) {
+  if (!Number.isInteger(n)) return u.accSing;
+  const tail = Math.abs(n) % 100;
+  if (tail === 0 && Math.abs(n) >= 100) return u.singular;
+  if (tail === 1) return u.singular;
+  if (tail === 2) return u.dual;
+  if (tail >= 3 && tail <= 10) return u.plural;
+  return u.accSing;
+}
+
 export function unitWordFor(n, unitId) {
   const id = resolveUnitId(unitId);
   if (!id) throw new Error(`Unknown unit id: ${unitId}`);
-  const u = UNITS[id];
-  const num = Number(n);
-  if (!Number.isInteger(num)) return u.accSing;
-  if (num === 1) return u.singular;
-  if (num === 2) return u.dual;
-  if (num >= 3 && num <= 10) return u.plural;
-  return u.accSing;
+  return formOf(UNITS[id], Number(n));
 }
 
 // ---------------------------------------------------------------------------
@@ -347,12 +378,7 @@ export function checkArabicNumberUnits(text) {
 }
 
 function expectedFormWord(n, unitId) {
-  const u = UNITS[unitId];
-  if (!Number.isInteger(n)) return u.accSing;
-  if (n === 1) return u.singular;
-  if (n === 2) return u.dual;
-  if (n >= 3 && n <= 10) return u.plural;
-  return u.accSing;
+  return formOf(UNITS[unitId], n);
 }
 
 export function checkArabicNumberUnitsDeep(strings) {
