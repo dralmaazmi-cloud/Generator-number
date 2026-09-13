@@ -14,7 +14,7 @@ import {execFileSync} from 'node:child_process';
 import {join} from 'node:path';
 
 import {ENGINE_VERSION} from '../../src/index.js';
-import {DEVELOPMENT_SEEDS, RC21_DEVELOPMENT_SEEDS, RC22_DEVELOPMENT_SEEDS, RC23_DEVELOPMENT_SEEDS, RC24_DEVELOPMENT_SEEDS, RC27_DEVELOPMENT_SEEDS, HOLDOUT_SEED} from './rc2-development-corpus.mjs';
+import {DEVELOPMENT_SEEDS, RC21_DEVELOPMENT_SEEDS, RC22_DEVELOPMENT_SEEDS, RC23_DEVELOPMENT_SEEDS, RC24_DEVELOPMENT_SEEDS, RC27_DEVELOPMENT_SEEDS, RC27_SIGNOFF_SEED, RC26_HOLDOUT_SEED, HOLDOUT_SEED} from './rc2-development-corpus.mjs';
 import {HOLDOUT_SEED as RC21_HOLDOUT_SEED} from './rc21-holdout.mjs';
 import {HOLDOUT_SEED as RC22_HOLDOUT_SEED} from './rc22-holdout.mjs';
 import {RC23_SIGNOFF_SEED} from './rc2-internal-gate.mjs';
@@ -122,8 +122,14 @@ export function freeze() {
     // withholds the next holdout until the validation report is approved. The
     // freeze is still the state that holdout would be sealed against, and
     // `holdoutGenerated` below says plainly that it has not been.
-    holdoutSeed: (rc27 || rc24 || rc23) ? RC23_SIGNOFF_SEED : rc22 ? RC22_HOLDOUT_SEED : rc21 ? RC21_HOLDOUT_SEED : HOLDOUT_SEED,
-    previousHoldouts: (rc27 || rc24 || rc23)
+    holdoutSeed: rc27 ? RC27_SIGNOFF_SEED : (rc24 || rc23) ? RC23_SIGNOFF_SEED : rc22 ? RC22_HOLDOUT_SEED : rc21 ? RC21_HOLDOUT_SEED : HOLDOUT_SEED,
+    previousHoldouts: rc27
+      ? [{seed: HOLDOUT_SEED, status: 'FAILED_DIAGNOSTIC_HOLDOUT', reused: false},
+         {seed: RC21_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
+         {seed: RC22_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
+         {seed: RC23_SIGNOFF_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
+         {seed: RC26_HOLDOUT_SEED, status: 'SEALED_AND_SPENT', reused: false}]
+      : (rc24 || rc23)
       ? [{seed: HOLDOUT_SEED, status: 'FAILED_DIAGNOSTIC_HOLDOUT', reused: false},
          {seed: RC21_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
          {seed: RC22_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false}]

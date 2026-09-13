@@ -32,6 +32,20 @@ export const HOLDOUT_SEED = 'AUDIT-2026-09-12-B';
  * gate, which would make the two mutually dependent.
  */
 export const RC23_SIGNOFF_SEED = 'AUDIT-2026-09-12-E';
+
+/**
+ * RC2.7's sign-off holdout, NAMED and not generated.
+ *
+ * Holdout E was reviewed under RC2.5 and Holdout F was sealed under RC2.6, so
+ * both are spent: an engine remediated against a holdout can no longer be
+ * tested by it. This release freezes against a seed nothing has been drawn on,
+ * and the RC2.7 brief is explicit that the holdout is not to be generated yet —
+ * which is the same posture RC2.3 took.
+ */
+export const RC27_SIGNOFF_SEED = 'AUDIT-2026-09-13-G';
+
+/** Holdout F, sealed under RC2.6 and reviewed independently. */
+export const RC26_HOLDOUT_SEED = 'AUDIT-2026-09-13-F';
 export const DEVELOPMENT_SEEDS = Object.freeze([
   'RC2-DEV-ALPHA', 'RC2-DEV-BETA', 'RC2-DEV-GAMMA', 'RC2-DEV-DELTA', 'RC2-DEV-EPSILON'
 ]);
