@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool, composeSentences} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, gt, gte, isInt, X, add, sub, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool, composeSentences} from './_shared.js';
 
 export function generateMachines({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'machines', family_ar: 'الآلات والإنتاج', category: 'الآلات والإنتاج'};
@@ -15,7 +15,9 @@ export function generateMachines({difficulty, rng, seed, engineVersion, telemetr
     ['MACH_H_TWO_TYPES', twoTypesCombined],
     ['MACH_H_STAGE_UP', stageChange],
     ['MACH_H_TWO_CONFIG', twoConfigurations],
-    ['MACH_H_STOPPAGE_TIME', stoppageTime]
+    ['MACH_H_STOPPAGE_TIME', stoppageTime],
+    // RC2.7-3. A smallest admissible count.
+    ['MACH_H_MIN_SECOND_TYPE', minimumSecondType]
   ])(ctx);
 }
 
@@ -597,5 +599,98 @@ function stoppageTime(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, reverseReasoning: 1, stageCount: 3, arithmeticBurden: 5},
     textParams: {essentialParams: ['machines', 'ratePerMachine', 'hours', 'actualOutput']}
+  });
+}
+
+// --- RC2.7-3. A smallest admissible count ------------------------------------
+//
+// The shortfall has to be derived, inverted onto the second rate, and then
+// rounded UP: a fraction of a machine cannot be hired, and the division invites
+// rounding the other way. Both the deadline and the wholeness bind at once.
+function minimumSecondType(ctx) {
+  const {rng} = ctx;
+  const hours = rng.pick([4, 5, 6, 8]);
+  const rateA = rng.pick([12, 15, 18, 20, 24]);
+  const rateB = rng.pick([9, 10, 14, 16, 21].filter(v => v !== rateA));
+  const haveA = rng.pick([2, 3, 4, 5]);
+  const fromA = haveA * rateA * hours;
+  const needB = rng.int(2, 6);
+  // A deliberate remainder, so the quotient is not whole and rounding up is the
+  // step the question exists to test. Without it the ceiling is invisible.
+  const slack = rng.int(1, rateB * hours - 1);
+  const target = fromA + (needB - 1) * rateB * hours + slack;
+  const shortfall = target - fromA;
+  const correct = Math.ceil(shortfall / (rateB * hours));
+  if (correct !== needB) return resample(ctx, minimumSecondType);
+  if (target > 6000 || shortfall <= 0) return resample(ctx, minimumSecondType);
+  // `minimumCount` and the count one below it are parameters of the check the
+  // explanation performs, not values conjured in it: an explanation may only
+  // show a numeral that is a parameter or the result of an equality it has
+  // already displayed, and the verification states both counts before it
+  // multiplies them out.
+  const params = {
+    hours, rateFirstType: rateA, rateSecondType: rateB, machinesFirstType: haveA,
+    targetOutput: target, shortfall, outputPerSecondMachine: rateB * hours,
+    minimumCount: 0, oneBelowMinimum: 0
+  };
+  const exact = shortfall / (rateB * hours);
+  const distractors = usable(ctx, [
+    mk(correct - 1, 'ROUNDED_DOWN_INSTEAD_OF_UP', `الجزء الصحيح من ${shortfall} ÷ ${rateB * hours}`, 2),
+    mk(Math.ceil(target / (rateB * hours)), 'USED_TOTAL_INSTEAD_OF_REMAINDER', `تقريب ${target} ÷ ${rateB * hours} إلى أعلى`, 1),
+    mk(Math.ceil(shortfall / (rateA * hours)), 'RATE_APPLIED_TO_WRONG_COUNT', `تقريب ${shortfall} ÷ ${rateA * hours} إلى أعلى`, 1),
+    mk(Math.ceil(shortfall / rateB), 'MISSED_ONE_STAGE', `تقريب ${shortfall} ÷ ${rateB} إلى أعلى`, 1),
+    mk(correct + 1, 'OFF_BY_ONE_STEP', `${correct} + 1`, 2),
+    mk(haveA + correct, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${haveA} + ${correct}`, 2),
+    ...(Number.isInteger(exact) ? [] : [mk(Number(exact.toFixed(2)), 'IGNORED_THE_WHOLENESS_CONSTRAINT', `${shortfall} ÷ ${rateB * hours}`, 2)])
+  ]);
+  const stem = composeSentences(ctx,
+    `مطلوب إنتاج ${u(target, 'piece')} خلال ${u(hours, 'hour', 'oblique')}. `
+    + `تتوفر ${u(haveA, 'machine')} من النوع الأول، وتنتج كل واحدة منها ${rateA} قطعة/ساعة. `
+    + `آلات النوع الثاني تنتج كل واحدة منها ${rateB} قطعة/ساعة. `
+    + `فما أقل عدد من آلات النوع الثاني يكفي لبلوغ المطلوب؟`,
+    {askFirst: 'أقل عدد من آلات النوع الثاني يكفي لبلوغ المطلوب'});
+  return buildBase(ctx, {
+    templateId: 'MACH_H_MIN_SECOND_TYPE',
+    subskill: 'أقل عدد آلات من نوع ثانٍ لبلوغ هدف',
+    difficulty: 'hard',
+    scenario: 'mixed_fleet_shortfall', direction: 'minimum',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: v => num(v),
+    answerIsCount: true,
+    steps: [
+      `إنتاج النوع الأول = ${haveA} × ${rateA} × ${hours} = ${fromA}.`,
+      `العجز الذي يجب أن يغطيه النوع الثاني = ${target} − ${fromA} = ${shortfall}.`,
+      `الآلة الواحدة من النوع الثاني تنتج ${rateB} × ${hours} = ${rateB * hours} في المدة نفسها.`,
+      // Every intermediate is shown as the equality that produces it, including
+      // the count one below the answer: an explanation may not display a value a
+      // learner cannot see derived.
+      `${shortfall} ÷ ${rateB * hours} لا يقسم قسمة تامة، وعدد الآلات عدد صحيح، فنأخذ أصغر عدد صحيح يبلغ العجز أو يتجاوزه.`,
+      `تحقق من ${correct}: الإنتاج ${correct} × ${rateB * hours} = ${correct * rateB * hours}، ومع النوع الأول ${fromA} + ${correct * rateB * hours} = ${fromA + correct * rateB * hours}، وهو لا يقل عن ${target}.`,
+      `والعدد الأقل بواحد، أي ${correct} − 1 = ${correct - 1}، يعطي ${correct - 1} × ${rateB * hours} = ${(correct - 1) * rateB * hours}، ومع النوع الأول ${fromA} + ${(correct - 1) * rateB * hours} = ${fromA + (correct - 1) * rateB * hours}، وهو أقل من ${target}؛ فأقل عدد كافٍ هو ${correct}.`
+    ],
+    howToStart: 'احسب أولًا ما ينتجه ما هو متوفر، ثم ما تبقى.',
+    remember: 'عدد الآلات عدد صحيح، فالقسمة غير التامة تُقرب إلى أعلى دائمًا.',
+    fastMethod: 'العجز مقسومًا على إنتاج الآلة الواحدة في المدة، مقربًا لأعلى.',
+    estimatedSteps: 6, conceptTags: ['machine-rate', 'minimum', 'integer-constraint'],
+    parameters: {...params, minimumCount: correct, oneBelowMinimum: correct - 1},
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [
+        isInt(X),
+        gte(add(fromA, mul(X, rateB * hours)), target),
+        gt(target, add(fromA, mul(sub(X, 1), rateB * hours)))
+      ]
+    },
+    askedUnknown: 'minimumSecondTypeMachines', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'SHORTFALL_THEN_CEILING', targetMisconception: 'ROUNDED_DOWN_INSTEAD_OF_UP',
+      wrongMethodValue: correct - 1
+    },
+    complexityFactors: {
+      reasoningTransformations: 3, conceptCount: 3, conditionCount: 2, stageCount: 3,
+      arithmeticBurden: 5, reverseReasoning: 1
+    },
+    textParams: {essentialParams: ['hours', 'rateFirstType', 'rateSecondType', 'machinesFirstType', 'targetOutput']}
   });
 }

@@ -134,6 +134,15 @@ export const MISCONCEPTIONS = Object.freeze({
   USED_DIGIT_SUM_INSTEAD_OF_PRODUCT: 'جمعت أرقام الحد بدل أن تضربها.',
   TERM_OBEYS_THE_RULE: 'اخترت حدًا يتفق مع القاعدة؛ المطلوب هو الحد الوحيد الذي يخالفها.',
 
+  // RC2.7-3. The slips the comparison and minimum/maximum forms produce.
+  STOPPED_AT_THE_EQUAL_POINT: 'توقفت عند العدد الذي تتساوى عنده الخطتان، والمطلوب أول عدد تصبح عنده إحداهما أقل فعلًا.',
+  DIVIDED_BY_ONE_RATE_INSTEAD_OF_THE_GAP: 'قسمت على سعر إحدى الخطتين بدل الفرق بين السعرين.',
+  ADDED_WHERE_A_DIFFERENCE_BELONGS: 'جمعت مقدارين كان ينبغي أن تطرحهما.',
+  IGNORED_THE_WHOLENESS_CONSTRAINT: 'أخذت ناتج القسمة كما هو رغم أن المطلوب عدد صحيح.',
+  ROUNDED_DOWN_INSTEAD_OF_UP: 'قربت إلى الأسفل، وعدد أقل من المطلوب لا يكفي لبلوغ الهدف.',
+  DIVIDED_THE_BOUND_BY_THE_RATIO_TERM: 'قسمت الحد الأعلى على أحد طرفي النسبة وحده، والمجموع هو ما يجب أن يكون من مضاعفات مجموع الطرفين.',
+  USED_THE_BOUND_ITSELF: 'استعملت الحد الأعلى نفسه، وهو غير مسموح لأن المطلوب أقل منه.',
+
   // --- relational / odd one out ---
   RELATION_REQUIRES_UNSTATED_ASSUMPTION: 'هذا الخيار يحتاج علاقة لم ينص عليها السؤال.',
   RELATION_CONTRADICTS_STATEMENT: 'هذا الخيار يخالف علاقة منصوصة صراحة في السؤال.',

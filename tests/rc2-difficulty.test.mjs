@@ -81,10 +81,16 @@ test('RC2-015: the boundaries follow the stated rule, within a tenth', {skip: 's
 test('RC2-015: the RC1 boundaries put the median easy question in medium', () => {
   // The defect, restated as a test so it cannot quietly return.
   const rc1Band = score => (score <= 4.5 ? 'easy' : score <= 9.5 ? 'medium' : 'hard');
+  // 6.4 was the RC1-era median easy score and is kept as the historical fixture.
+  // The second probe is taken FROM the boundaries in force rather than from a
+  // literal: the tertile rule moves the boundaries whenever the template
+  // population changes (RC2.4, RC2.7), and a pinned score would make this test
+  // fail on a legitimate recalibration instead of on the defect it guards.
+  const typicalMedium = BAND_BOUNDARIES.easyMedium + 0.4;
   assert.equal(rc1Band(6.4), 'medium', 'the median easy question read as medium under RC1');
-  assert.equal(rc1Band(10.2), 'hard', 'and the median medium question read as hard');
+  assert.equal(rc1Band(typicalMedium), 'hard', 'and a typical medium question read as hard');
   assert.equal(bandFor(6.4), 'easy');
-  assert.equal(bandFor(10.2), 'medium');
+  assert.equal(bandFor(typicalMedium), 'medium');
 });
 
 test('RC2-015: bandFor is driven by the exported boundaries, not by literals', () => {

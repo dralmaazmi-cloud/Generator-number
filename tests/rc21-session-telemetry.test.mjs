@@ -78,7 +78,11 @@ test('RC2.1-1: the identity survives the relaxed fallback', () => {
   // structures, so twenty hard slots are now refused up front (five structures
   // needed). Twelve is what three structures can be asked for, and the caps
   // still bind partway through, which is what this test is about.
-  const s = e.generatePractice({count: 12, difficulty: 'hard', family: 'ratios', seed: 'RLX-0'});
+  // RC2.7: ratios gained a fourth hard structure — RAT_H_MAX_PART, a largest
+  // admissible value — so twelve slots are now comfortably covered and stopped
+  // exercising the fallback at all. Fifteen is where four structures start to
+  // bind, which is the same condition one structure further along.
+  const s = e.generatePractice({count: 15, difficulty: 'hard', family: 'ratios', seed: 'RLX-0'});
   const r = e.getTelemetry().sessionReconciliation;
   assert.ok(s.validation.diversity_warnings.length > 0, 'this setup is meant to exercise the fallback');
   assert.equal(r.publishedToSessions, r.delivered + r.sessionDiscards);

@@ -27,7 +27,9 @@ export function generateDirectProportion({difficulty, rng, seed, engineVersion, 
     ['PROP_H_COST_PLUS', multiUnitCost],
     ['PROP_H_TWO_ITEM_SYSTEM', twoItemPrices],
     ['PROP_H_REPLACE', mixtureReplacement],
-    ['PROP_H_CAPITAL_TIME', investmentTimeShare]
+    ['PROP_H_CAPITAL_TIME', investmentTimeShare],
+    // RC2.7-3. Comparison of alternatives.
+    ['PROP_H_BREAK_EVEN', breakEvenQuantity]
   ])(ctx);
 }
 
@@ -994,5 +996,93 @@ function investmentTimeShare(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, conditionCount: 2, stageCount: 3, arithmeticBurden: 6},
     textParams: {essentialParams: ['capitalA', 'monthsA', 'capitalB', 'monthsB', 'totalProfit']}
+  });
+}
+
+// --- RC2.7-3. Comparison of alternatives, and the quantity at which it turns ---
+//
+// The RC2.6 inventory found 93% of published items running FORWARD from givens
+// to a computed value, and not one construction that compares two stated plans.
+// A candidate meets that shape constantly outside an exam and never inside one,
+// and it is a different reasoning entry point: the givens describe two rules
+// rather than one situation, and what is asked is where they cross.
+function breakEvenQuantity(ctx) {
+  const {rng} = ctx;
+  const perA = rng.pick([7, 8, 9, 10, 12, 14, 15]);
+  const gap = rng.pick([2, 3, 4, 5, 6]);
+  const perB = perA - gap;
+  if (perB <= 1) return resample(ctx, breakEvenQuantity);
+  const fixedA = rng.pick([0, 20, 25, 30, 40]);
+  const cross = rng.pick([4, 5, 6, 7, 8, 9, 10, 12]);
+  const fixedB = fixedA + gap * cross;
+  // At `cross` units the two plans cost exactly the same, so the smallest whole
+  // number of units at which the second is genuinely CHEAPER is one more. That
+  // gap between "equal" and "less" is the whole of the question, and the equal
+  // point is the wrong option a learner reaches by stopping one step early.
+  const correct = cross + 1;
+  const costA = n => fixedA + perA * n;
+  const costB = n => fixedB + perB * n;
+  if (costB(correct) >= costA(correct)) return resample(ctx, breakEvenQuantity);
+  if (fixedB > 400) return resample(ctx, breakEvenQuantity);
+  const params = {fixedFeeA: fixedA, perUnitA: perA, fixedFeeB: fixedB, perUnitB: perB, equalAt: cross};
+  const distractors = usable(ctx, [
+    // One expression, not two: the feedback check evaluates the derivation and
+    // compares it with the value, and a two-equation string evaluates to the
+    // first of them.
+    mk(cross, 'STOPPED_AT_THE_EQUAL_POINT', `(${fixedB} − ${fixedA}) ÷ ${gap}`, 2),
+    mk(cross - 1, 'OFF_BY_ONE_STEP', `${cross} − 1`, 2),
+    // Only where the division comes out whole: a derivation must produce the
+    // value it is attached to, and «÷» that does not divide exactly would not.
+    ...((fixedB - fixedA) % perA === 0
+      ? [mk((fixedB - fixedA) / perA, 'DIVIDED_BY_ONE_RATE_INSTEAD_OF_THE_GAP', `${fixedB - fixedA} ÷ ${perA}`, 1)] : []),
+    ...((fixedB - fixedA) % perB === 0
+      ? [mk((fixedB - fixedA) / perB, 'DIVIDED_BY_ONE_RATE_INSTEAD_OF_THE_GAP', `${fixedB - fixedA} ÷ ${perB}`, 1)] : []),
+    mk(gap, 'USED_DIFFERENCE_AS_ANSWER', `${perA} − ${perB} = ${gap}`, 1),
+    mk(fixedB - fixedA, 'USED_DIFFERENCE_AS_ANSWER', `${fixedB} − ${fixedA} = ${fixedB - fixedA}`, 1),
+    ...((fixedB + fixedA) % gap === 0
+      ? [mk((fixedB + fixedA) / gap, 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `(${fixedB} + ${fixedA}) ÷ ${gap}`, 1)] : []),
+    mk(cross * 2, 'APPLIED_STEP_TWICE', `${cross} × 2`, 2),
+    mk(cross + gap, 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `${cross} + ${gap}`, 2),
+    mk(cross + 2, 'OFF_BY_ONE_STEP', `${cross} + 2`, 2)
+  ]);
+  const stem = composeSentences(ctx,
+    `تعرض شركة خطتين لشراء الوحدة نفسها. الخطة الأولى رسم ثابت ${u(fixedA, 'dirham')} وسعر ${u(perA, 'dirham')} للوحدة الواحدة. `
+    + `الخطة الثانية رسم ثابت ${u(fixedB, 'dirham')} وسعر ${u(perB, 'dirham')} للوحدة الواحدة. `
+    + `ما أقل عدد صحيح من الوحدات تصبح عنده تكلفة الخطة الثانية أقل من تكلفة الأولى؟`,
+    {askFirst: 'أقل عدد صحيح من الوحدات تصبح عنده الخطة الثانية أقل تكلفة', orderFree: true});
+  return buildBase(ctx, {
+    templateId: 'PROP_H_BREAK_EVEN',
+    subskill: 'نقطة تفوق خطة على أخرى',
+    difficulty: 'hard',
+    scenario: 'two_pricing_plans', direction: 'comparison',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: v => num(v),
+    steps: [
+      `فرق الرسم الثابت = ${fixedB} − ${fixedA} = ${fixedB - fixedA}، وهو ما تبدأ به الخطة الثانية متأخرة.`,
+      `فرق سعر الوحدة = ${perA} − ${perB} = ${gap}، وهو ما تكسبه الخطة الثانية عن كل وحدة.`,
+      `تتساوى التكلفتان عند ${fixedB - fixedA} ÷ ${gap} = ${cross}: ${fixedA} + ${perA} × ${cross} = ${costA(cross)}، و${fixedB} + ${perB} × ${cross} = ${costB(cross)}.`,
+      `عند التساوي لا تكون الثانية أقل، فأقل عدد يحقق المطلوب = ${cross} + 1 = ${correct}، وعنده ${fixedB} + ${perB} × ${correct} = ${costB(correct)} مقابل ${fixedA} + ${perA} × ${correct} = ${costA(correct)}.`
+    ],
+    howToStart: 'قارن ما تخسره الخطة الثانية في الرسم الثابت بما تكسبه في كل وحدة.',
+    remember: 'نقطة التساوي ليست الجواب عندما يكون المطلوب «أقل».',
+    fastMethod: 'اقسم فرق الرسم الثابت على فرق سعر الوحدة، ثم أضف واحدًا.',
+    estimatedSteps: 4, conceptTags: ['comparison', 'break-even', 'linear-cost'],
+    parameters: params,
+    answerBounds: {between: [1, 60]}, answerIsCount: true,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(sub(X, 1), gap), fixedB - fixedA)]
+    },
+    askedUnknown: 'smallestQuantityWhereSecondPlanWins', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'COMPARE_TWO_LINEAR_COSTS', targetMisconception: 'STOPPED_AT_THE_EQUAL_POINT',
+      wrongMethodValue: cross
+    },
+    complexityFactors: {
+      reasoningTransformations: 3, conceptCount: 3, conditionCount: 2, stageCount: 3,
+      arithmeticBurden: 5, reverseReasoning: 1
+    },
+    textParams: {essentialParams: ['fixedFeeA', 'perUnitA', 'fixedFeeB', 'perUnitB']}
   });
 }

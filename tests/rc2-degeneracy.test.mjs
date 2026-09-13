@@ -252,11 +252,13 @@ test('RC2-005: every template in the engine is classified, and every classificat
   // can no longer be orphaned by a pool it fails to qualify for.
   // RC2.5-2: 126. The relational count question was split into its routine and
   // its branch-combining form, which is one template more than RC2.4 had.
-  // RC2.7: 142. Five new sequence structures — the widened rule space and the
-  // targets that are not «what comes next».
+  // RC2.7: 145. Five new sequence structures — the widened rule space and the
+  // targets that are not «what comes next» — and three construction forms the
+  // inventory found missing: comparison, a largest admissible value, and a
+  // smallest admissible count.
   // RC2.6: 137. Ten new HARD structures in the five families the RC2.5
   // calibration left with none.
-  assert.equal(report.totals.templates, 142, 'every declared template is reachable');
+  assert.equal(report.totals.templates, 145, 'every declared template is reachable');
   assert.deepEqual(report.totals.unclassified, []);
   assert.deepEqual(report.totals.declaredButAbsentFromEngine, []);
   assert.equal(report.totals.rc1TemplatesWithNoModel, 23, 'the RC1 gap was 23 templates');

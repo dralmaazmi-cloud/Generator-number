@@ -286,7 +286,24 @@ export function computeComplexity(f = {}) {
  * the agreement figure is re-reported afterwards so the effect on the evidence
  * is visible rather than absorbed.
  */
-export const BAND_BOUNDARIES = Object.freeze({easyMedium: 9.8, mediumHard: 14.8});
+/**
+ * RC2.7. The rule is unchanged again; the population moved again.
+ *
+ * RC2.7 adds eight structures — five widening the sequence rule space and three
+ * supplying construction FORMS the generator had none of (comparison of stated
+ * alternatives, a largest admissible value, a smallest admissible count). The
+ * last three carry an inversion and a wholeness or strictness condition on top
+ * of their arithmetic, so the population is heavier at the top than it was and
+ * the tertiles move up with it: 145 templates, tertiles at 10.4 and 15.6. Two
+ * independent samples of 500 and 700 draws per band agree to the reported
+ * decimal.
+ *
+ * As at RC2.4 this moves no published band — a question is released at its
+ * STRUCTURAL band and the score decides nothing — so what changes is one
+ * evidence field, `complexity_band`, and the `score_agrees_with_structure` flag
+ * derived from it.
+ */
+export const BAND_BOUNDARIES = Object.freeze({easyMedium: 10.4, mediumHard: 15.6});
 
 export function bandFor(score) {
   if (score <= BAND_BOUNDARIES.easyMedium) return 'easy';

@@ -168,6 +168,11 @@ test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs ou
   // Repinned again for RC2.5: the relational count template's option set was
   // rebuilt with per-slip provenance, which moves the corpus once more.
   //
+  // Repinned again for RC2.7: eight new structures and a recomposed stem layer
+  // move the corpus once more. The replacement was found by searching for a
+  // seed that exhausts on the SAME condition the fixture has always pinned — a
+  // distractor pool below five — not by taking the first seed that threw.
+  //
   // This seed replaced an earlier one that exhausted on REDUCIBLE_RATIO. RC2-003's
   // cost measurement found that rejection was 69% of three ratio templates' draws
   // and moved the constraint into the sampler, so that rejection no longer
@@ -175,7 +180,7 @@ test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs ou
   // its job, not failing.
   const engine = new Engine({maxGenerationAttempts: 1});
   assert.throws(
-    () => engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-25'}),
+    () => engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-rc27-132'}),
     err => err.code === 'QUESTION_GENERATION_EXHAUSTED'
   );
   const s = engine.getTelemetry();
@@ -189,7 +194,7 @@ test('RC2-003: RETRY_EXHAUSTED is emitted when the retry budget actually runs ou
 
 test('RC2-003 meta: a budget that does not run out emits no exhaustion', () => {
   const engine = new Engine();
-  engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-25'});
+  engine.generateQuestion({family: 'random', difficulty: 'hard', seed: 'exh-rc27-132'});
   assert.equal(engine.getTelemetry().exhaustions, 0);
 });
 

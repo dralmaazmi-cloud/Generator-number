@@ -174,14 +174,17 @@ test('RC2.6-5: 82 hard slots deliver with every required zero', async () => {
 });
 
 test('RC2.6-5: coverage is what the report says it is', () => {
-  // RC2.7-4 adds SEQ_H_DIGIT_PRODUCT — a digit-derived rule, adjudicated on the
-  // same terms as SEQ_H_DIGIT_SUM and not a duplicate of it.
-  assert.equal(templatesAtBand('hard').length, 27);
-  assert.equal(FAMILY_REGISTRY.filter(f => f.difficulties.includes('hard')).length, 13);
+  // RC2.7 adds four: SEQ_H_DIGIT_PRODUCT (a digit-derived rule adjudicated on
+  // the same terms as SEQ_H_DIGIT_SUM) and the three construction forms the
+  // RC2.6 inventory found missing — comparison of alternatives, a largest
+  // admissible value, and a smallest admissible count. The last returns hard
+  // coverage to the machines family, which the RC2.5 calibration had emptied.
+  assert.equal(templatesAtBand('hard').length, 30);
+  assert.equal(FAMILY_REGISTRY.filter(f => f.difficulties.includes('hard')).length, 14);
   // Spread: no family may hold more than a fifth of the hard band now that the
   // sequence concentration RC2.5 reported has been diluted by real additions.
   for (const f of FAMILY_REGISTRY.filter(f => f.difficulties.includes('hard'))) {
     const n = f.templates.filter(t => TEMPLATE_STRUCTURE[t].band === 'hard').length;
-    assert.ok(n / 27 <= 0.20, `${f.id} holds ${n} of 27 hard structures`);
+    assert.ok(n / 30 <= 0.20, `${f.id} holds ${n} of 30 hard structures`);
   }
 });

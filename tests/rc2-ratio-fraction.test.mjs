@@ -62,7 +62,7 @@ test('RC2-020: no published ratio question prints an unreduced or equal-sided pa
     }
   }
   assert.deepEqual(offenders.slice(0, 5), [], `${offenders.length} escapes, e.g. ${offenders.slice(0, 3).join(' | ')}`);
-  assert.equal(templates.size, 7, `all ratio templates must still publish, saw ${[...templates].join(', ')}`);
+  assert.equal(templates.size, 8, `all ratio templates must still publish, saw ${[...templates].join(", ")}`);
 });
 
 // --- RC2-018: the hidden fraction is next ÷ previous ------------------------

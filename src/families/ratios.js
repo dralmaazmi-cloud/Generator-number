@@ -13,7 +13,9 @@ export function generateRatios({difficulty, rng, seed, engineVersion, telemetry}
     ['RAT_M_COMMON_DIFF', commonTermDifference],
     ['RAT_H_TWO_COMB', twoRatiosExternalSum],
     ['RAT_M_ADD_SIDE', addToOneSide],
-    ['RAT_H_TRANSFER', transferBetweenSides]
+    ['RAT_H_TRANSFER', transferBetweenSides],
+    // RC2.7-3. A largest admissible value.
+    ['RAT_H_MAX_PART', largestAdmissiblePart]
   ])(ctx);
 }
 
@@ -504,5 +506,84 @@ function twoRatiosExternalSum(ctx) {
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 3, arithmeticBurden: 4, dependencyDepth: 2},
     textParams: {essentialParams: ['firstA', 'firstB', 'secondB', 'secondC', 'sumAB']}
+  });
+}
+
+// --- RC2.7-3. A largest admissible value ------------------------------------
+//
+// Every other construction in this family asks for a value that the givens
+// determine exactly. This one asks for the largest value the givens ALLOW, which
+// is a different question: the answer is pinned by a bound and a wholeness
+// condition acting together rather than by an equation, and the natural first
+// move — divide the bound by the ratio term — is wrong.
+function largestAdmissiblePart(ctx) {
+  const {rng} = ctx;
+  const p = rng.pick([2, 3, 4, 5]);
+  const q = p + rng.pick([1, 2, 3, 4, 5]);
+  if (gcd(p, q) !== 1) return resample(ctx, largestAdmissiblePart);
+  const sum = p + q;
+  const k = rng.int(3, 9);
+  // A remainder is what makes the ceiling bite: with the bound an exact multiple
+  // of the ratio sum, "divide and take the quotient" would be right by accident
+  // and the item would stop measuring the wholeness condition.
+  const remainder = rng.int(1, sum - 1);
+  const bound = sum * k + remainder;
+  const total = sum * k;
+  const correct = q * k;
+  if (correct < 6 || bound > 400) return resample(ctx, largestAdmissiblePart);
+  const params = {firstTerm: p, secondTerm: q, upperBound: bound, largestTotal: total, ratioMultiple: k};
+  const distractors = usable(ctx, [
+    mk(p * k, 'USED_WRONG_SIDE_OF_RATIO', `${p} × ${k}`, 2),
+    mk(total, 'USED_SUM_OF_PARTS', `${sum} × ${k}`, 2),
+    mk(q * (k + 1), 'USED_THE_BOUND_ITSELF', `${q} × ${k + 1}`, 2),
+    mk(Math.floor(bound / q) , 'DIVIDED_THE_BOUND_BY_THE_RATIO_TERM', `الجزء الصحيح من ${bound} ÷ ${q}`, 1),
+    mk(k, 'USED_PART_VALUE_AS_ANSWER', `${total} ÷ ${sum}`, 1),
+    mk(bound - total, 'USED_DIFFERENCE_AS_ANSWER', `${bound} − ${total}`, 2),
+    mk(q * k - q, 'OFF_BY_ONE_STEP', `${q} × ${k} − ${q}`, 2),
+    mk(Math.floor(bound / sum) * p, 'USED_WRONG_SIDE_OF_RATIO', `${k} × ${p}`, 2)
+  ]);
+  const stem = composeSentences(ctx,
+    `تُقسم كمية من الوحدات بين طرفين بنسبة ${p} : ${q}. `
+    + `نصيب كل طرف عدد صحيح من الوحدات، ومجموع النصيبين أقل من ${u(bound, 'unit')}. `
+    + `فما أكبر عدد ممكن من الوحدات لنصيب الطرف الثاني؟`,
+    {askFirst: 'أكبر عدد ممكن من الوحدات لنصيب الطرف الثاني'});
+  return buildBase(ctx, {
+    templateId: 'RAT_H_MAX_PART',
+    subskill: 'أكبر نصيب ممكن تحت حد أعلى',
+    difficulty: 'hard',
+    scenario: 'bounded_share', direction: 'maximum',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: v => num(v),
+    answerIsCount: true,
+    steps: [
+      // Worded so that no numeral is immediately followed by a word the
+      // construction table does not classify: each clause ends on its equality.
+      `النصيبان عددان صحيحان بنسبة ${p} : ${q}؛ أي أن كلًّا منهما حاصل ضرب طرفه في معامل صحيح واحد، ومجموعهما من مضاعفات ${p} + ${q} = ${sum}.`,
+      `المجموع دون الحد المعطى، وأكبر مضاعف لمجموع الطرفين يبقى دون ذلك الحد هو ${sum} × ${k} = ${total}؛ أما المضاعف الذي يليه فهو ${total} + ${sum} = ${total + sum}، وهذا يبلغ الحد المعطى أو يتجاوزه.`,
+      `عند هذا المجموع يكون معامل النسبة ${k}، فنصيب الطرف الثاني = ${q} × ${k} = ${correct}.`
+    ],
+    howToStart: 'اسأل أولًا: أي المجاميع ممكنة أصلًا؟ ثم خذ أكبرها.',
+    remember: 'عندما يكون النصيبان صحيحين، المجموع من مضاعفات مجموع طرفي النسبة.',
+    fastMethod: `اقسم الحد الأعلى على ${sum}، خذ الجزء الصحيح، ثم اضربه في ${q}.`,
+    estimatedSteps: 3, conceptTags: ['ratio', 'bound', 'maximum'],
+    parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [
+        eq(mul(X, sum), mul(q, total)),
+        eq(mod(X, q), 0)
+      ]
+    },
+    askedUnknown: 'largestSecondShare', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'BOUNDED_INTEGER_SHARE', targetMisconception: 'DIVIDED_THE_BOUND_BY_THE_RATIO_TERM',
+      wrongMethodValue: Math.floor(bound / q)
+    },
+    complexityFactors: {
+      reasoningTransformations: 3, conceptCount: 3, conditionCount: 2, stageCount: 3,
+      arithmeticBurden: 4, reverseReasoning: 1
+    },
+    textParams: {essentialParams: ['firstTerm', 'secondTerm', 'upperBound']}
   });
 }

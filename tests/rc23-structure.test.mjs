@@ -56,7 +56,7 @@ test('RC2.3-1: every template is adjudicated, and every adjudication is reachabl
   // RC2.4 added eighteen HARD templates across eleven families; RC2.5 split the
   // relational count question into its routine and its branch-combining form,
   // making 126. The count is pinned so a silent loss is still caught.
-  assert.equal(adjudicated.length, 142, 'the engine holds 142 templates');
+  assert.equal(adjudicated.length, 145, 'the engine holds 145 templates');
 });
 
 test('RC2.3-1: a hard template names a structural criterion, and nothing else may', () => {
@@ -112,8 +112,19 @@ test('RC2.3-1: family capability is derived, never asserted twice', () => {
   // 2x2 linear system — the shape the Holdout E reviewers judged medium 4 of 4
   // in another family — and sometimes a degenerate one. A family being narrow is
   // the intended outcome of calibrating honestly, not a defect to repair.
-  assert.ok(!FAMILY_MAP.machines.difficulties.includes('hard'),
-    'machines reaches hard again — re-check whether that structure was re-adjudicated on evidence');
+  // RC2.7: machines reaches hard again — but NOT by re-promoting MACH_H_TWO_CONFIG,
+  // which is still medium and still demoted. The capability comes from a
+  // structure that did not exist before: MACH_H_MIN_SECOND_TYPE asks for the
+  // smallest admissible count, deriving a shortfall, inverting it onto a second
+  // rate and rounding UP because a fraction of a machine cannot be hired. That
+  // is a construction form the engine had none of, not the old one renamed.
+  assert.equal(structuralBandOf('MACH_H_TWO_CONFIG'), 'medium',
+    'the demoted two-config structure must stay demoted');
+  assert.ok(FAMILY_MAP.machines.difficulties.includes('hard'));
+  assert.deepEqual(
+    FAMILY_MAP.machines.templates.filter(t => structuralBandOf(t) === 'hard'),
+    ['MACH_H_MIN_SECOND_TYPE'],
+    'machines may only reach hard through the structure RC2.7 added');
   assert.ok(FAMILY_MAP.percentages.difficulties.includes('hard'), 'RC2.4 gave percentages two hard structures');
 });
 

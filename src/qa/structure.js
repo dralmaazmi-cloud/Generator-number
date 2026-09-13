@@ -123,6 +123,15 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'The step is built from the DIGITS of the term, so neither differences nor ratios lead anywhere and the solver must abandon the positional repertoire entirely before the rule is even visible. Adjudicated with SEQ_H_DIGIT_SUM, which it does not duplicate: the steps here do not grow monotonically, so no difference pattern competes.'},
   SEQ_M_WRONG_TERM: {band: 'medium', criteria: [], routine: ['REPEATED_OPERATION'],
     why: 'The rule is visible from the terms that obey it; the work is then checking each printed term against it, one operation at a time.'},
+  // RC2.7-3. The construction forms the RC2.6 inventory found missing: 93% of
+  // published items ran forward from givens to a value, and none compared two
+  // stated alternatives or asked for a smallest or largest admissible value.
+  PROP_H_BREAK_EVEN: {band: 'hard', criteria: ['COMPOSED_INVERSION', 'STRATEGY_SELECTION'],
+    why: 'The givens describe two RULES rather than one situation, and what is asked is where they cross. The crossing has to be inverted out of the two cost structures — neither plan\'s cost is asked for — and then the strict inequality separated from the equality, which is a second decision the arithmetic does not make for you. The equal point is a wrong option, not the key.'},
+  RAT_H_MAX_PART: {band: 'hard', criteria: ['COMPOSED_INVERSION', 'STRATEGY_SELECTION'],
+    why: 'A largest admissible value under a ceiling and a wholeness constraint at once. The solver has to see that the total must be a multiple of the sum of the ratio terms before any arithmetic is possible, then invert the bound onto that multiple. Dividing the ceiling by the ratio directly — the natural first move — is a wrong option.'},
+  MACH_H_MIN_SECOND_TYPE: {band: 'hard', criteria: ['COMPOSED_INVERSION', 'SIMULTANEOUS_CONSTRAINTS'],
+    why: 'A shortfall has to be derived from what the available machines cannot cover, then inverted onto the second rate, and then rounded UP because a fraction of a machine cannot be hired. The deadline and the wholeness bind at the same time, and rounding down — which the division invites — misses the target.'},
   SEQ_H_POW_INDEX: {band: 'hard', criteria: ['RULE_DISCOVERY', 'STRATEGY_SELECTION'],
     why: 'Nothing works until the solver subtracts each term’s POSITION, which no difference or ratio check suggests; only then do the powers appear.'},
   SEQ_H_ALT_DIV: {band: 'hard', criteria: ['RULE_DISCOVERY', 'STRATEGY_SELECTION'],

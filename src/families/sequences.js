@@ -1175,7 +1175,8 @@ function pairedRule(ctx) {
     remember: 'قد تكون العلاقة بين حدين متجاورين لا بين كل حد والذي يليه.',
     fastMethod: 'اقرأ الأزواج، ثم طبّق قاعدة الزوج على أول الزوج الأخير.',
     estimatedSteps: 4, conceptTags: ['sequence', 'grouped-terms'],
-    parameters: {pairStep: step, firstOfFirstPair: first, shownTerms: flat, lastFirst: anchor},
+    parameters: {pairStep: step, firstOfFirstPair: first, shownTerms: flat, lastFirst: anchor,
+      lastFirstSuccessor: anchor + 1, askedTerm: correct},
     reasoningPattern: ['GROUP(2)', kind.toUpperCase()],
     oracle: {
       kind: 'constraint', answerKind: 'number',
@@ -1259,7 +1260,10 @@ function digitProductStep(ctx) {
     remember: 'بعض المتتاليات تبني خطوتها من أرقام الحد لا من موضعه.',
     fastMethod: 'اضرب أرقام الحد الأخير ثم أضف الناتج إليه.',
     estimatedSteps: 3, conceptTags: ['sequence', 'digit-rule'],
-    parameters: {shownTerms: seq, lastTerm: anchor, lastStep: prod(anchor)},
+    // The digits of the last term are parameters of the rule the explanation
+    // applies, so they are declared rather than appearing from nowhere.
+    parameters: {shownTerms: seq, lastTerm: anchor, lastStep: prod(anchor),
+      lastTermDigits: digitsOf(anchor), nextTerm: correct},
     reasoningPattern: ['DIGIT_PRODUCT', 'ADD'],
     oracle: {
       kind: 'constraint', answerKind: 'number',
