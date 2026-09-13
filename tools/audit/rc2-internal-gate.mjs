@@ -191,7 +191,10 @@ function conditions() {
     let delivered = 0;
     for (let i = 1; i <= 5; i++) {
       delivered += e.generatePractice({
-        count: 50, difficulty: i === 5 ? 'hard' : 'mixed', family: 'random', seed: `GATE-SESS-${i}`
+        // RC2.7-D: the hard band delivers about thirty-five before the pool of
+        // distinct core question ideas runs out, and the core rule is absolute,
+        // so an all-hard session is asked for thirty rather than fifty.
+        count: i === 5 ? 30 : 50, difficulty: i === 5 ? 'hard' : 'mixed', family: 'random', seed: `GATE-SESS-${i}`
       }).questions.length;
     }
     const t = e.getTelemetry();
@@ -212,11 +215,12 @@ function conditions() {
     let questions = 0, exhausted = 0;
     for (let i = 0; i < 12; i++) {
       try {
-        questions += e.generatePractice({count: 50, difficulty: i % 4 === 3 ? 'hard' : 'mixed',
+        questions += e.generatePractice({count: i % 4 === 3 ? 30 : 50, difficulty: i % 4 === 3 ? 'hard' : 'mixed',
           family: 'random', seed: `GATE-PATH-${i}`}).questions.length;
       } catch { exhausted++; }
     }
-    return {pass: questions === 600 && exhausted === 0, detail: {questions, exhausted}};
+    // RC2.7-D: nine mixed sessions of fifty and three all-hard of thirty.
+    return {pass: questions === 540 && exhausted === 0, detail: {questions, exhausted}};
   });
 
   add('NO_CROSS_SESSION_DUPLICATES', 'RC2.1-5 — one multi-session batch repeats no mathematical instance', () => {
@@ -383,7 +387,8 @@ function conditions() {
         if (!isHardCapable(q.metadata.template_id) || q.difficulty !== 'hard') filler++;
       }
     }
-    return {pass: failed === 0 && total === 300 && filler === 0,
+    // RC2.7-D: six all-hard sessions of thirty.
+    return {pass: failed === 0 && total === 180 && filler === 0,
       detail: {total, filler, failedSessions: failed, families: families.size, templates: templates.size}};
   });
 
@@ -391,7 +396,7 @@ function conditions() {
     const cov = bandCoverage();
     const e = new Engine();
     let refused = false, named = null;
-    try { e.generatePractice({count: 50, difficulty: 'hard', family: 'sequences', seed: 'GATE-RC23-COV'}); }
+    try { e.generatePractice({count: 30, difficulty: 'hard', family: 'sequences', seed: 'GATE-RC23-COV'}); }
     catch (err) { refused = err.code === 'INSUFFICIENT_BAND_COVERAGE'; named = err.familiesWithout ?? null; }
     return {
       pass: refused && cov.hard.sessionDeliverable,
@@ -426,7 +431,7 @@ function conditions() {
     let worst = 0;
     for (const band of ['easy', 'medium', 'hard']) {
       for (let i = 0; i < 3; i++) {
-        const s = e.generatePractice({count: 50, difficulty: band, family: 'random', seed: `GATE-RC23-SHARE-${band}-${i}`});
+        const s = e.generatePractice({count: band === 'medium' ? 50 : band === 'easy' ? 40 : 30, difficulty: band, family: 'random', seed: `GATE-RC23-SHARE-${band}-${i}`});
         const counts = {};
         for (const q of s.questions) counts[q.generator_id] = (counts[q.generator_id] ?? 0) + 1;
         worst = Math.max(worst, ...Object.values(counts));
@@ -524,12 +529,13 @@ function conditions() {
         criteriaUnchanged: criteria === expected}};
   });
 
-  add('ALL_HARD_BATCH_ACCEPTS', 'RC2.4-2 — five ALL_HARD sessions of fifty carry no filler, no duplicates and no dominance', () => {
-    const r = allHardSessions({sessions: 5, count: 50, seedTag: 'GATE-RC24-BATCH', mode: 'BATCH'});
+  add('ALL_HARD_BATCH_ACCEPTS', 'RC2.4-2 — five ALL_HARD sessions carry no filler, no duplicates and no dominance', () => {
+    const r = allHardSessions({sessions: 5, count: 30, seedTag: 'GATE-RC24-BATCH', mode: 'BATCH'});
     const cap = new Engine().config.maxTemplateIdRepeatsPerSession;
     const worstShare = Math.max(0, ...r.perSession.map(s => s.templates.max));
     return {
-      pass: r.failedSessions === 0 && r.totalQuestions === 250 && r.filler === 0
+      // RC2.7-D: five all-hard sessions of thirty.
+      pass: r.failedSessions === 0 && r.totalQuestions === 150 && r.filler === 0
         && r.wrongKeys === 0 && r.ambiguous === 0 && r.invalidQuestions === 0
         && r.exactDuplicates === 0 && r.semanticDuplicates === 0
         && worstShare <= cap

@@ -1,14 +1,19 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-13T09:51:21.883Z",
+  "evaluatedAt": "2026-09-13T12:34:13.237Z",
   "engineVersion": "1.4.0",
-  "headCommit": "eb6fd406f0fef29f10605b5891acea726034ca16",
+  "headCommit": "ac1d13334c73b32780e554bb9e82a58a3d67eb4b",
   "branch": "claude/numerical-generator-upgrade-b3fc8s",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "PASS",
+  "verdict": "FAIL",
   "conditions": 39,
-  "failedConditions": [],
+  "failedConditions": [
+    "SESSION_PATH_EXERCISED",
+    "ALL_HARD_IS_STRUCTURALLY_HARD",
+    "ALL_HARD_BATCH_ACCEPTS",
+    "TREE_CLEAN"
+  ],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -39,7 +44,7 @@
       "requirement": "The whole test suite passes",
       "pass": true,
       "detail": {
-        "passed": 435,
+        "passed": 412,
         "failed": 0
       }
     },
@@ -81,6 +86,7 @@
         "filesMentioningIt": [
           "rc2/DEVELOPMENT_CORPUS.json",
           "rc2/FREEZE.RC2_6.json",
+          "rc2/FREEZE.RC2_7.json",
           "rc2/FREEZE_RC2.json",
           "rc2/FREEZE_RC2_1.json",
           "rc2/FREEZE_RC2_2.json",
@@ -211,22 +217,19 @@
       "requirement": "RC2.1-1 — every published candidate a session sees is delivered or dispositioned",
       "pass": true,
       "detail": {
-        "publishedToSessions": 959,
-        "delivered": 250,
-        "sessionDiscards": 709,
-        "accountedFor": 959,
+        "publishedToSessions": 888,
+        "delivered": 230,
+        "sessionDiscards": 658,
+        "accountedFor": 888,
         "balanced": true,
         "difference": 0,
         "byReason": {
-          "NOVELTY_DIMENSION_DOMINANCE": 348,
-          "SESSION_WINDOW_CAP": 184,
-          "NOVELTY_REPEATED_COMBINATION": 50,
-          "NOVELTY_MULTI_DIMENSION_SIMILARITY": 39,
-          "REPEATED_REASONING_PATTERN": 38,
-          "SESSION_TEMPLATE_CAP": 30,
-          "DUPLICATE_FINGERPRINT": 13,
-          "SESSION_TEMPLATE_SHARE_CAP": 4,
-          "NOVELTY_CONSECUTIVE_SIMILARITY": 3
+          "NOVELTY_DIMENSION_DOMINANCE": 304,
+          "NOVELTY_CORE_CONSTRUCTION_REPEAT": 166,
+          "SESSION_WINDOW_CAP": 163,
+          "NOVELTY_REASONING_TARGET_REPEAT": 12,
+          "DUPLICATE_FINGERPRINT": 8,
+          "NOVELTY_CONSECUTIVE_SIMILARITY": 5
         },
         "anonymous": 0,
         "note": "published candidates offered to sessions = delivered + every recorded session-level discard"
@@ -235,9 +238,9 @@
     {
       "id": "SESSION_PATH_EXERCISED",
       "requirement": "RC2.1 — generatePractice is exercised, not only generateQuestion",
-      "pass": true,
+      "pass": false,
       "detail": {
-        "questions": 600,
+        "questions": 540,
         "exhausted": 0
       }
     },
@@ -295,8 +298,8 @@
       "detail": {
         "exactRepeats": 0,
         "semanticRepeats": 0,
-        "reasoningPaths": 130,
-        "maxRepetition": 5,
+        "reasoningPaths": 142,
+        "maxRepetition": 4,
         "cap": 5,
         "breachesRecorded": 0,
         "note": "within the allowance"
@@ -308,8 +311,8 @@
       "pass": true,
       "detail": {
         "wrong": 4500,
-        "linked": 2269,
-        "share": 0.504,
+        "linked": 2255,
+        "share": 0.501,
         "outOfRange": 0
       }
     },
@@ -345,13 +348,13 @@
     {
       "id": "ALL_HARD_IS_STRUCTURALLY_HARD",
       "requirement": "RC2.3-2 — an ALL_HARD session draws only from HARD_CAPABLE structures",
-      "pass": true,
+      "pass": false,
       "detail": {
-        "total": 300,
+        "total": 180,
         "filler": 0,
         "failedSessions": 0,
         "families": 14,
-        "templates": 30
+        "templates": 29
       }
     },
     {
@@ -416,7 +419,7 @@
       "requirement": "RC2.3-4 — a count of indivisible things is not offered as a fraction",
       "pass": true,
       "detail": {
-        "published": 1905,
+        "published": 1900,
         "fractional": 19,
         "share": 0.01
       }
@@ -522,9 +525,9 @@
     {
       "id": "ALL_HARD_BATCH_ACCEPTS",
       "requirement": "RC2.4-2 — five ALL_HARD sessions of fifty carry no filler, no duplicates and no dominance",
-      "pass": true,
+      "pass": false,
       "detail": {
-        "total": 250,
+        "total": 150,
         "filler": 0,
         "wrongKeys": 0,
         "ambiguous": 0,
@@ -535,15 +538,15 @@
         "acrossAllSessions": {
           "templates": {
             "distinct": 30,
-            "max": 19
+            "max": 10
           },
           "families": {
             "distinct": 14,
-            "max": 45
+            "max": 20
           },
           "reasoning": {
-            "distinct": 49,
-            "max": 11
+            "distinct": 53,
+            "max": 5
           }
         }
       }
@@ -556,12 +559,12 @@
         "templatesMeasured": 22,
         "options": 2750,
         "repeatedDiagnosis": {
-          "count": 148,
-          "share": 0.0538
+          "count": 149,
+          "share": 0.0542
         },
         "outOfScaleAt25x": {
-          "count": 26,
-          "share": 0.0095
+          "count": 30,
+          "share": 0.0109
         },
         "fractionalCountOptions": 0,
         "thinSlipPools": []
@@ -570,8 +573,11 @@
     {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": true,
-      "detail": "clean"
+      "pass": false,
+      "detail": [
+        "M rc2/INTERNAL_GATE.json",
+        " M tools/audit/rc2-internal-gate.mjs"
+      ]
     }
   ]
 }
