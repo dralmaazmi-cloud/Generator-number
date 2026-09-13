@@ -60,6 +60,12 @@ export const RC24_DEVELOPMENT_SEEDS = Object.freeze([
   'RC24-DEV-PHI', 'RC24-DEV-CHI', 'RC24-DEV-PSI', 'RC24-DEV-OMEGA', 'RC24-DEV-KOPPA'
 ]);
 
+/** RC2.7, likewise. Fresh seeds: a corpus drawn on RC2.4's seeds would measure
+ * this engine on draws chosen for a different one. */
+export const RC27_DEVELOPMENT_SEEDS = Object.freeze([
+  'RC27-DEV-ALEF', 'RC27-DEV-BAA', 'RC27-DEV-JEEM', 'RC27-DEV-DAL', 'RC27-DEV-HAA'
+]);
+
 /**
  * Which release a corpus run belongs to, and where its evidence lands. The RC2.1
  * and RC2.2 corpora were built by calling `build` with a seed list by hand and
@@ -70,7 +76,8 @@ export const RELEASES = Object.freeze({
   rc21: {seeds: RC21_DEVELOPMENT_SEEDS, json: 'rc2/RC21_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc21-development-corpus.jsonl.gz'},
   rc22: {seeds: RC22_DEVELOPMENT_SEEDS, json: 'rc2/RC22_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc22-development-corpus.jsonl.gz'},
   rc23: {seeds: RC23_DEVELOPMENT_SEEDS, json: 'rc2/RC23_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc23-development-corpus.jsonl.gz'},
-  rc24: {seeds: RC24_DEVELOPMENT_SEEDS, json: 'rc2/RC24_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc24-development-corpus.jsonl.gz'}
+  rc24: {seeds: RC24_DEVELOPMENT_SEEDS, json: 'rc2/RC24_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc24-development-corpus.jsonl.gz'},
+  rc27: {seeds: RC27_DEVELOPMENT_SEEDS, json: 'rc2/RC27_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc27-development-corpus.jsonl.gz'}
 });
 
 const BANDS = ['easy', 'medium', 'hard'];
