@@ -1,0 +1,95 @@
+{
+  "schema": "rc26-holdout-f-blind-package-v1",
+  "builtAt": "2026-09-13T00:21:52.169Z",
+  "holdoutSeed": "AUDIT-2026-09-13-F",
+  "builtExactlyOnce": true,
+  "note": "Written in the same run that produced the files. PDF bytes are not reproducible — Chromium embeds a creation timestamp — so this manifest, not a later re-render, is the record of what was shipped.",
+  "out": "rc2/holdout-f-blind-package",
+  "zip": "rc2/RC2_6_HOLDOUT_F_BLIND.zip",
+  "questions": 250,
+  "sourceOnlyRead": "rc2/holdout-f-blind.jsonl.gz",
+  "sourceSha256Uncompressed": "42724fdbbf6e41f0bd5926c356379120c743b58d5c9328036b9253dae39ffcf4",
+  "blindFieldsPresent": [
+    "declaredDifficulty",
+    "itemId",
+    "options",
+    "questionNumber",
+    "sessionId",
+    "sessionKind",
+    "stem",
+    "stimulus"
+  ],
+  "leakCheck": {
+    "passed": true,
+    "findings": []
+  },
+  "pdfs": [
+    {
+      "name": "session-1",
+      "rendered": true,
+      "bytes": 239151
+    },
+    {
+      "name": "session-2",
+      "rendered": true,
+      "bytes": 236556
+    },
+    {
+      "name": "session-3",
+      "rendered": true,
+      "bytes": 238222
+    },
+    {
+      "name": "session-4",
+      "rendered": true,
+      "bytes": 237881
+    },
+    {
+      "name": "session-5",
+      "rendered": true,
+      "bytes": 238348
+    }
+  ],
+  "zipContents": [
+    "blind-questions.txt",
+    "session-1.pdf",
+    "session-2.pdf",
+    "session-3.pdf",
+    "session-4.pdf",
+    "session-5.pdf"
+  ],
+  "zipSha256": "c67a14ff59b85f955675082641a33beb83101811d16a0713c1d0dc1e100bbb58",
+  "zipBytes": 605200,
+  "files": [
+    {
+      "path": "blind-questions.txt",
+      "bytes": 81954,
+      "sha256": "b49ca621b84dfaa51bdb45a406e4b30e9f8a1ca0c8d08a3c7366b829e035c28c"
+    },
+    {
+      "path": "session-1.pdf",
+      "bytes": 239151,
+      "sha256": "631a2f2970149191cb28fc2f005b4c920d43a248a78cae93959d84e571bfef08"
+    },
+    {
+      "path": "session-2.pdf",
+      "bytes": 236556,
+      "sha256": "f5e42abb54b32890f829be907eca12e4e2b7651f08f9eb365837431258d4481d"
+    },
+    {
+      "path": "session-3.pdf",
+      "bytes": 238222,
+      "sha256": "300d3cb1d907256810329b86ce520869c7e597431573a639a07052d57365a47b"
+    },
+    {
+      "path": "session-4.pdf",
+      "bytes": 237881,
+      "sha256": "04d4ec906abaf9ba7070a6eda142dac4bca71ce903483209bd77dbbe68389dd3"
+    },
+    {
+      "path": "session-5.pdf",
+      "bytes": 238348,
+      "sha256": "8e653c9b1b72e6393b288aea57814cfc36a5abe98590e1d53dbc4771a41fa2f8"
+    }
+  ]
+}

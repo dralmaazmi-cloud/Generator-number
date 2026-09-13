@@ -1,0 +1,305 @@
+{
+  "schema": "rc26-holdout-v1",
+  "section": "RC2.6 final sign-off holdout",
+  "generatedAt": "2026-09-13T00:21:08.546Z",
+  "engineVersion": "1.4.0",
+  "holdoutSeed": "AUDIT-2026-09-13-F",
+  "previousHoldouts": [
+    {
+      "seed": "AUDIT-2026-09-12-B",
+      "status": "FAILED_DIAGNOSTIC_HOLDOUT",
+      "reused": false
+    },
+    {
+      "seed": "AUDIT-2026-09-12-C",
+      "status": "REVIEWED_AND_SPENT",
+      "reused": false
+    },
+    {
+      "seed": "AUDIT-2026-09-12-D",
+      "status": "REVIEWED_AND_SPENT",
+      "reused": false
+    }
+  ],
+  "generatedExactlyOnce": true,
+  "generatedAsOneBatch": true,
+  "frozenAt": {
+    "RC2_6_COMMIT": "1d5e25c27ad907eb33c81eaf0f5a3afcbff1c472",
+    "treeHash": "cb6e159a911c3d588dd375476411d5ad3f2bf756",
+    "productionBundleSha256": "aaad3d966b41cf9a5d8760c8449e8b2abad1bcb43c2c6d198226534679a81507",
+    "internalGate": {
+      "verdict": "PASS",
+      "conditions": 39,
+      "evaluatedAt": "2026-09-12T23:49:21.436Z",
+      "headCommit": "fb1e1ba6a29d2f829c339649ba349759d4bf1556"
+    },
+    "freezeVerifiedIntactBeforeGeneration": true
+  },
+  "plan": {
+    "mixedSessions": 4,
+    "allHardSessions": 1,
+    "questionsPerSession": 50,
+    "totalRequested": 250,
+    "requestedBands": {
+      "easy": 52,
+      "medium": 116,
+      "hard": 82
+    }
+  },
+  "sessions": [
+    {
+      "id": "SESSION-1",
+      "kind": "MIXED",
+      "seed": "AUDIT-2026-09-13-F|S1",
+      "requestedDifficulty": "mixed",
+      "requestedCount": 50,
+      "requestedBands": {
+        "easy": 13,
+        "medium": 29,
+        "hard": 8
+      },
+      "delivered": 50,
+      "generationMode": "DETERMINISTIC_SINGLE_GENERATION",
+      "diversityWarnings": 0,
+      "fallbacks": {
+        "reasoningCap": 0,
+        "templateShare": 0,
+        "relaxedCap": 0
+      },
+      "sessionCost": {
+        "published_candidates": 50,
+        "delivered": 50,
+        "discarded": 0
+      },
+      "bands": {
+        "easy": 13,
+        "hard": 8,
+        "medium": 29
+      }
+    },
+    {
+      "id": "SESSION-2",
+      "kind": "MIXED",
+      "seed": "AUDIT-2026-09-13-F|S2",
+      "requestedDifficulty": "mixed",
+      "requestedCount": 50,
+      "requestedBands": {
+        "easy": 13,
+        "medium": 29,
+        "hard": 8
+      },
+      "delivered": 50,
+      "generationMode": "DETERMINISTIC_SINGLE_GENERATION",
+      "diversityWarnings": 0,
+      "fallbacks": {
+        "reasoningCap": 0,
+        "templateShare": 0,
+        "relaxedCap": 0
+      },
+      "sessionCost": {
+        "published_candidates": 51,
+        "delivered": 50,
+        "discarded": 1
+      },
+      "bands": {
+        "hard": 8,
+        "easy": 13,
+        "medium": 29
+      }
+    },
+    {
+      "id": "SESSION-3",
+      "kind": "MIXED",
+      "seed": "AUDIT-2026-09-13-F|S3",
+      "requestedDifficulty": "mixed",
+      "requestedCount": 50,
+      "requestedBands": {
+        "easy": 13,
+        "medium": 29,
+        "hard": 8
+      },
+      "delivered": 50,
+      "generationMode": "DETERMINISTIC_SINGLE_GENERATION",
+      "diversityWarnings": 0,
+      "fallbacks": {
+        "reasoningCap": 0,
+        "templateShare": 0,
+        "relaxedCap": 0
+      },
+      "sessionCost": {
+        "published_candidates": 54,
+        "delivered": 50,
+        "discarded": 4
+      },
+      "bands": {
+        "easy": 13,
+        "medium": 29,
+        "hard": 8
+      }
+    },
+    {
+      "id": "SESSION-4",
+      "kind": "MIXED",
+      "seed": "AUDIT-2026-09-13-F|S4",
+      "requestedDifficulty": "mixed",
+      "requestedCount": 50,
+      "requestedBands": {
+        "easy": 13,
+        "medium": 29,
+        "hard": 8
+      },
+      "delivered": 50,
+      "generationMode": "DETERMINISTIC_SINGLE_GENERATION",
+      "diversityWarnings": 0,
+      "fallbacks": {
+        "reasoningCap": 0,
+        "templateShare": 0,
+        "relaxedCap": 0
+      },
+      "sessionCost": {
+        "published_candidates": 53,
+        "delivered": 50,
+        "discarded": 3
+      },
+      "bands": {
+        "easy": 13,
+        "medium": 29,
+        "hard": 8
+      }
+    },
+    {
+      "id": "SESSION-5",
+      "kind": "ALL_HARD",
+      "seed": "AUDIT-2026-09-13-F|S5",
+      "requestedDifficulty": "hard",
+      "requestedCount": 50,
+      "requestedBands": {
+        "easy": 0,
+        "medium": 0,
+        "hard": 50
+      },
+      "delivered": 50,
+      "generationMode": "DETERMINISTIC_SINGLE_GENERATION",
+      "diversityWarnings": 0,
+      "fallbacks": {
+        "reasoningCap": 0,
+        "templateShare": 0,
+        "relaxedCap": 0
+      },
+      "sessionCost": {
+        "published_candidates": 168,
+        "delivered": 50,
+        "discarded": 118
+      },
+      "bands": {
+        "hard": 50
+      }
+    }
+  ],
+  "totals": {
+    "requested": 250,
+    "delivered": 250,
+    "requestedBands": {
+      "easy": 52,
+      "medium": 116,
+      "hard": 82
+    },
+    "deliveredBands": {
+      "easy": 52,
+      "hard": 82,
+      "medium": 116
+    },
+    "bandsMatchRequest": true,
+    "blindSha256": "42724fdbbf6e41f0bd5926c356379120c743b58d5c9328036b9253dae39ffcf4",
+    "fullSha256": "e8eb627609b59f6bd5d019c281904333fee39b86e2c79c7d9ce6c59aa39eddb5"
+  },
+  "preserved": {
+    "note": "Captured at first generation, because there is no second one.",
+    "reviewerVisible": [
+      "item id",
+      "stem",
+      "stimulus as rendered",
+      "six options in published order",
+      "declared difficulty"
+    ],
+    "reviewerHidden": [
+      "key",
+      "correct value",
+      "explanation and solution steps",
+      "per-option derivations",
+      "misconception ids",
+      "template and family",
+      "structural difficulty evidence",
+      "semantic fingerprint",
+      "reasoning signature",
+      "telemetry evidence"
+    ],
+    "separateFiles": {
+      "blind": "rc2/holdout-f-blind.jsonl.gz",
+      "full": "rc2/holdout-f-full.jsonl.gz"
+    }
+  },
+  "sessionTelemetry": {
+    "publishedToSessions": 376,
+    "delivered": 250,
+    "sessionDiscards": 126,
+    "accountedFor": 376,
+    "balanced": true,
+    "difference": 0,
+    "byReason": {
+      "SESSION_WINDOW_CAP": 42,
+      "SESSION_TEMPLATE_CAP": 39,
+      "REPEATED_REASONING_PATTERN_IN_BATCH": 38,
+      "DUPLICATE_FINGERPRINT": 3,
+      "SESSION_TEMPLATE_SHARE_CAP": 3,
+      "SESSION_BATCH_DUPLICATE": 1
+    },
+    "anonymous": 0,
+    "note": "published candidates offered to sessions = delivered + every recorded session-level discard"
+  },
+  "engineTelemetry": {
+    "proposals": 413,
+    "accountedFor": 413,
+    "balanced": true,
+    "difference": 0,
+    "breakdown": {
+      "published": 376,
+      "samplerFailures": 0,
+      "finalizationFailures": 13,
+      "pipelineRejectedCandidates": 24
+    }
+  },
+  "anonymousDiscards": 0,
+  "fallbacks": {
+    "reasoningCap": 0,
+    "templateShare": 0,
+    "relaxedCap": 0
+  },
+  "exhaustions": 0,
+  "rejectionByReason": {
+    "DISTRACTOR_IMPOSSIBLE": 181,
+    "EXPLANATION_UNSOURCED_VALUE": 14,
+    "SAMPLER_CONSTRAINT": 103,
+    "IMPLAUSIBLE_DISTRACTOR_DEMOTED": 38,
+    "DISTRACTOR_NO_MISCONCEPTION": 13,
+    "SESSION_WINDOW_CAP": 42,
+    "EXPLANATION_EQUATION_FAILURE": 1,
+    "DEGENERATE_WRONG_METHOD_EQUALS_KEY": 9,
+    "SESSION_BATCH_DUPLICATE": 1,
+    "REPEATED_REASONING_PATTERN_IN_BATCH": 38,
+    "DEGENERATE_PARAMETERS": 7,
+    "AMBIGUOUS_ODD_ONE_OUT": 3,
+    "DUPLICATE_FINGERPRINT": 3,
+    "SESSION_TEMPLATE_CAP": 39,
+    "SESSION_TEMPLATE_SHARE_CAP": 3
+  },
+  "performance": {
+    "perQuestionLatencyMeasured": false,
+    "latencyP50Ms": null,
+    "latencyP95Ms": null,
+    "latencyP99Ms": null,
+    "batchWallMs": 642,
+    "msPerQuestion": 2.568
+  },
+  "declaration": "Generated once from the frozen RC2.6 engine. Not to be inspected or remediated before independent review."
+}

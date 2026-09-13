@@ -35,7 +35,7 @@ const problems = [];
 if (answerKey.length !== manifest.totals.delivered) problems.push(`${answerKey.length} records, ${manifest.totals.delivered} delivered`);
 if (ids.size !== answerKey.length) problems.push(`${ids.size} unique ids across ${answerKey.length} records`);
 for (const k of answerKey) {
-  if (!/^E-S[1-5]-\d{2}$/.test(k.itemId)) problems.push(`item id outside Holdout F: ${k.itemId}`);
+  if (!/^F-S[1-5]-\d{2}$/.test(k.itemId)) problems.push(`item id outside Holdout F: ${k.itemId}`);
   if (!/^[A-F]$/.test(k.correctOption)) problems.push(`${k.itemId}: option label ${k.correctOption}`);
   if (k.correctValue === undefined || k.correctValue === null) problems.push(`${k.itemId}: no correct value`);
 }
@@ -56,7 +56,7 @@ console.log(JSON.stringify({
   records: answerKey.length,
   uniqueItemIds: ids.size,
   idRange: [answerKey[0].itemId, answerKey[answerKey.length - 1].itemId],
-  perSession: [1, 2, 3, 4, 5].map(s => answerKey.filter(k => k.itemId.startsWith(`E-S${s}-`)).length),
+  perSession: [1, 2, 3, 4, 5].map(s => answerKey.filter(k => k.itemId.startsWith(`F-S${s}-`)).length),
   answerKeySha256: sha(Buffer.from(text, 'utf8')),
   bytes: Buffer.byteLength(text, 'utf8'),
   note: 'Held for reveal after the blind verdicts are sealed. Not part of the blind package.'
