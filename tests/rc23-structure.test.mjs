@@ -65,7 +65,9 @@ test('RC2.3-1: every template is adjudicated, and every adjudication is reachabl
   // relational count question into its routine and its branch-combining form,
   // making 126. The count is pinned so a silent loss is still caught.
   // RC2.8 added six: the six jobs listed in tests/rc2-degeneracy.test.mjs.
-  assert.equal(adjudicated.length, 151, 'the engine holds 151 templates');
+  // RC2.9 added four: SEQ_M_MISSING_OP, SEQ_M_CANDIDATE, AGE_M_PAST_RATIO and
+  // AGE_M_DIFFERENCE_INVARIANT, the breadth the cross-session journeys need.
+  assert.equal(adjudicated.length, 155, 'the engine holds 155 templates');
 });
 
 test('RC2.3-1: a hard template names a structural criterion, and nothing else may', () => {

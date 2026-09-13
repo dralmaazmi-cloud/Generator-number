@@ -54,7 +54,8 @@ export const TASKS = Object.freeze({
   RECOVER_PATTERN_TERM: 'Recover a term that sits inside or before the shown run.',
   DETECT_PATTERN_FAULT: 'Find the term that breaks the pattern.',
   IDENTIFY_RULE: 'Name the rule or the missing operation that generates the run.',
-  EXTEND_BY_PROPERTY: 'Find the value that shares the property a shown set has.'
+  EXTEND_BY_PROPERTY: 'Find the value that shares the property a shown set has.',
+  SELECT_BY_RULE: 'Decide which of several candidates the rule admits at all.'
 });
 
 /** The classes of thing an answer can be. */
@@ -179,6 +180,7 @@ export const TASK_BY_TARGET = Object.freeze({
   youngerAgeNow: t('DECOMPOSE_COMBINED', 'AGE'),
   eldestAfterYears: t('FORWARD_COMPUTE', 'AGE'),
   yearsUntilRatio: t('REQUIRED_INPUT', 'DURATION'),
+  ageDifference: t('DECOMPOSE_COMBINED', 'AGE'),
 
   // --- calendar -------------------------------------------------------------
   todayFromOffset: t('REVERSE_RECOVER', 'DATE'),
@@ -213,6 +215,8 @@ export const TASK_BY_TARGET = Object.freeze({
   secondOfPair: t('RECOVER_PATTERN_TERM', 'TERM'),
   wrongTerm: t('DETECT_PATTERN_FAULT', 'TERM'),
   generatingRule: t('IDENTIFY_RULE', 'RULE'),
+  missingOperation: t('IDENTIFY_RULE', 'RULE'),
+  sequenceMember: t('SELECT_BY_RULE', 'TERM'),
   termFromStatedRule: t('FORWARD_COMPUTE', 'TERM'),
 
   // --- fractions ------------------------------------------------------------
@@ -227,18 +231,43 @@ export const TASK_BY_TARGET = Object.freeze({
  * template knows the shape of the situation it is telling.
  */
 export const INFO_STRUCTURE_BY_TEMPLATE = Object.freeze({
-  // Sequences show a run of terms; that is their whole presentation.
-  SEQ_E_GEO: 'SEQUENCE_DISPLAY', SEQ_E_ARITH: 'SEQUENCE_DISPLAY',
-  SEQ_M_INTERLEAVED: 'SEQUENCE_DISPLAY', SEQ_M_INC_DIFF: 'SEQUENCE_DISPLAY',
-  SEQ_M_ALT_OPS: 'SEQUENCE_DISPLAY', SEQ_M_DOUBLE_DIFF: 'SEQUENCE_DISPLAY',
-  SEQ_H_RECURRENCE: 'SEQUENCE_DISPLAY', SEQ_M_LINEAR_RECUR: 'SEQUENCE_DISPLAY',
-  SEQ_M_CYCLE3: 'SEQUENCE_DISPLAY', SEQ_M_PAIR_RULE: 'SEQUENCE_DISPLAY',
-  SEQ_H_DIGIT_PRODUCT: 'SEQUENCE_DISPLAY', SEQ_M_WRONG_TERM: 'SEQUENCE_DISPLAY',
-  SEQ_H_POW_INDEX: 'SEQUENCE_DISPLAY', SEQ_H_ALT_DIV: 'SEQUENCE_DISPLAY',
-  SEQ_H_DIGIT_SUM: 'SEQUENCE_DISPLAY', SEQ_H_INDEX_MULT: 'SEQUENCE_DISPLAY',
-  // RC2.8-5. One shows the run and hides the rule; the other states the rule and
-  // shows no run at all. Different layouts, not two more runs of numbers.
-  SEQ_M_RULE_ID: 'RULE_CHOICE', SEQ_M_RULE_APPLY: 'RULE_STATED',
+  // RC2.9-4. Sequences were all one layout — «a run of terms» — and the layout
+  // axis is what the scheduler spreads on, so eighteen sequence ideas sat behind
+  // three layout slots and a fifty-question session reached about three of them.
+  // Measured across four hundred questions, the family produced eighteen items
+  // from three templates and two rule families.
+  //
+  // «A run of terms» is not one presentation. What a solver READS is the RULE
+  // the run obeys: 3، 7، 15، 31 and 2، 6، 12، 20 are a multiply-then-add run and
+  // a growing-difference run, and nobody meeting them in one sitting would call
+  // them the same information twice. So the layout carries the rule class — the
+  // class, not the parameters: ×3+2 and ×3+5 are the same affine recurrence and
+  // share a slot, which is what the review asked for.
+  SEQ_E_ARITH: 'RUN_CONSTANT_DIFFERENCE',
+  SEQ_M_WRONG_TERM: 'RUN_CONSTANT_DIFFERENCE',
+  SEQ_E_GEO: 'RUN_CONSTANT_RATIO',
+  SEQ_H_ALT_DIV: 'RUN_ALTERNATING_OPERATIONS',
+  SEQ_M_ALT_OPS: 'RUN_ALTERNATING_OPERATIONS',
+  SEQ_M_INC_DIFF: 'RUN_GROWING_DIFFERENCE',
+  SEQ_M_DOUBLE_DIFF: 'RUN_SECOND_DIFFERENCE',
+  SEQ_M_INTERLEAVED: 'RUN_TWO_INTERLEAVED',
+  SEQ_M_CYCLE3: 'RUN_OPERATION_CYCLE',
+  SEQ_M_PAIR_RULE: 'RUN_WITHIN_PAIR',
+  SEQ_H_RECURRENCE: 'RUN_SUM_OF_PREVIOUS',
+  SEQ_M_LINEAR_RECUR: 'RUN_AFFINE_RECURRENCE',
+  SEQ_H_DIGIT_PRODUCT: 'RUN_DIGIT_FUNCTION',
+  SEQ_H_DIGIT_SUM: 'RUN_DIGIT_FUNCTION',
+  SEQ_H_POW_INDEX: 'RUN_POSITION_DEPENDENT',
+  SEQ_H_INDEX_MULT: 'RUN_POSITION_DEPENDENT',
+
+  // RC2.8-5 / RC2.9-4. These four do not print «a run to be continued», so they
+  // do not share a layout with the runs above: what the solver reads is a run
+  // whose OPTIONS are rules, a rule with no run at all, a run with one of its
+  // operations blanked, or a run plus a number to be tested for membership.
+  SEQ_M_RULE_ID: 'RUN_WITH_RULE_OPTIONS',
+  SEQ_M_RULE_APPLY: 'RULE_STATED_IN_WORDS',
+  SEQ_M_MISSING_OP: 'RUN_WITH_HIDDEN_OPERATION',
+  SEQ_M_CANDIDATE: 'RUN_WITH_MEMBERSHIP_CHOICE',
 
   ODD_E_MULT: 'SET_DISPLAY', ODD_E_SQUARES: 'SET_DISPLAY', ODD_M_PRONIC: 'SET_DISPLAY',
   ODD_M_PRIME2: 'SET_DISPLAY', ODD_M_CUBES: 'SET_DISPLAY', ODD_H_SQ_MINUS: 'SET_DISPLAY',
@@ -306,11 +335,22 @@ export const INFO_STRUCTURE_BY_TEMPLATE = Object.freeze({
   AVG_H_TARGET: 'BEFORE_AFTER_CHANGE', AVG_H_OVERLAP: 'OVERLAPPING_GROUPS',
   AVG_H_SPLIT_SIZE: 'PARTITION_OF_WHOLE',
 
-  AGE_E_SUM_DIFF: 'CONSTRAINT_SET', AGE_E_MULT_DIFF: 'CONSTRAINT_SET',
-  AGE_M_FUT_SUM_DIFF: 'TWO_TIME_POINTS', AGE_M_RATIO_FUT_SUM: 'TWO_TIME_POINTS',
-  AGE_M_FUT_RATIO: 'TWO_TIME_POINTS', AGE_H_TWO_TIME: 'TWO_TIME_POINTS',
-  AGE_H_THREE_SIBLINGS: 'CONSTRAINT_SET', AGE_H_PAST_FUT: 'TWO_TIME_POINTS',
-  AGE_M_WHEN_RATIO: 'TWO_TIME_POINTS',
+  // RC2.9-5. Ages had two layouts behind eight templates, and the same throttle
+  // applied: thirteen items across four hundred questions, from three templates.
+  // The layouts below are the genuinely different INFORMATION STRUCTURES the
+  // family builds — what is stated, and at which points in time — not different
+  // names or ratio values, which are not layouts and are not counted as any.
+  AGE_E_SUM_DIFF: 'PRESENT_SUM_AND_DIFFERENCE',
+  AGE_E_MULT_DIFF: 'PRESENT_RATIO_AND_DIFFERENCE',
+  AGE_M_FUT_SUM_DIFF: 'PRESENT_DIFFERENCE_FUTURE_SUM',
+  AGE_M_RATIO_FUT_SUM: 'PRESENT_RATIO_FUTURE_SUM',
+  AGE_M_FUT_RATIO: 'PRESENT_DIFFERENCE_FUTURE_RATIO',
+  AGE_H_TWO_TIME: 'RELATION_AT_TWO_TIMES',
+  AGE_H_THREE_SIBLINGS: 'THREE_PERSON_SYSTEM',
+  AGE_H_PAST_FUT: 'PAST_AND_FUTURE_CONDITIONS',
+  AGE_M_WHEN_RATIO: 'PRESENT_AGES_ASK_ELAPSED',
+  AGE_M_PAST_RATIO: 'PAST_RELATION_ASK_PRESENT',
+  AGE_M_DIFFERENCE_INVARIANT: 'TWO_RATIOS_ASK_INVARIANT',
 
   SPD_E_DISTANCE: 'DIRECT_GIVENS', SPD_E_TIME: 'DIRECT_GIVENS',
   SPD_M_AVG: 'MULTI_STAGE_PROCESS', SPD_M_TWO_TIME: 'MULTI_STAGE_PROCESS',

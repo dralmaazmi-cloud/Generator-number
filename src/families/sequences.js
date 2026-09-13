@@ -6,6 +6,7 @@
 // malformed run is rejected rather than published with a plausible-looking key.
 
 import {mk, usable, num, buildBase, eq, X, add, sub, mul, div, resample, bandPool, askOf} from './_shared.js';
+import {grid} from '../qa/oracle-engine.js';
 
 export function generateSequences({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
   const ctx = {
@@ -35,7 +36,10 @@ export function generateSequences({difficulty, rng, seed, engineVersion, telemet
     ['SEQ_M_WRONG_TERM', wrongTerm],
     // RC2.8-5. Two jobs that are not «compute a term».
     ['SEQ_M_RULE_ID', ruleIdentification],
-    ['SEQ_M_RULE_APPLY', ruleApplication]
+    ['SEQ_M_RULE_APPLY', ruleApplication],
+    // RC2.9-4. The two jobs the review named as still missing.
+    ['SEQ_M_MISSING_OP', missingOperation],
+    ['SEQ_M_CANDIDATE', candidateSelection]
   ], pinTemplate)(ctx);
 }
 
@@ -1532,5 +1536,131 @@ function ruleApplication(ctx) {
     },
     complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: steps},
     textParams: {essentialParams: ['firstTerm', 'multiplier', 'offset']}
+  });
+}
+
+// --- RC2.9-4. Two more jobs, and two more ways to read a run ----------------
+//
+// The independent review counted about three genuine rule families reaching a
+// reader, and told us not to answer it by renaming «next term» to «fourth
+// term». These do not rename anything: one hides an OPERATION rather than a
+// term, and one asks which of several numbers could belong to the run at all.
+// Both are questions about the rule, neither is a term computation, and neither
+// can be produced by reparameterising something that already existed.
+
+function missingOperation(ctx) {
+  const {rng} = ctx;
+  // A run built from two operations applied in turn, with one of them hidden.
+  const factor = rng.pick([2, 3, 4]);
+  const increment = rng.pick([2, 3, 4, 5, 6, 7]);
+  const start = rng.int(2, 9);
+  const seq = [start];
+  for (let i = 0; i < 4; i++) seq.push(i % 2 === 0 ? seq.at(-1) * factor : seq.at(-1) + increment);
+  if (seq.some(v => v > 9000)) return resample(ctx, missingOperation);
+  // The hidden step is always a multiplication, so the answer is one operation
+  // and the run around it settles which.
+  const hiddenAt = 1;
+  const shown = seq.map((v, i) => String(v));
+  const correct = `× ${factor}`;
+  const offered = [
+    [`× ${factor + 1}`, 'READ_THE_OFFSET_FROM_THE_WRONG_STEP', 'مقدار ضرب مأخوذ من انتقال لا يخصه'],
+    [`+ ${increment}`, 'USED_WRONG_OPERATION_IN_ALTERNATION', 'عملية الخطوة الأخرى في غير موضعها'],
+    [`+ ${seq[1] - seq[0]}`, 'CHECKED_ONLY_THE_FIRST_STEP', 'قراءة الانتقال كأنه جمع لفرق ثابت'],
+    [`× ${factor - 1 > 1 ? factor - 1 : factor + 2}`, 'IGNORED_THE_MULTIPLIER', 'مقدار ضرب لا يفسّر الانتقال'],
+    [`− ${increment}`, 'APPLIED_OPERATION_IN_REVERSE', 'العملية في الاتجاه المعاكس']
+  ];
+  const seen = new Set([correct]);
+  const distractors = usable(ctx, offered
+    .filter(([v]) => !seen.has(v) && seen.add(v))
+    .map(([v, id, why]) => mk(v, id, why)));
+  if (distractors.length < 5) return resample(ctx, missingOperation);
+  return buildBase(ctx, {
+    templateId: 'SEQ_M_MISSING_OP',
+    subskill: 'العملية المفقودة بين حدين',
+    difficulty: 'medium',
+    question: 'في المتتالية الآتية تتناوب عمليتان. ما العملية التي تنقل الحد الأول إلى الحد الثاني؟',
+    displayExpression: shown.join('، '),
+    correct, distractors, format: v => String(v),
+    steps: [
+      `الفرق في الانتقال من ${seq[1]} إلى ${seq[2]} هو ${seq[2]} − ${seq[1]} = ${increment}.`,
+      `والانتقال من ${seq[2]} إلى ${seq[3]} هو ضرب: ${seq[2]} × ${factor} = ${seq[3]}.`,
+      `والعمليتان تتناوبان، فالانتقال الأول يكون ضربًا: ${seq[0]} × ${factor} = ${seq[1]}.`
+    ],
+    howToStart: 'اقرأ الانتقالات التي تراها كاملة أولًا، فهي تكشف العمليتين وترتيبهما.',
+    remember: 'في التناوب، موضع العملية يحدده ترتيب الانتقال لا حجم القفزة.',
+    fastMethod: 'اقسم الحد الثاني على الحد الأول لترى مقدار الضرب مباشرة.',
+    estimatedSteps: 3, conceptTags: ['sequence', 'rule-discovery', 'alternation'],
+    parameters: {multiplier: factor, offset: increment, firstTerm: start, shownTerms: seq},
+    // The oracle solves for the MULTIPLIER the hidden step must carry, from the
+    // two terms as printed, and the label maps that number onto the operation
+    // the item offers as an answer.
+    oracle: {
+      kind: 'search', answerKind: 'number', domain: grid(2, 12),
+      constraints: [eq(mul(X, seq[0]), seq[1])],
+      labels: Object.fromEntries(Array.from({length: 11}, (_, k) => [String(k + 2), `× ${k + 2}`]))
+    },
+    askedUnknown: 'missingOperation', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'FIND_THE_MISSING_OPERATION', targetMisconception: 'USED_WRONG_OPERATION_IN_ALTERNATION',
+      wrongMethodValue: `+ ${increment}`,
+      degenerateWhen: [{when: factor === 1, note: 'a multiplier of one is not an operation to find'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 2, stageCount: 2, arithmeticBurden: 3},
+    textParams: false
+  });
+}
+
+function candidateSelection(ctx) {
+  const {rng} = ctx;
+  // A rule the run states clearly, and five numbers that do not obey it.
+  const step = rng.pick([4, 6, 7, 8, 9, 11, 12]);
+  const start = rng.int(3, 20);
+  const seq = Array.from({length: 4}, (_, i) => start + i * step);
+  // The answer is a term further along the same run — not the next one, so the
+  // question cannot be answered by adding the step once without thinking.
+  const ahead = rng.int(3, 6);
+  const correct = seq.at(-1) + ahead * step;
+  const offered = [
+    [correct + 1, 'NEAR_MISS_ON_THE_PROPERTY', 'عدد أكبر من أحد الحدود بواحد'],
+    [correct - 1, 'NEAR_MISS_ON_THE_PROPERTY', 'عدد أصغر من أحد الحدود بواحد'],
+    [seq.at(-1) + step * ahead - Math.trunc(step / 2), 'CHECKED_ONLY_THE_FIRST_STEP', 'قفزة مقدارها نصف الفرق الثابت'],
+    [start + ahead * step, 'APPLIED_THE_RULE_TO_THE_WRONG_TERM', 'العدّ من الحد الأول بدل الحد الأخير'],
+    [correct + step - 1, 'NEAR_MISS_ON_THE_PROPERTY', 'عدد يقع بين حدين متتاليين'],
+    [correct + 2, 'NEAR_MISS_ON_THE_PROPERTY', 'عدد أكبر من أحد الحدود باثنين']
+  ];
+  const seen = new Set([correct]);
+  const distractors = usable(ctx, offered
+    .filter(([v]) => v > 0 && (v - start) % step !== 0 && !seen.has(v) && seen.add(v))
+    .map(([v, id, why]) => mk(v, id, why)));
+  if (distractors.length < 5) return resample(ctx, candidateSelection);
+  return buildBase(ctx, {
+    templateId: 'SEQ_M_CANDIDATE',
+    subskill: 'اختيار عدد ينتمي إلى المتتالية',
+    difficulty: 'medium',
+    question: 'إذا استمرت المتتالية الآتية على قاعدتها، فأيُّ الأعداد الآتية يمكن أن يكون أحد حدودها؟',
+    displayExpression: `${seq.join('، ')}، …`,
+    correct, distractors, format: v => num(v),
+    steps: [
+      `الفرق الثابت = ${seq[1]} − ${seq[0]} = ${step}.`,
+      `كل حد يساوي الحد الأول مضافًا إليه مضاعفات الفرق الثابت.`,
+      `نطرح الحد الأول من كل خيار ونختبر القسمة على الفرق: ${correct} − ${start} = ${correct - start}، ثم ${correct - start} ÷ ${step} = ${(correct - start) / step}.`
+    ],
+    howToStart: 'اطرح الحد الأول من كل خيار واختبر إن كان الباقي من مضاعفات الفرق.',
+    remember: 'الانتماء إلى متتالية لا يعني أن يكون العدد هو الحد التالي مباشرة.',
+    fastMethod: 'العدد ينتمي إذا كان ناتج (العدد − الحد الأول) ÷ الفرق عددًا صحيحًا موجبًا.',
+    estimatedSteps: 3, conceptTags: ['sequence', 'membership'],
+    parameters: {firstTerm: start, step, shownTerms: seq},
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(X, add(start, mul(step, (correct - start) / step)))]
+    },
+    askedUnknown: 'sequenceMember', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'TEST_MEMBERSHIP_OF_A_RUN', targetMisconception: 'NEAR_MISS_ON_THE_PROPERTY',
+      wrongMethodValue: start + ahead * step,
+      degenerateWhen: [{when: step === 1, note: 'every integer belongs when the step is one'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 3},
+    textParams: false
   });
 }

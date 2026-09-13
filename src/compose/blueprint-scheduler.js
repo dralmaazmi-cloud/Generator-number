@@ -35,6 +35,19 @@
 import {BLUEPRINTS, blueprintsForBand, blueprintId, presentationOf} from './blueprints.js';
 
 /** Relaxation stages, in the order they are given up. Reported by name. */
+/**
+ * How many times one CONSTRUCTION may appear in a session.
+ *
+ * Two, which is what the acceptance gates leave room for rather than a number
+ * chosen for its own sake: the largest perceptual cluster in a hundred may be
+ * three, and each occurrence after the first is also counted as a near
+ * duplicate, of which a hundred may carry five. A cap of three satisfied the
+ * cluster gate and produced six near duplicates; two satisfies both. It is held
+ * as a plan-level bound so the session is composed under it rather than
+ * filtered against it afterwards, and it is read off what was DELIVERED.
+ */
+export const CONSTRUCTION_CLUSTER_CAP = 2;
+
 export const STAGES = Object.freeze([
   'ALL_CONSTRAINTS',
   'FAMILY_TASK_REUSE_ALLOWED',
@@ -89,13 +102,17 @@ export class BlueprintScheduler {
    * @param {Map<string,number>} [opts.batchBlueprints] shared across a batch
    */
   constructor({bandSchedule, familyPreference = [], familyPool = null, rng,
-    recentBlueprints = null, batchPresentations = null, batchBlueprints = null,
-    batchCount = null} = {}) {
+    journey = null, recentBlueprints = null, batchPresentations = null,
+    batchBlueprints = null, batchCount = null} = {}) {
     this.bands = [...bandSchedule];
     this.count = this.bands.length;
     this.familyPreference = familyPreference;
     this.familyPool = familyPool;
     this.rng = rng;
+    // RC2.9-1. What this user solved in earlier sessions of the same journey.
+    // Consulted at selection, so an idea they have already met is not offered
+    // again while the band still holds one they have not.
+    this.journey = journey;
     this.recentBlueprints = recentBlueprints;
     this.batchPresentations = batchPresentations;
     this.batchBlueprints = batchBlueprints;
@@ -200,6 +217,37 @@ export class BlueprintScheduler {
     const presHere = (state.presentationUse.get(pres) ?? 0)
       + (this.batchPresentations?.get(pres) ?? 0);
     // --- hard --------------------------------------------------------------
+    // RC2.9-3. An idea this user has already solved is treated exactly as one
+    // this session has already used: not eligible while the band holds an idea
+    // they have not met. Given up only at the same last stage the in-session
+    // rule is, and recorded there by name — never silently, and never as a
+    // surface relaxation.
+    if (stage < 5 && this.journey?.hasSolved('blueprint', id)) return 'SOLVED_IN_EARLIER_SESSION';
+    // RC2.9-2. And the CONSTRUCTION, not only the blueprint. A fourth
+    // proportion told about boxes and one told about machines are two
+    // blueprints and one question; planning the second as fresh meant the
+    // realisation guard threw it away, fifty-one times in one session, and the
+    // session ran out before it was full. The catalogue records what each
+    // blueprint realises, so the planner knows this before it allocates.
+    if (stage < 5 && this.journey && (b.signatures ?? []).length
+      && (b.signatures ?? []).every(sig => this.journey.hasSolved('perceptual', sig))) {
+      return 'CONSTRUCTION_SOLVED_IN_EARLIER_SESSION';
+    }
+    // Within THIS session the same construction is bounded rather than banned.
+    //
+    // Banning it outright — no blueprint whose constructions are all already on
+    // the page — reads as the obvious companion to the rule above, and it was
+    // tried: it pushed the planner into the few families that carry many
+    // constructions, whose items then shared five surface dimensions and were
+    // thrown away at realisation, taking a hundred-question sitting from 25.9%
+    // of candidates rejected to 45.6%. The bound below is what the review
+    // actually asks for — no construction may be the third thing a reader
+    // recognises — and it is read off what was DELIVERED, not off what a
+    // blueprint might have produced.
+    if (stage < 4 && (b.signatures ?? []).length
+      && (b.signatures ?? []).every(sig => (state.signatureUse?.get(sig) ?? 0) >= CONSTRUCTION_CLUSTER_CAP)) {
+      return 'CONSTRUCTION_CLUSTER_CAP';
+    }
     if (presHere >= this.presentationCap) return 'PRESENTATION_CLUSTER_CAP';
     if (usedHere > 0 && stage < 4) return 'BLUEPRINT_ALREADY_USED';
     if (stage < 5) {
@@ -255,6 +303,14 @@ export class BlueprintScheduler {
         taskUse: state.taskUse.get(b.task) ?? 0,
         familyUse: state.familyUse.get(b.family) ?? 0,
         recent: this.recentBlueprints?.has(blueprintId(b)) ? 1 : 0,
+        // Ranked before everything else: an idea the user has never met beats
+        // one they have, whatever else is equal.
+        solvedBefore: this.journey?.hasSolved('blueprint', blueprintId(b)) ? 1 : 0,
+        constructionSolved: this.journey && (b.signatures ?? []).length
+          && (b.signatures ?? []).some(sig => this.journey.hasSolved('perceptual', sig)) ? 1 : 0,
+        journeyPresentation: this.journey?.timesRecently('presentation', pres) ?? 0,
+        journeyTask: this.journey?.timesRecently('task', b.task) ?? 0,
+        journeyFamily: this.journey?.timesRecently('family', b.family) ?? 0,
         // How often the BATCH has already used this idea. Without it each
         // session of a sitting plans from an empty page and happily re-picks
         // what the previous session used, up to the batch cap: a 150-question
@@ -267,9 +323,14 @@ export class BlueprintScheduler {
       };
     });
     scored.sort((x, y) =>
-      x.recent - y.recent
+      x.solvedBefore - y.solvedBefore
+      || x.constructionSolved - y.constructionSolved
+      || x.recent - y.recent
       || x.batchUse - y.batchUse
+      || x.journeyPresentation - y.journeyPresentation
       || x.presUse - y.presUse
+      || x.journeyTask - y.journeyTask
+      || x.journeyFamily - y.journeyFamily
       || x.reach - y.reach
       || x.familyTaskUse - y.familyTaskUse
       || x.taskUse - y.taskUse
@@ -279,7 +340,7 @@ export class BlueprintScheduler {
     return scored.map(s => s.b);
   }
 
-  _commit(state, b, i) {
+  _commit(state, b, i, realized = null) {
     const id = blueprintId(b), pres = presentationOf(b);
     // RC2.8-3. A batch's shared tallies are written here, and ONLY when this is
     // the live realization — the plan is provisional and backtracks, so counting
@@ -294,6 +355,13 @@ export class BlueprintScheduler {
     state.presentationUse.set(pres, (state.presentationUse.get(pres) ?? 0) + 1);
     state.taskUse.set(b.task, (state.taskUse.get(b.task) ?? 0) + 1);
     state.familyUse.set(b.family, (state.familyUse.get(b.family) ?? 0) + 1);
+    // Which CONSTRUCTION this placement put on the page. During realization the
+    // caller knows it exactly, because the question has been rendered; during
+    // the plan it is known only when the blueprint can realise just one, and a
+    // guess is worse than nothing, so nothing is counted for the rest.
+    const sig = realized ?? ((b.signatures ?? []).length === 1 ? b.signatures[0] : null);
+    state.placedSignature[i] = sig;
+    if (sig) state.signatureUse.set(sig, (state.signatureUse.get(sig) ?? 0) + 1);
     if (!state.familyTasks.has(b.family)) state.familyTasks.set(b.family, new Map());
     const ft = state.familyTasks.get(b.family);
     ft.set(b.task, (ft.get(b.task) ?? 0) + 1);
@@ -311,6 +379,8 @@ export class BlueprintScheduler {
     dec(state.presentationUse, pres);
     dec(state.taskUse, b.task);
     dec(state.familyUse, b.family);
+    if (state.placedSignature[i]) dec(state.signatureUse, state.placedSignature[i]);
+    state.placedSignature[i] = null;
     const ft = state.familyTasks.get(b.family);
     if (ft) { dec(ft, b.task); if (!ft.size) state.familyTasks.delete(b.family); }
     state.placed[i] = null;
@@ -328,7 +398,8 @@ export class BlueprintScheduler {
       placed: new Array(this.count).fill(null),
       blueprintUse: new Map(), presentationUse: new Map(),
       taskUse: new Map(), familyUse: new Map(), repeats: 0,
-      familyTasks: new Map(), familyTaskPool: this._familyTaskPool()
+      familyTasks: new Map(), familyTaskPool: this._familyTaskPool(),
+      signatureUse: new Map(), placedSignature: new Array(this.count).fill(null)
     };
     const choices = new Array(this.count).fill(null);
     const cursors = new Array(this.count).fill(0);
@@ -421,7 +492,8 @@ export class BlueprintScheduler {
       placed: new Array(this.count).fill(null),
       blueprintUse: new Map(), presentationUse: new Map(),
       taskUse: new Map(), familyUse: new Map(), repeats: 0,
-      familyTasks: new Map(), familyTaskPool: this._familyTaskPool()
+      familyTasks: new Map(), familyTaskPool: this._familyTaskPool(),
+      signatureUse: new Map(), placedSignature: new Array(this.count).fill(null)
     };
     return this.live;
   }
@@ -430,13 +502,29 @@ export class BlueprintScheduler {
    * The blueprints that may fill slot `i` given what has actually been
    * published, best first, excluding ones already tried here.
    */
-  admissibleAt(i, exclude = new Set()) {
+  admissibleAt(i, exclude = new Set(), {atLeast = 6} = {}) {
     const pool = this._pool(this.bands[i]).filter(b => !exclude.has(blueprintId(b)));
-    for (let stage = 0; stage < STAGES.length; stage++) {
-      const ok = pool.filter(b => this._violation(b, i, this.live, stage) === null);
-      if (ok.length) return {stage: STAGES[stage], blueprints: this._rank(ok, i, this.live)};
+    // Walk the stages in their declared order and KEEP GOING until there is
+    // enough to work with.
+    //
+    // Returning at the first non-empty stage looked strict and was brittle: a
+    // slot whose strictest stage admitted exactly one blueprint got a list of
+    // one, spent its whole retry budget redrawing that single idea, and failed
+    // the session while twenty-five ideas sat one stage further down. The order
+    // is unchanged — everything admissible under the tighter rule still ranks
+    // ahead of everything that needed a looser one — so this loosens nothing;
+    // it stops a thin first stage from hiding the rest.
+    const seen = new Set();
+    const out = [];
+    let firstStage = null;
+    for (let stage = 0; stage < STAGES.length && out.length < atLeast; stage++) {
+      const ok = pool.filter(b => !seen.has(blueprintId(b))
+        && this._violation(b, i, this.live, stage) === null);
+      if (!ok.length) continue;
+      if (firstStage === null) firstStage = STAGES[stage];
+      for (const b of this._rank(ok, i, this.live)) { seen.add(blueprintId(b)); out.push(b); }
     }
-    return {stage: null, blueprints: []};
+    return {stage: firstStage, blueprints: out};
   }
 
   /**
@@ -465,7 +553,9 @@ export class BlueprintScheduler {
   }
 
   /** Commit what was actually published to the live state. */
-  record(i, blueprint) { this._commit(this.live, blueprint, i); }
+  record(i, blueprint, realizedSignature = null) {
+    this._commit(this.live, blueprint, i, realizedSignature);
+  }
 
   /** What the realised session looks like on the axes this scheduler controls. */
   realizedReport() {

@@ -262,7 +262,11 @@ test('RC2-005: every template in the engine is classified, and every classificat
   // «after how many years», «name the rule», «apply a stated rule», «name the
   // shared property», «which number would join the set», «what fraction is
   // left». The count is pinned so a silent LOSS is still caught.
-  assert.equal(report.totals.templates, 151, 'every declared template is reachable');
+  // RC2.9: 155. Canonicalising the perceptual signature collapsed constructions
+  // that were only parameter variants, so the breadth the journeys need had to
+  // come from four real structures: a hidden operation and a membership test in
+  // sequences, a past ratio and an invariant difference in ages.
+  assert.equal(report.totals.templates, 155, 'every declared template is reachable');
   assert.deepEqual(report.totals.unclassified, []);
   assert.deepEqual(report.totals.declaredButAbsentFromEngine, []);
   assert.equal(report.totals.rc1TemplatesWithNoModel, 23, 'the RC1 gap was 23 templates');

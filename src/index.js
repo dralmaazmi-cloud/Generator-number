@@ -9,6 +9,8 @@ import {structuralBandOf} from './qa/structure.js';
 import {NoveltyScheduler, CORE} from './compose/novelty.js';
 import {BlueprintScheduler, capacityFor} from './compose/blueprint-scheduler.js';
 import {blueprintFor, blueprintId, presentationOf} from './compose/blueprints.js';
+import {JourneyMemory, keysOf} from './compose/diversity-history.js';
+import {entityWordsIn} from './compose/entities.js';
 
 import {generateSequences} from './families/sequences.js';
 import {generateRatios} from './families/ratios.js';
@@ -480,11 +482,29 @@ export class NumericalQuestionGeneratorEngine {
     //
     // Difficulty is untouched: the band of every slot is the band the difficulty
     // schedule already decided, and the planner may not move one.
+    // RC2.9-1. What this user has already solved, in earlier sessions of the
+    // same journey.
+    //
+    // A session is fifty questions and a user who wants a hundred sits two, so
+    // the second call used to start the planner from an empty page: every idea
+    // the first session spent was eligible again. Measured through the product's
+    // own entry, 34 of the second fifty repeated something already solved, and
+    // the first repeat landed at Q51.
+    //
+    // The memory is a VALUE the caller hands in and gets back — never a field
+    // on the engine — so an omitted history behaves exactly as this engine did
+    // before, and a journey that is continued does not restart. It is consumed
+    // HERE, before a single blueprint is allocated, rather than used to reject
+    // candidates after they have been rendered.
+    const journey = new JourneyMemory(options.diversityHistory);
     const blueprints = new BlueprintScheduler({
       bandSchedule: difficultySchedule,
       familyPreference: familySchedule,
       familyPool: selectedFamilies,
       rng: rng.fork('blueprints'),
+      // The ideas this user has met before are not eligible again while the
+      // pool holds any they have not.
+      journey,
       recentBlueprints: options.recentBlueprints instanceof Set ? options.recentBlueprints : null,
       batchPresentations: options.batchPresentations ?? null,
       batchBlueprints: options.batchBlueprints ?? null,
@@ -677,6 +697,31 @@ export class NumericalQuestionGeneratorEngine {
           q.generator_id, q.metadata?.task_signature ?? '?', q.family,
           difficultySchedule[i], q.metadata?.information_structure ?? 'DIRECT_GIVENS'
         );
+        // RC2.9-3. Has this user already solved this exact question, or this
+        // exact construction, in an earlier session of the same journey?
+        //
+        // Checked on the FINISHED item, because that is where the stem and the
+        // perceptual identity are finally known, and checked on every retry —
+        // never staged. A construction the user has met is not a surface
+        // similarity to be relaxed under pressure; it is the defect this
+        // release exists to remove.
+        const journeyStem = q.metadata?.normalized_stem_identity ?? null;
+        const journeyPerceptual = q.metadata?.user_perceptual_signature ?? null;
+        // The stem is checked against the WHOLE journey — a literal repeat is
+        // a defect wherever it falls — and the construction against earlier
+        // sessions only, because spreading constructions inside one session is
+        // the scheduler's staged job and was already being done.
+        const solvedBefore = journey.hasMet('stem', journeyStem) ? 'stem'
+          : journey.hasSolved('perceptual', journeyPerceptual) ? 'perceptual'
+          : null;
+        if (solvedBefore) {
+          this.telemetry.sessionDiscard({
+            family: q.family, templateId: q.generator_id,
+            reasonCode: REASON.NOVELTY_CORE_CONSTRUCTION_REPEAT, seed, attempt: retry + 1,
+            detail: `JOURNEY: already solved in an earlier session (${solvedBefore})`
+          });
+          continue;
+        }
         const hardBreach = blueprints.hardViolation(i, realizedBlueprint);
         if (hardBreach) {
           this.telemetry.sessionDiscard({
@@ -877,7 +922,12 @@ export class NumericalQuestionGeneratorEngine {
         chosen.q.family, difficultySchedule[i],
         chosen.q.metadata?.information_structure ?? 'DIRECT_GIVENS'
       );
-      blueprints.record(i, deliveredBlueprint);
+      blueprints.record(i, deliveredBlueprint,
+        chosen.q.metadata?.user_perceptual_signature ?? null);
+      // RC2.9-1. The journey remembers what it delivered, from the identities
+      // the question itself publishes, so the memory and the measurement can
+      // never disagree about what the user was shown.
+      journey.record(keysOf(chosen.q, {entityWords: [...entityWordsIn(chosen.q.question)]}));
       const deliveredSubIdea = chosen.q.metadata?.sub_idea_signature ?? null;
       if (deliveredSubIdea) {
         if (!familySubIdeas.has(chosen.q.family)) familySubIdeas.set(chosen.q.family, new Set());
@@ -961,6 +1011,12 @@ export class NumericalQuestionGeneratorEngine {
       },
       summary: this.summarizeBatch(questions),
       validation,
+      // RC2.9-1. What the product persists so the NEXT session of this journey
+      // knows what the user has already solved. JSON, bounded to the fifty-to-
+      // a-hundred horizon the product is for, and a pure function of the seed
+      // and the history that came in. A caller that ignores it gets exactly the
+      // engine that existed before this field did.
+      diversity_history: journey.toHistory(),
       questions
     };
   }

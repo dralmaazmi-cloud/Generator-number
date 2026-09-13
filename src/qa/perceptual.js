@@ -146,6 +146,90 @@ export function normalizedPath(kinds = []) {
   return out.join('>') || 'none';
 }
 
+/**
+ * RC2.9-2. Reasoning archetypes: the constructions a solver recognises as the
+ * same piece of work however the story is told.
+ *
+ * The independent review proved two false distinctions that the relation-plus-
+ * path view could not see past, because it reads the equation as written rather
+ * than as solved:
+ *
+ *   FOURTH_PROPORTION   «four boxes cost eighty, what do six cost», «a machine
+ *                       makes 450 in six hours, what do five make in two»,
+ *                       «this many words in this many minutes». Whether the
+ *                       proportion has two factors on a side or three, the
+ *                       solver does one thing: a ÷ b × c. The extra factor is
+ *                       arithmetic, not a second idea.
+ *
+ *   TWO_EQUATION_SYSTEM «two boxes and three pieces cost X, four boxes and one
+ *                       piece cost Y, find the box» and «machine A and machine
+ *                       B in two configurations, find A's rate». Eliminate one
+ *                       unknown, substitute back. Different nouns, one method.
+ *
+ * These are matched STRUCTURALLY, on the shape of the constraint the oracle
+ * declares, so a new template built the same way is recognised without being
+ * listed anywhere. Anything that matches neither keeps the relation-and-path
+ * identity it had, which is why this narrows the signature exactly where the
+ * review showed it was too wide and nowhere else.
+ */
+const isLiteral = n => n === '#' || n === undefined;
+
+/** The shape of one side: how many factors, and whether the unknown is among them. */
+function productShape(node) {
+  const t = typeof node === 'string' ? node : topology(node);
+  const m = /^mul\(([^()]*)\)$/.exec(t);
+  if (!m) return null;
+  const parts = m[1].split(',');
+  return {factors: parts.length, hasUnknown: parts.includes('X')};
+}
+
+/** The two operands of a top-level `op(a,b)`, split on the comma that separates them. */
+function operandsOf(text, op) {
+  const head = `${op}(`;
+  if (!text.startsWith(head) || !text.endsWith(')')) return null;
+  const body = text.slice(head.length, -1);
+  let depth = 0;
+  for (let i = 0; i < body.length; i++) {
+    if (body[i] === '(') depth++;
+    else if (body[i] === ')') depth--;
+    else if (body[i] === ',' && depth === 0) return [body.slice(0, i), body.slice(i + 1)];
+  }
+  return null;
+}
+
+/** a × b … = c × x … — one equality, products both sides, the unknown a factor. */
+function isFourthProportion(relation) {
+  if (relation.includes(' & ')) return false;
+  const m = operandsOf(relation, 'eq');
+  if (!m) return false;
+  const left = productShape(m[0]);
+  const right = productShape(m[1]);
+  if (!left || !right) return false;
+  if (left.hasUnknown === right.hasUnknown) return false;
+  // Two or three factors a side is the same proportion with one more quantity
+  // carried through it; beyond that the sentence is doing something else.
+  return left.factors <= 3 && right.factors <= 3;
+}
+
+/** k × x = (a × b) − (c × d) — one unknown left after eliminating the other. */
+function isTwoEquationSystem(relation) {
+  if (relation.includes(' & ')) return false;
+  const m = operandsOf(relation, 'eq');
+  if (!m) return false;
+  const [left, right] = m;
+  const shape = productShape(left);
+  if (!shape || !shape.hasUnknown) return false;
+  const difference = operandsOf(right, 'sub');
+  if (!difference) return false;
+  return difference.every(side => productShape(side)?.hasUnknown === false);
+}
+
+export function reasoningArchetype(relation, path) {
+  if (isFourthProportion(relation)) return 'FOURTH_PROPORTION';
+  if (isTwoEquationSystem(relation)) return 'TWO_EQUATION_SYSTEM';
+  return `${relation}|${path}`;
+}
+
 const ENTRY = new Set(['forward', 'reverse', 'comparison', 'minimum', 'maximum']);
 
 /**
@@ -181,15 +265,33 @@ export const infoStructureOf = templateId =>
 export function userPerceptualSignature(spec = {}) {
   const t = taskOf(spec.askedUnknown) ?? {task: 'UNCLASSIFIED', qty: 'UNCLASSIFIED'};
   const entry = ENTRY.has(spec.direction) ? spec.direction : 'forward';
-  return [
-    `task:${t.task}`,
-    `qty:${t.qty}`,
-    `rel:${normalizedRelation(spec.oracle)}`,
-    `path:${normalizedPath(spec.operationKinds)}`,
-    `info:${infoStructureOf(spec.templateId)}`,
-    `entry:${entry}`
-  ].join('|');
+  const relation = normalizedRelation(spec.oracle);
+  const path = normalizedPath(spec.operationKinds);
+  const archetype = reasoningArchetype(relation, path);
+  const named = archetype !== `${relation}|${path}`;
+  // RC2.9-2. Where the construction is one the review named, the signature
+  // carries the NAME and drops the equation dressing and the layout — a fourth
+  // proportion is a fourth proportion whether it is stated as two givens or as
+  // two configurations, and the review proved that separating them was
+  // manufacturing diversity out of a story. Everything else keeps the identity
+  // it had, layout included.
+  // The answer CLASS is dropped for a named archetype, deliberately. «Find the
+  // price of the box» and «find machine A's rate» are the same elimination told
+  // about different goods, and the review named keeping them apart as one of
+  // the false distinctions. The class is still published on its own axis for
+  // analysis; it just no longer makes two questions out of one construction.
+  return named
+    ? [`task:${t.task}`, `arch:${archetype}`, `entry:${entry}`].join('|')
+    : [`task:${t.task}`, `qty:${t.qty}`, `rel:${relation}`, `path:${path}`,
+      `info:${infoStructureOf(spec.templateId)}`, `entry:${entry}`].join('|');
 }
+
+/**
+ * The reasoning archetype on its own: the construction, with the job and the
+ * answer class stripped away. Two questions sharing it are the same method.
+ */
+export const reasoningArchetypeOf = spec =>
+  reasoningArchetype(normalizedRelation(spec.oracle), normalizedPath(spec.operationKinds));
 
 /**
  * The coarsest perceptual unit: the job and the thing asked for, with the

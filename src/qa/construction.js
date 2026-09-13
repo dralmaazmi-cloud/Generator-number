@@ -79,6 +79,25 @@ export function scenarioSignature({family, scenario} = {}) {
 
 const norm = s => (s ?? '').replace(/\s+/g, ' ').trim();
 
+/**
+ * RC2.9-4. The rendered STEM, and nothing else.
+ *
+ * The exact-duplicate measure keyed on stem + options, so the same question
+ * with its choices in another order counted as two questions. To a reader it is
+ * the same question twice — the options are not what is being asked — and the
+ * independent review found a journey that asked one stem twice while the
+ * measure reported no duplicate at all.
+ *
+ * Normalisation removes only what is genuinely irrelevant to identity:
+ * whitespace, and the presentation of the digits. Anything else — a different
+ * noun, a different number — makes a different stem, which is the point.
+ */
+export function normalizedStemIdentity(q) {
+  const stem = norm(q.question ?? q.stem ?? '');
+  const shown = norm(q.display_expression ?? q.stimulus ?? '');
+  return shown ? `${stem} ⟨${shown}⟩` : stem;
+}
+
 /** The whole rendered item, for the exact-duplicate measure. */
 export function renderedItem(q) {
   return [

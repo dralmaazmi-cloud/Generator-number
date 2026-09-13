@@ -40,7 +40,9 @@ export const RULE_FAMILY = Object.freeze({
   SEQ_H_ALT_DIV: 'alternating-divide',
   SEQ_H_INDEX_MULT: 'index-scaled-multiplier',
   SEQ_M_RULE_ID: 'linear-recurrence',
-  SEQ_M_RULE_APPLY: 'linear-recurrence'
+  SEQ_M_RULE_APPLY: 'linear-recurrence',
+  SEQ_M_MISSING_OP: 'alternating-operations',
+  SEQ_M_CANDIDATE: 'constant-difference'
 });
 
 /** Targets that are «what comes next», however the template labels them. */

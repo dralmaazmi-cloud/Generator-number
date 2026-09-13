@@ -12,7 +12,7 @@ import {structuralBandOf, criteriaOf} from './qa/structure.js';
 import {coreConstructionSignature, reasoningTargetPair} from './qa/core-construction.js';
 import {userPerceptualSignature, taskSignature, subIdeaSignature, infoStructureOf} from './qa/perceptual.js';
 import {stemSkeleton, scenarioSignature, constructionSignature,
-  skillSignature, entityPattern, parameterizationSignature} from './qa/construction.js';
+  skillSignature, entityPattern, parameterizationSignature, normalizedStemIdentity} from './qa/construction.js';
 import {buildFingerprint, buildSemanticFingerprint, buildStructuralSignature, questionFingerprint} from './qa/fingerprint.js';
 
 export const LETTERS = ['A','B','C','D','E','F'];
@@ -381,6 +381,10 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
       // construction (situation + asked unknown + direction) that identifies a
       // genuinely different telling.
       stem_skeleton: stemSkeleton(base.question, NAME_POOL),
+      // RC2.9-4. The stem on its own, options excluded: two items sharing it
+      // are the same question asked twice however the choices are arranged.
+      normalized_stem_identity: normalizedStemIdentity(
+        {question: base.question, display_expression: base.display_expression ?? null}),
       scenario_signature: scenarioSignature({family: base.family, scenario: base.scenario}),
       construction_signature: constructionSignature({
         family: base.family, scenario: base.scenario,

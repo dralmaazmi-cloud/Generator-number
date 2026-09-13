@@ -14,7 +14,10 @@ export function generateAges({difficulty, rng, seed, engineVersion, telemetry, p
     ['AGE_H_PAST_FUT', pastRatioFutureSum],
     ['AGE_H_TWO_TIME', twoTimeRatio],
     ['AGE_H_THREE_SIBLINGS', threeSiblingsFuture],
-    ['AGE_M_WHEN_RATIO', yearsUntilRatio]
+    ['AGE_M_WHEN_RATIO', yearsUntilRatio],
+    // RC2.9-5. Two more time structures, not two more names.
+    ['AGE_M_PAST_RATIO', pastRatioPresentAge],
+    ['AGE_M_DIFFERENCE_INVARIANT', differenceFromTwoRatios]
   ], pinTemplate)(ctx);
 }
 
@@ -594,5 +597,165 @@ function yearsUntilRatio(ctx) {
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 3, arithmeticBurden: 3},
     textParams: {essentialParams: ['youngerAge', 'olderAge']}
+  });
+}
+
+/**
+ * RC2.9-5. A relationship in the PAST, and the present age asked for.
+ *
+ * Every construction this family had ran forward or stood still: a relation now,
+ * or a relation some years ahead. Reading backwards is a different piece of
+ * work — the years come OFF both ages before the relation is applied, and the
+ * slip it teaches against is subtracting them from one age only.
+ */
+function pastRatioPresentAge(ctx) {
+  const {rng} = ctx;
+  const ratio = rng.pick([2, 3, 4]);
+  const back = rng.int(3, 10);
+  const youngerThen = rng.int(4, 14);
+  const olderThen = ratio * youngerThen;
+  const younger = youngerThen + back;
+  const older = olderThen + back;
+  if (older > 70 || older <= younger) return resample(ctx, pastRatioPresentAge);
+  const diff = older - younger;
+  const correct = older;
+  const params = {yearsAgo: back, ratio, ageDifference: diff};
+  const ratioWord = ratio === 2 ? 'ضعف' : ratio === 3 ? 'ثلاثة أمثال' : 'أربعة أمثال';
+  const distractors = usable(ctx, [
+    mk(younger, 'ANSWERED_OTHER_PERSON', `${older} − ${diff}`, 3),
+    mk(olderThen, 'ANSWERED_PAST_AGE', `${older} − ${back}`, 3),
+    mk(diff, 'USED_AGE_DIFFERENCE_AS_ANSWER', `الفرق ${diff}`, 1),
+    mk(diff * ratio, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${diff} × ${ratio}`, 2),
+    mk(older + back, 'SUBTRACTED_INSTEAD_OF_ADDED', `${older} + ${back}`, 3),
+    mk(Math.round(diff / (ratio + 1)) + back, 'RATE_APPLIED_TO_WRONG_COUNT', `${diff} ÷ (${ratio} + 1) + ${back}`, 2)
+  ]);
+  const stem = composeSentences(ctx,
+    `قبل ${u(back, 'year', 'oblique')} كان عمر الأخ الأكبر ${ratioWord} عمر أخيه الأصغر. `
+    + `والفرق بين عمريهما ${u(diff, 'year')}. كم عمر الأخ الأكبر الآن؟`);
+  return buildBase(ctx, {
+    templateId: 'AGE_M_PAST_RATIO',
+    subskill: 'عمر حالي من علاقة ماضية',
+    difficulty: 'medium',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: years,
+    steps: [
+      `فرق العمر ثابت لا يتغير بمرور الزمن، فهو ${diff} في الماضي وفي الحاضر.`,
+      `قبل ${u(back, 'year', 'oblique')} كان الأكبر ${ratioWord} الأصغر، فالفرق يساوي (${ratio} − 1) من عمر الأصغر آنذاك.`,
+      `عمر الأصغر قبل ${u(back, 'year', 'oblique')} = ${diff} ÷ ${ratio - 1} = ${youngerThen}، وعمر الأكبر آنذاك = ${youngerThen} × ${ratio} = ${olderThen}.`,
+      `نعود إلى الحاضر: ${olderThen} + ${back} = ${correct}.`
+    ],
+    howToStart: 'ابدأ من الفرق: هو نفسه في الماضي والحاضر.',
+    remember: 'السنوات تُطرح من العمرين معًا عند الرجوع إلى الماضي، والفرق وحده لا يتأثر.',
+    fastMethod: `الفرق ÷ (${ratio} − 1) يعطي عمر الأصغر في الماضي، ثم أضف بعد ذلك ${back} سنوات.`,
+    estimatedSteps: 4, conceptTags: ['age', 'time-shift', 'invariant'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(sub(X, back), mul(ratio, sub(sub(X, diff), back)))]
+    },
+    askedUnknown: 'olderAgeNow', stageCount: 3, direction: 'reverse',
+    realism: {ages: [older, younger], siblingGap: diff},
+    pedagogy: {
+      targetSkill: 'PAST_RELATION_TO_PRESENT', targetMisconception: 'ANSWERED_PAST_AGE',
+      wrongMethodValue: olderThen,
+      degenerateWhen: [{when: back === 0, note: 'with no shift the past relation is the present one'}]
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 3, arithmeticBurden: 3},
+    textParams: {essentialParams: ['yearsAgo', 'ageDifference']}
+  });
+}
+
+/**
+ * RC2.9-5. Two ratios at two times, and the DIFFERENCE asked for.
+ *
+ * The family always handed back somebody's age. Here the invariant itself is
+ * the answer: two statements pin how the ratio changes, and what falls out is
+ * the gap between the two people, which never moved. It is the inverse use of
+ * the fact every other template in the family relies on quietly.
+ */
+function differenceFromTwoRatios(ctx) {
+  const {rng} = ctx;
+  // Built from the identity rather than drawn and filtered: with the father at
+  // `now` times the son now and `later` times him after `ahead` years,
+  //     y(now − later) = ahead(later − 1),
+  // so choosing the pair of ratios fixes the ratio between the son's age and
+  // the elapsed years. Drawing blindly and resampling searched a space where
+  // almost nothing was integral, and recursed until the stack gave out.
+  const PAIRS = [
+    {now: 4, later: 2, ageOverAhead: 1 / 2},
+    {now: 5, later: 2, ageOverAhead: 1 / 3},
+    {now: 4, later: 3, ageOverAhead: 2},
+    {now: 5, later: 3, ageOverAhead: 1},
+    {now: 3, later: 2, ageOverAhead: 1},
+    {now: 5, later: 4, ageOverAhead: 3}
+  ];
+  const pair = rng.pick(PAIRS);
+  const {now, later} = pair;
+  // `ahead` is drawn, the son's age follows, and both must come out whole.
+  const ahead = rng.int(3, 10);
+  const younger = ahead * pair.ageOverAhead;
+  if (!Number.isInteger(younger) || younger < 4) return resample(ctx, differenceFromTwoRatios);
+  const older = younger * now;
+  if (older > 70 || older <= younger) return resample(ctx, differenceFromTwoRatios);
+  const numerator = ahead * (later - 1);
+  const denominator = now - later;
+  const correct = older - younger;
+  const params = {yearsAhead: ahead, ratioNow: now, ratioLater: later};
+  const word = k => (k === 2 ? 'ضعف' : k === 3 ? 'ثلاثة أمثال' : k === 4 ? 'أربعة أمثال' : 'خمسة أمثال');
+  // Several of these land on the same value for some ratio pairs — the ages are
+  // small and the arithmetic is tight — so the list is deduped and the item is
+  // drawn again rather than published with a repeated choice.
+  const offered = [
+    [older, 'ANSWERED_OTHER_PERSON', `عمر الأكبر ${older} بدل الفرق`, 3],
+    [younger, 'ANSWERED_OTHER_PERSON', `عمر الأصغر ${younger} بدل الفرق`, 3],
+    [older + younger, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${older} + ${younger}`, 3],
+    [correct + ahead, 'SUBTRACTED_INSTEAD_OF_ADDED', `${correct} + ${ahead}`, 3],
+    [older + ahead, 'ANSWERED_FUTURE_AGE', `${older} + ${ahead}`, 3],
+    [younger + ahead, 'ANSWERED_FUTURE_AGE', `${younger} + ${ahead}`, 3],
+    [correct * later, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${correct} × ${later}`, 2],
+    [ahead * later, 'RATE_APPLIED_TO_WRONG_COUNT', `${ahead} × ${later}`, 2],
+    [ahead, 'USED_GIVEN_VALUE_AS_ANSWER', `المدة المعطاة ${ahead}`, 1],
+    [correct + younger, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${correct} + ${younger}`, 3]
+  ];
+  const seenValues = new Set([correct]);
+  const distractors = usable(ctx, offered
+    .filter(([v]) => v > 0 && !seenValues.has(v) && seenValues.add(v))
+    .map(([v, id, why, step]) => mk(v, id, why, step)));
+  if (distractors.length < 5) return resample(ctx, differenceFromTwoRatios);
+  const stem = composeSentences(ctx,
+    `عمر الأب الآن ${word(now)} عمر ابنه. وبعد ${u(ahead, 'year', 'oblique')} `
+    + `سيصبح عمره ${word(later)} عمر ابنه. فكم يبلغ الفرق بين عمريهما؟`);
+  return buildBase(ctx, {
+    templateId: 'AGE_M_DIFFERENCE_INVARIANT',
+    subskill: 'الفرق العمري من نسبتين في زمنين',
+    difficulty: 'medium',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: years,
+    steps: [
+      `نفرض عمر الابن الآن س، فعمر الأب يساوي س مضروبًا في ${now}.`,
+      `بعد ${u(ahead, 'year', 'oblique')} يصير عمر الابن س + ${ahead}، وعمر الأب أكبر منه بالفرق نفسه.`,
+      `ومن العلاقة الثانية نكتب المعادلة: (س × ${now}) + ${ahead} = (س + ${ahead}) × ${later}.`,
+      `بفك القوس وجمع الحدود تصير س مضروبة في (${now} − ${later}) تساوي ${ahead} × (${later} − 1) = ${numerator}.`,
+      `ومنها س = ${numerator} ÷ ${denominator} = ${younger}، وعمر الأب = ${younger} × ${now} = ${older}.`,
+      `الفرق = ${older} − ${younger} = ${correct}.`
+    ],
+    howToStart: 'اكتب العمرين بدلالة مجهول واحد، ثم طبّق العلاقة الثانية.',
+    remember: 'الفرق العمري ثابت، وهو ما تبحث عنه المسألة وليس أحد العمرين.',
+    fastMethod: 'النسبتان في زمنين تكفيان لتحديد العمرين، والفرق يُقرأ بعدهما مباشرة.',
+    estimatedSteps: 4, conceptTags: ['age', 'invariant', 'two-conditions'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(sub(now, later), X), mul(numerator, sub(now, 1)))]
+    },
+    askedUnknown: 'ageDifference', stageCount: 3, direction: 'comparison',
+    realism: {ages: [older, younger], siblingGap: correct},
+    pedagogy: {
+      targetSkill: 'AGE_DIFFERENCE_IS_INVARIANT', targetMisconception: 'ANSWERED_OTHER_PERSON',
+      wrongMethodValue: older,
+      degenerateWhen: [{when: now === later, note: 'an unchanged ratio pins nothing'}]
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 3, arithmeticBurden: 3},
+    textParams: {essentialParams: ['yearsAhead']}
   });
 }

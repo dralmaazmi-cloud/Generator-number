@@ -23,7 +23,11 @@ export const FAMILY_BY_PREFIX = Object.freeze({
   RATE: 'unit_rate', COMB: 'combined_rate', REL: 'relational', ODD: 'odd_one_out'
 });
 
-export const SAMPLES_PER_TEMPLATE = 30;
+// RC2.9-2. Sixty, not thirty. The catalogue's `signatures` list is now an INPUT
+// to planning rather than a note for the reader, so a construction a template
+// can realise but that thirty seeds happened to miss becomes a slot the planner
+// allocates and the realisation guard then throws away.
+export const SAMPLES_PER_TEMPLATE = 60;
 
 /** What each template can be asked for, observed rather than declared. */
 export function deriveBlueprints({samples = SAMPLES_PER_TEMPLATE} = {}) {
@@ -34,6 +38,15 @@ export function deriveBlueprints({samples = SAMPLES_PER_TEMPLATE} = {}) {
     const family = FAMILY_BY_PREFIX[templateId.split('_')[0]];
     if (!family) throw new Error(`RC28_UNKNOWN_TEMPLATE_PREFIX: ${templateId}`);
     const tasks = new Map();
+    // RC2.9-2. The perceptual signatures each blueprint actually realises.
+    //
+    // The scheduler could not see that two blueprints in different families
+    // produce the same construction — a fourth proportion told about boxes and
+    // one told about machines — so it planned both as fresh and the realisation
+    // guard threw the second away. Fifty-one discards in one session, and the
+    // session ran out before it was full. With the signatures in the catalogue
+    // the planner knows before it allocates.
+    const signatures = new Map();
     for (let i = 0; i < samples; i++) {
       let q;
       try {
@@ -46,13 +59,16 @@ export function deriveBlueprints({samples = SAMPLES_PER_TEMPLATE} = {}) {
       const task = q.metadata.task_signature;
       if (!tasks.has(task)) tasks.set(task, new Set());
       tasks.get(task).add(q.metadata.asked_unknown);
+      if (!signatures.has(task)) signatures.set(task, new Set());
+      signatures.get(task).add(q.metadata.user_perceptual_signature);
     }
     if (!tasks.size) { unreachable.push(templateId); continue; }
     for (const [task, targets] of tasks) {
       rows.push({
         templateId, family, band: entry.band, task,
         info: INFO_STRUCTURE_BY_TEMPLATE[templateId] ?? 'DIRECT_GIVENS',
-        targets: [...targets].sort()
+        targets: [...targets].sort(),
+        signatures: [...(signatures.get(task) ?? [])].sort()
       });
     }
   }
@@ -88,8 +104,10 @@ const HEAD = `// RC2.8-2. The blueprint catalogue: the SEMANTIC space the schedu
 // reachable at its band, fails the test rather than silently leaving the
 // scheduler planning against a fiction.
 //
-// \`targets\` lists the unknowns a template was observed to ask for that task. It
-// is evidence for the reader of this file, not an input to selection.
+// \`targets\` lists the unknowns a template was observed to ask for that task.
+// \`signatures\` lists the perceptual identities it was observed to realise, and
+// IS an input to selection: an idea whose signature this user has already met is
+// not offered again while the band holds one they have not.
 
 /**
  * @typedef {object} Blueprint
@@ -99,6 +117,7 @@ const HEAD = `// RC2.8-2. The blueprint catalogue: the SEMANTIC space the schedu
  * @property {string} task        the normalised job and answer class
  * @property {string} info        how the information is laid out
  * @property {string[]} targets   the unknowns observed for this task
+ * @property {string[]} signatures the perceptual identities it was observed to realise
  */
 
 /** @type {Blueprint[]} */
@@ -159,7 +178,8 @@ export function render(rows) {
   const body = rows.map(r =>
     `  {templateId: '${r.templateId}', family: '${r.family}', band: '${r.band}', `
     + `task: '${r.task}', info: '${r.info}', `
-    + `targets: [${r.targets.map(t => `'${t}'`).join(', ')}]}`).join(',\n');
+    + `targets: [${r.targets.map(t => `'${t}'`).join(', ')}], `
+    + `signatures: [${r.signatures.map(t => `'${t.replace(/'/g, "\\'")}'`).join(', ')}]}`).join(',\n');
   return HEAD + body + TAIL;
 }
 
