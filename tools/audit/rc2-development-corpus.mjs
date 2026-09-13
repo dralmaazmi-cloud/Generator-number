@@ -121,6 +121,25 @@ export const RC29_DEVELOPMENT_SEEDS = Object.freeze([
 export const RC29_SIGNOFF_SEED = 'AUDIT-2026-09-13-I';
 
 /**
+ * RC2.9.1. A corpus of its own, for the reason every release has had one: the
+ * engine it measures is not the one before it. RC2.9's corpus was drawn from a
+ * renderer that published «302 علبتان» and «5 زجاجة/ساعة», and freezing RC2.9.1
+ * against it would attest a measurement of text this release no longer emits.
+ *
+ * The seeds are RC2.9's, deliberately: this release changes how a question is
+ * WORDED, not which question is drawn, so drawing the same sample makes the two
+ * corpora comparable line for line.
+ */
+export const RC291_DEVELOPMENT_SEEDS = RC29_DEVELOPMENT_SEEDS;
+
+/**
+ * RC2.9.1 names its sign-off holdout and does not generate it. Its brief
+ * forbids generating a blind holdout; RC2.9's I is spent by being frozen
+ * against.
+ */
+export const RC291_SIGNOFF_SEED = 'AUDIT-2026-09-13-J';
+
+/**
  * Which release a corpus run belongs to, and where its evidence lands. The RC2.1
  * and RC2.2 corpora were built by calling `build` with a seed list by hand and
  * writing the files by hand, which left no record of how to reproduce them.
@@ -133,7 +152,8 @@ export const RELEASES = Object.freeze({
   rc24: {seeds: RC24_DEVELOPMENT_SEEDS, json: 'rc2/RC24_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc24-development-corpus.jsonl.gz'},
   rc27: {seeds: RC27_DEVELOPMENT_SEEDS, json: 'rc2/RC27_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc27-development-corpus.jsonl.gz'},
   rc28: {seeds: RC28_DEVELOPMENT_SEEDS, json: 'rc2/RC28_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc28-development-corpus.jsonl.gz'},
-  rc29: {seeds: RC29_DEVELOPMENT_SEEDS, json: 'rc2/RC29_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc29-development-corpus.jsonl.gz'}
+  rc29: {seeds: RC29_DEVELOPMENT_SEEDS, json: 'rc2/RC29_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc29-development-corpus.jsonl.gz'},
+  rc291: {seeds: RC291_DEVELOPMENT_SEEDS, json: 'rc2/RC291_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc291-development-corpus.jsonl.gz'}
 });
 
 const BANDS = ['easy', 'medium', 'hard'];

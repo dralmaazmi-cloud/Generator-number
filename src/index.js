@@ -35,10 +35,14 @@ import {generateProfitLoss} from './families/profit_loss.js';
  * the audit manifests — derives from this constant. Two stale literals
  * (report.js and index.html) were what the RC1 audit caught.
  */
-// RC2.9 moves the minor: `generatePractice` accepts a `diversityHistory` and
+// RC2.9 moved the minor: `generatePractice` accepts a `diversityHistory` and
 // returns the history to carry forward, which is a new term in the contract
 // between the product and the engine. Nothing already published changes shape.
-export const ENGINE_VERSION = '1.5.0';
+//
+// RC2.9.1 moves the patch. The contract is unchanged — what changed is that the
+// APPLICATION now honours it, and that four Arabic renderer defects are fixed,
+// so the same seed renders different text and callers should be able to tell.
+export const ENGINE_VERSION = '1.5.1';
 
 const GENERATORS = {
   sequences: generateSequences,
