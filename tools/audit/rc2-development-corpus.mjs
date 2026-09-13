@@ -100,6 +100,27 @@ export const RC28_DEVELOPMENT_SEEDS = Object.freeze([
 export const RC28_SIGNOFF_SEED = 'AUDIT-2026-09-13-H';
 
 /**
+ * RC2.9, likewise, and for this release's own reason.
+ *
+ * The engine no longer plans a session from an empty page: it is handed what
+ * the user has already solved and allocates around it. A corpus drawn on
+ * RC2.8's seeds would be a record of sessions planned without that memory, so
+ * freezing against it would attest a measurement of a planner that no longer
+ * runs.
+ */
+export const RC29_DEVELOPMENT_SEEDS = Object.freeze([
+  'RC29-DEV-ALEF', 'RC29-DEV-BAA', 'RC29-DEV-JEEM', 'RC29-DEV-DAL', 'RC29-DEV-HAA'
+]);
+
+/**
+ * RC2.9 names its sign-off holdout and does not generate it. The brief for this
+ * release forbids creating a blind holdout or claiming one exists, so the seed
+ * is named as the state this freeze would be sealed against and nothing is
+ * drawn on it. RC2.8's H is spent by having been frozen against.
+ */
+export const RC29_SIGNOFF_SEED = 'AUDIT-2026-09-13-I';
+
+/**
  * Which release a corpus run belongs to, and where its evidence lands. The RC2.1
  * and RC2.2 corpora were built by calling `build` with a seed list by hand and
  * writing the files by hand, which left no record of how to reproduce them.
@@ -111,7 +132,8 @@ export const RELEASES = Object.freeze({
   rc23: {seeds: RC23_DEVELOPMENT_SEEDS, json: 'rc2/RC23_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc23-development-corpus.jsonl.gz'},
   rc24: {seeds: RC24_DEVELOPMENT_SEEDS, json: 'rc2/RC24_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc24-development-corpus.jsonl.gz'},
   rc27: {seeds: RC27_DEVELOPMENT_SEEDS, json: 'rc2/RC27_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc27-development-corpus.jsonl.gz'},
-  rc28: {seeds: RC28_DEVELOPMENT_SEEDS, json: 'rc2/RC28_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc28-development-corpus.jsonl.gz'}
+  rc28: {seeds: RC28_DEVELOPMENT_SEEDS, json: 'rc2/RC28_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc28-development-corpus.jsonl.gz'},
+  rc29: {seeds: RC29_DEVELOPMENT_SEEDS, json: 'rc2/RC29_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc29-development-corpus.jsonl.gz'}
 });
 
 const BANDS = ['easy', 'medium', 'hard'];

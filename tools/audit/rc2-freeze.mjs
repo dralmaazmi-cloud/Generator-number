@@ -14,7 +14,7 @@ import {execFileSync} from 'node:child_process';
 import {join} from 'node:path';
 
 import {ENGINE_VERSION} from '../../src/index.js';
-import {DEVELOPMENT_SEEDS, RC21_DEVELOPMENT_SEEDS, RC22_DEVELOPMENT_SEEDS, RC23_DEVELOPMENT_SEEDS, RC24_DEVELOPMENT_SEEDS, RC27_DEVELOPMENT_SEEDS, RC27_SIGNOFF_SEED, RC28_DEVELOPMENT_SEEDS, RC28_SIGNOFF_SEED, RC26_HOLDOUT_SEED, HOLDOUT_SEED} from './rc2-development-corpus.mjs';
+import {DEVELOPMENT_SEEDS, RC21_DEVELOPMENT_SEEDS, RC22_DEVELOPMENT_SEEDS, RC23_DEVELOPMENT_SEEDS, RC24_DEVELOPMENT_SEEDS, RC27_DEVELOPMENT_SEEDS, RC27_SIGNOFF_SEED, RC28_DEVELOPMENT_SEEDS, RC28_SIGNOFF_SEED, RC29_DEVELOPMENT_SEEDS, RC29_SIGNOFF_SEED, RC26_HOLDOUT_SEED, HOLDOUT_SEED} from './rc2-development-corpus.mjs';
 import {HOLDOUT_SEED as RC21_HOLDOUT_SEED} from './rc21-holdout.mjs';
 import {HOLDOUT_SEED as RC22_HOLDOUT_SEED} from './rc22-holdout.mjs';
 import {RC23_SIGNOFF_SEED} from './rc2-internal-gate.mjs';
@@ -70,19 +70,25 @@ export function freeze() {
   // has: the engine it measures has changed, and this one changed the order of
   // generation itself. Freezing against RC2.7's corpus would attest a
   // measurement of a loop that no longer runs.
-  const rc28 = existsSync('rc2/RC28_DEVELOPMENT_CORPUS.json');
-  const rc27 = !rc28 && existsSync('rc2/RC27_DEVELOPMENT_CORPUS.json');
-  const rc24 = !rc28 && !rc27 && existsSync('rc2/RC24_DEVELOPMENT_CORPUS.json');
+  // RC2.9 for the same reason again: the planner is now handed what the user
+  // has already solved, so a corpus of sessions planned without that memory
+  // describes a loop that no longer runs.
+  const rc29 = existsSync('rc2/RC29_DEVELOPMENT_CORPUS.json');
+  const rc28 = !rc29 && existsSync('rc2/RC28_DEVELOPMENT_CORPUS.json');
+  const rc27 = !rc29 && !rc28 && existsSync('rc2/RC27_DEVELOPMENT_CORPUS.json');
+  const rc24 = !rc29 && !rc28 && !rc27 && existsSync('rc2/RC24_DEVELOPMENT_CORPUS.json');
   const rc23 = !rc27 && !rc24 && existsSync('rc2/RC23_DEVELOPMENT_CORPUS.json');
   const rc22 = !rc27 && !rc24 && !rc23 && existsSync('rc2/RC22_DEVELOPMENT_CORPUS.json');
   const rc21 = !rc27 && !rc24 && !rc23 && !rc22 && existsSync('rc2/RC21_DEVELOPMENT_CORPUS.json');
-  const corpusPath = rc28 ? 'rc2/RC28_DEVELOPMENT_CORPUS.json'
+  const corpusPath = rc29 ? 'rc2/RC29_DEVELOPMENT_CORPUS.json'
+    : rc28 ? 'rc2/RC28_DEVELOPMENT_CORPUS.json'
     : rc27 ? 'rc2/RC27_DEVELOPMENT_CORPUS.json'
     : rc24 ? 'rc2/RC24_DEVELOPMENT_CORPUS.json'
     : rc23 ? 'rc2/RC23_DEVELOPMENT_CORPUS.json'
     : rc22 ? 'rc2/RC22_DEVELOPMENT_CORPUS.json'
     : rc21 ? 'rc2/RC21_DEVELOPMENT_CORPUS.json' : 'rc2/DEVELOPMENT_CORPUS.json';
-  const corpusGzPath = rc28 ? 'rc2/rc28-development-corpus.jsonl.gz'
+  const corpusGzPath = rc29 ? 'rc2/rc29-development-corpus.jsonl.gz'
+    : rc28 ? 'rc2/rc28-development-corpus.jsonl.gz'
     : rc27 ? 'rc2/rc27-development-corpus.jsonl.gz'
     : rc24 ? 'rc2/rc24-development-corpus.jsonl.gz'
     : rc23 ? 'rc2/rc23-development-corpus.jsonl.gz'
@@ -123,23 +129,27 @@ export function freeze() {
     frozenRC1Baseline: matrix.frozenRC1Baseline,
     scopeCommit: matrix.scopeCommit,
     scopeSchema: matrix.scopeSchema,
-    release: rc28 ? 'RC2.8' : rc27 ? 'RC2.7' : rc24 ? 'RC2.4' : rc23 ? 'RC2.3' : rc22 ? 'RC2.2' : rc21 ? 'RC2.1' : 'RC2',
-    developmentSeeds: [...(rc28 ? RC28_DEVELOPMENT_SEEDS : rc27 ? RC27_DEVELOPMENT_SEEDS : rc24 ? RC24_DEVELOPMENT_SEEDS : rc23 ? RC23_DEVELOPMENT_SEEDS : rc22 ? RC22_DEVELOPMENT_SEEDS : rc21 ? RC21_DEVELOPMENT_SEEDS : DEVELOPMENT_SEEDS)],
+    release: rc29 ? 'RC2.9' : rc28 ? 'RC2.8' : rc27 ? 'RC2.7' : rc24 ? 'RC2.4' : rc23 ? 'RC2.3' : rc22 ? 'RC2.2' : rc21 ? 'RC2.1' : 'RC2',
+    developmentSeeds: [...(rc29 ? RC29_DEVELOPMENT_SEEDS : rc28 ? RC28_DEVELOPMENT_SEEDS : rc27 ? RC27_DEVELOPMENT_SEEDS : rc24 ? RC24_DEVELOPMENT_SEEDS : rc23 ? RC23_DEVELOPMENT_SEEDS : rc22 ? RC22_DEVELOPMENT_SEEDS : rc21 ? RC21_DEVELOPMENT_SEEDS : DEVELOPMENT_SEEDS)],
     // RC2.3 names its sign-off holdout and does not generate it: the brief
     // withholds the next holdout until the validation report is approved. The
     // freeze is still the state that holdout would be sealed against, and
     // `holdoutGenerated` below says plainly that it has not been.
-    holdoutSeed: rc28 ? RC28_SIGNOFF_SEED : rc27 ? RC27_SIGNOFF_SEED : (rc24 || rc23) ? RC23_SIGNOFF_SEED : rc22 ? RC22_HOLDOUT_SEED : rc21 ? RC21_HOLDOUT_SEED : HOLDOUT_SEED,
+    holdoutSeed: rc29 ? RC29_SIGNOFF_SEED : rc28 ? RC28_SIGNOFF_SEED : rc27 ? RC27_SIGNOFF_SEED : (rc24 || rc23) ? RC23_SIGNOFF_SEED : rc22 ? RC22_HOLDOUT_SEED : rc21 ? RC21_HOLDOUT_SEED : HOLDOUT_SEED,
     // RC2.8 inherits RC2.7's list unchanged: no holdout was generated between
     // them, so nothing was spent. G — the seed RC2.7 froze against — is spent by
     // being frozen against, and RC2.8 names H instead.
-    previousHoldouts: (rc28 || rc27)
+    previousHoldouts: (rc29 || rc28 || rc27)
       ? [{seed: HOLDOUT_SEED, status: 'FAILED_DIAGNOSTIC_HOLDOUT', reused: false},
          {seed: RC21_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
          {seed: RC22_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
          {seed: RC23_SIGNOFF_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
          {seed: RC26_HOLDOUT_SEED, status: 'SEALED_AND_SPENT', reused: false},
-         ...(rc28 ? [{seed: RC27_SIGNOFF_SEED, status: 'FROZEN_AGAINST_AND_SPENT', reused: false}] : [])]
+         // A seed is spent by being frozen against, whether or not anything
+         // was ever drawn on it: the freeze attests the engine that seed would
+         // have been sealed against.
+         ...((rc29 || rc28) ? [{seed: RC27_SIGNOFF_SEED, status: 'FROZEN_AGAINST_AND_SPENT', reused: false}] : []),
+         ...(rc29 ? [{seed: RC28_SIGNOFF_SEED, status: 'FROZEN_AGAINST_AND_SPENT', reused: false}] : [])]
       : (rc24 || rc23)
       ? [{seed: HOLDOUT_SEED, status: 'FAILED_DIAGNOSTIC_HOLDOUT', reused: false},
          {seed: RC21_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
