@@ -1,14 +1,16 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-13T15:48:51.985Z",
+  "evaluatedAt": "2026-09-13T16:42:53.291Z",
   "engineVersion": "1.4.0",
-  "headCommit": "58f8dc400bf0de0c6eedccdb6c91e6c944adcd1a",
+  "headCommit": "d9caea15d3697528a4496886fbd52560c654f728",
   "branch": "claude/numerical-generator-upgrade-b3fc8s",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "PASS",
+  "verdict": "FAIL",
   "conditions": 39,
-  "failedConditions": [],
+  "failedConditions": [
+    "TREE_CLEAN"
+  ],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -83,6 +85,7 @@
           "rc2/FREEZE.RC2_6.json",
           "rc2/FREEZE.RC2_7.json",
           "rc2/FREEZE.RC2_8A.json",
+          "rc2/FREEZE.RC2_8B.json",
           "rc2/FREEZE.RC2_8_PREVIOUS.json",
           "rc2/FREEZE_RC2.json",
           "rc2/FREEZE_RC2_1.json",
@@ -103,6 +106,7 @@
           "rc2/RC23_DEVELOPMENT_CORPUS.json",
           "rc2/RC24_DEVELOPMENT_CORPUS.json",
           "rc2/RC27_DEVELOPMENT_CORPUS.json",
+          "rc2/RC28_DEVELOPMENT_CORPUS.json",
           "rc2/RC2_IMPLEMENTATION_REPORT.md",
           "rc2/SUPERSEDED_FREEZES.json",
           "rc2/holdout-c-package/MANIFEST.json",
@@ -565,8 +569,10 @@
     {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": true,
-      "detail": "clean"
+      "pass": false,
+      "detail": [
+        "R  rc2/FREEZE.json -> rc2/FREEZE.RC2_8B.json"
+      ]
     }
   ]
 }
