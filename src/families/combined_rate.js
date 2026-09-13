@@ -1,4 +1,4 @@
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool, unitWordKam} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool, unitWordKam, composeSentences} from './_shared.js';
 
 export function generateCombinedRate({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'combined_rate', family_ar: 'المعدل المشترك', category: 'المعدل المشترك'};
@@ -42,11 +42,13 @@ function togetherOutput(ctx) {
     mk((a + b) * h * 2, 'APPLIED_STEP_TWICE', `(${a} + ${b}) × ${h} × 2`),
     mk((a + b + Math.min(a, b)) * h, 'RATE_APPLIED_TO_WRONG_COUNT', `(${a} + ${b} + ${Math.min(a, b)}) × ${h}`)
   ]);
+  const stem = composeSentences(ctx, `ينجز العامل أ ${a} وحدة/ساعة، وينجز العامل ب ${b} وحدة/ساعة. إذا عملا معًا ${u(h, 'hour', 'oblique')}، فكم وحدة ينجزان؟`);
   return buildBase(ctx, {
     templateId: 'COMB_E_OUTPUT',
     subskill: 'جمع معدلين خلال مدة معلومة',
     difficulty: 'easy',
-    question: `ينجز العامل أ ${a} وحدة/ساعة، وينجز العامل ب ${b} وحدة/ساعة. إذا عملا معًا ${u(h, 'hour', 'oblique')}، فكم وحدة ينجزان؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('unit'),
     steps: [
       `المعدل المشترك في الساعة = ${a} + ${b} = ${a + b}.`,
@@ -93,11 +95,13 @@ function togetherTime(ctx) {
     mk(target - (a + b), 'SUBTRACTED_INSTEAD_OF_ADDED', `${target} − (${a} + ${b})`),
     mk(a * b, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${a} × ${b}`)
   ]);
+  const stem = composeSentences(ctx, `تنجز آلة أ ${a} قطعة/ساعة، وآلة ب ${b} قطعة/ساعة. إذا عملتا معًا، فكم ساعة تحتاجان لإنتاج ${u(target, 'piece')}؟`);
   return buildBase(ctx, {
     templateId: 'COMB_E_TIME',
     subskill: 'جمع معدلين ثم إيجاد الزمن',
     difficulty: 'easy',
-    question: `تنجز آلة أ ${a} قطعة/ساعة، وآلة ب ${b} قطعة/ساعة. إذا عملتا معًا، فكم ساعة تحتاجان لإنتاج ${u(target, 'piece')}؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('hour'),
     steps: [
       `المعدل المشترك في الساعة = ${a} + ${b} = ${a + b}.`,
@@ -145,11 +149,13 @@ function soloThenTogether(ctx) {
     mk((target - a * solo) / (2 * (a + b)), 'APPLIED_STEP_TWICE', `${target - a * solo} ÷ (2 × ${a + b})`),
     mk(target / (a * b), 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${target} ÷ (${a} × ${b})`)
   ]);
+  const stem = composeSentences(ctx, `ينجز العامل أ ${a} وحدة/ساعة، والعامل ب ${b} وحدة/ساعة. عمل أ وحده ${u(solo, 'hour', 'oblique')}، ثم عملا معًا حتى بلغ الإنجاز ${u(target, 'unit')}. كم ساعة عملا معًا؟`);
   return buildBase(ctx, {
     templateId: 'COMB_M_SOLO_THEN',
     subskill: 'عمل منفرد أولًا ثم عمل مشترك',
     difficulty: 'hard',
-    question: `ينجز العامل أ ${a} وحدة/ساعة، والعامل ب ${b} وحدة/ساعة. عمل أ وحده ${u(solo, 'hour', 'oblique')}، ثم عملا معًا حتى بلغ الإنجاز ${u(target, 'unit')}. كم ساعة عملا معًا؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('hour'),
     steps: [
       `إنجاز أ منفردًا = ${a} × ${solo} = ${a * solo}.`,
@@ -200,11 +206,13 @@ function togetherThenSolo(ctx) {
     mk((target - (a + b) * bothH) / b + bothH, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${target - (a + b) * bothH} ÷ ${b} + ${bothH}`),
     mk(target / (a * b), 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${target} ÷ (${a} × ${b})`)
   ]);
+  const stem = composeSentences(ctx, `يعمل أ بمعدل ${a} وحدة/ساعة وب بمعدل ${b} وحدة/ساعة. عملا معًا ${u(bothH, 'hour', 'oblique')}، ثم توقف ب واستمر أ وحده حتى بلغ الإنجاز ${u(target, 'unit')}. كم ساعة عمل أ وحده؟`);
   return buildBase(ctx, {
     templateId: 'COMB_M_TOGETHER_SOLO',
     subskill: 'عمل مشترك ثم استمرار طرف واحد',
     difficulty: 'hard',
-    question: `يعمل أ بمعدل ${a} وحدة/ساعة وب بمعدل ${b} وحدة/ساعة. عملا معًا ${u(bothH, 'hour', 'oblique')}، ثم توقف ب واستمر أ وحده حتى بلغ الإنجاز ${u(target, 'unit')}. كم ساعة عمل أ وحده؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('hour'),
     steps: [
       `الإنجاز المشترك = (${a} + ${b}) × ${bothH} = ${(a + b) * bothH}.`,
@@ -255,11 +263,13 @@ function stagedTarget(ctx) {
     mk((target - a * soloA - (a + b) * togetherH) / b * 2, 'APPLIED_STEP_TWICE', `${target - a * soloA - (a + b) * togetherH} ÷ ${b} × 2`),
     mk(target / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `${target} ÷ ${a + b}`)
   ]);
+  const stem = composeSentences(ctx, `ينجز أ ${a} وحدة/ساعة وب ${b} وحدة/ساعة. عمل أ وحده ${u(soloA, 'hour', 'oblique')}، ثم عملا معًا ${u(togetherH, 'hour', 'oblique')}، ثم استمر ب وحده حتى بلغ الإنجاز ${u(target, 'unit')}. كم ساعة عمل ب وحده في المرحلة الأخيرة؟`);
   return buildBase(ctx, {
     templateId: 'COMB_H_STAGED',
     subskill: 'ثلاث مراحل بمعدلات مختلفة',
     difficulty: 'hard',
-    question: `ينجز أ ${a} وحدة/ساعة وب ${b} وحدة/ساعة. عمل أ وحده ${u(soloA, 'hour', 'oblique')}، ثم عملا معًا ${u(togetherH, 'hour', 'oblique')}، ثم استمر ب وحده حتى بلغ الإنجاز ${u(target, 'unit')}. كم ساعة عمل ب وحده في المرحلة الأخيرة؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('hour'),
     steps: [
       `إنجاز المرحلة الأولى = ${a} × ${soloA} = ${a * soloA}.`,
@@ -308,11 +318,13 @@ function threeRates(ctx) {
     mk(sum * h + rates[0] * h, 'RATE_APPLIED_TO_WRONG_COUNT', `${sum} × ${h} + ${rates[0]} × ${h}`),
     mk(sum * (h + 2), 'OFF_BY_ONE_STEP', `${sum} × (${h} + 2)`)
   ]);
+  const stem = composeSentences(ctx, `تعمل ثلاث آلات بمعدلات ${rates[0]} و${rates[1]} و${rates[2]} وحدة/ساعة. إذا عملت معًا ${u(h, 'hour', 'oblique')}، فكم وحدة تنتج؟`);
   return buildBase(ctx, {
     templateId: 'COMB_E_THREE',
     subskill: 'ثلاثة معدلات تعمل معًا',
     difficulty: 'easy',
-    question: `تعمل ثلاث آلات بمعدلات ${rates[0]} و${rates[1]} و${rates[2]} وحدة/ساعة. إذا عملت معًا ${u(h, 'hour', 'oblique')}، فكم وحدة تنتج؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('unit'),
     steps: [
       `المعدل المشترك في الساعة = ${rates.join(' + ')} = ${sum}.`,
@@ -393,11 +405,13 @@ function twoPumpsFromStages(ctx) {
     mk(a * b / joint, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${a} × ${b} ÷ ${joint}`)
   ]);
 
+  const stem = composeSentences(ctx, `تملأ مضختان خزانًا معًا في ${u(joint, 'hour', 'oblique')}. ولو عملت الأولى وحدها ${u(a, 'hour', 'oblique')} ثم أكملت الثانية وحدها ${u(b, 'hour', 'oblique')} لامتلأ الخزان أيضًا. كم ${unitWordKam('hour')} تحتاج الأولى وحدها لملئه؟`);
   return buildBase(ctx, {
     templateId: 'COMB_H_TWO_PUMPS',
     subskill: 'زمن مضخة وحدها من زمن مشترك ومرحلتين منفردتين',
     difficulty: 'hard',
-    question: `تملأ مضختان خزانًا معًا في ${u(joint, 'hour', 'oblique')}. ولو عملت الأولى وحدها ${u(a, 'hour', 'oblique')} ثم أكملت الثانية وحدها ${u(b, 'hour', 'oblique')} لامتلأ الخزان أيضًا. كم ${unitWordKam('hour')} تحتاج الأولى وحدها لملئه؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('hour'),
     steps: [
       `لو عملت المضختان معًا ${u(b, 'hour', 'oblique')} لملأتا ${b} ÷ ${joint} من الخزان.`,
@@ -486,11 +500,13 @@ function teamSizeFromTotal(ctx) {
     mk(team * 2, 'APPLIED_STEP_TWICE', `${remaining} ÷ ${perWorker} × 2`)
   ]);
 
+  const stem = composeSentences(ctx, `فريق أفراده متساوون في المعدل، ينجز كل فرد ${rate} وحدة/ساعة. عمل الفريق ${u(firstH, 'hour', 'oblique')}، ثم انضم إليه فرد واحد فعمل الجميع ${u(secondH, 'hour', 'oblique')} أخرى، فبلغ الإنجاز الكلي ${u(total, 'unit')}. كم فردًا كان في الفريق أولًا؟`);
   return buildBase(ctx, {
     templateId: 'COMB_H_TEAM_SIZE',
     subskill: 'عدد أفراد الفريق من إنجاز مرحلتين',
     difficulty: 'hard',
-    question: `فريق أفراده متساوون في المعدل، ينجز كل فرد ${rate} وحدة/ساعة. عمل الفريق ${u(firstH, 'hour', 'oblique')}، ثم انضم إليه فرد واحد فعمل الجميع ${u(secondH, 'hour', 'oblique')} أخرى، فبلغ الإنجاز الكلي ${u(total, 'unit')}. كم فردًا كان في الفريق أولًا؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('person'),
     steps: [
       `إنجاز الفرد الواحد في المرحلتين معًا = ${rate} × (${firstH} + ${secondH}) = ${perWorker}.`,

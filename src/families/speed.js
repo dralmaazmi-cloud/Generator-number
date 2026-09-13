@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, approx, bandPool} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, approx, bandPool, composeSentences} from './_shared.js';
 
 export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'speed', family_ar: 'السرعة والمسافة والزمن', category: 'السرعة والمسافة والزمن'};
@@ -47,11 +47,13 @@ function simpleTime(ctx) {
     mk(distance / (speed * 2), 'RATE_APPLIED_TO_WRONG_COUNT', `${distance} ÷ (${speed} × 2)`, 2),
     mk(distance - speed, 'SUBTRACTED_INSTEAD_OF_ADDED', `${distance} − ${speed}`, 2)
   ]);
+  const stem = composeSentences(ctx, `قطعت سيارة ${u(distance, 'km')} بسرعة ${speed} كم/ساعة. كم ساعة استغرقت؟`);
   return buildBase(ctx, {
     templateId: 'SPD_E_TIME',
     subskill: 'إيجاد الزمن من المسافة والسرعة',
     difficulty: 'easy',
-    question: `قطعت سيارة ${u(distance, 'km')} بسرعة ${speed} كم/ساعة. كم ساعة استغرقت؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('hour'),
     steps: [
       `الزمن = المسافة ÷ السرعة.`,
@@ -89,11 +91,13 @@ function simpleDistance(ctx) {
     mk((speed + 10) * hours, 'MISREAD_THE_STEP', `(${speed} + 10) × ${num(hours)}`, 2),
     mk(hours / speed, 'INVERTED_SPEED_TIME', `${num(hours)} ÷ ${speed}`)
   ]);
+  const stem = composeSentences(ctx, `سارت سيارة بسرعة ${speed} كم/ساعة لمدة ${u(hours, 'hour', 'oblique')}. ما المسافة التي قطعتها؟`);
   return buildBase(ctx, {
     templateId: 'SPD_E_DISTANCE',
     subskill: 'إيجاد المسافة من السرعة والزمن',
     difficulty: 'easy',
-    question: `سارت سيارة بسرعة ${speed} كم/ساعة لمدة ${u(hours, 'hour', 'oblique')}. ما المسافة التي قطعتها؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('km'),
     steps: [
       `المسافة = السرعة × الزمن.`,
@@ -136,11 +140,13 @@ function twoStageTime(ctx) {
     mk((d1 / s1 + d2 / s2), 'MISSED_ONE_STAGE', `${d1} ÷ ${s1} + ${d2} ÷ ${s2} بالساعات`),
     mk((d1 + d2) / (s1 + s2) * 60, 'STOPPED_AT_UNIT_RATE', `(${d1} + ${d2}) ÷ (${s1} + ${s2}) × 60`)
   ]);
+  const stem = composeSentences(ctx, `قطعت سيارة ${u(d1, 'km')} بسرعة ${s1} كم/ساعة، ثم قطعت ${u(d2, 'km')} بسرعة ${s2} كم/ساعة دون توقف. كم دقيقة استغرقت الرحلة كاملة؟`);
   return buildBase(ctx, {
     templateId: 'SPD_M_TWO_TIME',
     subskill: 'زمن مرحلتين ثم التحويل إلى دقائق',
     difficulty: 'medium',
-    question: `قطعت سيارة ${u(d1, 'km')} بسرعة ${s1} كم/ساعة، ثم قطعت ${u(d2, 'km')} بسرعة ${s2} كم/ساعة دون توقف. كم دقيقة استغرقت الرحلة كاملة؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('minute'),
     steps: [
       `زمن المرحلة الأولى بالساعات = ${d1} ÷ ${s1} = ${num(t1)}.`,
@@ -205,6 +211,7 @@ function averageSpeedUnequalTime(ctx) {
     mk(d1 + d2, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${d1} + ${d2}`, 3),
     mk((d1 + d2) / (t1 + t2) / 2, 'HALF_DISTANCE_AS_ANSWER', `(${d1} + ${d2}) ÷ (${num(t1)} + ${num(t2)}) ÷ 2`)
   ]);
+  const stem = composeSentences(ctx, `سارت سيارة ${u(t1, 'hour', 'oblique')} بسرعة ${s1} كم/ساعة، ثم ${u(t2, 'hour', 'oblique')} بسرعة ${s2} كم/ساعة. ما متوسط سرعتها في الرحلة كلها؟`);
   return buildBase(ctx, {
     templateId: 'SPD_M_AVG',
     // RC2.1-3. An average speed over two stages lies between the two stage
@@ -213,7 +220,8 @@ function averageSpeedUnequalTime(ctx) {
     answerBounds: {between: [s1, s2]},
     subskill: 'متوسط السرعة مع مدد زمنية مختلفة',
     difficulty: 'medium',
-    question: `سارت سيارة ${u(t1, 'hour', 'oblique')} بسرعة ${s1} كم/ساعة، ثم ${u(t2, 'hour', 'oblique')} بسرعة ${s2} كم/ساعة. ما متوسط سرعتها في الرحلة كلها؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: kmh,
     steps: [
       `المسافة الأولى = ${s1} × ${num(t1)} = ${d1}.`,
@@ -263,11 +271,13 @@ function equalDistanceTotalTime(ctx) {
     // chase in it, so the chase sentence cannot be the explanation.
     mk((s1 + s2) * total, 'SUMMED_SPEEDS_OVER_WHOLE_JOURNEY', `(${s1} + ${s2}) × ${num(total)}`)
   ]);
+  const stem = composeSentences(ctx, `قطعت سيارة نصف المسافة بسرعة ${s1} كم/ساعة، والنصف الآخر بسرعة ${s2} كم/ساعة. إذا استغرقت الرحلة كاملة ${u(total, 'hour', 'oblique')}، فما المسافة الكلية؟`);
   return buildBase(ctx, {
     templateId: 'SPD_M_EQUAL_DIST',
     subskill: 'نصفا مسافة متساويان بسرعتين مختلفتين',
     difficulty: 'hard',
-    question: `قطعت سيارة نصف المسافة بسرعة ${s1} كم/ساعة، والنصف الآخر بسرعة ${s2} كم/ساعة. إذا استغرقت الرحلة كاملة ${u(total, 'hour', 'oblique')}، فما المسافة الكلية؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('km'),
     steps: [
       `نفرض نصف المسافة = ن، فزمن النصف الأول = ن ÷ ${s1} وزمن النصف الثاني = ن ÷ ${s2}، ومجموعهما ${num(total)}.`,
@@ -323,11 +333,13 @@ function meetingDelayed(ctx) {
     mk(remaining / sB, 'USED_ONLY_SECOND_RATE', `${num(remaining)} ÷ ${sB}`),
     mk(remaining / sA, 'USED_ONLY_FIRST_RATE', `${num(remaining)} ÷ ${sA}`)
   ]);
+  const stem = composeSentences(ctx, `مدينتان بينهما ${u(total, 'km')}. انطلقت سيارة أ من الأولى بسرعة ${sA} كم/ساعة. بعد ${u(delay, 'hour', 'oblique')} انطلقت سيارة ب من الثانية باتجاه أ بسرعة ${sB} كم/ساعة. بعد كم ساعة من انطلاق ب تلتقي السيارتان؟`);
   return buildBase(ctx, {
     templateId: 'SPD_H_MEET_DELAY',
     subskill: 'التقاء مركبتين مع انطلاق متأخر',
     difficulty: 'hard',
-    question: `مدينتان بينهما ${u(total, 'km')}. انطلقت سيارة أ من الأولى بسرعة ${sA} كم/ساعة. بعد ${u(delay, 'hour', 'oblique')} انطلقت سيارة ب من الثانية باتجاه أ بسرعة ${sB} كم/ساعة. بعد كم ساعة من انطلاق ب تلتقي السيارتان؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('hour'),
     steps: [
       `ما قطعته أ أثناء التأخير = ${sA} × ${num(delay)} = ${num(sA * delay)}.`,
@@ -384,11 +396,13 @@ function catchupDelayed(ctx) {
     mk((sB - sA) * delay, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `(${sB} − ${sA}) × ${num(delay)}`),
     mk((sA + sB) * delay, 'USED_SUM_OF_SPEEDS_IN_CHASE', `(${sA} + ${sB}) × ${num(delay)}`)
   ]);
+  const stem = composeSentences(ctx, `انطلقت سيارة أ بسرعة ${sA} كم/ساعة. بعد ${u(delay, 'hour', 'oblique')} انطلقت سيارة ب من المكان نفسه وفي الاتجاه نفسه بسرعة ${sB} كم/ساعة. بعد كم ساعة من انطلاق ب تلحق بسيارة أ؟`);
   return buildBase(ctx, {
     templateId: 'SPD_H_CATCH',
     subskill: 'لحاق مع انطلاق متأخر',
     difficulty: 'easy',
-    question: `انطلقت سيارة أ بسرعة ${sA} كم/ساعة. بعد ${u(delay, 'hour', 'oblique')} انطلقت سيارة ب من المكان نفسه وفي الاتجاه نفسه بسرعة ${sB} كم/ساعة. بعد كم ساعة من انطلاق ب تلحق بسيارة أ؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('hour'),
     steps: [
       `تقدم أ أثناء التأخير = ${sA} × ${num(delay)} = ${num(lead)}.`,
@@ -442,11 +456,13 @@ function sameDistanceTimeDifference(ctx) {
     mk((s1 + s2) * diff / 2, 'USED_ARITHMETIC_MEAN_OF_SPEEDS', `(${s1} + ${s2}) × ${num(diff)} ÷ 2`),
     mk(diff * s1 * s2, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${num(diff)} × ${s1} × ${s2}`)
   ]);
+  const stem = composeSentences(ctx, `المسافة نفسها تُقطع بسرعة ${s1} كم/ساعة أو بسرعة ${s2} كم/ساعة. إذا كان الزمن عند السرعة ${s1} أطول بمقدار ${u(diff, 'hour', 'oblique')}، فما المسافة؟`);
   return buildBase(ctx, {
     templateId: 'SPD_H_TIME_DIFF',
     subskill: 'استنتاج المسافة من فرق الزمن',
     difficulty: 'hard',
-    question: `المسافة نفسها تُقطع بسرعة ${s1} كم/ساعة أو بسرعة ${s2} كم/ساعة. إذا كان الزمن عند السرعة ${s1} أطول بمقدار ${u(diff, 'hour', 'oblique')}، فما المسافة؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('km'),
     steps: [
       `نفرض المسافة = س، فالزمن عند ${s1} هو س ÷ ${s1}، وعند ${s2} هو س ÷ ${s2}.`,
@@ -518,14 +534,16 @@ function boatAgainstCurrent(ctx) {
     mk(Math.abs(tUp - tDown), 'USED_GIVEN_VALUE_AS_ANSWER', `${tUp} − ${tDown}`)
   ]);
 
+  const stem = composeSentences(ctx, `قطع قارب ${u(distance, 'km')} مع التيار في ${u(tDown, 'hour', 'oblique')}، وقطع المسافة نفسها ضد التيار في ${u(tUp, 'hour', 'oblique')}. `
+    + (askCurrent ? 'فما سرعة التيار؟' : 'فما سرعة القارب في الماء الساكن؟'));
   return buildBase(ctx, {
     templateId: 'SPD_H_CURRENT',
     scenario: 'boat_with_and_against_current',
     direction: askCurrent ? 'reverse' : 'forward',
     subskill: askCurrent ? 'سرعة التيار من رحلتي ذهاب وعودة' : 'سرعة القارب من رحلتي ذهاب وعودة',
     difficulty: 'hard',
-    question: `قطع قارب ${u(distance, 'km')} مع التيار في ${u(tDown, 'hour', 'oblique')}، وقطع المسافة نفسها ضد التيار في ${u(tUp, 'hour', 'oblique')}. `
-      + (askCurrent ? 'فما سرعة التيار؟' : 'فما سرعة القارب في الماء الساكن؟'),
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: v => `${num(v)} كم/ساعة`,
     steps: [
       `السرعة مع التيار = ${distance} ÷ ${tDown} = ${down}.`,
@@ -609,14 +627,16 @@ function twoLegSplit(ctx) {
     mk(total - s1 * hours, 'SOLVED_ONE_CONDITION_ONLY', `${total} − ${s1} × ${hours}`)
   ]);
 
+  const stem = composeSentences(ctx, `قطعت سيارة ${u(total, 'km')} في ${u(hours, 'hour', 'oblique')}. سارت جزءًا من الرحلة بسرعة ${s1} كم/ساعة والجزء الباقي بسرعة ${s2} كم/ساعة. `
+    + (askHours ? 'فكم ساعة سارت بالسرعة الثانية؟' : 'فما طول الجزء الأول؟'));
   return buildBase(ctx, {
     templateId: 'SPD_H_LEG_SPLIT',
     scenario: 'journey_split_between_two_speeds',
     direction: 'reverse',
     subskill: askHours ? 'زمن مرحلة من مسافة كلية وزمن كلي وسرعتين' : 'طول مرحلة من مسافة كلية وزمن كلي وسرعتين',
     difficulty: 'hard',
-    question: `قطعت سيارة ${u(total, 'km')} في ${u(hours, 'hour', 'oblique')}. سارت جزءًا من الرحلة بسرعة ${s1} كم/ساعة والجزء الباقي بسرعة ${s2} كم/ساعة. `
-      + (askHours ? 'فكم ساعة سارت بالسرعة الثانية؟' : 'فما طول الجزء الأول؟'),
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: askHours ? unitFormat('hour') : unitFormat('km'),
     steps: [
       `لو كانت الرحلة كلها بالسرعة الأولى لقطعت ${s1} × ${hours} = ${s1 * hours}.`,

@@ -1,5 +1,5 @@
 import {DAYS_AR, dayShift} from '../utils.js';
-import {mk, usable, u, unitFormat, buildBase, eq, X, add, sub, mod, resample, adj, bandPool} from './_shared.js';
+import {mk, usable, u, unitFormat, buildBase, eq, X, add, sub, mod, resample, adj, bandPool, composeSentences} from './_shared.js';
 import {grid} from '../qa/oracle-engine.js';
 
 export function generateCalendar({difficulty, rng, seed, engineVersion, telemetry}) {
@@ -84,11 +84,13 @@ function tomorrowKnown(ctx) {
     {index: target + 1, misconceptionId: 'SHIFTED_WRONG_DIRECTION', derivation: `التقدم يومًا واحدًا من ${DAYS_AR[target]} بدل الرجوع`},
     {index: target, misconceptionId: 'USED_GIVEN_VALUE_AS_ANSWER', derivation: `اليوم المذكور نفسه ${DAYS_AR[target]}`}
   ]);
+  const stem = composeSentences(ctx, `إذا كان غدًا هو يوم ${DAYS_AR[target]}، فما اليوم الحالي؟`);
   return buildBase(ctx, {
     templateId: 'CAL_E_TOM',
     subskill: 'معرفة اليوم من الغد',
     difficulty: 'easy',
-    question: `إذا كان غدًا هو يوم ${DAYS_AR[target]}، فما اليوم الحالي؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: v => String(v),
     steps: [
       `الغد يبعد يومًا واحدًا عن اليوم الحالي.`,
@@ -119,11 +121,13 @@ function afterTomorrow(ctx) {
     {index: target + 2, misconceptionId: 'SHIFTED_WRONG_DIRECTION', derivation: `التقدم يومين من ${DAYS_AR[target]} بدل الرجوع`},
     {index: target, misconceptionId: 'USED_GIVEN_VALUE_AS_ANSWER', derivation: `اليوم المذكور نفسه ${DAYS_AR[target]}`}
   ]);
+  const stem = composeSentences(ctx, `إذا كان بعد غد هو يوم ${DAYS_AR[target]}، فما اليوم الحالي؟`);
   return buildBase(ctx, {
     templateId: 'CAL_E_AFTER',
     subskill: 'معرفة اليوم من بعد غد',
     difficulty: 'easy',
-    question: `إذا كان بعد غد هو يوم ${DAYS_AR[target]}، فما اليوم الحالي؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: v => String(v),
     steps: [
       `«بعد غد» يبعد يومين عن اليوم الحالي.`,
@@ -157,6 +161,7 @@ function compoundForward(ctx) {
     {index: target + netOffset, misconceptionId: 'SHIFTED_WRONG_DIRECTION', derivation: `التقدم ${u(netOffset, 'day', 'oblique')} بدل الرجوع`},
     {index: target, misconceptionId: 'USED_GIVEN_VALUE_AS_ANSWER', derivation: `اليوم المذكور نفسه ${DAYS_AR[target]}`}
   ]);
+  const stem = composeSentences(ctx, `اليوم الذي يلي غدًا بمقدار ${aheadWord} هو ${DAYS_AR[target]}. فما اليوم الحالي؟`);
   return buildBase(ctx, {
     templateId: 'CAL_M_COMPOUND',
     subskill: 'إزاحة مركبة أمامية من الغد',
@@ -165,7 +170,8 @@ function compoundForward(ctx) {
     // the item and is kept; only the wording is straightened. «بعد غدٍ بـX» is
     // deliberately NOT used: «بعد غد» is itself an idiom for today+2, so that
     // phrasing would read as (today+2)+X and change the question.
-    question: `اليوم الذي يلي غدًا بمقدار ${aheadWord} هو ${DAYS_AR[target]}. فما اليوم الحالي؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: v => String(v),
     steps: [
       `«غد» إزاحة قدرها 1، ثم ${u(ahead, 'day', 'oblique')} ${adj(ahead, 'day', 'إضافي')}.`,
@@ -205,11 +211,13 @@ function forwardThenBack(ctx) {
     {index: asked + back, misconceptionId: 'SHIFTED_WRONG_DIRECTION', derivation: `التقدم ${u(back, 'day', 'oblique')} بدل الرجوع`},
     {index: afterTom, misconceptionId: 'USED_GIVEN_VALUE_AS_ANSWER', derivation: `اليوم المذكور نفسه ${DAYS_AR[afterTom]}`}
   ]);
+  const stem = composeSentences(ctx, `إذا كان بعد غد هو ${DAYS_AR[afterTom]}، فما اليوم الذي كان قبل ${u(back, 'day', 'oblique')} من اليوم؟`);
   return buildBase(ctx, {
     templateId: 'CAL_M_TWO_SHIFT',
     subskill: 'تحديد اليوم الحالي ثم الرجوع عدة أيام',
     difficulty: 'easy',
-    question: `إذا كان بعد غد هو ${DAYS_AR[afterTom]}، فما اليوم الذي كان قبل ${u(back, 'day', 'oblique')} من اليوم؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: v => String(v),
     steps: [
       `من «بعد غد = ${DAYS_AR[afterTom]}» نرجع يومين فنحدد اليوم الحالي: ${DAYS_AR[today]}.`,
@@ -266,6 +274,7 @@ function nestedOffset(ctx) {
     {index: target, misconceptionId: 'USED_GIVEN_VALUE_AS_ANSWER', derivation: `اليوم المذكور نفسه ${DAYS_AR[target]}`},
     {index: target - (1 + ahead + behind), misconceptionId: 'SHIFTED_WRONG_DIRECTION', derivation: 'جمع الإزاحة الخلفية بدل طرحها'}
   ]);
+  const stem = composeSentences(ctx, `ابدأ من غدٍ، ثم تقدّم بمقدار ${aheadWord}، ثم تراجع بمقدار ${behindWord}، فتصل إلى ${DAYS_AR[target]}. فما اليوم الحالي؟`);
   return buildBase(ctx, {
     templateId: 'CAL_H_NESTED',
     subskill: 'إزاحة زمنية مركبة أمامية وخلفية',
@@ -273,7 +282,8 @@ function nestedOffset(ctx) {
     // RC2.1-4. Was a triple-nested relative clause. Same arithmetic —
     // today +1 +ahead −behind = target — stated as the sequence of moves it
     // actually is, rather than as one sentence the reader must unpick.
-    question: `ابدأ من غدٍ، ثم تقدّم بمقدار ${aheadWord}، ثم تراجع بمقدار ${behindWord}، فتصل إلى ${DAYS_AR[target]}. فما اليوم الحالي؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: v => String(v),
     steps: [
       `«بعد ${aheadWord} من الغد» يعني إزاحة قدرها 1 + ${ahead} = ${1 + ahead} من اليوم الحالي.`,
@@ -323,11 +333,13 @@ function longOffset(ctx) {
     {index: today, misconceptionId: 'USED_GIVEN_VALUE_AS_ANSWER', derivation: `اليوم الحالي نفسه ${DAYS_AR[today]}`},
     {index: today + weeks, misconceptionId: 'IGNORED_NET_OFFSET', derivation: 'التحرك بعدد الأسابيع الكاملة بدل الباقي'}
   ]);
+  const stem = composeSentences(ctx, `إذا كان اليوم ${DAYS_AR[today]}، فما اليوم بعد ${u(n, 'day', 'oblique')}؟`);
   return buildBase(ctx, {
     templateId: 'CAL_H_LONG',
     subskill: 'إزاحة تتجاوز أسبوعًا',
     difficulty: 'easy',
-    question: `إذا كان اليوم ${DAYS_AR[today]}، فما اليوم بعد ${u(n, 'day', 'oblique')}؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: v => String(v),
     steps: [
       `نطرح أسبوعًا كاملًا في كل مرة، لأن ${u(7, 'day')} تعيدنا إلى اسم اليوم نفسه: ${weekSubtractionLine(n)}.`,
@@ -408,11 +420,13 @@ function twoCyclesMeet(ctx) {
     {index: today + weeks, misconceptionId: 'IGNORED_NET_OFFSET', derivation: 'التحرك بعدد الأسابيع الكاملة بدل الباقي'}
   ]);
 
+  const stem = composeSentences(ctx, `يزور أحدهما المكتبة كل ${u(first, 'day', 'oblique')} ويزورها الآخر كل ${u(second, 'day', 'oblique')}. التقيا فيها اليوم، وكان يوم ${DAYS_AR[today]}. في أي يوم من أيام الأسبوع يلتقيان فيها مرة أخرى؟`);
   return buildBase(ctx, {
     templateId: 'CAL_H_CYCLE_MEET',
     subskill: 'لقاء دورتين مختلفتين ويوم الأسبوع',
     difficulty: 'hard',
-    question: `يزور أحدهما المكتبة كل ${u(first, 'day', 'oblique')} ويزورها الآخر كل ${u(second, 'day', 'oblique')}. التقيا فيها اليوم، وكان يوم ${DAYS_AR[today]}. في أي يوم من أيام الأسبوع يلتقيان فيها مرة أخرى؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: v => String(v),
     steps: [
       `لا يلتقيان إلا حين تكتمل الدورتان معًا، أي بعد عدد من الأيام يقبل القسمة على كلٍّ من الدورتين.`,
@@ -490,13 +504,15 @@ function monthLengthFromTwoDates(ctx) {
     mk(28 - d1 + d2 + 7, 'USED_ONE_ANCHOR_ONLY', 'افتراض أربعة أسابيع ثم إضافة أسبوع')
   ]);
 
+  const stem = composeSentences(ctx, `كان اليوم ${d1} من شهرٍ ما يوم ${DAYS_AR[w1]}، وكان اليوم ${d2} من الشهر الذي يليه يوم ${DAYS_AR[w2]}. كم يومًا بين التاريخين؟`);
   return buildBase(ctx, {
     templateId: 'CAL_H_MONTH_LENGTH',
     scenario: 'two_dated_weekdays_across_a_month_boundary',
     direction: 'reverse',
     subskill: 'طول شهر من يومين معلومين في شهرين متتاليين',
     difficulty: 'hard',
-    question: `كان اليوم ${d1} من شهرٍ ما يوم ${DAYS_AR[w1]}، وكان اليوم ${d2} من الشهر الذي يليه يوم ${DAYS_AR[w2]}. كم يومًا بين التاريخين؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('day'),
     steps: [
       `عدد الأيام بين التاريخين = طول الشهر الأول − ${d1} + ${d2}، وطول الشهر غير معطى.`,
@@ -595,13 +611,15 @@ function offsetCyclesMeet(ctx) {
     })
   ]);
 
+  const stem = composeSentences(ctx, `يتكرر الحدث الأول كل ${u(p, 'day', 'oblique')} ابتداءً من يوم ${DAYS_AR[start]}، ويتكرر الحدث الثاني كل ${u(q, 'day', 'oblique')} ابتداءً بعد ${u(offset, 'day', 'oblique')} من بداية الأول. ما اليوم الذي يجتمع فيه الحدثان لأول مرة؟`);
   return buildBase(ctx, {
     templateId: 'CAL_H_OFFSET_CYCLES',
     scenario: 'two_cycles_with_offset_starts',
     direction: 'forward',
     subskill: 'أول يوم يجتمع فيه حدثان دوريان مختلفا البداية',
     difficulty: 'hard',
-    question: `يتكرر الحدث الأول كل ${u(p, 'day', 'oblique')} ابتداءً من يوم ${DAYS_AR[start]}، ويتكرر الحدث الثاني كل ${u(q, 'day', 'oblique')} ابتداءً بعد ${u(offset, 'day', 'oblique')} من بداية الأول. ما اليوم الذي يجتمع فيه الحدثان لأول مرة؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: v => String(v),
     steps: [
       `الحدث الأول يقع في الأيام التي تقبل القسمة على ${p} من يوم البداية.`,

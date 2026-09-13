@@ -26,7 +26,13 @@ export function generateSequences({difficulty, rng, seed, engineVersion, telemet
     ['SEQ_H_POW_INDEX', powersPlusIndex],
     ['SEQ_H_ALT_DIV', alternateDivide],
     ['SEQ_H_DIGIT_SUM', digitSumStep],
-    ['SEQ_H_INDEX_MULT', growingMultiplier]
+    ['SEQ_H_INDEX_MULT', growingMultiplier],
+    // RC2.7-4. The widened rule space and the targets that are not «what comes next».
+    ['SEQ_M_LINEAR_RECUR', linearRecurrence],
+    ['SEQ_M_CYCLE3', operationCycle],
+    ['SEQ_M_PAIR_RULE', pairedRule],
+    ['SEQ_H_DIGIT_PRODUCT', digitProductStep],
+    ['SEQ_M_WRONG_TERM', wrongTerm]
   ])(ctx);
 }
 
@@ -949,6 +955,388 @@ function growingMultiplier(ctx) {
       wrongMethodValue: last * (lastMul - 1) + add
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 3, ruleSearchDepth: 4, stageCount: 2, arithmeticBurden: 4},
+    textParams: false
+  });
+}
+
+// --- RC2.7-4. The rule space -------------------------------------------------
+//
+// The RC2.6 inventory found eleven sequence templates sharing THREE stem
+// skeletons and four asked unknowns: to a reader every sequence item was the
+// same question — a row of numbers and «ما العدد التالي؟» — however different
+// the rule behind it. Two things are wrong with that and they are separate
+// problems. The rule SPACE was narrower than the template count suggested, and
+// the TARGET was almost always the next term.
+//
+// What follows widens both, under the brief's constraint that every sequence
+// must have enough supporting terms, a discoverable intended rule, and no
+// equally natural competing rule leading to a different option. Where a second
+// reading exists it is one that AGREES: a_{n+1} = k·a_n + c is also "the
+// differences multiply by k", and both give the same next term.
+
+/** The digits of a positive integer, most significant first. */
+const digitsOf = n => String(Math.abs(n)).split('').map(Number);
+
+/**
+ * a_(n+1) = k · a_n + c — the multiply-add rule the brief names.
+ *
+ * The competing reading is the difference rule d_(n+1) = k · d_n, which is a
+ * consequence of this one and produces the same continuation, so the two
+ * readings never disagree.
+ */
+function linearRecurrence(ctx) {
+  const {rng} = ctx;
+  const k = rng.pick([2, 3]);
+  const c = rng.pick([2, 3, 4, 5]) * (rng.bool(0.35) ? -1 : 1);
+  const start = rng.int(3, 12);
+  const seq = [start];
+  for (let i = 1; i < 5; i++) seq.push(seq.at(-1) * k + c);
+  if (seq.some(v => v <= 0) || seq.at(-1) > 4000) return resample(ctx, linearRecurrence);
+  // The previous term only exists as a whole number when the arithmetic runs
+  // backwards cleanly; asking for it otherwise would have no printable answer.
+  const priorExists = (start - c) % k === 0 && (start - c) / k > 0;
+  const direction = rng.pick(priorExists
+    ? ['nextTerm', 'previousTerm', 'termAfterNext']
+    : ['nextTerm', 'termAfterNext']);
+  const next = seq.at(-1) * k + c;
+  const correct = direction === 'previousTerm' ? (start - c) / k
+    : direction === 'termAfterNext' ? next * k + c
+      : next;
+  const shown = direction === 'previousTerm' ? `؟، ${seq.join('، ')}`
+    : direction === 'termAfterNext' ? `${seq.join('، ')}، ${next}، ؟`
+      : `${seq.join('، ')}، ؟`;
+  const anchor = direction === 'previousTerm' ? start
+    : direction === 'termAfterNext' ? next : seq.at(-1);
+  const sign = v => (v < 0 ? `(${v})` : `${v}`);
+  const distractors = usable(ctx, [
+    mk(anchor * k, 'IGNORED_THE_OFFSET', `${anchor} × ${k}`, 2),
+    mk(anchor + c, 'IGNORED_THE_MULTIPLIER', `${anchor} + ${sign(c)}`, 2),
+    mk((anchor + c) * k, 'APPLIED_THE_STEPS_IN_THE_WRONG_ORDER', `(${anchor} + ${sign(c)}) × ${k}`, 2),
+    mk(anchor * k - c, 'APPLIED_OPERATION_IN_REVERSE', `${anchor} × ${k} − ${sign(c)}`, 2),
+    mk(anchor * (k + 1) + c, 'MISREAD_THE_STEP', `${anchor} × ${k + 1} + ${sign(c)}`, 1),
+    mk(anchor + (anchor - seq.at(-2)), 'TREATED_AS_ARITHMETIC', `${anchor} + (${anchor} − ${seq.at(-2)})`, 1),
+    mk(anchor * k * k + c, 'APPLIED_STEP_TWICE', `${anchor} × ${k} × ${k} + ${sign(c)}`, 2)
+  ], {allowNegative: true});
+  const stem = direction === 'previousTerm' ? 'ما العدد السابق في المتتالية؟'
+    : direction === 'termAfterNext' ? 'ما العدد الذي يشغل موضع علامة الاستفهام؟'
+      : 'ما العدد التالي في المتتالية؟';
+  return buildBase(ctx, {
+    templateId: 'SEQ_M_LINEAR_RECUR',
+    subskill: direction === 'previousTerm' ? 'قاعدة ضرب وجمع مع الحد السابق'
+      : direction === 'termAfterNext' ? 'قاعدة ضرب وجمع مع حد أبعد'
+        : 'قاعدة ضرب وجمع',
+    difficulty: 'medium',
+    scenario: 'multiply_then_add', direction: direction === 'previousTerm' ? 'reverse' : 'forward',
+    question: stem,
+    displayExpression: shown,
+    correct, distractors, format: v => num(v),
+    steps: [
+      `نجرب قاعدة على صورة «الحد السابق × عدد ثابت + عدد ثابت»: ${seq[0]} × ${k} ${c < 0 ? '−' : '+'} ${Math.abs(c)} = ${seq[1]}.`,
+      `القاعدة نفسها تصح على بقية الحدود: ${seq[1]} × ${k} ${c < 0 ? '−' : '+'} ${Math.abs(c)} = ${seq[2]}، و${seq[2]} × ${k} ${c < 0 ? '−' : '+'} ${Math.abs(c)} = ${seq[3]}، و${seq[3]} × ${k} ${c < 0 ? '−' : '+'} ${Math.abs(c)} = ${seq[4]}.`,
+      direction === 'previousTerm'
+        ? `نعكس القاعدة للحصول على الحد السابق: (${start} ${c < 0 ? '+' : '−'} ${Math.abs(c)}) ÷ ${k} = ${correct}.`
+        : direction === 'termAfterNext'
+          ? `الحد التالي = ${seq.at(-1)} × ${k} ${c < 0 ? '−' : '+'} ${Math.abs(c)} = ${next}، والذي يليه = ${next} × ${k} ${c < 0 ? '−' : '+'} ${Math.abs(c)} = ${correct}.`
+          : `الحد التالي = ${seq.at(-1)} × ${k} ${c < 0 ? '−' : '+'} ${Math.abs(c)} = ${correct}.`
+    ],
+    howToStart: 'إذا لم يكن الفرق ثابتًا ولا النسبة ثابتة، جرب ضربًا يتبعه جمع.',
+    remember: 'ضرب ثم جمع يجعل الفروق نفسها تتضاعف بالمقدار نفسه.',
+    fastMethod: `اضرب في ${k} ثم ${c < 0 ? 'اطرح' : 'اجمع'} ${Math.abs(c)}.`,
+    estimatedSteps: 3, conceptTags: ['sequence', 'linear-recurrence'],
+    parameters: {multiplier: k, offset: c, shownTerms: seq, laterTerm: next},
+    reasoningPattern: [`MUL(${k})`, `ADD(${c})`],
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: direction === 'previousTerm'
+        ? allTermsConstraints(seq, (a, b) => eq(b, add(mul(a, k), c)), eq(start, add(mul(X, k), c)))
+        : direction === 'termAfterNext'
+          ? allTermsConstraints(seq, (a, b) => eq(b, add(mul(a, k), c)), eq(X, add(mul(next, k), c)))
+          : allTermsConstraints(seq, (a, b) => eq(b, add(mul(a, k), c)), eq(X, add(mul(seq.at(-1), k), c)))
+    },
+    askedUnknown: direction, stageCount: 2,
+    pedagogy: {
+      targetSkill: 'MULTIPLY_THEN_ADD', targetMisconception: 'IGNORED_THE_OFFSET',
+      wrongMethodValue: anchor * k
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 3, ruleSearchDepth: 2},
+    textParams: false
+  });
+}
+
+/**
+ * A three-operation cycle, repeated. Two complete cycles are printed, which is
+ * what makes the repetition visible rather than guessed at.
+ */
+function operationCycle(ctx) {
+  const {rng} = ctx;
+  const a = rng.pick([3, 4, 5, 6, 7]);
+  const b = rng.pick([2, 3]);
+  const c = rng.pick([2, 3, 4, 5, 6]);
+  const start = rng.int(4, 14);
+  const apply = (v, i) => (i % 3 === 0 ? v + a : i % 3 === 1 ? v * b : v - c);
+  const seq = [start];
+  for (let i = 0; i < 6; i++) seq.push(apply(seq.at(-1), i));
+  if (seq.some(v => v <= 0) || seq.at(-1) > 900) return resample(ctx, operationCycle);
+  if (new Set(seq).size !== seq.length) return resample(ctx, operationCycle);
+  const correct = apply(seq.at(-1), 6);
+  const anchor = seq.at(-1);
+  const distractors = usable(ctx, [
+    mk(anchor * b, 'APPLIED_THE_WRONG_STEP_OF_THE_CYCLE', `${anchor} × ${b}`, 2),
+    mk(anchor - c, 'APPLIED_THE_WRONG_STEP_OF_THE_CYCLE', `${anchor} − ${c}`, 2),
+    mk(anchor - a, 'APPLIED_OPERATION_IN_REVERSE', `${anchor} − ${a}`, 2),
+    mk(anchor + a + a, 'APPLIED_STEP_TWICE', `${anchor} + ${a} + ${a}`, 2),
+    mk(anchor + a + b, 'MISREAD_THE_STEP', `${anchor} + ${a} + ${b}`, 1),
+    mk(anchor + c, 'APPLIED_THE_WRONG_STEP_OF_THE_CYCLE', `${anchor} + ${c}`, 2),
+    mk(anchor + (anchor - seq.at(-2)), 'TREATED_AS_ARITHMETIC', `${anchor} + (${anchor} − ${seq.at(-2)})`, 1)
+  ], {allowNegative: true});
+  return buildBase(ctx, {
+    templateId: 'SEQ_M_CYCLE3',
+    subskill: 'دورة من ثلاث عمليات تتكرر',
+    difficulty: 'medium',
+    scenario: 'three_operation_cycle',
+    question: 'ما العدد التالي في المتتالية؟',
+    displayExpression: `${seq.join('، ')}، ؟`,
+    correct, distractors, format: v => num(v),
+    steps: [
+      `الخطوات الثلاث الأولى: ${seq[0]} + ${a} = ${seq[1]}، و${seq[1]} × ${b} = ${seq[2]}، و${seq[2]} − ${c} = ${seq[3]}.`,
+      `الخطوات الثلاث التالية تكرر الدورة نفسها: ${seq[3]} + ${a} = ${seq[4]}، و${seq[4]} × ${b} = ${seq[5]}، و${seq[5]} − ${c} = ${seq[6]}.`,
+      `الدورة تبدأ من جديد، فالخطوة التالية جمع: ${seq[6]} + ${a} = ${correct}.`
+    ],
+    howToStart: 'اقسم الخطوات إلى مجموعات متساوية وابحث عن تكرارها.',
+    remember: 'إذا لم تتكرر عملية واحدة، ابحث عن دورة من عمليات.',
+    fastMethod: 'حدد موضع الخطوة المطلوبة داخل الدورة ثم طبّق عمليتها وحدها.',
+    estimatedSteps: 3, conceptTags: ['sequence', 'operation-cycle'],
+    parameters: {addend: a, multiplier: b, subtrahend: c, shownTerms: seq},
+    reasoningPattern: [`ADD(${a})`, `MUL(${b})`, `SUB(${c})`],
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [
+        eq(seq[1], add(seq[0], a)), eq(seq[2], mul(seq[1], b)), eq(seq[3], sub(seq[2], c)),
+        eq(seq[4], add(seq[3], a)), eq(seq[5], mul(seq[4], b)), eq(seq[6], sub(seq[5], c)),
+        eq(X, add(seq[6], a))
+      ]
+    },
+    askedUnknown: 'nextTerm', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'OPERATION_CYCLE', targetMisconception: 'APPLIED_THE_WRONG_STEP_OF_THE_CYCLE',
+      wrongMethodValue: anchor * b
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 3, arithmeticBurden: 4, ruleSearchDepth: 2},
+    textParams: false
+  });
+}
+
+/**
+ * Terms in pairs: the first of each pair advances by a constant step, the second
+ * is a function of the first. Two discoveries rather than one, but both are in
+ * the standard repertoire once the pairing is seen — hence medium.
+ */
+function pairedRule(ctx) {
+  const {rng} = ctx;
+  const step = rng.pick([1, 2, 3]);
+  const first = rng.int(2, 7);
+  const kind = rng.pick(['square', 'triple', 'successor']);
+  const f = v => (kind === 'square' ? v * v : kind === 'triple' ? v * 3 : v * (v + 1));
+  const firsts = [first, first + step, first + 2 * step, first + 3 * step];
+  const flat = [];
+  for (let i = 0; i < 3; i++) flat.push(firsts[i], f(firsts[i]));
+  flat.push(firsts[3]);
+  const correct = f(firsts[3]);
+  if (correct > 900) return resample(ctx, pairedRule);
+  if (new Set([...flat, correct]).size !== flat.length + 1) return resample(ctx, pairedRule);
+  const anchor = firsts[3];
+  const ruleText = kind === 'square' ? 'مربع العدد الذي قبله'
+    : kind === 'triple' ? 'ثلاثة أمثال العدد الذي قبله'
+      : 'حاصل ضرب العدد الذي قبله في العدد الذي يليه';
+  const distractors = usable(ctx, [
+    mk(anchor + step, 'CONTINUED_THE_FIRST_RUN_INSTEAD', `${anchor} + ${step}`, 1),
+    mk(f(firsts[2]) + step, 'CONTINUED_THE_SECOND_RUN_INSTEAD', `${f(firsts[2])} + ${step}`, 1),
+    mk(anchor * 2, 'TREATED_AS_GEOMETRIC', `${anchor} × 2`, 2),
+    mk(f(anchor - step), 'APPLIED_THE_RULE_TO_THE_WRONG_TERM', `القاعدة مطبقة على ${anchor - step} بدل ${anchor}`, 2),
+    mk(f(anchor + step), 'APPLIED_THE_RULE_TO_THE_WRONG_TERM', `القاعدة مطبقة على ${anchor + step} بدل ${anchor}`, 2),
+    mk(anchor + f(firsts[2]), 'USED_WRONG_OPERATION_IN_ALTERNATION', `${anchor} + ${f(firsts[2])}`, 2),
+    mk(f(anchor) - anchor, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${f(anchor)} − ${anchor}`, 2)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'SEQ_M_PAIR_RULE',
+    subskill: 'حدود مزدوجة: الثاني دالة في الأول',
+    difficulty: 'medium',
+    scenario: 'paired_terms',
+    question: 'ما العدد التالي في المتتالية؟',
+    displayExpression: `${flat.join('، ')}، ؟`,
+    correct, distractors, format: v => num(v),
+    steps: [
+      `الحدود تأتي في أزواج: (${firsts[0]}، ${f(firsts[0])})، و(${firsts[1]}، ${f(firsts[1])})، و(${firsts[2]}، ${f(firsts[2])}).`,
+      `أول كل زوج يزيد بمقدار ثابت: ${firsts[1]} − ${firsts[0]} = ${step}، و${firsts[2]} − ${firsts[1]} = ${step}، و${firsts[3]} − ${firsts[2]} = ${step}.`,
+      `وثاني كل زوج هو ${ruleText}: ${kind === 'square' ? `${firsts[0]} × ${firsts[0]}` : kind === 'triple' ? `${firsts[0]} × 3` : `${firsts[0]} × ${firsts[0] + 1}`} = ${f(firsts[0])}.`,
+      `إذن الحد المطلوب هو ثاني الزوج الرابع = ${kind === 'square' ? `${anchor} × ${anchor}` : kind === 'triple' ? `${anchor} × 3` : `${anchor} × ${anchor + 1}`} = ${correct}.`
+    ],
+    howToStart: 'جرب قراءة الحدود اثنين اثنين قبل أن تبحث عن فرق ثابت.',
+    remember: 'قد تكون العلاقة بين حدين متجاورين لا بين كل حد والذي يليه.',
+    fastMethod: 'اقرأ الأزواج، ثم طبّق قاعدة الزوج على أول الزوج الأخير.',
+    estimatedSteps: 4, conceptTags: ['sequence', 'grouped-terms'],
+    parameters: {pairStep: step, firstOfFirstPair: first, shownTerms: flat, lastFirst: anchor},
+    reasoningPattern: ['GROUP(2)', kind.toUpperCase()],
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [
+        eq(flat[1], kind === 'square' ? mul(flat[0], flat[0]) : kind === 'triple' ? mul(flat[0], 3) : mul(flat[0], flat[0] + 1)),
+        eq(flat[3], kind === 'square' ? mul(flat[2], flat[2]) : kind === 'triple' ? mul(flat[2], 3) : mul(flat[2], flat[2] + 1)),
+        eq(flat[5], kind === 'square' ? mul(flat[4], flat[4]) : kind === 'triple' ? mul(flat[4], 3) : mul(flat[4], flat[4] + 1)),
+        eq(sub(flat[2], flat[0]), step), eq(sub(flat[4], flat[2]), step), eq(sub(flat[6], flat[4]), step),
+        eq(X, kind === 'square' ? mul(anchor, anchor) : kind === 'triple' ? mul(anchor, 3) : mul(anchor, anchor + 1))
+      ]
+    },
+    askedUnknown: 'secondOfPair', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'GROUPED_TERMS', targetMisconception: 'CONTINUED_THE_FIRST_RUN_INSTEAD',
+      wrongMethodValue: anchor + step
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 3, arithmeticBurden: 3, ruleSearchDepth: 2},
+    textParams: false
+  });
+}
+
+/**
+ * The step is the PRODUCT of the digits of the term it is applied to — a
+ * digit-derived rule distinct from the digit-sum one, and one whose steps do not
+ * grow monotonically, so no difference pattern competes with it.
+ */
+function digitProductStep(ctx) {
+  const {rng} = ctx;
+  let seq = null;
+  // A zero anywhere in a term makes the product zero and the sequence stalls, so
+  // the search skips those starts rather than discovering the stall four terms
+  // in. Attempts are generous because the constraint bites: about one start in
+  // five survives to a full run.
+  for (let t = 0; t < 400; t++) {
+    const start = rng.int(12, 89);
+    if (String(start).includes('0')) continue;
+    const run = [start];
+    let ok = true;
+    for (let i = 0; i < 4; i++) {
+      const d = digitsOf(run.at(-1));
+      if (d.includes(0)) { ok = false; break; }
+      run.push(run.at(-1) + d.reduce((a, b) => a * b, 1));
+    }
+    if (!ok) continue;
+    if (digitsOf(run.at(-1)).includes(0)) continue;
+    if (run.at(-1) > 400) continue;
+    if (new Set(run).size !== run.length) continue;
+    seq = run;
+    break;
+  }
+  if (!seq) return resample(ctx, digitProductStep);
+  const prod = v => digitsOf(v).reduce((a, b) => a * b, 1);
+  const anchor = seq.at(-1);
+  const correct = anchor + prod(anchor);
+  const distractors = usable(ctx, [
+    mk(anchor + digitsOf(anchor).reduce((a, b) => a + b, 0), 'USED_DIGIT_SUM_INSTEAD_OF_PRODUCT',
+      `${anchor} + (${digitsOf(anchor).join(' + ')})`, 1),
+    mk(anchor + prod(seq.at(-2)), 'APPLIED_THE_RULE_TO_THE_WRONG_TERM',
+      `${anchor} + ${prod(seq.at(-2))}`, 2),
+    mk(anchor * prod(anchor), 'USED_WRONG_OPERATION_IN_ALTERNATION', `${anchor} × ${prod(anchor)}`, 2),
+    mk(anchor + (anchor - seq.at(-2)), 'TREATED_AS_ARITHMETIC', `${anchor} + (${anchor} − ${seq.at(-2)})`, 1),
+    mk(prod(anchor), 'USED_DIFFERENCE_AS_ANSWER', `حاصل ضرب أرقام ${anchor}`, 1),
+    mk(anchor + 2 * prod(anchor), 'APPLIED_STEP_TWICE', `${anchor} + 2 × ${prod(anchor)}`, 2),
+    mk(anchor - prod(anchor), 'APPLIED_OPERATION_IN_REVERSE', `${anchor} − ${prod(anchor)}`, 2)
+  ]);
+  const line = v => `${v} + (${digitsOf(v).join(' × ')}) = ${v + prod(v)}`;
+  return buildBase(ctx, {
+    templateId: 'SEQ_H_DIGIT_PRODUCT',
+    subskill: 'الزيادة تساوي حاصل ضرب أرقام الحد',
+    difficulty: 'hard',
+    scenario: 'digit_product_step',
+    question: 'ما العدد التالي في المتتالية؟',
+    displayExpression: `${seq.join('، ')}، ؟`,
+    correct, distractors, format: v => num(v),
+    steps: [
+      `الفروق ليست ثابتة ولا متضاعفة: ${differenceLine(seq)}.`,
+      `لكن كل فرق يساوي حاصل ضرب أرقام الحد الذي سبقه: ${line(seq[0])}، و${line(seq[1])}، و${line(seq[2])}، و${line(seq[3])}.`,
+      `إذن الحد التالي = ${line(anchor)}.`
+    ],
+    howToStart: 'إذا لم تنجح الفروق ولا النسب، انظر إلى أرقام الحد نفسه.',
+    remember: 'بعض المتتاليات تبني خطوتها من أرقام الحد لا من موضعه.',
+    fastMethod: 'اضرب أرقام الحد الأخير ثم أضف الناتج إليه.',
+    estimatedSteps: 3, conceptTags: ['sequence', 'digit-rule'],
+    parameters: {shownTerms: seq, lastTerm: anchor, lastStep: prod(anchor)},
+    reasoningPattern: ['DIGIT_PRODUCT', 'ADD'],
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [
+        ...seq.slice(1).map((v, i) => eq(v, add(seq[i], prod(seq[i])))),
+        eq(X, add(anchor, prod(anchor)))
+      ]
+    },
+    askedUnknown: 'nextTerm', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'DIGIT_DERIVED_STEP', targetMisconception: 'USED_DIGIT_SUM_INSTEAD_OF_PRODUCT',
+      wrongMethodValue: anchor + digitsOf(anchor).reduce((a, b) => a + b, 0)
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 4, ruleSearchDepth: 3},
+    textParams: false
+  });
+}
+
+/**
+ * One printed term breaks an otherwise constant rule. The target is not the
+ * continuation at all — it is which term does not belong — so the options ARE
+ * the printed run, exactly as in the odd-one-out family.
+ */
+function wrongTerm(ctx) {
+  const {rng} = ctx;
+  const kind = rng.pick(['arithmetic', 'geometric']);
+  const start = kind === 'arithmetic' ? rng.int(6, 40) : rng.pick([2, 3, 4, 5, 6]);
+  const step = kind === 'arithmetic' ? rng.pick([3, 4, 5, 6, 7, 8, 9]) : rng.pick([2, 3]);
+  const clean = [start];
+  for (let i = 1; i < 6; i++) clean.push(kind === 'arithmetic' ? clean.at(-1) + step : clean.at(-1) * step);
+  if (clean.at(-1) > 1500) return resample(ctx, wrongTerm);
+  const badIndex = rng.int(1, 4);
+  const offset = rng.pick([1, 2, 3]) * (rng.bool(0.5) ? -1 : 1);
+  const wrong = clean[badIndex] + offset;
+  if (wrong <= 0 || clean.includes(wrong)) return resample(ctx, wrongTerm);
+  const shownSeq = clean.map((v, i) => (i === badIndex ? wrong : v));
+  if (new Set(shownSeq).size !== shownSeq.length) return resample(ctx, wrongTerm);
+  const ruleText = kind === 'arithmetic'
+    ? `كل حد يزيد عن الذي قبله بمقدار ${step}`
+    : `كل حد يساوي الذي قبله مضروبًا في ${step}`;
+  const distractors = usable(ctx, shownSeq.filter((_, i) => i !== badIndex)
+    // «يحقق» rather than «يتفق»: the construction table declares the verbs that
+    // may follow a numeral, and this is the one the odd-one-out family already
+    // uses in exactly this position.
+    .map(v => mk(v, 'TERM_OBEYS_THE_RULE', `${v} يحقق القاعدة: ${ruleText}`)));
+  return buildBase(ctx, {
+    templateId: 'SEQ_M_WRONG_TERM',
+    subskill: 'تحديد الحد الذي يخالف القاعدة',
+    difficulty: 'medium',
+    scenario: 'rule_violation', direction: 'comparison',
+    question: 'أي الحدود الآتية لا يتفق مع قاعدة المتتالية؟',
+    // The six printed terms are the six options, so the spread between them is
+    // the question rather than an out-of-scale distractor.
+    stimulusIsOptions: true,
+    displayExpression: shownSeq.join('، '),
+    correct: wrong, distractors, format: v => num(v),
+    steps: [
+      `نفحص القاعدة على الحدود الأولى: ${ruleText}.`,
+      kind === 'arithmetic'
+        ? `الحد الصحيح في هذا الموضع = ${clean[badIndex - 1]} + ${step} = ${clean[badIndex]}.`
+        : `الحد الصحيح في هذا الموضع = ${clean[badIndex - 1]} × ${step} = ${clean[badIndex]}.`,
+      `المطبوع في ذلك الموضع هو ${wrong}، وهو يخالف القاعدة؛ أما بقية الحدود فتتفق معها.`
+    ],
+    howToStart: 'استخرج القاعدة من الحدود التي تتفق، ثم اختبر كل حد عليها.',
+    remember: 'حد واحد مخالف لا يغير القاعدة، بل يكشف نفسه.',
+    fastMethod: 'احسب ما ينبغي أن يكون كل حد وقارنه بالمطبوع.',
+    estimatedSteps: 3, conceptTags: ['sequence', 'rule-check'],
+    parameters: {rule: kind === 'arithmetic' ? step : step, shownTerms: shownSeq, correctTermAtPosition: clean[badIndex]},
+    commutative: null,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(X, wrong), eq(clean[badIndex], kind === 'arithmetic'
+        ? add(clean[badIndex - 1], step) : mul(clean[badIndex - 1], step))]
+    },
+    askedUnknown: 'wrongTerm', stageCount: 2,
+    pedagogy: {targetSkill: 'RULE_CHECK', targetMisconception: 'TERM_OBEYS_THE_RULE'},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 2, stageCount: 2, arithmeticBurden: 3, ruleSearchDepth: 1},
     textParams: false
   });
 }

@@ -111,6 +111,18 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Doubling differences; one layer below the surface.'},
   SEQ_H_RECURRENCE: {band: 'hard', criteria: ['RULE_DISCOVERY', 'STRATEGY_SELECTION'],
     why: 'RC2.5 promotion, correcting a factual error. RC2.3 ruled this out of HARD because "a solver who tries a+b finds it immediately" — but the template generates a_n = 2a_(n-1) + a_(n-2), not a+b, so the multiplier has to be discovered as well as the shape. Holdout E: both items were judged UNDERclassified, the only two such items in the whole holdout. Not a relaxation of the criteria: RULE_DISCOVERY was already declared and the rationale simply described the wrong template.'},
+  // RC2.7-4. The widened rule space. Bands are argued from the KIND of reasoning
+  // each asks for, on the same terms the RC2.5 human calibration set.
+  SEQ_M_LINEAR_RECUR: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Multiply-then-add. Once neither the difference nor the ratio is constant, "try a multiplier with an offset" is the next move in the standard repertoire, and the two unknowns fall out of two consecutive terms.'},
+  SEQ_M_CYCLE3: {band: 'medium', criteria: [], routine: ['REPEATED_OPERATION'],
+    why: 'A three-operation cycle printed twice over. Seeing the repetition is the whole of it; each step is then a single operation.'},
+  SEQ_M_PAIR_RULE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'Terms read two at a time, then one function inside the pair. Both moves are in the repertoire — this is the interleaving move of SEQ_M_INTERLEAVED with a functional relation in place of a second run.'},
+  SEQ_H_DIGIT_PRODUCT: {band: 'hard', criteria: ['RULE_DISCOVERY', 'STRATEGY_SELECTION'],
+    why: 'The step is built from the DIGITS of the term, so neither differences nor ratios lead anywhere and the solver must abandon the positional repertoire entirely before the rule is even visible. Adjudicated with SEQ_H_DIGIT_SUM, which it does not duplicate: the steps here do not grow monotonically, so no difference pattern competes.'},
+  SEQ_M_WRONG_TERM: {band: 'medium', criteria: [], routine: ['REPEATED_OPERATION'],
+    why: 'The rule is visible from the terms that obey it; the work is then checking each printed term against it, one operation at a time.'},
   SEQ_H_POW_INDEX: {band: 'hard', criteria: ['RULE_DISCOVERY', 'STRATEGY_SELECTION'],
     why: 'Nothing works until the solver subtracts each term’s POSITION, which no difference or ratio check suggests; only then do the powers appear.'},
   SEQ_H_ALT_DIV: {band: 'hard', criteria: ['RULE_DISCOVERY', 'STRATEGY_SELECTION'],

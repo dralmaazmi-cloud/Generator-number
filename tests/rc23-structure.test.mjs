@@ -56,7 +56,7 @@ test('RC2.3-1: every template is adjudicated, and every adjudication is reachabl
   // RC2.4 added eighteen HARD templates across eleven families; RC2.5 split the
   // relational count question into its routine and its branch-combining form,
   // making 126. The count is pinned so a silent loss is still caught.
-  assert.equal(adjudicated.length, 137, 'the engine holds 137 templates');
+  assert.equal(adjudicated.length, 142, 'the engine holds 142 templates');
 });
 
 test('RC2.3-1: a hard template names a structural criterion, and nothing else may', () => {

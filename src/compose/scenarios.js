@@ -30,78 +30,122 @@ const num = n => displayNumber(n);
 export const AGGREGATE = Object.freeze([
   {
     key: 'abstract_values', unit: 'value', measure: null, fmtUnit: null,
-    memberWord: 'قيمة',
+    measurePron: 'ها', listPron: 'فيها',
+    measureNoun: 'القيمة', measureRel: 'التي', measureAdded: 'قيمة',
+    listOf: n => `قائمة من ${u(n, 'value')}`, listDef: 'القائمة',
+    middlePhrase: 'القيمة التي تقع في الموضع الأوسط من القائمة',
+    countNoun: 'قيمة', groupWord: 'مجموعة',
+    memberWord: 'قيمة', membersDef: 'القيم', otherAdj: 'أخرى',
     groupOf: n => u(n, 'value'),
-    avgIs: (n, v) => `متوسط ${u(n, 'value')} هو ${num(v)}`,
+    avgOf: n => `متوسط ${u(n, 'value')}`,
+    mval: v => num(v),
     addedIs: v => `أُضيفت قيمة جديدة مقدارها ${num(v)}`,
     removedIs: v => `حُذفت قيمة مقدارها ${num(v)}`,
     replacedIs: (a, b) => `استُبدلت قيمة مقدارها ${num(a)} بقيمة مقدارها ${num(b)}`,
-    askAverage: 'فما متوسط القيم؟', membersDef: 'القيم'
+    pairAdded: v => `أُضيفت قيمتان متوسطهما ${num(v)}`
   },
   {
     key: 'exam_scores', unit: 'student', measure: 'degree', fmtUnit: 'degree',
-    memberWord: 'طالب',
+    measurePron: 'ها', listPron: 'فيه',
+    measureNoun: 'الدرجة', measureRel: 'التي', measureAdded: 'درجة',
+    listOf: n => `كشف درجات ${u(n, 'student')}`, listDef: 'الكشف',
+    middlePhrase: 'درجة الطالب الذي يقع في الموضع الأوسط من الكشف',
+    countNoun: 'طالبًا', groupWord: 'شعبة',
+    memberWord: 'طالب', membersDef: 'الدرجات', otherAdj: 'آخرين',
     groupOf: n => u(n, 'student'),
-    avgIs: (n, v) => `متوسط درجات ${u(n, 'student')} في اختبار هو ${u(v, 'degree')}`,
+    avgOf: n => `متوسط درجات ${u(n, 'student')}`,
+    mval: v => u(v, 'degree'),
     // The possessive already names the measure, so the unit word is not
     // repeated after the numeral: «طالب درجته 27», not «27 درجة».
     addedIs: v => `انضم إلى الاختبار طالب درجته ${num(v)}`,
     removedIs: v => `أُلغيت ورقة طالب درجته ${num(v)}`,
     replacedIs: (a, b) => `صُححت ورقة طالب من ${num(a)} إلى ${num(b)}`,
-    askAverage: 'فما متوسط الدرجات؟', membersDef: 'الدرجات'
+    pairAdded: v => `انضم طالبان متوسط درجتيهما ${num(v)}`
   },
   {
     key: 'warehouse_weights', unit: 'box', measure: 'kg', fmtUnit: 'kg',
-    memberWord: 'صندوق',
+    measurePron: 'ه', listPron: 'فيه',
+    measureNoun: 'الوزن', measureRel: 'الذي', measureAdded: 'وزن',
+    listOf: n => `سجل أوزان ${u(n, 'box')}`, listDef: 'السجل',
+    middlePhrase: 'وزن الصندوق الذي يقع في الموضع الأوسط من السجل',
+    countNoun: 'صندوقًا', groupWord: 'رصة',
+    memberWord: 'صندوق', membersDef: 'الأوزان', otherAdj: 'أخرى',
     groupOf: n => u(n, 'box'),
-    avgIs: (n, v) => `متوسط أوزان ${u(n, 'box')} في مستودع هو ${u(v, 'kg')}`,
+    avgOf: n => `متوسط أوزان ${u(n, 'box')}`,
+    mval: v => u(v, 'kg'),
     addedIs: v => `أُدخل إلى المستودع صندوق وزنه ${u(v, 'kg')}`,
     removedIs: v => `أُخرج من المستودع صندوق وزنه ${u(v, 'kg')}`,
     replacedIs: (a, b) => `استُبدل صندوق وزنه ${u(a, 'kg')} بصندوق وزنه ${u(b, 'kg')}`,
-    askAverage: 'فما متوسط الأوزان؟', membersDef: 'الأوزان'
+    pairAdded: v => `أُدخل صندوقان متوسط وزنهما ${u(v, 'kg')}`
   },
   {
     key: 'workshop_lengths', unit: 'panel', measure: 'meter', fmtUnit: 'meter',
-    memberWord: 'لوح',
+    measurePron: 'ه', listPron: 'فيه',
+    measureNoun: 'الطول', measureRel: 'الذي', measureAdded: 'طول',
+    listOf: n => `سجل أطوال ${u(n, 'panel')}`, listDef: 'السجل',
+    middlePhrase: 'طول اللوح الذي يقع في الموضع الأوسط من السجل',
+    countNoun: 'لوحًا', groupWord: 'حزمة',
+    memberWord: 'لوح', membersDef: 'الأطوال', otherAdj: 'أخرى',
     groupOf: n => u(n, 'panel'),
-    avgIs: (n, v) => `متوسط أطوال ${u(n, 'panel')} في ورشة هو ${u(v, 'meter')}`,
+    avgOf: n => `متوسط أطوال ${u(n, 'panel')}`,
+    mval: v => u(v, 'meter'),
     addedIs: v => `أُضيف لوح طوله ${u(v, 'meter')}`,
     removedIs: v => `سُحب لوح طوله ${u(v, 'meter')}`,
     replacedIs: (a, b) => `استُبدل لوح طوله ${u(a, 'meter')} بلوح طوله ${u(b, 'meter')}`,
-    askAverage: 'فما متوسط الأطوال؟', membersDef: 'الأطوال'
+    pairAdded: v => `أُضيف لوحان متوسط طولهما ${u(v, 'meter')}`
   },
   {
     key: 'library_pages', unit: 'book', measure: 'page', fmtUnit: 'page',
-    memberWord: 'كتاب',
+    measurePron: 'ه', listPron: 'فيه',
+    measureNoun: 'عدد الصفحات', measureRel: 'الذي', measureAdded: 'عدد صفحات',
+    listOf: n => `سجل عدد صفحات ${u(n, 'book')}`, listDef: 'السجل',
+    middlePhrase: 'عدد صفحات الكتاب الذي يقع في الموضع الأوسط من السجل',
+    countNoun: 'كتابًا', groupWord: 'رف',
+    memberWord: 'كتاب', membersDef: 'الصفحات', otherAdj: 'أخرى',
     groupOf: n => u(n, 'book'),
-    avgIs: (n, v) => `متوسط عدد صفحات ${u(n, 'book')} في رف هو ${u(v, 'page')}`,
-    // The averaged quantity is a page count, so an answer in pages is right.
+    avgOf: n => `متوسط عدد صفحات ${u(n, 'book')}`,
+    mval: v => u(v, 'page'),
     addedIs: v => `أُضيف إلى الرف كتاب عدد صفحاته ${num(v)}`,
     removedIs: v => `أُخرج من الرف كتاب عدد صفحاته ${num(v)}`,
     replacedIs: (a, b) => `استُبدل كتاب عدد صفحاته ${num(a)} بكتاب عدد صفحاته ${num(b)}`,
-    askAverage: 'فما متوسط عدد الصفحات؟', membersDef: 'الصفحات'
+    pairAdded: v => `أُضيف كتابان متوسط عدد صفحاتهما ${num(v)}`
   },
   {
     key: 'nursery_heights', unit: 'seedling', measure: 'cm', fmtUnit: 'cm',
-    memberWord: 'شتلة',
+    measurePron: 'ه', listPron: 'فيه',
+    measureNoun: 'الطول', measureRel: 'الذي', measureAdded: 'طول',
+    listOf: n => `سجل أطوال ${u(n, 'seedling')}`, listDef: 'السجل',
+    middlePhrase: 'طول الشتلة التي تقع في الموضع الأوسط من السجل',
+    countNoun: 'شتلة', groupWord: 'حوض',
+    memberWord: 'شتلة', membersDef: 'الأطوال', otherAdj: 'أخرى',
     groupOf: n => u(n, 'seedling'),
-    avgIs: (n, v) => `متوسط أطوال ${u(n, 'seedling')} في مشتل هو ${u(v, 'cm')}`,
+    avgOf: n => `متوسط أطوال ${u(n, 'seedling')}`,
+    mval: v => u(v, 'cm'),
     addedIs: v => `أُضيفت شتلة طولها ${u(v, 'cm')}`,
     removedIs: v => `نُقلت شتلة طولها ${u(v, 'cm')}`,
     replacedIs: (a, b) => `استُبدلت شتلة طولها ${u(a, 'cm')} بشتلة طولها ${u(b, 'cm')}`,
-    askAverage: 'فما متوسط الأطوال؟', membersDef: 'الأطوال'
+    pairAdded: v => `أُضيفت شتلتان متوسط طولهما ${u(v, 'cm')}`
   },
   {
     key: 'daily_visitors', unit: 'day', measure: 'visitor', fmtUnit: 'visitor',
-    memberWord: 'يوم',
+    measurePron: 'ه', listPron: 'فيه',
+    measureNoun: 'عدد الزوار', measureRel: 'الذي', measureAdded: 'عدد زوار',
+    listOf: n => `سجل عدد الزوار في ${u(n, 'day')}`, listDef: 'السجل',
+    middlePhrase: 'عدد زوار اليوم الذي يقع في الموضع الأوسط من السجل',
+    countNoun: 'يومًا', groupWord: 'فترة',
+    memberWord: 'يوم', membersDef: 'أعداد الزوار', otherAdj: 'أخرى',
     groupOf: n => u(n, 'day'),
-    avgIs: (n, v) => `متوسط عدد الزوار في ${u(n, 'day')} هو ${u(v, 'visitor')}`,
+    avgOf: n => `متوسط عدد الزوار في ${u(n, 'day')}`,
+    mval: v => u(v, 'visitor'),
     addedIs: v => `أُضيف يوم عدد زواره ${num(v)}`,
     removedIs: v => `استُبعد يوم عدد زواره ${num(v)}`,
     replacedIs: (a, b) => `صُحح يوم من ${num(a)} إلى ${num(b)}`,
-    askAverage: 'فما متوسط عدد الزوار؟', membersDef: 'أعداد الزوار'
+    pairAdded: v => `أُضيف يومان متوسط عدد زوارهما ${num(v)}`
   }
 ]);
+
+/** «متوسط درجات 6 طلاب آخرين» — the second group of a combine. */
+export const avgOfOther = (sc, n) => `${sc.avgOf(n)} ${sc.otherAdj}`;
 
 // --- production: an agent turning time into countable output -----------------
 

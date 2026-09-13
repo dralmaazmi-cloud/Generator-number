@@ -1,4 +1,14 @@
-import {mk, usable, num, buildBase, eq, X, add, sub, mul, resample, bandPool} from './_shared.js';
+import {mk, usable, num, buildBase, eq, X, add, sub, mul, resample, bandPool,
+  sceneFor, composeStem, unitFormat} from './_shared.js';
+import {avgOfOther} from '../compose/scenarios.js';
+
+// RC2.7-3. Every template here draws a SITUATION and has its finished clauses
+// joined by the realization layer. The arithmetic, the oracle, the distractors
+// and the explanation are untouched: what changes is that the same instance can
+// be told as an exam mark sheet, a warehouse weight log or a nursery height
+// record, in four sentence structures, instead of as one fixed sentence about
+// «قيم».
+const fmtFor = sc => (sc.fmtUnit ? unitFormat(sc.fmtUnit) : plain);
 
 export function generateAverages({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'averages', family_ar: 'المتوسط الحسابي', category: 'المتوسط الحسابي'};
@@ -45,14 +55,21 @@ function addOne(ctx) {
     mk((total - newVal) / (n + 1), 'SUBTRACTED_INSTEAD_OF_ADDED', `(${total} − ${newVal}) ÷ ${n + 1}`),
     mk(newVal / (n + 1), 'MISSED_ONE_STAGE', `${newVal} ÷ ${n + 1}`)
   ]);
+  const sc = sceneFor(ctx, 'aggregate');
+  const stem = composeStem(ctx, {
+    facts: [`${sc.avgOf(n)} هو ${sc.mval(avg)}`, sc.addedIs(newVal)],
+    ask: `فما متوسط ${sc.membersDef} بعد الإضافة؟`,
+    askFirst: `متوسط ${sc.membersDef} بعد الإضافة`
+  });
   return buildBase(ctx, {
     templateId: 'AVG_E_ADD',
+    scenario: sc.key, stemStructure: stem.structure, informationOrder: stem.order,
     subskill: 'إضافة قيمة جديدة إلى مجموعة',
     difficulty: 'medium',
     // RC2-002: a definite plural takes an agreeing numeral adjective, not a
     // bare numeral. The count is restated in words the sentence can carry.
-    question: `متوسط ${n} قيم هو ${avg}. أضيفت قيمة جديدة مقدارها ${newVal}. فما متوسط القيم بعد الإضافة؟`,
-    correct, distractors, format: plain,
+    question: stem.text,
+    correct, distractors, format: fmtFor(sc),
     steps: [
       `المجموع الأصلي = ${n} × ${avg} = ${total}.`,
       `المجموع بعد الإضافة = ${total} + ${newVal} = ${total + newVal}.`,
@@ -102,14 +119,21 @@ function removeOne(ctx) {
     mk(remain / (n - 1) * 2, 'APPLIED_STEP_TWICE', `${remain} ÷ ${n - 1} × 2`),
     mk(total - removed - avg, 'SUBTRACTED_INSTEAD_OF_ADDED', `${remain} − ${avg}`)
   ]);
+  const sc = sceneFor(ctx, 'aggregate');
+  const stem = composeStem(ctx, {
+    facts: [`${sc.avgOf(n)} هو ${sc.mval(avg)}`, sc.removedIs(removed)],
+    ask: `فما متوسط ${sc.membersDef} الباقية؟`,
+    askFirst: `متوسط ${sc.membersDef} الباقية`
+  });
   return buildBase(ctx, {
     templateId: 'AVG_E_REMOVE',
+    scenario: sc.key, stemStructure: stem.structure, informationOrder: stem.order,
     subskill: 'حذف قيمة من مجموعة',
     difficulty: 'medium',
     // RC2-002: a definite plural takes an agreeing numeral adjective, not a
     // bare numeral. The count is restated in words the sentence can carry.
-    question: `متوسط ${n} قيم هو ${avg}. حُذفت قيمة مقدارها ${removed}. فما متوسط القيم الباقية؟`,
-    correct, distractors, format: plain,
+    question: stem.text,
+    correct, distractors, format: fmtFor(sc),
     steps: [
       `المجموع الأصلي = ${n} × ${avg} = ${total}.`,
       `المجموع بعد الحذف = ${total} − ${removed} = ${remain}.`,
@@ -154,12 +178,19 @@ function replaceOne(ctx) {
     mk((total + newVal) / n, 'ADDED_INSTEAD_OF_SUBTRACTED', `(${total} + ${newVal}) ÷ ${n}`),
     mk(avg - diff, 'SUBTRACTED_INSTEAD_OF_ADDED', `${avg} − (${newVal} − ${oldVal})`)
   ]);
+  const sc = sceneFor(ctx, 'aggregate');
+  const stem = composeStem(ctx, {
+    facts: [`${sc.avgOf(n)} هو ${sc.mval(avg)}`, sc.replacedIs(oldVal, newVal)],
+    ask: `فما المتوسط الجديد؟`,
+    askFirst: `متوسط ${sc.membersDef} بعد الاستبدال`
+  });
   return buildBase(ctx, {
     templateId: 'AVG_M_REPLACE',
+    scenario: sc.key, stemStructure: stem.structure, informationOrder: stem.order,
     subskill: 'استبدال قيمة واحدة',
     difficulty: 'medium',
-    question: `متوسط ${n} قيم هو ${avg}. استُبدلت قيمة ${oldVal} بقيمة ${newVal}. فما المتوسط الجديد؟`,
-    correct, distractors, format: plain,
+    question: stem.text,
+    correct, distractors, format: fmtFor(sc),
     steps: [
       `المجموع القديم = ${n} × ${avg} = ${total}.`,
       `الاستبدال يزيد المجموع بمقدار ${newVal} − ${oldVal} = ${diff}.`,
@@ -211,16 +242,26 @@ function combineGroups(ctx) {
     mk((n2 * a1 + n1 * a2) / (n1 + n2), 'SWAPPED_RATE_AND_COUNT', `(${n2} × ${a1} + ${n1} × ${a2}) ÷ ${n1 + n2}`),
     mk(a1 + a2, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${a1} + ${a2}`)
   ]);
+  const sc = sceneFor(ctx, 'aggregate');
+  // Two symmetric groups: neither presupposes the other, so their order is a
+  // free choice and the realization layer may state either first.
+  const stem = composeStem(ctx, {
+    facts: [`${sc.avgOf(n1)} هو ${sc.mval(a1)}`, `${avgOfOther(sc, n2)} هو ${sc.mval(a2)}`],
+    ask: `فما متوسط ${sc.membersDef} مجتمعة؟`,
+    askFirst: `متوسط ${sc.membersDef} مجتمعة`,
+    orderFree: true
+  });
   return buildBase(ctx, {
     templateId: 'AVG_M_COMBINE',
+    scenario: sc.key, stemStructure: stem.structure, informationOrder: stem.order,
     // RC2.1-3. A weighted mean of two group averages lies between them.
     answerBounds: {between: [a1, a2]},
     subskill: 'دمج مجموعتين بمتوسطين مختلفين',
     difficulty: 'medium',
     // RC2-002: a definite plural takes an agreeing numeral adjective, not a
     // bare numeral. The count is restated in words the sentence can carry.
-    question: `متوسط ${n1} قيم هو ${a1}، ومتوسط ${n2} قيم أخرى هو ${a2}. فما متوسط القيم مجتمعة؟`,
-    correct, distractors, format: plain,
+    question: stem.text,
+    correct, distractors, format: fmtFor(sc),
     steps: [
       `مجموع المجموعة الأولى = ${n1} × ${a1} = ${n1 * a1}.`,
       `مجموع المجموعة الثانية = ${n2} × ${a2} = ${n2 * a2}.`,
@@ -272,14 +313,21 @@ function addPairKnownAverage(ctx) {
     mk(n * avg + 2 * pairAvg, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${n * avg} + ${2 * pairAvg}`),
     mk(2 * pairAvg, 'STOPPED_AT_INTERMEDIATE_TOTAL', `مجموع القيمتين ${2 * pairAvg}`)
   ]);
+  const sc = sceneFor(ctx, 'aggregate');
+  const stem = composeStem(ctx, {
+    facts: [`${sc.avgOf(n)} هو ${sc.mval(avg)}`, sc.pairAdded(pairAvg)],
+    ask: `فما متوسط ${sc.membersDef} بعد الإضافة؟`,
+    askFirst: `متوسط ${sc.membersDef} بعد الإضافة`
+  });
   return buildBase(ctx, {
     templateId: 'AVG_M_ADD_PAIR',
+    scenario: sc.key, stemStructure: stem.structure, informationOrder: stem.order,
     subskill: 'إضافة قيمتين بمتوسط معلوم',
     difficulty: 'medium',
     // RC2-002: a definite plural takes an agreeing numeral adjective, not a
     // bare numeral. The count is restated in words the sentence can carry.
-    question: `متوسط ${n} قيم هو ${avg}. أضيفت قيمتان متوسطهما ${pairAvg}. فما متوسط القيم بعد الإضافة؟`,
-    correct, distractors, format: plain,
+    question: stem.text,
+    correct, distractors, format: fmtFor(sc),
     steps: [
       `مجموع القيم الأصلية = ${n} × ${avg} = ${n * avg}.`,
       `مجموع القيمتين الجديدتين = 2 × ${pairAvg} = ${2 * pairAvg}.`,
@@ -333,8 +381,23 @@ function combineThenAdd(ctx) {
     mk(total, 'STOPPED_AT_INTERMEDIATE_TOTAL', `المجموع الكلي ${total}`),
     mk((n1 * a1 + n2 * a2) / (n1 + n2 + 1), 'MISSED_ONE_STAGE', `${n1 * a1 + n2 * a2} ÷ ${n1 + n2 + 1}`)
   ]);
+  const sc = sceneFor(ctx, 'aggregate');
+  // The third clause says «بعد ذلك» and depends on the first two having been
+  // stated, so this one keeps its order: only the sentence structure varies.
+  const stem = composeStem(ctx, {
+    facts: [
+      `${sc.avgOf(n1)} هو ${sc.mval(a1)}`,
+      `${avgOfOther(sc, n2)} هو ${sc.mval(a2)}`,
+      // The adverb leads the clause: trailing it after the numeral put «بعد»
+      // immediately behind a number, which is an unclassified construction.
+      `بعد ذلك ${sc.addedIs(extra)}`
+    ],
+    ask: `فما متوسط ${sc.membersDef} جميعها؟`,
+    askFirst: `متوسط ${sc.membersDef} جميعها`
+  });
   return buildBase(ctx, {
     templateId: 'AVG_H_COMB_ADD',
+    scenario: sc.key, stemStructure: stem.structure, informationOrder: stem.order,
     // RC2.1-3. The mean of everything lies between the smallest and largest
     // quantity being averaged, so the running total is not a possible answer.
     answerBounds: {between: [Math.min(a1, a2, extra), Math.max(a1, a2, extra)]},
@@ -342,8 +405,8 @@ function combineThenAdd(ctx) {
     difficulty: 'medium',
     // RC2-002: a definite plural takes an agreeing numeral adjective, not a
     // bare numeral. The count is restated in words the sentence can carry.
-    question: `متوسط ${n1} قيم هو ${a1}، ومتوسط ${n2} قيم أخرى هو ${a2}. أضيفت بعد ذلك قيمة جديدة مقدارها ${extra}. فما متوسط القيم جميعها؟`,
-    correct, distractors, format: plain,
+    question: stem.text,
+    correct, distractors, format: fmtFor(sc),
     steps: [
       `مجموع المجموعة الأولى = ${n1} × ${a1} = ${n1 * a1}.`,
       `مجموع المجموعة الثانية = ${n2} × ${a2} = ${n2 * a2}.`,
@@ -391,14 +454,28 @@ function missingValueForTarget(ctx) {
     mk((n + 2) * target - current, 'FAILED_TO_UPDATE_COUNT', `${n + 2} × ${target} − ${current}`),
     mk(n * (target - oldAvg), 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${n} × (${target} − ${oldAvg})`)
   ]);
+  const sc = sceneFor(ctx, 'aggregate');
+  // The target is stated as its own given rather than folded into the question,
+  // which is what lets this one be told outcome-first: the wanted average
+  // before the present one.
+  const stem = composeStem(ctx, {
+    facts: [
+      `${sc.avgOf(n)} هو ${sc.mval(oldAvg)}`,
+      `يُراد أن يصبح متوسط ${sc.membersDef} جميعها ${sc.mval(target)}`
+    ],
+    ask: `فما ${sc.measureNoun} ${sc.measureRel} يجب إضافت${sc.measurePron}؟`,
+    askFirst: `${sc.measureNoun} ${sc.measureRel} يجب إضافت${sc.measurePron}`,
+    orderFree: true, outcomeIndex: 1
+  });
   return buildBase(ctx, {
     templateId: 'AVG_H_TARGET',
+    scenario: sc.key, stemStructure: stem.structure, informationOrder: stem.order,
     subskill: 'إيجاد قيمة مطلوبة للوصول إلى متوسط مستهدف',
     difficulty: 'easy',
     // RC2-002: a definite plural takes an agreeing numeral adjective, not a
     // bare numeral. The count is restated in words the sentence can carry.
-    question: `متوسط ${n} قيم هو ${oldAvg}. ما القيمة التي يجب إضافتها ليصبح متوسط القيم جميعها هو ${target}؟`,
-    correct, distractors, format: plain,
+    question: stem.text,
+    correct, distractors, format: fmtFor(sc),
     steps: [
       `المجموع الحالي = ${n} × ${oldAvg} = ${current}.`,
       `المجموع المطلوب = ${n + 1} × ${target} = ${(n + 1) * target}.`,
@@ -476,16 +553,31 @@ function overlappingSubsets(ctx) {
     mk(wholeSum - tailSum, 'IGNORED_THE_OVERLAP', `${wholeSum} − ${tailSum}`, 0)
   ]);
 
+  const sc = sceneFor(ctx, 'aggregate');
+  // RC2.5-4. «قيم مرتبة» read as SORTED, and under that reading a head average
+  // above the tail average is contradictory, which is what the blind review
+  // flagged. The order here is positional — where a value sits in the record —
+  // so the clauses say that with positional words only.
+  const stem = composeStem(ctx, {
+    facts: [
+      `متوسط ${sc.membersDef} كلها في ${sc.listOf(count)} هو ${sc.mval(whole)}`,
+      `متوسط أول ${sc.groupOf(head)} في ${sc.listDef} هو ${sc.mval(headAvg)}`,
+      `متوسط آخر ${sc.groupOf(head)} ${sc.listPron} هو ${sc.mval(tailAvg)}`
+    ],
+    ask: `فما ${sc.middlePhrase}؟`,
+    askFirst: sc.middlePhrase
+  });
   return buildBase(ctx, {
     templateId: 'AVG_H_OVERLAP',
+    scenario: sc.key, stemStructure: stem.structure, informationOrder: stem.order,
     subskill: 'قيمة مشتركة بين مجموعتين متداخلتين',
     difficulty: 'hard',
     // RC2.5-4. «قيم مرتبة» read as SORTED, and under that reading a head
     // average above the tail average is contradictory, which is what the blind
     // review flagged. The order here is positional — where a value sits in the
     // list — so the stem now says that with positional words only.
-    question: `في قائمة من ${count} قيم، متوسط القيم كلها ${whole}. متوسط أول ${head} قيم في القائمة هو ${headAvg}، ومتوسط آخر ${head} قيم فيها هو ${tailAvg}. فما القيمة التي تقع في الموضع الأوسط من القائمة؟`,
-    correct, distractors, format: v => num(v),
+    question: stem.text,
+    correct, distractors, format: fmtFor(sc),
     steps: [
       `مجموع القيم كلها = ${count} × ${whole} = ${wholeSum}.`,
       `مجموع المجموعة الأولى = ${head} × ${headAvg} = ${headSum}، ومجموع الثانية = ${head} × ${tailAvg} = ${tailSum}.`,
@@ -558,11 +650,21 @@ function splitGroupSize(ctx) {
     mk(count * (whole - lowAvg) / whole, 'WEIGHTED_BY_WRONG_QUANTITY', `${count} × (${whole} − ${lowAvg}) ÷ ${whole}`)
   ]);
 
+  const sc = sceneFor(ctx, 'aggregate');
+  const stem = composeStem(ctx, {
+    facts: [
+      `${sc.avgOf(count)} هو ${sc.mval(whole)}`,
+      `قُسموا إلى مجموعتين: متوسط الأولى ${sc.mval(highAvg)}، ومتوسط الثانية ${sc.mval(lowAvg)}`
+    ],
+    ask: `كم ${sc.countNoun} في المجموعة الأولى؟`,
+    askFirst: 'حجم المجموعة الأولى'
+  });
   return buildBase(ctx, {
     templateId: 'AVG_H_SPLIT_SIZE',
+    scenario: sc.key, stemStructure: stem.structure, informationOrder: stem.order,
     subskill: 'حجم إحدى المجموعتين من ثلاثة متوسطات',
     difficulty: 'hard',
-    question: `متوسط ${count} قيمة هو ${whole}. قُسمت القيم إلى مجموعتين: متوسط الأولى ${highAvg}، ومتوسط الثانية ${lowAvg}. كم قيمة في المجموعة الأولى؟`,
+    question: stem.text,
     correct, distractors, format: v => num(v),
     steps: [
       `مجموع القيم كلها = ${count} × ${whole} = ${wholeSum}.`,

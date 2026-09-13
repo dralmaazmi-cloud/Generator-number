@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool, unitWordKam} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool, unitWordKam, composeSentences} from './_shared.js';
 
 export function generatePercentages({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'percentages', family_ar: 'النسب المئوية', category: 'النسب المئوية'};
@@ -39,11 +39,13 @@ function simplePercent(ctx) {
     mk(baseVal * pct / 200, 'APPLIED_STEP_TWICE', `${baseVal} × ${pct} ÷ 100 ÷ 2`),
     mk(baseVal * (100 + pct) / 100, 'USED_ORIGINAL_TOTAL', `${baseVal} × (100 + ${pct}) ÷ 100`)
   ]);
+  const stem = composeSentences(ctx, `ما قيمة ${pct}% من ${baseVal}؟`);
   return buildBase(ctx, {
     templateId: 'PCT_E_OF',
     subskill: 'حساب نسبة مئوية من قيمة',
     difficulty: 'easy',
-    question: `ما قيمة ${pct}% من ${baseVal}؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: plain,
     steps: [
       `النسبة كجزء من مئة = ${pct} ÷ 100 = ${num(pct / 100)}.`,
@@ -95,11 +97,13 @@ function reverseOneChange(ctx) {
     mk(final + final * pct / 100, 'TREATED_PERCENT_AS_AMOUNT', `${final} + ${final} × ${pct} ÷ 100`),
     mk(Fraction.from(original).mul(factor).mul(factor).toNumber(), 'APPLIED_STEP_TWICE', `${original} × ${factor.toDecimalString()} × ${factor.toDecimalString()}`)
   ]);
+  const stem = composeSentences(ctx, `بعد ${inc ? 'زيادة' : 'انخفاض'} قيمة بنسبة ${pct}% أصبحت ${final}. فما القيمة الأصلية؟`);
   return buildBase(ctx, {
     templateId: 'PCT_E_REVERSE_ONE',
     subskill: 'استرجاع الأصل بعد تغير واحد',
     difficulty: 'medium',
-    question: `بعد ${inc ? 'زيادة' : 'انخفاض'} قيمة بنسبة ${pct}% أصبحت ${final}. فما القيمة الأصلية؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: plain,
     steps: [
       factorText,
@@ -158,11 +162,13 @@ function successiveChange(ctx) {
     mk(upFirst ? -p2 : p2, 'USED_ONLY_LAST_STAGE', `التغير الثاني ${p2}% فقط`)
   ], {allowNegative: true, allowZero: true});
   const format = v => v > 0 ? `زيادة ${num(v)}%` : v < 0 ? `انخفاض ${num(Math.abs(v))}%` : 'لا يوجد تغير';
+  const stem = composeSentences(ctx, `كانت قيمة ${original}. ${upFirst ? 'زادت' : 'انخفضت'} بنسبة ${p1}%، ثم ${upFirst ? 'انخفضت' : 'زادت'} القيمة الجديدة بنسبة ${p2}%. ما نسبة التغير النهائية مقارنة بالأصل؟`);
   return buildBase(ctx, {
     templateId: 'PCT_M_SUCCESSIVE',
     subskill: 'تغيران مئويان متتاليان',
     difficulty: 'hard',
-    question: `كانت قيمة ${original}. ${upFirst ? 'زادت' : 'انخفضت'} بنسبة ${p1}%، ثم ${upFirst ? 'انخفضت' : 'زادت'} القيمة الجديدة بنسبة ${p2}%. ما نسبة التغير النهائية مقارنة بالأصل؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format,
     steps: [
       `القيمة بعد التغير الأول = ${original} × (100 ${upFirst ? '+' : '−'} ${p1}) ÷ 100 = ${after1}.`,
@@ -210,11 +216,13 @@ function remainingChain(ctx) {
     mk(total * p2 / 100, 'APPLIED_PERCENT_TO_ORIGINAL', `${total} × ${p2} ÷ 100`),
     mk(total - p1 - p2, 'TREATED_PERCENT_AS_AMOUNT', `${total} − ${p1} − ${p2}`)
   ]);
+  const stem = composeSentences(ctx, `في مجموعة عددها ${total}، غاب ${p1}% منهم، ثم غادر ${p2}% من الموجودين بعد ذلك. كم بقي؟`);
   return buildBase(ctx, {
     templateId: 'PCT_M_REMAIN',
     subskill: 'نسبتان من الباقي',
     difficulty: 'medium',
-    question: `في مجموعة عددها ${total}، غاب ${p1}% منهم، ثم غادر ${p2}% من الموجودين بعد ذلك. كم بقي؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: plain,
     steps: [
       `الباقي بعد الغياب الأول = ${total} × (100 − ${p1}) ÷ 100 = ${after1}.`,
@@ -266,11 +274,13 @@ function unitPriceChange(ctx) {
     mk(qty2 * unitPrice + pct, 'TREATED_PERCENT_AS_AMOUNT', `${qty2} × ${unitPrice} + ${pct}`),
     mk(total1 * qty2, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${total1} × ${qty2}`)
   ]);
+  const stem = composeSentences(ctx, `ثمن ${u(qty1, 'unit')} هو ${u(total1, 'dirham')}. إذا ارتفع سعر الوحدة ${riseByPercentPhrase(pct)}، فما ثمن ${u(qty2, 'unit')} بعد الزيادة؟`);
   return buildBase(ctx, {
     templateId: 'PCT_M_UNIT_PRICE',
     subskill: 'معدل وحدوي ثم زيادة مئوية',
     difficulty: 'medium',
-    question: `ثمن ${u(qty1, 'unit')} هو ${u(total1, 'dirham')}. إذا ارتفع سعر الوحدة ${riseByPercentPhrase(pct)}، فما ثمن ${u(qty2, 'unit')} بعد الزيادة؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('dirham'),
     steps: [
       `سعر الوحدة الأصلي = ${total1} ÷ ${qty1} = ${unitPrice}.`,
@@ -324,11 +334,13 @@ function reverseSuccessive(ctx) {
     mk(final + p1 - p2, 'TREATED_PERCENT_AS_AMOUNT', `${final} + ${p1} − ${p2}`),
     mk(Fraction.from(final).mul(20000).div(f1 * f2).toNumber(), 'APPLIED_STEP_TWICE', `${final} × 20000 ÷ (${f1} × ${f2})`)
   ]);
+  const stem = composeSentences(ctx, `زادت قيمة بنسبة ${p1}%، ثم انخفضت القيمة الجديدة بنسبة ${p2}%. إذا أصبحت القيمة النهائية ${final}، فما القيمة الأصلية؟`);
   return buildBase(ctx, {
     templateId: 'PCT_H_REVERSE_CHAIN',
     subskill: 'استرجاع الأصل بعد تغيرين متتاليين',
     difficulty: 'hard',
-    question: `زادت قيمة بنسبة ${p1}%، ثم انخفضت القيمة الجديدة بنسبة ${p2}%. إذا أصبحت القيمة النهائية ${final}، فما القيمة الأصلية؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: plain,
     steps: [
       `معامل الزيادة = (100 + ${p1}) ÷ 100 = ${num(f1 / 100)}.`,
@@ -378,11 +390,13 @@ function successiveWithTarget(ctx) {
     mk(after + original, 'USED_ORIGINAL_TOTAL', `${after} + ${original}`),
     mk(Fraction.from(after).mul(f2).mul(f2).div(10000).toNumber(), 'APPLIED_STEP_TWICE', `${after} × ${num(f2 / 100)} × ${num(f2 / 100)}`)
   ]);
+  const stem = composeSentences(ctx, `قيمة أصلية مقدارها ${original}. خُفّضت بنسبة ${p1}%، ثم زيدت القيمة الجديدة بنسبة ${p2}%. ما القيمة النهائية؟`);
   return buildBase(ctx, {
     templateId: 'PCT_H_CHAIN_VALUE',
     subskill: 'خصم ثم زيادة على القيمة الجديدة',
     difficulty: 'medium',
-    question: `قيمة أصلية مقدارها ${original}. خُفّضت بنسبة ${p1}%، ثم زيدت القيمة الجديدة بنسبة ${p2}%. ما القيمة النهائية؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: plain,
     steps: [
       `القيمة بعد الخصم = ${original} × (100 − ${p1}) ÷ 100 = ${after}.`,
@@ -476,11 +490,13 @@ function mixtureConcentration(ctx) {
     mk(allFirst + gap, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${num(allFirst)} + ${num(gap)}`)
   ]);
 
+  const stem = composeSentences(ctx, `خُلط محلول تركيزه ${p1}% مع محلول آخر تركيزه ${p2}%، فنتج ${u(total, 'liter')} من مزيج تركيزه ${pm}%. كم ${unitWordKam('liter')} من المحلول الأول استُخدم؟`);
   return buildBase(ctx, {
     templateId: 'PCT_H_MIXTURE',
     subskill: 'خلط محلولين بتركيزين مختلفين',
     difficulty: 'hard',
-    question: `خُلط محلول تركيزه ${p1}% مع محلول آخر تركيزه ${p2}%، فنتج ${u(total, 'liter')} من مزيج تركيزه ${pm}%. كم ${unitWordKam('liter')} من المحلول الأول استُخدم؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('liter'),
     steps: [
       `كمية المادة الذائبة في المزيج = ${total} × ${pm} ÷ 100 = ${num(mixAmount)}.`,
@@ -558,11 +574,13 @@ function twoGroupOppositeChange(ctx) {
     mk(total * rise / (rise + fall), 'SOLVED_ONE_CONDITION_ONLY', `${total} × ${rise} ÷ (${rise} + ${fall})`)
   ]);
 
+  const stem = composeSentences(ctx, `في مؤسسة قسمان، مجموع أفرادهما ${u(total, 'person')}. ارتفع عدد أفراد القسم الأول بنسبة ${rise}% وانخفض عدد أفراد القسم الثاني بنسبة ${fall}%، فأصبح المجموع ${u(newTotal, 'person')}. كم كان عدد أفراد القسم الأول؟`);
   return buildBase(ctx, {
     templateId: 'PCT_H_TWO_GROUP_CHANGE',
     subskill: 'مجموعتان تتغيران في اتجاهين متضادين',
     difficulty: 'hard',
-    question: `في مؤسسة قسمان، مجموع أفرادهما ${u(total, 'person')}. ارتفع عدد أفراد القسم الأول بنسبة ${rise}% وانخفض عدد أفراد القسم الثاني بنسبة ${fall}%، فأصبح المجموع ${u(newTotal, 'person')}. كم كان عدد أفراد القسم الأول؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('person'),
     steps: [
       `لو انخفض العدد كله بنسبة ${fall}% لأصبح المجموع = ${total} − ${total} × ${fall} ÷ 100 = ${num(ifAllFell)}.`,

@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool, composeSentences} from './_shared.js';
 
 export function generateUnitRate({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'unit_rate', family_ar: 'المعدل الوحدوي', category: 'المعدل الوحدوي'};
@@ -35,11 +35,13 @@ function directRate(ctx) {
     mk(total + rate * target, 'USED_ORIGINAL_TOTAL', `${total} + ${rate} × ${target}`),
     mk(rate * (minutes + target), 'RATE_APPLIED_TO_WRONG_COUNT', `${rate} × (${minutes} + ${target})`)
   ]);
+  const stem = composeSentences(ctx, `تنجز آلة ${u(total, 'unit')} خلال ${u(minutes, 'minute', 'oblique')} بمعدل ثابت. كم وحدة تنجز خلال ${u(target, 'minute', 'oblique')}؟`);
   return buildBase(ctx, {
     templateId: 'RATE_E_DIRECT',
     subskill: 'معدل وحدوي ثم كمية جديدة',
     difficulty: 'easy',
-    question: `تنجز آلة ${u(total, 'unit')} خلال ${u(minutes, 'minute', 'oblique')} بمعدل ثابت. كم وحدة تنجز خلال ${u(target, 'minute', 'oblique')}؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('unit'),
     steps: [
       `الإنتاج في الدقيقة الواحدة = ${total} ÷ ${minutes} = ${rate}.`,
@@ -82,11 +84,13 @@ function rateToTime(ctx) {
     mk(targetWords / (rate * minutes), 'RATE_APPLIED_TO_WRONG_COUNT', `${targetWords} ÷ (${rate} × ${minutes})`),
     mk(targetWords * minutes / total * 2, 'APPLIED_STEP_TWICE', `${targetWords} × ${minutes} ÷ ${total} × 2`)
   ]);
+  const stem = composeSentences(ctx, `يكتب شخص ${u(total, 'word')} خلال ${u(minutes, 'minute', 'oblique')} بمعدل ثابت. كم دقيقة يحتاج لكتابة ${u(targetWords, 'word')}؟`);
   return buildBase(ctx, {
     templateId: 'RATE_E_TIME',
     subskill: 'معدل وحدوي ثم إيجاد الزمن',
     difficulty: 'easy',
-    question: `يكتب شخص ${u(total, 'word')} خلال ${u(minutes, 'minute', 'oblique')} بمعدل ثابت. كم دقيقة يحتاج لكتابة ${u(targetWords, 'word')}؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('minute'),
     steps: [
       `عدد الكلمات في الدقيقة الواحدة = ${total} ÷ ${minutes} = ${rate}.`,
@@ -133,11 +137,13 @@ function rateThenPercent(ctx) {
     mk(newRate.mul(minutes).toNumber(), 'RATE_APPLIED_TO_WRONG_COUNT', `${newRate.toDecimalString()} × ${minutes}`),
     mk(total + correct, 'USED_ORIGINAL_TOTAL', `${total} + ${correct}`)
   ]);
+  const stem = composeSentences(ctx, `تنجز آلة ${u(total, 'unit')} خلال ${u(minutes, 'minute', 'oblique')}. بعد صيانة ارتفع معدلها في الدقيقة ${riseByPercentPhrase(pct)}. كم وحدة تنجز خلال ${u(targetMin, 'minute', 'oblique')} بالمعدل الجديد؟`);
   return buildBase(ctx, {
     templateId: 'RATE_M_PERCENT',
     subskill: 'معدل وحدوي ثم زيادة مئوية',
     difficulty: 'medium',
-    question: `تنجز آلة ${u(total, 'unit')} خلال ${u(minutes, 'minute', 'oblique')}. بعد صيانة ارتفع معدلها في الدقيقة ${riseByPercentPhrase(pct)}. كم وحدة تنجز خلال ${u(targetMin, 'minute', 'oblique')} بالمعدل الجديد؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('unit'),
     steps: [
       `المعدل الأصلي في الدقيقة = ${total} ÷ ${minutes} = ${rate}.`,
@@ -184,11 +190,13 @@ function rateThenNewQuantity(ctx) {
     mk(rateNum * targetQty * 2, 'APPLIED_STEP_TWICE', `${rateNum} × ${targetQty} × 2`),
     mk(amount + rateNum * (qty + targetQty), 'USED_ORIGINAL_TOTAL', `${amount} + ${rateNum} × (${qty} + ${targetQty})`)
   ]);
+  const stem = composeSentences(ctx, `قطعت سيارة ${u(amount, 'km')} باستخدام ${u(qty, 'liter', 'oblique')} من الوقود. إذا استمر المعدل نفسه، فكم كيلومترًا تقطع باستخدام ${u(targetQty, 'liter', 'oblique')}؟`);
   return buildBase(ctx, {
     templateId: 'RATE_M_SCALE',
     subskill: 'استخراج معدل وحدة ثم التوسع',
     difficulty: 'easy',
-    question: `قطعت سيارة ${u(amount, 'km')} باستخدام ${u(qty, 'liter', 'oblique')} من الوقود. إذا استمر المعدل نفسه، فكم كيلومترًا تقطع باستخدام ${u(targetQty, 'liter', 'oblique')}؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('km'),
     steps: [
       `المسافة لكل لتر = ${amount} ÷ ${qty} = ${rateNum}.`,
@@ -237,11 +245,13 @@ function rateChangeTarget(ctx) {
     mk(target / initial * oldMinutes * 2, 'RATE_APPLIED_TO_WRONG_COUNT', `${target} ÷ ${initial} × ${oldMinutes} × 2`),
     mk(Fraction.from(target).div(oldRate).div(2).toNumber(), 'USED_RATE_BEFORE_CHANGE', `${target} ÷ ${oldRate} ÷ 2`)
   ]);
+  const stem = composeSentences(ctx, `تنجز آلة ${u(initial, 'unit')} خلال ${u(oldMinutes, 'minute', 'oblique')}. ارتفع معدلها في الدقيقة بعد تطوير ${riseByPercentPhrase(pct)}. كم دقيقة تحتاج بالمعدل الجديد لإنجاز ${u(target, 'unit')}؟`);
   return buildBase(ctx, {
     templateId: 'RATE_H_TARGET',
     subskill: 'معدل محسن ثم زمن لهدف جديد',
     difficulty: 'medium',
-    question: `تنجز آلة ${u(initial, 'unit')} خلال ${u(oldMinutes, 'minute', 'oblique')}. ارتفع معدلها في الدقيقة بعد تطوير ${riseByPercentPhrase(pct)}. كم دقيقة تحتاج بالمعدل الجديد لإنجاز ${u(target, 'unit')}؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('minute'),
     steps: [
       `المعدل الأصلي في الدقيقة = ${initial} ÷ ${oldMinutes} = ${oldRate}.`,
@@ -289,11 +299,13 @@ function twoPhaseRate(ctx) {
     mk(r1 * h1 + r1 * h2, 'USED_RATE_BEFORE_CHANGE', `${r1} × ${h1} + ${r1} × ${h2}`),
     mk(r2n * h1 + r2n * h2, 'USED_ONLY_SECOND_RATE', `${r2n} × ${h1} + ${r2n} × ${h2}`)
   ]);
+  const stem = composeSentences(ctx, `يعمل جهاز بمعدل ${r1} وحدة/ساعة لمدة ${u(h1, 'hour', 'oblique')}، ثم ارتفع معدله ${riseByPercentPhrase(pct)} وعمل ${u(h2, 'hour', 'oblique')} أخرى. كم وحدة أنجز إجمالًا؟`);
   return buildBase(ctx, {
     templateId: 'RATE_H_TWO_PHASE',
     subskill: 'معدل يتغير بين مرحلتين',
     difficulty: 'hard',
-    question: `يعمل جهاز بمعدل ${r1} وحدة/ساعة لمدة ${u(h1, 'hour', 'oblique')}، ثم ارتفع معدله ${riseByPercentPhrase(pct)} وعمل ${u(h2, 'hour', 'oblique')} أخرى. كم وحدة أنجز إجمالًا؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('unit'),
     steps: [
       `إنتاج المرحلة الأولى = ${r1} × ${h1} = ${r1 * h1}.`,
@@ -371,11 +383,13 @@ function rateFromTimeSaved(ctx) {
     mk(rate + 2 * bump, 'APPLIED_STEP_TWICE', `${rate} + ${bump} × 2`)
   ]);
 
+  const stem = composeSentences(ctx, `ينجز جهاز ${u(total, 'unit')} بمعدل ثابت. ولو زاد معدله بمقدار ${bump} وحدة/ساعة لأنجز العمل نفسه في ${u(saved, 'hour', 'oblique')} أقل. فما معدله الأصلي؟`);
   return buildBase(ctx, {
     templateId: 'RATE_H_RATE_FROM_GAP',
     subskill: 'المعدل الأصلي من توفير في الزمن',
     difficulty: 'hard',
-    question: `ينجز جهاز ${u(total, 'unit')} بمعدل ثابت. ولو زاد معدله بمقدار ${bump} وحدة/ساعة لأنجز العمل نفسه في ${u(saved, 'hour', 'oblique')} أقل. فما معدله الأصلي؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     // RC2.5-4. The answer is a RATE. It was rendered «60 وحدة», which states a
     // quantity and answers a different question than the stem asks.
     correct, distractors, format: unitFormat('unitPerHour'),

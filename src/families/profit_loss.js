@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, approx, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool} from './_shared.js';
+import {mk, usable, u, num, approx, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool, composeSentences} from './_shared.js';
 
 export function generateProfitLoss({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'profit_loss', family_ar: 'الربح والخسارة والأسعار', category: 'الربح والخسارة والأسعار'};
@@ -47,11 +47,13 @@ function simpleProfit(ctx) {
     mk(approx(profit * 100 / (buy + sell)), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} × 100 ÷ (${buy} + ${sell})`),
     mk(approx(profit * 50 / buy), 'APPLIED_STEP_TWICE', `${profit} × 50 ÷ ${buy}`)
   ]);
+  const stem = composeSentences(ctx, `اشترى متجر سلعة بـ${u(buy, 'dirham', 'oblique')} وباعها بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الربح من سعر الشراء؟`);
   return buildBase(ctx, {
     templateId: 'PL_E_PROFIT',
     subskill: 'نسبة ربح من سعر الشراء',
     difficulty: 'easy',
-    question: `اشترى متجر سلعة بـ${u(buy, 'dirham', 'oblique')} وباعها بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الربح من سعر الشراء؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: pct,
     steps: [
       `الربح بالدرهم = ${sell} − ${buy} = ${profit}.`,
@@ -93,11 +95,13 @@ function simpleLoss(ctx) {
     mk(approx(loss * 100 / (buy + sell)), 'USED_SALE_PRICE_AS_DENOMINATOR', `${loss} × 100 ÷ (${buy} + ${sell})`),
     mk(approx(loss * 50 / buy), 'APPLIED_STEP_TWICE', `${loss} × 50 ÷ ${buy}`)
   ]);
+  const stem = composeSentences(ctx, `اشترى متجر سلعة بـ${u(buy, 'dirham', 'oblique')} وباعها بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الخسارة من سعر الشراء؟`);
   return buildBase(ctx, {
     templateId: 'PL_E_LOSS',
     subskill: 'نسبة خسارة من سعر الشراء',
     difficulty: 'easy',
-    question: `اشترى متجر سلعة بـ${u(buy, 'dirham', 'oblique')} وباعها بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الخسارة من سعر الشراء؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: pct,
     steps: [
       `الخسارة بالدرهم = ${buy} − ${sell} = ${loss}.`,
@@ -140,11 +144,13 @@ function totalCostProfit(ctx) {
     mk(approx(shipping / total * 100), 'TREATED_PERCENT_AS_AMOUNT', `${shipping} ÷ ${total} × 100`),
     mk(profit, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${sell} − ${total}`)
   ]);
+  const stem = composeSentences(ctx, `اشترى متجر سلعة بـ${u(buy, 'dirham', 'oblique')} ودفع ${u(shipping, 'dirham')} شحنًا وتجهيزًا، ثم باعها بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الربح من إجمالي التكلفة؟`);
   return buildBase(ctx, {
     templateId: 'PL_M_TOTAL_COST',
     subskill: 'ربح كنسبة من التكلفة الكلية',
     difficulty: 'medium',
-    question: `اشترى متجر سلعة بـ${u(buy, 'dirham', 'oblique')} ودفع ${u(shipping, 'dirham')} شحنًا وتجهيزًا، ثم باعها بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الربح من إجمالي التكلفة؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: pct,
     steps: [
       `إجمالي التكلفة = ${buy} + ${shipping} = ${total}.`,
@@ -194,13 +200,15 @@ function discountThenSale(ctx) {
     mk(tag + markup, 'TREATED_PERCENT_AS_AMOUNT', `${tag} + ${markup}`),
     mk(tag - discount, 'TREATED_PERCENT_AS_AMOUNT', `${tag} − ${discount}`)
   ]);
+  const stem = composeSentences(ctx, `سعر السلعة المعلن ${u(tag, 'dirham')}. حصل المتجر عليها بخصم ${discount}% من هذا السعر، ثم أراد ربحًا قدره ${markup}% من تكلفة الشراء الفعلية. فما سعر البيع؟`);
   return buildBase(ctx, {
     templateId: 'PL_M_DISC_MARK',
     subskill: 'خصم على سعر ثم إضافة ربح',
     difficulty: 'medium',
     // RC2-017: سعر سلعة is an indefinite إضافة and cannot carry the definite
     // adjective المعلن. Definite throughout: سعر السلعة المعلن.
-    question: `سعر السلعة المعلن ${u(tag, 'dirham')}. حصل المتجر عليها بخصم ${discount}% من هذا السعر، ثم أراد ربحًا قدره ${markup}% من تكلفة الشراء الفعلية. فما سعر البيع؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: money,
     steps: [
       `تكلفة الشراء بعد الخصم = ${tag} × (100 − ${discount}) ÷ 100 = ${costN}.`,
@@ -244,11 +252,13 @@ function reverseSellingPrice(ctx) {
     mk(sell, 'USED_GIVEN_VALUE_AS_ANSWER', `سعر البيع ${sell}`),
     mk(approx(sell * (100 + percent) / 100), 'APPLIED_OPERATION_IN_REVERSE', `${sell} × (100 + ${percent}) ÷ 100`)
   ]);
+  const stem = composeSentences(ctx, `باع متجر سلعة بـ${u(sell, 'dirham', 'oblique')} محققًا ربحًا قدره ${percent}% من تكلفة الشراء. فما تكلفة الشراء؟`);
   return buildBase(ctx, {
     templateId: 'PL_H_REVERSE',
     subskill: 'استرجاع التكلفة من سعر بيع وربح معلوم',
     difficulty: 'medium',
-    question: `باع متجر سلعة بـ${u(sell, 'dirham', 'oblique')} محققًا ربحًا قدره ${percent}% من تكلفة الشراء. فما تكلفة الشراء؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: money,
     steps: [
       `سعر البيع يمثل 100 + ${percent} = ${100 + percent} بالمئة من التكلفة.`,
@@ -299,11 +309,13 @@ function discountMarkupChain(ctx) {
     mk(-disc, 'STOPPED_AFTER_FIRST_STAGE', `نسبة الخصم ${disc} وحدها`)
   ], {allowNegative: true, allowZero: true});
   const format = v => v > 0 ? `زيادة ${num(v)}%` : v < 0 ? `انخفاض ${num(Math.abs(v))}%` : 'لا يوجد تغير';
+  const stem = composeSentences(ctx, `كان السعر ${u(list, 'dirham')}. خُفّض بنسبة ${disc}%، ثم زيد السعر الجديد بنسبة ${markup}%. ما نسبة التغير النهائية مقارنة بالسعر الأصلي؟`);
   return buildBase(ctx, {
     templateId: 'PL_H_CHAIN',
     subskill: 'خصم ثم زيادة وحساب التغير النهائي',
     difficulty: 'hard',
-    question: `كان السعر ${u(list, 'dirham')}. خُفّض بنسبة ${disc}%، ثم زيد السعر الجديد بنسبة ${markup}%. ما نسبة التغير النهائية مقارنة بالسعر الأصلي؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format,
     answerText: `الإجابة الصحيحة: ${format(correct)}.`,
     steps: [
@@ -374,11 +386,13 @@ function costFromTwoOutcomes(ctx) {
     mk(cost + gap, 'ADDED_INSTEAD_OF_SUBTRACTED', `${cost} + ${gap}`)
   ]);
 
+  const stem = composeSentences(ctx, `لو بيعت سلعة بسعر معين لتحقق ربح قدره ${gain}% من تكلفتها. ولو بيعت بسعر أقل من ذلك بـ${u(gap, 'dirham', 'oblique')} لكانت الخسارة ${loss}% من التكلفة. فما تكلفة السلعة؟`);
   return buildBase(ctx, {
     templateId: 'PL_H_TWO_OUTCOMES',
     subskill: 'التكلفة من حالتي ربح وخسارة',
     difficulty: 'hard',
-    question: `لو بيعت سلعة بسعر معين لتحقق ربح قدره ${gain}% من تكلفتها. ولو بيعت بسعر أقل من ذلك بـ${u(gap, 'dirham', 'oblique')} لكانت الخسارة ${loss}% من التكلفة. فما تكلفة السلعة؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('dirham'),
     steps: [
       `سعر الحالة الأولى يزيد على التكلفة بمقدار ${gain}% من التكلفة، وسعر الحالة الثانية يقل عنها بمقدار ${loss}% من التكلفة.`,
@@ -447,11 +461,13 @@ function costFromMarkupThenDiscount(ctx) {
     mk(sold - profit * 2, 'APPLIED_STEP_TWICE', `${sold} − ${profit} × 2`)
   ]);
 
+  const stem = composeSentences(ctx, `وضع متجر سعرًا معلنًا أعلى من تكلفة السلعة بنسبة ${markup}%، ثم باعها بخصم ${discount}% من السعر المعلن، فحقق ربحًا قدره ${u(profit, 'dirham')}. فما تكلفة السلعة؟`);
   return buildBase(ctx, {
     templateId: 'PL_H_MARKUP_DISCOUNT',
     subskill: 'التكلفة من زيادة ثم خصم وربح معلوم',
     difficulty: 'hard',
-    question: `وضع متجر سعرًا معلنًا أعلى من تكلفة السلعة بنسبة ${markup}%، ثم باعها بخصم ${discount}% من السعر المعلن، فحقق ربحًا قدره ${u(profit, 'dirham')}. فما تكلفة السلعة؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('dirham'),
     steps: [
       `معامل الزيادة = 100 + ${markup} = ${100 + markup}، ومعامل الخصم = 100 − ${discount} = ${100 - discount}.`,
@@ -531,14 +547,16 @@ function samePriceGainAndLoss(ctx) {
     mk(costLoss - price, 'SOLVED_ONE_CONDITION_ONLY', `${costLoss} − ${price}`)
   ]);
 
+  const stem = composeSentences(ctx, `باع تاجر قطعتين بسعر ${u(price, 'dirham')} لكل واحدة. ربح في الأولى ${g}% من تكلفتها وخسر في الثانية ${g}% من تكلفتها. `
+    + (askCost ? 'فكم كانت تكلفة القطعتين معًا؟' : 'ما مقدار خسارته الكلية في الصفقتين معًا؟'));
   return buildBase(ctx, {
     templateId: 'PL_H_SAME_PRICE_PAIR',
     scenario: 'two_articles_same_price_equal_percentages',
     direction: 'reverse',
     subskill: 'ربح وخسارة بنسبتين متساويتين وسعرَي بيع متساويين',
     difficulty: 'hard',
-    question: `باع تاجر قطعتين بسعر ${u(price, 'dirham')} لكل واحدة. ربح في الأولى ${g}% من تكلفتها وخسر في الثانية ${g}% من تكلفتها. `
-      + (askCost ? 'فكم كانت تكلفة القطعتين معًا؟' : 'ما مقدار خسارته الكلية في الصفقتين معًا؟'),
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('dirham'),
     steps: [
       `في القطعة الرابحة السعر = التكلفة + ${g}% من التكلفة، أي ${100} + ${g} = ${100 + g} جزءًا من كل 100.`,
@@ -622,6 +640,7 @@ function remainderMarginToTarget(ctx) {
     mk(Math.round(restGain * 100 / total), 'MARGIN_TAKEN_ON_THE_WRONG_BASE', `${restGain} × 100 ÷ ${total}`)
   ]);
 
+  const stem = composeSentences(ctx, `اشترى تاجر بضاعة بمبلغ ${u(total, 'dirham')}. باع منها ما تكلفته ${u(soldCost, 'dirham')} بربح ${firstPct}% من تكلفة ذلك الجزء. بكم في المئة من تكلفة الباقي يجب أن يبيع الباقي ليكون ربحه الكلي ${targetPct}% من التكلفة الكلية؟`);
   return buildBase(ctx, {
     templateId: 'PL_H_REST_MARGIN',
     scenario: 'consignment_part_sold_target_overall_margin',
@@ -631,7 +650,8 @@ function remainderMarginToTarget(ctx) {
     // «باع ${soldParts} من ${allParts} منها» put a bare numeral in front of
     // «منها», which the construction classifier cannot read. The part is named
     // by its cost instead, which says the same thing and parses.
-    question: `اشترى تاجر بضاعة بمبلغ ${u(total, 'dirham')}. باع منها ما تكلفته ${u(soldCost, 'dirham')} بربح ${firstPct}% من تكلفة ذلك الجزء. بكم في المئة من تكلفة الباقي يجب أن يبيع الباقي ليكون ربحه الكلي ${targetPct}% من التكلفة الكلية؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: v => `${num(v)}%`,
     steps: [
       `تكلفة الباقي = ${total} − ${soldCost} = ${restCost}.`,

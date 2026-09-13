@@ -1,4 +1,4 @@
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool, composeSentences} from './_shared.js';
 
 export function generateAges({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'ages', family_ar: 'مسائل الأعمار', category: 'مسائل الأعمار'};
@@ -39,11 +39,13 @@ function sumDifference(ctx) {
     mk(sum, 'USED_GIVEN_VALUE_AS_ANSWER', `المجموع المعطى ${sum}`),
     mk((sum + diff * 2) / 2, 'APPLIED_STEP_TWICE', `(${sum} + ${diff} × 2) ÷ 2`)
   ]);
+  const stem = composeSentences(ctx, `شخص أكبر من الآخر بـ${u(diff, 'year', 'oblique')}، ومجموع عمريهما ${u(sum, 'year')}. كم عمر الأكبر؟`);
   return buildBase(ctx, {
     templateId: 'AGE_E_SUM_DIFF',
     subskill: 'مجموع وفرق عمرين حاليين',
     difficulty: 'easy',
-    question: `شخص أكبر من الآخر بـ${u(diff, 'year', 'oblique')}، ومجموع عمريهما ${u(sum, 'year')}. كم عمر الأكبر؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: years,
     steps: [
       `لو تساوى العمران لكان كل منهما ${sum} ÷ 2 = ${sum / 2}.`,
@@ -97,11 +99,13 @@ function multipleDifference(ctx) {
     mk(Math.round(diff / (mult + 1)), 'RATE_APPLIED_TO_WRONG_COUNT', `${diff} ÷ (${mult} + 1)`, 2),
     mk(diff - mult, 'SUBTRACTED_INSTEAD_OF_ADDED', `${diff} − ${mult}`, 2)
   ]);
+  const stem = composeSentences(ctx, `عمر الأب يساوي ${multWord} عمر ابنه، والفرق بين عمريهما ${u(diff, 'year')}. كم عمر الابن؟`);
   return buildBase(ctx, {
     templateId: 'AGE_E_MULT_DIFF',
     subskill: 'مضاعف عمر مع فرق معلوم',
     difficulty: 'easy',
-    question: `عمر الأب يساوي ${multWord} عمر ابنه، والفرق بين عمريهما ${u(diff, 'year')}. كم عمر الابن؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: years,
     steps: [
       `عمر الابن جزء واحد، وعمر الأب ${u(mult, 'part')}.`,
@@ -151,11 +155,13 @@ function futureSumDifference(ctx) {
     mk((futureSum - yrs + diff) / 2 + yrs, 'ANSWERED_FUTURE_AGE', `(${futureSum} − ${yrs} + ${diff}) ÷ 2 + ${yrs}`),
     mk(diff, 'USED_AGE_DIFFERENCE_AS_ANSWER', `الفرق المعطى ${diff}`)
   ]);
+  const stem = composeSentences(ctx, `سارة أكبر من مريم بـ${u(diff, 'year', 'oblique')}. بعد ${u(yrs, 'year', 'oblique')} سيكون مجموع عمريهما ${u(futureSum, 'year')}. كم عمر سارة الآن؟`);
   return buildBase(ctx, {
     templateId: 'AGE_M_FUT_SUM_DIFF',
     subskill: 'فرق ثابت مع مجموع مستقبلي',
     difficulty: 'medium',
-    question: `سارة أكبر من مريم بـ${u(diff, 'year', 'oblique')}. بعد ${u(yrs, 'year', 'oblique')} سيكون مجموع عمريهما ${u(futureSum, 'year')}. كم عمر سارة الآن؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: years,
     steps: [
       `بعد ${u(yrs, 'year', 'oblique')} يزيد مجموع العمرين بمقدار 2 × ${yrs} = ${2 * yrs}.`,
@@ -213,11 +219,13 @@ function futureRatio(ctx) {
     mk(Math.round((diff + yrs) / ratio), 'APPLIED_FUTURE_RATIO_NOW', `(${diff} + ${yrs}) ÷ ${ratio}`, 5),
     mk(diff - yrs, 'SUBTRACTED_INSTEAD_OF_ADDED', `${diff} − ${yrs}`, 3)
   ]);
+  const stem = composeSentences(ctx, `عمر الأم أكبر من عمر ابنتها بـ${u(diff, 'year', 'oblique')}. بعد ${u(yrs, 'year', 'oblique')} سيكون عمر الأم ${ratioWord} عمر ابنتها. كم عمر الابنة الآن؟`);
   return buildBase(ctx, {
     templateId: 'AGE_M_FUT_RATIO',
     subskill: 'علاقة عمرية في المستقبل',
     difficulty: 'hard',
-    question: `عمر الأم أكبر من عمر ابنتها بـ${u(diff, 'year', 'oblique')}. بعد ${u(yrs, 'year', 'oblique')} سيكون عمر الأم ${ratioWord} عمر ابنتها. كم عمر الابنة الآن؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: years,
     steps: [
       `نفرض عمر الابنة الآن = س، فعمر الأم = س + ${diff}.`,
@@ -270,11 +278,13 @@ function currentRatioFutureSum(ctx) {
     mk(futureSum / 2, 'HALVED_THE_SUM', `${futureSum} ÷ 2`),
     mk(older - younger, 'USED_AGE_DIFFERENCE_AS_ANSWER', `${older} − ${younger}`, 4)
   ]);
+  const stem = composeSentences(ctx, `عمر سالم الآن ${ratioWord} عمر أخيه. بعد ${u(yrs, 'year', 'oblique')} سيكون مجموع عمريهما ${u(futureSum, 'year')}. كم عمر سالم الآن؟`);
   return buildBase(ctx, {
     templateId: 'AGE_M_RATIO_FUT_SUM',
     subskill: 'نسبة عمرية حالية مع مجموع مستقبلي',
     difficulty: 'medium',
-    question: `عمر سالم الآن ${ratioWord} عمر أخيه. بعد ${u(yrs, 'year', 'oblique')} سيكون مجموع عمريهما ${u(futureSum, 'year')}. كم عمر سالم الآن؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: years,
     steps: [
       `المجموع الآن = ${futureSum} − 2 × ${yrs} = ${older + younger}.`,
@@ -324,11 +334,13 @@ function pastRatioFutureSum(ctx) {
     mk((futureSum - 2 * futureYears) / 2, 'HALVED_THE_SUM', `(${futureSum} − ${2 * futureYears}) ÷ 2`, 1),
     mk((futureSum - 2 * futureYears) / (ratio + 1) * ratio, 'FORGOT_BOTH_AGES_GROW', `((${futureSum} − ${2 * futureYears}) ÷ ${ratio + 1}) × ${ratio}`)
   ]);
+  const stem = composeSentences(ctx, `قبل ${u(pastYears, 'year', 'oblique')} كان عمر علي ${ratioWord} عمر راشد. بعد ${u(futureYears, 'year', 'oblique')} من الآن سيكون مجموع عمريهما ${u(futureSum, 'year')}. كم عمر علي الآن؟`);
   return buildBase(ctx, {
     templateId: 'AGE_H_PAST_FUT',
     subskill: 'علاقة في الماضي مع مجموع مستقبلي',
     difficulty: 'hard',
-    question: `قبل ${u(pastYears, 'year', 'oblique')} كان عمر علي ${ratioWord} عمر راشد. بعد ${u(futureYears, 'year', 'oblique')} من الآن سيكون مجموع عمريهما ${u(futureSum, 'year')}. كم عمر علي الآن؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: years,
     steps: [
       `المجموع الآن = ${futureSum} − 2 × ${futureYears} = ${youngNow + oldNow}.`,
@@ -387,11 +399,13 @@ function twoTimeRatio(ctx) {
     mk(Math.round((gap + yrs) / ratio), 'APPLIED_FUTURE_RATIO_NOW', `(${gap} + ${yrs}) ÷ ${ratio}`, 5),
     mk(gap - yrs, 'SUBTRACTED_INSTEAD_OF_ADDED', `${gap} − ${yrs}`, 3)
   ]);
+  const stem = composeSentences(ctx, `عمر الأب أكبر من عمر ابنه بـ${u(gap, 'year', 'oblique')}. بعد ${u(yrs, 'year', 'oblique')} سيصبح عمر الأب ${ratioWord} عمر الابن. كم عمر الابن الآن؟`);
   return buildBase(ctx, {
     templateId: 'AGE_H_TWO_TIME',
     subskill: 'فرق حالي وعلاقة نسبية مستقبلية',
     difficulty: 'hard',
-    question: `عمر الأب أكبر من عمر ابنه بـ${u(gap, 'year', 'oblique')}. بعد ${u(yrs, 'year', 'oblique')} سيصبح عمر الأب ${ratioWord} عمر الابن. كم عمر الابن الآن؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: years,
     steps: [
       `نفرض عمر الابن الآن = س، والأب = س + ${gap}.`,
@@ -475,11 +489,13 @@ function threeSiblingsFuture(ctx) {
     mk(eldestNow + years + 1, 'OFF_BY_ONE_STEP', `${eldestNow} + ${years} + 1`, 5)
   ]);
 
+  const stem = composeSentences(ctx, `مجموع أعمار ثلاثة إخوة الآن ${u(total, 'year')}. الأكبر أكبر من الأوسط بـ${u(eldGap, 'year', 'oblique')}، والأوسط أكبر من الأصغر بـ${u(midGap, 'year', 'oblique')}. كم سيكون عمر الأكبر بعد ${u(years, 'year', 'oblique')}؟`);
   return buildBase(ctx, {
     templateId: 'AGE_H_THREE_SIBLINGS',
     subskill: 'ثلاثة إخوة مرتبطون بفروق ومجموع',
     difficulty: 'hard',
-    question: `مجموع أعمار ثلاثة إخوة الآن ${u(total, 'year')}. الأكبر أكبر من الأوسط بـ${u(eldGap, 'year', 'oblique')}، والأوسط أكبر من الأصغر بـ${u(midGap, 'year', 'oblique')}. كم سيكون عمر الأكبر بعد ${u(years, 'year', 'oblique')}؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('year'),
     steps: [
       `نفرض عمر الأصغر = س، فالأوسط = س + ${midGap}، والأكبر = س + ${midGap} + ${eldGap}.`,

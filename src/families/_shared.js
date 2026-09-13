@@ -38,6 +38,34 @@ export function composeStem(ctx, spec) {
   return realizeStem(ctx.rng.fork('stem'), spec);
 }
 
+/**
+ * RC2.7-3. Re-tell an already-correct stem.
+ *
+ * Most stems in this generator are written as «fact. fact. ask?» — a sequence of
+ * self-contained Arabic sentences ending in the question. Those sentences are
+ * exactly the clauses the realization layer wants, so a template that is already
+ * grammatical can gain the other sentence structures without being rewritten:
+ * split on the full stops, hand the pieces over, and the compact, listed and
+ * question-first shapes come out of the same words.
+ *
+ * A stem that is ONE sentence (its givens folded in behind «إذا») has nothing to
+ * split and is returned unchanged, marked `fixed`, rather than being cut at a
+ * place that would not survive reordering.
+ */
+export function composeSentences(ctx, text, opts = {}) {
+  const raw = String(text ?? '').trim();
+  // The lookbehind is on a full stop followed by space: «1.5» has no space after
+  // its point and is never split.
+  const parts = raw.split(/(?<=\.)\s+/).map(x => x.trim()).filter(Boolean);
+  const ask = parts.pop();
+  if (!parts.length || !/[؟?]\s*$/.test(ask)) return {text: raw, structure: 'fixed', order: 'given'};
+  return composeStem(ctx, {
+    facts: parts.map(x => x.replace(/\.$/, '')),
+    ask,
+    ...opts
+  });
+}
+
 export function mk(value, misconceptionId, derivation, reasoningStepAffected = null) {
   if (!isKnownMisconception(misconceptionId)) {
     throw new Error(`Unknown misconception id: ${misconceptionId}`);

@@ -50,6 +50,10 @@ export const CLASSIFICATION = {
     note: 'IGNORED_NET_OFFSET: moving by the number of whole weeks instead of the remainder. For n = 16 and n = 24 those are equal, so a quarter of this template measured nothing and the coincident distractor was silently dropped by the uniqueness check.'},
 
   // --- odd one out
+  // RC2.7-4. The only new sequence template whose options ARE the printed run.
+  SEQ_M_WRONG_TERM: {since: 'RC2.7', rc1: 'NOT_APPLICABLE', rc2: 'NOT_APPLICABLE',
+    note: 'The key is the one printed term that VIOLATES the rule, and every wrong option is a printed term that obeys it. The modelled wrong method — TERM_OBEYS_THE_RULE — is by construction a term satisfying the rule, and the key by construction is not, so the two sets are disjoint and no modelled wrong method can reach the key. The sampler additionally refuses any run whose perturbed term coincides with a term already printed.'},
+
   ODD_E_MULT: {rc1: 'COVERED_BY_OTHER_INVARIANT', rc2: 'COVERED_BY_OTHER_INVARIANT',
     note: 'The wrong method here is applying a competing rule. AMBIGUOUS_ODD_ONE_OUT / UNDISCOVERABLE_INTENDED_RULE reject a run in which ANY approved rule other than the intended one singles out a number — strictly stronger than rejecting only when a competing rule happens to land on the key.'},
   ODD_E_SQUARES: {rc1: 'COVERED_BY_OTHER_INVARIANT', rc2: 'COVERED_BY_OTHER_INVARIANT',
@@ -164,7 +168,11 @@ export async function measure(drawsPerBand = 400) {
   // answer to "what happened to the gap", and it must survive into the evidence
   // rather than being summarised away.
   const rc1Gap = templates
-    .filter(t => t.rc1Classification !== 'MODELLED')
+    // The RC1 gap is a fact about the RC1 sign-off, so templates that did not
+    // exist then cannot join it however they are classified now. `since` marks
+    // them; without this a later release could silently enlarge a historical
+    // figure and the comparison it exists for would stop meaning anything.
+    .filter(t => t.rc1Classification !== 'MODELLED' && !CLASSIFICATION[t.templateId]?.since)
     .map(t => ({
       templateId: t.templateId,
       family: t.family,
@@ -195,7 +203,8 @@ export async function measure(drawsPerBand = 400) {
     totals: {
       templates: templates.length,
       byRc2Classification: byClass,
-      rc1TemplatesWithNoModel: templates.filter(t => t.rc1Classification !== 'MODELLED').length,
+      rc1TemplatesWithNoModel: templates.filter(t =>
+        t.rc1Classification !== 'MODELLED' && !CLASSIFICATION[t.templateId]?.since).length,
       publishedSampled: published,
       publishedWithDeclaredModel: publishedWithModel,
       publishedModelCoverage: published ? Number((publishedWithModel / published).toFixed(3)) : 0,

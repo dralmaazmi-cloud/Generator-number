@@ -174,12 +174,14 @@ test('RC2.6-5: 82 hard slots deliver with every required zero', async () => {
 });
 
 test('RC2.6-5: coverage is what the report says it is', () => {
-  assert.equal(templatesAtBand('hard').length, 26);
+  // RC2.7-4 adds SEQ_H_DIGIT_PRODUCT — a digit-derived rule, adjudicated on the
+  // same terms as SEQ_H_DIGIT_SUM and not a duplicate of it.
+  assert.equal(templatesAtBand('hard').length, 27);
   assert.equal(FAMILY_REGISTRY.filter(f => f.difficulties.includes('hard')).length, 13);
   // Spread: no family may hold more than a fifth of the hard band now that the
   // sequence concentration RC2.5 reported has been diluted by real additions.
   for (const f of FAMILY_REGISTRY.filter(f => f.difficulties.includes('hard'))) {
     const n = f.templates.filter(t => TEMPLATE_STRUCTURE[t].band === 'hard').length;
-    assert.ok(n / 26 <= 0.20, `${f.id} holds ${n} of 26 hard structures`);
+    assert.ok(n / 27 <= 0.20, `${f.id} holds ${n} of 27 hard structures`);
   }
 });

@@ -7,7 +7,7 @@
 // satisfy the stated proportion. Nothing is announced without being derived.
 
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, div, factorLine, resample, unitWord, unitWordKam, theSingle, defPlural, bandPool} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, div, factorLine, resample, unitWord, unitWordKam, theSingle, defPlural, bandPool, composeSentences} from './_shared.js';
 
 export function generateDirectProportion({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {
@@ -162,11 +162,13 @@ function unitItems(ctx) {
       mk(total + per * targetCount, 'USED_ORIGINAL_TOTAL', `${total} + ${per} × ${targetCount}`),
       mk(per * (boxes + targetCount), 'RATE_APPLIED_TO_WRONG_COUNT', `${per} × (${boxes} + ${targetCount})`)
     ]);
+    const stem = composeSentences(ctx, `يحتوي كل ${unitWord('box')} على العدد نفسه من القطع. إذا كانت ${u(boxes, 'box')} تحتوي على ${u(total, 'piece')}، فكم قطعة يحتوي عليها ${u(targetCount, 'box')}؟`);
     return buildBase(ctx, {
       templateId: 'PROP_E_ITEMS',
       subskill: 'معدل ثابت بين عدد وحدات وكمية',
       difficulty: 'easy',
-      question: `يحتوي كل ${unitWord('box')} على العدد نفسه من القطع. إذا كانت ${u(boxes, 'box')} تحتوي على ${u(total, 'piece')}، فكم قطعة يحتوي عليها ${u(targetCount, 'box')}؟`,
+      question: stem.text,
+      stemStructure: stem.structure, informationOrder: stem.order,
       correct,
       distractors,
       format: unitFormat('piece'),
@@ -211,11 +213,13 @@ function unitItems(ctx) {
     mk(targetAmount / per / 2, 'HALF_DISTANCE_AS_ANSWER', `${targetAmount} ÷ ${per} ÷ 2`),
     mk((targetAmount - total) / per, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `(${targetAmount} − ${total}) ÷ ${per}`)
   ]);
+  const stem = composeSentences(ctx, `يحتوي كل ${unitWord('box')} على العدد نفسه من القطع. إذا كانت ${u(boxes, 'box')} تحتوي على ${u(total, 'piece')}، فكم ${unitWordKam('box')} نحتاج للحصول على ${u(targetAmount, 'piece')}؟`);
   return buildBase(ctx, {
     templateId: 'PROP_E_ITEMS',
     subskill: 'معدل ثابت بين عدد وحدات وكمية — إيجاد عدد الوحدات',
     difficulty: 'easy',
-    question: `يحتوي كل ${unitWord('box')} على العدد نفسه من القطع. إذا كانت ${u(boxes, 'box')} تحتوي على ${u(total, 'piece')}، فكم ${unitWordKam('box')} نحتاج للحصول على ${u(targetAmount, 'piece')}؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct,
     distractors,
     format: unitFormat('box'),
@@ -269,11 +273,13 @@ function unitCost(ctx) {
     mk(unitPrice * targetCount * 2, 'APPLIED_STEP_TWICE', `${unitPrice} × ${targetCount} × 2`),
     mk(total * targetCount / 2, 'RATE_APPLIED_TO_WRONG_COUNT', `${total} × ${targetCount} ÷ 2`)
   ]);
+  const stem = composeSentences(ctx, `تباع الوحدات بالسعر نفسه. إذا كانت ${u(n, 'unit')} تكلف ${u(total, 'dirham')}، فكم تكلف ${u(targetCount, 'unit')}؟`);
   return buildBase(ctx, {
     templateId: 'PROP_E_COST',
     subskill: 'تكلفة عدد أكبر من وحدات بالسعر نفسه',
     difficulty: 'easy',
-    question: `تباع الوحدات بالسعر نفسه. إذا كانت ${u(n, 'unit')} تكلف ${u(total, 'dirham')}، فكم تكلف ${u(targetCount, 'unit')}؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct,
     distractors,
     format: unitFormat('dirham'),
@@ -319,11 +325,13 @@ function unitCostReverse(ctx, n, unitPrice, total, targetCount) {
     mk(budget / total, 'STOPPED_AFTER_FIRST_STAGE', `${budget} ÷ ${total}`),
     mk(budget / unitPrice * 2, 'APPLIED_STEP_TWICE', `${budget} ÷ ${unitPrice} × 2`)
   ]);
+  const stem = composeSentences(ctx, `تباع الوحدات بالسعر نفسه. إذا كانت ${u(n, 'unit')} تكلف ${u(total, 'dirham')}، فكم وحدة نشتري بمبلغ ${u(budget, 'dirham')}؟`);
   return buildBase(ctx, {
     templateId: 'PROP_E_COST',
     subskill: 'تكلفة وحدات بالسعر نفسه — إيجاد عدد الوحدات',
     difficulty: 'easy',
-    question: `تباع الوحدات بالسعر نفسه. إذا كانت ${u(n, 'unit')} تكلف ${u(total, 'dirham')}، فكم وحدة نشتري بمبلغ ${u(budget, 'dirham')}؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct,
     distractors,
     format: unitFormat('unit'),
@@ -374,11 +382,13 @@ function recipeScale(ctx) {
     mk(cups + cups * factor, 'USED_ORIGINAL_TOTAL', `${cups} + ${cups} × ${factor}`),
     mk(cups * (factor + 1), 'OFF_BY_ONE_STEP', `${cups} × (${factor} + 1)`)
   ]);
+  const stem = composeSentences(ctx, `تحتاج وصفة إلى ${u(cups, 'cup')} من الدقيق لصنع ${u(pieces, 'piece')}. كم كوبًا تحتاج لصنع ${u(targetPieces, 'piece')} بالمعدل نفسه؟`);
   return buildBase(ctx, {
     templateId: 'PROP_M_RECIPE',
     subskill: 'تكبير وصفة بعامل ثابت',
     difficulty: 'easy',
-    question: `تحتاج وصفة إلى ${u(cups, 'cup')} من الدقيق لصنع ${u(pieces, 'piece')}. كم كوبًا تحتاج لصنع ${u(targetPieces, 'piece')} بالمعدل نفسه؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct,
     distractors,
     format: unitFormat('cup'),
@@ -427,11 +437,13 @@ function recipeScaleReverse(ctx, pieces, cups, factor) {
     mk(pieces * availableCups, 'RATE_APPLIED_TO_WRONG_COUNT', `${pieces} × ${availableCups}`),
     mk(pieces / factor, 'REVERSED_DIRECT_PROPORTION', `${pieces} ÷ ${factor}`)
   ]);
+  const stem = composeSentences(ctx, `تحتاج وصفة إلى ${u(cups, 'cup')} من الدقيق لصنع ${u(pieces, 'piece')}. كم قطعة نصنع من ${u(availableCups, 'cup')} بالمعدل نفسه؟`);
   return buildBase(ctx, {
     templateId: 'PROP_M_RECIPE',
     subskill: 'وصفة بمعدل ثابت — إيجاد عدد القطع',
     difficulty: 'medium',
-    question: `تحتاج وصفة إلى ${u(cups, 'cup')} من الدقيق لصنع ${u(pieces, 'piece')}. كم قطعة نصنع من ${u(availableCups, 'cup')} بالمعدل نفسه؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct,
     distractors,
     format: unitFormat('piece'),
@@ -486,13 +498,15 @@ function mapScale(ctx) {
     mk((a + b) * per + a * per, 'USED_ORIGINAL_TOTAL', `${totalCm} × ${per} + ${a} × ${per}`),
     mk(a * b * per, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${a} × ${b} × ${per}`)
   ]);
+  const stem = composeSentences(ctx, `على خريطة، كل ${u(cmBase, 'cm', 'oblique')} ${cmBase === 1 ? 'يمثل' : cmBase === 2 ? 'يمثلان' : 'تمثل'} ${u(kmBase, 'km')}. طول مسار على الخريطة ${u(a, 'cm')}، ثم أُضيف إليه طريق جانبي طوله ${u(b, 'cm')} على الخريطة. ما المسافة الحقيقية للمسار كاملًا؟`);
   return buildBase(ctx, {
     templateId: 'PROP_M_MAP',
     subskill: 'مقياس خريطة مع جمع مرحلتين',
     difficulty: 'medium',
     // RC2-016: كل governs its noun (genitive), and the verb agrees with it:
     // كل سنتيمتر يمثل / كل سنتيمترين يمثلان / كل 5 سنتيمترات تمثل.
-    question: `على خريطة، كل ${u(cmBase, 'cm', 'oblique')} ${cmBase === 1 ? 'يمثل' : cmBase === 2 ? 'يمثلان' : 'تمثل'} ${u(kmBase, 'km')}. طول مسار على الخريطة ${u(a, 'cm')}، ثم أُضيف إليه طريق جانبي طوله ${u(b, 'cm')} على الخريطة. ما المسافة الحقيقية للمسار كاملًا؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct,
     distractors,
     format: unitFormat('km'),
@@ -554,11 +568,13 @@ function fractionalUnit(ctx) {
     mk(unitNum * targetCount * 2, 'APPLIED_STEP_TWICE', `${unitNum} × ${targetCount} × 2`),
     mk(totalKg / targetCount, 'REVERSED_DIRECT_PROPORTION', `${totalKg} ÷ ${targetCount}`)
   ]);
+  const stem = composeSentences(ctx, `تتساوى العناصر في الوزن. إذا كان وزن ${u(n, 'item')} هو ${u(totalKg, 'kg')}، فما وزن ${u(targetCount, 'item')} من النوع نفسه؟`);
   return buildBase(ctx, {
     templateId: 'PROP_M_FRAC_UNIT',
     subskill: 'قيمة وحدة كسرية ثم التوسع',
     difficulty: 'easy',
-    question: `تتساوى العناصر في الوزن. إذا كان وزن ${u(n, 'item')} هو ${u(totalKg, 'kg')}، فما وزن ${u(targetCount, 'item')} من النوع نفسه؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct,
     distractors,
     format: unitFormat('kg'),
@@ -612,11 +628,13 @@ function compoundScale(ctx) {
     mk(scaled.add(amount).mul(factor).toNumber(), 'USED_ORIGINAL_TOTAL', `(${scaled.toDecimalString()} + ${amount}) × ${factor.toDecimalString()}`),
     mk(Fraction.from(amount).div(units).mul(units + targetUnits).mul(factor).toNumber(), 'RATE_APPLIED_TO_WRONG_COUNT', `${unitVal.toDecimalString()} × (${units} + ${targetUnits}) × ${factor.toDecimalString()}`)
   ]);
+  const stem = composeSentences(ctx, `تحتاج ${u(units, 'unit')} إلى ${u(amount, 'kg')} من مادة. نريد تجهيز ${u(targetUnits, 'unit')}، مع إضافة احتياط بنسبة ${reservePct}% فوق الكمية المحسوبة. كم كيلوجرامًا نحتاج؟`);
   return buildBase(ctx, {
     templateId: 'PROP_H_COMPOUND',
     subskill: 'تناسب مباشر ثم زيادة احتياط',
     difficulty: 'medium',
-    question: `تحتاج ${u(units, 'unit')} إلى ${u(amount, 'kg')} من مادة. نريد تجهيز ${u(targetUnits, 'unit')}، مع إضافة احتياط بنسبة ${reservePct}% فوق الكمية المحسوبة. كم كيلوجرامًا نحتاج؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct,
     distractors,
     format: unitFormat('kg'),
@@ -675,11 +693,13 @@ function multiUnitCost(ctx) {
     mk(scaled.add(packCost).add(flatFee).toNumber(), 'USED_ORIGINAL_TOTAL', `${scaled.toDecimalString()} + ${packCost} + ${flatFee}`),
     mk(unitVal.mul(packN + targetCount).add(flatFee).toNumber(), 'RATE_APPLIED_TO_WRONG_COUNT', `${unitVal.toDecimalString()} × (${packN} + ${targetCount}) + ${flatFee}`)
   ]);
+  const stem = composeSentences(ctx, `تكلف ${u(packN, 'unit')} مبلغ ${u(packCost, 'dirham')} بالسعر نفسه. إذا اشترينا ${u(targetCount, 'unit')} وأُضيف رسم ثابت قدره ${u(flatFee, 'dirham')} يُدفع مرة واحدة، فما التكلفة الكلية؟`);
   return buildBase(ctx, {
     templateId: 'PROP_H_COST_PLUS',
     subskill: 'تكلفة وحدات مع رسم ثابت',
     difficulty: 'hard',
-    question: `تكلف ${u(packN, 'unit')} مبلغ ${u(packCost, 'dirham')} بالسعر نفسه. إذا اشترينا ${u(targetCount, 'unit')} وأُضيف رسم ثابت قدره ${u(flatFee, 'dirham')} يُدفع مرة واحدة، فما التكلفة الكلية؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct,
     distractors,
     format: unitFormat('dirham'),
@@ -762,11 +782,13 @@ function twoItemPrices(ctx) {
     mk(lhs, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${t1} × ${d} − ${t2} × ${b}`, 1)
   ]);
 
+  const stem = composeSentences(ctx, `ثمن ${u(a, 'box')} و${u(b, 'piece')} معًا ${u(t1, 'dirham')}. وثمن ${u(c, 'box')} و${u(d, 'piece')} معًا ${u(t2, 'dirham')}. فما ثمن الصندوق الواحد؟`);
   return buildBase(ctx, {
     templateId: 'PROP_H_TWO_ITEM_SYSTEM',
     subskill: 'سعر الوحدة من خليطين مختلفين',
     difficulty: 'hard',
-    question: `ثمن ${u(a, 'box')} و${u(b, 'piece')} معًا ${u(t1, 'dirham')}. وثمن ${u(c, 'box')} و${u(d, 'piece')} معًا ${u(t2, 'dirham')}. فما ثمن الصندوق الواحد؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('dirham'),
     steps: [
       `نضرب العبارة الأولى في ${d} والثانية في ${b} ليتساوى عدد القطع فيهما: ${t1} × ${d} = ${t1 * d}، و${t2} × ${b} = ${t2 * b}.`,
@@ -850,13 +872,15 @@ function mixtureReplacement(ctx) {
     mk(before + after, 'ADDED_INSTEAD_OF_SUBTRACTED', `${before} + ${after}`)
   ]);
 
+  const stem = composeSentences(ctx, `في وعاء ${u(total, 'liter')} من خليط، نسبة المادة الأولى إلى الثانية ${p} : ${q}. سُحب مقدار من الخليط واستُبدل بالمادة الثانية وحدها، فصارت النسبة ${p2} : ${q2}. كم لترًا سُحب؟`);
   return buildBase(ctx, {
     templateId: 'PROP_H_REPLACE',
     scenario: 'mixture_drawn_off_and_replaced',
     direction: 'reverse',
     subskill: 'كمية مستبدلة من نسبة قبل وبعد',
     difficulty: 'hard',
-    question: `في وعاء ${u(total, 'liter')} من خليط، نسبة المادة الأولى إلى الثانية ${p} : ${q}. سُحب مقدار من الخليط واستُبدل بالمادة الثانية وحدها، فصارت النسبة ${p2} : ${q2}. كم لترًا سُحب؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('liter'),
     steps: [
       `مجموع أجزاء النسبة الأولى = ${p} + ${q} = ${p + q}.`,
@@ -938,13 +962,15 @@ function investmentTimeShare(ctx) {
     mk(Math.abs(byMoney - byTime), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(byMoney, byTime)} − ${Math.min(byMoney, byTime)}`)
   ]);
 
+  const stem = composeSentences(ctx, `شارك أحمد بمبلغ ${u(capA, 'dirham')} لمدة ${u(monA, 'month', 'oblique')}، وشارك سالم بمبلغ ${u(capB, 'dirham')} لمدة ${u(monB, 'month', 'oblique')}. فإذا بلغ الربح ${u(profit, 'dirham')}، فكم نصيب أحمد؟`);
   return buildBase(ctx, {
     templateId: 'PROP_H_CAPITAL_TIME',
     scenario: 'partnership_capital_times_duration',
     direction: 'forward',
     subskill: 'اقتسام ربح بحسب رأس المال والمدة معًا',
     difficulty: 'hard',
-    question: `شارك أحمد بمبلغ ${u(capA, 'dirham')} لمدة ${u(monA, 'month', 'oblique')}، وشارك سالم بمبلغ ${u(capB, 'dirham')} لمدة ${u(monB, 'month', 'oblique')}. فإذا بلغ الربح ${u(profit, 'dirham')}، فكم نصيب أحمد؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('dirham'),
     steps: [
       `نصيب كل شريك يتناسب مع المبلغ مضروبًا في المدة.`,

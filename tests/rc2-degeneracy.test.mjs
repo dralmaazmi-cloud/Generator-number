@@ -252,9 +252,11 @@ test('RC2-005: every template in the engine is classified, and every classificat
   // can no longer be orphaned by a pool it fails to qualify for.
   // RC2.5-2: 126. The relational count question was split into its routine and
   // its branch-combining form, which is one template more than RC2.4 had.
+  // RC2.7: 142. Five new sequence structures — the widened rule space and the
+  // targets that are not «what comes next».
   // RC2.6: 137. Ten new HARD structures in the five families the RC2.5
   // calibration left with none.
-  assert.equal(report.totals.templates, 137, 'every declared template is reachable');
+  assert.equal(report.totals.templates, 142, 'every declared template is reachable');
   assert.deepEqual(report.totals.unclassified, []);
   assert.deepEqual(report.totals.declaredButAbsentFromEngine, []);
   assert.equal(report.totals.rc1TemplatesWithNoModel, 23, 'the RC1 gap was 23 templates');
@@ -312,7 +314,11 @@ test('RC2-005: the published artifact matches the engine', async () => {
     saved.templates.map(t => t.templateId).sort(),
     saved.templates.map(t => t.templateId).sort()
   );
-  for (const id of Object.keys(CLASSIFICATION)) {
+  // The artifact is the RC2 record of 107 templates. Entries declared in a later
+  // release carry `since` and are not in it — asserting they were would require
+  // rewriting a published artifact to match code that postdates it.
+  for (const [id, decl] of Object.entries(CLASSIFICATION)) {
+    if (decl.since) continue;
     assert.ok(saved.templates.some(t => t.templateId === id), `${id} missing from the artifact`);
   }
 });

@@ -121,6 +121,19 @@ export const MISCONCEPTIONS = Object.freeze({
   APPLIED_OPERATION_IN_REVERSE: 'طبّقت العملية في الاتجاه المعاكس.',
   TREATED_PATTERN_AS_CONSTANT: 'عاملت النمط كأن مقداره ثابت لا يتغير.',
 
+  // RC2.7-4. The slips the widened rule space actually produces. Each names what
+  // the learner did, on the quantities in front of them, not a distance from the
+  // key: a wrong option here is what one of these mistakes computes.
+  IGNORED_THE_OFFSET: 'ضربت في العدد الثابت ونسيت أن تضيف المقدار الثابت بعده.',
+  IGNORED_THE_MULTIPLIER: 'أضفت المقدار الثابت ونسيت الضرب الذي يسبقه.',
+  APPLIED_THE_STEPS_IN_THE_WRONG_ORDER: 'جمعت قبل أن تضرب، والقاعدة تضرب أولًا ثم تجمع.',
+  APPLIED_THE_WRONG_STEP_OF_THE_CYCLE: 'طبّقت خطوة من الدورة في غير موضعها؛ الخطوة المطلوبة هي التي تلي آخر خطوة مطبّقة.',
+  CONTINUED_THE_FIRST_RUN_INSTEAD: 'تابعت أوائل الأزواج بدل أن تطبّق قاعدة الزوج على آخرها.',
+  CONTINUED_THE_SECOND_RUN_INSTEAD: 'تابعت ثواني الأزواج كأنها سلسلة مستقلة، وهي مرتبطة بأوائلها.',
+  APPLIED_THE_RULE_TO_THE_WRONG_TERM: 'طبّقت القاعدة على حد غير الحد المطلوب.',
+  USED_DIGIT_SUM_INSTEAD_OF_PRODUCT: 'جمعت أرقام الحد بدل أن تضربها.',
+  TERM_OBEYS_THE_RULE: 'اخترت حدًا يتفق مع القاعدة؛ المطلوب هو الحد الوحيد الذي يخالفها.',
+
   // --- relational / odd one out ---
   RELATION_REQUIRES_UNSTATED_ASSUMPTION: 'هذا الخيار يحتاج علاقة لم ينص عليها السؤال.',
   RELATION_CONTRADICTS_STATEMENT: 'هذا الخيار يخالف علاقة منصوصة صراحة في السؤال.',

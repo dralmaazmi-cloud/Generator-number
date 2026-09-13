@@ -1,4 +1,4 @@
-import {mk, usable, buildBase, eq, X, mul, fractionChainPhrase} from './_shared.js';
+import {mk, usable, buildBase, eq, X, mul, fractionChainPhrase, composeSentences} from './_shared.js';
 import {grid} from '../qa/oracle-engine.js';
 import {structuralBandOf} from '../qa/structure.js';
 
@@ -104,11 +104,13 @@ function buildFractionItem(ctx, count, direction) {
       mk(total - denomProduct, 'SUBTRACTED_INSTEAD_OF_ADDED', `${total} − ${denomProduct}`),
       mk(denomProduct, 'USED_GIVEN_VALUE_AS_ANSWER', `حاصل ضرب المقامات ${denomProduct}`)
     ]);
+    const stem = composeSentences(ctx, `${fractionChainPhrase(names, `العدد ${total}`)}. ما الناتج؟`);
     return buildBase(ctx, {
       ...shared,
       subskill: `${count} كسور مباشرة متتابعة من عدد معلوم`,
       difficulty: ctx.difficulty,
-      question: `${fractionChainPhrase(names, `العدد ${total}`)}. ما الناتج؟`,
+      question: stem.text,
+      stemStructure: stem.structure, informationOrder: stem.order,
       correct, distractors, format: v => String(v),
       steps: [...chainSteps],
       howToStart: 'طبّق الكسور واحدًا بعد الآخر على الناتج السابق، ولا تستخدم مفهوم «الباقي».',
@@ -135,11 +137,13 @@ function buildFractionItem(ctx, count, direction) {
       mk(result + denomProduct, 'ADDED_INSTEAD_OF_SCALING', `${result} + ${denomProduct}`),
       mk(result * denomProduct * denomProduct, 'APPLIED_STEP_TWICE', `${result} × ${denomProduct} × ${denomProduct}`)
     ]);
+    const stem = composeSentences(ctx, `${fractionChainPhrase(names, 'عدد')}، فكان الناتج ${result}. فما العدد؟`);
     return buildBase(ctx, {
       ...shared,
       subskill: `${count} كسور متتابعة — إيجاد العدد الأصلي`,
       difficulty: ctx.difficulty,
-      question: `${fractionChainPhrase(names, 'عدد')}، فكان الناتج ${result}. فما العدد؟`,
+      question: stem.text,
+      stemStructure: stem.structure, informationOrder: stem.order,
       correct, distractors, format: v => String(v),
       steps: [
         `${fractionChainPhrase(names, 'عدد')} يعني القسمة على ${denomList.join(' ثم على ')}.`,
@@ -172,11 +176,13 @@ function buildFractionItem(ctx, count, direction) {
     FRACS.filter(f => f.d !== hidden.d).map(f =>
       mk(f.def, 'MISSED_ONE_FRACTION_STAGE', `القسمة على ${f.d} بدل ${hidden.d}`))
   );
+  const stem = composeSentences(ctx, `${fractionChainPhrase(knownNames, `العدد ${total}`)}، ثم كسرٌ من الناتج، فكان الناتج ${result}. فما هذا الكسر؟`);
   return buildBase(ctx, {
     ...shared,
     subskill: `${count} كسور متتابعة — تحديد الكسر المجهول`,
     difficulty: ctx.difficulty,
-    question: `${fractionChainPhrase(knownNames, `العدد ${total}`)}، ثم كسرٌ من الناتج، فكان الناتج ${result}. فما هذا الكسر؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: v => String(v),
     steps: [
       `حاصل ضرب مقامات الكسور المعلومة = ${knownFracs.map(f => f.d).join(' × ')} = ${knownProduct}.`,

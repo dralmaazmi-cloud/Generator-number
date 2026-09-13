@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool, unitWordKam} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool, unitWordKam, composeSentences} from './_shared.js';
 
 export function generateWorkTime({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'work_time', family_ar: 'العمال والزمن', category: 'العمال والزمن'};
@@ -44,11 +44,13 @@ function inverseDirect(ctx) {
     mk(work / Math.abs(w2 - w1 || 1), 'RATE_APPLIED_TO_WRONG_COUNT', `${work} ÷ |${w2} − ${w1}|`),
     mk(d1 - (w2 - w1), 'SUBTRACTED_INSTEAD_OF_ADDED', `${d1} − (${w2} − ${w1})`)
   ]);
+  const stem = composeSentences(ctx, `يستطيع ${u(w1, 'worker')} إنجاز عمل في ${u(d1, 'day', 'oblique')}. إذا عمل ${u(w2, 'worker')} بالكفاءة نفسها، فكم يومًا يحتاجون؟`);
   return buildBase(ctx, {
     templateId: 'WORK_E_INVERSE',
     subskill: 'تناسب عكسي مباشر بين العمال والزمن',
     difficulty: 'easy',
-    question: `يستطيع ${u(w1, 'worker')} إنجاز عمل في ${u(d1, 'day', 'oblique')}. إذا عمل ${u(w2, 'worker')} بالكفاءة نفسها، فكم يومًا يحتاجون؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('day'),
     steps: [
       `العمل الكامل بوحدة عامل-يوم = ${w1} × ${d1} = ${work}.`,
@@ -90,13 +92,15 @@ function workVolume(ctx) {
     mk(newUnits / oldUnits, 'STOPPED_AT_UNIT_RATE', `${newUnits} ÷ ${oldUnits}`),
     mk(workers * (newUnits - oldUnits) / oldUnits, 'MISSED_ONE_STAGE', `${workers} × (${newUnits} − ${oldUnits}) ÷ ${oldUnits}`)
   ]);
+  const stem = composeSentences(ctx, `يستطيع ${u(workers, 'worker')} إنجاز ${u(oldUnits, 'task', 'oblique')} خلال ${u(days, 'day', 'oblique')}. كم عاملًا نحتاج لإنجاز ${u(newUnits, 'task', 'oblique')} خلال ${u(days, 'day', 'oblique')} بالكفاءة نفسها؟`);
   return buildBase(ctx, {
     templateId: 'WORK_E_VOLUME',
     subskill: 'زيادة حجم العمل مع ثبات الزمن',
     difficulty: 'easy',
     // RC2-016: إنجاز governs its noun, so the count must take the genitive
     // form — إنجاز مهمتين, never إنجاز مهمتان.
-    question: `يستطيع ${u(workers, 'worker')} إنجاز ${u(oldUnits, 'task', 'oblique')} خلال ${u(days, 'day', 'oblique')}. كم عاملًا نحتاج لإنجاز ${u(newUnits, 'task', 'oblique')} خلال ${u(days, 'day', 'oblique')} بالكفاءة نفسها؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('worker'),
     steps: [
       `العمل يتضاعف بنسبة ${newUnits} إلى ${oldUnits}، والزمن ثابت.`,
@@ -148,11 +152,13 @@ function changeWorkers(ctx) {
     mk(totalDays - 2 * initialDays, 'USED_COUNT_BEFORE_CHANGE', `${totalDays} − 2 × ${initialDays}`),
     mk(done / w1, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${done} ÷ ${w1}`, 3)
   ]);
+  const stem = composeSentences(ctx, `يستطيع ${u(w1, 'worker')} إنجاز عمل كامل في ${u(totalDays, 'day', 'oblique')}. عملوا ${u(initialDays, 'day', 'oblique')}، ثم ${change > 0 ? `انضم إليهم ${u(change, 'worker')}` : `غادر ${u(Math.abs(change), 'worker')}`}. كم يومًا إضافيًا يحتاج العدد الجديد لإكمال العمل؟`);
   return buildBase(ctx, {
     templateId: 'WORK_M_CHANGE',
     subskill: 'تغير عدد العمال بعد إنجاز جزء من العمل',
     difficulty: 'hard',
-    question: `يستطيع ${u(w1, 'worker')} إنجاز عمل كامل في ${u(totalDays, 'day', 'oblique')}. عملوا ${u(initialDays, 'day', 'oblique')}، ثم ${change > 0 ? `انضم إليهم ${u(change, 'worker')}` : `غادر ${u(Math.abs(change), 'worker')}`}. كم يومًا إضافيًا يحتاج العدد الجديد لإكمال العمل؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('day'),
     steps: [
       `العمل الكامل بوحدة عامل-يوم = ${w1} × ${totalDays} = ${totalWork}.`,
@@ -200,11 +206,13 @@ function efficiencyChange(ctx) {
     mk(days - Fraction.from(days).div(factor).toNumber(), 'TOOK_COMPLEMENT_PERCENT', `${days} − ${days} ÷ ${factor.toDecimalString()}`),
     mk(days + pct / 10, 'TREATED_PERCENT_AS_AMOUNT', `${days} + ${pct} ÷ 10`)
   ]);
+  const stem = composeSentences(ctx, `فريق ينجز عملًا في ${u(days, 'day', 'oblique')}. بعد تدريب ارتفعت كفاءة الفريق ${riseByPercentPhrase(pct)} مع بقاء عدد العمال نفسه. كم يومًا يحتاج للعمل نفسه؟`);
   return buildBase(ctx, {
     templateId: 'WORK_M_EFF',
     subskill: 'زيادة كفاءة العمال مع ثبات العدد',
     difficulty: 'easy',
-    question: `فريق ينجز عملًا في ${u(days, 'day', 'oblique')}. بعد تدريب ارتفعت كفاءة الفريق ${riseByPercentPhrase(pct)} مع بقاء عدد العمال نفسه. كم يومًا يحتاج للعمل نفسه؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('day'),
     steps: [
       factorText,
@@ -256,11 +264,13 @@ function targetDeadline(ctx) {
     mk(remain / finishDays + w, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${remain} ÷ ${finishDays} + ${w}`),
     mk(w * totalDays / finishDays, 'REVERSED_INVERSE_PROPORTION', `${w} × ${totalDays} ÷ ${finishDays}`)
   ]);
+  const stem = composeSentences(ctx, `يستطيع ${u(w, 'worker')} إنجاز عمل كامل في ${u(totalDays, 'day', 'oblique')}. عملوا ${u(initialDays, 'day', 'oblique')}، ثم تقرر إنهاء ما تبقى خلال ${u(finishDays, 'day', 'oblique')} فقط. كم عاملًا يجب أن يعمل خلال المدة الأخيرة؟`);
   return buildBase(ctx, {
     templateId: 'WORK_M_TARGET',
     subskill: 'حساب العمل المتبقي ثم عدد العمال المطلوب',
     difficulty: 'medium',
-    question: `يستطيع ${u(w, 'worker')} إنجاز عمل كامل في ${u(totalDays, 'day', 'oblique')}. عملوا ${u(initialDays, 'day', 'oblique')}، ثم تقرر إنهاء ما تبقى خلال ${u(finishDays, 'day', 'oblique')} فقط. كم عاملًا يجب أن يعمل خلال المدة الأخيرة؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('worker'),
     steps: [
       `العمل الكامل بوحدة عامل-يوم = ${w} × ${totalDays} = ${total}.`,
@@ -312,11 +322,13 @@ function twoStageWorkers(ctx) {
     mk(total / w2, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${total} ÷ ${w2}`, 3),
     mk(remain, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} − ${done} − ${done2}`)
   ]);
+  const stem = composeSentences(ctx, `يستطيع ${u(w1, 'worker')} إنجاز عمل في ${u(totalDays, 'day', 'oblique')}. عمل الجميع ${u(firstDays, 'day', 'oblique')}، ثم غادر ${u(left, 'worker')} وعمل الباقون ${u(secondDays, 'day', 'oblique')} ${adj(secondDays, 'day', 'إضافي')}. كم يومًا آخر يحتاج العمال الباقون لإكمال العمل؟`);
   return buildBase(ctx, {
     templateId: 'WORK_H_TWO_STAGE',
     subskill: 'تغير العمال عبر مرحلتين قبل حساب المتبقي',
     difficulty: 'hard',
-    question: `يستطيع ${u(w1, 'worker')} إنجاز عمل في ${u(totalDays, 'day', 'oblique')}. عمل الجميع ${u(firstDays, 'day', 'oblique')}، ثم غادر ${u(left, 'worker')} وعمل الباقون ${u(secondDays, 'day', 'oblique')} ${adj(secondDays, 'day', 'إضافي')}. كم يومًا آخر يحتاج العمال الباقون لإكمال العمل؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('day'),
     steps: [
       `العمل الكامل بوحدة عامل-يوم = ${w1} × ${totalDays} = ${total}.`,
@@ -372,11 +384,13 @@ function workersAndEfficiency(ctx) {
     mk(Fraction.from(remain).div(newW).div(factor).div(factor).toNumber(), 'APPLIED_STEP_TWICE', `${remain} ÷ ${newW} ÷ ${factor.toDecimalString()} ÷ ${factor.toDecimalString()}`),
     mk(Fraction.from(remain).mul(factor).div(newW).toNumber(), 'REVERSED_INVERSE_PROPORTION', `${remain} × ${factor.toDecimalString()} ÷ ${newW}`)
   ]);
+  const stem = composeSentences(ctx, `يستطيع ${u(w, 'worker')} إنجاز عمل في ${u(totalDays, 'day', 'oblique')}. بعد ${u(initial, 'day', 'oblique')} غادر ${u(left, 'worker')}، ثم ارتفعت كفاءة كل عامل باقٍ ${riseByPercentPhrase(pct)}. كم يومًا إضافيًا يحتاجون لإكمال العمل؟`);
   return buildBase(ctx, {
     templateId: 'WORK_H_WORKERS_EFF',
     subskill: 'تغير عدد العمال والكفاءة بعد بدء العمل',
     difficulty: 'hard',
-    question: `يستطيع ${u(w, 'worker')} إنجاز عمل في ${u(totalDays, 'day', 'oblique')}. بعد ${u(initial, 'day', 'oblique')} غادر ${u(left, 'worker')}، ثم ارتفعت كفاءة كل عامل باقٍ ${riseByPercentPhrase(pct)}. كم يومًا إضافيًا يحتاجون لإكمال العمل؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('day'),
     steps: [
       `العمل الكامل بوحدة عامل-يوم = ${w} × ${totalDays} = ${total}.`,
@@ -459,11 +473,13 @@ function jointThenSoloTime(ctx) {
     mk(joint * 2 + solo, 'APPLIED_STEP_TWICE', `${joint} × 2 + ${solo}`)
   ]);
 
+  const stem = composeSentences(ctx, `ينجز عاملان العمل نفسه معًا في ${u(joint, 'day', 'oblique')}. ولو عمل الأول وحده لأنجزه في ${u(solo, 'day', 'oblique')}. كم ${unitWordKam('day')} يحتاج الثاني وحده لإنجاز العمل نفسه؟`);
   return buildBase(ctx, {
     templateId: 'WORK_H_JOINT_SOLO',
     subskill: 'زمن الطرف الثاني من الزمن المشترك وزمن الأول',
     difficulty: 'hard',
-    question: `ينجز عاملان العمل نفسه معًا في ${u(joint, 'day', 'oblique')}. ولو عمل الأول وحده لأنجزه في ${u(solo, 'day', 'oblique')}. كم ${unitWordKam('day')} يحتاج الثاني وحده لإنجاز العمل نفسه؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('day'),
     steps: [
       `نعمل بالمعدلات لا بالأزمنة: ما ينجزه الاثنان معًا في اليوم = 1 ÷ ${joint}.`,
@@ -540,11 +556,13 @@ function extraWorkersSaveDays(ctx) {
     mk(extra + saved, 'ADDED_INSTEAD_OF_SCALING', `${extra} + ${saved}`)
   ]);
 
+  const stem = composeSentences(ctx, `يستطيع ${u(workers, 'worker')} إنجاز عمل في ${u(days, 'day', 'oblique')}. وللانتهاء قبل الموعد بـ${u(saved, 'day', 'oblique')} أُضيف عدد من العمال بالكفاءة نفسها. كم عاملًا أُضيف؟`);
   return buildBase(ctx, {
     templateId: 'WORK_H_EXTRA_WORKERS',
     subskill: 'عدد العمال الإضافيين من توفير في المدة',
     difficulty: 'hard',
-    question: `يستطيع ${u(workers, 'worker')} إنجاز عمل في ${u(days, 'day', 'oblique')}. وللانتهاء قبل الموعد بـ${u(saved, 'day', 'oblique')} أُضيف عدد من العمال بالكفاءة نفسها. كم عاملًا أُضيف؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('worker'),
     steps: [
       `العمل الكامل بوحدة عامل-يوم = ${workers} × ${days} = ${totalWork}.`,
@@ -624,13 +642,15 @@ function threePairwiseRates(ctx) {
     mk((ab + bc + ac) / 2, 'FORGOT_TO_HALVE_THE_DIFFERENCE', `(${ab} + ${bc} + ${ac}) ÷ 2`)
   ]);
 
+  const stem = composeSentences(ctx, `ينجز العاملان الأول والثاني عملًا معًا في ${u(ab, 'day', 'oblique')}، والثاني والثالث في ${u(bc, 'day', 'oblique')}، والأول والثالث في ${u(ac, 'day', 'oblique')}. كم ${unitWordKam('day')} يحتاج الثلاثة معًا لإنجاز العمل نفسه؟`);
   return buildBase(ctx, {
     templateId: 'WORK_H_THREE_PAIRS',
     scenario: 'three_workers_timed_in_pairs',
     direction: 'forward',
     subskill: 'زمن ثلاثة معًا من أزمنة الأزواج',
     difficulty: 'hard',
-    question: `ينجز العاملان الأول والثاني عملًا معًا في ${u(ab, 'day', 'oblique')}، والثاني والثالث في ${u(bc, 'day', 'oblique')}، والأول والثالث في ${u(ac, 'day', 'oblique')}. كم ${unitWordKam('day')} يحتاج الثلاثة معًا لإنجاز العمل نفسه؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('day'),
     steps: [
       `معدل كل زوج في اليوم: 1 ÷ ${ab}، و1 ÷ ${bc}، و1 ÷ ${ac}.`,
@@ -703,13 +723,15 @@ function pairWithSoloGap(ctx) {
     mk(fast + slow, 'ADDED_TIMES_INSTEAD_OF_RATES', `${fast} + ${slow}`)
   ]);
 
+  const stem = composeSentences(ctx, `ينجز عاملان عملًا معًا في ${u(joint, 'day', 'oblique')}. ولو عمل كل منهما وحده لاحتاج الأبطأ ${u(gap, 'day', 'oblique')} أكثر من الأسرع. كم ${unitWordKam('day')} يحتاج الأسرع وحده؟`);
   return buildBase(ctx, {
     templateId: 'WORK_H_SOLO_GAP',
     scenario: 'pair_joint_time_with_solo_gap',
     direction: 'reverse',
     subskill: 'زمن كل عامل وحده من زمن مشترك وفرق بين الزمنين',
     difficulty: 'hard',
-    question: `ينجز عاملان عملًا معًا في ${u(joint, 'day', 'oblique')}. ولو عمل كل منهما وحده لاحتاج الأبطأ ${u(gap, 'day', 'oblique')} أكثر من الأسرع. كم ${unitWordKam('day')} يحتاج الأسرع وحده؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('day'),
     steps: [
       `نفرض زمن الأسرع = س، فزمن الأبطأ = س + ${gap}.`,

@@ -1,5 +1,5 @@
 import {gcd} from '../utils.js';
-import {mk, usable, u, num, buildBase, eq, X, add, sub, mul, mod, resample, bandPool} from './_shared.js';
+import {mk, usable, u, num, buildBase, eq, X, add, sub, mul, mod, resample, bandPool, composeSentences} from './_shared.js';
 
 export function generateRatios({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'ratios', family_ar: 'النسب وتقسيم الكميات', category: 'النسب وتقسيم الكميات'};
@@ -55,11 +55,13 @@ function splitTotal(ctx) {
     mk(total * mine / other, 'REVERSED_DIRECT_PROPORTION', `${total} × ${mine} ÷ ${other}`),
     mk(k * mine * 2, 'APPLIED_STEP_TWICE', `${k} × ${mine} × 2`)
   ]);
+  const stem = composeSentences(ctx, `النسبة بين أ : ب = ${a} : ${b}. إذا كان مجموعهما ${total}، فما قيمة ${askA ? 'أ' : 'ب'}؟`);
   return buildBase(ctx, {
     templateId: 'RAT_E_SPLIT',
     subskill: 'تقسيم مجموع وفق نسبة',
     difficulty: 'medium',
-    question: `النسبة بين أ : ب = ${a} : ${b}. إذا كان مجموعهما ${total}، فما قيمة ${askA ? 'أ' : 'ب'}؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: plain,
     steps: [
       `مجموع أجزاء النسبة = ${a} + ${b} = ${a + b}.`,
@@ -102,11 +104,13 @@ function scaleKnown(ctx) {
     mk(given * wantedParts, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${given} × ${wantedParts}`),
     mk(given - wantedParts, 'SUBTRACTED_INSTEAD_OF_ADDED', `${given} − ${wantedParts}`)
   ]);
+  const stem = composeSentences(ctx, `النسبة أ : ب = ${a} : ${b}. إذا كانت ${askB ? 'أ' : 'ب'} = ${given}، فما قيمة ${askB ? 'ب' : 'أ'}؟`);
   return buildBase(ctx, {
     templateId: 'RAT_E_KNOWN',
     subskill: 'استخدام قيمة طرف معلوم في نسبة',
     difficulty: 'easy',
-    question: `النسبة أ : ب = ${a} : ${b}. إذا كانت ${askB ? 'أ' : 'ب'} = ${given}، فما قيمة ${askB ? 'ب' : 'أ'}؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: plain,
     steps: [
       `${askB ? 'أ' : 'ب'} تمثل ${givenParts} من أجزاء النسبة وقيمتها ${given}.`,
@@ -190,11 +194,13 @@ function commonTermSum(ctx) {
     mk(given * b / (a + b), 'MISSED_ONE_STAGE', `${given} × ${b} ÷ (${a} + ${b})`),
     mk((A + B + C) * k + given, 'USED_ORIGINAL_TOTAL', `(${A} + ${B} + ${C}) × ${k} + ${given}`)
   ]);
+  const stem = composeSentences(ctx, `النسبة أ : ب = ${a} : ${b}، والنسبة ب : ج = ${c} : ${d}. إذا كان أ + ج = ${given}، فما قيمة ب؟`);
   return buildBase(ctx, {
     templateId: 'RAT_M_COMMON_SUM',
     subskill: 'نسبتان بحد مشترك مع مجموع الطرفين الخارجيين',
     difficulty: 'hard',
-    question: `النسبة أ : ب = ${a} : ${b}، والنسبة ب : ج = ${c} : ${d}. إذا كان أ + ج = ${given}، فما قيمة ب؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: plain,
     steps: [
       `نضرب النسبة الأولى في ${c} والثانية في ${b} ليتساوى حد ب: ${a} × ${c} = ${A}، و${b} × ${c} = ${B}، و${d} × ${b} = ${C}.`,
@@ -250,11 +256,13 @@ function commonTermDifference(ctx) {
     mk(k, 'USED_PART_VALUE_AS_ANSWER', `${given} ÷ ${diffParts}`),
     mk((A + B + C) * k, 'USED_SUM_OF_PARTS', `(${A} + ${B} + ${C}) × ${k}`)
   ]);
+  const stem = composeSentences(ctx, `النسبة أ : ب = ${a} : ${b}، والنسبة ب : ج = ${c} : ${d}. إذا كان الفرق بين أ وج يساوي ${given}، فما مجموع أ + ب + ج؟`);
   return buildBase(ctx, {
     templateId: 'RAT_M_COMMON_DIFF',
     subskill: 'نسبتان بحد مشترك مع فرق الطرفين',
     difficulty: 'hard',
-    question: `النسبة أ : ب = ${a} : ${b}، والنسبة ب : ج = ${c} : ${d}. إذا كان الفرق بين أ وج يساوي ${given}، فما مجموع أ + ب + ج؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: plain,
     steps: [
       `نضرب النسبة الأولى في ${c} والثانية في ${b} ليتساوى حد ب: ${a} × ${c} = ${A}، و${b} × ${c} = ${B}، و${d} × ${b} = ${C}.`,
@@ -315,11 +323,13 @@ function addToOneSide(ctx) {
     mk((p + q) * (k - 1), 'OFF_BY_ONE_STEP', `(${p} + ${q}) × (${k} − 1)`),
     mk((p + q) * k * 2, 'APPLIED_STEP_TWICE', `(${p} + ${q}) × ${k} × 2`)
   ]);
+  const stem = composeSentences(ctx, `النسبة بين أ : ب = ${p} : ${q}. أُضيفت ${u(addUnits, 'unit')} إلى ب فأصبحت النسبة أ : ب = ${p} : ${r}. فما مجموع أ + ب قبل الإضافة؟`);
   return buildBase(ctx, {
     templateId: 'RAT_M_ADD_SIDE',
     subskill: 'تغير النسبة بعد إضافة كمية إلى أحد الطرفين',
     difficulty: 'hard',
-    question: `النسبة بين أ : ب = ${p} : ${q}. أُضيفت ${u(addUnits, 'unit')} إلى ب فأصبحت النسبة أ : ب = ${p} : ${r}. فما مجموع أ + ب قبل الإضافة؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: plain,
     steps: [
       `نضع أ = ${p}ك وب = ${q}ك، حيث ك قيمة الجزء.`,
@@ -403,11 +413,13 @@ function transferBetweenSides(ctx) {
     `ك = ${nrB * x + nrA * x} ÷ ${nrB * p - nrA * q} = ${k}.`,
     `${askA ? 'أ' : 'ب'} قبل النقل = ${askA ? p : q} × ${k} = ${correct}.`
   ];
+  const stem = composeSentences(ctx, `النسبة بين أ : ب = ${p} : ${q}. نُقلت ${u(x, 'unit')} من أ إلى ب فأصبحت النسبة أ : ب = ${nrA} : ${nrB}. فما قيمة ${askA ? 'أ' : 'ب'} قبل النقل؟`);
   return buildBase(ctx, {
     templateId: 'RAT_H_TRANSFER',
     subskill: 'نقل كمية بين طرفين وتغير النسبة',
     difficulty: 'hard',
-    question: `النسبة بين أ : ب = ${p} : ${q}. نُقلت ${u(x, 'unit')} من أ إلى ب فأصبحت النسبة أ : ب = ${nrA} : ${nrB}. فما قيمة ${askA ? 'أ' : 'ب'} قبل النقل؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: plain,
     steps,
     howToStart: 'اكتب الطرفين على صورة أجزاء ثم طبّق النقل على الطرفين معًا.',
@@ -457,11 +469,13 @@ function twoRatiosExternalSum(ctx) {
     mk(C * k * 2, 'APPLIED_STEP_TWICE', `${C} × ${k} × 2`),
     mk(given - C * k, 'SUBTRACTED_INSTEAD_OF_ADDED', `${given} − ${C * k}`)
   ]);
+  const stem = composeSentences(ctx, `النسبة أ : ب = ${a} : ${b}، والنسبة ب : ج = ${c} : ${d}. إذا كان أ + ب = ${given}، فما قيمة ج؟`);
   return buildBase(ctx, {
     templateId: 'RAT_H_TWO_COMB',
     subskill: 'توحيد نسبتين ثم استخدام مجموع مركب',
     difficulty: 'hard',
-    question: `النسبة أ : ب = ${a} : ${b}، والنسبة ب : ج = ${c} : ${d}. إذا كان أ + ب = ${given}، فما قيمة ج؟`,
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: plain,
     steps: [
       `نضرب النسبة الأولى في ${c} والثانية في ${b} ليتساوى حد ب: ${a} × ${c} = ${A}، و${b} × ${c} = ${B}، و${d} × ${b} = ${C}.`,

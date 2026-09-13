@@ -53,8 +53,9 @@ const joinListed = clauses => `المعطيات: ${clauses.join('؛ ')}.`;
  * @param {object} spec
  * @param {string[]} spec.facts     self-contained clauses, no terminal stop
  * @param {string} spec.ask         the question, ending in ؟
- * @param {string} [spec.askFirst]  the same question phrased to open the stem;
- *                                  when absent `question_first` is not offered
+ * @param {string} [spec.askFirst]  a NOUN PHRASE naming the requested quantity,
+ *                                  for the question-first layout; when absent
+ *                                  `question_first` is not offered
  * @param {boolean} [spec.orderFree] may the clauses be reordered
  * @param {number} [spec.outcomeIndex] which clause states the outcome
  * @param {string[]} [spec.allow]   restrict the structures offered
@@ -90,7 +91,11 @@ export function realizeStem(rng, spec) {
 
   let text;
   if (structure === 'question_first') {
-    text = `${strip(spec.askFirst)}، علمًا أن ${arranged.map(strip).join('، و')}؟`;
+    // The exam layout: what is wanted, then what is given. `askFirst` is a NOUN
+    // PHRASE naming the requested quantity rather than a question — an
+    // interrogative here would need a second question mark and read as two
+    // sentences pretending to be one.
+    text = `المطلوب: ${strip(spec.askFirst)}. المعطيات: ${arranged.map(strip).join('؛ ')}.`;
   } else if (structure === 'compact') {
     text = `${joinCompact(arranged)} ${ask}`;
   } else if (structure === 'listed') {
