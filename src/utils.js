@@ -3,14 +3,14 @@ import {REASON} from './qa/reasons.js';
 
 // RC2.6-3. Every personal name the generators draw from, so the stem skeleton
 // can take names out without guessing which Arabic words are names.
-const NAME_POOL = Object.freeze([
-  'خالد', 'سالم', 'ماجد', 'راشد', 'ناصر', 'فهد', 'علي', 'بدر', 'حمد', 'سامي',
-  'نورة', 'سارة', 'هند', 'ريم', 'ليان', 'مريم', 'أحمد', 'محمد', 'عمر', 'يوسف',
-  'ليلى', 'فاطمة', 'عائشة', 'زينب'
-]);
+// RC2.7-3. One pool, declared once, in src/compose/entities.js. It used to be
+// written out here and again in the relational family, which is how the two
+// drifted apart.
+import {NAME_POOL, entityKindsIn} from './compose/entities.js';
 import {deriveOperationProfile, computeComplexity} from './qa/complexity.js';
 import {structuralBandOf, criteriaOf} from './qa/structure.js';
-import {stemSkeleton, scenarioSignature, constructionSignature} from './qa/construction.js';
+import {stemSkeleton, scenarioSignature, constructionSignature,
+  skillSignature, entityPattern, parameterizationSignature} from './qa/construction.js';
 import {buildFingerprint, buildSemanticFingerprint, buildStructuralSignature, questionFingerprint} from './qa/fingerprint.js';
 
 export const LETTERS = ['A','B','C','D','E','F'];
@@ -362,6 +362,15 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
         family: base.family, scenario: base.scenario,
         askedUnknown: base.askedUnknown, direction: base.direction
       }),
+      // RC2.7-5. The remaining independent dimensions, each published in its own
+      // right so a diversity claim can be checked dimension by dimension rather
+      // than taken on one aggregate.
+      skill_signature: skillSignature({family: base.family, subskill: base.subskill}),
+      target_signature: base.askedUnknown ?? 'default',
+      stem_structure: base.stemStructure ?? 'fixed',
+      information_order: base.informationOrder ?? 'given',
+      entity_pattern: base.entityPattern ?? entityPattern(entityKindsIn(base.question)),
+      parameterization_signature: parameterizationSignature(base.template_id, base.parameters ?? {}),
       structural_criteria: criteriaOf(base.template_id),
       band_source: 'structural_adjudication',
       score_agrees_with_structure: complexity.band === structuralBand,

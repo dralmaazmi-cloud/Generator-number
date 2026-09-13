@@ -12,6 +12,8 @@ import {partitionByPlausibility} from '../qa/distractor-plausibility.js';
 import {Fraction} from '../qa/fraction.js';
 import {isKnownMisconception} from '../qa/misconceptions.js';
 import {REASON} from '../qa/reasons.js';
+import {realizeStem} from '../compose/realize.js';
+import {pickScenario} from '../compose/scenarios.js';
 import {structuralBandOf} from '../qa/structure.js';
 
 /**
@@ -22,6 +24,20 @@ import {structuralBandOf} from '../qa/structure.js';
  * distractor whose derivation starts from the answer — those have to say which
  * step went wrong, because "key + 1" says nothing — and is welcome on the rest.
  */
+// RC2.7-3. The composition helpers. A template calls `sceneFor` to choose the
+// situation it is set in and `composeStem` to have its finished clauses joined
+// into one of several Arabic sentence structures, in one of several information
+// orders. Both draw from FORKS of the template's own RNG, so the choice of
+// telling can never shift the parameter draw beneath it: the mathematics of a
+// seed is what it was, whatever sentence shape comes out.
+export function sceneFor(ctx, frame) {
+  return pickScenario(ctx.rng.fork('scenario'), frame);
+}
+
+export function composeStem(ctx, spec) {
+  return realizeStem(ctx.rng.fork('stem'), spec);
+}
+
 export function mk(value, misconceptionId, derivation, reasoningStepAffected = null) {
   if (!isKnownMisconception(misconceptionId)) {
     throw new Error(`Unknown misconception id: ${misconceptionId}`);
@@ -268,7 +284,12 @@ export function buildBase(ctx, spec) {
     answerBounds = null, stimulusIsOptions = false,
     // RC2.3-4. Defaults to whatever the answer's unit implies; a template may
     // override it where its unit is a count but its answer legitimately is not.
-    answerIsCount = null
+    answerIsCount = null,
+    // RC2.7-3. What the realization layer chose for this instance. Declared so
+    // the diversity measures can separate "a different situation" from "a
+    // different sentence shape" from "the facts in a different order" — three
+    // things a reader perceives separately and a single signature would blur.
+    stemStructure = null, informationOrder = null, entityPattern = null
   } = spec;
   const countedAnswer = answerIsCount === null ? isCountUnit(format?.unitId) : answerIsCount;
 
@@ -391,6 +412,10 @@ export function buildBase(ctx, spec) {
     // so an undeclared template is still measurable rather than invisible.
     scenario: spec.scenario ?? templateId,
     direction: spec.direction ?? 'forward',
+    // RC2.7-3.
+    stemStructure: stemStructure ?? 'fixed',
+    informationOrder: informationOrder ?? 'given',
+    entityPattern: entityPattern ?? null,
     textParams,
     allowedConstants,
     commutative,

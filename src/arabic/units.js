@@ -21,7 +21,14 @@
  *
  * `cup` is deliberately absent: a recipe really can call for a cup and a half.
  */
-const COUNT_UNITS = new Set(['worker', 'machine', 'unit', 'piece', 'box', 'task', 'person', 'item', 'word']);
+const COUNT_UNITS = new Set(['worker', 'machine', 'unit', 'piece', 'box', 'task', 'person', 'item', 'word',
+  // RC2.7-3. The scenario layer counts concrete things as well as abstract
+  // ones. Each of these is indivisible in the world for the same reason a
+  // worker is: half a seedling, two thirds of a loaf and 1.4 seats do not
+  // exist. `meter`, `degree` and `point` are deliberately absent — those
+  // really do take fractions.
+  'page', 'can', 'bottle', 'loaf', 'seat', 'seedling', 'shirt', 'book',
+  'card', 'order', 'visitor', 'student', 'panel', 'trip', 'device', 'tree', 'value']);
 
 export const isCountUnit = unitId => COUNT_UNITS.has(unitId);
 
@@ -48,7 +55,34 @@ export const UNITS = Object.freeze({
   cm:      {singular:'سنتيمتر',  one:'سنتيمتر واحد',  dual:'سنتيمتران',  dualOblique:'سنتيمترين',  plural:'سنتيمترات', accSing:'سنتيمترًا'},
   week:    {singular:'أسبوع',    one:'أسبوع واحد',    dual:'أسبوعان',    dualOblique:'أسبوعين',    plural:'أسابيع',    accSing:'أسبوعًا'},
   // RC2.6: partnership questions are stated in months.
-  month:   {singular:'شهر',      one:'شهر واحد',      dual:'شهران',      dualOblique:'شهرين',      plural:'أشهر',      accSing:'شهرًا'}
+  month:   {singular:'شهر',      one:'شهر واحد',      dual:'شهران',      dualOblique:'شهرين',      plural:'أشهر',      accSing:'شهرًا'},
+  // RC2.7-3. The scenario layer. Each entry declares the same four forms the
+  // lexicon has always required, so a composed stem inflects exactly as a
+  // hand-written one does; nothing here is a synonym of an existing unit, each
+  // is a different thing to count.
+  page:    {singular:'صفحة',     one:'صفحة واحدة',    dual:'صفحتان',     dualOblique:'صفحتين',     plural:'صفحات',     accSing:'صفحة'},
+  can:     {singular:'علبة',     one:'علبة واحدة',    dual:'علبتان',     dualOblique:'علبتين',     plural:'علب',       accSing:'علبة'},
+  bottle:  {singular:'زجاجة',    one:'زجاجة واحدة',   dual:'زجاجتان',    dualOblique:'زجاجتين',    plural:'زجاجات',    accSing:'زجاجة'},
+  loaf:    {singular:'رغيف',     one:'رغيف واحد',     dual:'رغيفان',     dualOblique:'رغيفين',     plural:'أرغفة',     accSing:'رغيفًا'},
+  seat:    {singular:'مقعد',     one:'مقعد واحد',     dual:'مقعدان',     dualOblique:'مقعدين',     plural:'مقاعد',     accSing:'مقعدًا'},
+  seedling:{singular:'شتلة',     one:'شتلة واحدة',    dual:'شتلتان',     dualOblique:'شتلتين',     plural:'شتلات',     accSing:'شتلة'},
+  shirt:   {singular:'قميص',     one:'قميص واحد',     dual:'قميصان',     dualOblique:'قميصين',     plural:'قمصان',     accSing:'قميصًا'},
+  book:    {singular:'كتاب',     one:'كتاب واحد',     dual:'كتابان',     dualOblique:'كتابين',     plural:'كتب',       accSing:'كتابًا'},
+  card:    {singular:'بطاقة',    one:'بطاقة واحدة',   dual:'بطاقتان',    dualOblique:'بطاقتين',    plural:'بطاقات',    accSing:'بطاقة'},
+  order:   {singular:'طلب',      one:'طلب واحد',      dual:'طلبان',      dualOblique:'طلبين',      plural:'طلبات',     accSing:'طلبًا'},
+  visitor: {singular:'زائر',     one:'زائر واحد',     dual:'زائران',     dualOblique:'زائرين',     plural:'زوار',      accSing:'زائرًا'},
+  student: {singular:'طالب',     one:'طالب واحد',     dual:'طالبان',     dualOblique:'طالبين',     plural:'طلاب',      accSing:'طالبًا'},
+  panel:   {singular:'لوح',      one:'لوح واحد',      dual:'لوحان',      dualOblique:'لوحين',      plural:'ألواح',     accSing:'لوحًا'},
+  trip:    {singular:'رحلة',     one:'رحلة واحدة',    dual:'رحلتان',     dualOblique:'رحلتين',     plural:'رحلات',     accSing:'رحلة'},
+  device:  {singular:'جهاز',     one:'جهاز واحد',     dual:'جهازان',     dualOblique:'جهازين',     plural:'أجهزة',     accSing:'جهازًا'},
+  tree:    {singular:'شجرة',     one:'شجرة واحدة',    dual:'شجرتان',     dualOblique:'شجرتين',     plural:'أشجار',     accSing:'شجرة'},
+  meter:   {singular:'متر',      one:'متر واحد',      dual:'متران',      dualOblique:'مترين',      plural:'أمتار',     accSing:'مترًا'},
+  degree:  {singular:'درجة',     one:'درجة واحدة',    dual:'درجتان',     dualOblique:'درجتين',     plural:'درجات',     accSing:'درجة'},
+  point:   {singular:'نقطة',     one:'نقطة واحدة',    dual:'نقطتان',     dualOblique:'نقطتين',     plural:'نقاط',      accSing:'نقطة'},
+  // The abstract member of a list. Already emitted by the averages family as
+  // a hand-written «قيم»; declaring it here is what lets the composer inflect
+  // it instead of spelling one form out.
+  value:   {singular:'قيمة',     one:'قيمة واحدة',    dual:'قيمتان',     dualOblique:'قيمتين',     plural:'قيم',       accSing:'قيمة'}
 });
 
 /** Units that never inflect: symbols, rates and percentages. */
@@ -59,6 +93,20 @@ export const INVARIANT_UNITS = Object.freeze({
   piecePerHour: 'قطعة/ساعة',
   kmPerLiter: 'كم/لتر',
   wordPerMinute: 'كلمة/دقيقة',
+  // RC2.7-3. Rate symbols for the scenario layer.
+  pagePerHour: 'صفحة/ساعة',
+  pagePerMinute: 'صفحة/دقيقة',
+  canPerHour: 'علبة/ساعة',
+  bottlePerHour: 'زجاجة/ساعة',
+  loafPerHour: 'رغيف/ساعة',
+  seedlingPerHour: 'شتلة/ساعة',
+  shirtPerHour: 'قميص/ساعة',
+  panelPerHour: 'لوح/ساعة',
+  orderPerHour: 'طلب/ساعة',
+  bookPerHour: 'كتاب/ساعة',
+  cardPerMinute: 'بطاقة/دقيقة',
+  literPerMinute: 'لتر/دقيقة',
+  literPerHour: 'لتر/ساعة',
   percent: '%',
   none: ''
 });
@@ -69,7 +117,12 @@ export const UNIT_ALIASES = Object.freeze({
   machines:'machine', units:'unit', pieces:'piece', dirhams:'dirham', cups:'cup',
   boxes:'box', tasks:'task', parts:'part', kilometers:'km', liters:'liter',
   kilograms:'kg', words:'word', persons:'person', people:'person', items:'item',
-  centimeters:'cm', weeks:'week', months:'month'
+  centimeters:'cm', weeks:'week', months:'month',
+  pages:'page', cans:'can', bottles:'bottle', loaves:'loaf', seats:'seat',
+  seedlings:'seedling', shirts:'shirt', books:'book', cards:'card',
+  orders:'order', visitors:'visitor', students:'student', panels:'panel',
+  trips:'trip', devices:'device', trees:'tree', meters:'meter',
+  degrees:'degree', points:'point', values:'value'
 });
 
 export function resolveUnitId(unitId) {

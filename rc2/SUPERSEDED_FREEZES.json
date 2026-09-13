@@ -1,67 +1,77 @@
 {
- "schema": "rc2-superseded-freezes-v1",
- "note": "Freezes taken before the candidate had stopped moving. Kept so the record shows what was frozen and why it did not hold, rather than the earlier attempt being erased.",
- "entries": [
-  {
-   "RC2_COMMIT": "ddc2c9016a9ff68106a18182605e0a20a603f158",
-   "treeHash": "aa7b51f9b329a0b1341419a199a4c55e09adecd7",
-   "frozenAt": "2026-09-12T11:15:12.650Z",
-   "productionBundleSha256": "3d2d668d6455193453692723801ee6cab359969d82fc383e4386179657b42dd3",
-   "reason": "superseded: package.json moved when the freeze's own tests were registered, and package.json is in the production bundle"
-  },
-  {
-   "RC2_COMMIT": "56565ec4e1be4ace34dff60a0b5b6368e6177cf0",
-   "treeHash": "43515585d1901495df4607472cf637d0349f9295",
-   "frozenAt": "2026-09-12T11:37:09.472Z",
-   "productionBundleSha256": "69e39e737a0347ae5edd890011b6cb1161fcc1edc5482fdf98b9669fcf0e3c53",
-   "reason": "archived, not invalidated: this freeze was sound and holdout AUDIT-2026-09-12-B was generated from exactly this production state. RC2.1 remediates defects the holdout exposed, so production necessarily moves past it and a new freeze must be taken. The full record is kept at rc2/FREEZE_RC2.json so holdout B's provenance stays checkable.",
-   "archivedRecord": "rc2/FREEZE_RC2.json",
-   "holdoutGeneratedFromIt": "AUDIT-2026-09-12-B"
-  },
-  {
-   "RC2_COMMIT": "489a2570a56de32b39ee6c50061dc6a203c3113f",
-   "treeHash": "6656abc3fb98356735a09336a61a028e96a1b40b",
-   "frozenAt": "2026-09-12T14:02:30.478Z",
-   "productionBundleSha256": "fd0db212b5ef871561e66ac55f92381be3bc59cb7fd8dad67eef1743458f092a",
-   "reason": "archived, not invalidated: holdout AUDIT-2026-09-12-C was generated from exactly this production state, and its independent review is the diagnosis RC2.2 remediates. Production necessarily moves past it.",
-   "archivedRecord": "rc2/FREEZE_RC2_1.json",
-   "holdoutGeneratedFromIt": "AUDIT-2026-09-12-C"
-  },
-  {
-   "RC2_COMMIT": "11a6f79cf8c6ecb507898a42952fdcf3b26b5df0",
-   "treeHash": "f8eb425b02e9dcdf09f87648ca26960e31adc74c",
-   "frozenAt": "2026-09-12T16:57:31.844Z",
-   "productionBundleSha256": "c52637038ff26a15d48dc107e7cd114a12c321709e0d0064c6ffd4aa4549978a",
-   "reason": "archived, not invalidated: holdout AUDIT-2026-09-12-D was generated from exactly this production state, and its independent review — 250 correct keys, one ambiguous item, 44 of 82 hard items not hard — is the diagnosis RC2.3 remediates. Production necessarily moves past it.",
-   "archivedRecord": "rc2/FREEZE_RC2_2.json",
-   "holdoutGeneratedFromIt": "AUDIT-2026-09-12-D"
-  },
-  {
-   "RC2_COMMIT": "337cff336558b8cf254b754f5b5c10c4f7f7b6cc",
-   "treeHash": "eebff6d88f614a6f11b11d3b76d9ebcd87d0ab60",
-   "frozenAt": "2026-09-12T19:15:56.390Z",
-   "productionBundleSha256": "56a6d34171136b7c3cbefbf519383bafb117c4d42d7402c560cb290c85c65abf",
-   "reason": "archived, not invalidated: RC2.3 was frozen with no holdout generated, because its own validation reported that 19 hard structures across 5 of 16 families could not fill repeated ALL_HARD sessions. RC2.4 answers exactly that finding by adding structures, so production necessarily moves past it.",
-   "archivedRecord": "rc2/FREEZE_RC2_3.json",
-   "holdoutGeneratedFromIt": null
-  },
-  {
-   "RC2_COMMIT": "ac99d2a5968451b45fdb4978abfcf0588d1f49ee",
-   "treeHash": "19b209884f2c9785324dec22004261b44d0e01b0",
-   "frozenAt": "2026-09-12T20:10:10.115Z",
-   "productionBundleSha256": "c2571fff9a15357f30648d9d8f40f14487d42d56db4224a715cb515e59369d99",
-   "reason": "archived, not invalidated: holdout AUDIT-2026-09-13-E was generated from exactly this production state, and its sealed blind review is the evidence RC2.5 calibrates against. The review found 53 of 82 delivered HARD items overclassified and 37 of 116 MEDIUM items easy, so production necessarily moves past it: nineteen structures demoted out of HARD, ten out of MEDIUM, one promotion correcting a factually wrong rationale, and two splits. Kept so Holdout E's provenance stays checkable.",
-   "archivedRecord": "rc2/FREEZE_RC2_4.json",
-   "holdoutGeneratedFromIt": "AUDIT-2026-09-13-E"
-  },
-  {
-   "RC2_COMMIT": "09e57e8b6158000c4ef7bdad1f4896d6c69a8566",
-   "treeHash": "7e5e48d5cdc67117227a56dbb68a5e022a1e19d0",
-   "frozenAt": "2026-09-12T22:45:51.427Z",
-   "productionBundleSha256": "1976eaebf2cbed499d155c215198d09279bc1627cb89c7abb6a9a10f898107eb",
-   "reason": "archived, not invalidated: this is the RC2.5 human-calibrated engine, sound and frozen after the Holdout E verdicts were applied. It reported an honest coverage shortfall — 17 hard structures could not fill an 82-slot batch inside the diversity caps — and RC2.6 closes that by ADDING ten genuinely hard structures in the five families the calibration had emptied, plus one further demotion (MACH_H_TWO_CONFIG) resolved by direct sampling. Production necessarily moves past it.",
-   "archivedRecord": "rc2/FREEZE_RC2_5.json",
-   "holdoutGeneratedFromIt": null
-  }
- ]
+  "schema": "rc2-superseded-freezes-v1",
+  "note": "Freezes taken before the candidate had stopped moving. Kept so the record shows what was frozen and why it did not hold, rather than the earlier attempt being erased.",
+  "entries": [
+    {
+      "RC2_COMMIT": "ddc2c9016a9ff68106a18182605e0a20a603f158",
+      "treeHash": "aa7b51f9b329a0b1341419a199a4c55e09adecd7",
+      "frozenAt": "2026-09-12T11:15:12.650Z",
+      "productionBundleSha256": "3d2d668d6455193453692723801ee6cab359969d82fc383e4386179657b42dd3",
+      "reason": "superseded: package.json moved when the freeze's own tests were registered, and package.json is in the production bundle"
+    },
+    {
+      "RC2_COMMIT": "56565ec4e1be4ace34dff60a0b5b6368e6177cf0",
+      "treeHash": "43515585d1901495df4607472cf637d0349f9295",
+      "frozenAt": "2026-09-12T11:37:09.472Z",
+      "productionBundleSha256": "69e39e737a0347ae5edd890011b6cb1161fcc1edc5482fdf98b9669fcf0e3c53",
+      "reason": "archived, not invalidated: this freeze was sound and holdout AUDIT-2026-09-12-B was generated from exactly this production state. RC2.1 remediates defects the holdout exposed, so production necessarily moves past it and a new freeze must be taken. The full record is kept at rc2/FREEZE_RC2.json so holdout B's provenance stays checkable.",
+      "archivedRecord": "rc2/FREEZE_RC2.json",
+      "holdoutGeneratedFromIt": "AUDIT-2026-09-12-B"
+    },
+    {
+      "RC2_COMMIT": "489a2570a56de32b39ee6c50061dc6a203c3113f",
+      "treeHash": "6656abc3fb98356735a09336a61a028e96a1b40b",
+      "frozenAt": "2026-09-12T14:02:30.478Z",
+      "productionBundleSha256": "fd0db212b5ef871561e66ac55f92381be3bc59cb7fd8dad67eef1743458f092a",
+      "reason": "archived, not invalidated: holdout AUDIT-2026-09-12-C was generated from exactly this production state, and its independent review is the diagnosis RC2.2 remediates. Production necessarily moves past it.",
+      "archivedRecord": "rc2/FREEZE_RC2_1.json",
+      "holdoutGeneratedFromIt": "AUDIT-2026-09-12-C"
+    },
+    {
+      "RC2_COMMIT": "11a6f79cf8c6ecb507898a42952fdcf3b26b5df0",
+      "treeHash": "f8eb425b02e9dcdf09f87648ca26960e31adc74c",
+      "frozenAt": "2026-09-12T16:57:31.844Z",
+      "productionBundleSha256": "c52637038ff26a15d48dc107e7cd114a12c321709e0d0064c6ffd4aa4549978a",
+      "reason": "archived, not invalidated: holdout AUDIT-2026-09-12-D was generated from exactly this production state, and its independent review — 250 correct keys, one ambiguous item, 44 of 82 hard items not hard — is the diagnosis RC2.3 remediates. Production necessarily moves past it.",
+      "archivedRecord": "rc2/FREEZE_RC2_2.json",
+      "holdoutGeneratedFromIt": "AUDIT-2026-09-12-D"
+    },
+    {
+      "RC2_COMMIT": "337cff336558b8cf254b754f5b5c10c4f7f7b6cc",
+      "treeHash": "eebff6d88f614a6f11b11d3b76d9ebcd87d0ab60",
+      "frozenAt": "2026-09-12T19:15:56.390Z",
+      "productionBundleSha256": "56a6d34171136b7c3cbefbf519383bafb117c4d42d7402c560cb290c85c65abf",
+      "reason": "archived, not invalidated: RC2.3 was frozen with no holdout generated, because its own validation reported that 19 hard structures across 5 of 16 families could not fill repeated ALL_HARD sessions. RC2.4 answers exactly that finding by adding structures, so production necessarily moves past it.",
+      "archivedRecord": "rc2/FREEZE_RC2_3.json",
+      "holdoutGeneratedFromIt": null
+    },
+    {
+      "RC2_COMMIT": "ac99d2a5968451b45fdb4978abfcf0588d1f49ee",
+      "treeHash": "19b209884f2c9785324dec22004261b44d0e01b0",
+      "frozenAt": "2026-09-12T20:10:10.115Z",
+      "productionBundleSha256": "c2571fff9a15357f30648d9d8f40f14487d42d56db4224a715cb515e59369d99",
+      "reason": "archived, not invalidated: holdout AUDIT-2026-09-13-E was generated from exactly this production state, and its sealed blind review is the evidence RC2.5 calibrates against. The review found 53 of 82 delivered HARD items overclassified and 37 of 116 MEDIUM items easy, so production necessarily moves past it: nineteen structures demoted out of HARD, ten out of MEDIUM, one promotion correcting a factually wrong rationale, and two splits. Kept so Holdout E's provenance stays checkable.",
+      "archivedRecord": "rc2/FREEZE_RC2_4.json",
+      "holdoutGeneratedFromIt": "AUDIT-2026-09-13-E"
+    },
+    {
+      "RC2_COMMIT": "09e57e8b6158000c4ef7bdad1f4896d6c69a8566",
+      "treeHash": "7e5e48d5cdc67117227a56dbb68a5e022a1e19d0",
+      "frozenAt": "2026-09-12T22:45:51.427Z",
+      "productionBundleSha256": "1976eaebf2cbed499d155c215198d09279bc1627cb89c7abb6a9a10f898107eb",
+      "reason": "archived, not invalidated: this is the RC2.5 human-calibrated engine, sound and frozen after the Holdout E verdicts were applied. It reported an honest coverage shortfall — 17 hard structures could not fill an 82-slot batch inside the diversity caps — and RC2.6 closes that by ADDING ten genuinely hard structures in the five families the calibration had emptied, plus one further demotion (MACH_H_TWO_CONFIG) resolved by direct sampling. Production necessarily moves past it.",
+      "archivedRecord": "rc2/FREEZE_RC2_5.json",
+      "holdoutGeneratedFromIt": null
+    },
+    {
+      "supersededAt": "2026-09-13T08:04:03.865Z",
+      "supersededBy": "RC2.7 — generative breadth and true question diversity",
+      "reason": "RC2.7 changes production source (composition layer, scenario and realization rendering, novelty scheduler, sequence rule space). The RC2.6 freeze is archived intact so the engine it certified stays identifiable; a new freeze is taken at the end of RC2.7.",
+      "RC2_COMMIT": "1d5e25c27ad907eb33c81eaf0f5a3afcbff1c472",
+      "treeHash": "cb6e159a911c3d588dd375476411d5ad3f2bf756",
+      "engineVersion": "1.4.0",
+      "productionBundleSha256": "aaad3d966b41cf9a5d8760c8449e8b2abad1bcb43c2c6d198226534679a81507",
+      "productionFileCount": 50
+    }
+  ]
 }

@@ -33,6 +33,8 @@ export const CONSTRUCTION_CAP_PER_BATCH = 6;
 
 const ARABIC_DIGITS = /[٠-٩]/g;
 
+const escapeAr = w => String(w).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 /**
  * The stem with its numerals and its personal names taken out.
  *
@@ -42,9 +44,12 @@ const ARABIC_DIGITS = /[٠-٩]/g;
 export function stemSkeleton(text, names = []) {
   if (typeof text !== 'string') return '';
   let out = text.replace(ARABIC_DIGITS, '#').replace(/\d+(?:[.,]\d+)?/g, '#');
+  // RC2.7-2. Whole words only. A plain substring replace turned الخسارة into
+  // الخ@ because سارة is a name, which both corrupted the skeleton and inflated
+  // the distinct-skeleton count for every family whose stems mention a loss.
   for (const n of names) {
     if (!n) continue;
-    out = out.split(n).join('@');
+    out = out.replace(new RegExp(`(^|[^\u0621-\u064a])${escapeAr(n)}(?![\u0621-\u064a])`, 'g'), '$1@');
   }
   return out
     .replace(/#(?:\s*[×÷+\-−/]\s*#)+/g, '#')   // arithmetic runs collapse to one slot
@@ -133,3 +138,42 @@ export function measureConstruction(rows) {
     cap: CONSTRUCTION_CAP_PER_BATCH
   };
 }
+
+// --- RC2.7-5. The independent signatures ------------------------------------
+//
+// The brief asks for nine dimensions to be tracked SEPARATELY, because a reader
+// notices them separately: two questions can share a skill and differ in every
+// other respect, and two can share a sentence shape while testing different
+// skills. Collapsing them into one number is what lets a generator report
+// diversity it does not have.
+
+/** What is being tested, independent of how it is told. */
+export const skillSignature = q =>
+  `${q.family ?? q.metadata?.family ?? '?'}/${q.subskill ?? q.metadata?.subskill ?? '?'}`;
+
+/** Which KINDS of entity the stem uses, and how many of each. */
+export function entityPattern(kinds = []) {
+  if (!kinds.length) return 'none';
+  const t = new Map();
+  for (const k of kinds) t.set(k, (t.get(k) ?? 0) + 1);
+  return [...t.entries()].sort().map(([k, v]) => `${k}x${v}`).join('+');
+}
+
+/**
+ * The SHAPE of the parameterization: which parameters a template drew and
+ * roughly how large each was. Two instances sharing it differ only in the exact
+ * numbers — which is precisely the "parameter-only variant" the brief names.
+ */
+export function parameterizationSignature(templateId, parameters = {}) {
+  const bucket = v => {
+    if (!Number.isFinite(v)) return 'x';
+    const a = Math.abs(v);
+    if (a === 0) return '0';
+    if (!Number.isInteger(v)) return 'frac';
+    return `1e${Math.floor(Math.log10(a))}`;
+  };
+  const parts = Object.keys(parameters).sort()
+    .map(k => `${k}:${bucket(Number(parameters[k]))}`);
+  return `${templateId}|${parts.join(',')}`;
+}
+
