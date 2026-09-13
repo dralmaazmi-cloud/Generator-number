@@ -48,14 +48,18 @@ whenFrozen('§24: the freeze records everything the scope asks it to', () => {
   // RC2.8 names the next unused one, and does not generate it: its brief
   // forbids starting a new blind holdout, and G is spent as the seed RC2.7 was
   // frozen against.
-  const EXPECTED = {'RC2.8': 'AUDIT-2026-09-13-H', 'RC2.7': 'AUDIT-2026-09-13-G', 'RC2.4': 'AUDIT-2026-09-12-E', 'RC2.3': 'AUDIT-2026-09-12-E', 'RC2.2': 'AUDIT-2026-09-12-D', 'RC2.1': 'AUDIT-2026-09-12-C'};
+  // RC2.9 names the next unused one on the same terms: its brief forbids
+  // creating a blind holdout or claiming one exists, and H is spent as the seed
+  // RC2.8 was frozen against.
+  const EXPECTED = {'RC2.9': 'AUDIT-2026-09-13-I', 'RC2.8': 'AUDIT-2026-09-13-H', 'RC2.7': 'AUDIT-2026-09-13-G', 'RC2.4': 'AUDIT-2026-09-12-E', 'RC2.3': 'AUDIT-2026-09-12-E', 'RC2.2': 'AUDIT-2026-09-12-D', 'RC2.1': 'AUDIT-2026-09-12-C'};
   assert.equal(f.holdoutSeed, EXPECTED[f.release] ?? 'AUDIT-2026-09-12-B');
-  if (f.release === 'RC2.7' || f.release === 'RC2.8') {
+  if (f.release === 'RC2.7' || f.release === 'RC2.8' || f.release === 'RC2.9') {
     assert.deepEqual(f.previousHoldouts.map(h => h.seed), [
       'AUDIT-2026-09-12-B', 'AUDIT-2026-09-12-C', 'AUDIT-2026-09-12-D',
       'AUDIT-2026-09-12-E', 'AUDIT-2026-09-13-F',
-      // G is spent by having been frozen against under RC2.7.
-      ...(f.release === 'RC2.8' ? ['AUDIT-2026-09-13-G'] : [])
+      // G is spent by having been frozen against under RC2.7, H under RC2.8.
+      ...(f.release === 'RC2.8' || f.release === 'RC2.9' ? ['AUDIT-2026-09-13-G'] : []),
+      ...(f.release === 'RC2.9' ? ['AUDIT-2026-09-13-H'] : [])
     ]);
     for (const h of f.previousHoldouts) assert.equal(h.reused, false);
     assert.equal(f.holdoutGenerated, false, `the ${f.release} brief withholds the next holdout`);
