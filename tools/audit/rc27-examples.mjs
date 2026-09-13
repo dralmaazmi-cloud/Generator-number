@@ -16,6 +16,11 @@ import {FAMILY_REGISTRY} from '../../src/registry.js';
 
 const PER_BAND = Number(process.env.PER_BAND ?? 120);
 const EXAMPLES_PER_GROUP = Number(process.env.EXAMPLES ?? 3);
+// The seed prefix is settable so the sample can be redrawn. A rendered example
+// is drawn from the same space a sealed holdout was drawn from, so an item here
+// can coincide with one there — and this file prints the answer. Delivery scans
+// for that and redraws; see SOURCE_PROVENANCE.json.
+const TAG = process.env.TAG ?? 'RC27-EX';
 
 const meta = (q, k) => q.metadata?.[k] ?? null;
 
@@ -24,7 +29,7 @@ function sample(engine, family) {
   const rows = [];
   for (const band of f.difficulties) {
     for (let i = 0; i < PER_BAND; i++) {
-      try { rows.push(engine.generateQuestion({family, difficulty: band, seed: `RC27-EX-${family}-${band}-${i}`})); }
+      try { rows.push(engine.generateQuestion({family, difficulty: band, seed: `${TAG}-${family}-${band}-${i}`})); }
       catch { /* a refused draw is not evidence */ }
     }
   }
