@@ -124,7 +124,7 @@ test('RC2.2-4: a cap the fallback can bypass is not a cap', () => {
   // fallback is ignoring the cap, which is what it used to do.
   const e = new Engine({maxReasoningRepeatsPerSession: 1, maxReasoningRepeatsPerBatch: 1});
   const s = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC22-T-BYPASS'});
-  assert.equal(s.questions.length, 50, 'the session must still be deliverable');
+  assert.equal(s.questions.length, 30, 'the session must still be deliverable');
   const sigs = s.questions.map(q => q.metadata.structural_reasoning_signature);
   const counts = {};
   for (const x of sigs) counts[x] = (counts[x] || 0) + 1;

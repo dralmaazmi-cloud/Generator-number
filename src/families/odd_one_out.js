@@ -106,7 +106,10 @@ function build(ctx, spec) {
     // RC2-022: `numbers` is the same set again, in display order only, so two
     // permutations of one set must not look like two different questions.
     orderInsensitive: ['numbers'],
-    oracle: {kind: 'ruleset', numbers: group, intendedOutlier: outlier},
+    // RC2.7-D. The rule id travels with the oracle so the core signature can
+    // tell one number property from another; it is already a declared
+    // parameter of the item, not a new fact about it.
+    oracle: {kind: 'ruleset', numbers: group, intendedOutlier: outlier, intendedRule: ruleId},
     askedUnknown: 'outlier',
     stageCount: 1,
     pedagogy: {targetSkill: `RULE_${ruleId}`, targetMisconception: 'SATISFIES_SHARED_PROPERTY'},

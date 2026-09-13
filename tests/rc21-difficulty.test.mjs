@@ -68,7 +68,7 @@ test('RC2.1-2: the boundaries are what the stated rule implies', {skip: 'superse
 
 // --- the outcome ------------------------------------------------------------
 
-test('RC2.1-2: calibration improved against the RC2 baseline', async () => {
+test('RC2.1-2: calibration improved against the RC2 baseline', {skip: 'superseded by RC2.7-R2: this measures a fifty-question ALL_HARD session, a shape the engine no longer delivers. The core construction control is absolute — a session that cannot be filled without repeating a core question idea is refused rather than completed with parameter reskins — and the hard band supports about thirty-five. This release does not reopen difficulty, so the measurement is retired rather than rescaled; the deliverable shape is measured in tools/audit/rc27-validation.mjs.'}, async () => {
   // RC2 measured 65.4% declared/computed agreement on this same sampling.
   // Floors are set from the measured spread over four seed tags at this sample
   // size (overall .722-.728, easy .847-.871, hard .719-.743), not from a single
@@ -111,7 +111,7 @@ test('RC2.1-2: no band was emptied by reclassification', {skip: 'superseded by R
   }
 });
 
-test('RC2.1-2: the ALL_HARD session is measurably less inflated', () => {
+test('RC2.1-2: the ALL_HARD session is measurably less inflated', {skip: 'superseded by RC2.7-R2: this measures a fifty-question ALL_HARD session, a shape the engine no longer delivers. The core construction control is absolute — a session that cannot be filled without repeating a core question idea is refused rather than completed with parameter reskins — and the hard band supports about thirty-five. This release does not reopen difficulty, so the measurement is retired rather than rescaled; the deliverable shape is measured in tools/audit/rc27-validation.mjs.'}, () => {
   // RC2 delivered 38% of ALL_HARD questions below the hard band on the same
   // measurement. This asserts the improvement and pins the residual, which is
   // structural: four families hold no template that reaches the hard band, and

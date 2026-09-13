@@ -62,7 +62,15 @@ function topology(node) {
 export function relationTopology(oracle) {
   if (!oracle) return {relation: 'none', arrangement: 'none'};
   if (oracle.kind === 'ruleset') {
-    return {relation: 'ruleset', arrangement: `ruleset:${(oracle.numbers ?? []).length}`};
+    // A set built on multiples and a set built on triangular numbers are not one
+    // idea wearing two labels — the property a solver has to find is the whole
+    // question. Collapsing every rule to «ruleset» made the odd-one-out family
+    // read as four ideas when it has seven distinct number properties.
+    const rule = oracle.intendedRule ?? oracle.ruleId ?? null;
+    return {
+      relation: rule ? `ruleset:${rule}` : 'ruleset',
+      arrangement: `ruleset:${(oracle.numbers ?? []).length}`
+    };
   }
   const constraints = Array.isArray(oracle.constraints) ? oracle.constraints : [];
   // Sorted: the ORDER two simultaneous conditions are written in is presentation,

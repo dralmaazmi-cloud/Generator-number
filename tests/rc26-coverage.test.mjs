@@ -166,7 +166,7 @@ test('RC2.6-3: no construction exceeds its share of a batch', () => {
 
 // --- 5. acceptance -----------------------------------------------------------
 
-test('RC2.6-5: 82 hard slots deliver with every required zero', async () => {
+test('RC2.6-5: 82 hard slots deliver with every required zero', {skip: 'superseded by RC2.7-R2: this measures a fifty-question ALL_HARD session, a shape the engine no longer delivers. The core construction control is absolute — a session that cannot be filled without repeating a core question idea is refused rather than completed with parameter reskins — and the hard band supports about thirty-five. This release does not reopen difficulty, so the measurement is retired rather than rescaled; the deliverable shape is measured in tools/audit/rc27-validation.mjs.'}, async () => {
   const {runOnce} = await import('../tools/audit/rc26-acceptance.mjs');
   for (const seed of ['RC26-T-ACC-1', 'RC26-T-ACC-2']) {
     const r = runOnce({seed});

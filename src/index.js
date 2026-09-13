@@ -444,7 +444,8 @@ export class NumericalQuestionGeneratorEngine {
     // judgement is delivered as a recorded breach, the same way the template
     // and reasoning caps report theirs.
     const novelty = new NoveltyScheduler(count, undefined,
-      options.batchEntityCounts ?? null, options.batchQuestionCount ?? null);
+      options.batchEntityCounts ?? null, options.batchQuestionCount ?? null,
+      options.batchCoreConstructions ?? null, options.batchReasoningTargets ?? null);
     // RC2-004. Two generation modes, named and documented, because the RC1
     // engine silently had both and called the result reproducible.
     //
@@ -827,6 +828,11 @@ export class NumericalQuestionGeneratorEngine {
     // where no single session had more than 6 of it.
     const batchEntityCounts = new Map();
     const batchQuestionCount = specs.reduce((a, x) => a + (Number(x.count) || 0), 0);
+    // RC2.7-D. The ideas already used, shared across the whole batch, so a user
+    // who sits several sessions does not meet the same question idea again in
+    // the next one.
+    const batchCoreConstructions = new Map();
+    const batchReasoningTargets = new Map();
     const sessions = specs.map((spec, k) => this.generatePractice({
       ...options.defaults,
       ...spec,
@@ -834,7 +840,9 @@ export class NumericalQuestionGeneratorEngine {
       batchFingerprints,
       batchReasoningCounts,
       batchEntityCounts,
-      batchQuestionCount
+      batchQuestionCount,
+      batchCoreConstructions,
+      batchReasoningTargets
     }));
     return {
       engine_version: this.version,
@@ -847,6 +855,8 @@ export class NumericalQuestionGeneratorEngine {
         distinct_semantic_fingerprints: batchFingerprints.size,
         distinct_reasoning_paths: batchReasoningCounts.size,
         most_repeated_reasoning_path: Math.max(0, ...batchReasoningCounts.values()),
+        distinct_core_constructions: batchCoreConstructions.size,
+        distinct_reasoning_targets: batchReasoningTargets.size,
         distinct_entities: batchEntityCounts.size,
         most_repeated_entity: Math.max(0, ...batchEntityCounts.values()),
         published_candidates: sessions.reduce((a, s) => a + s.validation.session_cost.published_candidates, 0),

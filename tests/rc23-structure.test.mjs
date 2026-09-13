@@ -181,7 +181,7 @@ test('RC2.3-2: an ALL_HARD session is built only from HARD_CAPABLE structures', 
   const e = new Engine();
   for (let i = 0; i < 4; i++) {
     const s = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: `RC23-AH-${i}`});
-    assert.equal(s.questions.length, 50);
+    assert.equal(s.questions.length, 30);
     for (const q of s.questions) {
       assert.equal(q.difficulty, 'hard', q.generator_id);
       assert.ok(isHardCapable(q.metadata.template_id), `${q.generator_id} is not hard-capable`);
@@ -198,18 +198,18 @@ test('RC2.3-2: a band that cannot fill a session is refused up front, by name', 
   // needed to fix it.
   const e = new Engine();
   let err = null;
-  try { e.generatePractice({count: 50, difficulty: 'hard', family: 'sequences', seed: 'RC23-COV'}); }
+  try { e.generatePractice({count: 30, difficulty: 'hard', family: 'sequences', seed: 'RC23-COV'}); }
   catch (caught) { err = caught; }
   assert.ok(err, 'a band that cannot fill a session must refuse');
   assert.equal(err.code, 'INSUFFICIENT_BAND_COVERAGE');
   assert.equal(err.band, 'hard');
-  assert.equal(err.needed, 13);
-  assert.ok(err.distinctTemplates < 13, `sequences holds ${err.distinctTemplates} hard structures`);
-  assert.ok(/INSUFFICIENT_BAND_COVERAGE: 50 hard slots need 13 distinct structures/.test(err.message), err.message);
+  assert.equal(err.needed, 8);
+  assert.ok(err.distinctTemplates < 8, `sequences holds ${err.distinctTemplates} hard structures`);
+  assert.ok(/INSUFFICIENT_BAND_COVERAGE: 30 hard slots need 8 distinct structures/.test(err.message), err.message);
 
   // And the refusal is not blanket: the full pool can still fill one.
   const ok = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC23-COV-OK'});
-  assert.equal(ok.questions.length, 50);
+  assert.equal(ok.questions.length, 30);
 });
 
 test('RC2.3-2: a family that cannot reach a band refuses rather than substituting', () => {
@@ -245,12 +245,15 @@ test('RC2.3-5: no template takes more than its share of a session', () => {
   const e = new Engine();
   for (const band of ['hard', 'medium', 'easy']) {
     for (let i = 0; i < 3; i++) {
-      const s = e.generatePractice({count: 50, difficulty: band, family: 'random', seed: `RC23-SHARE-${band}-${i}`});
+      // RC2.7-R2: the reachable pool of distinct core ideas under the
+      // per-template share is about 45 easy, 50+ medium and 35 hard, and the
+      // core rule is absolute, so each band is asked for what it can supply.
+      const s = e.generatePractice({count: band === 'medium' ? 50 : band === 'easy' ? 40 : 30, difficulty: band, family: 'random', seed: `RC23-SHARE-${band}-${i}`});
       const counts = {};
       for (const q of s.questions) counts[q.generator_id] = (counts[q.generator_id] ?? 0) + 1;
       const worst = Math.max(...Object.values(counts));
       assert.ok(worst <= e.config.maxTemplateIdRepeatsPerSession,
-        `${band} session ${i}: one template took ${worst} of 50 slots`);
+        `${band} session ${i}: one template took ${worst} of ${s.questions.length} slots`);
     }
   }
 });
@@ -263,7 +266,7 @@ test('RC2.3-5: exact, semantic and reasoning repetition are counted apart', asyn
       {count: 50, difficulty: 'mixed'}, {count: 50, difficulty: 'mixed'},
       {count: 30, difficulty: 'hard'}]
   });
-  assert.equal(r.questions, 250);
+  assert.equal(r.questions, 230);
   // Exact and semantic repetition are defects and must be zero.
   assert.equal(r.exact.repeats, 0, 'an identical instance was published twice');
   assert.equal(r.semantic.repeats, 0, 'the same mathematical instance was published twice');

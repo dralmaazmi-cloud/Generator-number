@@ -174,20 +174,32 @@ test('RC2.7-5: a fifty-question mixed session reads as fifty different questions
     // A relaxation is allowed and recorded; what is not allowed is a session
     // whose variety rests on them. One in fifty is the observed worst of three
     // seeds and is well inside "this session reads as fifty questions".
-    assert.ok(n.breaches.length <= 2,
-      `${seed}: ${n.breaches.length} novelty controls relaxed — ${JSON.stringify(n.breaches.map(b => b.dimension))}`);
+    assert.equal(n.core.relaxations, 0, `${seed}: a core construction was relaxed`);
+    assert.equal(n.core.distinctConstructions, 50, `${seed}: only ${n.core.distinctConstructions} distinct core ideas in fifty`);
   }
 });
 
 test('RC2.7-5: a control relaxed by the fallback is recorded, never silent', () => {
-  // The all-hard session is where the pressure is real: thirty hard structures
-  // for fifty slots. The scheduler cannot be satisfied there, and what this
-  // checks is that every relaxation comes back with its dimension attached.
+  // RC2.7-R2. The all-hard session is where the pressure is real, and the
+  // engine now REFUSES rather than completing it with parameter reskins. Both
+  // halves are asserted: fifty is refused by name with the shortfall reported,
+  // and the deliverable size comes back with every relaxation carrying its
+  // dimension and its level.
   const e = new Engine();
-  const s = e.generatePractice({count: 50, difficulty: 'hard', family: 'random', seed: 'RC27-T-HARD'});
+  let refusal = null;
+  try { e.generatePractice({count: 50, difficulty: 'hard', family: 'random', seed: 'RC27-T-HARD'}); }
+  catch (err) { refusal = err; }
+  assert.ok(refusal, 'a fifty-question all-hard session must be refused, not reskinned');
+  assert.equal(refusal.code, 'INSUFFICIENT_CONSTRUCTION_BREADTH');
+  assert.ok(refusal.delivered >= 25 && refusal.delivered < 50, `filled ${refusal.delivered}`);
+  assert.equal(refusal.distinctCoreConstructions, refusal.delivered,
+    'every slot filled before the refusal must have carried a distinct core idea');
+  const s = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC27-T-HARD'});
   const n = s.validation.novelty;
-  assert.equal(n.delivered, 50);
-  const warned = s.validation.diversity_warnings.filter(w => w.reason === REASON.NOVELTY_FALLBACK);
+  assert.equal(n.delivered, 30);
+  assert.equal(n.core.relaxations, 0, 'a core construction relaxation is forbidden');
+  assert.equal(n.core.distinctConstructions, 30, 'thirty slots, thirty distinct core ideas');
+  const warned = s.validation.diversity_warnings.filter(w => w.reason === REASON.NOVELTY_SURFACE_FALLBACK);
   assert.equal(warned.length, n.breaches.length,
     'every breach must appear as a session warning and every warning as a breach');
   for (const b of n.breaches) {

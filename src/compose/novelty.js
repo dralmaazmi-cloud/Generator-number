@@ -103,6 +103,22 @@ export const ENTITY_CAP_PER_50 = 6;
  */
 export const ENTITY_BATCH_CAP_PER_50 = 3;
 
+/**
+ * How often one core question IDEA may appear across a whole batch.
+ *
+ * Inside a session the rule is absolute — an idea never repeats. Across a batch
+ * it is a CAP rather than a ban, because a ban is not currently deliverable: a
+ * 250-question batch needs about 50 easy, 120 medium and 62 hard slots against
+ * pools of 94, 143 and 89 distinct ideas, and the sampler cannot be relied on to
+ * find every unused one. A cap of two keeps a user who sits several sessions
+ * from meeting the same idea a third time, and §9 of the brief asks for exactly
+ * that: limit how often a thin construction appears rather than reskin it.
+ *
+ * Raising the pool is what would let this become a ban, and the report says so
+ * rather than the cap pretending to be one.
+ */
+export const CORE_BATCH_CAP = 2;
+
 /** How many dimensions two questions may share before they read as one. */
 export const CONSECUTIVE_SIMILARITY_LIMIT = 3;
 export const SESSION_SIMILARITY_LIMIT = 5;
@@ -130,7 +146,8 @@ export class NoveltyScheduler {
    * @param {number} count how many questions the session will deliver
    * @param {object} [caps] override the per-50 caps (tests, not production)
    */
-  constructor(count, caps = NOVELTY_CAPS_PER_50, batchEntities = null, batchCount = null) {
+  constructor(count, caps = NOVELTY_CAPS_PER_50, batchEntities = null, batchCount = null,
+    batchCores = null, batchReasoningTargets = null) {
     this.count = Math.max(1, Number(count) || 1);
     const scale = this.count / 50;
     // Shared across the sessions of one batch when the caller supplies it; a
@@ -147,6 +164,15 @@ export class NoveltyScheduler {
     // and no branch consults them optionally.
     this.coreConstructions = new Set();
     this.reasoningTargets = new Set();
+    // RC2.7-D. Shared across the sessions of one batch when the caller supplies
+    // them. A per-session core rule says nothing about a user who sits four
+    // sessions in a row: the second session was free to repeat every idea the
+    // first one used, and a 250-question batch was measured with 165 of its
+    // items inside a repeated core group while each session was internally
+    // clean. The experience the brief asks about is 50 to 100 questions, which
+    // crosses a session boundary.
+    this.batchCores = batchCores;
+    this.batchReasoningTargets = batchReasoningTargets;
     this.nearDuplicates = new Map();
     this.tallies = Object.fromEntries(Object.keys(this.caps).map(k => [k, new Map()]));
     this.entities = new Map();
@@ -165,10 +191,23 @@ export class NoveltyScheduler {
       return {ok: false, level: CORE, reason: REASON.NOVELTY_CORE_CONSTRUCTION_REPEAT,
         dimension: 'user_construction_signature'};
     }
+    // Across a BATCH the cap is a preference, not a ban, and is therefore a
+    // surface control: the pools per band (94 easy, 143 medium, 89 hard) cannot
+    // support a ban over 250 slots, and refusing the batch would trade a real
+    // improvement for an undeliverable one. Inside a session the ban above
+    // stays absolute. Every relaxation here is recorded with this dimension.
+    if (core && (this.batchCores?.get(core) ?? 0) >= CORE_BATCH_CAP) {
+      return {ok: false, level: SURFACE, reason: REASON.NOVELTY_CORE_CONSTRUCTION_REPEAT,
+        dimension: 'user_construction_signature_batch'};
+    }
     const pair = dim(candidate, 'reasoning_target_pair');
     if (pair && this.reasoningTargets.has(pair)) {
       return {ok: false, level: CORE, reason: REASON.NOVELTY_REASONING_TARGET_REPEAT,
         dimension: 'reasoning_target_pair'};
+    }
+    if (pair && (this.batchReasoningTargets?.get(pair) ?? 0) >= CORE_BATCH_CAP) {
+      return {ok: false, level: SURFACE, reason: REASON.NOVELTY_REASONING_TARGET_REPEAT,
+        dimension: 'reasoning_target_pair_batch'};
     }
 
     // --- SURFACE -------------------------------------------------------------
@@ -217,11 +256,17 @@ export class NoveltyScheduler {
     const core = dim(candidate, 'user_construction_signature');
     if (core) {
       this.coreConstructions.add(core);
+      if (this.batchCores) this.batchCores.set(core, (this.batchCores.get(core) ?? 0) + 1);
       const near = nearDuplicateKey(core);
       this.nearDuplicates.set(near, (this.nearDuplicates.get(near) ?? 0) + 1);
     }
     const pair = dim(candidate, 'reasoning_target_pair');
-    if (pair) this.reasoningTargets.add(pair);
+    if (pair) {
+      this.reasoningTargets.add(pair);
+      if (this.batchReasoningTargets) {
+        this.batchReasoningTargets.set(pair, (this.batchReasoningTargets.get(pair) ?? 0) + 1);
+      }
+    }
     this.combinations.add(combinationKey(candidate));
     for (const k of Object.keys(this.caps)) {
       const v = dim(candidate, k);

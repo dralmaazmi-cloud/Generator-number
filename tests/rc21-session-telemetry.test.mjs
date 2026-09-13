@@ -59,6 +59,7 @@ test('RC2.1-1: no session discard is anonymous', () => {
     REASON.SESSION_WINDOW_CAP, REASON.SESSION_BATCH_DUPLICATE,
     // RC2.7-5. The novelty scheduler's refusals are session discards too, and
     // each names the dimension it refused on.
+    REASON.NOVELTY_CORE_CONSTRUCTION_REPEAT, REASON.NOVELTY_REASONING_TARGET_REPEAT,
     REASON.NOVELTY_REPEATED_COMBINATION, REASON.NOVELTY_CONSECUTIVE_SIMILARITY,
     REASON.NOVELTY_DIMENSION_DOMINANCE, REASON.NOVELTY_MULTI_DIMENSION_SIMILARITY,
     REASON.REPEATED_REASONING_PATTERN_IN_BATCH
@@ -95,7 +96,11 @@ test('RC2.1-1: the identity survives the relaxed fallback', () => {
   // admissible value — so twelve slots are now comfortably covered and stopped
   // exercising the fallback at all. Fifteen is where four structures start to
   // bind, which is the same condition one structure further along.
-  const s = e.generatePractice({count: 15, difficulty: 'hard', family: 'ratios', seed: 'RLX-0'});
+  // RC2.7-R2: ratios holds four hard core ideas, and the core rule is absolute,
+  // so a hard ratios session longer than four is refused rather than reskinned.
+  // A MIXED ratios session still binds the surface caps partway through, which
+  // is what this test is about.
+  const s = e.generatePractice({count: 45, difficulty: 'mixed', family: 'random', seed: 'RLX-0'});
   const r = e.getTelemetry().sessionReconciliation;
   assert.ok(s.validation.diversity_warnings.length > 0, 'this setup is meant to exercise the fallback');
   assert.equal(r.publishedToSessions, r.delivered + r.sessionDiscards);
@@ -117,7 +122,7 @@ test('RC2.1-1: engine-level and session-level cost are reported separately', () 
   // where it actually occurs.
   const d = new Engine();
   d.resetTelemetry();
-  d.generatePractice({count: 12, difficulty: 'hard', family: 'ratios', seed: 'RC21-SPLIT-DISCARD'});
+  d.generatePractice({count: 12, difficulty: 'mixed', family: 'random', seed: 'RC21-SPLIT-DISCARD'});
   assert.ok((d.getTelemetry().byStage.session_discard ?? 0) > 0,
     'a session that hits its caps must record session-level discards under their own stage');
 });
@@ -179,10 +184,10 @@ test('RC2.1-5: a multi-session batch delivers no repeated mathematical instance'
     const b = e.generateMockBatch({seed, sessions: sessionPlan});
     const fps = b.sessions.flatMap(s => s.questions.map(
       q => q.metadata.semantic_fingerprint ?? q.metadata.fingerprint));
-    assert.equal(fps.length, 250, `${seed}: expected 250 delivered`);
-    assert.equal(new Set(fps).size, 250,
+    assert.equal(fps.length, 230, `${seed}: expected 230 delivered`);
+    assert.equal(new Set(fps).size, 230,
       `${seed}: ${fps.length - new Set(fps).size} repeated instance(s) across sessions`);
-    assert.equal(b.batch_summary.distinct_semantic_fingerprints, 250);
+    assert.equal(b.batch_summary.distinct_semantic_fingerprints, 230);
   }
 });
 
@@ -195,7 +200,7 @@ test('RC2.1-5: ordinary template reuse is still allowed', () => {
   const templates = b.sessions.flatMap(s => s.questions.map(q => q.generator_id));
   const distinct = new Set(templates).size;
   assert.ok(distinct < templates.length,
-    'no template was reused at all across 250 questions, which means reuse was suppressed rather than duplication');
+    'no template was reused at all across the batch, which means reuse was suppressed rather than duplication');
   const counts = {};
   for (const t of templates) counts[t] = (counts[t] || 0) + 1;
   assert.ok(Math.max(...Object.values(counts)) >= 2, 'expected at least one template used more than once');

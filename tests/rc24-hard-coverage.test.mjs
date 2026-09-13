@@ -170,7 +170,7 @@ test('RC2.4: every added template names a criterion and is reachable', async () 
 
 // --- the acceptance evidence ------------------------------------------------
 
-test('RC2.4: five ALL_HARD sessions of fifty, delivered together', () => {
+test('RC2.4: five ALL_HARD sessions of fifty, delivered together', {skip: 'superseded by RC2.7-R2: five ALL_HARD sessions of fifty is no longer a deliverable shape. The core construction control is absolute — a session that cannot be filled without repeating a core question idea is refused rather than completed with parameter reskins — and the hard band supports about thirty-five. What this test measured (no filler, no duplicates, breadth across the batch) is measured on a deliverable all-hard shape by tools/audit/rc27-validation.mjs, and the shortfall itself is asserted in tests/rc27-diversity.test.mjs.'}, () => {
   // How a 250-question assessment is actually produced, and how every holdout so
   // far has been generated: one batch, so cross-session repetition is governed.
   const r = allHardSessions({sessions: 5, count: 50, seedTag: 'RC24-TEST-BATCH', mode: 'BATCH'});
@@ -203,7 +203,7 @@ test('RC2.4: five ALL_HARD sessions of fifty, delivered together', () => {
   }
 });
 
-test('RC2.4: five unrelated ALL_HARD sittings still carry no filler', () => {
+test('RC2.4: five unrelated ALL_HARD sittings still carry no filler', {skip: 'superseded by RC2.7-R2: five ALL_HARD sessions of fifty is no longer a deliverable shape. The core construction control is absolute — a session that cannot be filled without repeating a core question idea is refused rather than completed with parameter reskins — and the hard band supports about thirty-five. What this test measured (no filler, no duplicates, breadth across the batch) is measured on a deliverable all-hard shape by tools/audit/rc27-validation.mjs, and the shortfall itself is asserted in tests/rc27-diversity.test.mjs.'}, () => {
   // Sessions that share no state can legitimately repeat an instance — nothing
   // connects them — so this measures the two things that must hold regardless.
   const r = allHardSessions({sessions: 5, count: 50, seedTag: 'RC24-TEST-INDEP', mode: 'INDEPENDENT'});
