@@ -81,6 +81,25 @@ export const RC27_DEVELOPMENT_SEEDS = Object.freeze([
 ]);
 
 /**
+ * RC2.8, likewise, and for a reason this release makes sharper than the others.
+ *
+ * The generator no longer draws a question and then judges it; it plans the
+ * IDEA for every slot first. A corpus drawn on RC2.7's seeds would be a record
+ * of what the old loop happened to sample, and freezing against it would attest
+ * a measurement of an engine that no longer exists.
+ */
+export const RC28_DEVELOPMENT_SEEDS = Object.freeze([
+  'RC28-DEV-ALEF', 'RC28-DEV-BAA', 'RC28-DEV-JEEM', 'RC28-DEV-DAL', 'RC28-DEV-HAA'
+]);
+
+/**
+ * RC2.8 names its sign-off holdout and does not generate it, exactly as RC2.3
+ * and RC2.7 did: the brief for this release forbids starting a new blind
+ * holdout, and a seed that has been drawn on is spent.
+ */
+export const RC28_SIGNOFF_SEED = 'AUDIT-2026-09-13-H';
+
+/**
  * Which release a corpus run belongs to, and where its evidence lands. The RC2.1
  * and RC2.2 corpora were built by calling `build` with a seed list by hand and
  * writing the files by hand, which left no record of how to reproduce them.
@@ -91,7 +110,8 @@ export const RELEASES = Object.freeze({
   rc22: {seeds: RC22_DEVELOPMENT_SEEDS, json: 'rc2/RC22_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc22-development-corpus.jsonl.gz'},
   rc23: {seeds: RC23_DEVELOPMENT_SEEDS, json: 'rc2/RC23_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc23-development-corpus.jsonl.gz'},
   rc24: {seeds: RC24_DEVELOPMENT_SEEDS, json: 'rc2/RC24_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc24-development-corpus.jsonl.gz'},
-  rc27: {seeds: RC27_DEVELOPMENT_SEEDS, json: 'rc2/RC27_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc27-development-corpus.jsonl.gz'}
+  rc27: {seeds: RC27_DEVELOPMENT_SEEDS, json: 'rc2/RC27_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc27-development-corpus.jsonl.gz'},
+  rc28: {seeds: RC28_DEVELOPMENT_SEEDS, json: 'rc2/RC28_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc28-development-corpus.jsonl.gz'}
 });
 
 const BANDS = ['easy', 'medium', 'hard'];
