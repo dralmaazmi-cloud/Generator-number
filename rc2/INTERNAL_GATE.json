@@ -1,18 +1,15 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-13T15:24:10.768Z",
+  "evaluatedAt": "2026-09-13T15:33:55.883Z",
   "engineVersion": "1.4.0",
-  "headCommit": "73232c95e4ec54e6e2b14e2f0db8371ffb511c7b",
+  "headCommit": "571cfd3db66fae605efc794ab0db488c5b836662",
   "branch": "claude/numerical-generator-upgrade-b3fc8s",
   "holdoutSeed": "AUDIT-2026-09-12-B",
   "verdict": "FAIL",
   "conditions": 39,
   "failedConditions": [
     "SUITE_GREEN",
-    "STRUCTURE_ADJUDICATION_COMPLETE",
-    "TEMPLATE_SHARE_CAPPED",
-    "ALL_HARD_BATCH_ACCEPTS",
     "TREE_CLEAN"
   ],
   "checks": [
@@ -316,7 +313,7 @@
     {
       "id": "STRUCTURE_ADJUDICATION_COMPLETE",
       "requirement": "RC2.3-1 — every template is adjudicated and every adjudication is reachable",
-      "pass": false,
+      "pass": true,
       "detail": {
         "templates": 151,
         "byBand": {
@@ -406,8 +403,10 @@
     {
       "id": "TEMPLATE_SHARE_CAPPED",
       "requirement": "RC2.3-5 — no template takes more than its share of a session",
-      "pass": false,
-      "detail": "threw: INSUFFICIENT_CONSTRUCTION_BREADTH: 39 of 40 slots filled before the pool of distinct core constructions ran out (39 used). Add genuine constructions; the caps and the novelty controls were not relaxed."
+      "pass": true,
+      "detail": {
+        "worstShareOf50": 2
+      }
     },
     {
       "id": "COUNT_ANSWERS_ARE_WHOLE",
@@ -520,28 +519,28 @@
     {
       "id": "ALL_HARD_BATCH_ACCEPTS",
       "requirement": "RC2.4-2 — five ALL_HARD sessions carry no filler, no duplicates and no dominance",
-      "pass": false,
+      "pass": true,
       "detail": {
-        "total": 0,
+        "total": 100,
         "filler": 0,
         "wrongKeys": 0,
         "ambiguous": 0,
         "exactDuplicates": 0,
         "semanticDuplicates": 0,
-        "worstTemplateShareOf50": 0,
+        "worstTemplateShareOf50": 2,
         "cap": 4,
         "acrossAllSessions": {
           "templates": {
-            "distinct": 0,
-            "max": 0
+            "distinct": 30,
+            "max": 8
           },
           "families": {
-            "distinct": 0,
-            "max": 0
+            "distinct": 14,
+            "max": 12
           },
           "reasoning": {
-            "distinct": 0,
-            "max": 0
+            "distinct": 39,
+            "max": 4
           }
         }
       }
@@ -570,16 +569,8 @@
       "requirement": "§23 — the candidate is not still moving",
       "pass": false,
       "detail": [
-        "M package.json",
-        " M src/arabic/units.js",
-        " M src/compose/novelty.js",
-        " M src/compose/scenarios.js",
-        " M src/families/_shared.js",
-        " M src/families/ages.js",
-        " M src/families/averages.js",
-        " M src/families/calendar.js",
-        " M src/families/combined_rate.js",
-        " M src/families/direct_proportion.js"
+        "M rc2/INTERNAL_GATE.json",
+        " M tools/audit/rc2-internal-gate.mjs"
       ]
     }
   ]
