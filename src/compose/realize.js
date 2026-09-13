@@ -37,10 +37,22 @@ export const ORDERS = Object.freeze(['given', 'outcome_first', 'rotated']);
 
 const strip = s => String(s ?? '').trim().replace(/[.،؛]+$/u, '');
 
+/**
+ * Clauses that already open with a connective must not take another one.
+ *
+ * The first letter is the whole test for و and ف: they are PREFIXES in Arabic —
+ * «ولو», «فحقق» — so there is no word boundary after them to match on, and a
+ * `\b` here (which is ASCII-word-based) matches nothing at all. That is what
+ * produced «وولو زاد معدله».
+ */
+const LEADS_WITH_CONNECTIVE = /^(?:[وف]|ثم\s|بعد ذلك|بعدها)/u;
+
 function joinCompact(clauses) {
   if (clauses.length === 1) return `${clauses[0]}.`;
   const [head, ...rest] = clauses;
-  return `${head}، ${rest.map(c => `و${c}`).join('، ')}.`;
+  // «وثم طُورت» is what a blind «و» in front of every clause produces. A clause
+  // that already carries its own connective keeps it and takes none.
+  return `${head}، ${rest.map(c => (LEADS_WITH_CONNECTIVE.test(c) ? c : `و${c}`)).join('، ')}.`;
 }
 
 const joinSequential = clauses => clauses.map(c => `${c}.`).join(' ');

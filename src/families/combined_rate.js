@@ -1,4 +1,4 @@
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool, unitWordKam, composeSentences} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool, unitWordKam, composeSentences, sceneFor} from './_shared.js';
 
 export function generateCombinedRate({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'combined_rate', family_ar: 'المعدل المشترك', category: 'المعدل المشترك'};
@@ -24,6 +24,7 @@ export function generateCombinedRate({difficulty, rng, seed, engineVersion, tele
 }
 
 function togetherOutput(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   const a = rng.pick([6, 8, 10, 12, 15]);
   const b = rng.pick([8, 10, 12, 15, 20].filter(v => v !== a));
@@ -42,14 +43,15 @@ function togetherOutput(ctx) {
     mk((a + b) * h * 2, 'APPLIED_STEP_TWICE', `(${a} + ${b}) × ${h} × 2`),
     mk((a + b + Math.min(a, b)) * h, 'RATE_APPLIED_TO_WRONG_COUNT', `(${a} + ${b} + ${Math.min(a, b)}) × ${h}`)
   ]);
-  const stem = composeSentences(ctx, `ينجز العامل أ ${a} وحدة/ساعة، وينجز العامل ب ${b} وحدة/ساعة. إذا عملا معًا ${u(h, 'hour', 'oblique')}، فكم وحدة ينجزان؟`);
+  const stem = composeSentences(ctx, `ينجز العامل أ ${a} ${sc.rateWord}، وينجز العامل ب ${b} ${sc.rateWord}. إذا عملا معًا ${u(h, 'hour', 'oblique')}، فكم ${unitWordKam(sc.out)} ينجزان؟`);
   return buildBase(ctx, {
     templateId: 'COMB_E_OUTPUT',
+    scenario: sc.key,
     subskill: 'جمع معدلين خلال مدة معلومة',
     difficulty: 'easy',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
-    correct, distractors, format: unitFormat('unit'),
+    correct, distractors, format: unitFormat(sc.out),
     steps: [
       `المعدل المشترك في الساعة = ${a} + ${b} = ${a + b}.`,
       `الإنجاز الكلي = ${a + b} × ${h} = ${correct}.`
@@ -72,6 +74,7 @@ function togetherOutput(ctx) {
 }
 
 function togetherTime(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   // RC2-011. The hours asked for came from four values.
   const a = rng.pick([8, 10, 12, 14, 15, 16, 18, 20]);
@@ -95,9 +98,10 @@ function togetherTime(ctx) {
     mk(target - (a + b), 'SUBTRACTED_INSTEAD_OF_ADDED', `${target} − (${a} + ${b})`),
     mk(a * b, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${a} × ${b}`)
   ]);
-  const stem = composeSentences(ctx, `تنجز آلة أ ${a} قطعة/ساعة، وآلة ب ${b} قطعة/ساعة. إذا عملتا معًا، فكم ساعة تحتاجان لإنتاج ${u(target, 'piece')}؟`);
+  const stem = composeSentences(ctx, `تنجز آلة أ ${a} ${sc.rateWord}، وآلة ب ${b} ${sc.rateWord}. إذا عملتا معًا، فكم ساعة تحتاجان لإنتاج ${u(target, sc.out)}؟`);
   return buildBase(ctx, {
     templateId: 'COMB_E_TIME',
+    scenario: sc.key,
     subskill: 'جمع معدلين ثم إيجاد الزمن',
     difficulty: 'easy',
     question: stem.text,
@@ -124,6 +128,7 @@ function togetherTime(ctx) {
 }
 
 function soloThenTogether(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   // RC2-011. The solo stretch and the joint stretch are the two spans the
   // question states; both were drawn from three or four values, so the number of
@@ -149,9 +154,10 @@ function soloThenTogether(ctx) {
     mk((target - a * solo) / (2 * (a + b)), 'APPLIED_STEP_TWICE', `${target - a * solo} ÷ (2 × ${a + b})`),
     mk(target / (a * b), 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${target} ÷ (${a} × ${b})`)
   ]);
-  const stem = composeSentences(ctx, `ينجز العامل أ ${a} وحدة/ساعة، والعامل ب ${b} وحدة/ساعة. عمل أ وحده ${u(solo, 'hour', 'oblique')}، ثم عملا معًا حتى بلغ الإنجاز ${u(target, 'unit')}. كم ساعة عملا معًا؟`);
+  const stem = composeSentences(ctx, `ينجز العامل أ ${a} ${sc.rateWord}، والعامل ب ${b} ${sc.rateWord}. عمل أ وحده ${u(solo, 'hour', 'oblique')}، ثم عملا معًا حتى بلغ الإنجاز ${u(target, sc.out)}. كم ساعة عملا معًا؟`);
   return buildBase(ctx, {
     templateId: 'COMB_M_SOLO_THEN',
+    scenario: sc.key,
     subskill: 'عمل منفرد أولًا ثم عمل مشترك',
     difficulty: 'hard',
     question: stem.text,
@@ -180,6 +186,7 @@ function soloThenTogether(ctx) {
 }
 
 function togetherThenSolo(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   // RC2-011, as above: widen the two stated spans and the two stated rates.
   const a = rng.pick([8, 10, 12, 14, 15, 16, 18]);
@@ -206,9 +213,10 @@ function togetherThenSolo(ctx) {
     mk((target - (a + b) * bothH) / b + bothH, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${target - (a + b) * bothH} ÷ ${b} + ${bothH}`),
     mk(target / (a * b), 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${target} ÷ (${a} × ${b})`)
   ]);
-  const stem = composeSentences(ctx, `يعمل أ بمعدل ${a} وحدة/ساعة وب بمعدل ${b} وحدة/ساعة. عملا معًا ${u(bothH, 'hour', 'oblique')}، ثم توقف ب واستمر أ وحده حتى بلغ الإنجاز ${u(target, 'unit')}. كم ساعة عمل أ وحده؟`);
+  const stem = composeSentences(ctx, `يعمل أ بمعدل ${a} ${sc.rateWord} وب بمعدل ${b} ${sc.rateWord}. عملا معًا ${u(bothH, 'hour', 'oblique')}، ثم توقف ب واستمر أ وحده حتى بلغ الإنجاز ${u(target, sc.out)}. كم ساعة عمل أ وحده؟`);
   return buildBase(ctx, {
     templateId: 'COMB_M_TOGETHER_SOLO',
+    scenario: sc.key,
     subskill: 'عمل مشترك ثم استمرار طرف واحد',
     difficulty: 'hard',
     question: stem.text,
@@ -236,6 +244,7 @@ function togetherThenSolo(ctx) {
 }
 
 function stagedTarget(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   // RC2-011. This was the narrowest draw in the engine: three candidate spans
   // with two of them excluded by the filter, so the third stretch had at most
@@ -263,9 +272,10 @@ function stagedTarget(ctx) {
     mk((target - a * soloA - (a + b) * togetherH) / b * 2, 'APPLIED_STEP_TWICE', `${target - a * soloA - (a + b) * togetherH} ÷ ${b} × 2`),
     mk(target / (a + b), 'USED_COMBINED_RATE_ON_FULL_TARGET', `${target} ÷ ${a + b}`)
   ]);
-  const stem = composeSentences(ctx, `ينجز أ ${a} وحدة/ساعة وب ${b} وحدة/ساعة. عمل أ وحده ${u(soloA, 'hour', 'oblique')}، ثم عملا معًا ${u(togetherH, 'hour', 'oblique')}، ثم استمر ب وحده حتى بلغ الإنجاز ${u(target, 'unit')}. كم ساعة عمل ب وحده في المرحلة الأخيرة؟`);
+  const stem = composeSentences(ctx, `ينجز أ ${a} ${sc.rateWord} وب ${b} ${sc.rateWord}. عمل أ وحده ${u(soloA, 'hour', 'oblique')}، ثم عملا معًا ${u(togetherH, 'hour', 'oblique')}، ثم استمر ب وحده حتى بلغ الإنجاز ${u(target, sc.out)}. كم ساعة عمل ب وحده في المرحلة الأخيرة؟`);
   return buildBase(ctx, {
     templateId: 'COMB_H_STAGED',
+    scenario: sc.key,
     subskill: 'ثلاث مراحل بمعدلات مختلفة',
     difficulty: 'hard',
     question: stem.text,
@@ -297,6 +307,7 @@ function stagedTarget(ctx) {
 }
 
 function threeRates(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   const rates = rng.sample([6, 8, 10, 12, 15, 18, 20], 3);
   const h = rng.pick([3, 4, 5]);
@@ -318,14 +329,15 @@ function threeRates(ctx) {
     mk(sum * h + rates[0] * h, 'RATE_APPLIED_TO_WRONG_COUNT', `${sum} × ${h} + ${rates[0]} × ${h}`),
     mk(sum * (h + 2), 'OFF_BY_ONE_STEP', `${sum} × (${h} + 2)`)
   ]);
-  const stem = composeSentences(ctx, `تعمل ثلاث آلات بمعدلات ${rates[0]} و${rates[1]} و${rates[2]} وحدة/ساعة. إذا عملت معًا ${u(h, 'hour', 'oblique')}، فكم وحدة تنتج؟`);
+  const stem = composeSentences(ctx, `تعمل ثلاث آلات بمعدلات ${rates[0]} و${rates[1]} و${rates[2]} ${sc.rateWord}. إذا عملت معًا ${u(h, 'hour', 'oblique')}، فكم ${unitWordKam(sc.out)} تنتج؟`);
   return buildBase(ctx, {
     templateId: 'COMB_E_THREE',
+    scenario: sc.key,
     subskill: 'ثلاثة معدلات تعمل معًا',
     difficulty: 'easy',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
-    correct, distractors, format: unitFormat('unit'),
+    correct, distractors, format: unitFormat(sc.out),
     steps: [
       `المعدل المشترك في الساعة = ${rates.join(' + ')} = ${sum}.`,
       `الإنتاج الكلي = ${sum} × ${h} = ${correct}.`
@@ -366,6 +378,7 @@ function threeRates(ctx) {
  * and inverted back.
  */
 function twoPumpsFromStages(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   let found = null;
   for (let t = 0; t < 250; t++) {
@@ -408,6 +421,7 @@ function twoPumpsFromStages(ctx) {
   const stem = composeSentences(ctx, `تملأ مضختان خزانًا معًا في ${u(joint, 'hour', 'oblique')}. ولو عملت الأولى وحدها ${u(a, 'hour', 'oblique')} ثم أكملت الثانية وحدها ${u(b, 'hour', 'oblique')} لامتلأ الخزان أيضًا. كم ${unitWordKam('hour')} تحتاج الأولى وحدها لملئه؟`);
   return buildBase(ctx, {
     templateId: 'COMB_H_TWO_PUMPS',
+    scenario: sc.key,
     subskill: 'زمن مضخة وحدها من زمن مشترك ومرحلتين منفردتين',
     difficulty: 'hard',
     question: stem.text,
@@ -445,6 +459,7 @@ function twoPumpsFromStages(ctx) {
  * the original team, one over the second with a team that grew.
  */
 function teamSizeFromTotal(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   let found = null;
   for (let t = 0; t < 150; t++) {
@@ -500,9 +515,10 @@ function teamSizeFromTotal(ctx) {
     mk(team * 2, 'APPLIED_STEP_TWICE', `${remaining} ÷ ${perWorker} × 2`)
   ]);
 
-  const stem = composeSentences(ctx, `فريق أفراده متساوون في المعدل، ينجز كل فرد ${rate} وحدة/ساعة. عمل الفريق ${u(firstH, 'hour', 'oblique')}، ثم انضم إليه فرد واحد فعمل الجميع ${u(secondH, 'hour', 'oblique')} أخرى، فبلغ الإنجاز الكلي ${u(total, 'unit')}. كم فردًا كان في الفريق أولًا؟`);
+  const stem = composeSentences(ctx, `فريق أفراده متساوون في المعدل، ينجز كل فرد ${rate} ${sc.rateWord}. عمل الفريق ${u(firstH, 'hour', 'oblique')}، ثم انضم إليه فرد واحد فعمل الجميع ${u(secondH, 'hour', 'oblique')} أخرى، فبلغ الإنجاز الكلي ${u(total, sc.out)}. كم فردًا كان في الفريق أولًا؟`);
   return buildBase(ctx, {
     templateId: 'COMB_H_TEAM_SIZE',
+    scenario: sc.key,
     subskill: 'عدد أفراد الفريق من إنجاز مرحلتين',
     difficulty: 'hard',
     question: stem.text,

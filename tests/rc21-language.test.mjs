@@ -65,12 +65,29 @@ test('RC2.1-4: agreement is derived, and derived correctly', () => {
 // --- one entity, one name ---------------------------------------------------
 
 test('RC2.1-4: prose never invents a second noun for a unit the table names', () => {
-  // The stem said «علبة» while the formatter rendered «صندوق» for the same box.
-  // The table is the single source of truth, so the synonym must not appear.
+  // The defect: the stem said «علبة» while the formatter rendered «صندوق» for
+  // the same box. The table is the single source of truth.
+  //
+  // RC2.7 made «علبة» a table word in its own right — the unit `can`, a
+  // different thing to count — so a blanket ban on the word would now forbid
+  // the lexicon's own rendering. The rule it enforces is unchanged and is
+  // stated directly instead: a question that counts BOXES may not name them
+  // with the word the table gives to cans, and vice versa.
   assert.equal(singularOf('box'), 'صندوق');
-  const offenders = CORPUS.filter(q => /علبة|علب\b|العلب/.test(q.question));
+  assert.equal(singularOf('can'), 'علبة');
+  const CAN_WORDS = /علبة|علبتان|علبتين|علب\b|العلب/;
+  const BOX_WORDS = /صندوق|صندوقان|صندوقين|صناديق|الصناديق/;
+  const offenders = CORPUS.filter(q => {
+    const unit = q.metadata?.answer_unit_id ?? null;
+    const text = q.question;
+    if (unit === 'box' && CAN_WORDS.test(text)) return true;
+    if (unit === 'can' && BOX_WORDS.test(text)) return true;
+    // Neither word may appear beside the other in one stem, whatever the answer
+    // unit is: that is the mixed-naming the defect was.
+    return CAN_WORDS.test(text) && BOX_WORDS.test(text);
+  });
   assert.deepEqual(offenders.map(q => q.generator_id), [],
-    `stems still using a non-table synonym for box: ${offenders.slice(0, 3).map(q => q.question)}`);
+    `a stem names one unit with another unit's word: ${offenders.slice(0, 3).map(q => q.question)}`);
 });
 
 test('RC2.1-4: the box template names the same thing throughout', () => {

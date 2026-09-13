@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, gt, gte, isInt, X, add, sub, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool, composeSentences} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, gt, gte, isInt, X, add, sub, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool, composeSentences, sceneFor, unitWordKam} from './_shared.js';
 
 export function generateMachines({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'machines', family_ar: 'الآلات والإنتاج', category: 'الآلات والإنتاج'};
@@ -22,6 +22,7 @@ export function generateMachines({difficulty, rng, seed, engineVersion, telemetr
 }
 
 function machineHours(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   const machines = rng.pick([3, 4, 5, 6]);
   const hours = rng.pick([3, 4, 5, 6]);
@@ -43,14 +44,15 @@ function machineHours(ctx) {
     mk(total * newHours / hours, 'MISSED_ONE_STAGE', `${total} × ${newHours} ÷ ${hours}`),
     mk(total * machines * hours / (newMachines * newHours), 'REVERSED_DIRECT_PROPORTION', `${total} × ${machines} × ${hours} ÷ (${newMachines} × ${newHours})`)
   ]);
-  const stem = composeSentences(ctx, `تنتج ${u(machines, 'machine')} متطابقة في الإنتاجية ${u(total, 'piece')} خلال ${u(hours, 'hour', 'oblique')}. كم قطعة تنتج ${u(newMachines, 'machine')} من النوع نفسه خلال ${u(newHours, 'hour', 'oblique')}؟`);
+  const stem = composeSentences(ctx, `تنتج ${u(machines, 'machine')} متطابقة في الإنتاجية ${u(total, sc.out)} خلال ${u(hours, 'hour', 'oblique')}. كم ${unitWordKam(sc.out)} تنتج ${u(newMachines, 'machine')} من النوع نفسه خلال ${u(newHours, 'hour', 'oblique')}؟`);
   return buildBase(ctx, {
     templateId: 'MACH_E_HOURS',
+    scenario: sc.key,
     subskill: 'معدل آلة واحدة من آلة-ساعة',
     difficulty: 'medium',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
-    correct, distractors, format: unitFormat('piece'),
+    correct, distractors, format: unitFormat(sc.out),
     steps: [
       `إجمالي وحدات آلة-ساعة = ${machines} × ${hours} = ${machines * hours}.`,
       `إنتاج الآلة الواحدة في الساعة = ${total} ÷ ${machines * hours} = ${rate}.`,
@@ -76,6 +78,7 @@ function machineHours(ctx) {
 }
 
 function requiredMachines(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   // RC2-011. The number of machines asked for was drawn from four values, one
   // of which the filter often removed.
@@ -100,9 +103,10 @@ function requiredMachines(ctx) {
     mk(target / (rate * targetHours) * 2, 'APPLIED_STEP_TWICE', `${target} ÷ (${rate} × ${targetHours}) × 2`),
     mk(target / rate / targetHours + machines, 'ADDED_INSTEAD_OF_SCALING', `${target} ÷ ${rate} ÷ ${targetHours} + ${machines}`)
   ]);
-  const stem = composeSentences(ctx, `تنتج ${u(machines, 'machine')} متطابقة في الإنتاجية ${u(total, 'piece')} خلال ${u(hours, 'hour', 'oblique')}. كم آلة نحتاج لإنتاج ${u(target, 'piece')} خلال ${u(targetHours, 'hour', 'oblique')}؟`);
+  const stem = composeSentences(ctx, `تنتج ${u(machines, 'machine')} متطابقة في الإنتاجية ${u(total, sc.out)} خلال ${u(hours, 'hour', 'oblique')}. كم آلة نحتاج لإنتاج ${u(target, sc.out)} خلال ${u(targetHours, 'hour', 'oblique')}؟`);
   return buildBase(ctx, {
     templateId: 'MACH_E_REQUIRED',
+    scenario: sc.key,
     subskill: 'إيجاد عدد الآلات المطلوبة',
     difficulty: 'medium',
     question: stem.text,
@@ -133,6 +137,7 @@ function requiredMachines(ctx) {
 }
 
 function newMachineFaster(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   const machines = rng.pick([3, 4, 5]);
   const hours = rng.pick([4, 5, 6]);
@@ -154,14 +159,15 @@ function newMachineFaster(ctx) {
     mk((oldRate + newRateN) * hours, 'RATE_APPLIED_TO_WRONG_COUNT', `(${oldRate} + ${newRateN}) × ${hours}`),
     mk(oldRate + newRateN, 'STOPPED_AT_UNIT_RATE', `${oldRate} + ${newRateN}`)
   ]);
-  const stem = composeSentences(ctx, `تنتج ${u(machines, 'machine')} متطابقة في الإنتاجية ${u(total, 'piece')} خلال ${u(hours, 'hour', 'oblique')}. آلة جديدة تنتج في الساعة أكثر من الآلة القديمة ${riseByPercentPhrase(pct)}. كم قطعة تنتج آلة قديمة واحدة وآلة جديدة واحدة معًا خلال ${u(targetH, 'hour', 'oblique')}؟`);
+  const stem = composeSentences(ctx, `تنتج ${u(machines, 'machine')} متطابقة في الإنتاجية ${u(total, sc.out)} خلال ${u(hours, 'hour', 'oblique')}. آلة جديدة تنتج في الساعة أكثر من الآلة القديمة ${riseByPercentPhrase(pct)}. كم ${unitWordKam(sc.out)} تنتج آلة قديمة واحدة وآلة جديدة واحدة معًا خلال ${u(targetH, 'hour', 'oblique')}؟`);
   return buildBase(ctx, {
     templateId: 'MACH_M_NEW_FAST',
+    scenario: sc.key,
     subskill: 'آلة قديمة وآلة أسرع بنسبة معلومة',
     difficulty: 'hard',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
-    correct, distractors, format: unitFormat('piece'),
+    correct, distractors, format: unitFormat(sc.out),
     steps: [
       `معدل الآلة القديمة في الساعة = ${total} ÷ (${machines} × ${hours}) = ${oldRate}.`,
       factorText,
@@ -189,6 +195,7 @@ function newMachineFaster(ctx) {
 }
 
 function oneStops(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   const machines = rng.pick([4, 5, 6]);
   const rate = rng.pick([12, 15, 20, 25]);
@@ -209,14 +216,15 @@ function oneStops(ctx) {
     mk(machines * rate * h1 + machines * rate * h2, 'IGNORED_STOPPAGE', `${machines} × ${rate} × ${h1} + ${machines} × ${rate} × ${h2}`),
     mk(rate * (h1 + h2), 'STOPPED_AT_UNIT_RATE', `${rate} × (${h1} + ${h2})`)
   ]);
-  const stem = composeSentences(ctx, `تنتج كل آلة من ${u(machines, 'machine')} ${rate} قطعة/ساعة. عملت الآلات كلها ${u(h1, 'hour', 'oblique')}، ثم توقفت ${u(stopped, 'machine')} وعملت البقية ${u(h2, 'hour', 'oblique')} ${adj(h2, 'hour', 'إضافي')}. كم قطعة أُنتجت؟`);
+  const stem = composeSentences(ctx, `تنتج كل آلة من ${u(machines, 'machine')} ${rate} ${sc.rateWord}. عملت الآلات كلها ${u(h1, 'hour', 'oblique')}، ثم توقفت ${u(stopped, 'machine')} وعملت البقية ${u(h2, 'hour', 'oblique')} ${adj(h2, 'hour', 'إضافي')}. كم ${unitWordKam(sc.out)} أُنتجت؟`);
   return buildBase(ctx, {
     templateId: 'MACH_M_STOP',
+    scenario: sc.key,
     subskill: 'توقف آلات أثناء جزء من زمن العمل',
     difficulty: 'medium',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
-    correct, distractors, format: unitFormat('piece'),
+    correct, distractors, format: unitFormat(sc.out),
     steps: [
       `إنتاج المرحلة الأولى = ${machines} × ${rate} × ${h1} = ${machines * rate * h1}.`,
       `عدد الآلات العاملة بعد التوقف = ${machines} − ${stopped} = ${machines - stopped}.`,
@@ -243,6 +251,7 @@ function oneStops(ctx) {
 }
 
 function subsetUpgrade(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   const machines = rng.pick([4, 5, 6]);
   const hours = rng.pick([4, 5, 6]);
@@ -264,14 +273,15 @@ function subsetUpgrade(ctx) {
     mk(combined, 'STOPPED_AT_UNIT_RATE', `${upgraded} × ${newRateN} + ${machines - upgraded} × ${rate}`),
     mk(combined * (hours + 1), 'OFF_BY_ONE_STEP', `${combined} × (${hours} + 1)`)
   ]);
-  const stem = composeSentences(ctx, `تعمل ${u(machines, 'machine')} بمعدل ${rate} قطعة/ساعة لكل آلة. طُورت ${u(upgraded, 'machine')} منها فزادت إنتاجيتها ${riseByPercentPhrase(pct)} وبقيت البقية كما هي. كم قطعة تنتج المجموعة خلال ${u(hours, 'hour', 'oblique')}؟`);
+  const stem = composeSentences(ctx, `تعمل ${u(machines, 'machine')} بمعدل ${rate} ${sc.rateWord} لكل آلة. طُورت ${u(upgraded, 'machine')} منها فزادت إنتاجيتها ${riseByPercentPhrase(pct)} وبقيت البقية كما هي. كم ${unitWordKam(sc.out)} تنتج المجموعة خلال ${u(hours, 'hour', 'oblique')}؟`);
   return buildBase(ctx, {
     templateId: 'MACH_M_SUBSET_UP',
+    scenario: sc.key,
     subskill: 'زيادة إنتاجية بعض الآلات فقط',
     difficulty: 'hard',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
-    correct, distractors, format: unitFormat('piece'),
+    correct, distractors, format: unitFormat(sc.out),
     steps: [
       factorText,
       `معدل الآلة المطورة = ${rate} × ${factor.toDecimalString()} = ${newRateN}.`,
@@ -298,6 +308,7 @@ function subsetUpgrade(ctx) {
 }
 
 function twoTypesCombined(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   const rA = rng.pick([12, 15, 18, 20]);
   const rB = rng.pick([20, 24, 25, 30].filter(v => v !== rA));
@@ -318,14 +329,15 @@ function twoTypesCombined(ctx) {
     mk((nA + nB) * Math.round((rA + rB) / 2) * hours, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${nA} + ${nB}) × ${Math.round((rA + rB) / 2)} × ${hours}`),
     mk((nA + nB) * (rA + rB) * hours, 'RATE_APPLIED_TO_WRONG_COUNT', `(${nA} + ${nB}) × (${rA} + ${rB}) × ${hours}`)
   ]);
-  const stem = composeSentences(ctx, `تنتج آلة من النوع أ ${rA} قطعة/ساعة، وآلة من النوع ب ${rB} قطعة/ساعة. إذا عملت ${u(nA, 'machine')} من أ و${u(nB, 'machine')} من ب معًا لمدة ${u(hours, 'hour', 'oblique')}، فكم قطعة تنتج؟`);
+  const stem = composeSentences(ctx, `تنتج آلة من النوع أ ${rA} ${sc.rateWord}، وآلة من النوع ب ${rB} ${sc.rateWord}. إذا عملت ${u(nA, 'machine')} من أ و${u(nB, 'machine')} من ب معًا لمدة ${u(hours, 'hour', 'oblique')}، فكم ${unitWordKam(sc.out)} تنتج؟`);
   return buildBase(ctx, {
     templateId: 'MACH_H_TWO_TYPES',
+    scenario: sc.key,
     subskill: 'نوعان من الآلات بمعدلين مختلفين',
     difficulty: 'medium',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
-    correct, distractors, format: unitFormat('piece'),
+    correct, distractors, format: unitFormat(sc.out),
     steps: [
       `معدل مجموعة أ في الساعة = ${nA} × ${rA} = ${nA * rA}.`,
       `معدل مجموعة ب في الساعة = ${nB} × ${rB} = ${nB * rB}.`,
@@ -352,6 +364,7 @@ function twoTypesCombined(ctx) {
 }
 
 function stageChange(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   const machines = rng.pick([4, 5, 6]);
   const rate = rng.pick([10, 12, 15, 20]);
@@ -378,14 +391,15 @@ function stageChange(ctx) {
     mk(stage1 + (machines - upgraded) * rate * h2, 'USED_ONLY_FIRST_RATE', `${stage1} + ${machines - upgraded} × ${rate} × ${h2}`),
     mk(machines * newRateN * h1 + combined * h2, 'UPGRADED_ALL_INSTEAD_OF_SOME', `${machines} × ${newRateN} × ${h1} + ${combined} × ${h2}`)
   ]);
-  const stem = composeSentences(ctx, `عملت ${u(machines, 'machine')} بمعدل ${rate} قطعة/ساعة لمدة ${u(h1, 'hour', 'oblique')}. ثم طُورت ${u(upgraded, 'machine')} فزادت إنتاجيتها ${riseByPercentPhrase(pct)}، وعملت المجموعة كلها ${u(h2, 'hour', 'oblique')} ${adj(h2, 'hour', 'إضافي')}. كم بلغ الإنتاج الكلي؟`);
+  const stem = composeSentences(ctx, `عملت ${u(machines, 'machine')} بمعدل ${rate} ${sc.rateWord} لمدة ${u(h1, 'hour', 'oblique')}. ثم طُورت ${u(upgraded, 'machine')} فزادت إنتاجيتها ${riseByPercentPhrase(pct)}، وعملت المجموعة كلها ${u(h2, 'hour', 'oblique')} ${adj(h2, 'hour', 'إضافي')}. كم بلغ الإنتاج الكلي؟`);
   return buildBase(ctx, {
     templateId: 'MACH_H_STAGE_UP',
+    scenario: sc.key,
     subskill: 'مرحلتان مع تطوير جزء من الآلات',
     difficulty: 'hard',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
-    correct, distractors, format: unitFormat('piece'),
+    correct, distractors, format: unitFormat(sc.out),
     steps: [
       `إنتاج المرحلة الأولى = ${machines} × ${rate} × ${h1} = ${stage1}.`,
       factorText,
@@ -429,6 +443,7 @@ function stageChange(ctx) {
  * unknown eliminated before anything is computable.
  */
 function twoConfigurations(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   let found = null;
   for (let t = 0; t < 200; t++) {
@@ -487,9 +502,10 @@ function twoConfigurations(ctx) {
     mk(det, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${a} × ${d} − ${c} × ${b}`, 2)
   ]);
 
-  const stem = composeSentences(ctx, `تنتج ${u(a, 'machine')} من النوع الأول و${u(b, 'machine')} من النوع الثاني معًا ${u(out1, 'piece')} في الساعة. وتنتج ${u(c, 'machine')} من النوع الأول و${u(d, 'machine')} من النوع الثاني معًا ${u(out2, 'piece')} في الساعة. كم قطعة تنتج آلة واحدة من النوع الأول في الساعة؟`);
+  const stem = composeSentences(ctx, `تنتج ${u(a, 'machine')} من النوع الأول و${u(b, 'machine')} من النوع الثاني معًا ${u(out1, sc.out)} في الساعة. وتنتج ${u(c, 'machine')} من النوع الأول و${u(d, 'machine')} من النوع الثاني معًا ${u(out2, sc.out)} في الساعة. كم ${unitWordKam(sc.out)} تنتج آلة واحدة من النوع الأول في الساعة؟`);
   return buildBase(ctx, {
     templateId: 'MACH_H_TWO_CONFIG',
+    scenario: sc.key,
     subskill: 'معدل آلة من مجموعتين مختلطتين',
     difficulty: 'hard',
     question: stem.text,
@@ -534,6 +550,7 @@ function twoConfigurations(ctx) {
  * inverting back to a clock time. Each of those three moves is a choice.
  */
 function stoppageTime(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   let found = null;
   for (let t = 0; t < 150; t++) {
@@ -569,9 +586,10 @@ function stoppageTime(ctx) {
     mk(stopAt + 1, 'OFF_BY_ONE_STEP', `${hours} − ${idleHours} + 1`)
   ]);
 
-  const stem = composeSentences(ctx, `تعمل ${u(machines, 'machine')} بمعدل ${rate} قطعة/ساعة لكل آلة لمدة ${u(hours, 'hour', 'oblique')}. توقفت آلة واحدة في أثناء العمل ولم تعد، فبلغ الإنتاج الفعلي ${u(actual, 'piece')}. بعد كم ساعة من بدء العمل توقفت تلك الآلة؟`);
+  const stem = composeSentences(ctx, `تعمل ${u(machines, 'machine')} بمعدل ${rate} ${sc.rateWord} لكل آلة لمدة ${u(hours, 'hour', 'oblique')}. توقفت آلة واحدة في أثناء العمل ولم تعد، فبلغ الإنتاج الفعلي ${u(actual, sc.out)}. بعد كم ساعة من بدء العمل توقفت تلك الآلة؟`);
   return buildBase(ctx, {
     templateId: 'MACH_H_STOPPAGE_TIME',
+    scenario: sc.key,
     subskill: 'زمن توقف آلة من نقص الإنتاج',
     difficulty: 'hard',
     question: stem.text,
@@ -608,6 +626,7 @@ function stoppageTime(ctx) {
 // rounded UP: a fraction of a machine cannot be hired, and the division invites
 // rounding the other way. Both the deadline and the wholeness bind at once.
 function minimumSecondType(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   const hours = rng.pick([4, 5, 6, 8]);
   const rateA = rng.pick([12, 15, 18, 20, 24]);
@@ -644,16 +663,16 @@ function minimumSecondType(ctx) {
     ...(Number.isInteger(exact) ? [] : [mk(Number(exact.toFixed(2)), 'IGNORED_THE_WHOLENESS_CONSTRAINT', `${shortfall} ÷ ${rateB * hours}`, 2)])
   ]);
   const stem = composeSentences(ctx,
-    `مطلوب إنتاج ${u(target, 'piece')} خلال ${u(hours, 'hour', 'oblique')}. `
-    + `تتوفر ${u(haveA, 'machine')} من النوع الأول، وتنتج كل واحدة منها ${rateA} قطعة/ساعة. `
-    + `آلات النوع الثاني تنتج كل واحدة منها ${rateB} قطعة/ساعة. `
+    `مطلوب إنتاج ${u(target, sc.out)} خلال ${u(hours, 'hour', 'oblique')}. `
+    + `تتوفر ${u(haveA, 'machine')} من النوع الأول، وتنتج كل واحدة منها ${rateA} ${sc.rateWord}. `
+    + `آلات النوع الثاني تنتج كل واحدة منها ${rateB} ${sc.rateWord}. `
     + `فما أقل عدد من آلات النوع الثاني يكفي لبلوغ المطلوب؟`,
     {askFirst: 'أقل عدد من آلات النوع الثاني يكفي لبلوغ المطلوب'});
   return buildBase(ctx, {
     templateId: 'MACH_H_MIN_SECOND_TYPE',
     subskill: 'أقل عدد آلات من نوع ثانٍ لبلوغ هدف',
     difficulty: 'hard',
-    scenario: 'mixed_fleet_shortfall', direction: 'minimum',
+    scenario: `${sc.key}/mixed_fleet_shortfall`, direction: 'minimum',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: v => num(v),

@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, approx, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool, composeSentences} from './_shared.js';
+import {mk, usable, u, num, approx, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool, composeSentences, sceneFor} from './_shared.js';
 
 export function generateProfitLoss({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'profit_loss', family_ar: 'الربح والخسارة والأسعار', category: 'الربح والخسارة والأسعار'};
@@ -24,6 +24,7 @@ const pct = v => `${num(v)}%`;
 const money = unitFormat('dirham');
 
 function simpleProfit(ctx) {
+  const sc = sceneFor(ctx, 'trade');
   const {rng} = ctx;
   // RC2-011. The percentage the stem states IS the answer here, so the answer
   // space was the length of this list. Widened at design time; the integrality
@@ -47,9 +48,10 @@ function simpleProfit(ctx) {
     mk(approx(profit * 100 / (buy + sell)), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} × 100 ÷ (${buy} + ${sell})`),
     mk(approx(profit * 50 / buy), 'APPLIED_STEP_TWICE', `${profit} × 50 ÷ ${buy}`)
   ]);
-  const stem = composeSentences(ctx, `اشترى متجر سلعة بـ${u(buy, 'dirham', 'oblique')} وباعها بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الربح من سعر الشراء؟`);
+  const stem = composeSentences(ctx, `${sc.bought} ${sc.good} بـ${u(buy, 'dirham', 'oblique')} وباع${sc.pron} بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الربح من سعر الشراء؟`);
   return buildBase(ctx, {
     templateId: 'PL_E_PROFIT',
+    scenario: sc.key,
     subskill: 'نسبة ربح من سعر الشراء',
     difficulty: 'easy',
     question: stem.text,
@@ -75,6 +77,7 @@ function simpleProfit(ctx) {
 }
 
 function simpleLoss(ctx) {
+  const sc = sceneFor(ctx, 'trade');
   const {rng} = ctx;
   // RC2-011, as simpleProfit: the stated percentage is the answer.
   const buy = rng.pick([100, 120, 125, 150, 160, 180, 200, 240, 250, 300, 320, 400, 450, 500]);
@@ -95,9 +98,10 @@ function simpleLoss(ctx) {
     mk(approx(loss * 100 / (buy + sell)), 'USED_SALE_PRICE_AS_DENOMINATOR', `${loss} × 100 ÷ (${buy} + ${sell})`),
     mk(approx(loss * 50 / buy), 'APPLIED_STEP_TWICE', `${loss} × 50 ÷ ${buy}`)
   ]);
-  const stem = composeSentences(ctx, `اشترى متجر سلعة بـ${u(buy, 'dirham', 'oblique')} وباعها بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الخسارة من سعر الشراء؟`);
+  const stem = composeSentences(ctx, `${sc.bought} ${sc.good} بـ${u(buy, 'dirham', 'oblique')} وباع${sc.pron} بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الخسارة من سعر الشراء؟`);
   return buildBase(ctx, {
     templateId: 'PL_E_LOSS',
+    scenario: sc.key,
     subskill: 'نسبة خسارة من سعر الشراء',
     difficulty: 'easy',
     question: stem.text,
@@ -123,6 +127,7 @@ function simpleLoss(ctx) {
 }
 
 function totalCostProfit(ctx) {
+  const sc = sceneFor(ctx, 'trade');
   const {rng} = ctx;
   // RC2-011. Three stated percentages meant three possible answers, and one of
   // them took 51.6% of the corpus on its own.
@@ -144,9 +149,10 @@ function totalCostProfit(ctx) {
     mk(approx(shipping / total * 100), 'TREATED_PERCENT_AS_AMOUNT', `${shipping} ÷ ${total} × 100`),
     mk(profit, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${sell} − ${total}`)
   ]);
-  const stem = composeSentences(ctx, `اشترى متجر سلعة بـ${u(buy, 'dirham', 'oblique')} ودفع ${u(shipping, 'dirham')} شحنًا وتجهيزًا، ثم باعها بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الربح من إجمالي التكلفة؟`);
+  const stem = composeSentences(ctx, `${sc.bought} ${sc.good} بـ${u(buy, 'dirham', 'oblique')} و${sc.paid} ${u(shipping, 'dirham')} شحنًا وتجهيزًا، ثم باع${sc.pron} بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الربح من إجمالي التكلفة؟`);
   return buildBase(ctx, {
     templateId: 'PL_M_TOTAL_COST',
+    scenario: sc.key,
     subskill: 'ربح كنسبة من التكلفة الكلية',
     difficulty: 'medium',
     question: stem.text,
@@ -177,6 +183,7 @@ function totalCostProfit(ctx) {
 }
 
 function discountThenSale(ctx) {
+  const sc = sceneFor(ctx, 'trade');
   const {rng} = ctx;
   const tag = rng.pick([200, 240, 300, 400, 500]);
   const discount = rng.pick([10, 20, 25]);
@@ -200,13 +207,14 @@ function discountThenSale(ctx) {
     mk(tag + markup, 'TREATED_PERCENT_AS_AMOUNT', `${tag} + ${markup}`),
     mk(tag - discount, 'TREATED_PERCENT_AS_AMOUNT', `${tag} − ${discount}`)
   ]);
-  const stem = composeSentences(ctx, `سعر السلعة المعلن ${u(tag, 'dirham')}. حصل المتجر عليها بخصم ${discount}% من هذا السعر، ثم أراد ربحًا قدره ${markup}% من تكلفة الشراء الفعلية. فما سعر البيع؟`);
+  const stem = composeSentences(ctx, `سعر ${sc.goodDef} المعلن ${u(tag, 'dirham')}. حصل ${sc.sellerDef} علي${sc.pron} بخصم ${discount}% من هذا السعر، ثم أراد ربحًا قدره ${markup}% من تكلفة الشراء الفعلية. فما سعر البيع؟`);
   return buildBase(ctx, {
     templateId: 'PL_M_DISC_MARK',
+    scenario: sc.key,
     subskill: 'خصم على سعر ثم إضافة ربح',
     difficulty: 'medium',
-    // RC2-017: سعر سلعة is an indefinite إضافة and cannot carry the definite
-    // adjective المعلن. Definite throughout: سعر السلعة المعلن.
+    // RC2-017: سعر ${sc.good} is an indefinite إضافة and cannot carry the definite
+    // adjective المعلن. Definite throughout: سعر ${sc.goodDef} المعلن.
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: money,
@@ -234,6 +242,7 @@ function discountThenSale(ctx) {
 }
 
 function reverseSellingPrice(ctx) {
+  const sc = sceneFor(ctx, 'trade');
   const {rng} = ctx;
   const cost = rng.pick([100, 120, 160, 200, 240, 300, 400]);
   const percent = rng.pick([20, 25, 50]);
@@ -252,9 +261,10 @@ function reverseSellingPrice(ctx) {
     mk(sell, 'USED_GIVEN_VALUE_AS_ANSWER', `سعر البيع ${sell}`),
     mk(approx(sell * (100 + percent) / 100), 'APPLIED_OPERATION_IN_REVERSE', `${sell} × (100 + ${percent}) ÷ 100`)
   ]);
-  const stem = composeSentences(ctx, `باع متجر سلعة بـ${u(sell, 'dirham', 'oblique')} محققًا ربحًا قدره ${percent}% من تكلفة الشراء. فما تكلفة الشراء؟`);
+  const stem = composeSentences(ctx, `${sc.soldPair} ${sc.good} بـ${u(sell, 'dirham', 'oblique')} محققًا ربحًا قدره ${percent}% من تكلفة الشراء. فما تكلفة الشراء؟`);
   return buildBase(ctx, {
     templateId: 'PL_H_REVERSE',
+    scenario: sc.key,
     subskill: 'استرجاع التكلفة من سعر بيع وربح معلوم',
     difficulty: 'medium',
     question: stem.text,
@@ -283,6 +293,7 @@ function reverseSellingPrice(ctx) {
 }
 
 function discountMarkupChain(ctx) {
+  const sc = sceneFor(ctx, 'trade');
   const {rng} = ctx;
   const list = rng.pick([200, 240, 300, 400, 500]);
   const disc = rng.pick([10, 20, 25]);
@@ -312,6 +323,7 @@ function discountMarkupChain(ctx) {
   const stem = composeSentences(ctx, `كان السعر ${u(list, 'dirham')}. خُفّض بنسبة ${disc}%، ثم زيد السعر الجديد بنسبة ${markup}%. ما نسبة التغير النهائية مقارنة بالسعر الأصلي؟`);
   return buildBase(ctx, {
     templateId: 'PL_H_CHAIN',
+    scenario: sc.key,
     subskill: 'خصم ثم زيادة وحساب التغير النهائي',
     difficulty: 'hard',
     question: stem.text,
@@ -355,6 +367,7 @@ function discountMarkupChain(ctx) {
  * the two prices is the two percentages of it, added.
  */
 function costFromTwoOutcomes(ctx) {
+  const sc = sceneFor(ctx, 'trade');
   const {rng} = ctx;
   let found = null;
   for (let t = 0; t < 150; t++) {
@@ -386,9 +399,10 @@ function costFromTwoOutcomes(ctx) {
     mk(cost + gap, 'ADDED_INSTEAD_OF_SUBTRACTED', `${cost} + ${gap}`)
   ]);
 
-  const stem = composeSentences(ctx, `لو بيعت سلعة بسعر معين لتحقق ربح قدره ${gain}% من تكلفتها. ولو بيعت بسعر أقل من ذلك بـ${u(gap, 'dirham', 'oblique')} لكانت الخسارة ${loss}% من التكلفة. فما تكلفة السلعة؟`);
+  const stem = composeSentences(ctx, `لو بيع${sc.passT} ${sc.goodNom} بسعر معين لتحقق ربح قدره ${gain}% من تكلفت${sc.pron}. ولو بيع${sc.passT} بسعر أقل من ذلك بـ${u(gap, 'dirham', 'oblique')} لكانت الخسارة ${loss}% من التكلفة. فما تكلفة ${sc.goodDef}؟`);
   return buildBase(ctx, {
     templateId: 'PL_H_TWO_OUTCOMES',
+    scenario: sc.key,
     subskill: 'التكلفة من حالتي ربح وخسارة',
     difficulty: 'hard',
     question: stem.text,
@@ -425,6 +439,7 @@ function costFromTwoOutcomes(ctx) {
  * so the two percentages have to be combined before anything can be divided.
  */
 function costFromMarkupThenDiscount(ctx) {
+  const sc = sceneFor(ctx, 'trade');
   const {rng} = ctx;
   let found = null;
   for (let t = 0; t < 200; t++) {
@@ -461,9 +476,10 @@ function costFromMarkupThenDiscount(ctx) {
     mk(sold - profit * 2, 'APPLIED_STEP_TWICE', `${sold} − ${profit} × 2`)
   ]);
 
-  const stem = composeSentences(ctx, `وضع متجر سعرًا معلنًا أعلى من تكلفة السلعة بنسبة ${markup}%، ثم باعها بخصم ${discount}% من السعر المعلن، فحقق ربحًا قدره ${u(profit, 'dirham')}. فما تكلفة السلعة؟`);
+  const stem = composeSentences(ctx, `${sc.placed} سعرًا معلنًا أعلى من تكلفة ${sc.goodDef} بنسبة ${markup}%، ثم باع${sc.pron} بخصم ${discount}% من السعر المعلن، فحقق ربحًا قدره ${u(profit, 'dirham')}. فما تكلفة ${sc.goodDef}؟`);
   return buildBase(ctx, {
     templateId: 'PL_H_MARKUP_DISCOUNT',
+    scenario: sc.key,
     subskill: 'التكلفة من زيادة ثم خصم وربح معلوم',
     difficulty: 'hard',
     question: stem.text,
@@ -503,6 +519,7 @@ function costFromMarkupThenDiscount(ctx) {
  * loss" is the answer almost everyone writes, and it is on the paper.
  */
 function samePriceGainAndLoss(ctx) {
+  const sc = sceneFor(ctx, 'trade');
   const {rng} = ctx;
   let found = null;
   for (let t = 0; t < 300; t++) {
@@ -551,7 +568,7 @@ function samePriceGainAndLoss(ctx) {
     + (askCost ? 'فكم كانت تكلفة القطعتين معًا؟' : 'ما مقدار خسارته الكلية في الصفقتين معًا؟'));
   return buildBase(ctx, {
     templateId: 'PL_H_SAME_PRICE_PAIR',
-    scenario: 'two_articles_same_price_equal_percentages',
+    scenario: `${sc.key}/two_articles_same_price_equal_percentages`,
     direction: 'reverse',
     subskill: 'ربح وخسارة بنسبتين متساويتين وسعرَي بيع متساويين',
     difficulty: 'hard',
@@ -601,6 +618,7 @@ function samePriceGainAndLoss(ctx) {
  * the difference between them, are both on the paper.
  */
 function remainderMarginToTarget(ctx) {
+  const sc = sceneFor(ctx, 'trade');
   const {rng} = ctx;
   let found = null;
   for (let t = 0; t < 400; t++) {
@@ -643,7 +661,7 @@ function remainderMarginToTarget(ctx) {
   const stem = composeSentences(ctx, `اشترى تاجر بضاعة بمبلغ ${u(total, 'dirham')}. باع منها ما تكلفته ${u(soldCost, 'dirham')} بربح ${firstPct}% من تكلفة ذلك الجزء. بكم في المئة من تكلفة الباقي يجب أن يبيع الباقي ليكون ربحه الكلي ${targetPct}% من التكلفة الكلية؟`);
   return buildBase(ctx, {
     templateId: 'PL_H_REST_MARGIN',
-    scenario: 'consignment_part_sold_target_overall_margin',
+    scenario: `${sc.key}/consignment_part_sold_target_overall_margin`,
     direction: 'reverse',
     subskill: 'نسبة ربح الجزء الباقي لبلوغ ربح كلي مطلوب',
     difficulty: 'hard',

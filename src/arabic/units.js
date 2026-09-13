@@ -107,6 +107,13 @@ export const INVARIANT_UNITS = Object.freeze({
   cardPerMinute: 'بطاقة/دقيقة',
   literPerMinute: 'لتر/دقيقة',
   literPerHour: 'لتر/ساعة',
+  piecePerMinute: 'قطعة/دقيقة',
+  loafPerMinute: 'رغيف/دقيقة',
+  bottlePerMinute: 'زجاجة/دقيقة',
+  shirtPerMinute: 'قميص/دقيقة',
+  canPerMinute: 'علبة/دقيقة',
+  panelPerMinute: 'لوح/دقيقة',
+  loafPerHourAlt: 'رغيف/ساعة',
   percent: '%',
   none: ''
 });

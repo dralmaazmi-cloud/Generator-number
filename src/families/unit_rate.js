@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool, composeSentences} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool, composeSentences, sceneFor, unitWordKam} from './_shared.js';
 
 export function generateUnitRate({difficulty, rng, seed, engineVersion, telemetry}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'unit_rate', family_ar: 'المعدل الوحدوي', category: 'المعدل الوحدوي'};
@@ -18,6 +18,7 @@ export function generateUnitRate({difficulty, rng, seed, engineVersion, telemetr
 }
 
 function directRate(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   const minutes = rng.pick([5, 6, 8, 10, 12]);
   const rate = rng.pick([20, 25, 30, 40, 50].filter(v => v !== minutes));
@@ -35,14 +36,15 @@ function directRate(ctx) {
     mk(total + rate * target, 'USED_ORIGINAL_TOTAL', `${total} + ${rate} × ${target}`),
     mk(rate * (minutes + target), 'RATE_APPLIED_TO_WRONG_COUNT', `${rate} × (${minutes} + ${target})`)
   ]);
-  const stem = composeSentences(ctx, `تنجز آلة ${u(total, 'unit')} خلال ${u(minutes, 'minute', 'oblique')} بمعدل ثابت. كم وحدة تنجز خلال ${u(target, 'minute', 'oblique')}؟`);
+  const stem = composeSentences(ctx, `تنجز آلة ${u(total, sc.out)} خلال ${u(minutes, 'minute', 'oblique')} بمعدل ثابت. كم ${unitWordKam(sc.out)} تنجز خلال ${u(target, 'minute', 'oblique')}؟`);
   return buildBase(ctx, {
     templateId: 'RATE_E_DIRECT',
+    scenario: sc.key,
     subskill: 'معدل وحدوي ثم كمية جديدة',
     difficulty: 'easy',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
-    correct, distractors, format: unitFormat('unit'),
+    correct, distractors, format: unitFormat(sc.out),
     steps: [
       `الإنتاج في الدقيقة الواحدة = ${total} ÷ ${minutes} = ${rate}.`,
       `الإنتاج خلال ${u(target, 'minute', 'oblique')} = ${rate} × ${target} = ${correct}.`
@@ -64,6 +66,7 @@ function directRate(ctx) {
 }
 
 function rateToTime(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   // RC2-011. The minutes asked for came from four values.
   const minutes = rng.pick([15, 20, 24, 25, 30, 36, 40, 45]);
@@ -87,6 +90,7 @@ function rateToTime(ctx) {
   const stem = composeSentences(ctx, `يكتب شخص ${u(total, 'word')} خلال ${u(minutes, 'minute', 'oblique')} بمعدل ثابت. كم دقيقة يحتاج لكتابة ${u(targetWords, 'word')}؟`);
   return buildBase(ctx, {
     templateId: 'RATE_E_TIME',
+    scenario: sc.key,
     subskill: 'معدل وحدوي ثم إيجاد الزمن',
     difficulty: 'easy',
     question: stem.text,
@@ -113,6 +117,7 @@ function rateToTime(ctx) {
 }
 
 function rateThenPercent(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   const minutes = rng.pick([6, 8, 9, 10]);
   const rate = rng.pick([40, 50, 60, 70]);
@@ -137,14 +142,15 @@ function rateThenPercent(ctx) {
     mk(newRate.mul(minutes).toNumber(), 'RATE_APPLIED_TO_WRONG_COUNT', `${newRate.toDecimalString()} × ${minutes}`),
     mk(total + correct, 'USED_ORIGINAL_TOTAL', `${total} + ${correct}`)
   ]);
-  const stem = composeSentences(ctx, `تنجز آلة ${u(total, 'unit')} خلال ${u(minutes, 'minute', 'oblique')}. بعد صيانة ارتفع معدلها في الدقيقة ${riseByPercentPhrase(pct)}. كم وحدة تنجز خلال ${u(targetMin, 'minute', 'oblique')} بالمعدل الجديد؟`);
+  const stem = composeSentences(ctx, `تنجز آلة ${u(total, sc.out)} خلال ${u(minutes, 'minute', 'oblique')}. بعد صيانة ارتفع معدلها في الدقيقة ${riseByPercentPhrase(pct)}. كم ${unitWordKam(sc.out)} تنجز خلال ${u(targetMin, 'minute', 'oblique')} بالمعدل الجديد؟`);
   return buildBase(ctx, {
     templateId: 'RATE_M_PERCENT',
+    scenario: sc.key,
     subskill: 'معدل وحدوي ثم زيادة مئوية',
     difficulty: 'medium',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
-    correct, distractors, format: unitFormat('unit'),
+    correct, distractors, format: unitFormat(sc.out),
     steps: [
       `المعدل الأصلي في الدقيقة = ${total} ÷ ${minutes} = ${rate}.`,
       factorText,
@@ -168,6 +174,7 @@ function rateThenPercent(ctx) {
 }
 
 function rateThenNewQuantity(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   const qty = rng.pick([12, 15, 18, 20]);
   const amount = rng.pick([180, 240, 300, 360]);
@@ -193,6 +200,7 @@ function rateThenNewQuantity(ctx) {
   const stem = composeSentences(ctx, `قطعت سيارة ${u(amount, 'km')} باستخدام ${u(qty, 'liter', 'oblique')} من الوقود. إذا استمر المعدل نفسه، فكم كيلومترًا تقطع باستخدام ${u(targetQty, 'liter', 'oblique')}؟`);
   return buildBase(ctx, {
     templateId: 'RATE_M_SCALE',
+    scenario: sc.key,
     subskill: 'استخراج معدل وحدة ثم التوسع',
     difficulty: 'easy',
     question: stem.text,
@@ -219,6 +227,7 @@ function rateThenNewQuantity(ctx) {
 }
 
 function rateChangeTarget(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   const oldRate = rng.pick([30, 40, 50, 60]);
   const pct = rng.pick([20, 25, 50]);
@@ -245,9 +254,10 @@ function rateChangeTarget(ctx) {
     mk(target / initial * oldMinutes * 2, 'RATE_APPLIED_TO_WRONG_COUNT', `${target} ÷ ${initial} × ${oldMinutes} × 2`),
     mk(Fraction.from(target).div(oldRate).div(2).toNumber(), 'USED_RATE_BEFORE_CHANGE', `${target} ÷ ${oldRate} ÷ 2`)
   ]);
-  const stem = composeSentences(ctx, `تنجز آلة ${u(initial, 'unit')} خلال ${u(oldMinutes, 'minute', 'oblique')}. ارتفع معدلها في الدقيقة بعد تطوير ${riseByPercentPhrase(pct)}. كم دقيقة تحتاج بالمعدل الجديد لإنجاز ${u(target, 'unit')}؟`);
+  const stem = composeSentences(ctx, `تنجز آلة ${u(initial, sc.out)} خلال ${u(oldMinutes, 'minute', 'oblique')}. ارتفع معدلها في الدقيقة بعد تطوير ${riseByPercentPhrase(pct)}. كم دقيقة تحتاج بالمعدل الجديد لإنجاز ${u(target, sc.out)}؟`);
   return buildBase(ctx, {
     templateId: 'RATE_H_TARGET',
+    scenario: sc.key,
     subskill: 'معدل محسن ثم زمن لهدف جديد',
     difficulty: 'medium',
     question: stem.text,
@@ -276,6 +286,7 @@ function rateChangeTarget(ctx) {
 }
 
 function twoPhaseRate(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   const r1 = rng.pick([20, 25, 30, 40]);
   const h1 = rng.pick([3, 4, 5]);
@@ -299,14 +310,15 @@ function twoPhaseRate(ctx) {
     mk(r1 * h1 + r1 * h2, 'USED_RATE_BEFORE_CHANGE', `${r1} × ${h1} + ${r1} × ${h2}`),
     mk(r2n * h1 + r2n * h2, 'USED_ONLY_SECOND_RATE', `${r2n} × ${h1} + ${r2n} × ${h2}`)
   ]);
-  const stem = composeSentences(ctx, `يعمل جهاز بمعدل ${r1} وحدة/ساعة لمدة ${u(h1, 'hour', 'oblique')}، ثم ارتفع معدله ${riseByPercentPhrase(pct)} وعمل ${u(h2, 'hour', 'oblique')} أخرى. كم وحدة أنجز إجمالًا؟`);
+  const stem = composeSentences(ctx, `يعمل جهاز بمعدل ${r1} ${sc.rateWord} لمدة ${u(h1, 'hour', 'oblique')}، ثم ارتفع معدله ${riseByPercentPhrase(pct)} وعمل ${u(h2, 'hour', 'oblique')} أخرى. كم ${unitWordKam(sc.out)} أنجز إجمالًا؟`);
   return buildBase(ctx, {
     templateId: 'RATE_H_TWO_PHASE',
+    scenario: sc.key,
     subskill: 'معدل يتغير بين مرحلتين',
     difficulty: 'hard',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
-    correct, distractors, format: unitFormat('unit'),
+    correct, distractors, format: unitFormat(sc.out),
     steps: [
       `إنتاج المرحلة الأولى = ${r1} × ${h1} = ${r1 * h1}.`,
       factorText,
@@ -349,6 +361,7 @@ function twoPhaseRate(ctx) {
  * factor pairs. That search is the item.
  */
 function rateFromTimeSaved(ctx) {
+  const sc = sceneFor(ctx, 'production');
   const {rng} = ctx;
   let found = null;
   for (let t = 0; t < 200; t++) {
@@ -383,9 +396,10 @@ function rateFromTimeSaved(ctx) {
     mk(rate + 2 * bump, 'APPLIED_STEP_TWICE', `${rate} + ${bump} × 2`)
   ]);
 
-  const stem = composeSentences(ctx, `ينجز جهاز ${u(total, 'unit')} بمعدل ثابت. ولو زاد معدله بمقدار ${bump} وحدة/ساعة لأنجز العمل نفسه في ${u(saved, 'hour', 'oblique')} أقل. فما معدله الأصلي؟`);
+  const stem = composeSentences(ctx, `ينجز جهاز ${u(total, sc.out)} بمعدل ثابت. ولو زاد معدله بمقدار ${bump} ${sc.rateWord} لأنجز العمل نفسه في ${u(saved, 'hour', 'oblique')} أقل. فما معدله الأصلي؟`);
   return buildBase(ctx, {
     templateId: 'RATE_H_RATE_FROM_GAP',
+    scenario: sc.key,
     subskill: 'المعدل الأصلي من توفير في الزمن',
     difficulty: 'hard',
     question: stem.text,

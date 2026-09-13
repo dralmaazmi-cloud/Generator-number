@@ -150,112 +150,78 @@ export const avgOfOther = (sc, n) => `${sc.avgOf(n)} ${sc.otherAdj}`;
 // --- production: an agent turning time into countable output -----------------
 
 export const PRODUCTION = Object.freeze([
-  {
-    key: 'abstract_machines', producer: 'machine', out: 'piece', time: 'hour',
-    rateUnit: 'piecePerHour', site: 'مصنع',
-    produce: (m, q, t) => `تنتج ${u(m, 'machine')} متطابقة في الإنتاجية ${u(q, 'piece')} خلال ${u(t, 'hour')}`,
-    producersDef: 'الآلات', outDef: 'القطع', verbPresent: 'تنتج'
-  },
-  {
-    key: 'press_pages', producer: 'machine', out: 'page', time: 'hour',
-    rateUnit: 'pagePerHour', site: 'مطبعة',
-    produce: (m, q, t) => `تطبع ${u(m, 'machine')} متطابقة في مطبعة ${u(q, 'page')} خلال ${u(t, 'hour')}`,
-    producersDef: 'الآلات', outDef: 'الصفحات', verbPresent: 'تطبع'
-  },
-  {
-    key: 'bakery_loaves', producer: 'device', out: 'loaf', time: 'hour',
-    rateUnit: 'loafPerHour', site: 'مخبز',
-    produce: (m, q, t) => `ينتج ${u(m, 'device')} متطابقة في مخبز ${u(q, 'loaf')} خلال ${u(t, 'hour')}`,
-    producersDef: 'الأجهزة', outDef: 'الأرغفة', verbPresent: 'ينتج'
-  },
-  {
-    key: 'dairy_bottles', producer: 'machine', out: 'bottle', time: 'hour',
-    rateUnit: 'bottlePerHour', site: 'معمل ألبان',
-    produce: (m, q, t) => `تعبئ ${u(m, 'machine')} متطابقة في معمل ألبان ${u(q, 'bottle')} خلال ${u(t, 'hour')}`,
-    producersDef: 'الآلات', outDef: 'الزجاجات', verbPresent: 'تعبئ'
-  },
-  {
-    key: 'textile_shirts', producer: 'machine', out: 'shirt', time: 'hour',
-    rateUnit: 'shirtPerHour', site: 'مشغل خياطة',
-    produce: (m, q, t) => `تخيط ${u(m, 'machine')} متطابقة في مشغل ${u(q, 'shirt')} خلال ${u(t, 'hour')}`,
-    producersDef: 'الآلات', outDef: 'القمصان', verbPresent: 'تخيط'
-  },
-  {
-    key: 'cannery_cans', producer: 'device', out: 'can', time: 'hour',
-    rateUnit: 'canPerHour', site: 'مصنع تعليب',
-    produce: (m, q, t) => `يملأ ${u(m, 'device')} متطابقة في مصنع تعليب ${u(q, 'can')} خلال ${u(t, 'hour')}`,
-    producersDef: 'الأجهزة', outDef: 'العلب', verbPresent: 'يملأ'
-  },
-  {
-    key: 'solar_panels', producer: 'machine', out: 'panel', time: 'hour',
-    rateUnit: 'panelPerHour', site: 'مصنع ألواح',
-    produce: (m, q, t) => `تجمع ${u(m, 'machine')} متطابقة في مصنع ${u(q, 'panel')} خلال ${u(t, 'hour')}`,
-    producersDef: 'الآلات', outDef: 'الألواح', verbPresent: 'تجمع'
-  }
+  {key: 'abstract_pieces', out: 'piece', rateWord: 'قطعة/ساعة', rateWordMinute: 'قطعة/دقيقة',
+    site: 'مصنع', outDef: 'القطع', verb: 'تنتج'},
+  {key: 'press_pages', out: 'page', rateWord: 'صفحة/ساعة', rateWordMinute: 'صفحة/دقيقة',
+    site: 'مطبعة', outDef: 'الصفحات', verb: 'تطبع'},
+  {key: 'bakery_loaves', out: 'loaf', rateWord: 'رغيف/ساعة', rateWordMinute: 'رغيف/دقيقة',
+    site: 'مخبز', outDef: 'الأرغفة', verb: 'تخبز'},
+  {key: 'dairy_bottles', out: 'bottle', rateWord: 'زجاجة/ساعة', rateWordMinute: 'زجاجة/دقيقة',
+    site: 'معمل ألبان', outDef: 'الزجاجات', verb: 'تعبئ'},
+  {key: 'textile_shirts', out: 'shirt', rateWord: 'قميص/ساعة', rateWordMinute: 'قميص/دقيقة',
+    site: 'مشغل خياطة', outDef: 'القمصان', verb: 'تخيط'},
+  {key: 'cannery_cans', out: 'can', rateWord: 'علبة/ساعة', rateWordMinute: 'علبة/دقيقة',
+    site: 'مصنع تعليب', outDef: 'العلب', verb: 'تملأ'},
+  {key: 'solar_panels', out: 'panel', rateWord: 'لوح/ساعة', rateWordMinute: 'لوح/دقيقة',
+    site: 'مصنع ألواح', outDef: 'الألواح', verb: 'تجمع'},
+  {key: 'abstract_units', out: 'unit', rateWord: 'وحدة/ساعة', rateWordMinute: 'وحدة/دقيقة',
+    site: 'منشأة', outDef: 'الوحدات', verb: 'تنجز'}
 ]);
 
 // --- trade: a cost and a selling price ---------------------------------------
 
 export const TRADE = Object.freeze([
-  {
-    key: 'abstract_goods', goodIndef: 'سلعة', goodDef: 'السلعة', g: 'f',
-    buyer: 'متجر', bought: 'اشترى متجر', sold: 'باع المتجر',
-    unitId: 'dirham'
-  },
-  {
-    key: 'bookshop', goodIndef: 'كتاب', goodDef: 'الكتاب', g: 'm',
-    buyer: 'مكتبة', bought: 'اشترت مكتبة', sold: 'باعت المكتبة',
-    unitId: 'dirham'
-  },
-  {
-    key: 'nursery', goodIndef: 'شتلة', goodDef: 'الشتلة', g: 'f',
-    buyer: 'مشتل', bought: 'اشترى مشتل', sold: 'باع المشتل',
-    unitId: 'dirham'
-  },
-  {
-    key: 'furniture', goodIndef: 'مقعد', goodDef: 'المقعد', g: 'm',
-    buyer: 'معرض أثاث', bought: 'اشترى معرض أثاث', sold: 'باع المعرض',
-    unitId: 'dirham'
-  },
-  {
-    key: 'garment', goodIndef: 'قميص', goodDef: 'القميص', g: 'm',
-    buyer: 'متجر ملابس', bought: 'اشترى متجر ملابس', sold: 'باع المتجر',
-    unitId: 'dirham'
-  },
-  {
-    key: 'electronics', goodIndef: 'جهاز', goodDef: 'الجهاز', g: 'm',
-    buyer: 'محل إلكترونيات', bought: 'اشترى محل إلكترونيات', sold: 'باع المحل',
-    unitId: 'dirham'
-  }
+  // `good` is masculine or feminine per entry, and everything that has to agree
+  // with it is stored rather than derived: `pron` is the object suffix (باعه vs
+  // باعها) and `passT` the feminine marker on a passive verb (بيع vs بيعت). A
+  // table that cannot produce wrong agreement is better than one that can and
+  // relies on being used carefully.
+  {key: 'general_store', good: 'سلعة', goodDef: 'السلعة', goodPair: 'سلعتين', seller: 'متجر', sellerDef: 'المتجر',
+    paid: 'دفع',
+    goodNom: 'سلعة', placed: 'وضع متجر',
+    pron: 'ها', passT: 'ت',
+    bought: 'اشترى متجر', sold: 'باع المتجر', soldPair: 'باع متجر'},
+  {key: 'bookshop', good: 'كتابًا', goodDef: 'الكتاب', goodPair: 'كتابين', seller: 'مكتبة', sellerDef: 'المكتبة',
+    paid: 'دفعت',
+    goodNom: 'كتاب', placed: 'وضعت مكتبة',
+    pron: 'ه', passT: '',
+    bought: 'اشترت مكتبة', sold: 'باعت المكتبة', soldPair: 'باعت مكتبة'},
+  {key: 'nursery', good: 'شتلة', goodDef: 'الشتلة', goodPair: 'شتلتين', seller: 'مشتل', sellerDef: 'المشتل',
+    paid: 'دفع',
+    goodNom: 'شتلة', placed: 'وضع مشتل',
+    pron: 'ها', passT: 'ت',
+    bought: 'اشترى مشتل', sold: 'باع المشتل', soldPair: 'باع مشتل'},
+  {key: 'furniture', good: 'مقعدًا', goodDef: 'المقعد', goodPair: 'مقعدين', seller: 'معرض أثاث', sellerDef: 'المعرض',
+    paid: 'دفع',
+    goodNom: 'مقعد', placed: 'وضع معرض أثاث',
+    pron: 'ه', passT: '',
+    bought: 'اشترى معرض أثاث', sold: 'باع المعرض', soldPair: 'باع معرض أثاث'},
+  {key: 'garment', good: 'قميصًا', goodDef: 'القميص', goodPair: 'قميصين', seller: 'متجر ملابس', sellerDef: 'المتجر',
+    paid: 'دفع',
+    goodNom: 'قميص', placed: 'وضع متجر ملابس',
+    pron: 'ه', passT: '',
+    bought: 'اشترى متجر ملابس', sold: 'باع المتجر', soldPair: 'باع متجر ملابس'},
+  {key: 'electronics', good: 'جهازًا', goodDef: 'الجهاز', goodPair: 'جهازين', seller: 'محل إلكترونيات', sellerDef: 'المحل',
+    paid: 'دفع',
+    goodNom: 'جهاز', placed: 'وضع محل إلكترونيات',
+    pron: 'ه', passT: '',
+    bought: 'اشترى محل إلكترونيات', sold: 'باع المحل', soldPair: 'باع محل إلكترونيات'}
 ]);
 
 // --- journey: a mover, a distance and a speed --------------------------------
 
 export const JOURNEY = Object.freeze([
-  {
-    key: 'abstract_car', moverIndef: 'سيارة', moverDef: 'السيارة', g: 'f',
-    set: 'انطلقت سيارة', went: 'قطعت السيارة', distUnit: 'km', speedUnit: 'kmPerHour'
-  },
-  {
-    key: 'bus_route', moverIndef: 'حافلة', moverDef: 'الحافلة', g: 'f',
-    set: 'انطلقت حافلة', went: 'قطعت الحافلة', distUnit: 'km', speedUnit: 'kmPerHour'
-  },
-  {
-    key: 'freight_train', moverIndef: 'قطار', moverDef: 'القطار', g: 'm',
-    set: 'انطلق قطار', went: 'قطع القطار', distUnit: 'km', speedUnit: 'kmPerHour'
-  },
-  {
-    key: 'delivery_truck', moverIndef: 'شاحنة', moverDef: 'الشاحنة', g: 'f',
-    set: 'انطلقت شاحنة', went: 'قطعت الشاحنة', distUnit: 'km', speedUnit: 'kmPerHour'
-  },
-  {
-    key: 'cyclist', moverIndef: 'دراجة', moverDef: 'الدراجة', g: 'f',
-    set: 'انطلقت دراجة', went: 'قطعت الدراجة', distUnit: 'km', speedUnit: 'kmPerHour'
-  },
-  {
-    key: 'ferry', moverIndef: 'عبّارة', moverDef: 'العبّارة', g: 'f',
-    set: 'انطلقت عبّارة', went: 'قطعت العبّارة', distUnit: 'km', speedUnit: 'kmPerHour'
-  }
+  // Every mover here is grammatically FEMININE. The family's verbs — انطلقت،
+  // قطعت، تلتقي — already agree that way, and a masculine mover would need each
+  // of them rewritten per instance; a table that cannot produce wrong agreement
+  // is better than one that can and relies on being used carefully.
+  {key: 'car', one: 'سيارة', def: 'السيارة', dual: 'السيارتان', distUnit: 'km', speedWord: 'كم/ساعة'},
+  {key: 'bus', one: 'حافلة', def: 'الحافلة', dual: 'الحافلتان', distUnit: 'km', speedWord: 'كم/ساعة'},
+  {key: 'truck', one: 'شاحنة', def: 'الشاحنة', dual: 'الشاحنتان', distUnit: 'km', speedWord: 'كم/ساعة'},
+  {key: 'bicycle', one: 'دراجة', def: 'الدراجة', dual: 'الدراجتان', distUnit: 'km', speedWord: 'كم/ساعة'},
+  {key: 'ferry', one: 'عبّارة', def: 'العبّارة', dual: 'العبّارتان', distUnit: 'km', speedWord: 'كم/ساعة'},
+  {key: 'minibus', one: 'مركبة', def: 'المركبة', dual: 'المركبتان', distUnit: 'km', speedWord: 'كم/ساعة'},
+  {key: 'tram', one: 'عربة', def: 'العربة', dual: 'العربتان', distUnit: 'km', speedWord: 'كم/ساعة'}
 ]);
 
 // --- population: a quantity that changes by a percentage ---------------------
