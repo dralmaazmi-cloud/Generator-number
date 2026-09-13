@@ -497,7 +497,7 @@ function monthLengthFromTwoDates(ctx) {
 
   const distractors = usable(ctx, [
     ...LENGTHS.filter(L => L !== length).map(L => mk(L - d1 + d2, 'USED_ONE_ANCHOR_ONLY',
-      `افتراض أن الشهر ${L} يومًا، وهو لا يوافق يوم ${DAYS_AR[w2]}`)),
+      `افتراض أن الشهر ${u(L, 'day')}، وهو لا يوافق يوم ${DAYS_AR[w2]}`)),
     mk(d2 - d1, 'IGNORED_NET_OFFSET', `${d2} − ${d1}`),
     mk(d1 + d2, 'ADDED_INSTEAD_OF_SUBTRACTED', `${d1} + ${d2}`),
     mk(length, 'STOPPED_AT_INTERMEDIATE_TOTAL', `طول الشهر ${length} وحده`, 1),

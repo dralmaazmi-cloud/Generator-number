@@ -97,7 +97,7 @@ function reverseOneChange(ctx) {
     mk(final + final * pct / 100, 'TREATED_PERCENT_AS_AMOUNT', `${final} + ${final} × ${pct} ÷ 100`),
     mk(Fraction.from(original).mul(factor).mul(factor).toNumber(), 'APPLIED_STEP_TWICE', `${original} × ${factor.toDecimalString()} × ${factor.toDecimalString()}`)
   ]);
-  const stem = composeSentences(ctx, `بعد ${inc ? 'زيادة' : 'انخفاض'} قيمة بنسبة ${pct}% أصبحت ${final}. فما القيمة الأصلية؟`);
+  const stem = composeSentences(ctx, `تغيرت قيمة بـ${inc ? 'زيادة' : 'انخفاض'} نسبته ${pct}% فأصبحت ${final}. فما القيمة الأصلية؟`);
   return buildBase(ctx, {
     templateId: 'PCT_E_REVERSE_ONE',
     subskill: 'استرجاع الأصل بعد تغير واحد',
