@@ -130,6 +130,11 @@ export function freeze() {
   const evidence = walkEvidence('rc2');
 
   const prior = priorFreezes();
+  // The sign-off seeds, oldest first, each named by one release and spent by
+  // that release's freeze. A release spends everything before its own entry.
+  const SIGNOFF_CHAIN = [RC27_SIGNOFF_SEED, RC28_SIGNOFF_SEED, RC29_SIGNOFF_SEED,
+    RC291_SIGNOFF_SEED, RC292_SIGNOFF_SEED];
+  const chainIndex = rc292 ? 4 : rc291 ? 3 : rc29 ? 2 : rc28 ? 1 : rc27 ? 0 : 0;
   return {
     schema: 'rc2-freeze-v1',
     supersedes: prior,
@@ -159,13 +164,18 @@ export function freeze() {
          {seed: RC22_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
          {seed: RC23_SIGNOFF_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
          {seed: RC26_HOLDOUT_SEED, status: 'SEALED_AND_SPENT', reused: false},
-         // A seed is spent by being frozen against, whether or not anything
-         // was ever drawn on it: the freeze attests the engine that seed would
-         // have been sealed against.
-         ...((rc291 || rc29 || rc28) ? [{seed: RC27_SIGNOFF_SEED, status: 'FROZEN_AGAINST_AND_SPENT', reused: false}] : []),
-         ...((rc291 || rc29) ? [{seed: RC28_SIGNOFF_SEED, status: 'FROZEN_AGAINST_AND_SPENT', reused: false}] : []),
-         ...((rc292 || rc291) ? [{seed: RC29_SIGNOFF_SEED, status: 'FROZEN_AGAINST_AND_SPENT', reused: false}] : []),
-         ...(rc292 ? [{seed: RC291_SIGNOFF_SEED, status: 'FROZEN_AGAINST_AND_SPENT', reused: false}] : [])]
+         // A seed is spent by being frozen against, whether or not anything was
+         // ever drawn on it: the freeze attests the engine that seed would have
+         // been sealed against.
+         //
+         // RC2.9.2 derives this rather than listing it. Written as one boolean
+         // condition per seed, it went wrong the first time it was extended —
+         // the RC2.9.2 freeze dropped G and H because two of the four
+         // conditions had not been updated. A release spends every seed the
+         // releases before it named, and that is a position in a list, not four
+         // expressions to keep in step.
+         ...SIGNOFF_CHAIN.slice(0, chainIndex)
+           .map(seed => ({seed, status: 'FROZEN_AGAINST_AND_SPENT', reused: false}))]
       : (rc24 || rc23)
       ? [{seed: HOLDOUT_SEED, status: 'FAILED_DIAGNOSTIC_HOLDOUT', reused: false},
          {seed: RC21_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
