@@ -1,0 +1,3532 @@
+{
+  "schema": "rc27-validation-v1",
+  "generatedAt": "2026-09-13T09:24:30.300Z",
+  "accepted": true,
+  "batches": [
+    {
+      "seed": "RC27-V1",
+      "refused": false,
+      "questions": 250,
+      "gates": {
+        "wrongKeys": 0,
+        "ambiguousPublished": 0,
+        "noValidAnswerPublished": 0,
+        "duplicateOrEquivalentOptions": 0,
+        "invalidQuestions": 0,
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "exhaustions": 0,
+        "unexplainedFallbacks": 0
+      },
+      "repetition": {
+        "items": 250,
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "parameterOnlyVariants": {
+          "groups": 125,
+          "itemsInARepeatedGroup": 190,
+          "largestGroup": 5
+        },
+        "parameterizationShapes": {
+          "distinct": 147,
+          "largestGroup": 6
+        },
+        "repeatedReasoningTarget": {
+          "distinct": 129,
+          "largestGroup": 5,
+          "itemsInARepeatedGroup": 183
+        },
+        "constructions": {
+          "distinct": 170,
+          "largestGroup": 5,
+          "itemsInARepeatedGroup": 128
+        },
+        "scenarios": {
+          "distinct": 110,
+          "largestGroup": 7
+        },
+        "stemSkeletons": {
+          "distinct": 208,
+          "largestGroup": 9,
+          "itemsInARepeatedGroup": 70
+        },
+        "skills": {
+          "distinct": 115,
+          "largestGroup": 6
+        },
+        "entities": {
+          "distinct": 31,
+          "largestGroup": 17,
+          "mostUsed": [
+            "سالم×17",
+            "راشد×17",
+            "آلة×16",
+            "هند×16",
+            "ليان×16"
+          ]
+        },
+        "longestSimilarRun": 2
+      },
+      "novelty": {
+        "rejections": 603,
+        "byReason": {
+          "NOVELTY_REPEATED_COMBINATION": 46,
+          "NOVELTY_CONSECUTIVE_SIMILARITY": 7,
+          "NOVELTY_DIMENSION_DOMINANCE": 531,
+          "NOVELTY_MULTI_DIMENSION_SIMILARITY": 19
+        },
+        "fallbacks": 34,
+        "exhaustions": 0
+      },
+      "telemetryBalanced": true,
+      "sessions": [
+        {
+          "session": "SESSION-1",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "easy": 13,
+            "medium": 29,
+            "hard": 8
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 47,
+              "itemsInARepeatedGroup": 6,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 47,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 6
+            },
+            "constructions": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "scenarios": {
+              "distinct": 44,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 48,
+              "largestGroup": 3,
+              "itemsInARepeatedGroup": 3
+            },
+            "skills": {
+              "distinct": 46,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 23,
+              "largestGroup": 6,
+              "mostUsed": [
+                "آلة×6",
+                "عمر×6",
+                "نورة×5",
+                "هند×4",
+                "ليان×4"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 2,
+          "noveltyBreachDimensions": [
+            "entity_pattern",
+            "entity_pattern"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 46,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "target_signature": {
+              "distinct": 41,
+              "largestGroup": 3
+            },
+            "scenario_signature": {
+              "distinct": 44,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 48,
+              "largestGroup": 3
+            },
+            "entity_pattern": {
+              "distinct": 9,
+              "largestGroup": 22
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 24
+            }
+          },
+          "entityConcentration": {
+            "distinct": 23,
+            "largestGroup": 6,
+            "mostUsed": [
+              "آلة×6",
+              "عمر×6",
+              "نورة×5",
+              "هند×4",
+              "ليان×4"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-2",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "easy": 13,
+            "medium": 29,
+            "hard": 8
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 47,
+              "itemsInARepeatedGroup": 6,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 46,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 47,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 6
+            },
+            "constructions": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "scenarios": {
+              "distinct": 46,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "skills": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 22,
+              "largestGroup": 6,
+              "mostUsed": [
+                "عمر×6",
+                "آلة×6",
+                "علي×5",
+                "فهد×4",
+                "خالد×4"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 1,
+          "noveltyBreachDimensions": [
+            "entity_pattern"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "target_signature": {
+              "distinct": 42,
+              "largestGroup": 4
+            },
+            "scenario_signature": {
+              "distinct": 46,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "entity_pattern": {
+              "distinct": 8,
+              "largestGroup": 21
+            },
+            "stem_structure": {
+              "distinct": 4,
+              "largestGroup": 20
+            }
+          },
+          "entityConcentration": {
+            "distinct": 22,
+            "largestGroup": 6,
+            "mostUsed": [
+              "عمر×6",
+              "آلة×6",
+              "علي×5",
+              "فهد×4",
+              "خالد×4"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-3",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "medium": 29,
+            "hard": 8,
+            "easy": 13
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 48,
+              "itemsInARepeatedGroup": 4,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 48,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 4
+            },
+            "constructions": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "scenarios": {
+              "distinct": 46,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "skills": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 26,
+              "largestGroup": 6,
+              "mostUsed": [
+                "سالم×6",
+                "هند×5",
+                "آلة×4",
+                "راشد×4",
+                "شاحنة×4"
+              ]
+            },
+            "longestSimilarRun": 2
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 3,
+          "noveltyBreachDimensions": [
+            "consecutive",
+            "entity_word_batch",
+            "entity_pattern"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "target_signature": {
+              "distinct": 46,
+              "largestGroup": 2
+            },
+            "scenario_signature": {
+              "distinct": 46,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "entity_pattern": {
+              "distinct": 10,
+              "largestGroup": 22
+            },
+            "stem_structure": {
+              "distinct": 4,
+              "largestGroup": 17
+            }
+          },
+          "entityConcentration": {
+            "distinct": 26,
+            "largestGroup": 6,
+            "mostUsed": [
+              "سالم×6",
+              "هند×5",
+              "آلة×4",
+              "راشد×4",
+              "شاحنة×4"
+            ]
+          },
+          "longestSimilarRun": 2
+        },
+        {
+          "session": "SESSION-4",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "hard": 8,
+            "medium": 29,
+            "easy": 13
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 47,
+              "itemsInARepeatedGroup": 6,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 47,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 6
+            },
+            "constructions": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "scenarios": {
+              "distinct": 41,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "skills": {
+              "distinct": 46,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 26,
+              "largestGroup": 5,
+              "mostUsed": [
+                "راشد×5",
+                "جهاز×4",
+                "نورة×4",
+                "مريم×4",
+                "سارة×4"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 6,
+          "noveltyBreachDimensions": [
+            "entity_pattern",
+            "entity_pattern",
+            "entity_pattern",
+            "entity_pattern",
+            "entity_pattern",
+            "entity_pattern"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 46,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "target_signature": {
+              "distinct": 46,
+              "largestGroup": 2
+            },
+            "scenario_signature": {
+              "distinct": 41,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "entity_pattern": {
+              "distinct": 8,
+              "largestGroup": 26
+            },
+            "stem_structure": {
+              "distinct": 4,
+              "largestGroup": 18
+            }
+          },
+          "entityConcentration": {
+            "distinct": 26,
+            "largestGroup": 5,
+            "mostUsed": [
+              "راشد×5",
+              "جهاز×4",
+              "نورة×4",
+              "مريم×4",
+              "سارة×4"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-5",
+          "kind": "ALL_HARD",
+          "delivered": 50,
+          "bands": {
+            "hard": 50
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 30,
+              "itemsInARepeatedGroup": 34,
+              "largestGroup": 3
+            },
+            "parameterizationShapes": {
+              "distinct": 32,
+              "largestGroup": 3
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 32,
+              "largestGroup": 3,
+              "itemsInARepeatedGroup": 31
+            },
+            "constructions": {
+              "distinct": 34,
+              "largestGroup": 3,
+              "itemsInARepeatedGroup": 27
+            },
+            "scenarios": {
+              "distinct": 30,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 39,
+              "largestGroup": 6,
+              "itemsInARepeatedGroup": 18
+            },
+            "skills": {
+              "distinct": 28,
+              "largestGroup": 3
+            },
+            "entities": {
+              "distinct": 20,
+              "largestGroup": 6,
+              "mostUsed": [
+                "سالم×6",
+                "بدر×4",
+                "سامي×4",
+                "سارة×4",
+                "خالد×4"
+              ]
+            },
+            "longestSimilarRun": 2
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 22,
+          "noveltyBreachDimensions": [
+            "entity_pattern",
+            "entity_pattern",
+            "combination",
+            "entity_word_batch",
+            "entity_pattern",
+            "entity_pattern",
+            "entity_pattern",
+            "entity_pattern",
+            "entity_pattern",
+            "entity_pattern",
+            "multi",
+            "entity_pattern",
+            "entity_pattern",
+            "combination",
+            "entity_pattern",
+            "combination",
+            "entity_word_batch",
+            "entity_pattern",
+            "entity_pattern",
+            "consecutive",
+            "combination",
+            "combination"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 28,
+              "largestGroup": 3
+            },
+            "structural_reasoning_signature": {
+              "distinct": 32,
+              "largestGroup": 3
+            },
+            "construction_signature": {
+              "distinct": 34,
+              "largestGroup": 3
+            },
+            "target_signature": {
+              "distinct": 27,
+              "largestGroup": 6
+            },
+            "scenario_signature": {
+              "distinct": 30,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 39,
+              "largestGroup": 6
+            },
+            "entity_pattern": {
+              "distinct": 8,
+              "largestGroup": 38
+            },
+            "stem_structure": {
+              "distinct": 4,
+              "largestGroup": 14
+            }
+          },
+          "entityConcentration": {
+            "distinct": 20,
+            "largestGroup": 6,
+            "mostUsed": [
+              "سالم×6",
+              "بدر×4",
+              "سامي×4",
+              "سارة×4",
+              "خالد×4"
+            ]
+          },
+          "longestSimilarRun": 2
+        }
+      ]
+    },
+    {
+      "seed": "RC27-V2",
+      "refused": false,
+      "questions": 250,
+      "gates": {
+        "wrongKeys": 0,
+        "ambiguousPublished": 0,
+        "noValidAnswerPublished": 0,
+        "duplicateOrEquivalentOptions": 0,
+        "invalidQuestions": 0,
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "exhaustions": 0,
+        "unexplainedFallbacks": 0
+      },
+      "repetition": {
+        "items": 250,
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "parameterOnlyVariants": {
+          "groups": 122,
+          "itemsInARepeatedGroup": 194,
+          "largestGroup": 5
+        },
+        "parameterizationShapes": {
+          "distinct": 148,
+          "largestGroup": 6
+        },
+        "repeatedReasoningTarget": {
+          "distinct": 124,
+          "largestGroup": 5,
+          "itemsInARepeatedGroup": 190
+        },
+        "constructions": {
+          "distinct": 165,
+          "largestGroup": 5,
+          "itemsInARepeatedGroup": 137
+        },
+        "scenarios": {
+          "distinct": 108,
+          "largestGroup": 8
+        },
+        "stemSkeletons": {
+          "distinct": 196,
+          "largestGroup": 9,
+          "itemsInARepeatedGroup": 85
+        },
+        "skills": {
+          "distinct": 112,
+          "largestGroup": 5
+        },
+        "entities": {
+          "distinct": 31,
+          "largestGroup": 18,
+          "mostUsed": [
+            "عمر×18",
+            "راشد×18",
+            "علي×18",
+            "آلة×17",
+            "ليان×16"
+          ]
+        },
+        "longestSimilarRun": 2
+      },
+      "novelty": {
+        "rejections": 535,
+        "byReason": {
+          "NOVELTY_REPEATED_COMBINATION": 54,
+          "NOVELTY_CONSECUTIVE_SIMILARITY": 2,
+          "NOVELTY_DIMENSION_DOMINANCE": 454,
+          "NOVELTY_MULTI_DIMENSION_SIMILARITY": 25
+        },
+        "fallbacks": 32,
+        "exhaustions": 0
+      },
+      "telemetryBalanced": true,
+      "sessions": [
+        {
+          "session": "SESSION-1",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "medium": 29,
+            "easy": 13,
+            "hard": 8
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 49,
+              "itemsInARepeatedGroup": 2,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "constructions": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "scenarios": {
+              "distinct": 41,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "skills": {
+              "distinct": 46,
+              "largestGroup": 3
+            },
+            "entities": {
+              "distinct": 24,
+              "largestGroup": 6,
+              "mostUsed": [
+                "عمر×6",
+                "آلة×6",
+                "راشد×6",
+                "مريم×6",
+                "علي×5"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 0,
+          "noveltyBreachDimensions": [],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 46,
+              "largestGroup": 3
+            },
+            "structural_reasoning_signature": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "target_signature": {
+              "distinct": 45,
+              "largestGroup": 2
+            },
+            "scenario_signature": {
+              "distinct": 41,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "entity_pattern": {
+              "distinct": 11,
+              "largestGroup": 20
+            },
+            "stem_structure": {
+              "distinct": 4,
+              "largestGroup": 21
+            }
+          },
+          "entityConcentration": {
+            "distinct": 24,
+            "largestGroup": 6,
+            "mostUsed": [
+              "عمر×6",
+              "آلة×6",
+              "راشد×6",
+              "مريم×6",
+              "علي×5"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-2",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "medium": 29,
+            "hard": 8,
+            "easy": 13
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 49,
+              "itemsInARepeatedGroup": 2,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "constructions": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "scenarios": {
+              "distinct": 43,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 48,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 4
+            },
+            "skills": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 26,
+              "largestGroup": 6,
+              "mostUsed": [
+                "آلة×6",
+                "عمر×6",
+                "مريم×4",
+                "جهاز×4",
+                "ليان×3"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 0,
+          "noveltyBreachDimensions": [],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "target_signature": {
+              "distinct": 45,
+              "largestGroup": 2
+            },
+            "scenario_signature": {
+              "distinct": 43,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "entity_pattern": {
+              "distinct": 10,
+              "largestGroup": 20
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 18
+            }
+          },
+          "entityConcentration": {
+            "distinct": 26,
+            "largestGroup": 6,
+            "mostUsed": [
+              "آلة×6",
+              "عمر×6",
+              "مريم×4",
+              "جهاز×4",
+              "ليان×3"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-3",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "medium": 29,
+            "easy": 13,
+            "hard": 8
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 48,
+              "itemsInARepeatedGroup": 4,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 48,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 4
+            },
+            "constructions": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "scenarios": {
+              "distinct": 46,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 47,
+              "largestGroup": 3,
+              "itemsInARepeatedGroup": 5
+            },
+            "skills": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 28,
+              "largestGroup": 4,
+              "mostUsed": [
+                "علي×4",
+                "آلة×4",
+                "راشد×4",
+                "جهاز×3",
+                "ليان×3"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 3,
+          "noveltyBreachDimensions": [
+            "entity_pattern",
+            "entity_pattern",
+            "entity_word_batch"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "target_signature": {
+              "distinct": 43,
+              "largestGroup": 3
+            },
+            "scenario_signature": {
+              "distinct": 46,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 47,
+              "largestGroup": 3
+            },
+            "entity_pattern": {
+              "distinct": 9,
+              "largestGroup": 22
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 17
+            }
+          },
+          "entityConcentration": {
+            "distinct": 28,
+            "largestGroup": 4,
+            "mostUsed": [
+              "علي×4",
+              "آلة×4",
+              "راشد×4",
+              "جهاز×3",
+              "ليان×3"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-4",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "medium": 29,
+            "hard": 8,
+            "easy": 13
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 48,
+              "itemsInARepeatedGroup": 4,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 48,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 4
+            },
+            "constructions": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "scenarios": {
+              "distinct": 43,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "skills": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 28,
+              "largestGroup": 4,
+              "mostUsed": [
+                "حمد×4",
+                "سالم×3",
+                "راشد×3",
+                "سامي×3",
+                "ليان×3"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 8,
+          "noveltyBreachDimensions": [
+            "entity_pattern",
+            "entity_pattern",
+            "entity_word_batch",
+            "entity_pattern",
+            "multi",
+            "entity_word_batch",
+            "entity_pattern",
+            "entity_pattern"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "target_signature": {
+              "distinct": 45,
+              "largestGroup": 2
+            },
+            "scenario_signature": {
+              "distinct": 43,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "entity_pattern": {
+              "distinct": 9,
+              "largestGroup": 25
+            },
+            "stem_structure": {
+              "distinct": 4,
+              "largestGroup": 22
+            }
+          },
+          "entityConcentration": {
+            "distinct": 28,
+            "largestGroup": 4,
+            "mostUsed": [
+              "حمد×4",
+              "سالم×3",
+              "راشد×3",
+              "سامي×3",
+              "ليان×3"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-5",
+          "kind": "ALL_HARD",
+          "delivered": 50,
+          "bands": {
+            "hard": 50
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 30,
+              "itemsInARepeatedGroup": 36,
+              "largestGroup": 3
+            },
+            "parameterizationShapes": {
+              "distinct": 32,
+              "largestGroup": 4
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 30,
+              "largestGroup": 3,
+              "itemsInARepeatedGroup": 36
+            },
+            "constructions": {
+              "distinct": 35,
+              "largestGroup": 3,
+              "itemsInARepeatedGroup": 27
+            },
+            "scenarios": {
+              "distinct": 32,
+              "largestGroup": 4
+            },
+            "stemSkeletons": {
+              "distinct": 42,
+              "largestGroup": 3,
+              "itemsInARepeatedGroup": 13
+            },
+            "skills": {
+              "distinct": 28,
+              "largestGroup": 3
+            },
+            "entities": {
+              "distinct": 23,
+              "largestGroup": 4,
+              "mostUsed": [
+                "علي×4",
+                "سالم×3",
+                "خالد×3",
+                "سارة×3",
+                "ليان×3"
+              ]
+            },
+            "longestSimilarRun": 2
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 21,
+          "noveltyBreachDimensions": [
+            "entity_pattern",
+            "entity_pattern",
+            "entity_word_batch",
+            "consecutive",
+            "multi",
+            "entity_pattern",
+            "entity_pattern",
+            "multi",
+            "entity_pattern",
+            "entity_word_batch",
+            "entity_pattern",
+            "entity_pattern",
+            "entity_pattern",
+            "combination",
+            "combination",
+            "combination",
+            "entity_pattern",
+            "combination",
+            "combination",
+            "entity_pattern",
+            "entity_pattern"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 28,
+              "largestGroup": 3
+            },
+            "structural_reasoning_signature": {
+              "distinct": 30,
+              "largestGroup": 3
+            },
+            "construction_signature": {
+              "distinct": 35,
+              "largestGroup": 3
+            },
+            "target_signature": {
+              "distinct": 28,
+              "largestGroup": 3
+            },
+            "scenario_signature": {
+              "distinct": 32,
+              "largestGroup": 4
+            },
+            "stem_skeleton": {
+              "distinct": 42,
+              "largestGroup": 3
+            },
+            "entity_pattern": {
+              "distinct": 9,
+              "largestGroup": 36
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 19
+            }
+          },
+          "entityConcentration": {
+            "distinct": 23,
+            "largestGroup": 4,
+            "mostUsed": [
+              "علي×4",
+              "سالم×3",
+              "خالد×3",
+              "سارة×3",
+              "ليان×3"
+            ]
+          },
+          "longestSimilarRun": 2
+        }
+      ]
+    },
+    {
+      "seed": "RC27-V3",
+      "refused": false,
+      "questions": 250,
+      "gates": {
+        "wrongKeys": 0,
+        "ambiguousPublished": 0,
+        "noValidAnswerPublished": 0,
+        "duplicateOrEquivalentOptions": 0,
+        "invalidQuestions": 0,
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "exhaustions": 0,
+        "unexplainedFallbacks": 0
+      },
+      "repetition": {
+        "items": 250,
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "parameterOnlyVariants": {
+          "groups": 115,
+          "itemsInARepeatedGroup": 201,
+          "largestGroup": 5
+        },
+        "parameterizationShapes": {
+          "distinct": 138,
+          "largestGroup": 6
+        },
+        "repeatedReasoningTarget": {
+          "distinct": 119,
+          "largestGroup": 5,
+          "itemsInARepeatedGroup": 195
+        },
+        "constructions": {
+          "distinct": 159,
+          "largestGroup": 5,
+          "itemsInARepeatedGroup": 141
+        },
+        "scenarios": {
+          "distinct": 105,
+          "largestGroup": 7
+        },
+        "stemSkeletons": {
+          "distinct": 201,
+          "largestGroup": 10,
+          "itemsInARepeatedGroup": 81
+        },
+        "skills": {
+          "distinct": 105,
+          "largestGroup": 6
+        },
+        "entities": {
+          "distinct": 31,
+          "largestGroup": 20,
+          "mostUsed": [
+            "عمر×20",
+            "سالم×20",
+            "علي×18",
+            "حمد×18",
+            "راشد×18"
+          ]
+        },
+        "longestSimilarRun": 2
+      },
+      "novelty": {
+        "rejections": 580,
+        "byReason": {
+          "NOVELTY_REPEATED_COMBINATION": 52,
+          "NOVELTY_CONSECUTIVE_SIMILARITY": 6,
+          "NOVELTY_DIMENSION_DOMINANCE": 507,
+          "NOVELTY_MULTI_DIMENSION_SIMILARITY": 15
+        },
+        "fallbacks": 37,
+        "exhaustions": 0
+      },
+      "telemetryBalanced": true,
+      "sessions": [
+        {
+          "session": "SESSION-1",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "medium": 29,
+            "easy": 13,
+            "hard": 8
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 49,
+              "itemsInARepeatedGroup": 2,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 47,
+              "largestGroup": 3
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "constructions": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "scenarios": {
+              "distinct": 44,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "skills": {
+              "distinct": 46,
+              "largestGroup": 4
+            },
+            "entities": {
+              "distinct": 24,
+              "largestGroup": 6,
+              "mostUsed": [
+                "آلة×6",
+                "خالد×6",
+                "عمر×5",
+                "سامي×5",
+                "نورة×5"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 0,
+          "noveltyBreachDimensions": [],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 46,
+              "largestGroup": 4
+            },
+            "structural_reasoning_signature": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "target_signature": {
+              "distinct": 47,
+              "largestGroup": 3
+            },
+            "scenario_signature": {
+              "distinct": 44,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "entity_pattern": {
+              "distinct": 9,
+              "largestGroup": 20
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 15
+            }
+          },
+          "entityConcentration": {
+            "distinct": 24,
+            "largestGroup": 6,
+            "mostUsed": [
+              "آلة×6",
+              "خالد×6",
+              "عمر×5",
+              "سامي×5",
+              "نورة×5"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-2",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "hard": 8,
+            "medium": 29,
+            "easy": 13
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 48,
+              "itemsInARepeatedGroup": 4,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 48,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 4
+            },
+            "constructions": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "scenarios": {
+              "distinct": 45,
+              "largestGroup": 2
+            },
+            "stemSkeletons": {
+              "distinct": 47,
+              "largestGroup": 3,
+              "itemsInARepeatedGroup": 5
+            },
+            "skills": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 25,
+              "largestGroup": 6,
+              "mostUsed": [
+                "آلة×6",
+                "عمر×5",
+                "سالم×5",
+                "بدر×5",
+                "ليان×5"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 1,
+          "noveltyBreachDimensions": [
+            "entity_pattern"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "target_signature": {
+              "distinct": 43,
+              "largestGroup": 3
+            },
+            "scenario_signature": {
+              "distinct": 45,
+              "largestGroup": 2
+            },
+            "stem_skeleton": {
+              "distinct": 47,
+              "largestGroup": 3
+            },
+            "entity_pattern": {
+              "distinct": 9,
+              "largestGroup": 21
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 15
+            }
+          },
+          "entityConcentration": {
+            "distinct": 25,
+            "largestGroup": 6,
+            "mostUsed": [
+              "آلة×6",
+              "عمر×5",
+              "سالم×5",
+              "بدر×5",
+              "ليان×5"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-3",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "medium": 29,
+            "hard": 8,
+            "easy": 13
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 48,
+              "itemsInARepeatedGroup": 4,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 48,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 4
+            },
+            "constructions": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "scenarios": {
+              "distinct": 44,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "skills": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 27,
+              "largestGroup": 6,
+              "mostUsed": [
+                "عمر×6",
+                "ناصر×5",
+                "علي×4",
+                "ريم×4",
+                "مريم×4"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 3,
+          "noveltyBreachDimensions": [
+            "entity_word_batch",
+            "multi",
+            "entity_pattern"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "target_signature": {
+              "distinct": 46,
+              "largestGroup": 2
+            },
+            "scenario_signature": {
+              "distinct": 44,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "entity_pattern": {
+              "distinct": 11,
+              "largestGroup": 21
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 17
+            }
+          },
+          "entityConcentration": {
+            "distinct": 27,
+            "largestGroup": 6,
+            "mostUsed": [
+              "عمر×6",
+              "ناصر×5",
+              "علي×4",
+              "ريم×4",
+              "مريم×4"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-4",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "medium": 29,
+            "easy": 13,
+            "hard": 8
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 45,
+              "itemsInARepeatedGroup": 10,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 45,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 10
+            },
+            "constructions": {
+              "distinct": 48,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 4
+            },
+            "scenarios": {
+              "distinct": 39,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 48,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 4
+            },
+            "skills": {
+              "distinct": 45,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 28,
+              "largestGroup": 4,
+              "mostUsed": [
+                "سالم×4",
+                "سارة×3",
+                "عبّارة×3",
+                "جهاز×3",
+                "راشد×2"
+              ]
+            },
+            "longestSimilarRun": 2
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 11,
+          "noveltyBreachDimensions": [
+            "entity_word_batch",
+            "entity_pattern",
+            "combination",
+            "consecutive",
+            "combination",
+            "entity_pattern",
+            "entity_word_batch",
+            "entity_pattern",
+            "entity_pattern",
+            "entity_word_batch",
+            "entity_word_batch"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 45,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 45,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "target_signature": {
+              "distinct": 44,
+              "largestGroup": 2
+            },
+            "scenario_signature": {
+              "distinct": 39,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "entity_pattern": {
+              "distinct": 7,
+              "largestGroup": 26
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 19
+            }
+          },
+          "entityConcentration": {
+            "distinct": 28,
+            "largestGroup": 4,
+            "mostUsed": [
+              "سالم×4",
+              "سارة×3",
+              "عبّارة×3",
+              "جهاز×3",
+              "راشد×2"
+            ]
+          },
+          "longestSimilarRun": 2
+        },
+        {
+          "session": "SESSION-5",
+          "kind": "ALL_HARD",
+          "delivered": 50,
+          "bands": {
+            "hard": 50
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 29,
+              "itemsInARepeatedGroup": 36,
+              "largestGroup": 3
+            },
+            "parameterizationShapes": {
+              "distinct": 30,
+              "largestGroup": 4
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 30,
+              "largestGroup": 3,
+              "itemsInARepeatedGroup": 34
+            },
+            "constructions": {
+              "distinct": 33,
+              "largestGroup": 3,
+              "itemsInARepeatedGroup": 30
+            },
+            "scenarios": {
+              "distinct": 30,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 42,
+              "largestGroup": 4,
+              "itemsInARepeatedGroup": 13
+            },
+            "skills": {
+              "distinct": 27,
+              "largestGroup": 4
+            },
+            "entities": {
+              "distinct": 21,
+              "largestGroup": 7,
+              "mostUsed": [
+                "راشد×7",
+                "علي×7",
+                "حمد×7",
+                "سامي×6",
+                "خالد×4"
+              ]
+            },
+            "longestSimilarRun": 2
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 22,
+          "noveltyBreachDimensions": [
+            "entity_word_batch",
+            "entity_pattern",
+            "entity_word_batch",
+            "entity_pattern",
+            "entity_pattern",
+            "combination",
+            "entity_pattern",
+            "entity_word_batch",
+            "entity_pattern",
+            "combination",
+            "entity_pattern",
+            "entity_word_batch",
+            "entity_word_batch",
+            "combination",
+            "entity_pattern",
+            "entity_pattern",
+            "entity_pattern",
+            "combination",
+            "entity_pattern",
+            "entity_word_batch",
+            "consecutive",
+            "combination"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 27,
+              "largestGroup": 4
+            },
+            "structural_reasoning_signature": {
+              "distinct": 30,
+              "largestGroup": 3
+            },
+            "construction_signature": {
+              "distinct": 33,
+              "largestGroup": 3
+            },
+            "target_signature": {
+              "distinct": 27,
+              "largestGroup": 4
+            },
+            "scenario_signature": {
+              "distinct": 30,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 42,
+              "largestGroup": 4
+            },
+            "entity_pattern": {
+              "distinct": 10,
+              "largestGroup": 34
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 15
+            }
+          },
+          "entityConcentration": {
+            "distinct": 21,
+            "largestGroup": 7,
+            "mostUsed": [
+              "راشد×7",
+              "علي×7",
+              "حمد×7",
+              "سامي×6",
+              "خالد×4"
+            ]
+          },
+          "longestSimilarRun": 2
+        }
+      ]
+    },
+    {
+      "seed": "RC27-V4",
+      "refused": false,
+      "questions": 250,
+      "gates": {
+        "wrongKeys": 0,
+        "ambiguousPublished": 0,
+        "noValidAnswerPublished": 0,
+        "duplicateOrEquivalentOptions": 0,
+        "invalidQuestions": 0,
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "exhaustions": 0,
+        "unexplainedFallbacks": 0
+      },
+      "repetition": {
+        "items": 250,
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "parameterOnlyVariants": {
+          "groups": 124,
+          "itemsInARepeatedGroup": 191,
+          "largestGroup": 5
+        },
+        "parameterizationShapes": {
+          "distinct": 143,
+          "largestGroup": 7
+        },
+        "repeatedReasoningTarget": {
+          "distinct": 127,
+          "largestGroup": 5,
+          "itemsInARepeatedGroup": 185
+        },
+        "constructions": {
+          "distinct": 174,
+          "largestGroup": 5,
+          "itemsInARepeatedGroup": 119
+        },
+        "scenarios": {
+          "distinct": 111,
+          "largestGroup": 8
+        },
+        "stemSkeletons": {
+          "distinct": 203,
+          "largestGroup": 11,
+          "itemsInARepeatedGroup": 71
+        },
+        "skills": {
+          "distinct": 113,
+          "largestGroup": 5
+        },
+        "entities": {
+          "distinct": 30,
+          "largestGroup": 19,
+          "mostUsed": [
+            "عمر×19",
+            "آلة×16",
+            "راشد×16",
+            "سارة×16",
+            "ناصر×16"
+          ]
+        },
+        "longestSimilarRun": 2
+      },
+      "novelty": {
+        "rejections": 607,
+        "byReason": {
+          "NOVELTY_REPEATED_COMBINATION": 35,
+          "NOVELTY_CONSECUTIVE_SIMILARITY": 2,
+          "NOVELTY_DIMENSION_DOMINANCE": 547,
+          "NOVELTY_MULTI_DIMENSION_SIMILARITY": 23
+        },
+        "fallbacks": 35,
+        "exhaustions": 0
+      },
+      "telemetryBalanced": true,
+      "sessions": [
+        {
+          "session": "SESSION-1",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "medium": 29,
+            "hard": 8,
+            "easy": 13
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 49,
+              "itemsInARepeatedGroup": 2,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "constructions": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "scenarios": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "stemSkeletons": {
+              "distinct": 48,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 4
+            },
+            "skills": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 26,
+              "largestGroup": 6,
+              "mostUsed": [
+                "عمر×6",
+                "آلة×6",
+                "راشد×4",
+                "فهد×4",
+                "علي×4"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 1,
+          "noveltyBreachDimensions": [
+            "entity_pattern"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "target_signature": {
+              "distinct": 45,
+              "largestGroup": 3
+            },
+            "scenario_signature": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "stem_skeleton": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "entity_pattern": {
+              "distinct": 10,
+              "largestGroup": 21
+            },
+            "stem_structure": {
+              "distinct": 4,
+              "largestGroup": 18
+            }
+          },
+          "entityConcentration": {
+            "distinct": 26,
+            "largestGroup": 6,
+            "mostUsed": [
+              "عمر×6",
+              "آلة×6",
+              "راشد×4",
+              "فهد×4",
+              "علي×4"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-2",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "easy": 13,
+            "medium": 29,
+            "hard": 8
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 49,
+              "itemsInARepeatedGroup": 2,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "constructions": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "scenarios": {
+              "distinct": 46,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 47,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 6
+            },
+            "skills": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 24,
+              "largestGroup": 6,
+              "mostUsed": [
+                "آلة×6",
+                "عمر×6",
+                "سارة×5",
+                "عبّارة×3",
+                "ناصر×3"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 2,
+          "noveltyBreachDimensions": [
+            "entity_pattern",
+            "entity_pattern"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "target_signature": {
+              "distinct": 43,
+              "largestGroup": 3
+            },
+            "scenario_signature": {
+              "distinct": 46,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "entity_pattern": {
+              "distinct": 9,
+              "largestGroup": 22
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 18
+            }
+          },
+          "entityConcentration": {
+            "distinct": 24,
+            "largestGroup": 6,
+            "mostUsed": [
+              "آلة×6",
+              "عمر×6",
+              "سارة×5",
+              "عبّارة×3",
+              "ناصر×3"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-3",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "easy": 13,
+            "medium": 29,
+            "hard": 8
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 47,
+              "itemsInARepeatedGroup": 6,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 46,
+              "largestGroup": 3
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 47,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 6
+            },
+            "constructions": {
+              "distinct": 48,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 4
+            },
+            "scenarios": {
+              "distinct": 39,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "skills": {
+              "distinct": 46,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 22,
+              "largestGroup": 7,
+              "mostUsed": [
+                "راشد×7",
+                "علي×6",
+                "حمد×5",
+                "ليان×5",
+                "ناصر×5"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 5,
+          "noveltyBreachDimensions": [
+            "entity_pattern",
+            "entity_pattern",
+            "entity_word",
+            "entity_word_batch",
+            "entity_pattern"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 46,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "target_signature": {
+              "distinct": 46,
+              "largestGroup": 2
+            },
+            "scenario_signature": {
+              "distinct": 39,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "entity_pattern": {
+              "distinct": 10,
+              "largestGroup": 23
+            },
+            "stem_structure": {
+              "distinct": 4,
+              "largestGroup": 21
+            }
+          },
+          "entityConcentration": {
+            "distinct": 22,
+            "largestGroup": 7,
+            "mostUsed": [
+              "راشد×7",
+              "علي×6",
+              "حمد×5",
+              "ليان×5",
+              "ناصر×5"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-4",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "medium": 29,
+            "hard": 8,
+            "easy": 13
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 50,
+              "itemsInARepeatedGroup": 0,
+              "largestGroup": 1
+            },
+            "parameterizationShapes": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "constructions": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "scenarios": {
+              "distinct": 41,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "skills": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 28,
+              "largestGroup": 5,
+              "mostUsed": [
+                "ناصر×5",
+                "نورة×4",
+                "سالم×4",
+                "جهاز×4",
+                "سيارة×4"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 5,
+          "noveltyBreachDimensions": [
+            "entity_pattern",
+            "entity_word_batch",
+            "entity_pattern",
+            "entity_word_batch",
+            "entity_pattern"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "construction_signature": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "target_signature": {
+              "distinct": 44,
+              "largestGroup": 2
+            },
+            "scenario_signature": {
+              "distinct": 41,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "entity_pattern": {
+              "distinct": 9,
+              "largestGroup": 23
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 16
+            }
+          },
+          "entityConcentration": {
+            "distinct": 28,
+            "largestGroup": 5,
+            "mostUsed": [
+              "ناصر×5",
+              "نورة×4",
+              "سالم×4",
+              "جهاز×4",
+              "سيارة×4"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-5",
+          "kind": "ALL_HARD",
+          "delivered": 50,
+          "bands": {
+            "hard": 50
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 29,
+              "itemsInARepeatedGroup": 37,
+              "largestGroup": 3
+            },
+            "parameterizationShapes": {
+              "distinct": 35,
+              "largestGroup": 4
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 30,
+              "largestGroup": 3,
+              "itemsInARepeatedGroup": 35
+            },
+            "constructions": {
+              "distinct": 36,
+              "largestGroup": 3,
+              "itemsInARepeatedGroup": 25
+            },
+            "scenarios": {
+              "distinct": 34,
+              "largestGroup": 4
+            },
+            "stemSkeletons": {
+              "distinct": 39,
+              "largestGroup": 5,
+              "itemsInARepeatedGroup": 18
+            },
+            "skills": {
+              "distinct": 28,
+              "largestGroup": 4
+            },
+            "entities": {
+              "distinct": 22,
+              "largestGroup": 3,
+              "mostUsed": [
+                "سالم×3",
+                "سامي×3",
+                "هند×3",
+                "خالد×2",
+                "نورة×2"
+              ]
+            },
+            "longestSimilarRun": 2
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 22,
+          "noveltyBreachDimensions": [
+            "entity_pattern",
+            "entity_pattern",
+            "entity_pattern",
+            "combination",
+            "combination",
+            "entity_pattern",
+            "entity_word_batch",
+            "entity_pattern",
+            "combination",
+            "combination",
+            "entity_pattern",
+            "consecutive",
+            "entity_word_batch",
+            "combination",
+            "entity_pattern",
+            "entity_pattern",
+            "entity_pattern",
+            "entity_pattern",
+            "multi",
+            "combination",
+            "combination",
+            "entity_pattern"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 28,
+              "largestGroup": 4
+            },
+            "structural_reasoning_signature": {
+              "distinct": 30,
+              "largestGroup": 3
+            },
+            "construction_signature": {
+              "distinct": 36,
+              "largestGroup": 3
+            },
+            "target_signature": {
+              "distinct": 26,
+              "largestGroup": 5
+            },
+            "scenario_signature": {
+              "distinct": 34,
+              "largestGroup": 4
+            },
+            "stem_skeleton": {
+              "distinct": 39,
+              "largestGroup": 5
+            },
+            "entity_pattern": {
+              "distinct": 8,
+              "largestGroup": 38
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 19
+            }
+          },
+          "entityConcentration": {
+            "distinct": 22,
+            "largestGroup": 3,
+            "mostUsed": [
+              "سالم×3",
+              "سامي×3",
+              "هند×3",
+              "خالد×2",
+              "نورة×2"
+            ]
+          },
+          "longestSimilarRun": 2
+        }
+      ]
+    },
+    {
+      "seed": "RC27-V5",
+      "refused": false,
+      "questions": 250,
+      "gates": {
+        "wrongKeys": 0,
+        "ambiguousPublished": 0,
+        "noValidAnswerPublished": 0,
+        "duplicateOrEquivalentOptions": 0,
+        "invalidQuestions": 0,
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "exhaustions": 0,
+        "unexplainedFallbacks": 0
+      },
+      "repetition": {
+        "items": 250,
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "parameterOnlyVariants": {
+          "groups": 124,
+          "itemsInARepeatedGroup": 191,
+          "largestGroup": 5
+        },
+        "parameterizationShapes": {
+          "distinct": 143,
+          "largestGroup": 6
+        },
+        "repeatedReasoningTarget": {
+          "distinct": 126,
+          "largestGroup": 5,
+          "itemsInARepeatedGroup": 187
+        },
+        "constructions": {
+          "distinct": 173,
+          "largestGroup": 5,
+          "itemsInARepeatedGroup": 123
+        },
+        "scenarios": {
+          "distinct": 111,
+          "largestGroup": 6
+        },
+        "stemSkeletons": {
+          "distinct": 209,
+          "largestGroup": 10,
+          "itemsInARepeatedGroup": 67
+        },
+        "skills": {
+          "distinct": 112,
+          "largestGroup": 5
+        },
+        "entities": {
+          "distinct": 31,
+          "largestGroup": 18,
+          "mostUsed": [
+            "عمر×18",
+            "راشد×17",
+            "آلة×17",
+            "سالم×16",
+            "هند×16"
+          ]
+        },
+        "longestSimilarRun": 2
+      },
+      "novelty": {
+        "rejections": 631,
+        "byReason": {
+          "NOVELTY_REPEATED_COMBINATION": 53,
+          "NOVELTY_CONSECUTIVE_SIMILARITY": 8,
+          "NOVELTY_DIMENSION_DOMINANCE": 564,
+          "NOVELTY_MULTI_DIMENSION_SIMILARITY": 6
+        },
+        "fallbacks": 39,
+        "exhaustions": 0
+      },
+      "telemetryBalanced": true,
+      "sessions": [
+        {
+          "session": "SESSION-1",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "medium": 29,
+            "easy": 13,
+            "hard": 8
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 49,
+              "itemsInARepeatedGroup": 2,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "constructions": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "scenarios": {
+              "distinct": 45,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "skills": {
+              "distinct": 47,
+              "largestGroup": 3
+            },
+            "entities": {
+              "distinct": 26,
+              "largestGroup": 6,
+              "mostUsed": [
+                "عمر×6",
+                "آلة×6",
+                "ماجد×5",
+                "سارة×5",
+                "ناصر×4"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 0,
+          "noveltyBreachDimensions": [],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 47,
+              "largestGroup": 3
+            },
+            "structural_reasoning_signature": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "target_signature": {
+              "distinct": 45,
+              "largestGroup": 3
+            },
+            "scenario_signature": {
+              "distinct": 45,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "entity_pattern": {
+              "distinct": 9,
+              "largestGroup": 20
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 14
+            }
+          },
+          "entityConcentration": {
+            "distinct": 26,
+            "largestGroup": 6,
+            "mostUsed": [
+              "عمر×6",
+              "آلة×6",
+              "ماجد×5",
+              "سارة×5",
+              "ناصر×4"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-2",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "medium": 29,
+            "hard": 8,
+            "easy": 13
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 48,
+              "itemsInARepeatedGroup": 4,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 48,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 4
+            },
+            "constructions": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "scenarios": {
+              "distinct": 45,
+              "largestGroup": 2
+            },
+            "stemSkeletons": {
+              "distinct": 47,
+              "largestGroup": 3,
+              "itemsInARepeatedGroup": 5
+            },
+            "skills": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 21,
+              "largestGroup": 7,
+              "mostUsed": [
+                "عمر×7",
+                "مريم×7",
+                "آلة×6",
+                "خالد×5",
+                "بدر×4"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 4,
+          "noveltyBreachDimensions": [
+            "entity_pattern",
+            "entity_pattern",
+            "entity_pattern",
+            "combination"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 47,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "target_signature": {
+              "distinct": 43,
+              "largestGroup": 3
+            },
+            "scenario_signature": {
+              "distinct": 45,
+              "largestGroup": 2
+            },
+            "stem_skeleton": {
+              "distinct": 47,
+              "largestGroup": 3
+            },
+            "entity_pattern": {
+              "distinct": 10,
+              "largestGroup": 23
+            },
+            "stem_structure": {
+              "distinct": 4,
+              "largestGroup": 17
+            }
+          },
+          "entityConcentration": {
+            "distinct": 21,
+            "largestGroup": 7,
+            "mostUsed": [
+              "عمر×7",
+              "مريم×7",
+              "آلة×6",
+              "خالد×5",
+              "بدر×4"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-3",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "easy": 13,
+            "medium": 29,
+            "hard": 8
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 45,
+              "itemsInARepeatedGroup": 10,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 45,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 45,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 10
+            },
+            "constructions": {
+              "distinct": 49,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 2
+            },
+            "scenarios": {
+              "distinct": 41,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 50,
+              "largestGroup": 1,
+              "itemsInARepeatedGroup": 0
+            },
+            "skills": {
+              "distinct": 45,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 26,
+              "largestGroup": 5,
+              "mostUsed": [
+                "جهاز×5",
+                "ناصر×3",
+                "ريم×3",
+                "سالم×3",
+                "علي×3"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 4,
+          "noveltyBreachDimensions": [
+            "entity_pattern",
+            "entity_pattern",
+            "entity_word_batch",
+            "entity_pattern"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 45,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 45,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 49,
+              "largestGroup": 2
+            },
+            "target_signature": {
+              "distinct": 45,
+              "largestGroup": 2
+            },
+            "scenario_signature": {
+              "distinct": 41,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 50,
+              "largestGroup": 1
+            },
+            "entity_pattern": {
+              "distinct": 9,
+              "largestGroup": 23
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 20
+            }
+          },
+          "entityConcentration": {
+            "distinct": 26,
+            "largestGroup": 5,
+            "mostUsed": [
+              "جهاز×5",
+              "ناصر×3",
+              "ريم×3",
+              "سالم×3",
+              "علي×3"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-4",
+          "kind": "MIXED",
+          "delivered": 50,
+          "bands": {
+            "hard": 8,
+            "medium": 29,
+            "easy": 13
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 43,
+              "itemsInARepeatedGroup": 14,
+              "largestGroup": 2
+            },
+            "parameterizationShapes": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 43,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 14
+            },
+            "constructions": {
+              "distinct": 46,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 8
+            },
+            "scenarios": {
+              "distinct": 41,
+              "largestGroup": 3
+            },
+            "stemSkeletons": {
+              "distinct": 48,
+              "largestGroup": 2,
+              "itemsInARepeatedGroup": 4
+            },
+            "skills": {
+              "distinct": 43,
+              "largestGroup": 2
+            },
+            "entities": {
+              "distinct": 24,
+              "largestGroup": 5,
+              "mostUsed": [
+                "خالد×5",
+                "سالم×5",
+                "هند×4",
+                "ريم×4",
+                "متجر×3"
+              ]
+            },
+            "longestSimilarRun": 0
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 10,
+          "noveltyBreachDimensions": [
+            "entity_pattern",
+            "entity_pattern",
+            "entity_word_batch",
+            "entity_pattern",
+            "entity_word_batch",
+            "entity_pattern",
+            "entity_pattern",
+            "multi",
+            "entity_pattern",
+            "entity_pattern"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 43,
+              "largestGroup": 2
+            },
+            "structural_reasoning_signature": {
+              "distinct": 43,
+              "largestGroup": 2
+            },
+            "construction_signature": {
+              "distinct": 46,
+              "largestGroup": 2
+            },
+            "target_signature": {
+              "distinct": 40,
+              "largestGroup": 3
+            },
+            "scenario_signature": {
+              "distinct": 41,
+              "largestGroup": 3
+            },
+            "stem_skeleton": {
+              "distinct": 48,
+              "largestGroup": 2
+            },
+            "entity_pattern": {
+              "distinct": 8,
+              "largestGroup": 27
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 17
+            }
+          },
+          "entityConcentration": {
+            "distinct": 24,
+            "largestGroup": 5,
+            "mostUsed": [
+              "خالد×5",
+              "سالم×5",
+              "هند×4",
+              "ريم×4",
+              "متجر×3"
+            ]
+          },
+          "longestSimilarRun": 0
+        },
+        {
+          "session": "SESSION-5",
+          "kind": "ALL_HARD",
+          "delivered": 50,
+          "bands": {
+            "hard": 50
+          },
+          "repetition": {
+            "items": 50,
+            "exactDuplicates": 0,
+            "semanticDuplicates": 0,
+            "parameterOnlyVariants": {
+              "groups": 32,
+              "itemsInARepeatedGroup": 32,
+              "largestGroup": 3
+            },
+            "parameterizationShapes": {
+              "distinct": 33,
+              "largestGroup": 4
+            },
+            "repeatedReasoningTarget": {
+              "distinct": 33,
+              "largestGroup": 3,
+              "itemsInARepeatedGroup": 30
+            },
+            "constructions": {
+              "distinct": 37,
+              "largestGroup": 3,
+              "itemsInARepeatedGroup": 25
+            },
+            "scenarios": {
+              "distinct": 32,
+              "largestGroup": 4
+            },
+            "stemSkeletons": {
+              "distinct": 43,
+              "largestGroup": 4,
+              "itemsInARepeatedGroup": 12
+            },
+            "skills": {
+              "distinct": 29,
+              "largestGroup": 3
+            },
+            "entities": {
+              "distinct": 22,
+              "largestGroup": 6,
+              "mostUsed": [
+                "هند×6",
+                "علي×6",
+                "راشد×5",
+                "حمد×4",
+                "سامي×4"
+              ]
+            },
+            "longestSimilarRun": 2
+          },
+          "gates": {
+            "wrongKeys": 0,
+            "ambiguousPublished": 0,
+            "noValidAnswerPublished": 0,
+            "duplicateOrEquivalentOptions": 0,
+            "invalidQuestions": 0
+          },
+          "noveltyFallbacks": 21,
+          "noveltyBreachDimensions": [
+            "combination",
+            "entity_pattern",
+            "entity_word_batch",
+            "multi",
+            "entity_pattern",
+            "entity_pattern",
+            "multi",
+            "entity_pattern",
+            "consecutive",
+            "entity_pattern",
+            "entity_pattern",
+            "entity_pattern",
+            "combination",
+            "entity_pattern",
+            "combination",
+            "entity_pattern",
+            "entity_pattern",
+            "multi",
+            "combination",
+            "entity_word_batch",
+            "entity_word_batch"
+          ],
+          "capWarnings": 0,
+          "noveltySpread": {
+            "skill_signature": {
+              "distinct": 29,
+              "largestGroup": 3
+            },
+            "structural_reasoning_signature": {
+              "distinct": 33,
+              "largestGroup": 3
+            },
+            "construction_signature": {
+              "distinct": 37,
+              "largestGroup": 3
+            },
+            "target_signature": {
+              "distinct": 30,
+              "largestGroup": 4
+            },
+            "scenario_signature": {
+              "distinct": 32,
+              "largestGroup": 4
+            },
+            "stem_skeleton": {
+              "distinct": 43,
+              "largestGroup": 4
+            },
+            "entity_pattern": {
+              "distinct": 9,
+              "largestGroup": 34
+            },
+            "stem_structure": {
+              "distinct": 5,
+              "largestGroup": 15
+            }
+          },
+          "entityConcentration": {
+            "distinct": 22,
+            "largestGroup": 6,
+            "mostUsed": [
+              "هند×6",
+              "علي×6",
+              "راشد×5",
+              "حمد×4",
+              "سامي×4"
+            ]
+          },
+          "longestSimilarRun": 2
+        }
+      ]
+    }
+  ],
+  "reproducibility": {
+    "seeds": 3,
+    "failures": []
+  },
+  "stress": {
+    "draws": 4000,
+    "delivered": 4000,
+    "exhausted": 0,
+    "exhaustionRate": 0,
+    "gates": {
+      "wrongKeys": 0,
+      "ambiguousPublished": 0,
+      "noValidAnswerPublished": 0,
+      "duplicateOrEquivalentOptions": 0,
+      "invalidQuestions": 0
+    },
+    "repetition": {
+      "items": 2500,
+      "exactDuplicates": 0,
+      "semanticDuplicates": 529,
+      "parameterOnlyVariants": {
+        "groups": 182,
+        "itemsInARepeatedGroup": 2491,
+        "largestGroup": 72
+      },
+      "parameterizationShapes": {
+        "distinct": 340,
+        "largestGroup": 58
+      },
+      "repeatedReasoningTarget": {
+        "distinct": 234,
+        "largestGroup": 72,
+        "itemsInARepeatedGroup": 2460
+      },
+      "constructions": {
+        "distinct": 430,
+        "largestGroup": 65,
+        "itemsInARepeatedGroup": 2408
+      },
+      "scenarios": {
+        "distinct": 157,
+        "largestGroup": 65
+      },
+      "stemSkeletons": {
+        "distinct": 978,
+        "largestGroup": 118,
+        "itemsInARepeatedGroup": 1941
+      },
+      "skills": {
+        "distinct": 168,
+        "largestGroup": 72
+      },
+      "entities": {
+        "distinct": 31,
+        "largestGroup": 160,
+        "mostUsed": [
+          "عمر×160",
+          "آلة×141",
+          "راشد×116",
+          "علي×110",
+          "جهاز×91"
+        ]
+      },
+      "longestSimilarRun": 2
+    },
+    "telemetryBalanced": true
+  }
+}

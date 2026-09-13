@@ -443,7 +443,8 @@ export class NumericalQuestionGeneratorEngine {
     // session. It never bypasses itself — a candidate delivered against its
     // judgement is delivered as a recorded breach, the same way the template
     // and reasoning caps report theirs.
-    const novelty = new NoveltyScheduler(count);
+    const novelty = new NoveltyScheduler(count, undefined,
+      options.batchEntityCounts ?? null, options.batchQuestionCount ?? null);
     // RC2-004. Two generation modes, named and documented, because the RC1
     // engine silently had both and called the result reproducible.
     //
@@ -780,12 +781,19 @@ export class NumericalQuestionGeneratorEngine {
     const seed = options.seed ?? makeSeed('NUMBATCH');
     const batchFingerprints = new Set();
     const batchReasoningCounts = new Map();
+    // RC2.7-6. Entity concentration measured across the batch rather than only
+    // inside each session: the validation found one word reaching 25 of 250
+    // where no single session had more than 6 of it.
+    const batchEntityCounts = new Map();
+    const batchQuestionCount = specs.reduce((a, x) => a + (Number(x.count) || 0), 0);
     const sessions = specs.map((spec, k) => this.generatePractice({
       ...options.defaults,
       ...spec,
       seed: `${seed}|S${k + 1}`,
       batchFingerprints,
-      batchReasoningCounts
+      batchReasoningCounts,
+      batchEntityCounts,
+      batchQuestionCount
     }));
     return {
       engine_version: this.version,
@@ -798,6 +806,8 @@ export class NumericalQuestionGeneratorEngine {
         distinct_semantic_fingerprints: batchFingerprints.size,
         distinct_reasoning_paths: batchReasoningCounts.size,
         most_repeated_reasoning_path: Math.max(0, ...batchReasoningCounts.values()),
+        distinct_entities: batchEntityCounts.size,
+        most_repeated_entity: Math.max(0, ...batchEntityCounts.values()),
         published_candidates: sessions.reduce((a, s) => a + s.validation.session_cost.published_candidates, 0),
         discarded: sessions.reduce((a, s) => a + s.validation.session_cost.discarded, 0)
       }

@@ -67,6 +67,20 @@ export const NOVELTY_CAPS_PER_50 = Object.freeze({
  */
 export const ENTITY_CAP_PER_50 = 6;
 
+/**
+ * And across a whole batch. A per-session cap says nothing about a candidate
+ * meeting «آلة» twenty-five times over five sessions of a mock exam, which is
+ * the same perception one session further out.
+ *
+ * Scaled by the BATCH size, not the session's: about thirty entity words are in
+ * play and a 250-question batch names roughly 325 of them, so the mean word
+ * appears about eleven times. Three per fifty puts the ceiling at fifteen for
+ * such a batch — half as much again as the mean, which binds the outliers and
+ * leaves the ordinary distribution alone. A cap near the mean would do nothing
+ * but generate breaches.
+ */
+export const ENTITY_BATCH_CAP_PER_50 = 3;
+
 /** How many dimensions two questions may share before they read as one. */
 export const CONSECUTIVE_SIMILARITY_LIMIT = 3;
 export const SESSION_SIMILARITY_LIMIT = 5;
@@ -94,9 +108,15 @@ export class NoveltyScheduler {
    * @param {number} count how many questions the session will deliver
    * @param {object} [caps] override the per-50 caps (tests, not production)
    */
-  constructor(count, caps = NOVELTY_CAPS_PER_50) {
+  constructor(count, caps = NOVELTY_CAPS_PER_50, batchEntities = null, batchCount = null) {
     this.count = Math.max(1, Number(count) || 1);
     const scale = this.count / 50;
+    // Shared across the sessions of one batch when the caller supplies it; a
+    // lone session passes nothing and is bounded by its own cap alone.
+    this.batchEntities = batchEntities;
+    this.batchEntityCap = batchEntities
+      ? Math.max(4, Math.ceil(ENTITY_BATCH_CAP_PER_50 * (Math.max(this.count, Number(batchCount) || 0) / 50)))
+      : Infinity;
     this.caps = Object.fromEntries(Object.entries(caps)
       .map(([k, v]) => [k, Math.max(2, Math.ceil(v * scale))]));
     this.entityCap = Math.max(2, Math.ceil(ENTITY_CAP_PER_50 * scale));
@@ -131,6 +151,9 @@ export class NoveltyScheduler {
       if ((this.entities.get(w) ?? 0) >= this.entityCap) {
         return {ok: false, reason: REASON.NOVELTY_DIMENSION_DOMINANCE, dimension: 'entity_word'};
       }
+      if (this.batchEntities && (this.batchEntities.get(w) ?? 0) >= this.batchEntityCap) {
+        return {ok: false, reason: REASON.NOVELTY_DIMENSION_DOMINANCE, dimension: 'entity_word_batch'};
+      }
     }
     for (const earlier of this.accepted) {
       if (sharedDimensions(earlier, candidate) >= SESSION_SIMILARITY_LIMIT) {
@@ -153,6 +176,7 @@ export class NoveltyScheduler {
     }
     for (const w of entityWordsIn(candidate.question)) {
       this.entities.set(w, (this.entities.get(w) ?? 0) + 1);
+      if (this.batchEntities) this.batchEntities.set(w, (this.batchEntities.get(w) ?? 0) + 1);
     }
     this.accepted.push(candidate);
     if (forced) {
@@ -184,7 +208,7 @@ export class NoveltyScheduler {
     }
     return {
       delivered: this.accepted.length,
-      caps: {...this.caps, entity_word: this.entityCap},
+      caps: {...this.caps, entity_word: this.entityCap, entity_word_batch: this.batchEntityCap},
       spread,
       entities: {
         distinct: this.entities.size,

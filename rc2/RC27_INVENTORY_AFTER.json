@@ -1,0 +1,1379 @@
+{
+  "schema": "rc27-inventory-v1",
+  "generatedAt": "2026-09-13T09:19:36.772Z",
+  "perBand": 200,
+  "totals": {
+    "sampled": 9000,
+    "templates": 145,
+    "concepts": 171,
+    "reasoningStructures": 308,
+    "constructions": 489,
+    "scenarios": 157,
+    "stemSkeletons": 1781,
+    "requestedTargets": 132,
+    "entityNamesUsed": 18,
+    "distractorModels": 146,
+    "exactDuplicates": 0,
+    "forms": {
+      "forward": 8113,
+      "comparison": 81,
+      "reverse": 557,
+      "maximum": 49,
+      "minimum": 200
+    }
+  },
+  "families": [
+    {
+      "family": "sequences",
+      "sampled": 600,
+      "templates": 16,
+      "templatesByBand": {
+        "easy": 2,
+        "medium": 8,
+        "hard": 6
+      },
+      "concepts": 28,
+      "reasoningStructures": 142,
+      "constructions": 25,
+      "requestedTargets": 7,
+      "targetList": [
+        "missingMiddleTerm",
+        "nextTerm",
+        "nextTermOfSecondRun",
+        "previousTerm",
+        "secondOfPair",
+        "termAfterNext",
+        "wrongTerm"
+      ],
+      "forms": {
+        "forward": 576,
+        "comparison": 22,
+        "reverse": 2
+      },
+      "scenarios": 16,
+      "stemSkeletons": 5,
+      "stemSkeletonsPerTemplate": 0.31,
+      "entityNamesUsed": 0,
+      "distractorModels": 24,
+      "parameterOnlyVariantGroups": 25,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.0717,
+      "topConstructions": [
+        {
+          "key": "family:sequences|scenario:SEQ_E_GEO|asks:missingMiddleTerm|direction:forward",
+          "count": 43
+        },
+        {
+          "key": "family:sequences|scenario:SEQ_E_GEO|asks:nextTerm|direction:forward",
+          "count": 41
+        },
+        {
+          "key": "family:sequences|scenario:SEQ_E_ARITH|asks:previousTerm|direction:forward",
+          "count": 40
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "sequences/SEQ_E_GEO",
+          "count": 107
+        },
+        {
+          "key": "sequences/SEQ_E_ARITH",
+          "count": 93
+        },
+        {
+          "key": "sequences/SEQ_H_ALT_DIV",
+          "count": 39
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 390,
+          "key": "ما العدد التالي في المتتالية؟"
+        },
+        {
+          "count": 109,
+          "key": "ما العدد المفقود في المتتالية؟"
+        },
+        {
+          "count": 65,
+          "key": "ما العدد السابق في المتتالية؟"
+        }
+      ],
+      "templatesSharingOneSkeleton": [
+        {
+          "templates": [
+            "SEQ_E_GEO",
+            "SEQ_E_ARITH",
+            "SEQ_M_PAIR_RULE",
+            "SEQ_M_INTERLEAVED",
+            "SEQ_M_DOUBLE_DIFF",
+            "SEQ_M_LINEAR_RECUR",
+            "SEQ_M_CYCLE3",
+            "SEQ_M_INC_DIFF",
+            "SEQ_M_ALT_OPS",
+            "SEQ_H_INDEX_MULT",
+            "SEQ_H_POW_INDEX",
+            "SEQ_H_DIGIT_PRODUCT",
+            "SEQ_H_ALT_DIV",
+            "SEQ_H_RECURRENCE",
+            "SEQ_H_DIGIT_SUM"
+          ],
+          "skeleton": "ما العدد التالي في المتتالية؟"
+        },
+        {
+          "templates": [
+            "SEQ_E_GEO",
+            "SEQ_E_ARITH",
+            "SEQ_M_LINEAR_RECUR"
+          ],
+          "skeleton": "ما العدد السابق في المتتالية؟"
+        },
+        {
+          "templates": [
+            "SEQ_E_GEO",
+            "SEQ_E_ARITH",
+            "SEQ_M_DOUBLE_DIFF",
+            "SEQ_M_INC_DIFF",
+            "SEQ_H_RECURRENCE"
+          ],
+          "skeleton": "ما العدد المفقود في المتتالية؟"
+        }
+      ]
+    },
+    {
+      "family": "ratios",
+      "sampled": 600,
+      "templates": 8,
+      "templatesByBand": {
+        "easy": 2,
+        "medium": 2,
+        "hard": 4
+      },
+      "concepts": 8,
+      "reasoningStructures": 11,
+      "constructions": 11,
+      "requestedTargets": 9,
+      "targetList": [
+        "commonTerm",
+        "largestSecondShare",
+        "sideA",
+        "sideABeforeTransfer",
+        "sideB",
+        "sideBBeforeTransfer",
+        "sumBeforeChange",
+        "sumOfAllThree",
+        "thirdTerm"
+      ],
+      "forms": {
+        "forward": 551,
+        "maximum": 49
+      },
+      "scenarios": 8,
+      "stemSkeletons": 36,
+      "stemSkeletonsPerTemplate": 4.5,
+      "entityNamesUsed": 0,
+      "distractorModels": 21,
+      "parameterOnlyVariantGroups": 11,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.1633,
+      "topConstructions": [
+        {
+          "key": "family:ratios|scenario:RAT_M_ADD_SIDE|asks:sumBeforeChange|direction:forward",
+          "count": 98
+        },
+        {
+          "key": "family:ratios|scenario:RAT_E_KNOWN|asks:sideB|direction:forward",
+          "count": 69
+        },
+        {
+          "key": "family:ratios|scenario:RAT_H_TWO_COMB|asks:thirdTerm|direction:forward",
+          "count": 54
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "ratios/RAT_E_KNOWN",
+          "count": 105
+        },
+        {
+          "key": "ratios/RAT_H_TRANSFER",
+          "count": 102
+        },
+        {
+          "key": "ratios/RAT_M_ADD_SIDE",
+          "count": 98
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 69,
+          "key": "النسبة أ : ب = # : #. إذا كانت أ = #، فما قيمة ب؟"
+        },
+        {
+          "count": 54,
+          "key": "النسبة أ : ب = # : #، والنسبة ب : ج = # : #. إذا كان أ + ب = #، فما قيمة ج؟"
+        },
+        {
+          "count": 52,
+          "key": "النسبة أ : ب = # : #، والنسبة ب : ج = # : #. إذا كان أ + ج = #، فما قيمة ب؟"
+        }
+      ],
+      "templatesSharingOneSkeleton": []
+    },
+    {
+      "family": "percentages",
+      "sampled": 600,
+      "templates": 9,
+      "templatesByBand": {
+        "easy": 3,
+        "medium": 5,
+        "hard": 1
+      },
+      "concepts": 9,
+      "reasoningStructures": 11,
+      "constructions": 9,
+      "requestedTargets": 9,
+      "targetList": [
+        "finalAfterTwoChanges",
+        "firstComponentVolume",
+        "firstGroupSize",
+        "netPercentChange",
+        "originalFromFinal",
+        "originalFromTwoChanges",
+        "percentOfValue",
+        "remainingAfterTwoStages",
+        "scaledCostAfterIncrease"
+      ],
+      "forms": {
+        "forward": 600
+      },
+      "scenarios": 9,
+      "stemSkeletons": 20,
+      "stemSkeletonsPerTemplate": 2.22,
+      "entityNamesUsed": 0,
+      "distractorModels": 28,
+      "parameterOnlyVariantGroups": 9,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.3333,
+      "topConstructions": [
+        {
+          "key": "family:percentages|scenario:PCT_H_TWO_GROUP_CHANGE|asks:firstGroupSize|direction:forward",
+          "count": 200
+        },
+        {
+          "key": "family:percentages|scenario:PCT_E_OF|asks:percentOfValue|direction:forward",
+          "count": 72
+        },
+        {
+          "key": "family:percentages|scenario:PCT_M_UNIT_PRICE|asks:scaledCostAfterIncrease|direction:forward",
+          "count": 67
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "percentages/PCT_H_TWO_GROUP_CHANGE",
+          "count": 200
+        },
+        {
+          "key": "percentages/PCT_E_OF",
+          "count": 72
+        },
+        {
+          "key": "percentages/PCT_M_UNIT_PRICE",
+          "count": 67
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 72,
+          "key": "ما قيمة #% من #؟"
+        },
+        {
+          "count": 68,
+          "key": "المعطيات: في مؤسسة قسمان، مجموع أفرادهما # شخصًا؛ ارتفع عدد أفراد القسم الأول بنسبة #% وان"
+        },
+        {
+          "count": 67,
+          "key": "في مؤسسة قسمان، مجموع أفرادهما # شخصًا. ارتفع عدد أفراد القسم الأول بنسبة #% وانخفض عدد أف"
+        }
+      ],
+      "templatesSharingOneSkeleton": []
+    },
+    {
+      "family": "averages",
+      "sampled": 600,
+      "templates": 9,
+      "templatesByBand": {
+        "easy": 2,
+        "medium": 6,
+        "hard": 1
+      },
+      "concepts": 9,
+      "reasoningStructures": 9,
+      "constructions": 63,
+      "requestedTargets": 9,
+      "targetList": [
+        "averageAfterAddingPair",
+        "firstGroupCount",
+        "newAverageAfterAdd",
+        "newAverageAfterRemove",
+        "newAverageAfterReplace",
+        "overlappingValue",
+        "valueForTargetAverage",
+        "weightedAverage",
+        "weightedAveragePlusValue"
+      ],
+      "forms": {
+        "forward": 600
+      },
+      "scenarios": 7,
+      "stemSkeletons": 272,
+      "stemSkeletonsPerTemplate": 30.22,
+      "entityNamesUsed": 0,
+      "distractorModels": 21,
+      "parameterOnlyVariantGroups": 9,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.0583,
+      "topConstructions": [
+        {
+          "key": "family:averages|scenario:exam_scores|asks:overlappingValue|direction:forward",
+          "count": 35
+        },
+        {
+          "key": "family:averages|scenario:nursery_heights|asks:overlappingValue|direction:forward",
+          "count": 32
+        },
+        {
+          "key": "family:averages|scenario:library_pages|asks:overlappingValue|direction:forward",
+          "count": 31
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "averages/nursery_heights",
+          "count": 99
+        },
+        {
+          "key": "averages/exam_scores",
+          "count": 93
+        },
+        {
+          "key": "averages/library_pages",
+          "count": 90
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 11,
+          "key": "المعطيات: متوسط القيم كلها في قائمة من # قيم هو #؛ متوسط أول # قيم في القائمة هو #؛ متوسط "
+        },
+        {
+          "count": 8,
+          "key": "متوسط أطوال # شتلات هو # سنتيمترًا. أُضيفت شتلة طولها # سنتيمترًا. فما متوسط الأطوال بعد ا"
+        },
+        {
+          "count": 8,
+          "key": "المعطيات: متوسط الصفحات كلها في سجل عدد صفحات # كتب هو # صفحة؛ متوسط أول # كتب في السجل هو"
+        }
+      ],
+      "templatesSharingOneSkeleton": []
+    },
+    {
+      "family": "ages",
+      "sampled": 600,
+      "templates": 8,
+      "templatesByBand": {
+        "easy": 1,
+        "medium": 6,
+        "hard": 1
+      },
+      "concepts": 8,
+      "reasoningStructures": 8,
+      "constructions": 8,
+      "requestedTargets": 5,
+      "targetList": [
+        "eldestAfterYears",
+        "olderAge",
+        "olderAgeNow",
+        "youngerAge",
+        "youngerAgeNow"
+      ],
+      "forms": {
+        "forward": 600
+      },
+      "scenarios": 8,
+      "stemSkeletons": 49,
+      "stemSkeletonsPerTemplate": 6.13,
+      "entityNamesUsed": 7,
+      "distractorModels": 18,
+      "parameterOnlyVariantGroups": 8,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.3333,
+      "topConstructions": [
+        {
+          "key": "family:ages|scenario:AGE_E_SUM_DIFF|asks:olderAge|direction:forward",
+          "count": 200
+        },
+        {
+          "key": "family:ages|scenario:AGE_H_PAST_FUT|asks:olderAgeNow|direction:forward",
+          "count": 200
+        },
+        {
+          "key": "family:ages|scenario:AGE_H_TWO_TIME|asks:youngerAgeNow|direction:forward",
+          "count": 39
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "ages/AGE_E_SUM_DIFF",
+          "count": 200
+        },
+        {
+          "key": "ages/AGE_H_PAST_FUT",
+          "count": 200
+        },
+        {
+          "key": "ages/AGE_H_TWO_TIME",
+          "count": 39
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 160,
+          "key": "شخص أكبر من الآخر بـ# سنوات، ومجموع عمريهما # سنة. كم @ الأكبر؟"
+        },
+        {
+          "count": 40,
+          "key": "شخص أكبر من الآخر بـ# سنة، ومجموع عمريهما # سنة. كم @ الأكبر؟"
+        },
+        {
+          "count": 29,
+          "key": "قبل # سنوات كان @ @ ثلاثة أمثال @ @. بعد # سنوات من الآن سيكون مجموع عمريهما # سنة. كم @ @"
+        }
+      ],
+      "templatesSharingOneSkeleton": []
+    },
+    {
+      "family": "speed",
+      "sampled": 600,
+      "templates": 10,
+      "templatesByBand": {
+        "easy": 2,
+        "medium": 6,
+        "hard": 2
+      },
+      "concepts": 12,
+      "reasoningStructures": 12,
+      "constructions": 59,
+      "requestedTargets": 12,
+      "targetList": [
+        "averageSpeed",
+        "boatSpeed",
+        "catchupTime",
+        "currentSpeed",
+        "distance",
+        "distanceFromTimeGap",
+        "firstLegDistance",
+        "meetingTime",
+        "secondLegHours",
+        "time",
+        "totalDistance",
+        "totalTimeMinutes"
+      ],
+      "forms": {
+        "forward": 443,
+        "reverse": 157
+      },
+      "scenarios": 9,
+      "stemSkeletons": 162,
+      "stemSkeletonsPerTemplate": 16.2,
+      "entityNamesUsed": 1,
+      "distractorModels": 36,
+      "parameterOnlyVariantGroups": 12,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.0917,
+      "topConstructions": [
+        {
+          "key": "family:speed|scenario:journey_split_between_two_speeds|asks:firstLegDistance|direction:reverse",
+          "count": 55
+        },
+        {
+          "key": "family:speed|scenario:boat_with_and_against_current|asks:currentSpeed|direction:reverse",
+          "count": 51
+        },
+        {
+          "key": "family:speed|scenario:journey_split_between_two_speeds|asks:secondLegHours|direction:reverse",
+          "count": 51
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "speed/journey_split_between_two_speeds",
+          "count": 106
+        },
+        {
+          "key": "speed/boat_with_and_against_current",
+          "count": 94
+        },
+        {
+          "key": "speed/bicycle",
+          "count": 61
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 46,
+          "key": "قطع قارب # كيلومترًا مع التيار في # ساعة، وقطع المسافة نفسها ضد التيار في # ساعة. فما سرعة"
+        },
+        {
+          "count": 33,
+          "key": "قطع قارب # كيلومترًا مع التيار في # ساعة، وقطع المسافة نفسها ضد التيار في # ساعة. فما سرعة"
+        },
+        {
+          "count": 25,
+          "key": "المسافة نفسها تُقطع بسرعة # كم/ساعة أو بسرعة # كم/ساعة. إذا كان الزمن عند السرعة # أطول بم"
+        }
+      ],
+      "templatesSharingOneSkeleton": []
+    },
+    {
+      "family": "work_time",
+      "sampled": 600,
+      "templates": 11,
+      "templatesByBand": {
+        "easy": 3,
+        "medium": 6,
+        "hard": 2
+      },
+      "concepts": 11,
+      "reasoningStructures": 12,
+      "constructions": 11,
+      "requestedTargets": 11,
+      "targetList": [
+        "daysAfterEfficiencyGain",
+        "daysForNewCrew",
+        "extraDaysAfterCrewAndEfficiency",
+        "extraDaysAfterCrewChange",
+        "extraDaysAfterTwoStages",
+        "extraWorkers",
+        "fasterSoloDays",
+        "secondSoloDays",
+        "threeTogetherDays",
+        "workersForDeadline",
+        "workersForMoreWork"
+      ],
+      "forms": {
+        "forward": 577,
+        "reverse": 23
+      },
+      "scenarios": 11,
+      "stemSkeletons": 84,
+      "stemSkeletonsPerTemplate": 7.64,
+      "entityNamesUsed": 0,
+      "distractorModels": 31,
+      "parameterOnlyVariantGroups": 11,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.295,
+      "topConstructions": [
+        {
+          "key": "family:work_time|scenario:three_workers_timed_in_pairs|asks:threeTogetherDays|direction:forward",
+          "count": 177
+        },
+        {
+          "key": "family:work_time|scenario:WORK_E_INVERSE|asks:daysForNewCrew|direction:forward",
+          "count": 68
+        },
+        {
+          "key": "family:work_time|scenario:WORK_M_EFF|asks:daysAfterEfficiencyGain|direction:forward",
+          "count": 67
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "work_time/three_workers_timed_in_pairs",
+          "count": 177
+        },
+        {
+          "key": "work_time/WORK_E_INVERSE",
+          "count": 68
+        },
+        {
+          "key": "work_time/WORK_M_EFF",
+          "count": 67
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 134,
+          "key": "ينجز العاملان الأول والثاني عملًا معًا في # يومًا، والثاني والثالث في # يومًا، والأول والث"
+        },
+        {
+          "count": 29,
+          "key": "يستطيع # عمال إنجاز عمل في # يومًا. إذا عمل # عاملًا بالكفاءة نفسها، فكم يومًا يحتاجون؟"
+        },
+        {
+          "count": 23,
+          "key": "يستطيع # عمال إنجاز مهمتين خلال # أيام. كم عاملًا نحتاج لإنجاز # مهام خلال # أيام بالكفاءة"
+        }
+      ],
+      "templatesSharingOneSkeleton": []
+    },
+    {
+      "family": "machines",
+      "sampled": 600,
+      "templates": 10,
+      "templatesByBand": {
+        "easy": 1,
+        "medium": 8,
+        "hard": 1
+      },
+      "concepts": 10,
+      "reasoningStructures": 10,
+      "constructions": 67,
+      "requestedTargets": 9,
+      "targetList": [
+        "firstTypeRate",
+        "machinesForTarget",
+        "minimumSecondTypeMachines",
+        "mixedFleetOutput",
+        "mixedGroupOutput",
+        "mixedPairOutput",
+        "outputForNewSetup",
+        "stoppageHour",
+        "totalAcrossStages"
+      ],
+      "forms": {
+        "forward": 400,
+        "minimum": 200
+      },
+      "scenarios": 16,
+      "stemSkeletons": 210,
+      "stemSkeletonsPerTemplate": 21,
+      "entityNamesUsed": 1,
+      "distractorModels": 29,
+      "parameterOnlyVariantGroups": 10,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.0583,
+      "topConstructions": [
+        {
+          "key": "family:machines|scenario:textile_shirts/mixed_fleet_shortfall|asks:minimumSecondTypeMachines|direction:minimum",
+          "count": 35
+        },
+        {
+          "key": "family:machines|scenario:press_pages|asks:outputForNewSetup|direction:forward",
+          "count": 33
+        },
+        {
+          "key": "family:machines|scenario:abstract_pieces/mixed_fleet_shortfall|asks:minimumSecondTypeMachines|direction:minimum",
+          "count": 31
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "machines/press_pages",
+          "count": 60
+        },
+        {
+          "key": "machines/abstract_pieces",
+          "count": 57
+        },
+        {
+          "key": "machines/textile_shirts",
+          "count": 54
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 21,
+          "key": "تنتج # آلات متطابقة في الإنتاجية # صفحة خلال # ساعات. كم صفحة تنتج # آلات من النوع نفسه خل"
+        },
+        {
+          "count": 19,
+          "key": "تنتج # آلات متطابقة في الإنتاجية # علبة خلال # ساعات. كم علبة تنتج # آلات من النوع نفسه خل"
+        },
+        {
+          "count": 18,
+          "key": "تنتج # آلات متطابقة في الإنتاجية # قميصًا خلال # ساعات. كم قميصًا تنتج # آلات من النوع نفس"
+        }
+      ],
+      "templatesSharingOneSkeleton": []
+    },
+    {
+      "family": "direct_proportion",
+      "sampled": 600,
+      "templates": 11,
+      "templatesByBand": {
+        "easy": 6,
+        "medium": 2,
+        "hard": 3
+      },
+      "concepts": 14,
+      "reasoningStructures": 14,
+      "constructions": 14,
+      "requestedTargets": 9,
+      "targetList": [
+        "boxUnitPrice",
+        "firstPartnerShare",
+        "replacedVolume",
+        "requiredInput",
+        "scaledOutput",
+        "scaledOutputFromResource",
+        "scaledOutputPlusFee",
+        "scaledOutputPlusReserve",
+        "smallestQuantityWhereSecondPlanWins"
+      ],
+      "forms": {
+        "forward": 472,
+        "reverse": 69,
+        "comparison": 59
+      },
+      "scenarios": 11,
+      "stemSkeletons": 116,
+      "stemSkeletonsPerTemplate": 10.55,
+      "entityNamesUsed": 5,
+      "distractorModels": 31,
+      "parameterOnlyVariantGroups": 14,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.1717,
+      "topConstructions": [
+        {
+          "key": "family:direct_proportion|scenario:PROP_H_TWO_ITEM_SYSTEM|asks:boxUnitPrice|direction:forward",
+          "count": 103
+        },
+        {
+          "key": "family:direct_proportion|scenario:PROP_H_COMPOUND|asks:scaledOutputPlusReserve|direction:forward",
+          "count": 97
+        },
+        {
+          "key": "family:direct_proportion|scenario:partnership_capital_times_duration|asks:firstPartnerShare|direction:forward",
+          "count": 72
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "direct_proportion/PROP_H_TWO_ITEM_SYSTEM",
+          "count": 103
+        },
+        {
+          "key": "direct_proportion/PROP_H_COMPOUND",
+          "count": 97
+        },
+        {
+          "key": "direct_proportion/partnership_capital_times_duration",
+          "count": 72
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 50,
+          "key": "شارك @ بمبلغ # درهمًا لمدة # أشهر، وشارك @ بمبلغ # درهمًا لمدة # أشهر. فإذا بلغ الربح # در"
+        },
+        {
+          "count": 32,
+          "key": "تحتاج # وحدات إلى # كيلوجرامًا من مادة. نريد تجهيز # وحدات، مع إضافة احتياط بنسبة #% فوق ا"
+        },
+        {
+          "count": 29,
+          "key": "تتساوى العناصر في الوزن. إذا كان وزن # عناصر هو # كيلوجرامات، فما وزن # عنصرًا من النوع نف"
+        }
+      ],
+      "templatesSharingOneSkeleton": []
+    },
+    {
+      "family": "fractions",
+      "sampled": 200,
+      "templates": 3,
+      "templatesByBand": {
+        "easy": 3,
+        "medium": 0,
+        "hard": 0
+      },
+      "concepts": 8,
+      "reasoningStructures": 8,
+      "constructions": 8,
+      "requestedTargets": 3,
+      "targetList": [
+        "chainResult",
+        "hiddenFraction",
+        "startNumber"
+      ],
+      "forms": {
+        "forward": 200
+      },
+      "scenarios": 3,
+      "stemSkeletons": 163,
+      "stemSkeletonsPerTemplate": 54.33,
+      "entityNamesUsed": 0,
+      "distractorModels": 9,
+      "parameterOnlyVariantGroups": 8,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.165,
+      "topConstructions": [
+        {
+          "key": "family:fractions|scenario:FRAC_E_2|asks:chainResult|direction:forward",
+          "count": 33
+        },
+        {
+          "key": "family:fractions|scenario:FRAC_M_3|asks:hiddenFraction|direction:forward",
+          "count": 31
+        },
+        {
+          "key": "family:fractions|scenario:FRAC_H_4|asks:startNumber|direction:forward",
+          "count": 30
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "fractions/FRAC_H_4",
+          "count": 78
+        },
+        {
+          "key": "fractions/FRAC_M_3",
+          "count": 77
+        },
+        {
+          "key": "fractions/FRAC_E_2",
+          "count": 45
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 3,
+          "key": "نصف عدد، ثم خُمس الناتج، ثم سُدس الناتج، فكان الناتج #. فما العدد؟"
+        },
+        {
+          "count": 3,
+          "key": "سُدس عدد، ثم خُمس الناتج، فكان الناتج #. فما العدد؟"
+        },
+        {
+          "count": 3,
+          "key": "ربع العدد #، ثم خُمس الناتج، ثم كسرٌ من الناتج، فكان الناتج #. فما هذا الكسر؟"
+        }
+      ],
+      "templatesSharingOneSkeleton": []
+    },
+    {
+      "family": "unit_rate",
+      "sampled": 600,
+      "templates": 7,
+      "templatesByBand": {
+        "easy": 4,
+        "medium": 2,
+        "hard": 1
+      },
+      "concepts": 7,
+      "reasoningStructures": 7,
+      "constructions": 47,
+      "requestedTargets": 6,
+      "targetList": [
+        "originalRate",
+        "requiredTime",
+        "requiredTimeAfterIncrease",
+        "scaledOutput",
+        "scaledOutputAfterIncrease",
+        "totalAcrossStages"
+      ],
+      "forms": {
+        "forward": 600
+      },
+      "scenarios": 8,
+      "stemSkeletons": 128,
+      "stemSkeletonsPerTemplate": 18.29,
+      "entityNamesUsed": 0,
+      "distractorModels": 23,
+      "parameterOnlyVariantGroups": 7,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.055,
+      "topConstructions": [
+        {
+          "key": "family:unit_rate|scenario:abstract_units|asks:originalRate|direction:forward",
+          "count": 33
+        },
+        {
+          "key": "family:unit_rate|scenario:press_pages|asks:originalRate|direction:forward",
+          "count": 30
+        },
+        {
+          "key": "family:unit_rate|scenario:solar_panels|asks:originalRate|direction:forward",
+          "count": 28
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "unit_rate/solar_panels",
+          "count": 87
+        },
+        {
+          "key": "unit_rate/abstract_units",
+          "count": 84
+        },
+        {
+          "key": "unit_rate/dairy_bottles",
+          "count": 82
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 52,
+          "key": "يكتب شخص # كلمة خلال # دقيقة بمعدل ثابت. كم دقيقة يحتاج لكتابة # كلمة؟"
+        },
+        {
+          "count": 52,
+          "key": "قطعت سيارة # كيلومترًا باستخدام # لترًا من الوقود. إذا استمر المعدل نفسه، فكم كيلومترًا تق"
+        },
+        {
+          "count": 17,
+          "key": "يعمل جهاز بمعدل # لوح/ساعة لمدة # ساعات، ثم ارتفع معدله بمقدار #% من القيمة السابقة وعمل #"
+        }
+      ],
+      "templatesSharingOneSkeleton": []
+    },
+    {
+      "family": "combined_rate",
+      "sampled": 600,
+      "templates": 8,
+      "templatesByBand": {
+        "easy": 3,
+        "medium": 4,
+        "hard": 1
+      },
+      "concepts": 8,
+      "reasoningStructures": 8,
+      "constructions": 56,
+      "requestedTargets": 7,
+      "targetList": [
+        "finalSoloTime",
+        "firstPumpSoloHours",
+        "initialTeamSize",
+        "jointOutput",
+        "jointTime",
+        "jointTimeAfterSolo",
+        "soloTimeAfterJoint"
+      ],
+      "forms": {
+        "forward": 600
+      },
+      "scenarios": 8,
+      "stemSkeletons": 166,
+      "stemSkeletonsPerTemplate": 20.75,
+      "entityNamesUsed": 0,
+      "distractorModels": 22,
+      "parameterOnlyVariantGroups": 8,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.0567,
+      "topConstructions": [
+        {
+          "key": "family:combined_rate|scenario:textile_shirts|asks:firstPumpSoloHours|direction:forward",
+          "count": 34
+        },
+        {
+          "key": "family:combined_rate|scenario:cannery_cans|asks:firstPumpSoloHours|direction:forward",
+          "count": 31
+        },
+        {
+          "key": "family:combined_rate|scenario:abstract_pieces|asks:firstPumpSoloHours|direction:forward",
+          "count": 28
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "combined_rate/textile_shirts",
+          "count": 86
+        },
+        {
+          "key": "combined_rate/cannery_cans",
+          "count": 85
+        },
+        {
+          "key": "combined_rate/dairy_bottles",
+          "count": 83
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 22,
+          "key": "تملأ مضختان خزانًا معًا في # ساعات، ولو عملت الأولى وحدها # ساعات ثم أكملت الثانية وحدها #"
+        },
+        {
+          "count": 21,
+          "key": "المعطيات: تملأ مضختان خزانًا معًا في # ساعة؛ ولو عملت الأولى وحدها # ساعة ثم أكملت الثانية"
+        },
+        {
+          "count": 20,
+          "key": "تملأ مضختان خزانًا معًا في # ساعات. ولو عملت الأولى وحدها # ساعات ثم أكملت الثانية وحدها #"
+        }
+      ],
+      "templatesSharingOneSkeleton": []
+    },
+    {
+      "family": "relational",
+      "sampled": 600,
+      "templates": 9,
+      "templatesByBand": {
+        "easy": 2,
+        "medium": 4,
+        "hard": 3
+      },
+      "concepts": 9,
+      "reasoningStructures": 29,
+      "constructions": 29,
+      "requestedTargets": 19,
+      "targetList": [
+        "countAbove",
+        "guaranteedDespiteBranches",
+        "guaranteedStatement",
+        "position2",
+        "position3",
+        "position4",
+        "position5",
+        "position6",
+        "position7",
+        "position8",
+        "position9",
+        "undeterminedPair",
+        "undeterminedPosition2",
+        "undeterminedPosition3",
+        "undeterminedPosition4",
+        "undeterminedPosition6",
+        "undeterminedPosition7",
+        "undeterminedPosition8",
+        "undeterminedPosition9"
+      ],
+      "forms": {
+        "forward": 600
+      },
+      "scenarios": 9,
+      "stemSkeletons": 82,
+      "stemSkeletonsPerTemplate": 9.11,
+      "entityNamesUsed": 16,
+      "distractorModels": 9,
+      "parameterOnlyVariantGroups": 29,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.1033,
+      "topConstructions": [
+        {
+          "key": "family:relational|scenario:REL_H_COUNT_BRANCHED|asks:countAbove|direction:forward",
+          "count": 62
+        },
+        {
+          "key": "family:relational|scenario:REL_E_BETWEEN|asks:position2|direction:forward",
+          "count": 58
+        },
+        {
+          "key": "family:relational|scenario:REL_M_BRANCH_UNRES|asks:undeterminedPair|direction:forward",
+          "count": 57
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "relational/REL_E_BETWEEN",
+          "count": 108
+        },
+        {
+          "key": "relational/REL_E_CHAIN",
+          "count": 92
+        },
+        {
+          "key": "relational/REL_H_POSITION",
+          "count": 81
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 54,
+          "key": "@ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. من صاحب المركز الرابع من الأسرع إلى ال"
+        },
+        {
+          "count": 38,
+          "key": "@ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. من صاحب المركز الثاني من الأسرع إلى ال"
+        },
+        {
+          "count": 31,
+          "key": "@ أطول من @. @ أطول من @. @ أطول من @. من صاحب المركز الثاني من الأطول إلى الأقصر؟"
+        }
+      ],
+      "templatesSharingOneSkeleton": [
+        {
+          "templates": [
+            "REL_M_COUNT",
+            "REL_H_COUNT_BRANCHED"
+          ],
+          "skeleton": "@ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @."
+        },
+        {
+          "templates": [
+            "REL_M_COUNT",
+            "REL_H_COUNT_BRANCHED"
+          ],
+          "skeleton": "@ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @."
+        },
+        {
+          "templates": [
+            "REL_M_COUNT",
+            "REL_H_COUNT_BRANCHED"
+          ],
+          "skeleton": "@ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. كم شخصًا نعر"
+        },
+        {
+          "templates": [
+            "REL_M_COUNT",
+            "REL_H_COUNT_BRANCHED"
+          ],
+          "skeleton": "@ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. كم شخصًا نعرف يقينًا أنهم"
+        },
+        {
+          "templates": [
+            "REL_M_COUNT",
+            "REL_H_COUNT_BRANCHED"
+          ],
+          "skeleton": "@ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @."
+        },
+        {
+          "templates": [
+            "REL_M_COUNT",
+            "REL_H_COUNT_BRANCHED"
+          ],
+          "skeleton": "@ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @. @ أسرع من @."
+        }
+      ]
+    },
+    {
+      "family": "calendar",
+      "sampled": 600,
+      "templates": 9,
+      "templatesByBand": {
+        "easy": 6,
+        "medium": 1,
+        "hard": 2
+      },
+      "concepts": 9,
+      "reasoningStructures": 9,
+      "constructions": 9,
+      "requestedTargets": 8,
+      "targetList": [
+        "dayAfterLongOffset",
+        "daysBetweenDates",
+        "firstSharedWeekday",
+        "meetingWeekday",
+        "pastDayFromFutureAnchor",
+        "todayFromCompoundOffset",
+        "todayFromNestedOffset",
+        "todayFromOffset"
+      ],
+      "forms": {
+        "forward": 494,
+        "reverse": 106
+      },
+      "scenarios": 9,
+      "stemSkeletons": 208,
+      "stemSkeletonsPerTemplate": 23.11,
+      "entityNamesUsed": 0,
+      "distractorModels": 13,
+      "parameterOnlyVariantGroups": 9,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.3333,
+      "topConstructions": [
+        {
+          "key": "family:calendar|scenario:CAL_H_CYCLE_MEET|asks:meetingWeekday|direction:forward",
+          "count": 200
+        },
+        {
+          "key": "family:calendar|scenario:two_dated_weekdays_across_a_month_boundary|asks:daysBetweenDates|direction:reverse",
+          "count": 106
+        },
+        {
+          "key": "family:calendar|scenario:two_cycles_with_offset_starts|asks:firstSharedWeekday|direction:forward",
+          "count": 94
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "calendar/CAL_H_CYCLE_MEET",
+          "count": 200
+        },
+        {
+          "key": "calendar/two_dated_weekdays_across_a_month_boundary",
+          "count": 106
+        },
+        {
+          "key": "calendar/two_cycles_with_offset_starts",
+          "count": 94
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 12,
+          "key": "يزور أحدهما المكتبة كل # أيام ويزورها الآخر كل # أيام، والتقيا فيها اليوم، وكان يوم الجمعة"
+        },
+        {
+          "count": 10,
+          "key": "يزور أحدهما المكتبة كل # أيام ويزورها الآخر كل # أيام، والتقيا فيها اليوم، وكان يوم الاثني"
+        },
+        {
+          "count": 9,
+          "key": "يزور أحدهما المكتبة كل # أيام ويزورها الآخر كل # أيام. التقيا فيها اليوم، وكان يوم الجمعة."
+        }
+      ],
+      "templatesSharingOneSkeleton": []
+    },
+    {
+      "family": "odd_one_out",
+      "sampled": 400,
+      "templates": 7,
+      "templatesByBand": {
+        "easy": 5,
+        "medium": 2,
+        "hard": 0
+      },
+      "concepts": 12,
+      "reasoningStructures": 7,
+      "constructions": 7,
+      "requestedTargets": 1,
+      "targetList": [
+        "outlier"
+      ],
+      "forms": {
+        "forward": 400
+      },
+      "scenarios": 7,
+      "stemSkeletons": 1,
+      "stemSkeletonsPerTemplate": 0.14,
+      "entityNamesUsed": 0,
+      "distractorModels": 1,
+      "parameterOnlyVariantGroups": 7,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.2575,
+      "topConstructions": [
+        {
+          "key": "family:odd_one_out|scenario:ODD_H_TRIANGULAR|asks:outlier|direction:forward",
+          "count": 103
+        },
+        {
+          "key": "family:odd_one_out|scenario:ODD_H_SQ_MINUS|asks:outlier|direction:forward",
+          "count": 97
+        },
+        {
+          "key": "family:odd_one_out|scenario:ODD_E_MULT|asks:outlier|direction:forward",
+          "count": 47
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "odd_one_out/ODD_H_TRIANGULAR",
+          "count": 103
+        },
+        {
+          "key": "odd_one_out/ODD_H_SQ_MINUS",
+          "count": 97
+        },
+        {
+          "key": "odd_one_out/ODD_E_MULT",
+          "count": 47
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 400,
+          "key": "أي عدد لا ينتمي إلى المجموعة الآتية؟"
+        }
+      ],
+      "templatesSharingOneSkeleton": [
+        {
+          "templates": [
+            "ODD_M_PRIME2",
+            "ODD_E_MULT",
+            "ODD_M_CUBES",
+            "ODD_E_SQUARES",
+            "ODD_M_PRONIC",
+            "ODD_H_TRIANGULAR",
+            "ODD_H_SQ_MINUS"
+          ],
+          "skeleton": "أي عدد لا ينتمي إلى المجموعة الآتية؟"
+        }
+      ]
+    },
+    {
+      "family": "profit_loss",
+      "sampled": 600,
+      "templates": 10,
+      "templatesByBand": {
+        "easy": 3,
+        "medium": 5,
+        "hard": 2
+      },
+      "concepts": 10,
+      "reasoningStructures": 11,
+      "constructions": 66,
+      "requestedTargets": 11,
+      "targetList": [
+        "costFromNetFactor",
+        "costFromSellPrice",
+        "costFromTwoCases",
+        "lossPercent",
+        "netLossOnPair",
+        "netPercentChange",
+        "profitPercent",
+        "profitPercentOnTotalCost",
+        "remainderMarginPercent",
+        "sellPriceAfterDiscountAndMarkup",
+        "totalCostOfPair"
+      ],
+      "forms": {
+        "forward": 400,
+        "reverse": 200
+      },
+      "scenarios": 18,
+      "stemSkeletons": 79,
+      "stemSkeletonsPerTemplate": 7.9,
+      "entityNamesUsed": 2,
+      "distractorModels": 28,
+      "parameterOnlyVariantGroups": 11,
+      "parameterOnlyShare": 1,
+      "largestConstructionShare": 0.0283,
+      "topConstructions": [
+        {
+          "key": "family:profit_loss|scenario:garment|asks:lossPercent|direction:forward",
+          "count": 17
+        },
+        {
+          "key": "family:profit_loss|scenario:general_store/two_articles_same_price_equal_percentages|asks:totalCostOfPair|direction:reverse",
+          "count": 17
+        },
+        {
+          "key": "family:profit_loss|scenario:furniture/two_articles_same_price_equal_percentages|asks:totalCostOfPair|direction:reverse",
+          "count": 17
+        }
+      ],
+      "topScenarios": [
+        {
+          "key": "profit_loss/general_store",
+          "count": 69
+        },
+        {
+          "key": "profit_loss/garment",
+          "count": 68
+        },
+        {
+          "key": "profit_loss/bookshop",
+          "count": 68
+        }
+      ],
+      "topSkeletons": [
+        {
+          "count": 30,
+          "key": "المعطيات: باع تاجر قطعتين بسعر # درهمًا لكل واحدة؛ ربح في الأولى #% من تكلفتها وخسر في الث"
+        },
+        {
+          "count": 26,
+          "key": "باع تاجر قطعتين بسعر # درهمًا لكل واحدة، وربح في الأولى #% من تكلفتها وخسر في الثانية #% م"
+        },
+        {
+          "count": 23,
+          "key": "اشترى تاجر بضاعة بمبلغ # درهمًا، وباع منها ما تكلفته # درهمًا بربح #% من تكلفة ذلك الجزء. "
+        }
+      ],
+      "templatesSharingOneSkeleton": []
+    }
+  ]
+}
