@@ -13,10 +13,18 @@ import {gunzipSync} from 'node:zlib';
 import Engine from '../src/index.js';
 import {REASON} from '../src/qa/reasons.js';
 
+// RC2.7-R2. All-hard sessions are sized at 30 here, not 50. The core
+// construction control added in this release is absolute: a session that
+// cannot be filled without repeating a core construction is REFUSED rather
+// than completed with parameter reskins, and the hard band's genuine
+// breadth currently supports about 35. Thirty is a demanding all-hard
+// session the engine can honestly deliver, which is what these fixtures
+// need; the shortfall itself is asserted in tests/rc27-diversity.test.mjs.
+
 const sessionPlan = [
   {count: 50, difficulty: 'mixed'}, {count: 50, difficulty: 'mixed'},
   {count: 50, difficulty: 'mixed'}, {count: 50, difficulty: 'mixed'},
-  {count: 50, difficulty: 'hard'}
+  {count: 30, difficulty: 'hard'}
 ];
 
 test('RC2.1-1: every published candidate a session sees is delivered or dispositioned', () => {
@@ -25,7 +33,7 @@ test('RC2.1-1: every published candidate a session sees is delivered or disposit
   let delivered = 0;
   for (let i = 1; i <= 5; i++) {
     delivered += e.generatePractice({
-      count: 50, difficulty: i === 5 ? 'hard' : 'mixed', family: 'random',
+      count: i === 5 ? 30 : 50, difficulty: i === 5 ? 'hard' : 'mixed', family: 'random',
       seed: `RC21-TELEM-${i}`
     }).questions.length;
   }

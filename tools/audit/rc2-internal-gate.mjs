@@ -28,6 +28,14 @@ import {
 } from './rc24-hard-coverage.mjs';
 import {isHardCapable, structuralBandOf, TEMPLATE_STRUCTURE, ADJUDICATED_TEMPLATE_IDS, HARD_CRITERIA} from '../../src/qa/structure.js';
 
+// RC2.7-R2. All-hard sessions are sized at 30 here, not 50. The core
+// construction control added in this release is absolute: a session that
+// cannot be filled without repeating a core construction is REFUSED rather
+// than completed with parameter reskins, and the hard band's genuine
+// breadth currently supports about 35. Thirty is a demanding all-hard
+// session the engine can honestly deliver, which is what these fixtures
+// need; the shortfall itself is asserted in tests/rc27-diversity.test.mjs.
+
 export const HOLDOUT_SEED = 'AUDIT-2026-09-12-B';
 export {RC23_SIGNOFF_SEED} from './rc2-development-corpus.mjs';
 
@@ -214,7 +222,7 @@ function conditions() {
   add('NO_CROSS_SESSION_DUPLICATES', 'RC2.1-5 — one multi-session batch repeats no mathematical instance', () => {
     const e = new Engine();
     const plan = [{count: 50, difficulty: 'mixed'}, {count: 50, difficulty: 'mixed'},
-      {count: 50, difficulty: 'mixed'}, {count: 50, difficulty: 'mixed'}, {count: 50, difficulty: 'hard'}];
+      {count: 50, difficulty: 'mixed'}, {count: 50, difficulty: 'mixed'}, {count: 30, difficulty: 'hard'}];
     const offenders = [];
     for (const seed of ['GATE-BATCH-A', 'GATE-BATCH-B']) {
       const b = e.generateMockBatch({seed, sessions: plan});
@@ -368,7 +376,7 @@ function conditions() {
     const families = new Set(), templates = new Set();
     for (let i = 0; i < 6; i++) {
       let s;
-      try { s = e.generatePractice({count: 50, difficulty: 'hard', family: 'random', seed: `GATE-RC23-AH-${i}`}); }
+      try { s = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: `GATE-RC23-AH-${i}`}); }
       catch { failed++; continue; }
       for (const q of s.questions) {
         total++; families.add(q.family); templates.add(q.metadata.template_id);

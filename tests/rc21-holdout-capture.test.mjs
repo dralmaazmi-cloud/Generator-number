@@ -26,7 +26,7 @@ test('RC2.1-6: the real holdout seed is not touched by the test path', () => {
   assert.equal(built.report.previousHoldout.reused, false);
 });
 
-test('RC2.1-6: 250 questions, five sessions, four mixed and one all-hard', () => {
+test('RC2.1-6: 250 questions, five sessions, four mixed and one all-hard', {skip: 'superseded by RC2.7-R2: this regenerates a holdout plan whose all-hard session is fifty questions, and the core construction control added in RC2.7-R is absolute — a session that cannot be filled without repeating a core construction is refused rather than completed with parameter reskins. The hard band supports about thirty-five, so the historical plan is no longer generable by this engine. The plan itself is NOT changed: Holdouts C, D, E and F were sealed against the engines that produced them and rewriting their shape would falsify a record. The shortfall is asserted directly in tests/rc27-diversity.test.mjs.'}, () => {
   assert.equal(blind.length, 250);
   assert.equal(full.length, 250);
   assert.equal(SESSION_PLAN.filter(p => p.kind === 'MIXED').length, 4);
@@ -90,13 +90,13 @@ test('RC2.1-6: unmeasured latency is null, never zero', () => {
   assert.ok(p.msPerQuestion > 0);
 });
 
-test('RC2.1-6: the holdout is generated as one batch, so no instance repeats across it', () => {
+test('RC2.1-6: the holdout is generated as one batch, so no instance repeats across it', {skip: 'superseded by RC2.7-R2: this regenerates a holdout plan whose all-hard session is fifty questions, and the core construction control added in RC2.7-R is absolute — a session that cannot be filled without repeating a core construction is refused rather than completed with parameter reskins. The hard band supports about thirty-five, so the historical plan is no longer generable by this engine. The plan itself is NOT changed: Holdouts C, D, E and F were sealed against the engines that produced them and rewriting their shape would falsify a record. The shortfall is asserted directly in tests/rc27-diversity.test.mjs.'}, () => {
   assert.equal(built.report.generatedAsOneBatch, true);
   const fps = full.map(f => f.semanticFingerprint);
   assert.equal(new Set(fps).size, 250, `${250 - new Set(fps).size} repeated instances`);
 });
 
-test('RC2.1-6: the session accounting closes on the holdout itself', () => {
+test('RC2.1-6: the session accounting closes on the holdout itself', {skip: 'superseded by RC2.7-R2: this regenerates a holdout plan whose all-hard session is fifty questions, and the core construction control added in RC2.7-R is absolute — a session that cannot be filled without repeating a core construction is refused rather than completed with parameter reskins. The hard band supports about thirty-five, so the historical plan is no longer generable by this engine. The plan itself is NOT changed: Holdouts C, D, E and F were sealed against the engines that produced them and rewriting their shape would falsify a record. The shortfall is asserted directly in tests/rc27-diversity.test.mjs.'}, () => {
   const t = built.report.sessionTelemetry;
   assert.equal(t.balanced, true);
   assert.equal(t.difference, 0);

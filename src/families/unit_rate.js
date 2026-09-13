@@ -381,11 +381,23 @@ function rateFromTimeSaved(ctx) {
   }
   if (!found) return resample(ctx, rateFromTimeSaved);
   const {rate, bump, saved, total, product, oldTime, newTime} = found;
-  const correct = rate;
+  // RC2.7-R3. The factor search yields BOTH members of the pair, and which one
+  // is asked for decides a different final step — take the smaller, or take the
+  // larger. It is also a different equation once written from the asked side,
+  // so the two are different core constructions rather than one with a
+  // subtraction after it. A third target asks for the original TIME, which is
+  // the same search followed by an inversion the other reading never performs.
+  // `originalTime` was tried here and withdrawn: this stem states a rate and a
+  // rate increase, and the RC2.5 wording rule reads it as asking for a rate —
+  // correctly. Answering it in hours would be arguing with a guard instead of
+  // respecting it, so this template offers the two RATE targets only.
+  const ask = rng.pick(['originalRate', 'increasedRate']);
+  const correct = ask === 'increasedRate' ? rate + bump : rate;
   const params = {totalUnits: total, rateIncrease: bump, hoursSaved: saved};
 
   const distractors = usable(ctx, [
-    mk(rate + bump, 'USED_THE_LARGER_FACTOR', `${rate} + ${bump}`, 3),
+    mk(ask === 'increasedRate' ? rate : rate + bump, 'USED_THE_LARGER_FACTOR',
+      `العامل الآخر من الزوج ${ask === 'increasedRate' ? rate : rate + bump}`, 3),
     mk(total / saved, 'SOLVED_ONE_CONDITION_ONLY', `${total} ÷ ${saved}`),
     mk(total / oldTime + bump / 2, 'MISREAD_THE_STEP', `${total} ÷ ${oldTime} + ${bump} ÷ 2`),
     mk(2 * rate + bump, 'USED_SUM_OF_FACTOR_PAIR', `${rate} + ${rate + bump}`, 3),
@@ -396,11 +408,12 @@ function rateFromTimeSaved(ctx) {
     mk(rate + 2 * bump, 'APPLIED_STEP_TWICE', `${rate} + ${bump} × 2`)
   ]);
 
-  const stem = composeSentences(ctx, `ينجز جهاز ${u(total, sc.out)} بمعدل ثابت. ولو زاد معدله بمقدار ${bump} ${sc.rateWord} لأنجز العمل نفسه في ${u(saved, 'hour', 'oblique')} أقل. فما معدله الأصلي؟`);
+  const stem = composeSentences(ctx, `ينجز جهاز ${u(total, sc.out)} بمعدل ثابت. ولو زاد معدله بمقدار ${bump} ${sc.rateWord} لأنجز العمل نفسه في ${u(saved, 'hour', 'oblique')} أقل. ${ask === 'increasedRate' ? 'فما معدله بعد الزيادة؟' : 'فما معدله الأصلي؟'}`);
   return buildBase(ctx, {
     templateId: 'RATE_H_RATE_FROM_GAP',
     scenario: sc.key,
-    subskill: 'المعدل الأصلي من توفير في الزمن',
+    subskill: ask === 'increasedRate' ? 'المعدل بعد الزيادة من توفير في الزمن'
+      : 'المعدل الأصلي من توفير في الزمن',
     difficulty: 'hard',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
@@ -412,7 +425,7 @@ function rateFromTimeSaved(ctx) {
       `بضرب طرفي المعادلة في س وفي (س + ${bump}) تصبح: س × (س + ${bump}) = ${total} × ${bump} ÷ ${saved}.`,
       `نحسب الطرف الأيمن: ${total} × ${bump} = ${total * bump}، ثم ${total * bump} ÷ ${saved} = ${product}.`,
       `نبحث عن عددين فرقهما ${bump}، وحاصل ضربهما ${product}؛ وهما ${rate} و${rate + bump}، لأن ${rate} × ${rate + bump} = ${product}.`,
-      `إذن المعدل الأصلي = ${correct}.`
+      ask === 'increasedRate' ? `إذن المعدل بعد الزيادة = ${correct}.` : `إذن المعدل الأصلي = ${correct}.`
     ],
     howToStart: 'اكتب الزمنين بدلالة المعدل المجهول، ثم وحّد المقامات للتخلص من القسمة.',
     remember: 'عندما يظهر المجهول في مقامين، اضرب طرفي المعادلة فيهما معًا.',
@@ -420,12 +433,18 @@ function rateFromTimeSaved(ctx) {
     estimatedSteps: 5, conceptTags: ['unit-rate', 'inverse', 'factor-pair'], parameters: params,
     oracle: {
       kind: 'constraint', answerKind: 'number',
-      constraints: [eq(mul(X, add(X, bump), saved), mul(total, bump))]
+      constraints: [
+        ask === 'increasedRate'
+          ? eq(mul(X, sub(X, bump), saved), mul(total, bump))
+          : eq(mul(X, add(X, bump), saved), mul(total, bump))
+      ]
     },
-    askedUnknown: 'originalRate', stageCount: 3,
+    askedUnknown: ask, stageCount: 3,
     pedagogy: {
       targetSkill: 'RATE_FROM_TIME_DIFFERENCE', targetMisconception: 'USED_THE_LARGER_FACTOR',
-      wrongMethodValue: rate + bump
+      // The named slip is "take the other member of the factor pair", so which
+      // value that is depends on which member is the key.
+      wrongMethodValue: ask === 'increasedRate' ? rate : rate + bump
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, reverseReasoning: 1, stageCount: 3, arithmeticBurden: 5},
     textParams: {essentialParams: ['totalUnits', 'rateIncrease', 'hoursSaved']}

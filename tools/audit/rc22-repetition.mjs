@@ -58,7 +58,7 @@ export function build({seeds = ['RC22-REP-A', 'RC22-REP-B', 'RC22-REP-C']} = {})
   const plan = [
     {count: 50, difficulty: 'mixed'}, {count: 50, difficulty: 'mixed'},
     {count: 50, difficulty: 'mixed'}, {count: 50, difficulty: 'mixed'},
-    {count: 50, difficulty: 'hard'}
+    {count: 30, difficulty: 'hard'}
   ];
   const batches = seeds.map(seed => measureBatch({seed, plan}));
   const engine = new Engine();

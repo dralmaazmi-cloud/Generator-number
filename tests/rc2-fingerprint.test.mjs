@@ -14,6 +14,14 @@ import assert from 'node:assert/strict';
 import Engine from '../src/index.js';
 import {buildFingerprint, buildSemanticFingerprint, buildStructuralSignature} from '../src/qa/fingerprint.js';
 
+// RC2.7-R2. All-hard sessions are sized at 30 here, not 50. The core
+// construction control added in this release is absolute: a session that
+// cannot be filled without repeating a core construction is REFUSED rather
+// than completed with parameter reskins, and the hard band's genuine
+// breadth currently supports about 35. Thirty is a demanding all-hard
+// session the engine can honestly deliver, which is what these fixtures
+// need; the shortfall itself is asserted in tests/rc27-diversity.test.mjs.
+
 // --- RC2-022: commutative content is order-blind --------------------------
 
 const oddSpec = numbers => ({
@@ -156,7 +164,7 @@ test('RC2-022/023: no session repeats a semantic instance or a reasoning pattern
 test('RC2-022/023: the same holds for all-hard sessions', {skip: 'superseded by RC2.2-4, same reason: reasoning repetition is capped, not banned.'}, () => {
   const engine = new Engine();
   for (let s = 0; s < 15; s++) {
-    const set = engine.generatePractice({difficulty: 'hard', count: 50, seed: `rc2-hard-${s}`});
+    const set = engine.generatePractice({difficulty: 'hard', count: 30, seed: `rc2-hard-${s}`});
     const semantic = set.questions.map(q => q.metadata.semantic_fingerprint);
     assert.equal(new Set(semantic).size, semantic.length, `hard session ${s}: a semantic instance repeated`);
     const structural = set.questions.map(q => q.metadata.structural_reasoning_signature).filter(Boolean);

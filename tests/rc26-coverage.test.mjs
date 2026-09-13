@@ -13,6 +13,14 @@ import {FAMILY_REGISTRY, FAMILY_MAP} from '../src/registry.js';
 import {TEMPLATE_STRUCTURE, templatesAtBand, structuralBandOf, isHardCapable, criteriaOf} from '../src/qa/structure.js';
 import {stemSkeleton, constructionSignature, measureConstruction, CONSTRUCTION_CAP_PER_BATCH} from '../src/qa/construction.js';
 
+// RC2.7-R2. All-hard sessions are sized at 30 here, not 50. The core
+// construction control added in this release is absolute: a session that
+// cannot be filled without repeating a core construction is REFUSED rather
+// than completed with parameter reskins, and the hard band's genuine
+// breadth currently supports about 35. Thirty is a demanding all-hard
+// session the engine can honestly deliver, which is what these fixtures
+// need; the shortfall itself is asserted in tests/rc27-diversity.test.mjs.
+
 const ADDED = [
   'SPD_H_CURRENT', 'SPD_H_LEG_SPLIT',
   'WORK_H_THREE_PAIRS', 'WORK_H_SOLO_GAP',
@@ -146,7 +154,7 @@ test('RC2.6-3: no construction exceeds its share of a batch', () => {
       {count: 50, difficulty: 'mixed', family: 'random'},
       {count: 50, difficulty: 'mixed', family: 'random'},
       {count: 50, difficulty: 'mixed', family: 'random'},
-      {count: 50, difficulty: 'hard', family: 'random'}
+      {count: 30, difficulty: 'hard', family: 'random'}
     ]
   });
   const m = measureConstruction(batch.sessions.flatMap(s => s.questions));

@@ -19,6 +19,14 @@ import {
 } from '../src/qa/structure.js';
 import {RC23_HARD, newHardTemplates, allHardSessions, newTemplateOptions} from '../tools/audit/rc24-hard-coverage.mjs';
 
+// RC2.7-R2. All-hard sessions are sized at 30 here, not 50. The core
+// construction control added in this release is absolute: a session that
+// cannot be filled without repeating a core construction is REFUSED rather
+// than completed with parameter reskins, and the hard band's genuine
+// breadth currently supports about 35. Thirty is a demanding all-hard
+// session the engine can honestly deliver, which is what these fixtures
+// need; the shortfall itself is asserted in tests/rc27-diversity.test.mjs.
+
 // --- RC2.3 is preserved -----------------------------------------------------
 
 test('RC2.4: the structural criteria are untouched', () => {
@@ -230,8 +238,8 @@ test('RC2.4: the added templates carry misconception-linked options, not magnitu
 });
 
 test('RC2.4: reproducible, and the same seed replays through both APIs', () => {
-  const a = new Engine().generatePractice({count: 40, difficulty: 'hard', family: 'random', seed: 'RC24-REPRO'});
-  const b = new Engine().generatePractice({count: 40, difficulty: 'hard', family: 'random', seed: 'RC24-REPRO'});
+  const a = new Engine().generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC24-REPRO'});
+  const b = new Engine().generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC24-REPRO'});
   assert.deepEqual(a.questions.map(q => q.id), b.questions.map(q => q.id));
   assert.deepEqual(a.questions.map(q => q.correct_value), b.questions.map(q => q.correct_value));
   for (const id of newHardTemplates().slice(0, 6)) {
@@ -247,7 +255,7 @@ test('RC2.4: telemetry still reconciles, and hard sessions still cost what they 
   e.resetTelemetry();
   let delivered = 0;
   for (let i = 0; i < 3; i++) {
-    delivered += e.generatePractice({count: 50, difficulty: 'hard', family: 'random', seed: `RC24-TEL-${i}`}).questions.length;
+    delivered += e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: `RC24-TEL-${i}`}).questions.length;
   }
   const r = e.getTelemetry().sessionReconciliation;
   assert.equal(r.delivered, delivered);

@@ -12,10 +12,18 @@ import Engine from '../src/index.js';
 import {buildStructuralSignature} from '../src/qa/fingerprint.js';
 import {build, measureBatch} from '../tools/audit/rc22-repetition.mjs';
 
+// RC2.7-R2. All-hard sessions are sized at 30 here, not 50. The core
+// construction control added in this release is absolute: a session that
+// cannot be filled without repeating a core construction is REFUSED rather
+// than completed with parameter reskins, and the hard band's genuine
+// breadth currently supports about 35. Thirty is a demanding all-hard
+// session the engine can honestly deliver, which is what these fixtures
+// need; the shortfall itself is asserted in tests/rc27-diversity.test.mjs.
+
 const PLAN = [
   {count: 50, difficulty: 'mixed'}, {count: 50, difficulty: 'mixed'},
   {count: 50, difficulty: 'mixed'}, {count: 50, difficulty: 'mixed'},
-  {count: 50, difficulty: 'hard'}
+  {count: 30, difficulty: 'hard'}
 ];
 
 test('RC2.2-4: every question has a reasoning signature, not only the ones that declared a pattern', () => {
@@ -115,7 +123,7 @@ test('RC2.2-4: a cap the fallback can bypass is not a cap', () => {
   // deliverable, and every breach must be recorded — silence would mean the
   // fallback is ignoring the cap, which is what it used to do.
   const e = new Engine({maxReasoningRepeatsPerSession: 1, maxReasoningRepeatsPerBatch: 1});
-  const s = e.generatePractice({count: 50, difficulty: 'hard', family: 'random', seed: 'RC22-T-BYPASS'});
+  const s = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC22-T-BYPASS'});
   assert.equal(s.questions.length, 50, 'the session must still be deliverable');
   const sigs = s.questions.map(q => q.metadata.structural_reasoning_signature);
   const counts = {};

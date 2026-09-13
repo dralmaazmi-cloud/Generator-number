@@ -20,12 +20,20 @@ import {renderedItem} from '../../src/qa/construction.js';
 import {entityWordsIn} from '../../src/compose/entities.js';
 import {DIMENSIONS} from '../../src/compose/novelty.js';
 
+// RC2.7-R2. All-hard sessions are sized at 30 here, not 50. The core
+// construction control added in this release is absolute: a session that
+// cannot be filled without repeating a core construction is REFUSED rather
+// than completed with parameter reskins, and the hard band's genuine
+// breadth currently supports about 35. Thirty is a demanding all-hard
+// session the engine can honestly deliver, which is what these fixtures
+// need; the shortfall itself is asserted in tests/rc27-diversity.test.mjs.
+
 const PLAN = [
   {id: 'SESSION-1', kind: 'MIXED', difficulty: 'mixed', count: 50},
   {id: 'SESSION-2', kind: 'MIXED', difficulty: 'mixed', count: 50},
   {id: 'SESSION-3', kind: 'MIXED', difficulty: 'mixed', count: 50},
   {id: 'SESSION-4', kind: 'MIXED', difficulty: 'mixed', count: 50},
-  {id: 'SESSION-5', kind: 'ALL_HARD', difficulty: 'hard', count: 50}
+  {id: 'SESSION-5', kind: 'ALL_HARD', difficulty: 'hard', count: 30}
 ];
 
 const NOVELTY_REASONS = [

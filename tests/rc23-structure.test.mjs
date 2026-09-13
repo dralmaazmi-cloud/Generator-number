@@ -17,6 +17,14 @@ import {SeededRNG} from '../src/rng.js';
 import {finalizeQuestion} from '../src/utils.js';
 import {FAMILY_REGISTRY, FAMILY_MAP} from '../src/registry.js';
 import {
+
+// RC2.7-R2. All-hard sessions are sized at 30 here, not 50. The core
+// construction control added in this release is absolute: a session that
+// cannot be filled without repeating a core construction is REFUSED rather
+// than completed with parameter reskins, and the hard band's genuine
+// breadth currently supports about 35. Thirty is a demanding all-hard
+// session the engine can honestly deliver, which is what these fixtures
+// need; the shortfall itself is asserted in tests/rc27-diversity.test.mjs.
   TEMPLATE_STRUCTURE, ADJUDICATED_TEMPLATE_IDS, HARD_CRITERIA, ROUTINE_MARKERS,
   structuralBandOf, isHardCapable, criteriaOf, templatesAtBand, contradictions
 } from '../src/qa/structure.js';
@@ -172,7 +180,7 @@ test('RC2.3-1: the complexity score is kept as evidence, and is not the label', 
 test('RC2.3-2: an ALL_HARD session is built only from HARD_CAPABLE structures', () => {
   const e = new Engine();
   for (let i = 0; i < 4; i++) {
-    const s = e.generatePractice({count: 50, difficulty: 'hard', family: 'random', seed: `RC23-AH-${i}`});
+    const s = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: `RC23-AH-${i}`});
     assert.equal(s.questions.length, 50);
     for (const q of s.questions) {
       assert.equal(q.difficulty, 'hard', q.generator_id);
@@ -200,7 +208,7 @@ test('RC2.3-2: a band that cannot fill a session is refused up front, by name', 
   assert.ok(/INSUFFICIENT_BAND_COVERAGE: 50 hard slots need 13 distinct structures/.test(err.message), err.message);
 
   // And the refusal is not blanket: the full pool can still fill one.
-  const ok = e.generatePractice({count: 50, difficulty: 'hard', family: 'random', seed: 'RC23-COV-OK'});
+  const ok = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC23-COV-OK'});
   assert.equal(ok.questions.length, 50);
 });
 
@@ -253,7 +261,7 @@ test('RC2.3-5: exact, semantic and reasoning repetition are counted apart', asyn
     seed: 'RC23-REP',
     plan: [{count: 50, difficulty: 'mixed'}, {count: 50, difficulty: 'mixed'},
       {count: 50, difficulty: 'mixed'}, {count: 50, difficulty: 'mixed'},
-      {count: 50, difficulty: 'hard'}]
+      {count: 30, difficulty: 'hard'}]
   });
   assert.equal(r.questions, 250);
   // Exact and semantic repetition are defects and must be zero.
