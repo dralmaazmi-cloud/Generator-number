@@ -181,7 +181,7 @@ export const TRADE = Object.freeze([
     goodNom: 'سلعة', placed: 'وضع متجر',
     pron: 'ها', passT: 'ت',
     bought: 'اشترى متجر', sold: 'باع المتجر', soldPair: 'باع متجر'},
-  {key: 'bookshop', good: 'كتابًا', goodDef: 'الكتاب', goodPair: 'كتابين', seller: 'مكتبة', sellerDef: 'المكتبة',
+  {key: 'bookshop', good: 'كتابًا', goodDef: 'الكتاب', goodPair: 'كتابين', seller: 'مكتبة', sellerDef: 'المكتبة', sellerFeminine: true,
     paid: 'دفعت',
     goodNom: 'كتاب', placed: 'وضعت مكتبة',
     pron: 'ه', passT: '',

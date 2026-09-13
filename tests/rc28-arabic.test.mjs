@@ -90,6 +90,27 @@ test('RC2.8-6: a rate answer is a rate of the thing the stem counts', () => {
   assert.deepEqual(offenders.slice(0, 3), [], `${offenders.length} items answer in the wrong rate unit`);
 });
 
+test('RC2.8-6: a verb agrees with the seller it is about', () => {
+  // «حصل المكتبة» — the only feminine seller in the pool, and the one stem in
+  // profit_loss that wrote its own verb instead of taking the scenario's.
+  const offenders = CORPUS
+    .filter(q => /(?:^|\s)حصل\s+(?:المكتبة|مكتبة)/.test(q.question))
+    .map(q => q.question);
+  assert.deepEqual(offenders.slice(0, 3), [], `${offenders.length} stems disagree with the seller`);
+  // And the agreeing form is actually produced, so this is not vacuous.
+  const engine = new Engine();
+  const forms = new Set();
+  for (let i = 0; i < 40; i++) {
+    try {
+      const q = engine.generateQuestion({family: 'profit_loss', difficulty: 'medium',
+        templateId: 'PL_M_DISC_MARK', seed: `rc28-seller-${i}`});
+      const m = q.question.match(/(حصل|حصلت)\s+(\S+)/);
+      if (m) forms.add(m[0]);
+    } catch { /* another draw */ }
+  }
+  assert.ok([...forms].some(f => f.startsWith('حصلت')), `no feminine form drawn: ${[...forms].join(', ')}`);
+});
+
 test('RC2.8-6: the fraction chain is a sentence, not a run of noun phrases', () => {
   const phrase = fractionChainPhrase(['ثلث', 'ربع'], 'العدد 240');
   assert.match(phrase, /^أُخذ /, 'the chain needs a verb');

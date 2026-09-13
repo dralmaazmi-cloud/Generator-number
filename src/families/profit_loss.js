@@ -207,7 +207,11 @@ function discountThenSale(ctx) {
     mk(tag + markup, 'TREATED_PERCENT_AS_AMOUNT', `${tag} + ${markup}`),
     mk(tag - discount, 'TREATED_PERCENT_AS_AMOUNT', `${tag} − ${discount}`)
   ]);
-  const stem = composeSentences(ctx, `سعر ${sc.goodDef} المعلن ${u(tag, 'dirham')}. حصل ${sc.sellerDef} علي${sc.pron} بخصم ${discount}% من هذا السعر، ثم أراد ربحًا قدره ${markup}% من تكلفة الشراء الفعلية. فما سعر البيع؟`);
+  const stem = composeSentences(ctx, // RC2.8-6. The verb agrees with the seller. Every other stem in this family
+  // takes its verb from the scenario itself — «اشترت مكتبة», «باعت المكتبة» —
+  // but this one wrote its own and left it masculine, so the bookshop scenario
+  // published «حصل المكتبة».
+  `سعر ${sc.goodDef} المعلن ${u(tag, 'dirham')}. ${sc.sellerFeminine ? 'حصلت' : 'حصل'} ${sc.sellerDef} علي${sc.pron} بخصم ${discount}% من هذا السعر، ثم أراد ربحًا قدره ${markup}% من تكلفة الشراء الفعلية. فما سعر البيع؟`);
   return buildBase(ctx, {
     templateId: 'PL_M_DISC_MARK',
     scenario: sc.key,
