@@ -1,0 +1,2632 @@
+{
+  "schema": "rc27-user-diversity-v1",
+  "generatedAt": "2026-09-13T12:26:56.764Z",
+  "accepted": true,
+  "runs": [
+    {
+      "shape": "session50",
+      "seed": "RC27D-1",
+      "refused": false,
+      "measures": {
+        "items": 50,
+        "core": {
+          "distinct": 50,
+          "largestGroup": 1,
+          "itemsInARepeatedGroup": 0,
+          "perHundred": 100
+        },
+        "nearDuplicates": {
+          "distinct": 50,
+          "largestGroup": 1,
+          "itemsInARepeatedGroup": 0
+        },
+        "reasoningTarget": {
+          "distinct": 50,
+          "largestGroup": 1,
+          "itemsInARepeatedGroup": 0
+        },
+        "parameterOnly": {
+          "groups": 50,
+          "largestGroup": 1,
+          "itemsInARepeatedGroup": 0
+        },
+        "targets": {
+          "distinct": 49
+        },
+        "scenarios": {
+          "distinct": 46
+        },
+        "stemSkeletons": {
+          "distinct": 49,
+          "largestGroup": 2
+        },
+        "stemStructures": {
+          "distinct": 5
+        },
+        "entities": {
+          "distinct": 25,
+          "largestGroup": 5,
+          "mostUsed": [
+            "آلة×5",
+            "عمر×4",
+            "جهاز×4",
+            "راشد×4",
+            "مريم×4"
+          ]
+        },
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "longestSimilarRun": 0,
+        "gates": {
+          "wrongKeys": 0,
+          "ambiguous": 0,
+          "duplicateOptions": 0
+        }
+      },
+      "coreRelaxations": 0,
+      "surfaceRelaxations": 4,
+      "relaxationsByDimension": {
+        "entity_word_batch": 1,
+        "entity_pattern": 3
+      },
+      "telemetryBalanced": true,
+      "perSession": [
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        }
+      ],
+      "repeatedGroups": [],
+      "contrasting": {
+        "averages": [
+          {
+            "template": "AVG_H_COMB_ADD",
+            "target": "weightedAveragePlusValue",
+            "scenario": "averages/warehouse_weights",
+            "structure": "listed",
+            "question": "المعطيات: متوسط أوزان 5 صناديق هو 12 كيلوجرامًا؛ متوسط أوزان 6 صناديق أخرى هو 18 كيلوجرامًا؛ بعد ذلك أُدخل إلى المستودع صندوق وزنه 36 كيلوجرامًا. فما متوسط الأوزان جميعها؟",
+            "stimulus": null,
+            "answer": "F) 17 كيلوجرامًا"
+          },
+          {
+            "template": "AVG_E_REMOVE",
+            "target": "newAverageAfterRemove",
+            "scenario": "averages/library_pages",
+            "structure": "listed",
+            "question": "المعطيات: متوسط عدد صفحات 7 كتب هو 28 صفحة؛ أُخرج من الرف كتاب عدد صفحاته 34. فما متوسط الصفحات الباقية؟",
+            "stimulus": null,
+            "answer": "D) 27 صفحة"
+          },
+          {
+            "template": "AVG_H_OVERLAP",
+            "target": "overlappingValue",
+            "scenario": "averages/daily_visitors",
+            "structure": "question_first",
+            "question": "المطلوب: عدد زوار اليوم الذي يقع في الموضع الأوسط من السجل. المعطيات: متوسط أعداد الزوار كلها في سجل عدد الزوار في 11 يومًا هو 16 زائرًا؛ متوسط أول 6 أيام في السجل هو 21 زائرًا؛ متوسط آخر 6 أيام فيه هو 17 زائرًا.",
+            "stimulus": null,
+            "answer": "D) 52 زائرًا"
+          }
+        ],
+        "sequences": [
+          {
+            "template": "SEQ_H_RECURRENCE",
+            "target": "missingMiddleTerm",
+            "scenario": "sequences/SEQ_H_RECURRENCE",
+            "structure": "fixed",
+            "question": "ما العدد المفقود في المتتالية؟",
+            "stimulus": "1، 3، 7، ؟، 41",
+            "answer": "A) 17"
+          },
+          {
+            "template": "SEQ_M_INC_DIFF",
+            "target": "missingMiddleTerm",
+            "scenario": "sequences/SEQ_M_INC_DIFF",
+            "structure": "fixed",
+            "question": "ما العدد المفقود في المتتالية؟",
+            "stimulus": "9، 12، ؟، 27، 39",
+            "answer": "A) 18"
+          },
+          {
+            "template": "SEQ_M_LINEAR_RECUR",
+            "target": "termAfterNext",
+            "scenario": "sequences/multiply_then_add",
+            "structure": "fixed",
+            "question": "ما العدد الذي يشغل موضع علامة الاستفهام؟",
+            "stimulus": "9، 20، 42، 86، 174، 350، ؟",
+            "answer": "E) 702"
+          }
+        ],
+        "speed": [
+          {
+            "template": "SPD_H_TIME_DIFF",
+            "target": "distanceFromTimeGap",
+            "scenario": "speed/bicycle",
+            "structure": "compact",
+            "question": "المسافة نفسها تُقطع بسرعة 60 كم/ساعة أو بسرعة 120 كم/ساعة. إذا كان الزمن عند السرعة 60 أطول بمقدار 4 ساعات، فما المسافة؟",
+            "stimulus": null,
+            "answer": "A) 480 كيلومترًا"
+          },
+          {
+            "template": "SPD_E_DISTANCE",
+            "target": "distance",
+            "scenario": "speed/tram",
+            "structure": "compact",
+            "question": "سارت عربة بسرعة 80 كم/ساعة لمدة ساعتين. ما المسافة التي قطعتها؟",
+            "stimulus": null,
+            "answer": "E) 160 كيلومترًا"
+          },
+          {
+            "template": "SPD_H_MEET_DELAY",
+            "target": "meetingTime",
+            "scenario": "speed/bicycle",
+            "structure": "compact",
+            "question": "مدينتان بينهما 360 كيلومترًا، وانطلقت دراجة أ من الأولى بسرعة 60 كم/ساعة، وبعد ساعتين انطلقت دراجة ب من الثانية باتجاه أ بسرعة 100 كم/ساعة. بعد كم ساعة من انطلاق ب تلتقي الدراجتان؟",
+            "stimulus": null,
+            "answer": "B) 1.5 ساعة"
+          },
+          {
+            "template": "SPD_M_TWO_TIME",
+            "target": "totalTimeMinutes",
+            "scenario": "speed/ferry",
+            "structure": "sequential",
+            "question": "قطعت عبّارة 120 كيلومترًا بسرعة 80 كم/ساعة، ثم قطعت 40 كيلومترًا بسرعة 40 كم/ساعة دون توقف. كم دقيقة استغرقت الرحلة كاملة؟",
+            "stimulus": null,
+            "answer": "C) 150 دقيقة"
+          }
+        ],
+        "relational": [
+          {
+            "template": "REL_M_COUNT",
+            "target": "countAbove",
+            "scenario": "relational/REL_M_COUNT",
+            "structure": "fixed",
+            "question": "ماجد أسرع من فهد. فهد أسرع من بدر. ماجد أسرع من راشد. راشد أسرع من ريم. مريم أسرع من سارة. ماجد أسرع من مريم. سارة أسرع من بدر. ريم أسرع من بدر. كم شخصًا نعرف يقينًا أنهم أسرع من فهد؟",
+            "stimulus": null,
+            "answer": "A) شخص واحد"
+          },
+          {
+            "template": "REL_M_CHAIN6",
+            "target": "position4",
+            "scenario": "relational/REL_M_CHAIN6",
+            "structure": "fixed",
+            "question": "هند أسرع من نورة. مريم أسرع من ماجد. نورة أسرع من مريم. سامي أسرع من بدر. بدر أسرع من هند. من صاحب المركز الرابع من الأسرع إلى الأبطأ؟",
+            "stimulus": null,
+            "answer": "B) نورة"
+          },
+          {
+            "template": "REL_E_BETWEEN",
+            "target": "position2",
+            "scenario": "relational/REL_E_BETWEEN",
+            "structure": "fixed",
+            "question": "ماجد أطول من مريم. مريم أطول من نورة. نورة أطول من راشد. من صاحب المركز الثاني من الأطول إلى الأقصر؟",
+            "stimulus": null,
+            "answer": "E) مريم"
+          },
+          {
+            "template": "REL_H_GUARANTEE",
+            "target": "guaranteedDespiteBranches",
+            "scenario": "relational/REL_H_GUARANTEE",
+            "structure": "fixed",
+            "question": "نورة أسرع من ناصر. راشد أسرع من نورة. سامي أسرع من ناصر. هند أسرع من سامي. راشد أسرع من سارة. سارة أسرع من ناصر. راشد أسرع من هند. أي عبارة يجب أن تكون صحيحة مهما كان ترتيب هند ونورة؟",
+            "stimulus": null,
+            "answer": "B) هند أسرع من ناصر"
+          }
+        ]
+      }
+    },
+    {
+      "shape": "session50",
+      "seed": "RC27D-2",
+      "refused": false,
+      "measures": {
+        "items": 50,
+        "core": {
+          "distinct": 50,
+          "largestGroup": 1,
+          "itemsInARepeatedGroup": 0,
+          "perHundred": 100
+        },
+        "nearDuplicates": {
+          "distinct": 50,
+          "largestGroup": 1,
+          "itemsInARepeatedGroup": 0
+        },
+        "reasoningTarget": {
+          "distinct": 50,
+          "largestGroup": 1,
+          "itemsInARepeatedGroup": 0
+        },
+        "parameterOnly": {
+          "groups": 50,
+          "largestGroup": 1,
+          "itemsInARepeatedGroup": 0
+        },
+        "targets": {
+          "distinct": 49
+        },
+        "scenarios": {
+          "distinct": 45
+        },
+        "stemSkeletons": {
+          "distinct": 49,
+          "largestGroup": 2
+        },
+        "stemStructures": {
+          "distinct": 4
+        },
+        "entities": {
+          "distinct": 25,
+          "largestGroup": 4,
+          "mostUsed": [
+            "سالم×4",
+            "عمر×4",
+            "آلة×4",
+            "جهاز×4",
+            "خالد×4"
+          ]
+        },
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "longestSimilarRun": 0,
+        "gates": {
+          "wrongKeys": 0,
+          "ambiguous": 0,
+          "duplicateOptions": 0
+        }
+      },
+      "coreRelaxations": 0,
+      "surfaceRelaxations": 2,
+      "relaxationsByDimension": {
+        "entity_pattern": 2
+      },
+      "telemetryBalanced": true,
+      "perSession": [
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        }
+      ],
+      "repeatedGroups": [],
+      "contrasting": {
+        "averages": [
+          {
+            "template": "AVG_E_REMOVE",
+            "target": "newAverageAfterRemove",
+            "scenario": "averages/nursery_heights",
+            "structure": "compact",
+            "question": "متوسط أطوال 6 شتلات هو 23 سنتيمترًا، ونُقلت شتلة طولها 33 سنتيمترًا. فما متوسط الأطوال الباقية؟",
+            "stimulus": null,
+            "answer": "C) 21 سنتيمترًا"
+          },
+          {
+            "template": "AVG_M_REPLACE",
+            "target": "newAverageAfterReplace",
+            "scenario": "averages/workshop_lengths",
+            "structure": "listed",
+            "question": "المعطيات: متوسط أطوال 6 ألواح هو 26 مترًا؛ استُبدل لوح طوله 21 مترًا بلوح طوله 33 مترًا. فما المتوسط الجديد؟",
+            "stimulus": null,
+            "answer": "B) 28 مترًا"
+          }
+        ],
+        "sequences": [
+          {
+            "template": "SEQ_M_WRONG_TERM",
+            "target": "wrongTerm",
+            "scenario": "sequences/rule_violation",
+            "structure": "fixed",
+            "question": "أي الحدود الآتية لا يتفق مع قاعدة المتتالية؟",
+            "stimulus": "11، 20، 25، 32، 39، 46",
+            "answer": "E) 20"
+          },
+          {
+            "template": "SEQ_M_CYCLE3",
+            "target": "nextTerm",
+            "scenario": "sequences/three_operation_cycle",
+            "structure": "fixed",
+            "question": "ما العدد التالي في المتتالية؟",
+            "stimulus": "12، 18، 54، 52، 58، 174، 172، ؟",
+            "answer": "E) 178"
+          }
+        ],
+        "speed": [
+          {
+            "template": "SPD_M_EQUAL_DIST",
+            "target": "totalDistance",
+            "scenario": "speed/bus",
+            "structure": "sequential",
+            "question": "قطعت حافلة نصف المسافة بسرعة 60 كم/ساعة، والنصف الآخر بسرعة 40 كم/ساعة. إذا استغرقت الرحلة كاملة 15 ساعة، فما المسافة الكلية؟",
+            "stimulus": null,
+            "answer": "F) 720 كيلومترًا"
+          },
+          {
+            "template": "SPD_E_TIME",
+            "target": "time",
+            "scenario": "speed/truck",
+            "structure": "sequential",
+            "question": "قطعت شاحنة 270 كيلومترًا بسرعة 45 كم/ساعة. كم ساعة استغرقت؟",
+            "stimulus": null,
+            "answer": "A) 6 ساعات"
+          },
+          {
+            "template": "SPD_H_LEG_SPLIT",
+            "target": "firstLegDistance",
+            "scenario": "speed/journey_split_between_two_speeds",
+            "structure": "compact",
+            "question": "قطعت سيارة 190 كيلومترًا في 3 ساعات، وسارت جزءًا من الرحلة بسرعة 40 كم/ساعة والجزء الباقي بسرعة 75 كم/ساعة. فما طول الجزء الأول؟",
+            "stimulus": null,
+            "answer": "D) 40 كيلومترًا"
+          },
+          {
+            "template": "SPD_H_CATCH",
+            "target": "catchupTime",
+            "scenario": "speed/bus",
+            "structure": "listed",
+            "question": "المعطيات: انطلقت حافلة أ بسرعة 72 كم/ساعة؛ بعد ساعة واحدة انطلقت حافلة ب من المكان نفسه وفي الاتجاه نفسه بسرعة 80 كم/ساعة. بعد كم ساعة من انطلاق ب تلحق بحافلة أ؟",
+            "stimulus": null,
+            "answer": "E) 9 ساعات"
+          }
+        ],
+        "relational": [
+          {
+            "template": "REL_M_BRANCH_UNRES",
+            "target": "undeterminedPair",
+            "scenario": "relational/REL_M_BRANCH_UNRES",
+            "structure": "fixed",
+            "question": "نورة أسرع من سالم. سامي أسرع من ريم. ريم أسرع من ليان. سامي أسرع من خالد. ليان أسرع من سالم. خالد أسرع من نورة. أي مقارنة لا يمكن حسمها؟",
+            "stimulus": null,
+            "answer": "A) ليان ونورة"
+          },
+          {
+            "template": "REL_H_GUARANTEE",
+            "target": "guaranteedDespiteBranches",
+            "scenario": "relational/REL_H_GUARANTEE",
+            "structure": "fixed",
+            "question": "سارة أسرع من خالد. نورة أسرع من ريم. علي أسرع من راشد. راشد أسرع من ريم. علي أسرع من سارة. خالد أسرع من ريم. علي أسرع من نورة. أي عبارة يجب أن تكون صحيحة مهما كان ترتيب سارة وراشد؟",
+            "stimulus": null,
+            "answer": "D) علي أسرع من ريم"
+          },
+          {
+            "template": "REL_E_CHAIN",
+            "target": "position4",
+            "scenario": "relational/REL_E_CHAIN",
+            "structure": "fixed",
+            "question": "نورة أسرع من خالد. سالم أسرع من ماجد. ماجد أسرع من هند. خالد أسرع من سالم. من صاحب المركز الرابع من الأسرع إلى الأبطأ؟",
+            "stimulus": null,
+            "answer": "A) ماجد"
+          },
+          {
+            "template": "REL_M_COUNT",
+            "target": "countAbove",
+            "scenario": "relational/REL_M_COUNT",
+            "structure": "fixed",
+            "question": "مريم أسرع من سارة. سامي أسرع من سارة. راشد أسرع من مريم. فهد أسرع من سارة. راشد أسرع من علي. راشد أسرع من سامي. علي أسرع من فهد. كم شخصًا نعرف يقينًا أنهم أسرع من سامي؟",
+            "stimulus": null,
+            "answer": "B) شخص واحد"
+          }
+        ]
+      }
+    },
+    {
+      "shape": "session50",
+      "seed": "RC27D-3",
+      "refused": false,
+      "measures": {
+        "items": 50,
+        "core": {
+          "distinct": 50,
+          "largestGroup": 1,
+          "itemsInARepeatedGroup": 0,
+          "perHundred": 100
+        },
+        "nearDuplicates": {
+          "distinct": 50,
+          "largestGroup": 1,
+          "itemsInARepeatedGroup": 0
+        },
+        "reasoningTarget": {
+          "distinct": 50,
+          "largestGroup": 1,
+          "itemsInARepeatedGroup": 0
+        },
+        "parameterOnly": {
+          "groups": 50,
+          "largestGroup": 1,
+          "itemsInARepeatedGroup": 0
+        },
+        "targets": {
+          "distinct": 48
+        },
+        "scenarios": {
+          "distinct": 43
+        },
+        "stemSkeletons": {
+          "distinct": 49,
+          "largestGroup": 2
+        },
+        "stemStructures": {
+          "distinct": 5
+        },
+        "entities": {
+          "distinct": 24,
+          "largestGroup": 4,
+          "mostUsed": [
+            "آلة×4",
+            "جهاز×4",
+            "راشد×4",
+            "عمر×4",
+            "خالد×3"
+          ]
+        },
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "longestSimilarRun": 0,
+        "gates": {
+          "wrongKeys": 0,
+          "ambiguous": 0,
+          "duplicateOptions": 0
+        }
+      },
+      "coreRelaxations": 0,
+      "surfaceRelaxations": 6,
+      "relaxationsByDimension": {
+        "entity_pattern": 6
+      },
+      "telemetryBalanced": true,
+      "perSession": [
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        }
+      ],
+      "repeatedGroups": [],
+      "contrasting": {
+        "averages": [
+          {
+            "template": "AVG_M_ADD_PAIR",
+            "target": "averageAfterAddingPair",
+            "scenario": "averages/workshop_lengths",
+            "structure": "sequential",
+            "question": "متوسط أطوال 7 ألواح هو 25 مترًا. أُضيف لوحان متوسط طولهما 34 مترًا. فما متوسط الأطوال بعد الإضافة؟",
+            "stimulus": null,
+            "answer": "D) 27 مترًا"
+          },
+          {
+            "template": "AVG_E_REMOVE",
+            "target": "newAverageAfterRemove",
+            "scenario": "averages/abstract_values",
+            "structure": "compact",
+            "question": "متوسط 8 قيم هو 28، وحُذفت قيمة مقدارها 21. فما متوسط القيم الباقية؟",
+            "stimulus": null,
+            "answer": "B) 29"
+          },
+          {
+            "template": "AVG_H_SPLIT_SIZE",
+            "target": "firstGroupCount",
+            "scenario": "averages/warehouse_weights",
+            "structure": "listed",
+            "question": "المعطيات: متوسط أوزان 20 صندوقًا هو 19 كيلوجرامًا؛ قُسموا إلى مجموعتين: متوسط الأولى 23 كيلوجرامًا، ومتوسط الثانية 13 كيلوجرامًا. كم صندوقًا في المجموعة الأولى؟",
+            "stimulus": null,
+            "answer": "E) 12"
+          }
+        ],
+        "sequences": [
+          {
+            "template": "SEQ_M_WRONG_TERM",
+            "target": "wrongTerm",
+            "scenario": "sequences/rule_violation",
+            "structure": "fixed",
+            "question": "أي الحدود الآتية لا يتفق مع قاعدة المتتالية؟",
+            "stimulus": "40، 49، 60، 67، 76، 85",
+            "answer": "A) 60"
+          },
+          {
+            "template": "SEQ_M_PAIR_RULE",
+            "target": "secondOfPair",
+            "scenario": "sequences/paired_terms",
+            "structure": "fixed",
+            "question": "ما العدد التالي في المتتالية؟",
+            "stimulus": "7، 56، 8، 72، 9، 90، 10، ؟",
+            "answer": "A) 110"
+          }
+        ],
+        "speed": [
+          {
+            "template": "SPD_M_TWO_TIME",
+            "target": "totalTimeMinutes",
+            "scenario": "speed/car",
+            "structure": "compact",
+            "question": "قطعت سيارة 120 كيلومترًا بسرعة 60 كم/ساعة، ثم قطعت 40 كيلومترًا بسرعة 40 كم/ساعة دون توقف. كم دقيقة استغرقت الرحلة كاملة؟",
+            "stimulus": null,
+            "answer": "F) 180 دقيقة"
+          },
+          {
+            "template": "SPD_E_DISTANCE",
+            "target": "distance",
+            "scenario": "speed/bicycle",
+            "structure": "sequential",
+            "question": "سارت دراجة بسرعة 40 كم/ساعة لمدة 1.5 ساعة. ما المسافة التي قطعتها؟",
+            "stimulus": null,
+            "answer": "D) 60 كيلومترًا"
+          },
+          {
+            "template": "SPD_E_TIME",
+            "target": "time",
+            "scenario": "speed/truck",
+            "structure": "sequential",
+            "question": "قطعت شاحنة 180 كيلومترًا بسرعة 60 كم/ساعة. كم ساعة استغرقت؟",
+            "stimulus": null,
+            "answer": "F) 3 ساعات"
+          },
+          {
+            "template": "SPD_M_EQUAL_DIST",
+            "target": "totalDistance",
+            "scenario": "speed/bus",
+            "structure": "compact",
+            "question": "قطعت حافلة نصف المسافة بسرعة 50 كم/ساعة، والنصف الآخر بسرعة 30 كم/ساعة. إذا استغرقت الرحلة كاملة 32 ساعة، فما المسافة الكلية؟",
+            "stimulus": null,
+            "answer": "B) 1200 كيلومترًا"
+          }
+        ],
+        "relational": [
+          {
+            "template": "REL_M_CHAIN6",
+            "target": "position5",
+            "scenario": "relational/REL_M_CHAIN6",
+            "structure": "fixed",
+            "question": "هند أسرع من راشد. خالد أسرع من نورة. سامي أسرع من هند. نورة أسرع من ماجد. راشد أسرع من خالد. من صاحب المركز الخامس من الأسرع إلى الأبطأ؟",
+            "stimulus": null,
+            "answer": "D) نورة"
+          },
+          {
+            "template": "REL_H_GUARANTEE",
+            "target": "guaranteedDespiteBranches",
+            "scenario": "relational/REL_H_GUARANTEE",
+            "structure": "fixed",
+            "question": "فهد أسرع من مريم. فهد أسرع من ريم. راشد أسرع من مريم. ريم أسرع من بدر. راشد أسرع من ريم. بدر أسرع من خالد. أي عبارة يجب أن تكون صحيحة مهما كان ترتيب مريم وخالد؟",
+            "stimulus": null,
+            "answer": "E) فهد أسرع من بدر"
+          },
+          {
+            "template": "REL_M_COUNT",
+            "target": "countAbove",
+            "scenario": "relational/REL_M_COUNT",
+            "structure": "fixed",
+            "question": "سارة أسرع من راشد. راشد أسرع من فهد. علي أسرع من فهد. ريم أسرع من سارة. نورة أسرع من بدر. خالد أسرع من ريم. خالد أسرع من علي. بدر أسرع من فهد. خالد أسرع من نورة. كم شخصًا نعرف يقينًا أنهم أسرع من علي؟",
+            "stimulus": null,
+            "answer": "C) شخص واحد"
+          }
+        ]
+      }
+    },
+    {
+      "shape": "sitting100",
+      "seed": "RC27D-1",
+      "refused": false,
+      "measures": {
+        "items": 100,
+        "core": {
+          "distinct": 76,
+          "largestGroup": 2,
+          "itemsInARepeatedGroup": 48,
+          "perHundred": 76
+        },
+        "nearDuplicates": {
+          "distinct": 74,
+          "largestGroup": 3,
+          "itemsInARepeatedGroup": 51
+        },
+        "reasoningTarget": {
+          "distinct": 75,
+          "largestGroup": 2,
+          "itemsInARepeatedGroup": 50
+        },
+        "parameterOnly": {
+          "groups": 76,
+          "largestGroup": 3,
+          "itemsInARepeatedGroup": 47
+        },
+        "targets": {
+          "distinct": 69
+        },
+        "scenarios": {
+          "distinct": 72
+        },
+        "stemSkeletons": {
+          "distinct": 92,
+          "largestGroup": 3
+        },
+        "stemStructures": {
+          "distinct": 4
+        },
+        "entities": {
+          "distinct": 30,
+          "largestGroup": 8,
+          "mostUsed": [
+            "آلة×8",
+            "عمر×6",
+            "جهاز×6",
+            "علي×6",
+            "نورة×6"
+          ]
+        },
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "longestSimilarRun": 0,
+        "gates": {
+          "wrongKeys": 0,
+          "ambiguous": 0,
+          "duplicateOptions": 0
+        }
+      },
+      "coreRelaxations": 0,
+      "surfaceRelaxations": 9,
+      "relaxationsByDimension": {
+        "entity_pattern": 7,
+        "entity_word_batch": 2
+      },
+      "telemetryBalanced": true,
+      "perSession": [
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        },
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        }
+      ],
+      "repeatedGroups": [
+        {
+          "coreSignature": "rel:eq(mul(X,add(#,#)),mul(#,#))|path:add>multiply>divide|asks:costFromSellPrice|entry:forward|arr:eqx1|dep:1/2",
+          "occurrences": 2,
+          "target": "costFromSellPrice",
+          "examples": [
+            {
+              "family": "profit_loss",
+              "template": "PL_H_REVERSE",
+              "band": "easy",
+              "scenario": "profit_loss/furniture",
+              "structure": "compact",
+              "question": "باع معرض أثاث مقعدًا بـ192 درهمًا محققًا ربحًا قدره 20% من تكلفة الشراء. فما تكلفة الشراء؟",
+              "stimulus": null,
+              "answer": "A) 160 درهمًا"
+            },
+            {
+              "family": "profit_loss",
+              "template": "PL_H_REVERSE",
+              "band": "easy",
+              "scenario": "profit_loss/bookshop",
+              "structure": "compact",
+              "question": "باعت مكتبة كتابًا بـ300 درهمًا محققًا ربحًا قدره 50% من تكلفة الشراء. فما تكلفة الشراء؟",
+              "stimulus": null,
+              "answer": "F) 200 درهمًا"
+            }
+          ]
+        },
+        {
+          "coreSignature": "rel:eq(add(mul(#,#),mul(X,#)),mul(#,#))|path:multiply>subtract>divide|asks:workersForDeadline|entry:forward|arr:eqx1|dep:2/2",
+          "occurrences": 2,
+          "target": "workersForDeadline",
+          "examples": [
+            {
+              "family": "work_time",
+              "template": "WORK_M_TARGET",
+              "band": "medium",
+              "scenario": "work_time/WORK_M_TARGET",
+              "structure": "listed",
+              "question": "المعطيات: يستطيع 6 عمال إنجاز عمل كامل في 12 يومًا؛ عملوا 3 أيام، ثم تقرر إنهاء ما تبقى خلال 3 أيام فقط. كم عاملًا يجب أن يعمل خلال المدة الأخيرة؟",
+              "stimulus": null,
+              "answer": "F) 18 عاملًا"
+            },
+            {
+              "family": "work_time",
+              "template": "WORK_M_TARGET",
+              "band": "medium",
+              "scenario": "work_time/WORK_M_TARGET",
+              "structure": "compact",
+              "question": "يستطيع 6 عمال إنجاز عمل كامل في 15 يومًا، وعملوا 4 أيام، ثم تقرر إنهاء ما تبقى خلال 3 أيام فقط. كم عاملًا يجب أن يعمل خلال المدة الأخيرة؟",
+              "stimulus": null,
+              "answer": "C) 22 عاملًا"
+            }
+          ]
+        },
+        {
+          "coreSignature": "rel:eq(mul(X,#),sub(mul(#,#),mul(#,#)))|path:multiply>ratio>subtract>divide|asks:boxUnitPrice|entry:forward|arr:eqx1|dep:2/3",
+          "occurrences": 2,
+          "target": "boxUnitPrice",
+          "examples": [
+            {
+              "family": "direct_proportion",
+              "template": "PROP_H_TWO_ITEM_SYSTEM",
+              "band": "medium",
+              "scenario": "direct_proportion/PROP_H_TWO_ITEM_SYSTEM",
+              "structure": "listed",
+              "question": "المعطيات: ثمن 4 صناديق وقطعة واحدة معًا 55 درهمًا؛ وثمن صندوق واحد وقطعتان معًا 26 درهمًا. فما ثمن الصندوق الواحد؟",
+              "stimulus": null,
+              "answer": "B) 12 درهمًا"
+            },
+            {
+              "family": "direct_proportion",
+              "template": "PROP_H_TWO_ITEM_SYSTEM",
+              "band": "medium",
+              "scenario": "direct_proportion/PROP_H_TWO_ITEM_SYSTEM",
+              "structure": "sequential",
+              "question": "ثمن 5 صناديق وقطعتان معًا 95 درهمًا. وثمن 5 صناديق و5 قطع معًا 125 درهمًا. فما ثمن الصندوق الواحد؟",
+              "stimulus": null,
+              "answer": "E) 15 درهمًا"
+            }
+          ]
+        }
+      ],
+      "contrasting": {
+        "averages": [
+          {
+            "template": "AVG_H_OVERLAP",
+            "target": "overlappingValue",
+            "scenario": "averages/workshop_lengths",
+            "structure": "compact",
+            "question": "متوسط الأطوال كلها في سجل أطوال 11 لوحًا هو 18 مترًا، ومتوسط أول 6 ألواح في السجل هو 16 مترًا، ومتوسط آخر 6 ألواح فيه هو 22 مترًا. فما طول اللوح الذي يقع في الموضع الأوسط من السجل؟",
+            "stimulus": null,
+            "answer": "D) 30 مترًا"
+          },
+          {
+            "template": "AVG_E_ADD",
+            "target": "newAverageAfterAdd",
+            "scenario": "averages/workshop_lengths",
+            "structure": "compact",
+            "question": "متوسط أطوال 7 ألواح هو 24 مترًا، وأُضيف لوح طوله 32 مترًا. فما متوسط الأطوال بعد الإضافة؟",
+            "stimulus": null,
+            "answer": "E) 25 مترًا"
+          },
+          {
+            "template": "AVG_H_SPLIT_SIZE",
+            "target": "firstGroupCount",
+            "scenario": "averages/abstract_values",
+            "structure": "sequential",
+            "question": "متوسط 10 قيم هو 12. قُسموا إلى مجموعتين: متوسط الأولى 20، ومتوسط الثانية 10. كم قيمة في المجموعة الأولى؟",
+            "stimulus": null,
+            "answer": "D) 2"
+          }
+        ],
+        "sequences": [
+          {
+            "template": "SEQ_M_PAIR_RULE",
+            "target": "secondOfPair",
+            "scenario": "sequences/paired_terms",
+            "structure": "fixed",
+            "question": "ما العدد التالي في المتتالية؟",
+            "stimulus": "6، 42، 8، 72، 10، 110، 12، ؟",
+            "answer": "A) 156"
+          },
+          {
+            "template": "SEQ_E_GEO",
+            "target": "previousTerm",
+            "scenario": "sequences/SEQ_E_GEO",
+            "structure": "fixed",
+            "question": "ما العدد السابق في المتتالية؟",
+            "stimulus": "؟، 243، 81، 27، 9",
+            "answer": "D) 729"
+          },
+          {
+            "template": "SEQ_M_WRONG_TERM",
+            "target": "wrongTerm",
+            "scenario": "sequences/rule_violation",
+            "structure": "fixed",
+            "question": "أي الحدود الآتية لا يتفق مع قاعدة المتتالية؟",
+            "stimulus": "36، 41، 46، 52، 56، 61",
+            "answer": "D) 52"
+          },
+          {
+            "template": "SEQ_M_CYCLE3",
+            "target": "nextTerm",
+            "scenario": "sequences/three_operation_cycle",
+            "structure": "fixed",
+            "question": "ما العدد التالي في المتتالية؟",
+            "stimulus": "12، 19، 57، 55، 62، 186، 184، ؟",
+            "answer": "B) 191"
+          }
+        ],
+        "speed": [
+          {
+            "template": "SPD_H_CURRENT",
+            "target": "boatSpeed",
+            "scenario": "speed/boat_with_and_against_current",
+            "structure": "compact",
+            "question": "قطع قارب 221 كيلومترًا مع التيار في 13 ساعة، وقطع المسافة نفسها ضد التيار في 17 ساعة. فما سرعة القارب في الماء الساكن؟",
+            "stimulus": null,
+            "answer": "C) 15 كم/ساعة"
+          },
+          {
+            "template": "SPD_H_CATCH",
+            "target": "catchupTime",
+            "scenario": "speed/truck",
+            "structure": "sequential",
+            "question": "انطلقت شاحنة أ بسرعة 72 كم/ساعة. بعد ساعة واحدة انطلقت شاحنة ب من المكان نفسه وفي الاتجاه نفسه بسرعة 96 كم/ساعة. بعد كم ساعة من انطلاق ب تلحق بشاحنة أ؟",
+            "stimulus": null,
+            "answer": "F) 3 ساعات"
+          },
+          {
+            "template": "SPD_H_LEG_SPLIT",
+            "target": "secondLegHours",
+            "scenario": "speed/journey_split_between_two_speeds",
+            "structure": "compact",
+            "question": "قطعت دراجة 390 كيلومترًا في 7 ساعات، وسارت جزءًا من الرحلة بسرعة 30 كم/ساعة والجزء الباقي بسرعة 90 كم/ساعة. فكم ساعة سارت بالسرعة الثانية؟",
+            "stimulus": null,
+            "answer": "B) 3 ساعات"
+          },
+          {
+            "template": "SPD_E_DISTANCE",
+            "target": "distance",
+            "scenario": "speed/minibus",
+            "structure": "sequential",
+            "question": "سارت مركبة بسرعة 70 كم/ساعة لمدة 4 ساعات. ما المسافة التي قطعتها؟",
+            "stimulus": null,
+            "answer": "A) 280 كيلومترًا"
+          }
+        ],
+        "relational": [
+          {
+            "template": "REL_M_COUNT",
+            "target": "countAbove",
+            "scenario": "relational/REL_M_COUNT",
+            "structure": "fixed",
+            "question": "راشد أسرع من ماجد. خالد أسرع من علي. سالم أسرع من راشد. سالم أسرع من خالد. سالم أسرع من نورة. نورة أسرع من ماجد. علي أسرع من ماجد. كم شخصًا نعرف يقينًا أنهم أسرع من نورة؟",
+            "stimulus": null,
+            "answer": "A) شخص واحد"
+          },
+          {
+            "template": "REL_E_BETWEEN",
+            "target": "position2",
+            "scenario": "relational/REL_E_BETWEEN",
+            "structure": "fixed",
+            "question": "ليان أطول من نورة. ناصر أطول من علي. نورة أطول من ناصر. من صاحب المركز الثاني من الأطول إلى الأقصر؟",
+            "stimulus": null,
+            "answer": "F) نورة"
+          },
+          {
+            "template": "REL_E_CHAIN",
+            "target": "position4",
+            "scenario": "relational/REL_E_CHAIN",
+            "structure": "fixed",
+            "question": "خالد أسرع من ريم. ريم أسرع من راشد. حمد أسرع من خالد. ليان أسرع من حمد. من صاحب المركز الرابع من الأسرع إلى الأبطأ؟",
+            "stimulus": null,
+            "answer": "B) ريم"
+          },
+          {
+            "template": "REL_M_CHAIN6",
+            "target": "position3",
+            "scenario": "relational/REL_M_CHAIN6",
+            "structure": "fixed",
+            "question": "علي أسرع من ناصر. ناصر أسرع من سامي. فهد أسرع من علي. بدر أسرع من فهد. سامي أسرع من ماجد. من صاحب المركز الثالث من الأسرع إلى الأبطأ؟",
+            "stimulus": null,
+            "answer": "D) علي"
+          }
+        ]
+      }
+    },
+    {
+      "shape": "sitting100",
+      "seed": "RC27D-2",
+      "refused": false,
+      "measures": {
+        "items": 100,
+        "core": {
+          "distinct": 79,
+          "largestGroup": 2,
+          "itemsInARepeatedGroup": 42,
+          "perHundred": 79
+        },
+        "nearDuplicates": {
+          "distinct": 77,
+          "largestGroup": 2,
+          "itemsInARepeatedGroup": 46
+        },
+        "reasoningTarget": {
+          "distinct": 76,
+          "largestGroup": 2,
+          "itemsInARepeatedGroup": 48
+        },
+        "parameterOnly": {
+          "groups": 80,
+          "largestGroup": 2,
+          "itemsInARepeatedGroup": 40
+        },
+        "targets": {
+          "distinct": 70
+        },
+        "scenarios": {
+          "distinct": 77
+        },
+        "stemSkeletons": {
+          "distinct": 89,
+          "largestGroup": 6
+        },
+        "stemStructures": {
+          "distinct": 5
+        },
+        "entities": {
+          "distinct": 29,
+          "largestGroup": 8,
+          "mostUsed": [
+            "آلة×8",
+            "عمر×7",
+            "سالم×6",
+            "سامي×6",
+            "سارة×6"
+          ]
+        },
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "longestSimilarRun": 0,
+        "gates": {
+          "wrongKeys": 0,
+          "ambiguous": 0,
+          "duplicateOptions": 0
+        }
+      },
+      "coreRelaxations": 0,
+      "surfaceRelaxations": 14,
+      "relaxationsByDimension": {
+        "entity_pattern": 11,
+        "entity_word_batch": 3
+      },
+      "telemetryBalanced": true,
+      "perSession": [
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        },
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        }
+      ],
+      "repeatedGroups": [
+        {
+          "coreSignature": "rel:eq(mul(X,#),add(sub(mul(#,#),#),#))|path:multiply>subtract>add>divide|asks:newAverageAfterReplace|entry:forward|arr:eqx1|dep:2/2",
+          "occurrences": 2,
+          "target": "newAverageAfterReplace",
+          "examples": [
+            {
+              "family": "averages",
+              "template": "AVG_M_REPLACE",
+              "band": "medium",
+              "scenario": "averages/daily_visitors",
+              "structure": "sequential",
+              "question": "متوسط عدد الزوار في 10 أيام هو 30 زائرًا. صُحح يوم من 8 إلى 18. فما المتوسط الجديد؟",
+              "stimulus": null,
+              "answer": "F) 31 زائرًا"
+            },
+            {
+              "family": "averages",
+              "template": "AVG_M_REPLACE",
+              "band": "medium",
+              "scenario": "averages/warehouse_weights",
+              "structure": "question_first",
+              "question": "المطلوب: متوسط الأوزان بعد الاستبدال. المعطيات: متوسط أوزان 10 صناديق هو 30 كيلوجرامًا؛ استُبدل صندوق وزنه 24 كيلوجرامًا بصندوق وزنه 34 كيلوجرامًا.",
+              "stimulus": null,
+              "answer": "A) 31 كيلوجرامًا"
+            }
+          ]
+        },
+        {
+          "coreSignature": "rel:eq(add(mul(X,#),mul(#,#)),mul(#,#))|path:subtract>multiply>divide|asks:remainderMarginPercent|entry:reverse|arr:eqx1|dep:2/3",
+          "occurrences": 2,
+          "target": "remainderMarginPercent",
+          "examples": [
+            {
+              "family": "profit_loss",
+              "template": "PL_H_REST_MARGIN",
+              "band": "hard",
+              "scenario": "profit_loss/electronics/consignment_part_sold_target_overall_margin",
+              "structure": "compact",
+              "question": "اشترى تاجر بضاعة بمبلغ 600 درهمًا، وباع منها ما تكلفته 480 درهمًا بربح 20% من تكلفة ذلك الجزء. بكم في المئة من تكلفة الباقي يجب أن يبيع الباقي ليكون ربحه الكلي 18% من التكلفة الكلية؟",
+              "stimulus": null,
+              "answer": "B) 10%"
+            },
+            {
+              "family": "profit_loss",
+              "template": "PL_H_REST_MARGIN",
+              "band": "hard",
+              "scenario": "profit_loss/general_store/consignment_part_sold_target_overall_margin",
+              "structure": "listed",
+              "question": "المعطيات: اشترى تاجر بضاعة بمبلغ 600 درهمًا؛ باع منها ما تكلفته 200 درهمًا بربح 10% من تكلفة ذلك الجزء. بكم في المئة من تكلفة الباقي يجب أن يبيع الباقي ليكون ربحه الكلي 18% من التكلفة الكلية؟",
+              "stimulus": null,
+              "answer": "F) 22%"
+            }
+          ]
+        },
+        {
+          "coreSignature": "rel:eq(add(X,#,#),mul(#,add(X,#)))|path:add>ratio>multiply>subtract>divide|asks:youngerAgeNow|entry:forward|arr:eqx1|dep:4/3",
+          "occurrences": 2,
+          "target": "youngerAgeNow",
+          "examples": [
+            {
+              "family": "ages",
+              "template": "AGE_H_TWO_TIME",
+              "band": "medium",
+              "scenario": "ages/AGE_H_TWO_TIME",
+              "structure": "compact",
+              "question": "عمر الأب أكبر من عمر ابنه بـ18 سنة، وبعد 8 سنوات سيصبح عمر الأب ضعف عمر الابن. كم عمر الابن الآن؟",
+              "stimulus": null,
+              "answer": "D) 10 سنوات"
+            },
+            {
+              "family": "ages",
+              "template": "AGE_M_FUT_RATIO",
+              "band": "medium",
+              "scenario": "ages/AGE_M_FUT_RATIO",
+              "structure": "compact",
+              "question": "عمر الأم أكبر من عمر ابنتها بـ28 سنة، وبعد 3 سنوات سيكون عمر الأم ثلاثة أمثال عمر ابنتها. كم عمر الابنة الآن؟",
+              "stimulus": null,
+              "answer": "C) 11 سنة"
+            }
+          ]
+        }
+      ],
+      "contrasting": {
+        "averages": [
+          {
+            "template": "AVG_M_REPLACE",
+            "target": "newAverageAfterReplace",
+            "scenario": "averages/daily_visitors",
+            "structure": "sequential",
+            "question": "متوسط عدد الزوار في 10 أيام هو 30 زائرًا. صُحح يوم من 8 إلى 18. فما المتوسط الجديد؟",
+            "stimulus": null,
+            "answer": "F) 31 زائرًا"
+          },
+          {
+            "template": "AVG_H_OVERLAP",
+            "target": "overlappingValue",
+            "scenario": "averages/nursery_heights",
+            "structure": "sequential",
+            "question": "متوسط الأطوال كلها في سجل أطوال 9 شتلات هو 16 سنتيمترًا. متوسط أول 5 شتلات في السجل هو 9 سنتيمترات. متوسط آخر 5 شتلات فيه هو 21 سنتيمترًا. فما طول الشتلة التي تقع في الموضع الأوسط من السجل؟",
+            "stimulus": null,
+            "answer": "C) 6 سنتيمترات"
+          },
+          {
+            "template": "AVG_H_COMB_ADD",
+            "target": "weightedAveragePlusValue",
+            "scenario": "averages/library_pages",
+            "structure": "listed",
+            "question": "المعطيات: متوسط عدد صفحات 3 كتب هو 19 صفحة؛ متوسط عدد صفحات 6 كتب أخرى هو 23 صفحة؛ بعد ذلك أُضيف إلى الرف كتاب عدد صفحاته 45. فما متوسط الصفحات جميعها؟",
+            "stimulus": null,
+            "answer": "D) 24 صفحة"
+          },
+          {
+            "template": "AVG_E_REMOVE",
+            "target": "newAverageAfterRemove",
+            "scenario": "averages/warehouse_weights",
+            "structure": "sequential",
+            "question": "متوسط أوزان 8 صناديق هو 15 كيلوجرامًا. أُخرج من المستودع صندوق وزنه 29 كيلوجرامًا. فما متوسط الأوزان الباقية؟",
+            "stimulus": null,
+            "answer": "C) 13 كيلوجرامًا"
+          }
+        ],
+        "sequences": [
+          {
+            "template": "SEQ_H_ALT_DIV",
+            "target": "nextTerm",
+            "scenario": "sequences/SEQ_H_ALT_DIV",
+            "structure": "fixed",
+            "question": "ما العدد التالي في المتتالية؟",
+            "stimulus": "204، 200، 100، 96، 32، 28، ؟",
+            "answer": "D) 7"
+          },
+          {
+            "template": "SEQ_E_ARITH",
+            "target": "previousTerm",
+            "scenario": "sequences/SEQ_E_ARITH",
+            "structure": "fixed",
+            "question": "ما العدد السابق في المتتالية؟",
+            "stimulus": "؟، 25، 32، 39، 46، 53",
+            "answer": "C) 18"
+          },
+          {
+            "template": "SEQ_M_WRONG_TERM",
+            "target": "wrongTerm",
+            "scenario": "sequences/rule_violation",
+            "structure": "fixed",
+            "question": "أي الحدود الآتية لا يتفق مع قاعدة المتتالية؟",
+            "stimulus": "4، 14، 36، 108، 324، 972",
+            "answer": "F) 14"
+          },
+          {
+            "template": "SEQ_M_LINEAR_RECUR",
+            "target": "nextTerm",
+            "scenario": "sequences/multiply_then_add",
+            "structure": "fixed",
+            "question": "ما العدد التالي في المتتالية؟",
+            "stimulus": "4، 10، 22، 46، 94، ؟",
+            "answer": "F) 190"
+          }
+        ],
+        "speed": [
+          {
+            "template": "SPD_M_EQUAL_DIST",
+            "target": "totalDistance",
+            "scenario": "speed/minibus",
+            "structure": "compact",
+            "question": "قطعت مركبة نصف المسافة بسرعة 75 كم/ساعة، والنصف الآخر بسرعة 50 كم/ساعة. إذا استغرقت الرحلة كاملة 15 ساعة، فما المسافة الكلية؟",
+            "stimulus": null,
+            "answer": "A) 900 كيلومترًا"
+          },
+          {
+            "template": "SPD_E_DISTANCE",
+            "target": "distance",
+            "scenario": "speed/truck",
+            "structure": "compact",
+            "question": "سارت شاحنة بسرعة 90 كم/ساعة لمدة 3 ساعات. ما المسافة التي قطعتها؟",
+            "stimulus": null,
+            "answer": "A) 270 كيلومترًا"
+          },
+          {
+            "template": "SPD_E_TIME",
+            "target": "time",
+            "scenario": "speed/bicycle",
+            "structure": "compact",
+            "question": "قطعت دراجة 150 كيلومترًا بسرعة 100 كم/ساعة. كم ساعة استغرقت؟",
+            "stimulus": null,
+            "answer": "D) 1.5 ساعة"
+          },
+          {
+            "template": "SPD_M_AVG",
+            "target": "averageSpeed",
+            "scenario": "speed/truck",
+            "structure": "compact",
+            "question": "سارت شاحنة ساعتين بسرعة 50 كم/ساعة، ثم 3 ساعات بسرعة 120 كم/ساعة. ما متوسط سرعتها في الرحلة كلها؟",
+            "stimulus": null,
+            "answer": "A) 92 كم/ساعة"
+          }
+        ],
+        "relational": [
+          {
+            "template": "REL_H_GUARANTEE",
+            "target": "guaranteedDespiteBranches",
+            "scenario": "relational/REL_H_GUARANTEE",
+            "structure": "fixed",
+            "question": "حمد أسرع من ريم. ماجد أسرع من بدر. حمد أسرع من علي. حمد أسرع من راشد. راشد أسرع من ماجد. أي عبارة يجب أن تكون صحيحة مهما كان ترتيب علي وريم؟",
+            "stimulus": null,
+            "answer": "F) راشد أسرع من بدر"
+          },
+          {
+            "template": "REL_E_CHAIN",
+            "target": "position2",
+            "scenario": "relational/REL_E_CHAIN",
+            "structure": "fixed",
+            "question": "ناصر أسرع من علي. خالد أسرع من نورة. نورة أسرع من حمد. علي أسرع من خالد. من صاحب المركز الثاني من الأسرع إلى الأبطأ؟",
+            "stimulus": null,
+            "answer": "C) علي"
+          },
+          {
+            "template": "REL_E_BETWEEN",
+            "target": "position4",
+            "scenario": "relational/REL_E_BETWEEN",
+            "structure": "fixed",
+            "question": "سالم أطول من مريم. مريم أطول من سارة. خالد أطول من سالم. سارة أطول من سامي. من صاحب المركز الرابع من الأطول إلى الأقصر؟",
+            "stimulus": null,
+            "answer": "B) سارة"
+          },
+          {
+            "template": "REL_H_COUNT_BRANCHED",
+            "target": "countAbove",
+            "scenario": "relational/REL_H_COUNT_BRANCHED",
+            "structure": "fixed",
+            "question": "ريم أسرع من ليان. سالم أسرع من ناصر. نورة أسرع من ماجد. نورة أسرع من ليان. ليان أسرع من راشد. ماجد أسرع من سالم. ريم أسرع من ماجد. راشد أسرع من سامي. كم شخصًا نعرف يقينًا أنهم أسرع من سامي؟",
+            "stimulus": null,
+            "answer": "E) أربعة أشخاص"
+          }
+        ]
+      }
+    },
+    {
+      "shape": "sitting100",
+      "seed": "RC27D-3",
+      "refused": false,
+      "measures": {
+        "items": 100,
+        "core": {
+          "distinct": 81,
+          "largestGroup": 2,
+          "itemsInARepeatedGroup": 38,
+          "perHundred": 81
+        },
+        "nearDuplicates": {
+          "distinct": 79,
+          "largestGroup": 2,
+          "itemsInARepeatedGroup": 42
+        },
+        "reasoningTarget": {
+          "distinct": 79,
+          "largestGroup": 2,
+          "itemsInARepeatedGroup": 42
+        },
+        "parameterOnly": {
+          "groups": 82,
+          "largestGroup": 2,
+          "itemsInARepeatedGroup": 36
+        },
+        "targets": {
+          "distinct": 74
+        },
+        "scenarios": {
+          "distinct": 74
+        },
+        "stemSkeletons": {
+          "distinct": 92,
+          "largestGroup": 5
+        },
+        "stemStructures": {
+          "distinct": 4
+        },
+        "entities": {
+          "distinct": 28,
+          "largestGroup": 7,
+          "mostUsed": [
+            "آلة×7",
+            "عمر×6",
+            "سالم×6",
+            "علي×6",
+            "متجر×6"
+          ]
+        },
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "longestSimilarRun": 0,
+        "gates": {
+          "wrongKeys": 0,
+          "ambiguous": 0,
+          "duplicateOptions": 0
+        }
+      },
+      "coreRelaxations": 0,
+      "surfaceRelaxations": 9,
+      "relaxationsByDimension": {
+        "entity_pattern": 8,
+        "entity_word_batch": 1
+      },
+      "telemetryBalanced": true,
+      "perSession": [
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        },
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        }
+      ],
+      "repeatedGroups": [
+        {
+          "coreSignature": "rel:eq(mul(X,#),add(mul(#,#),mul(#,#),#))|path:multiply>add>divide|asks:weightedAveragePlusValue|entry:forward|arr:eqx1|dep:2/3",
+          "occurrences": 2,
+          "target": "weightedAveragePlusValue",
+          "examples": [
+            {
+              "family": "averages",
+              "template": "AVG_H_COMB_ADD",
+              "band": "medium",
+              "scenario": "averages/daily_visitors",
+              "structure": "sequential",
+              "question": "متوسط عدد الزوار في 3 أيام هو 14 زائرًا. متوسط عدد الزوار في 5 أيام أخرى هو 18 زائرًا. بعد ذلك أُضيف يوم عدد زواره 30. فما متوسط أعداد الزوار جميعها؟",
+              "stimulus": null,
+              "answer": "F) 18 زائرًا"
+            },
+            {
+              "family": "averages",
+              "template": "AVG_H_COMB_ADD",
+              "band": "medium",
+              "scenario": "averages/abstract_values",
+              "structure": "compact",
+              "question": "متوسط 3 قيم هو 18، ومتوسط 4 قيم أخرى هو 22، بعد ذلك أُضيفت قيمة جديدة مقدارها 50. فما متوسط القيم جميعها؟",
+              "stimulus": null,
+              "answer": "A) 24"
+            }
+          ]
+        },
+        {
+          "coreSignature": "rel:eq(mul(#,add(#,X)),mul(#,X))|path:multiply>subtract>divide|asks:catchupTime|entry:forward|arr:eqx1|dep:1/2",
+          "occurrences": 2,
+          "target": "catchupTime",
+          "examples": [
+            {
+              "family": "speed",
+              "template": "SPD_H_CATCH",
+              "band": "medium",
+              "scenario": "speed/car",
+              "structure": "listed",
+              "question": "المعطيات: انطلقت سيارة أ بسرعة 60 كم/ساعة؛ بعد 1.5 ساعة انطلقت سيارة ب من المكان نفسه وفي الاتجاه نفسه بسرعة 80 كم/ساعة. بعد كم ساعة من انطلاق ب تلحق بسيارة أ؟",
+              "stimulus": null,
+              "answer": "D) 4.5 ساعة"
+            },
+            {
+              "family": "speed",
+              "template": "SPD_H_CATCH",
+              "band": "medium",
+              "scenario": "speed/bicycle",
+              "structure": "sequential",
+              "question": "انطلقت دراجة أ بسرعة 80 كم/ساعة. بعد ساعتين انطلقت دراجة ب من المكان نفسه وفي الاتجاه نفسه بسرعة 96 كم/ساعة. بعد كم ساعة من انطلاق ب تلحق بدراجة أ؟",
+              "stimulus": null,
+              "answer": "D) 10 ساعات"
+            }
+          ]
+        },
+        {
+          "coreSignature": "rel:eq(mul(X,mul(#,#)),mul(#,#,add(#,#)))|path:divide>multiply>add|asks:scaledOutputPlusReserve|entry:forward|arr:eqx1|dep:2/3",
+          "occurrences": 2,
+          "target": "scaledOutputPlusReserve",
+          "examples": [
+            {
+              "family": "direct_proportion",
+              "template": "PROP_H_COMPOUND",
+              "band": "medium",
+              "scenario": "direct_proportion/PROP_H_COMPOUND",
+              "structure": "sequential",
+              "question": "تحتاج 6 وحدات إلى 30 كيلوجرامًا من مادة. نريد تجهيز 12 وحدة، مع إضافة احتياط بنسبة 25% فوق الكمية المحسوبة. كم كيلوجرامًا نحتاج؟",
+              "stimulus": null,
+              "answer": "B) 75 كيلوجرامًا"
+            },
+            {
+              "family": "direct_proportion",
+              "template": "PROP_H_COMPOUND",
+              "band": "medium",
+              "scenario": "direct_proportion/PROP_H_COMPOUND",
+              "structure": "compact",
+              "question": "تحتاج 4 وحدات إلى 20 كيلوجرامًا من مادة، ونريد تجهيز 8 وحدات، مع إضافة احتياط بنسبة 20% فوق الكمية المحسوبة. كم كيلوجرامًا نحتاج؟",
+              "stimulus": null,
+              "answer": "C) 48 كيلوجرامًا"
+            }
+          ]
+        }
+      ],
+      "contrasting": {
+        "averages": [
+          {
+            "template": "AVG_H_COMB_ADD",
+            "target": "weightedAveragePlusValue",
+            "scenario": "averages/daily_visitors",
+            "structure": "sequential",
+            "question": "متوسط عدد الزوار في 3 أيام هو 14 زائرًا. متوسط عدد الزوار في 5 أيام أخرى هو 18 زائرًا. بعد ذلك أُضيف يوم عدد زواره 30. فما متوسط أعداد الزوار جميعها؟",
+            "stimulus": null,
+            "answer": "F) 18 زائرًا"
+          },
+          {
+            "template": "AVG_H_OVERLAP",
+            "target": "overlappingValue",
+            "scenario": "averages/workshop_lengths",
+            "structure": "listed",
+            "question": "المعطيات: متوسط الأطوال كلها في سجل أطوال 7 ألواح هو 12 مترًا؛ متوسط أول 4 ألواح في السجل هو 22 مترًا؛ متوسط آخر 4 ألواح فيه هو 12 مترًا. فما طول اللوح الذي يقع في الموضع الأوسط من السجل؟",
+            "stimulus": null,
+            "answer": "B) 52 مترًا"
+          },
+          {
+            "template": "AVG_H_SPLIT_SIZE",
+            "target": "firstGroupCount",
+            "scenario": "averages/workshop_lengths",
+            "structure": "compact",
+            "question": "متوسط أطوال 15 لوحًا هو 14 مترًا، وقُسموا إلى مجموعتين: متوسط الأولى 18 مترًا، ومتوسط الثانية 13 مترًا. كم لوحًا في المجموعة الأولى؟",
+            "stimulus": null,
+            "answer": "E) 3"
+          },
+          {
+            "template": "AVG_E_REMOVE",
+            "target": "newAverageAfterRemove",
+            "scenario": "averages/daily_visitors",
+            "structure": "sequential",
+            "question": "متوسط عدد الزوار في 6 أيام هو 16 زائرًا. استُبعد يوم عدد زواره 21. فما متوسط أعداد الزوار الباقية؟",
+            "stimulus": null,
+            "answer": "A) 15 زائرًا"
+          }
+        ],
+        "sequences": [
+          {
+            "template": "SEQ_M_WRONG_TERM",
+            "target": "wrongTerm",
+            "scenario": "sequences/rule_violation",
+            "structure": "fixed",
+            "question": "أي الحدود الآتية لا يتفق مع قاعدة المتتالية؟",
+            "stimulus": "24، 32، 40، 48، 54، 64",
+            "answer": "C) 54"
+          },
+          {
+            "template": "SEQ_M_CYCLE3",
+            "target": "nextTerm",
+            "scenario": "sequences/three_operation_cycle",
+            "structure": "fixed",
+            "question": "ما العدد التالي في المتتالية؟",
+            "stimulus": "6، 9، 18، 12، 15، 30، 24، ؟",
+            "answer": "E) 27"
+          },
+          {
+            "template": "SEQ_E_ARITH",
+            "target": "missingMiddleTerm",
+            "scenario": "sequences/SEQ_E_ARITH",
+            "structure": "fixed",
+            "question": "ما العدد المفقود في المتتالية؟",
+            "stimulus": "11، 14، 17، ؟، 23",
+            "answer": "A) 20"
+          }
+        ],
+        "speed": [
+          {
+            "template": "SPD_H_CATCH",
+            "target": "catchupTime",
+            "scenario": "speed/car",
+            "structure": "listed",
+            "question": "المعطيات: انطلقت سيارة أ بسرعة 60 كم/ساعة؛ بعد 1.5 ساعة انطلقت سيارة ب من المكان نفسه وفي الاتجاه نفسه بسرعة 80 كم/ساعة. بعد كم ساعة من انطلاق ب تلحق بسيارة أ؟",
+            "stimulus": null,
+            "answer": "D) 4.5 ساعة"
+          },
+          {
+            "template": "SPD_H_LEG_SPLIT",
+            "target": "secondLegHours",
+            "scenario": "speed/journey_split_between_two_speeds",
+            "structure": "listed",
+            "question": "المعطيات: قطعت مركبة 350 كيلومترًا في 5 ساعات؛ سارت جزءًا من الرحلة بسرعة 50 كم/ساعة والجزء الباقي بسرعة 75 كم/ساعة. فكم ساعة سارت بالسرعة الثانية؟",
+            "stimulus": null,
+            "answer": "F) 4 ساعات"
+          },
+          {
+            "template": "SPD_M_TWO_TIME",
+            "target": "totalTimeMinutes",
+            "scenario": "speed/truck",
+            "structure": "compact",
+            "question": "قطعت شاحنة 60 كيلومترًا بسرعة 60 كم/ساعة، ثم قطعت 120 كيلومترًا بسرعة 40 كم/ساعة دون توقف. كم دقيقة استغرقت الرحلة كاملة؟",
+            "stimulus": null,
+            "answer": "C) 240 دقيقة"
+          },
+          {
+            "template": "SPD_H_MEET_DELAY",
+            "target": "meetingTime",
+            "scenario": "speed/truck",
+            "structure": "compact",
+            "question": "مدينتان بينهما 300 كيلومترًا، وانطلقت شاحنة أ من الأولى بسرعة 70 كم/ساعة، وبعد 1.5 ساعة انطلقت شاحنة ب من الثانية باتجاه أ بسرعة 80 كم/ساعة. بعد كم ساعة من انطلاق ب تلتقي الشاحنتان؟",
+            "stimulus": null,
+            "answer": "D) 1.3 ساعة"
+          }
+        ],
+        "relational": [
+          {
+            "template": "REL_M_CONFIRM",
+            "target": "guaranteedStatement",
+            "scenario": "relational/REL_M_CONFIRM",
+            "structure": "fixed",
+            "question": "فهد أسرع من راشد. ليان أسرع من سالم. علي أسرع من راشد. ليان أسرع من علي. سالم أسرع من فهد. أي عبارة مؤكدة؟",
+            "stimulus": null,
+            "answer": "E) سالم أسرع من راشد"
+          },
+          {
+            "template": "REL_E_CHAIN",
+            "target": "position4",
+            "scenario": "relational/REL_E_CHAIN",
+            "structure": "fixed",
+            "question": "ماجد أسرع من ناصر. ناصر أسرع من نورة. نورة أسرع من ريم. ريم أسرع من ليان. من صاحب المركز الرابع من الأسرع إلى الأبطأ؟",
+            "stimulus": null,
+            "answer": "C) ريم"
+          },
+          {
+            "template": "REL_M_COUNT",
+            "target": "countAbove",
+            "scenario": "relational/REL_M_COUNT",
+            "structure": "fixed",
+            "question": "سامي أسرع من مريم. ناصر أسرع من بدر. هند أسرع من علي. بدر أسرع من خالد. علي أسرع من خالد. ناصر أسرع من هند. ناصر أسرع من سامي. مريم أسرع من خالد. كم شخصًا نعرف يقينًا أنهم أسرع من مريم؟",
+            "stimulus": null,
+            "answer": "B) شخصان"
+          },
+          {
+            "template": "REL_H_GUARANTEE",
+            "target": "guaranteedDespiteBranches",
+            "scenario": "relational/REL_H_GUARANTEE",
+            "structure": "fixed",
+            "question": "هند أسرع من فهد. مريم أسرع من هند. مريم أسرع من راشد. نورة أسرع من فهد. مريم أسرع من ماجد. راشد أسرع من فهد. ماجد أسرع من نورة. أي عبارة يجب أن تكون صحيحة مهما كان ترتيب هند وماجد؟",
+            "stimulus": null,
+            "answer": "D) مريم أسرع من نورة"
+          }
+        ]
+      }
+    },
+    {
+      "shape": "batch230",
+      "seed": "RC27D-1",
+      "refused": false,
+      "measures": {
+        "items": 230,
+        "core": {
+          "distinct": 133,
+          "largestGroup": 4,
+          "itemsInARepeatedGroup": 172,
+          "perHundred": 57.8
+        },
+        "nearDuplicates": {
+          "distinct": 119,
+          "largestGroup": 4,
+          "itemsInARepeatedGroup": 195
+        },
+        "reasoningTarget": {
+          "distinct": 122,
+          "largestGroup": 4,
+          "itemsInARepeatedGroup": 191
+        },
+        "parameterOnly": {
+          "groups": 132,
+          "largestGroup": 4,
+          "itemsInARepeatedGroup": 175
+        },
+        "targets": {
+          "distinct": 108
+        },
+        "scenarios": {
+          "distinct": 110
+        },
+        "stemSkeletons": {
+          "distinct": 197,
+          "largestGroup": 9
+        },
+        "stemStructures": {
+          "distinct": 5
+        },
+        "entities": {
+          "distinct": 31,
+          "largestGroup": 20,
+          "mostUsed": [
+            "آلة×20",
+            "سارة×16",
+            "علي×15",
+            "سالم×13",
+            "عمر×13"
+          ]
+        },
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "longestSimilarRun": 0,
+        "gates": {
+          "wrongKeys": 0,
+          "ambiguous": 0,
+          "duplicateOptions": 0
+        }
+      },
+      "coreRelaxations": 0,
+      "surfaceRelaxations": 53,
+      "relaxationsByDimension": {
+        "entity_pattern": 24,
+        "entity_word_batch": 3,
+        "user_construction_signature_batch": 22,
+        "reasoning_target_pair_batch": 3,
+        "consecutive": 1
+      },
+      "telemetryBalanced": true,
+      "perSession": [
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        },
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        },
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        },
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        },
+        {
+          "delivered": 30,
+          "coreIdeas": 30,
+          "coreRelaxations": 0
+        }
+      ],
+      "repeatedGroups": [
+        {
+          "coreSignature": "rel:eq(mul(X,#,add(#,#)),mul(#,#,#))|path:divide>add>multiply|asks:requiredTimeAfterIncrease|entry:forward|arr:eqx1|dep:2/3",
+          "occurrences": 4,
+          "target": "requiredTimeAfterIncrease",
+          "examples": [
+            {
+              "family": "unit_rate",
+              "template": "RATE_H_TARGET",
+              "band": "medium",
+              "scenario": "unit_rate/textile_shirts",
+              "structure": "listed",
+              "question": "المعطيات: تنجز آلة 360 قميصًا خلال 6 دقائق؛ ارتفع معدلها في الدقيقة بعد تطوير بمقدار 50% من القيمة السابقة. كم دقيقة تحتاج بالمعدل الجديد لإنجاز 900 قميصًا؟",
+              "stimulus": null,
+              "answer": "F) 10 دقائق"
+            },
+            {
+              "family": "unit_rate",
+              "template": "RATE_H_TARGET",
+              "band": "medium",
+              "scenario": "unit_rate/cannery_cans",
+              "structure": "compact",
+              "question": "تنجز آلة 400 علبة خلال 10 دقائق، وارتفع معدلها في الدقيقة بعد تطوير بمقدار 50% من القيمة السابقة. كم دقيقة تحتاج بالمعدل الجديد لإنجاز 900 علبة؟",
+              "stimulus": null,
+              "answer": "F) 15 دقيقة"
+            },
+            {
+              "family": "unit_rate",
+              "template": "RATE_H_TARGET",
+              "band": "medium",
+              "scenario": "unit_rate/dairy_bottles",
+              "structure": "sequential",
+              "question": "تنجز آلة 360 زجاجة خلال 6 دقائق. ارتفع معدلها في الدقيقة بعد تطوير بمقدار 25% من القيمة السابقة. كم دقيقة تحتاج بالمعدل الجديد لإنجاز 600 زجاجة؟",
+              "stimulus": null,
+              "answer": "F) 8 دقائق"
+            }
+          ]
+        },
+        {
+          "coreSignature": "rel:ruleset:TRIANGULAR|path:multiply>divide|asks:outlier|entry:forward|arr:ruleset:6|dep:0/1",
+          "occurrences": 4,
+          "target": "outlier",
+          "examples": [
+            {
+              "family": "odd_one_out",
+              "template": "ODD_H_TRIANGULAR",
+              "band": "medium",
+              "scenario": "odd_one_out/ODD_H_TRIANGULAR",
+              "structure": "fixed",
+              "question": "أي عدد لا ينتمي إلى المجموعة الآتية؟",
+              "stimulus": "78، 50، 91، 66، 55، 45",
+              "answer": "A) 50"
+            },
+            {
+              "family": "odd_one_out",
+              "template": "ODD_H_TRIANGULAR",
+              "band": "medium",
+              "scenario": "odd_one_out/ODD_H_TRIANGULAR",
+              "structure": "fixed",
+              "question": "أي عدد لا ينتمي إلى المجموعة الآتية؟",
+              "stimulus": "28، 10، 6، 21، 15، 2",
+              "answer": "E) 2"
+            },
+            {
+              "family": "odd_one_out",
+              "template": "ODD_H_TRIANGULAR",
+              "band": "medium",
+              "scenario": "odd_one_out/ODD_H_TRIANGULAR",
+              "structure": "fixed",
+              "question": "أي عدد لا ينتمي إلى المجموعة الآتية؟",
+              "stimulus": "78، 91، 105، 113، 136، 120",
+              "answer": "B) 113"
+            }
+          ]
+        },
+        {
+          "coreSignature": "rel:eq(mod(X,#),#) & eq(mul(sub(X,#),#,#),mul(add(mul(#,X),mul(#,#)),#))|path:add>subtract>ratio>multiply>divide|asks:sideABeforeTransfer|entry:forward|arr:eqx2|dep:4/3",
+          "occurrences": 3,
+          "target": "sideABeforeTransfer",
+          "examples": [
+            {
+              "family": "ratios",
+              "template": "RAT_H_TRANSFER",
+              "band": "medium",
+              "scenario": "ratios/RAT_H_TRANSFER",
+              "structure": "sequential",
+              "question": "النسبة بين أ : ب = 3 : 1. نُقلت 6 وحدات من أ إلى ب فأصبحت النسبة أ : ب = 7 : 5. فما قيمة أ قبل النقل؟",
+              "stimulus": null,
+              "answer": "B) 27"
+            },
+            {
+              "family": "ratios",
+              "template": "RAT_H_TRANSFER",
+              "band": "medium",
+              "scenario": "ratios/RAT_H_TRANSFER",
+              "structure": "listed",
+              "question": "المعطيات: النسبة بين أ : ب = 5 : 3؛ نُقلت 5 وحدات من أ إلى ب فأصبحت النسبة أ : ب = 5 : 4. فما قيمة أ قبل النقل؟",
+              "stimulus": null,
+              "answer": "F) 45"
+            },
+            {
+              "family": "ratios",
+              "template": "RAT_H_TRANSFER",
+              "band": "medium",
+              "scenario": "ratios/RAT_H_TRANSFER",
+              "structure": "listed",
+              "question": "المعطيات: النسبة بين أ : ب = 3 : 1؛ نُقلت 6 وحدات من أ إلى ب فأصبحت النسبة أ : ب = 3 : 2. فما قيمة أ قبل النقل؟",
+              "stimulus": null,
+              "answer": "A) 30"
+            }
+          ]
+        }
+      ],
+      "contrasting": {
+        "averages": [
+          {
+            "template": "AVG_H_COMB_ADD",
+            "target": "weightedAveragePlusValue",
+            "scenario": "averages/workshop_lengths",
+            "structure": "compact",
+            "question": "متوسط أطوال 3 ألواح هو 17 مترًا، ومتوسط أطوال 5 ألواح أخرى هو 23 مترًا، بعد ذلك أُضيف لوح طوله 50 مترًا. فما متوسط الأطوال جميعها؟",
+            "stimulus": null,
+            "answer": "D) 24 مترًا"
+          },
+          {
+            "template": "AVG_H_TARGET",
+            "target": "valueForTargetAverage",
+            "scenario": "averages/nursery_heights",
+            "structure": "compact",
+            "question": "يُراد أن يصبح متوسط الأطوال جميعها 27 سنتيمترًا، ومتوسط أطوال 6 شتلات هو 23 سنتيمترًا. فما الطول الذي يجب إضافته؟",
+            "stimulus": null,
+            "answer": "F) 51 سنتيمترًا"
+          },
+          {
+            "template": "AVG_M_ADD_PAIR",
+            "target": "averageAfterAddingPair",
+            "scenario": "averages/exam_scores",
+            "structure": "listed",
+            "question": "المعطيات: متوسط درجات 7 طلاب هو 23 درجة؛ انضم طالبان متوسط درجتيهما 32. فما متوسط الدرجات بعد الإضافة؟",
+            "stimulus": null,
+            "answer": "D) 25 درجة"
+          },
+          {
+            "template": "AVG_M_REPLACE",
+            "target": "newAverageAfterReplace",
+            "scenario": "averages/abstract_values",
+            "structure": "compact",
+            "question": "متوسط 7 قيم هو 26، واستُبدلت قيمة مقدارها 21 بقيمة مقدارها 35. فما المتوسط الجديد؟",
+            "stimulus": null,
+            "answer": "C) 28"
+          }
+        ],
+        "sequences": [
+          {
+            "template": "SEQ_M_INTERLEAVED",
+            "target": "nextTermOfSecondRun",
+            "scenario": "sequences/SEQ_M_INTERLEAVED",
+            "structure": "fixed",
+            "question": "ما العدد التالي في المتتالية؟",
+            "stimulus": "5، 36، 7، 30، 9، 24، 11، ؟",
+            "answer": "F) 18"
+          },
+          {
+            "template": "SEQ_M_INC_DIFF",
+            "target": "nextTerm",
+            "scenario": "sequences/SEQ_M_INC_DIFF",
+            "structure": "fixed",
+            "question": "ما العدد التالي في المتتالية؟",
+            "stimulus": "12، 14، 19، 27، 38، ؟",
+            "answer": "B) 52"
+          },
+          {
+            "template": "SEQ_M_WRONG_TERM",
+            "target": "wrongTerm",
+            "scenario": "sequences/rule_violation",
+            "structure": "fixed",
+            "question": "أي الحدود الآتية لا يتفق مع قاعدة المتتالية؟",
+            "stimulus": "6، 18، 53، 162، 486، 1458",
+            "answer": "F) 53"
+          },
+          {
+            "template": "SEQ_M_DOUBLE_DIFF",
+            "target": "missingMiddleTerm",
+            "scenario": "sequences/SEQ_M_DOUBLE_DIFF",
+            "structure": "fixed",
+            "question": "ما العدد المفقود في المتتالية؟",
+            "stimulus": "9، 10، ؟، 16، 24",
+            "answer": "B) 12"
+          }
+        ],
+        "speed": [
+          {
+            "template": "SPD_E_DISTANCE",
+            "target": "distance",
+            "scenario": "speed/ferry",
+            "structure": "sequential",
+            "question": "سارت عبّارة بسرعة 60 كم/ساعة لمدة 1.5 ساعة. ما المسافة التي قطعتها؟",
+            "stimulus": null,
+            "answer": "A) 90 كيلومترًا"
+          },
+          {
+            "template": "SPD_M_EQUAL_DIST",
+            "target": "totalDistance",
+            "scenario": "speed/truck",
+            "structure": "sequential",
+            "question": "قطعت شاحنة نصف المسافة بسرعة 70 كم/ساعة، والنصف الآخر بسرعة 25 كم/ساعة. إذا استغرقت الرحلة كاملة 19 ساعة، فما المسافة الكلية؟",
+            "stimulus": null,
+            "answer": "A) 700 كيلومترًا"
+          },
+          {
+            "template": "SPD_H_TIME_DIFF",
+            "target": "distanceFromTimeGap",
+            "scenario": "speed/bus",
+            "structure": "compact",
+            "question": "المسافة نفسها تُقطع بسرعة 40 كم/ساعة أو بسرعة 120 كم/ساعة. إذا كان الزمن عند السرعة 40 أطول بمقدار ساعتين، فما المسافة؟",
+            "stimulus": null,
+            "answer": "D) 120 كيلومترًا"
+          },
+          {
+            "template": "SPD_H_LEG_SPLIT",
+            "target": "firstLegDistance",
+            "scenario": "speed/journey_split_between_two_speeds",
+            "structure": "sequential",
+            "question": "قطعت حافلة 370 كيلومترًا في 5 ساعات. سارت جزءًا من الرحلة بسرعة 50 كم/ساعة والجزء الباقي بسرعة 90 كم/ساعة. فما طول الجزء الأول؟",
+            "stimulus": null,
+            "answer": "A) 100 كيلومترًا"
+          }
+        ],
+        "relational": [
+          {
+            "template": "REL_M_CONFIRM",
+            "target": "guaranteedStatement",
+            "scenario": "relational/REL_M_CONFIRM",
+            "structure": "fixed",
+            "question": "ليان أسرع من فهد. راشد أسرع من علي. علي أسرع من نورة. راشد أسرع من ليان. أي عبارة مؤكدة؟",
+            "stimulus": null,
+            "answer": "F) راشد أسرع من فهد"
+          },
+          {
+            "template": "REL_H_COUNT_BRANCHED",
+            "target": "countAbove",
+            "scenario": "relational/REL_H_COUNT_BRANCHED",
+            "structure": "fixed",
+            "question": "بدر أسرع من سارة. سارة أسرع من هند. علي أسرع من حمد. سامي أسرع من خالد. راشد أسرع من سارة. راشد أسرع من علي. بدر أسرع من سامي. راشد أسرع من سامي. بدر أسرع من علي. كم شخصًا نعرف يقينًا أنهم أسرع من حمد؟",
+            "stimulus": null,
+            "answer": "C) ثلاثة أشخاص"
+          },
+          {
+            "template": "REL_E_BETWEEN",
+            "target": "position3",
+            "scenario": "relational/REL_E_BETWEEN",
+            "structure": "fixed",
+            "question": "ناصر أطول من بدر. بدر أطول من ليان. علي أطول من ناصر. من صاحب المركز الثالث من الأطول إلى الأقصر؟",
+            "stimulus": null,
+            "answer": "C) بدر"
+          },
+          {
+            "template": "REL_E_CHAIN",
+            "target": "position2",
+            "scenario": "relational/REL_E_CHAIN",
+            "structure": "fixed",
+            "question": "سالم أسرع من فهد. سارة أسرع من سالم. بدر أسرع من سارة. علي أسرع من بدر. من صاحب المركز الثاني من الأسرع إلى الأبطأ؟",
+            "stimulus": null,
+            "answer": "D) بدر"
+          }
+        ]
+      }
+    },
+    {
+      "shape": "batch230",
+      "seed": "RC27D-2",
+      "refused": false,
+      "measures": {
+        "items": 230,
+        "core": {
+          "distinct": 134,
+          "largestGroup": 4,
+          "itemsInARepeatedGroup": 167,
+          "perHundred": 58.3
+        },
+        "nearDuplicates": {
+          "distinct": 128,
+          "largestGroup": 4,
+          "itemsInARepeatedGroup": 175
+        },
+        "reasoningTarget": {
+          "distinct": 124,
+          "largestGroup": 5,
+          "itemsInARepeatedGroup": 180
+        },
+        "parameterOnly": {
+          "groups": 137,
+          "largestGroup": 4,
+          "itemsInARepeatedGroup": 162
+        },
+        "targets": {
+          "distinct": 109
+        },
+        "scenarios": {
+          "distinct": 122
+        },
+        "stemSkeletons": {
+          "distinct": 190,
+          "largestGroup": 13
+        },
+        "stemStructures": {
+          "distinct": 5
+        },
+        "entities": {
+          "distinct": 30,
+          "largestGroup": 16,
+          "mostUsed": [
+            "عمر×16",
+            "آلة×16",
+            "سالم×15",
+            "جهاز×12",
+            "فهد×11"
+          ]
+        },
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "longestSimilarRun": 0,
+        "gates": {
+          "wrongKeys": 0,
+          "ambiguous": 0,
+          "duplicateOptions": 0
+        }
+      },
+      "coreRelaxations": 0,
+      "surfaceRelaxations": 53,
+      "relaxationsByDimension": {
+        "entity_pattern": 21,
+        "user_construction_signature_batch": 25,
+        "reasoning_target_pair_batch": 7,
+        "TEMPLATE_OVERUSE": 1
+      },
+      "telemetryBalanced": true,
+      "perSession": [
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        },
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        },
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        },
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        },
+        {
+          "delivered": 30,
+          "coreIdeas": 30,
+          "coreRelaxations": 0
+        }
+      ],
+      "repeatedGroups": [
+        {
+          "coreSignature": "rel:eq(mul(X,add(#,#)),mul(sub(#,add(#,#)),#))|path:add>subtract>multiply>divide|asks:profitPercentOnTotalCost|entry:forward|arr:eqx1|dep:2/3",
+          "occurrences": 4,
+          "target": "profitPercentOnTotalCost",
+          "examples": [
+            {
+              "family": "profit_loss",
+              "template": "PL_M_TOTAL_COST",
+              "band": "medium",
+              "scenario": "profit_loss/general_store",
+              "structure": "sequential",
+              "question": "اشترى متجر سلعة بـ200 درهمًا ودفع 50 درهمًا شحنًا وتجهيزًا، ثم باعها بـ350 درهمًا. ما نسبة الربح من إجمالي التكلفة؟",
+              "stimulus": null,
+              "answer": "E) 40%"
+            },
+            {
+              "family": "profit_loss",
+              "template": "PL_M_TOTAL_COST",
+              "band": "medium",
+              "scenario": "profit_loss/furniture",
+              "structure": "compact",
+              "question": "اشترى معرض أثاث مقعدًا بـ210 درهمًا ودفع 60 درهمًا شحنًا وتجهيزًا، ثم باعه بـ297 درهمًا. ما نسبة الربح من إجمالي التكلفة؟",
+              "stimulus": null,
+              "answer": "E) 10%"
+            },
+            {
+              "family": "profit_loss",
+              "template": "PL_M_TOTAL_COST",
+              "band": "medium",
+              "scenario": "profit_loss/electronics",
+              "structure": "sequential",
+              "question": "اشترى محل إلكترونيات جهازًا بـ300 درهمًا ودفع 40 درهمًا شحنًا وتجهيزًا، ثم باعه بـ442 درهمًا. ما نسبة الربح من إجمالي التكلفة؟",
+              "stimulus": null,
+              "answer": "C) 30%"
+            }
+          ]
+        },
+        {
+          "coreSignature": "rel:eq(mul(X,#),mul(sub(#,#),#))|path:subtract>multiply>divide|asks:profitPercent|entry:forward|arr:eqx1|dep:1/2",
+          "occurrences": 4,
+          "target": "profitPercent",
+          "examples": [
+            {
+              "family": "profit_loss",
+              "template": "PL_E_PROFIT",
+              "band": "easy",
+              "scenario": "profit_loss/furniture",
+              "structure": "sequential",
+              "question": "اشترى معرض أثاث مقعدًا بـ250 درهمًا وباعه بـ270 درهمًا. ما نسبة الربح من سعر الشراء؟",
+              "stimulus": null,
+              "answer": "B) 8%"
+            },
+            {
+              "family": "profit_loss",
+              "template": "PL_E_PROFIT",
+              "band": "easy",
+              "scenario": "profit_loss/electronics",
+              "structure": "sequential",
+              "question": "اشترى محل إلكترونيات جهازًا بـ320 درهمًا وباعه بـ448 درهمًا. ما نسبة الربح من سعر الشراء؟",
+              "stimulus": null,
+              "answer": "D) 40%"
+            },
+            {
+              "family": "profit_loss",
+              "template": "PL_E_PROFIT",
+              "band": "easy",
+              "scenario": "profit_loss/furniture",
+              "structure": "sequential",
+              "question": "اشترى معرض أثاث مقعدًا بـ100 درهمًا وباعه بـ135 درهمًا. ما نسبة الربح من سعر الشراء؟",
+              "stimulus": null,
+              "answer": "E) 35%"
+            }
+          ]
+        },
+        {
+          "coreSignature": "rel:ruleset:SQUARE_MINUS_ONE|path:multiply>add|asks:outlier|entry:forward|arr:ruleset:6|dep:0/1",
+          "occurrences": 3,
+          "target": "outlier",
+          "examples": [
+            {
+              "family": "odd_one_out",
+              "template": "ODD_H_SQ_MINUS",
+              "band": "medium",
+              "scenario": "odd_one_out/ODD_H_SQ_MINUS",
+              "structure": "fixed",
+              "question": "أي عدد لا ينتمي إلى المجموعة الآتية؟",
+              "stimulus": "48، 10، 35، 63، 80، 24",
+              "answer": "E) 10"
+            },
+            {
+              "family": "odd_one_out",
+              "template": "ODD_H_SQ_MINUS",
+              "band": "medium",
+              "scenario": "odd_one_out/ODD_H_SQ_MINUS",
+              "structure": "fixed",
+              "question": "أي عدد لا ينتمي إلى المجموعة الآتية؟",
+              "stimulus": "30، 24، 80، 63، 48، 35",
+              "answer": "C) 30"
+            },
+            {
+              "family": "odd_one_out",
+              "template": "ODD_H_SQ_MINUS",
+              "band": "medium",
+              "scenario": "odd_one_out/ODD_H_SQ_MINUS",
+              "structure": "fixed",
+              "question": "أي عدد لا ينتمي إلى المجموعة الآتية؟",
+              "stimulus": "24، 48، 35، 42، 80، 63",
+              "answer": "D) 42"
+            }
+          ]
+        }
+      ],
+      "contrasting": {
+        "averages": [
+          {
+            "template": "AVG_H_OVERLAP",
+            "target": "overlappingValue",
+            "scenario": "averages/library_pages",
+            "structure": "compact",
+            "question": "متوسط الصفحات كلها في سجل عدد صفحات 11 كتابًا هو 18 صفحة، ومتوسط أول 6 كتب في السجل هو 18 صفحة، ومتوسط آخر 6 كتب فيه هو 24 صفحة. فما عدد صفحات الكتاب الذي يقع في الموضع الأوسط من السجل؟",
+            "stimulus": null,
+            "answer": "E) 54 صفحة"
+          },
+          {
+            "template": "AVG_M_ADD_PAIR",
+            "target": "averageAfterAddingPair",
+            "scenario": "averages/warehouse_weights",
+            "structure": "sequential",
+            "question": "متوسط أوزان 7 صناديق هو 17 كيلوجرامًا. أُدخل صندوقان متوسط وزنهما 26 كيلوجرامًا. فما متوسط الأوزان بعد الإضافة؟",
+            "stimulus": null,
+            "answer": "D) 19 كيلوجرامًا"
+          },
+          {
+            "template": "AVG_H_TARGET",
+            "target": "valueForTargetAverage",
+            "scenario": "averages/nursery_heights",
+            "structure": "sequential",
+            "question": "يُراد أن يصبح متوسط الأطوال جميعها 18 سنتيمترًا. متوسط أطوال 8 شتلات هو 15 سنتيمترًا. فما الطول الذي يجب إضافته؟",
+            "stimulus": null,
+            "answer": "D) 42 سنتيمترًا"
+          },
+          {
+            "template": "AVG_M_REPLACE",
+            "target": "newAverageAfterReplace",
+            "scenario": "averages/exam_scores",
+            "structure": "question_first",
+            "question": "المطلوب: متوسط الدرجات بعد الاستبدال. المعطيات: متوسط درجات 5 طلاب هو 22 درجة؛ صُححت ورقة طالب من 11 إلى 21.",
+            "stimulus": null,
+            "answer": "E) 24 درجة"
+          }
+        ],
+        "sequences": [
+          {
+            "template": "SEQ_M_CYCLE3",
+            "target": "nextTerm",
+            "scenario": "sequences/three_operation_cycle",
+            "structure": "fixed",
+            "question": "ما العدد التالي في المتتالية؟",
+            "stimulus": "9، 16، 48، 45، 52، 156، 153، ؟",
+            "answer": "A) 160"
+          },
+          {
+            "template": "SEQ_E_ARITH",
+            "target": "missingMiddleTerm",
+            "scenario": "sequences/SEQ_E_ARITH",
+            "structure": "fixed",
+            "question": "ما العدد المفقود في المتتالية؟",
+            "stimulus": "15، 6، -3، ؟، -21",
+            "answer": "E) -12"
+          },
+          {
+            "template": "SEQ_M_LINEAR_RECUR",
+            "target": "termAfterNext",
+            "scenario": "sequences/multiply_then_add",
+            "structure": "fixed",
+            "question": "ما العدد الذي يشغل موضع علامة الاستفهام؟",
+            "stimulus": "10، 28، 82، 244، 730، 2188، ؟",
+            "answer": "B) 6562"
+          },
+          {
+            "template": "SEQ_M_WRONG_TERM",
+            "target": "wrongTerm",
+            "scenario": "sequences/rule_violation",
+            "structure": "fixed",
+            "question": "أي الحدود الآتية لا يتفق مع قاعدة المتتالية؟",
+            "stimulus": "6، 18، 54، 162، 484، 1458",
+            "answer": "E) 484"
+          }
+        ],
+        "speed": [
+          {
+            "template": "SPD_H_LEG_SPLIT",
+            "target": "secondLegHours",
+            "scenario": "speed/journey_split_between_two_speeds",
+            "structure": "sequential",
+            "question": "قطعت حافلة 165 كيلومترًا في 3 ساعات. سارت جزءًا من الرحلة بسرعة 45 كم/ساعة والجزء الباقي بسرعة 75 كم/ساعة. فكم ساعة سارت بالسرعة الثانية؟",
+            "stimulus": null,
+            "answer": "F) ساعة واحدة"
+          },
+          {
+            "template": "SPD_H_MEET_DELAY",
+            "target": "meetingTime",
+            "scenario": "speed/bus",
+            "structure": "sequential",
+            "question": "مدينتان بينهما 420 كيلومترًا. انطلقت حافلة أ من الأولى بسرعة 70 كم/ساعة. بعد 1.5 ساعة انطلقت حافلة ب من الثانية باتجاه أ بسرعة 80 كم/ساعة. بعد كم ساعة من انطلاق ب تلتقي الحافلتان؟",
+            "stimulus": null,
+            "answer": "D) 2.1 ساعة"
+          },
+          {
+            "template": "SPD_E_DISTANCE",
+            "target": "distance",
+            "scenario": "speed/ferry",
+            "structure": "sequential",
+            "question": "سارت عبّارة بسرعة 80 كم/ساعة لمدة ساعتين. ما المسافة التي قطعتها؟",
+            "stimulus": null,
+            "answer": "F) 160 كيلومترًا"
+          },
+          {
+            "template": "SPD_M_EQUAL_DIST",
+            "target": "totalDistance",
+            "scenario": "speed/ferry",
+            "structure": "sequential",
+            "question": "قطعت عبّارة نصف المسافة بسرعة 50 كم/ساعة، والنصف الآخر بسرعة 30 كم/ساعة. إذا استغرقت الرحلة كاملة 32 ساعة، فما المسافة الكلية؟",
+            "stimulus": null,
+            "answer": "B) 1200 كيلومترًا"
+          }
+        ],
+        "relational": [
+          {
+            "template": "REL_E_CHAIN",
+            "target": "position2",
+            "scenario": "relational/REL_E_CHAIN",
+            "structure": "fixed",
+            "question": "فهد أسرع من بدر. نورة أسرع من ماجد. ماجد أسرع من حمد. بدر أسرع من نورة. من صاحب المركز الثاني من الأسرع إلى الأبطأ؟",
+            "stimulus": null,
+            "answer": "F) بدر"
+          },
+          {
+            "template": "REL_M_COUNT",
+            "target": "countAbove",
+            "scenario": "relational/REL_M_COUNT",
+            "structure": "fixed",
+            "question": "بدر أسرع من فهد. فهد أسرع من علي. بدر أسرع من سامي. سامي أسرع من مريم. كم شخصًا نعرف يقينًا أنهم أسرع من علي؟",
+            "stimulus": null,
+            "answer": "B) شخصان"
+          },
+          {
+            "template": "REL_M_CONFIRM",
+            "target": "guaranteedStatement",
+            "scenario": "relational/REL_M_CONFIRM",
+            "structure": "fixed",
+            "question": "سالم أسرع من خالد. سالم أسرع من فهد. فهد أسرع من ناصر. بدر أسرع من فهد. بدر أسرع من خالد. خالد أسرع من ناصر. أي عبارة مؤكدة؟",
+            "stimulus": null,
+            "answer": "B) سالم أسرع من ناصر"
+          },
+          {
+            "template": "REL_M_CHAIN6",
+            "target": "position3",
+            "scenario": "relational/REL_M_CHAIN6",
+            "structure": "fixed",
+            "question": "ريم أسرع من سالم. راشد أسرع من علي. سالم أسرع من ليان. علي أسرع من سارة. ليان أسرع من راشد. من صاحب المركز الثالث من الأسرع إلى الأبطأ؟",
+            "stimulus": null,
+            "answer": "D) ليان"
+          }
+        ]
+      }
+    },
+    {
+      "shape": "batch230",
+      "seed": "RC27D-3",
+      "refused": false,
+      "measures": {
+        "items": 230,
+        "core": {
+          "distinct": 137,
+          "largestGroup": 4,
+          "itemsInARepeatedGroup": 163,
+          "perHundred": 59.6
+        },
+        "nearDuplicates": {
+          "distinct": 121,
+          "largestGroup": 4,
+          "itemsInARepeatedGroup": 186
+        },
+        "reasoningTarget": {
+          "distinct": 126,
+          "largestGroup": 4,
+          "itemsInARepeatedGroup": 180
+        },
+        "parameterOnly": {
+          "groups": 133,
+          "largestGroup": 4,
+          "itemsInARepeatedGroup": 169
+        },
+        "targets": {
+          "distinct": 109
+        },
+        "scenarios": {
+          "distinct": 111
+        },
+        "stemSkeletons": {
+          "distinct": 195,
+          "largestGroup": 8
+        },
+        "stemStructures": {
+          "distinct": 5
+        },
+        "entities": {
+          "distinct": 31,
+          "largestGroup": 16,
+          "mostUsed": [
+            "آلة×16",
+            "عمر×16",
+            "سارة×14",
+            "سالم×13",
+            "ناصر×13"
+          ]
+        },
+        "exactDuplicates": 0,
+        "semanticDuplicates": 0,
+        "longestSimilarRun": 0,
+        "gates": {
+          "wrongKeys": 0,
+          "ambiguous": 0,
+          "duplicateOptions": 0
+        }
+      },
+      "coreRelaxations": 0,
+      "surfaceRelaxations": 51,
+      "relaxationsByDimension": {
+        "entity_pattern": 22,
+        "reasoning_target_pair_batch": 5,
+        "user_construction_signature_batch": 23,
+        "entity_word_batch": 1,
+        "TEMPLATE_OVERUSE": 1
+      },
+      "telemetryBalanced": true,
+      "perSession": [
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        },
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        },
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        },
+        {
+          "delivered": 50,
+          "coreIdeas": 50,
+          "coreRelaxations": 0
+        },
+        {
+          "delivered": 30,
+          "coreIdeas": 30,
+          "coreRelaxations": 0
+        }
+      ],
+      "repeatedGroups": [
+        {
+          "coreSignature": "rel:eq(mod(add(#,#),#),X)|path:multiply>subtract>ratio|asks:meetingWeekday|entry:forward|arr:eqx1|dep:1/3",
+          "occurrences": 4,
+          "target": "meetingWeekday",
+          "examples": [
+            {
+              "family": "calendar",
+              "template": "CAL_H_CYCLE_MEET",
+              "band": "medium",
+              "scenario": "calendar/CAL_H_CYCLE_MEET",
+              "structure": "sequential",
+              "question": "يزور أحدهما المكتبة كل 6 أيام ويزورها الآخر كل 15 يومًا. التقيا فيها اليوم، وكان يوم السبت. في أي يوم من أيام الأسبوع يلتقيان فيها مرة أخرى؟",
+              "stimulus": null,
+              "answer": "F) الاثنين"
+            },
+            {
+              "family": "calendar",
+              "template": "CAL_H_CYCLE_MEET",
+              "band": "medium",
+              "scenario": "calendar/CAL_H_CYCLE_MEET",
+              "structure": "sequential",
+              "question": "يزور أحدهما المكتبة كل 12 يومًا ويزورها الآخر كل 10 أيام. التقيا فيها اليوم، وكان يوم الأحد. في أي يوم من أيام الأسبوع يلتقيان فيها مرة أخرى؟",
+              "stimulus": null,
+              "answer": "A) الخميس"
+            },
+            {
+              "family": "calendar",
+              "template": "CAL_H_CYCLE_MEET",
+              "band": "medium",
+              "scenario": "calendar/CAL_H_CYCLE_MEET",
+              "structure": "compact",
+              "question": "يزور أحدهما المكتبة كل 12 يومًا ويزورها الآخر كل 10 أيام، والتقيا فيها اليوم، وكان يوم الجمعة. في أي يوم من أيام الأسبوع يلتقيان فيها مرة أخرى؟",
+              "stimulus": null,
+              "answer": "E) الثلاثاء"
+            }
+          ]
+        },
+        {
+          "coreSignature": "rel:eq(mod(add(#,#),#),X)|path:multiply>subtract>ratio|asks:firstSharedWeekday|entry:forward|arr:eqx1|dep:0/3",
+          "occurrences": 3,
+          "target": "firstSharedWeekday",
+          "examples": [
+            {
+              "family": "calendar",
+              "template": "CAL_H_OFFSET_CYCLES",
+              "band": "hard",
+              "scenario": "calendar/two_cycles_with_offset_starts",
+              "structure": "compact",
+              "question": "يتكرر الحدث الأول كل 4 أيام ابتداءً من يوم الاثنين، ويتكرر الحدث الثاني كل 9 أيام ابتداءً بعد 4 أيام من بداية الأول. ما اليوم الذي يجتمع فيه الحدثان لأول مرة؟",
+              "stimulus": null,
+              "answer": "D) الجمعة"
+            },
+            {
+              "family": "calendar",
+              "template": "CAL_H_OFFSET_CYCLES",
+              "band": "hard",
+              "scenario": "calendar/two_cycles_with_offset_starts",
+              "structure": "sequential",
+              "question": "يتكرر الحدث الأول كل 8 أيام ابتداءً من يوم الخميس، ويتكرر الحدث الثاني كل 15 يومًا ابتداءً بعد 7 أيام من بداية الأول. ما اليوم الذي يجتمع فيه الحدثان لأول مرة؟",
+              "stimulus": null,
+              "answer": "C) الخميس"
+            },
+            {
+              "family": "calendar",
+              "template": "CAL_H_OFFSET_CYCLES",
+              "band": "hard",
+              "scenario": "calendar/two_cycles_with_offset_starts",
+              "structure": "compact",
+              "question": "يتكرر الحدث الأول كل 6 أيام ابتداءً من يوم الجمعة، ويتكرر الحدث الثاني كل 8 أيام ابتداءً بعد 6 أيام من بداية الأول. ما اليوم الذي يجتمع فيه الحدثان لأول مرة؟",
+              "stimulus": null,
+              "answer": "C) الخميس"
+            }
+          ]
+        },
+        {
+          "coreSignature": "rel:eq(mul(X,#,#),mul(#,#,#))|path:multiply>subtract>divide|asks:outputForNewSetup|entry:forward|arr:eqx1|dep:2/2",
+          "occurrences": 3,
+          "target": "outputForNewSetup",
+          "examples": [
+            {
+              "family": "machines",
+              "template": "MACH_E_HOURS",
+              "band": "easy",
+              "scenario": "machines/bakery_loaves",
+              "structure": "compact",
+              "question": "تنتج 3 آلات متطابقة في الإنتاجية 108 رغيفًا خلال 3 ساعات. كم رغيفًا تنتج 6 آلات من النوع نفسه خلال 4 ساعات؟",
+              "stimulus": null,
+              "answer": "F) 288 رغيفًا"
+            },
+            {
+              "family": "machines",
+              "template": "MACH_E_HOURS",
+              "band": "easy",
+              "scenario": "machines/solar_panels",
+              "structure": "sequential",
+              "question": "تنتج 4 آلات متطابقة في الإنتاجية 192 لوحًا خلال 4 ساعات. كم لوحًا تنتج 5 آلات من النوع نفسه خلال ساعتين؟",
+              "stimulus": null,
+              "answer": "D) 120 لوحًا"
+            },
+            {
+              "family": "machines",
+              "template": "MACH_E_HOURS",
+              "band": "easy",
+              "scenario": "machines/dairy_bottles",
+              "structure": "sequential",
+              "question": "تنتج 3 آلات متطابقة في الإنتاجية 225 زجاجة خلال 5 ساعات. كم زجاجة تنتج 6 آلات من النوع نفسه خلال 3 ساعات؟",
+              "stimulus": null,
+              "answer": "D) 270 زجاجة"
+            }
+          ]
+        }
+      ],
+      "contrasting": {
+        "averages": [
+          {
+            "template": "AVG_E_REMOVE",
+            "target": "newAverageAfterRemove",
+            "scenario": "averages/nursery_heights",
+            "structure": "question_first",
+            "question": "المطلوب: متوسط الأطوال الباقية. المعطيات: متوسط أطوال 9 شتلات هو 29 سنتيمترًا؛ نُقلت شتلة طولها 21 سنتيمترًا.",
+            "stimulus": null,
+            "answer": "E) 30 سنتيمترًا"
+          },
+          {
+            "template": "AVG_H_COMB_ADD",
+            "target": "weightedAveragePlusValue",
+            "scenario": "averages/nursery_heights",
+            "structure": "sequential",
+            "question": "متوسط أطوال 5 شتلات هو 15 سنتيمترًا. متوسط أطوال 6 شتلات أخرى هو 20 سنتيمترًا. بعد ذلك أُضيفت شتلة طولها 45 سنتيمترًا. فما متوسط الأطوال جميعها؟",
+            "stimulus": null,
+            "answer": "E) 20 سنتيمترًا"
+          },
+          {
+            "template": "AVG_M_ADD_PAIR",
+            "target": "averageAfterAddingPair",
+            "scenario": "averages/warehouse_weights",
+            "structure": "question_first",
+            "question": "المطلوب: متوسط الأوزان بعد الإضافة. المعطيات: متوسط أوزان 7 صناديق هو 25 كيلوجرامًا؛ أُدخل صندوقان متوسط وزنهما 34 كيلوجرامًا.",
+            "stimulus": null,
+            "answer": "D) 27 كيلوجرامًا"
+          },
+          {
+            "template": "AVG_H_SPLIT_SIZE",
+            "target": "firstGroupCount",
+            "scenario": "averages/warehouse_weights",
+            "structure": "sequential",
+            "question": "متوسط أوزان 12 صندوقًا هو 11 كيلوجرامًا. قُسموا إلى مجموعتين: متوسط الأولى 15 كيلوجرامًا، ومتوسط الثانية 9 كيلوجرامات. كم صندوقًا في المجموعة الأولى؟",
+            "stimulus": null,
+            "answer": "E) 4"
+          }
+        ],
+        "sequences": [
+          {
+            "template": "SEQ_E_ARITH",
+            "target": "nextTerm",
+            "scenario": "sequences/SEQ_E_ARITH",
+            "structure": "fixed",
+            "question": "ما العدد التالي في المتتالية؟",
+            "stimulus": "37، 28، 19، 10، 1، ؟",
+            "answer": "A) -8"
+          },
+          {
+            "template": "SEQ_M_WRONG_TERM",
+            "target": "wrongTerm",
+            "scenario": "sequences/rule_violation",
+            "structure": "fixed",
+            "question": "أي الحدود الآتية لا يتفق مع قاعدة المتتالية؟",
+            "stimulus": "9، 16، 23، 30، 35، 44",
+            "answer": "B) 35"
+          },
+          {
+            "template": "SEQ_M_CYCLE3",
+            "target": "nextTerm",
+            "scenario": "sequences/three_operation_cycle",
+            "structure": "fixed",
+            "question": "ما العدد التالي في المتتالية؟",
+            "stimulus": "11، 14، 28، 22، 25، 50، 44، ؟",
+            "answer": "D) 47"
+          },
+          {
+            "template": "SEQ_M_WRONG_TERM",
+            "target": "wrongTerm",
+            "scenario": "sequences/rule_violation",
+            "structure": "fixed",
+            "question": "أي الحدود الآتية لا يتفق مع قاعدة المتتالية؟",
+            "stimulus": "2، 6، 18، 54، 159، 486",
+            "answer": "D) 159"
+          }
+        ],
+        "speed": [
+          {
+            "template": "SPD_E_TIME",
+            "target": "time",
+            "scenario": "speed/car",
+            "structure": "sequential",
+            "question": "قطعت سيارة 100 كيلومترًا بسرعة 50 كم/ساعة. كم ساعة استغرقت؟",
+            "stimulus": null,
+            "answer": "C) ساعتان"
+          },
+          {
+            "template": "SPD_H_MEET_DELAY",
+            "target": "meetingTime",
+            "scenario": "speed/ferry",
+            "structure": "compact",
+            "question": "مدينتان بينهما 420 كيلومترًا، وانطلقت عبّارة أ من الأولى بسرعة 80 كم/ساعة، وبعد ساعة واحدة انطلقت عبّارة ب من الثانية باتجاه أ بسرعة 90 كم/ساعة. بعد كم ساعة من انطلاق ب تلتقي العبّارتان؟",
+            "stimulus": null,
+            "answer": "E) ساعتان"
+          },
+          {
+            "template": "SPD_M_TWO_TIME",
+            "target": "totalTimeMinutes",
+            "scenario": "speed/car",
+            "structure": "compact",
+            "question": "قطعت سيارة 90 كيلومترًا بسرعة 60 كم/ساعة، ثم قطعت 90 كيلومترًا بسرعة 90 كم/ساعة دون توقف. كم دقيقة استغرقت الرحلة كاملة؟",
+            "stimulus": null,
+            "answer": "C) 150 دقيقة"
+          },
+          {
+            "template": "SPD_M_EQUAL_DIST",
+            "target": "totalDistance",
+            "scenario": "speed/ferry",
+            "structure": "sequential",
+            "question": "قطعت عبّارة نصف المسافة بسرعة 60 كم/ساعة، والنصف الآخر بسرعة 40 كم/ساعة. إذا استغرقت الرحلة كاملة 20 ساعة، فما المسافة الكلية؟",
+            "stimulus": null,
+            "answer": "E) 960 كيلومترًا"
+          }
+        ],
+        "relational": [
+          {
+            "template": "REL_M_COUNT",
+            "target": "countAbove",
+            "scenario": "relational/REL_M_COUNT",
+            "structure": "fixed",
+            "question": "نورة أسرع من خالد. فهد أسرع من خالد. ناصر أسرع من نورة. حمد أسرع من فهد. سالم أسرع من ناصر. حمد أسرع من سالم. كم شخصًا نعرف يقينًا أنهم أسرع من ناصر؟",
+            "stimulus": null,
+            "answer": "F) شخصان"
+          },
+          {
+            "template": "REL_M_BRANCH_UNRES",
+            "target": "undeterminedPair",
+            "scenario": "relational/REL_M_BRANCH_UNRES",
+            "structure": "fixed",
+            "question": "ماجد أسرع من سامي. ماجد أسرع من فهد. نورة أسرع من فهد. نورة أسرع من سامي. فهد أسرع من ناصر. أي مقارنة لا يمكن حسمها؟",
+            "stimulus": null,
+            "answer": "F) فهد وسامي"
+          },
+          {
+            "template": "REL_M_CHAIN6",
+            "target": "position4",
+            "scenario": "relational/REL_M_CHAIN6",
+            "structure": "fixed",
+            "question": "ماجد أسرع من حمد. نورة أسرع من سالم. سالم أسرع من ماجد. بدر أسرع من نورة. ناصر أسرع من بدر. من صاحب المركز الرابع من الأسرع إلى الأبطأ؟",
+            "stimulus": null,
+            "answer": "C) سالم"
+          },
+          {
+            "template": "REL_M_CONFIRM",
+            "target": "guaranteedStatement",
+            "scenario": "relational/REL_M_CONFIRM",
+            "structure": "fixed",
+            "question": "حمد أسرع من ليان. فهد أسرع من حمد. علي أسرع من ليان. فهد أسرع من سامي. سامي أسرع من سالم. سالم أسرع من ليان. فهد أسرع من علي. أي عبارة مؤكدة؟",
+            "stimulus": null,
+            "answer": "D) سامي أسرع من ليان"
+          }
+        ]
+      }
+    }
+  ]
+}
