@@ -737,8 +737,19 @@ function powersPlusIndex(ctx) {
   const n = startIndex + shown - 1;
   const seq = [];
   for (let i = startIndex; i <= n; i++) seq.push(basePow ** i + i);
-  const correct = basePow ** (n + 1) + (n + 1);
-  const p = basePow ** (n + 1);
+  // RC2.7-R3 / §8. A positional rule is defined at every index, so the term
+  // BEFORE the run and the term two places past it are both well posed. Each is
+  // a different core construction: the relation pins a different position and
+  // the reasoning enters from a different end.
+  const ask = startIndex > 1 ? rng.pick(['nextTerm', 'previousTerm', 'termAfterNext'])
+    : rng.pick(['nextTerm', 'termAfterNext']);
+  const askedIndex = ask === 'previousTerm' ? startIndex - 1 : ask === 'termAfterNext' ? n + 2 : n + 1;
+  const correct = basePow ** askedIndex + askedIndex;
+  const p = basePow ** askedIndex;
+  const runShown = ask === 'previousTerm' ? seq
+    : ask === 'termAfterNext' ? [...seq, basePow ** (n + 1) + (n + 1)]
+      : seq;
+  const shownExpression = ask === 'previousTerm' ? `؟، ${seq.join('، ')}` : `${runShown.join('، ')}، ؟`;
   // RC2-012. Built from the power and the position index, which are the two
   // quantities the solution actually handles.
   //   step 1  subtracting the position index from each term
@@ -746,26 +757,30 @@ function powersPlusIndex(ctx) {
   //   step 3  adding the next position index back
   const distractors = usable(ctx, [
     mk(p, 'MISSED_ONE_STAGE', `${basePow} مرفوعًا للقوة التالية = ${p} دون إضافة رقم الترتيب`, 3),
-    mk(p + n, 'MISREAD_THE_STEP', `${p} + ${n} برقم الموضع السابق`, 3),
-    mk(p + n + 2, 'MISREAD_THE_STEP', `${p} + ${n + 2} برقم موضع متقدم`, 3),
-    mk(basePow ** n + (n + 1), 'APPLIED_PREVIOUS_STEP', `${basePow ** n} + ${n + 1}`, 2),
-    mk(p * basePow + n + 2, 'APPLIED_STEP_TWICE', `${p} × ${basePow} + ${n + 2}`, 2),
-    mk(seq.at(-1) * basePow, 'TREATED_AS_GEOMETRIC', `${seq.at(-1)} × ${basePow} بضرب الحد كاملًا`, 1),
-    mk(p - (n + 1), 'APPLIED_OPERATION_IN_REVERSE', `${p} − ${n + 1}`, 3),
-    mk(seq.at(-1) + basePow ** (n + 1) - basePow ** n, 'APPLIED_PREVIOUS_STEP', `${seq.at(-1)} + (${p} − ${basePow ** n})`, 2)
+    mk(p + askedIndex - 1, 'MISREAD_THE_STEP', `${p} + ${askedIndex - 1} برقم موضع مجاور`, 3),
+    mk(p + askedIndex + 1, 'MISREAD_THE_STEP', `${p} + ${askedIndex + 1} برقم موضع مجاور`, 3),
+    mk(basePow ** (askedIndex - 1) + askedIndex, 'APPLIED_PREVIOUS_STEP', `${basePow ** (askedIndex - 1)} + ${askedIndex}`, 2),
+    mk(p * basePow + askedIndex + 1, 'APPLIED_STEP_TWICE', `${p} × ${basePow} + ${askedIndex + 1}`, 2),
+    mk(runShown.at(-1) * basePow, 'TREATED_AS_GEOMETRIC', `${runShown.at(-1)} × ${basePow} بضرب الحد كاملًا`, 1),
+    mk(p - askedIndex, 'APPLIED_OPERATION_IN_REVERSE', `${p} − ${askedIndex}`, 3),
+    mk(runShown.at(-1) + p - basePow ** (askedIndex - 1), 'APPLIED_PREVIOUS_STEP', `${runShown.at(-1)} + (${p} − ${basePow ** (askedIndex - 1)})`, 2)
   ]);
-  const powerLine = seq.map((v, i) => `${v} − ${startIndex + i} = ${v - (startIndex + i)}`).join('، ');
+  const powerLine = runShown.map((v, i) => `${v} − ${startIndex + i} = ${v - (startIndex + i)}`).join('، ');
   return buildBase(ctx, {
     templateId: 'SEQ_H_POW_INDEX',
-    subskill: 'قوة عدد مع رقم ترتيب الحد',
+    subskill: ask === 'previousTerm' ? 'قوة عدد مع رقم الترتيب، بالرجوع إلى الحد السابق'
+      : ask === 'termAfterNext' ? 'قوة عدد مع رقم الترتيب، لحد أبعد'
+        : 'قوة عدد مع رقم ترتيب الحد',
     difficulty: 'hard',
-    question: 'ما العدد التالي في المتتالية؟',
-    displayExpression: `${seq.join('، ')}، ؟`,
+    question: ask === 'previousTerm' ? 'ما العدد السابق في المتتالية؟' : 'ما العدد التالي في المتتالية؟',
+    displayExpression: shownExpression,
     correct, distractors, format: v => num(v),
     steps: [
       `نطرح من كل حد رقم موضعه في المتتالية: ${powerLine}.`,
-      `النواتج هي قوى العدد ${basePow} بالترتيب، فالقوة التالية = ${basePow ** n} × ${basePow} = ${p}.`,
-      `الحد التالي = ${p} + ${n + 1} = ${correct}.`
+      ask === 'previousTerm'
+        ? `النواتج هي قوى العدد ${basePow} بالترتيب، فالقوة التي تسبقها = ${basePow ** startIndex} ÷ ${basePow} = ${p}.`
+        : `النواتج هي قوى العدد ${basePow} بالترتيب، فالقوة المطلوبة = ${basePow ** (askedIndex - 1)} × ${basePow} = ${p}.`,
+      `الحد المطلوب = ${p} + ${askedIndex} = ${correct}.`
     ],
     howToStart: 'افحص هل كل حد يجمع بين قوة معروفة ورقم موضعه.',
     remember: 'قد يكون رقم ترتيب الحد جزءًا من القاعدة.',
@@ -775,17 +790,23 @@ function powersPlusIndex(ctx) {
     // allowed-constant list and made the final step unsourced. The index is a
     // real quantity of the task — the position of the term being asked for — so
     // it is declared rather than permitted as a bare constant.
-    parameters: {powerBase: basePow, startIndex, nextIndex: n + 1, shownTerms: seq},
+    // The power at the asked position and the one before it are parameters of
+    // the rule the explanation applies, so neither appears from nowhere.
+    parameters: {powerBase: basePow, startIndex, askedIndex, shownTerms: runShown,
+      powerAtAskedIndex: p, powerBefore: basePow ** (askedIndex - 1)},
     // RC2-023: the reasoning pattern, free of incidental start values.
     reasoningPattern: [`POW_BASE(${basePow})`, 'PLUS_TERM_INDEX'],
     oracle: {
       kind: 'constraint', answerKind: 'number',
       constraints: [
-        ...seq.map((v, i) => eq(sub(v, startIndex + i), basePow ** (startIndex + i))),
-        eq(sub(X, n + 1), p)
+        // Every printed term is re-checked against the positional rule, and the
+        // last constraint pins the term at the position ACTUALLY asked for —
+        // which moves with the target rather than always being n+1.
+        ...runShown.map((v, i) => eq(sub(v, startIndex + i), basePow ** (startIndex + i))),
+        eq(sub(X, askedIndex), p)
       ]
     },
-    askedUnknown: 'nextTerm', stageCount: 2,
+    askedUnknown: ask, stageCount: ask === 'nextTerm' ? 2 : 3,
     allowedConstants: [0, 1, 2, 3, 4, 5, 6, 7, 8, 100],
     pedagogy: {
       targetSkill: 'POWER_PLUS_INDEX', targetMisconception: 'MISSED_ONE_STAGE',
@@ -832,28 +853,34 @@ function digitSumStep(ctx) {
   }
   if (!found) return resample(ctx, digitSumStep);
   const {seq, next} = found;
-  const last = seq.at(-1);
-  const correct = next;
-  const ds = digitSum(last);
+  // RC2.7-R3 / §8. The target, not only the rule. Asking for the term AFTER the
+  // next one is a different core construction: the relation that pins the answer
+  // hangs off a term the reader must derive first, and the entry point moves.
+  const askAfter = rng.bool(0.4);
+  const anchor = askAfter ? next : seq.at(-1);
+  const last = anchor;
+  const correct = anchor + digitSum(anchor);
+  const ds = digitSum(anchor);
+  const shownRun = askAfter ? [...seq, next] : seq;
 
   const distractors = usable(ctx, [
-    mk(last + (last - seq.at(-2)), 'TREATED_PATTERN_AS_CONSTANT', `${last} + (${last} − ${seq.at(-2)})`, 1),
-    mk(last + digitSum(seq.at(-2)), 'APPLIED_PREVIOUS_STEP', `${last} + ${digitSum(seq.at(-2))} بمجموع أرقام الحد السابق`, 2),
+    mk(last + (last - shownRun.at(-2)), 'TREATED_PATTERN_AS_CONSTANT', `${last} + (${last} − ${shownRun.at(-2)})`, 1),
+    mk(last + digitSum(shownRun.at(-2)), 'APPLIED_PREVIOUS_STEP', `${last} + ${digitSum(shownRun.at(-2))} بمجموع أرقام الحد السابق`, 2),
     mk(last + Number(String(last)[0]), 'USED_DIGITS_AS_THE_STEP', `${last} + ${Number(String(last)[0])} برقم واحد من الحد`, 2),
     mk(last + ds + 1, 'OFF_BY_ONE_STEP', `${last} + ${ds} + 1`, 2),
     mk(last + ds - 1, 'OFF_BY_ONE_STEP', `${last} + ${ds} − 1`, 2),
-    mk(last * 2 - seq.at(-2), 'TREATED_AS_ARITHMETIC', `${last} × 2 − ${seq.at(-2)}`, 1),
+    mk(last * 2 - shownRun.at(-2), 'TREATED_AS_ARITHMETIC', `${last} × 2 − ${shownRun.at(-2)}`, 1),
     mk(last + 2 * ds, 'APPLIED_STEP_TWICE', `${last} + ${ds} × 2`, 2),
     mk(ds, 'USED_DIFFERENCE_AS_ANSWER', `مجموع أرقام الحد الأخير ${ds}`, 2)
   ]);
 
-  const line = seq.slice(0, -1).map((v, i) => `${v} + ${digitSum(v)} = ${seq[i + 1]}`).join('، ');
+  const line = shownRun.slice(0, -1).map((v, i) => `${v} + ${digitSum(v)} = ${shownRun[i + 1]}`).join('، ');
   return buildBase(ctx, {
     templateId: 'SEQ_H_DIGIT_SUM',
-    subskill: 'خطوة تعتمد على أرقام الحد نفسه',
+    subskill: askAfter ? 'خطوة من أرقام الحد مع حد أبعد' : 'خطوة تعتمد على أرقام الحد نفسه',
     difficulty: 'hard',
     question: 'ما العدد التالي في المتتالية؟',
-    displayExpression: `${seq.join('، ')}، ؟`,
+    displayExpression: `${shownRun.join('، ')}، ؟`,
     correct, distractors, format: v => num(v),
     steps: [
       `الفروق بين الحدود غير ثابتة ولا تتبع نمطًا في ذاتها، فننظر داخل كل حد.`,
@@ -864,22 +891,22 @@ function digitSumStep(ctx) {
     remember: 'قد تكون القاعدة داخل الحد لا بين الحدود.',
     fastMethod: 'اجمع أرقام الحد الأخير وأضفها إليه.',
     estimatedSteps: 3, conceptTags: ['sequence', 'digits'],
-    parameters: {shownTerms: seq, lastDigitSum: ds},
-    reasoningPattern: ['DIGIT_SUM_STEP'],
+    parameters: {shownTerms: shownRun, lastDigitSum: ds},
+    reasoningPattern: askAfter ? ['DIGIT_SUM_STEP', 'DIGIT_SUM_STEP'] : ['DIGIT_SUM_STEP'],
     oracle: {
       kind: 'constraint', answerKind: 'number',
       constraints: [
-        ...seq.slice(0, -1).map((v, i) => eq(sub(seq[i + 1], v), digitSum(v))),
-        eq(sub(X, last), ds)
+        ...shownRun.slice(0, -1).map((v, i) => eq(sub(shownRun[i + 1], v), digitSum(v))),
+        eq(sub(X, anchor), ds)
       ]
     },
-    askedUnknown: 'nextTerm', stageCount: 2,
+    askedUnknown: askAfter ? 'termAfterNext' : 'nextTerm', stageCount: askAfter ? 3 : 2,
     allowedConstants: [0, 1, 2, 100],
     pedagogy: {
       targetSkill: 'DIGIT_SUM_RULE', targetMisconception: 'TREATED_PATTERN_AS_CONSTANT',
-      wrongMethodValue: last + (last - seq.at(-2))
+      wrongMethodValue: last + (last - shownRun.at(-2))
     },
-    complexityFactors: {reasoningTransformations: 3, conceptCount: 3, ruleSearchDepth: 4, stageCount: 2, arithmeticBurden: 4},
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 3, ruleSearchDepth: 4, stageCount: askAfter ? 3 : 2, arithmeticBurden: 4},
     textParams: false
   });
 }
@@ -908,27 +935,33 @@ function growingMultiplier(ctx) {
   }
   if (!found) return resample(ctx, growingMultiplier);
   const {seq, next, add, firstMul} = found;
-  const last = seq.at(-1);
-  const lastMul = firstMul + 4;
-  const correct = next;
+  // RC2.7-R3 / §8. The multiplier grows with the position, so the term two
+  // places on is well posed and is a different core construction: the answer is
+  // pinned through a term the reader derives first.
+  const afterNext = next * (firstMul + 5) + add;
+  const askAfter = afterNext <= 200000 && rng.bool(0.4);
+  const runShown = askAfter ? [...seq, next] : seq;
+  const last = runShown.at(-1);
+  const lastMul = firstMul + (askAfter ? 5 : 4);
+  const correct = askAfter ? afterNext : next;
 
   const distractors = usable(ctx, [
     mk(last * (lastMul - 1) + add, 'APPLIED_PREVIOUS_STEP', `${last} × ${lastMul - 1} + ${add}`, 1),
     mk(last * lastMul, 'MISSED_ONE_STAGE', `${last} × ${lastMul} دون إضافة ${add}`, 2),
     mk(last * lastMul + add + 1, 'OFF_BY_ONE_STEP', `${last} × ${lastMul} + ${add} + 1`, 2),
     mk(last * (lastMul + 1) + add, 'MISREAD_THE_STEP', `${last} × ${lastMul + 1} + ${add}`, 2),
-    mk(last + (last - seq.at(-2)), 'TREATED_AS_ARITHMETIC', `${last} + (${last} − ${seq.at(-2)})`, 0),
+    mk(last + (last - runShown.at(-2)), 'TREATED_AS_ARITHMETIC', `${last} + (${last} − ${runShown.at(-2)})`, 0),
     mk(last * lastMul - add, 'APPLIED_OPERATION_IN_REVERSE', `${last} × ${lastMul} − ${add}`, 2),
     mk(last * 2 + add, 'TREATED_PATTERN_AS_CONSTANT', `${last} × 2 + ${add}`, 1)
   ]);
 
-  const line = seq.slice(0, -1).map((v, i) => `${v} × ${firstMul + i} + ${add} = ${seq[i + 1]}`).join('، ');
+  const line = runShown.slice(0, -1).map((v, i) => `${v} × ${firstMul + i} + ${add} = ${runShown[i + 1]}`).join('، ');
   return buildBase(ctx, {
     templateId: 'SEQ_H_INDEX_MULT',
-    subskill: 'مضروب متزايد مع ثابت مضاف',
+    subskill: askAfter ? 'مضروب متزايد مع ثابت مضاف، لحد أبعد' : 'مضروب متزايد مع ثابت مضاف',
     difficulty: 'hard',
     question: 'ما العدد التالي في المتتالية؟',
-    displayExpression: `${seq.join('، ')}، ؟`,
+    displayExpression: `${runShown.join('، ')}، ؟`,
     correct, distractors, format: v => num(v),
     steps: [
       `الفروق تتضخم بسرعة والنسب بين الحدود تتزايد، فلا الفروق ولا النسب ثابتة.`,
@@ -939,16 +972,16 @@ function growingMultiplier(ctx) {
     remember: 'قد يكون المعامل نفسه متغيرًا وليس ثابتًا.',
     fastMethod: 'اضرب الحد الأخير في المضروب التالي ثم أضف الثابت.',
     estimatedSteps: 3, conceptTags: ['sequence', 'growing-factor'],
-    parameters: {shownTerms: seq, addedConstant: add, firstMultiplier: firstMul, nextMultiplier: lastMul},
+    parameters: {shownTerms: runShown, addedConstant: add, firstMultiplier: firstMul, nextMultiplier: lastMul},
     reasoningPattern: ['GROWING_MULTIPLIER', `PLUS_CONST(${add})`],
     oracle: {
       kind: 'constraint', answerKind: 'number',
       constraints: [
-        ...seq.slice(0, -1).map((v, i) => eq(seq[i + 1], v * (firstMul + i) + add)),
+        ...runShown.slice(0, -1).map((v, i) => eq(runShown[i + 1], v * (firstMul + i) + add)),
         eq(X, last * lastMul + add)
       ]
     },
-    askedUnknown: 'nextTerm', stageCount: 2,
+    askedUnknown: askAfter ? 'termAfterNext' : 'nextTerm', stageCount: askAfter ? 3 : 2,
     allowedConstants: [0, 1, 2, 3, 4, 5, 6, 7, 100],
     pedagogy: {
       targetSkill: 'GROWING_MULTIPLIER_RULE', targetMisconception: 'APPLIED_PREVIOUS_STEP',

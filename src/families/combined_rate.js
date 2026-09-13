@@ -403,11 +403,17 @@ function twoPumpsFromStages(ctx) {
   }
   if (!found) return resample(ctx, twoPumpsFromStages);
   const {joint, first, second, a, b} = found;
-  const correct = first;
+  // RC2.7-R3. Which pump's solo time is asked for is a different core
+  // construction: the second is not a subtraction away from the first — it is a
+  // second inversion, through the joint rate — and a reader who found one has
+  // not found the other.
+  const askSecond = rng.bool(0.45);
+  const correct = askSecond ? second : first;
+  const other = askSecond ? first : second;
   const params = {jointHours: joint, firstAloneHours: a, secondAloneHours: b};
 
   const distractors = usable(ctx, [
-    mk(second, 'SWAPPED_THE_TWO_UNKNOWNS', `زمن المضخة الثانية وحدها ${second}`, 3),
+    mk(other, 'SWAPPED_THE_TWO_UNKNOWNS', `زمن المضخة الأخرى وحدها ${other}`, 3),
     mk(a + b, 'ADDED_TIMES_INSTEAD_OF_RATES', `${a} + ${b}`),
     mk(joint, 'USED_JOINT_TIME_AS_SOLO', `الزمن المشترك ${joint}`),
     mk(a, 'USED_GIVEN_VALUE_AS_ANSWER', `المدة المذكورة للأولى ${a}`),
@@ -418,11 +424,12 @@ function twoPumpsFromStages(ctx) {
     mk(a * b / joint, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${a} × ${b} ÷ ${joint}`)
   ]);
 
-  const stem = composeSentences(ctx, `تملأ مضختان خزانًا معًا في ${u(joint, 'hour', 'oblique')}. ولو عملت الأولى وحدها ${u(a, 'hour', 'oblique')} ثم أكملت الثانية وحدها ${u(b, 'hour', 'oblique')} لامتلأ الخزان أيضًا. كم ${unitWordKam('hour')} تحتاج الأولى وحدها لملئه؟`);
+  const stem = composeSentences(ctx, `تملأ مضختان خزانًا معًا في ${u(joint, 'hour', 'oblique')}. ولو عملت الأولى وحدها ${u(a, 'hour', 'oblique')} ثم أكملت الثانية وحدها ${u(b, 'hour', 'oblique')} لامتلأ الخزان أيضًا. كم ${unitWordKam('hour')} تحتاج ${askSecond ? 'الثانية' : 'الأولى'} وحدها لملئه؟`);
   return buildBase(ctx, {
     templateId: 'COMB_H_TWO_PUMPS',
     scenario: sc.key,
-    subskill: 'زمن مضخة وحدها من زمن مشترك ومرحلتين منفردتين',
+    subskill: askSecond ? 'زمن المضخة الثانية وحدها من زمن مشترك ومرحلتين منفردتين'
+      : 'زمن مضخة وحدها من زمن مشترك ومرحلتين منفردتين',
     difficulty: 'hard',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
@@ -431,17 +438,24 @@ function twoPumpsFromStages(ctx) {
       `لو عملت المضختان معًا ${u(b, 'hour', 'oblique')} لملأتا ${b} ÷ ${joint} من الخزان.`,
       `في الحالة المذكورة عملت الثانية ${u(b, 'hour', 'oblique')} أيضًا، فالفرق بين الحالتين يخص الأولى وحدها: ${a} − ${b} = ${a - b}.`,
       `وهذا الفرق يقابل ما تبقى من الخزان في الحالة الأولى = 1 − ${b} ÷ ${joint}، أي ${joint} − ${b} = ${joint - b} من ${joint}.`,
-      `إذن الأولى تملأ ${joint - b} من ${joint} في ${u(a - b, 'hour', 'oblique')}، فزمنها الكامل = ${a - b} × ${joint} ÷ ${joint - b} = ${correct}.`
+      `إذن الأولى تملأ ${joint - b} من ${joint} في ${u(a - b, 'hour', 'oblique')}، فزمنها الكامل = ${a - b} × ${joint} ÷ ${joint - b} = ${first}.`,
+      ...(askSecond
+        ? [`ومعدل الثانية = ما يتبقى من المعدل المشترك بعد الأولى، فزمنها = ${joint} × ${first} ÷ (${first} − ${joint}) = ${correct}.`]
+        : [])
     ],
     howToStart: 'قارن الحالتين: الفرق بينهما يخص طرفًا واحدًا فقط.',
     remember: 'عند وجود معدلين مجهولين، كل حالة وحدها لا تكفي؛ الحالتان معًا هما ما يحدد المعدلين.',
     fastMethod: 'اطرح الحالتين ليختفي أحد الطرفين، ثم اقرأ الجزء المتبقي من الخزان.',
-    estimatedSteps: 4, conceptTags: ['combined-rate', 'two-unknowns', 'reciprocal'], parameters: params,
+    estimatedSteps: askSecond ? 5 : 4, conceptTags: ['combined-rate', 'two-unknowns', 'reciprocal'],
+    parameters: {...params, firstPumpSolo: first},
     oracle: {
       kind: 'constraint', answerKind: 'number',
-      constraints: [eq(mul(X, sub(joint, b)), mul(joint, sub(a, b)))]
+      constraints: [askSecond
+        ? eq(mul(X, sub(first, joint)), mul(joint, first))
+        : eq(mul(X, sub(joint, b)), mul(joint, sub(a, b)))]
     },
-    askedUnknown: 'firstPumpSoloHours', stageCount: 3,
+    askedUnknown: askSecond ? 'secondPumpSoloHours' : 'firstPumpSoloHours',
+    stageCount: askSecond ? 4 : 3,
     pedagogy: {
       targetSkill: 'TWO_RATES_FROM_TWO_CASES', targetMisconception: 'ADDED_TIMES_INSTEAD_OF_RATES',
       wrongMethodValue: a + b

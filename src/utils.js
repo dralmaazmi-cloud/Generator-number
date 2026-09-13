@@ -9,6 +9,7 @@ import {REASON} from './qa/reasons.js';
 import {NAME_POOL, entityKindsIn} from './compose/entities.js';
 import {deriveOperationProfile, computeComplexity} from './qa/complexity.js';
 import {structuralBandOf, criteriaOf} from './qa/structure.js';
+import {coreConstructionSignature, reasoningTargetPair} from './qa/core-construction.js';
 import {stemSkeleton, scenarioSignature, constructionSignature,
   skillSignature, entityPattern, parameterizationSignature} from './qa/construction.js';
 import {buildFingerprint, buildSemanticFingerprint, buildStructuralSignature, questionFingerprint} from './qa/fingerprint.js';
@@ -281,6 +282,21 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
     ...fingerprintSpec,
     orderInsensitive: base.orderInsensitive
   });
+  const operationKinds = deriveOperationProfile(base.explanation?.steps ?? base.steps)?.kinds ?? [];
+  // RC2.7-R1. The scenario-independent identity. See src/qa/core-construction.js:
+  // the RC2.6/RC2.7 `construction_signature` had the scenario in it, so every
+  // scenario added inflated it without a reader seeing a new question.
+  const coreSpec = {
+    oracle: base.oracle,
+    askedUnknown: base.askedUnknown,
+    direction: base.direction,
+    operationKinds,
+    reasoningPattern: base.reasoningPattern,
+    dependencyDepth: base.complexityFactors?.dependencyDepth ?? 0,
+    stageCount: base.stageCount ?? 0
+  };
+  const userConstructionSignature = coreConstructionSignature(coreSpec);
+  const reasoningTarget = reasoningTargetPair(coreSpec);
   const structuralSignature = buildStructuralSignature({
     family: base.family,
     templateId: base.template_id,
@@ -288,7 +304,7 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
     reasoningPattern: base.reasoningPattern,
     // RC2.2-4. The kinds of transformation this solution composes, so an item
     // without a declared pattern still has a reasoning identity.
-    operationKinds: deriveOperationProfile(base.explanation?.steps ?? base.steps)?.kinds ?? []
+    operationKinds
   });
 
   const q = {
@@ -366,6 +382,10 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
       // right so a diversity claim can be checked dimension by dimension rather
       // than taken on one aggregate.
       skill_signature: skillSignature({family: base.family, subskill: base.subskill}),
+      // RC2.7-R1. The core identity, and the coarser reasoning+target pair the
+      // review asks to be reported on its own.
+      user_construction_signature: userConstructionSignature,
+      reasoning_target_pair: reasoningTarget,
       target_signature: base.askedUnknown ?? 'default',
       stem_structure: base.stemStructure ?? 'fixed',
       information_order: base.informationOrder ?? 'given',

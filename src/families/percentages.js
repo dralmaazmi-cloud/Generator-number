@@ -560,24 +560,34 @@ function twoGroupOppositeChange(ctx) {
   const ifAllFell = total - total * fall / 100;
   const gap = newTotal - ifAllFell;
   const perUnit = (rise + fall) / 100;
-  const correct = first;
+  // RC2.7-R3. Which of the two sections is asked for is a different CORE
+  // construction, not a rewording: the relation that pins the answer is a
+  // different equation, and the last step of the reasoning runs the other way.
+  // The independent review's finding was that scenario changes did not do this;
+  // changing what is asked for does.
+  const askSecond = rng.bool(0.45);
+  const correct = askSecond ? second : first;
+  const other = askSecond ? first : second;
+  const ordinal = askSecond ? 'الثاني' : 'الأول';
   const params = {total, risePercent: rise, fallPercent: fall, newTotal};
 
   const distractors = usable(ctx, [
-    mk(second, 'ANSWERED_THE_OTHER_COMPONENT', `${total} − ${first}`, 4),
+    mk(other, 'ANSWERED_THE_OTHER_COMPONENT', `${total} − ${correct}`, 4),
     mk(total / 2, 'SOLVED_ONE_CONDITION_ONLY', `${total} ÷ 2`),
     mk(newTotal - total, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${newTotal} − ${total}`),
     mk(ifAllFell, 'APPLIED_ONE_CHANGE_TO_THE_WHOLE', `${total} − ${total} × ${fall} ÷ 100`, 0),
     mk(total + total * rise / 100, 'APPLIED_ONE_CHANGE_TO_THE_WHOLE', `${total} + ${total} × ${rise} ÷ 100`),
     mk(gap, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${newTotal} − ${num(ifAllFell)}`, 1),
     mk(first + first * rise / 100, 'USED_NEW_TOTAL', `${first} + ${first} × ${rise} ÷ 100`, 4),
+    mk(second - second * fall / 100, 'USED_NEW_TOTAL', `${second} − ${second} × ${fall} ÷ 100`, 4),
     mk(total * rise / (rise + fall), 'SOLVED_ONE_CONDITION_ONLY', `${total} × ${rise} ÷ (${rise} + ${fall})`)
   ]);
 
-  const stem = composeSentences(ctx, `في مؤسسة قسمان، مجموع أفرادهما ${u(total, 'person')}. ارتفع عدد أفراد القسم الأول بنسبة ${rise}% وانخفض عدد أفراد القسم الثاني بنسبة ${fall}%، فأصبح المجموع ${u(newTotal, 'person')}. كم كان عدد أفراد القسم الأول؟`);
+  const stem = composeSentences(ctx, `في مؤسسة قسمان، مجموع أفرادهما ${u(total, 'person')}. ارتفع عدد أفراد القسم الأول بنسبة ${rise}% وانخفض عدد أفراد القسم الثاني بنسبة ${fall}%، فأصبح المجموع ${u(newTotal, 'person')}. كم كان عدد أفراد القسم ${ordinal}؟`);
   return buildBase(ctx, {
     templateId: 'PCT_H_TWO_GROUP_CHANGE',
-    subskill: 'مجموعتان تتغيران في اتجاهين متضادين',
+    subskill: askSecond ? 'مجموعتان تتغيران في اتجاهين متضادين، مع طلب القسم المنخفض'
+      : 'مجموعتان تتغيران في اتجاهين متضادين',
     difficulty: 'hard',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
@@ -586,8 +596,10 @@ function twoGroupOppositeChange(ctx) {
       `لو انخفض العدد كله بنسبة ${fall}% لأصبح المجموع = ${total} − ${total} × ${fall} ÷ 100 = ${num(ifAllFell)}.`,
       `المجموع الفعلي أكبر من ذلك بمقدار ${newTotal} − ${num(ifAllFell)} = ${num(gap)}.`,
       `كل فرد في القسم الأول بدل الثاني يزيد المجموع بمقدار (${rise} + ${fall}) ÷ 100 = ${num(perUnit)}.`,
-      `عدد أفراد القسم الأول = ${num(gap)} ÷ ${num(perUnit)} = ${correct}.`,
-      `وللتأكد: القسم الثاني = ${total} − ${correct} = ${second}.`
+      `عدد أفراد القسم الأول = ${num(gap)} ÷ ${num(perUnit)} = ${first}.`,
+      askSecond
+        ? `والمطلوب هو القسم الثاني = ${total} − ${first} = ${correct}.`
+        : `وللتأكد: القسم الثاني = ${total} − ${first} = ${second}.`
     ],
     howToStart: 'افترض أن التغير كله كان في اتجاه واحد، ثم احسب الفارق الذي يحدثه نقل فرد من قسم إلى آخر.',
     remember: 'عند تغيرين متضادين لا يكفي أي قسم وحده؛ الشرطان يحددان التقسيم معًا.',
@@ -595,12 +607,15 @@ function twoGroupOppositeChange(ctx) {
     estimatedSteps: 4, conceptTags: ['percentage', 'two-group', 'weighted-mean'], parameters: params,
     oracle: {
       kind: 'constraint', answerKind: 'number',
-      constraints: [eq(
-        add(mul(X, 100 + rise), mul(sub(total, X), 100 - fall)),
-        mul(newTotal, 100)
-      )]
+      // X is whichever section is asked for, so the equation is written from
+      // that section's side. Writing it always from the first section's and
+      // subtracting afterwards would make the two targets one relation, which is
+      // exactly the collapse this release is fixing.
+      constraints: [askSecond
+        ? eq(add(mul(sub(total, X), 100 + rise), mul(X, 100 - fall)), mul(newTotal, 100))
+        : eq(add(mul(X, 100 + rise), mul(sub(total, X), 100 - fall)), mul(newTotal, 100))]
     },
-    askedUnknown: 'firstGroupSize', stageCount: 3,
+    askedUnknown: askSecond ? 'secondGroupSize' : 'firstGroupSize', stageCount: askSecond ? 4 : 3,
     answerBounds: {between: [0, total]},
     pedagogy: {
       targetSkill: 'TWO_GROUP_OPPOSITE_CHANGE', targetMisconception: 'APPLIED_ONE_CHANGE_TO_THE_WHOLE',

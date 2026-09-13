@@ -26,6 +26,28 @@
 
 import {REASON} from '../qa/reasons.js';
 import {entityWordsIn} from './entities.js';
+import {nearDuplicateKey} from '../qa/core-construction.js';
+
+/**
+ * RC2.7-R2. The two levels, and why the split exists.
+ *
+ * The independent review of RC2.7 failed it at 4.2/10 for perceived diversity
+ * and found that 34 of 35 novelty relaxations had produced a perceptually
+ * repetitive item. The scheduler was treating every dimension as equally
+ * relaxable, so under pressure it relaxed the ones that matter most and
+ * delivered a parameter reskin to complete the session.
+ *
+ * CORE   the equation, the reasoning path and the requested target. Two
+ *        questions sharing these are the same question to a reader however
+ *        different the shirts, loaves and pages around them. NEVER relaxed. If
+ *        a session cannot be filled without repeating one, the session is
+ *        refused and the shortfall reported.
+ *
+ * SURFACE  scenario, entity, sentence shape, information order, skeleton.
+ *          These may relax under pressure, and every relaxation says so.
+ */
+export const CORE = 'CORE_CONSTRUCTION';
+export const SURFACE = 'SURFACE_ONLY';
 
 /** The dimensions compared. Each is published on every question. */
 export const DIMENSIONS = Object.freeze([
@@ -121,6 +143,11 @@ export class NoveltyScheduler {
       .map(([k, v]) => [k, Math.max(2, Math.ceil(v * scale))]));
     this.entityCap = Math.max(2, Math.ceil(ENTITY_CAP_PER_50 * scale));
     this.combinations = new Set();
+    // RC2.7-R2. The core sets. Membership is absolute: nothing removes an entry
+    // and no branch consults them optionally.
+    this.coreConstructions = new Set();
+    this.reasoningTargets = new Set();
+    this.nearDuplicates = new Map();
     this.tallies = Object.fromEntries(Object.keys(this.caps).map(k => [k, new Map()]));
     this.entities = new Map();
     this.accepted = [];
@@ -132,32 +159,45 @@ export class NoveltyScheduler {
    * dimension, so a refusal can be reported rather than merely counted.
    */
   assess(candidate) {
+    // --- CORE, first and unconditionally ------------------------------------
+    const core = dim(candidate, 'user_construction_signature');
+    if (core && this.coreConstructions.has(core)) {
+      return {ok: false, level: CORE, reason: REASON.NOVELTY_CORE_CONSTRUCTION_REPEAT,
+        dimension: 'user_construction_signature'};
+    }
+    const pair = dim(candidate, 'reasoning_target_pair');
+    if (pair && this.reasoningTargets.has(pair)) {
+      return {ok: false, level: CORE, reason: REASON.NOVELTY_REASONING_TARGET_REPEAT,
+        dimension: 'reasoning_target_pair'};
+    }
+
+    // --- SURFACE -------------------------------------------------------------
     const key = combinationKey(candidate);
     if (this.combinations.has(key)) {
-      return {ok: false, reason: REASON.NOVELTY_REPEATED_COMBINATION, dimension: 'combination'};
+      return {ok: false, level: SURFACE, reason: REASON.NOVELTY_REPEATED_COMBINATION, dimension: 'combination'};
     }
     const previous = this.accepted.at(-1);
     if (previous && sharedDimensions(previous, candidate) >= CONSECUTIVE_SIMILARITY_LIMIT) {
-      return {ok: false, reason: REASON.NOVELTY_CONSECUTIVE_SIMILARITY, dimension: 'consecutive'};
+      return {ok: false, level: SURFACE, reason: REASON.NOVELTY_CONSECUTIVE_SIMILARITY, dimension: 'consecutive'};
     }
     for (const [k, cap] of Object.entries(this.caps)) {
       const v = dim(candidate, k);
       if (v == null) continue;
       if ((this.tallies[k].get(v) ?? 0) >= cap) {
-        return {ok: false, reason: REASON.NOVELTY_DIMENSION_DOMINANCE, dimension: k};
+        return {ok: false, level: SURFACE, reason: REASON.NOVELTY_DIMENSION_DOMINANCE, dimension: k};
       }
     }
     for (const w of entityWordsIn(candidate.question)) {
       if ((this.entities.get(w) ?? 0) >= this.entityCap) {
-        return {ok: false, reason: REASON.NOVELTY_DIMENSION_DOMINANCE, dimension: 'entity_word'};
+        return {ok: false, level: SURFACE, reason: REASON.NOVELTY_DIMENSION_DOMINANCE, dimension: 'entity_word'};
       }
       if (this.batchEntities && (this.batchEntities.get(w) ?? 0) >= this.batchEntityCap) {
-        return {ok: false, reason: REASON.NOVELTY_DIMENSION_DOMINANCE, dimension: 'entity_word_batch'};
+        return {ok: false, level: SURFACE, reason: REASON.NOVELTY_DIMENSION_DOMINANCE, dimension: 'entity_word_batch'};
       }
     }
     for (const earlier of this.accepted) {
       if (sharedDimensions(earlier, candidate) >= SESSION_SIMILARITY_LIMIT) {
-        return {ok: false, reason: REASON.NOVELTY_MULTI_DIMENSION_SIMILARITY, dimension: 'multi'};
+        return {ok: false, level: SURFACE, reason: REASON.NOVELTY_MULTI_DIMENSION_SIMILARITY, dimension: 'multi'};
       }
     }
     return {ok: true};
@@ -168,6 +208,20 @@ export class NoveltyScheduler {
    * refusal — the fallback path — and records the breach rather than hiding it.
    */
   accept(candidate, {index = null, forced = null} = {}) {
+    if (forced && forced.level === CORE) {
+      throw Object.assign(
+        new Error('NOVELTY_CORE_RELAXATION_ATTEMPTED: a core construction repeat may not be delivered'),
+        {code: 'NOVELTY_CORE_RELAXATION_ATTEMPTED', dimension: forced.dimension}
+      );
+    }
+    const core = dim(candidate, 'user_construction_signature');
+    if (core) {
+      this.coreConstructions.add(core);
+      const near = nearDuplicateKey(core);
+      this.nearDuplicates.set(near, (this.nearDuplicates.get(near) ?? 0) + 1);
+    }
+    const pair = dim(candidate, 'reasoning_target_pair');
+    if (pair) this.reasoningTargets.add(pair);
     this.combinations.add(combinationKey(candidate));
     for (const k of Object.keys(this.caps)) {
       const v = dim(candidate, k);
@@ -182,8 +236,9 @@ export class NoveltyScheduler {
     if (forced) {
       this.breaches.push({
         index, template_id: candidate.generator_id,
+        level: forced.level ?? SURFACE,
         reason: forced.reason, dimension: forced.dimension,
-        note: 'novelty control relaxed by the fallback: no candidate satisfying it was available'
+        note: 'surface novelty control relaxed by the fallback: no candidate satisfying it was available'
       });
     }
   }
@@ -206,8 +261,19 @@ export class NoveltyScheduler {
         run += 1; longestRun = Math.max(longestRun, run + 1);
       } else run = 0;
     }
+    const nearLargest = Math.max(0, ...this.nearDuplicates.values());
     return {
       delivered: this.accepted.length,
+      // RC2.7-R2. The core measures, reported first because they are the ones
+      // the independent review found the release had been failing.
+      core: {
+        distinctConstructions: this.coreConstructions.size,
+        distinctReasoningTargets: this.reasoningTargets.size,
+        nearDuplicateGroups: this.nearDuplicates.size,
+        largestNearDuplicateGroup: nearLargest,
+        itemsInANearDuplicateGroup: [...this.nearDuplicates.values()].filter(v => v > 1).reduce((a, v) => a + v, 0),
+        relaxations: this.breaches.filter(b => b.level === CORE).length
+      },
       caps: {...this.caps, entity_word: this.entityCap, entity_word_batch: this.batchEntityCap},
       spread,
       entities: {

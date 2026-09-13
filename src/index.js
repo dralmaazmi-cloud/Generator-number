@@ -6,7 +6,7 @@ import {REASON} from './qa/reasons.js';
 import {GenerationAnalytics} from './qa/analytics.js';
 import {GenerationTelemetry} from './qa/telemetry.js';
 import {structuralBandOf} from './qa/structure.js';
-import {NoveltyScheduler} from './compose/novelty.js';
+import {NoveltyScheduler, CORE} from './compose/novelty.js';
 
 import {generateSequences} from './families/sequences.js';
 import {generateRatios} from './families/ratios.js';
@@ -553,8 +553,16 @@ export class NumericalQuestionGeneratorEngine {
         // against a cap of four.
         const within = c => c.used < this.config.maxTemplateRepeatsPerSession
           && c.usedTemplate < this.config.maxTemplateIdRepeatsPerSession;
+        // RC2.7-R2. A candidate that repeats a core construction is not a
+        // fallback at any price, so it is never promoted to one here either.
+        // This branch runs BEFORE the novelty assessment below, and without the
+        // guard a core repeat could be parked as `relaxed` and delivered later
+        // without the assessment ever being consulted.
+        const coreVerdict = novelty.assess(q);
         const candidate = {q, fingerprint, used, usedTemplate, variant, discardEvent: null};
-        if (!relaxed || (!within(relaxed) && within(candidate))) relaxed = candidate;
+        if (coreVerdict.level !== CORE && (!relaxed || (!within(relaxed) && within(candidate)))) {
+          relaxed = candidate;
+        }
         // RC2.2-4. A CAP, not a ban. Before RC2.2 a reasoning signature existed
         // only where a template declared one — sequences alone, 15 of Holdout
         // C's 250 items — so the rule governed almost nothing and the same
@@ -626,21 +634,36 @@ export class NumericalQuestionGeneratorEngine {
         // case and leaves the last third to the caps that were there first.
         // Whatever is finally delivered is re-assessed at commit, so a
         // relaxation here is still recorded rather than lost.
-        const noveltyVetoes = retry < Math.floor(this.config.diversityAttempts * 2 / 3);
-        const verdict = noveltyVetoes ? novelty.assess(q) : {ok: true};
-        if (!verdict.ok) {
+        // RC2.7-R2. CORE is assessed on EVERY retry and is never staged: the
+        // independent review found 34 of 35 relaxations producing a
+        // perceptually repetitive item, because under pressure the scheduler
+        // relaxed the dimensions that decide whether a reader sees a new
+        // question. Surface vetoes are still staged — binding for the first two
+        // thirds of the budget, advisory after — because relaxing those is what
+        // a session under pressure SHOULD do.
+        const verdict = novelty.assess(q);
+        const staged = retry < Math.floor(this.config.diversityAttempts * 2 / 3);
+        if (!verdict.ok && (verdict.level === CORE || staged)) {
           const ev = this.telemetry.sessionDiscard({
             family: q.family, templateId: q.generator_id, reasonCode: verdict.reason,
-            seed, attempt: retry + 1, detail: `dimension: ${verdict.dimension}`
+            seed, attempt: retry + 1, detail: `${verdict.level}: ${verdict.dimension}`
           });
           if (relaxed && relaxed.q === q) relaxed.discardEvent = ev;
-          // A candidate refused only on novelty is still the best fallback
-          // available if nothing better turns up, so it is remembered as one —
-          // ranked behind any candidate that satisfies the scheduler.
-          if (!relaxed || relaxed.noveltyRefusal) {
+          // A candidate refused on a SURFACE dimension is still the best
+          // fallback available if nothing better turns up. One refused on CORE
+          // never is — delivering it is the reskin this release exists to stop —
+          // so it is dropped from the fallback entirely.
+          if (verdict.level === CORE) {
+            if (relaxed && relaxed.q === q) relaxed = null;
+          } else if (!relaxed || relaxed.noveltyRefusal) {
             relaxed = {q, fingerprint, used, usedTemplate, variant, discardEvent: ev, noveltyRefusal: verdict};
           }
           continue;
+        }
+        if (!verdict.ok) {
+          // Past the staged window and surface-only: delivered, and recorded.
+          chosen = {q, fingerprint, variant, noveltyRefusal: verdict};
+          break;
         }
         chosen = {q, fingerprint, variant, noveltyRefusal: null};
         break;
@@ -648,9 +671,23 @@ export class NumericalQuestionGeneratorEngine {
 
       if (!chosen) {
         if (!relaxed) {
-          throw Object.assign(new Error('SESSION_DIVERSITY_EXHAUSTED: no distinct question available'), {
-            code: 'SESSION_DIVERSITY_EXHAUSTED', index: i + 1
-          });
+          // RC2.7-R2. The review's instruction, made structural: when a session
+          // cannot be filled without repeating a core construction, the session
+          // is REFUSED and the shortfall named. Filling the remaining slots with
+          // parameter reskins is what produced a 2.8/10 all-hard session, and
+          // there is no longer a code path that can do it.
+          throw Object.assign(
+            new Error(
+              `INSUFFICIENT_CONSTRUCTION_BREADTH: ${i} of ${count} slots filled before the pool of `
+              + `distinct core constructions ran out (${novelty.coreConstructions.size} used). `
+              + 'Add genuine constructions; the caps and the novelty controls were not relaxed.'
+            ),
+            {
+              code: 'INSUFFICIENT_CONSTRUCTION_BREADTH', index: i + 1, delivered: i, requested: count,
+              distinctCoreConstructions: novelty.coreConstructions.size,
+              band: difficultySchedule[i]
+            }
+          );
         }
         chosen = relaxed;
         this.telemetry.withdrawSessionDiscard(relaxed.discardEvent);
@@ -695,14 +732,18 @@ export class NumericalQuestionGeneratorEngine {
       // and a control that is only consulted on some paths is a control that
       // can be bypassed without anybody being told.
       const noveltyAtCommit = novelty.assess(chosen.q);
+      // RC2.7-R2. `accept` throws on a core relaxation rather than recording
+      // one, so this is a last structural check on the delivered question and
+      // not merely a place that reports.
       novelty.accept(chosen.q, {index: i + 1, forced: noveltyAtCommit.ok ? null : noveltyAtCommit});
       if (!noveltyAtCommit.ok) {
         diversityWarnings.push({
           index: i + 1,
           template_id: chosen.q.generator_id,
-          reason: REASON.NOVELTY_FALLBACK,
+          reason: REASON.NOVELTY_SURFACE_FALLBACK,
+          level: noveltyAtCommit.level,
           dimension: noveltyAtCommit.dimension,
-          note: `novelty control relaxed by the fallback on ${noveltyAtCommit.dimension}: no candidate satisfying it was available`
+          note: `surface novelty control relaxed on ${noveltyAtCommit.dimension}: no candidate satisfying it was available`
         });
       }
       const chosenSignature = chosen.q.metadata?.structural_reasoning_signature;

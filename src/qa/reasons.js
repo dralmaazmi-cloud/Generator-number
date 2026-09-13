@@ -64,6 +64,13 @@ export const REASON = Object.freeze({
   NOVELTY_MULTI_DIMENSION_SIMILARITY: 'NOVELTY_MULTI_DIMENSION_SIMILARITY',
   NOVELTY_FALLBACK: 'NOVELTY_FALLBACK',
   NOVELTY_EXHAUSTED: 'NOVELTY_EXHAUSTED',
+
+  // RC2.7-R2. The core/surface split the independent review requires. A core
+  // refusal can never be relaxed; a surface one can, and says so.
+  NOVELTY_CORE_CONSTRUCTION_REPEAT: 'NOVELTY_CORE_CONSTRUCTION_REPEAT',
+  NOVELTY_REASONING_TARGET_REPEAT: 'NOVELTY_REASONING_TARGET_REPEAT',
+  NOVELTY_SURFACE_FALLBACK: 'NOVELTY_SURFACE_FALLBACK',
+  INSUFFICIENT_CONSTRUCTION_BREADTH: 'INSUFFICIENT_CONSTRUCTION_BREADTH',
   INVALID_ARABIC_NUMBER_UNIT: 'INVALID_ARABIC_NUMBER_UNIT',
   // RC2.5-4. «مرتبة» asserting a numeric sort where the stem means position in
   // a list, and a rate answer whose options are rendered as a bare quantity.

@@ -948,13 +948,21 @@ function investmentTimeShare(ctx) {
   }
   if (!found) return resample(ctx, investmentTimeShare);
   const {capA, capB, monA, monB, rA, rB, profit, shareA} = found;
-  const correct = shareA;
+  // RC2.7-R3. Which partner's share is asked for is a different core
+  // construction: the equation that pins the answer is written from the other
+  // partner's weight, and the reader who computed the first share has not
+  // answered this one.
+  const askSecond = rng.bool(0.45);
+  const correct = askSecond ? profit - shareA : shareA;
   const params = {capitalA: capA, monthsA: monA, capitalB: capB, monthsB: monB, totalProfit: profit};
   const byMoney = Math.round(profit * capA / (capA + capB));
   const byTime = Math.round(profit * monA / (monA + monB));
 
   const distractors = usable(ctx, [
-    mk(profit - shareA, 'SWAPPED_THE_TWO_UNKNOWNS', `نصيب الشريك الثاني ${profit - shareA}`, 3),
+    mk(askSecond ? shareA : profit - shareA, 'SWAPPED_THE_TWO_UNKNOWNS',
+      `نصيب الشريك الآخر ${askSecond ? shareA : profit - shareA}`, 3),
+    ...(askSecond ? [mk(Math.round(profit * capB / (capA + capB)), 'SOLVED_ONE_CONDITION_ONLY',
+      `${profit} × ${capB} ÷ (${capA} + ${capB})`)] : []),
     mk(byMoney, 'SOLVED_ONE_CONDITION_ONLY', `${profit} × ${capA} ÷ (${capA} + ${capB})`),
     mk(byTime, 'SOLVED_ONE_CONDITION_ONLY', `${profit} × ${monA} ÷ (${monA} + ${monB})`),
     mk(profit / 2, 'ASSUMED_EQUAL_SHARES', `${profit} ÷ 2`),
@@ -964,12 +972,13 @@ function investmentTimeShare(ctx) {
     mk(Math.abs(byMoney - byTime), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(byMoney, byTime)} − ${Math.min(byMoney, byTime)}`)
   ]);
 
-  const stem = composeSentences(ctx, `شارك أحمد بمبلغ ${u(capA, 'dirham')} لمدة ${u(monA, 'month', 'oblique')}، وشارك سالم بمبلغ ${u(capB, 'dirham')} لمدة ${u(monB, 'month', 'oblique')}. فإذا بلغ الربح ${u(profit, 'dirham')}، فكم نصيب أحمد؟`);
+  const stem = composeSentences(ctx, `شارك أحمد بمبلغ ${u(capA, 'dirham')} لمدة ${u(monA, 'month', 'oblique')}، وشارك سالم بمبلغ ${u(capB, 'dirham')} لمدة ${u(monB, 'month', 'oblique')}. فإذا بلغ الربح ${u(profit, 'dirham')}، فكم نصيب ${askSecond ? 'سالم' : 'أحمد'}؟`);
   return buildBase(ctx, {
     templateId: 'PROP_H_CAPITAL_TIME',
     scenario: 'partnership_capital_times_duration',
     direction: 'forward',
-    subskill: 'اقتسام ربح بحسب رأس المال والمدة معًا',
+    subskill: askSecond ? 'اقتسام ربح بحسب رأس المال والمدة، بطلب نصيب الشريك الثاني'
+      : 'اقتسام ربح بحسب رأس المال والمدة معًا',
     difficulty: 'hard',
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
@@ -978,7 +987,9 @@ function investmentTimeShare(ctx) {
       `نصيب كل شريك يتناسب مع المبلغ مضروبًا في المدة.`,
       `حصة أحمد = ${capA} × ${monA} = ${capA * monA}، وحصة سالم = ${capB} × ${monB} = ${capB * monB}.`,
       `مجموع الحصتين = ${capA * monA} + ${capB * monB} = ${capA * monA + capB * monB}.`,
-      `نصيب أحمد = ${profit} × ${capA * monA} = ${profit * capA * monA}، ثم ${profit * capA * monA} ÷ ${capA * monA + capB * monB} = ${correct}.`
+      askSecond
+        ? `نصيب سالم = ${profit} × ${capB * monB} = ${profit * capB * monB}، ثم ${profit * capB * monB} ÷ ${capA * monA + capB * monB} = ${correct}.`
+        : `نصيب أحمد = ${profit} × ${capA * monA} = ${profit * capA * monA}، ثم ${profit * capA * monA} ÷ ${capA * monA + capB * monB} = ${correct}.`
     ],
     howToStart: 'اضرب مبلغ كل شريك في مدته قبل أي مقارنة.',
     remember: 'المال وحده لا يحدد النصيب، والمدة وحدها لا تحدده؛ حاصل ضربهما هو ما يحدده.',
@@ -986,9 +997,13 @@ function investmentTimeShare(ctx) {
     estimatedSteps: 5, conceptTags: ['ratio', 'partnership', 'two-dimensions'], parameters: params,
     oracle: {
       kind: 'constraint', answerKind: 'number',
-      constraints: [eq(mul(X, add(mul(capA, monA), mul(capB, monB))), mul(profit, mul(capA, monA)))]
+      // Written from the asked partner's own weight, so the two targets are two
+      // relations rather than one relation and a subtraction.
+      constraints: [askSecond
+        ? eq(mul(X, add(mul(capA, monA), mul(capB, monB))), mul(profit, mul(capB, monB)))
+        : eq(mul(X, add(mul(capA, monA), mul(capB, monB))), mul(profit, mul(capA, monA)))]
     },
-    askedUnknown: 'firstPartnerShare', stageCount: 3,
+    askedUnknown: askSecond ? 'secondPartnerShare' : 'firstPartnerShare', stageCount: 3,
     pedagogy: {
       targetSkill: 'WEIGHT_BY_TWO_DIMENSIONS', targetMisconception: 'SOLVED_ONE_CONDITION_ONLY',
       wrongMethodValue: byMoney,

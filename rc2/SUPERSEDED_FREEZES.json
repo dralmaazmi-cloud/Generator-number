@@ -72,6 +72,17 @@
       "engineVersion": "1.4.0",
       "productionBundleSha256": "aaad3d966b41cf9a5d8760c8449e8b2abad1bcb43c2c6d198226534679a81507",
       "productionFileCount": 50
+    },
+    {
+      "supersededAt": "2026-09-13T11:12:51.556Z",
+      "supersededBy": "RC2.7-R — user-perceived diversity remediation",
+      "reason": "An independent review failed RC2.7 for perceived diversity (4.2/10 overall, 2.8/10 all-hard) and located the cause: scenario, noun, name, number and order changes moved the internal signatures while the equation, the requested target and the solution path stayed the same. Production moves again to fix that, so the RC2.7 freeze is archived intact.",
+      "RC2_COMMIT": "1c982ee7b1d1c742aa11d23a9b783316d556a23c",
+      "treeHash": "706b82f9a119d64598871b679ae4c08e6b4743b9",
+      "engineVersion": "1.4.0",
+      "productionBundleSha256": "b694f614df6882e6bf78b653c0136ac28c4cbf2a859b608a0d04d40eea7d9d42",
+      "productionFileCount": 54,
+      "release": "RC2.7"
     }
   ]
 }
