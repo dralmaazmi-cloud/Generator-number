@@ -423,5 +423,26 @@ report is read from them.
 
 ## 12. Final commit and repository status
 
-_Filled in by the freeze step; see `rc2/FREEZE.json` and `SOURCE_PROVENANCE.json`._
+| field | value |
+| --- | --- |
+| release | `RC2.7` |
+| frozen commit | `1c982ee7b1d1c742aa11d23a9b783316d556a23c` |
+| tree SHA | `706b82f9a119d64598871b679ae4c08e6b4743b9` |
+| production bundle SHA-256 | `b694f614df6882e6bf78b653c0136ac28c4cbf2a859b608a0d04d40eea7d9d42` |
+| production files | 54 |
+| engine version | 1.4.0 |
+| tests at freeze | 454 |
+| development corpus | `rc2/RC27_DEVELOPMENT_CORPUS.json`, 10000 questions on 5 RC2.7 seeds, sha `ec5a65ab272b7bdd…` |
+| sign-off holdout | `AUDIT-2026-09-13-G` — NAMED, not generated (`holdoutGenerated: false`) |
+| spent holdouts | `AUDIT-2026-09-12-B` (FAILED_DIAGNOSTIC_HOLDOUT), `AUDIT-2026-09-12-C` (REVIEWED_AND_SPENT), `AUDIT-2026-09-12-D` (REVIEWED_AND_SPENT), `AUDIT-2026-09-12-E` (REVIEWED_AND_SPENT), `AUDIT-2026-09-13-F` (SEALED_AND_SPENT) |
+| freeze verification | `verifyFreeze()` reports intact, recomputed bundle identical |
+| working tree | clean at the freeze; §24 refuses a dirty one |
+
+The RC2.6 freeze it supersedes is kept whole in `rc2/FREEZE.RC2_6.json`, and the
+reason it was superseded is recorded in `rc2/SUPERSEDED_FREEZES.json`.
+
+**The next blind holdout has not been generated.** The brief withholds it, and
+`AUDIT-2026-09-13-G` is named here so that whatever is eventually drawn on it is
+drawn against a stated engine rather than against whatever the tree happened to
+hold that day.
 

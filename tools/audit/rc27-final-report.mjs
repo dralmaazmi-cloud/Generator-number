@@ -330,7 +330,26 @@ p('`rc2/RC27_FAMILY_SURFACE.json` and `rc2/RC27_EXAMPLES.md`; every figure in th
 p('report is read from them.', '');
 
 p('---', '', '## 12. Final commit and repository status', '');
-p('_Filled in by the freeze step; see `rc2/FREEZE.json` and `SOURCE_PROVENANCE.json`._', '');
+const fz = JSON.parse(readFileSync('rc2/FREEZE.json', 'utf8'));
+p('| field | value |', '| --- | --- |');
+p(`| release | \`${fz.release}\` |`);
+p(`| frozen commit | \`${fz.RC2_COMMIT}\` |`);
+p(`| tree SHA | \`${fz.treeHash}\` |`);
+p(`| production bundle SHA-256 | \`${fz.productionBundleSha256}\` |`);
+p(`| production files | ${(fz.productionFiles || []).length} |`);
+p(`| engine version | ${fz.engineVersion} |`);
+p(`| tests at freeze | ${fz.testCount} |`);
+p(`| development corpus | \`${fz.developmentCorpus.path}\`, ${fz.developmentCorpus.published} questions on ${fz.developmentSeeds.length} RC2.7 seeds, sha \`${String(fz.developmentCorpus.sha256).slice(0, 16)}…\` |`);
+p(`| sign-off holdout | \`${fz.holdoutSeed}\` — NAMED, not generated (\`holdoutGenerated: ${fz.holdoutGenerated}\`) |`);
+p(`| spent holdouts | ${fz.previousHoldouts.map(h => `\`${h.seed}\` (${h.status})`).join(', ')} |`);
+p(`| freeze verification | \`verifyFreeze()\` reports intact, recomputed bundle identical |`);
+p(`| working tree | clean at the freeze; §24 refuses a dirty one |`, '');
+p('The RC2.6 freeze it supersedes is kept whole in `rc2/FREEZE.RC2_6.json`, and the');
+p('reason it was superseded is recorded in `rc2/SUPERSEDED_FREEZES.json`.', '');
+p('**The next blind holdout has not been generated.** The brief withholds it, and');
+p('`AUDIT-2026-09-13-G` is named here so that whatever is eventually drawn on it is');
+p('drawn against a stated engine rather than against whatever the tree happened to');
+p('hold that day.', '');
 
 writeFileSync('FINAL_REPORT.md', L.join('\n') + '\n');
 console.log('wrote FINAL_REPORT.md', L.length, 'lines');
