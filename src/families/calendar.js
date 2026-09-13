@@ -510,7 +510,11 @@ function monthLengthFromTwoDates(ctx) {
     mk(28 - d1 + d2 + 7, 'USED_ONE_ANCHOR_ONLY', 'افتراض أربعة أسابيع ثم إضافة أسبوع')
   ]);
 
-  const stem = composeSentences(ctx, `كان اليوم ${d1} من شهرٍ ما يوم ${DAYS_AR[w1]}، وكان اليوم ${d2} من الشهر الذي يليه يوم ${DAYS_AR[w2]}. كم يومًا بين التاريخين؟`);
+  // RC2.9.1. Was «كان اليوم 3 من شهرٍ ما يوم الأحد، وكان اليوم 15 من الشهر الذي
+  // يليه يوم السبت» — «اليوم N من شهرٍ ما يوم D» twice over, a frame bolted
+  // together rather than a sentence. Dates in Arabic are said «وافق الثالثَ من
+  // شهرٍ يومُ الأحد»; the two anchors and the question are unchanged.
+  const stem = composeSentences(ctx, `وافق يومُ ${DAYS_AR[w1]} التاريخَ ${d1} من أحد الشهور، ووافق يومُ ${DAYS_AR[w2]} التاريخَ ${d2} من الشهر التالي له. كم يومًا بين التاريخين؟`);
   return buildBase(ctx, {
     templateId: 'CAL_H_MONTH_LENGTH',
     scenario: 'two_dated_weekdays_across_a_month_boundary',

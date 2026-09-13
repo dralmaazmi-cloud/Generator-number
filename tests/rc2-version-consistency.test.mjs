@@ -32,9 +32,29 @@ test('RC2-021: the generator manifest agrees', () => {
   assert.equal(manifest.engine_version, ENGINE_VERSION);
 });
 
+test('RC2.9.1: the manifest describes the engine that ships with it', async () => {
+  // It claimed 107 templates while the engine held 155, and its per-family
+  // lists had not moved since RC2.4. A manifest an integrator reads to find out
+  // what the generator can do may not be a record of an older one, so it is
+  // derived from the runtime and this test is what keeps it derived.
+  const {buildManifest} = await import('../tools/audit/rc291-manifest.mjs');
+  const onDisk = JSON.parse(readFileSync('generator_manifest.json', 'utf8'));
+  const fromEngine = buildManifest();
+  assert.equal(onDisk.template_count, fromEngine.template_count,
+    'rerun node tools/audit/rc291-manifest.mjs');
+  assert.deepEqual(Object.keys(onDisk.families).sort(), Object.keys(fromEngine.families).sort());
+  for (const [id, f] of Object.entries(fromEngine.families)) {
+    for (const band of ['easy', 'medium', 'hard']) {
+      assert.deepEqual(onDisk.families[id].templates[band].map(t => t.id),
+        f.templates[band].map(t => t.id), `${id}/${band} is stale`);
+    }
+  }
+});
+
 test('RC2-021: no shipped file hard-codes a different version', () => {
   const offenders = [];
-  for (const file of ['index.html', 'report.js', 'app.js', 'generator_manifest.json', 'package.json']) {
+  for (const file of ['index.html', 'report.js', 'app.js', 'practice-journey.js',
+    'generator_manifest.json', 'package.json']) {
     // Comments may name a historical version on purpose — the note in app.js
     // records the very defect this test guards — so only code is scanned.
     const code = readFileSync(file, 'utf8')

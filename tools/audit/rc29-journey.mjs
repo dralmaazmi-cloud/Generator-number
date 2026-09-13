@@ -9,8 +9,22 @@
 // because the second call starts the planner from an empty page.
 //
 // So this harness never asks for a hundred. It calls the same public entry the
-// application calls, twice, carrying between the calls exactly what the product
-// carries, and judges the combined hundred.
+// application calls, twice, and judges the combined hundred.
+//
+// WHAT IT IS, EXACTLY — corrected in RC2.9.1.
+//
+// This is an ENGINE CONTRACT test. It carries `diversity_history` between the
+// two calls ITSELF. It proves that an engine handed a history honours it; it
+// proves nothing whatever about whether the product hands it one. RC2.9
+// described this file as "carrying exactly what the product carries" and that
+// was false: the product carried nothing, and an independent review measuring
+// the real application found 26–34 repeats in each second fifty while this
+// harness reported none.
+//
+// The product's side is measured by tools/audit/rc291-product-journey.mjs and
+// tools/audit/rc291-acceptance.mjs, which drive the real page in a real browser
+// and let the application do the persisting. Final acceptance comes from those.
+// This file stays as what it always was, honestly labelled.
 
 import Engine from '../../src/index.js';
 import {measureSample, classify, presentationKey} from '../../src/qa/perceptual-classify.js';

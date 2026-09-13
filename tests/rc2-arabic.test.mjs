@@ -9,6 +9,7 @@ import assert from 'node:assert/strict';
 
 import Engine from '../src/index.js';
 import {classifyConstructions, classifyQuestionConstructions, STATUS} from '../src/arabic/constructions.js';
+import {unitIdOfWord, surfaceFormsOf} from '../src/arabic/units.js';
 import {allRenderedText} from '../src/qa/pipeline.js';
 
 const invalid = text => classifyConstructions(text).filter(c => c.status === STATUS.INVALID);
@@ -147,7 +148,13 @@ test('RC2.9-6: a rate answer is rendered in the output the stem names', () => {
       const text = String(opt);
       if (!text.includes('/')) continue;
       const noun = text.split('/')[0].replace(/[\d.,\s]/g, '').trim();
-      if (noun && !q.question.includes(noun)) offenders.push(`${q.generator_id}: «${text}» against «${q.question}»`);
+      // RC2.9.1: the numerator inflects, so what must match is the UNIT, not
+      // the spelling — «5 صفحات/ساعة» answers a stem that says «صفحة».
+      const id = unitIdOfWord(noun);
+      const named = id
+        ? surfaceFormsOf(id).some(form => q.question.includes(form))
+        : q.question.includes(noun);
+      if (noun && !named) offenders.push(`${q.generator_id}: «${text}» against «${q.question}»`);
     }
   }
   assert.deepEqual(offenders.slice(0, 3), [], `${offenders.length} answers in a unit the stem never names`);
@@ -189,8 +196,13 @@ test('RC2.9-6: the تمييز agrees with the last element of the number', async
     [1, 'درهم'], [2, 'درهمان'], [3, 'دراهم'], [10, 'دراهم'],
     [11, 'درهمًا'], [99, 'درهمًا'], [198, 'درهمًا'],
     [100, 'درهم'], [400, 'درهم'], [1000, 'درهم'], [4500, 'درهم'],
-    // A compound follows its own last element, not its size.
-    [102, 'درهمان'], [103, 'دراهم'], [110, 'دراهم'], [1001, 'درهم']
+    // A compound follows its own last element for three to ten and for the
+    // teens and tens — but the DUAL and the lone singular belong to the numbers
+    // one and two themselves. RC2.9 let them apply to any number ending in one
+    // or two and published «302 علبتان»; in a compound the hundred governs.
+    [101, 'درهم'], [102, 'درهم'], [202, 'درهم'], [302, 'درهم'], [1002, 'درهم'],
+    [103, 'دراهم'], [110, 'دراهم'], [1001, 'درهم'],
+    [21, 'درهمًا'], [22, 'درهمًا'], [121, 'درهمًا']
   ];
   for (const [n, want] of cases) assert.equal(unitWordFor(n, 'dirham'), want, `${n}`);
   assert.equal(formatNumberWithUnit(400, 'dirham'), '400 درهم');

@@ -243,13 +243,20 @@ function combineGroups(ctx) {
     mk(a1 + a2, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${a1} + ${a2}`)
   ]);
   const sc = sceneFor(ctx, 'aggregate');
-  // Two symmetric groups: neither presupposes the other, so their order is a
-  // free choice and the realization layer may state either first.
+  // RC2.9.1. The two groups are symmetric in the MATHEMATICS and this template
+  // said so — `orderFree: true` — but not in the PROSE: the second clause says
+  // «أخرى», which is a backward reference to a group that has to have been
+  // introduced already. Rotated, it published «متوسط أطوال 5 شتلات أخرى هو 24
+  // سنتيمترًا. متوسط أطوال 3 شتلات هو 16» — «another» than what?
+  //
+  // «أخرى» is not decoration: it is what says the two groups are disjoint, so
+  // it stays and the order is pinned instead. The sentence STRUCTURE still
+  // varies — sequential, compact, listed, question-first — which is where this
+  // template's presentation breadth actually comes from.
   const stem = composeStem(ctx, {
     facts: [`${sc.avgOf(n1)} هو ${sc.mval(a1)}`, `${avgOfOther(sc, n2)} هو ${sc.mval(a2)}`],
     ask: `فما متوسط ${sc.membersDef} مجتمعة؟`,
-    askFirst: `متوسط ${sc.membersDef} مجتمعة`,
-    orderFree: true
+    askFirst: `متوسط ${sc.membersDef} مجتمعة`
   });
   return buildBase(ctx, {
     templateId: 'AVG_M_COMBINE',

@@ -23,7 +23,11 @@ const git = args => execFileSync('git', args, {encoding: 'utf8'}).trim();
 
 /** Every production file, with its own hash, so a later edit is visible. */
 function productionFiles() {
-  const roots = ['src', 'report.js', 'app.js', 'index.html', 'generator_manifest.json', 'package.json'];
+  // RC2.9.1 adds practice-journey.js: it is product code the application
+  // imports, so a freeze that did not cover it would leave the one file this
+  // release exists to add outside the hash it attests.
+  const roots = ['src', 'report.js', 'app.js', 'practice-journey.js', 'index.html',
+    'generator_manifest.json', 'package.json'];
   const files = [];
   const walk = p => {
     const st = statSync(p);

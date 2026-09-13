@@ -7,8 +7,17 @@
 // of 50 repeating something already solved, beginning at Q51, because the
 // second call starts the planner from an empty page.
 //
-// Every test here goes through `generatePractice` twice, exactly as the
-// application does, and judges the hundred the user actually meets.
+// Every test here goes through `generatePractice` twice and judges the hundred
+// the user actually meets.
+//
+// RC2.9.1 — what this file is, exactly. It is the ENGINE CONTRACT test: it
+// carries the history between the two calls itself, so it proves the engine
+// honours a history it is given. Saying it went through the engine "exactly as
+// the application does" was false — the application did not carry the history
+// at all, and an independent review of the real product found 26–34 repeats in
+// each second fifty while these tests were green. The product's side is
+// tests/rc291-product-journey.test.mjs and tests/rc291-browser-journey.test.mjs,
+// and final acceptance comes from those.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';

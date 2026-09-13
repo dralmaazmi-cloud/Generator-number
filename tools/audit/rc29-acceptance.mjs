@@ -20,6 +20,7 @@ import {measureSample} from '../../src/qa/perceptual-classify.js';
 import {playSession, playJourney, measureJourney, gradeJourney, JOURNEY_GATES} from './rc29-journey.mjs';
 import {RULE_FAMILY} from './rc28-sequences.mjs';
 import {classifyQuestionConstructions} from '../../src/arabic/constructions.js';
+import {unitIdOfWord, surfaceFormsOf} from '../../src/arabic/units.js';
 import {allRenderedText} from '../../src/qa/pipeline.js';
 
 /** Seeds minted for this run and used nowhere else in the repository. */
@@ -109,7 +110,13 @@ export function rateUnitMismatches(rows) {
       if (!text.includes('/')) continue;
       const noun = text.split('/')[0].replace(/[\d.,\s]/g, '').trim();
       if (!noun || noun === 'كم') continue;
-      if (!q.question.includes(noun)) out.push(`${q.generator_id}: «${text}» against a stem that never says ${noun}`);
+      // RC2.9.1: compare the UNIT, not the spelling of it — a rate numerator
+      // agrees with its number, so «5 صفحات/ساعة» answers a stem saying «صفحة».
+      const id = unitIdOfWord(noun);
+      const named = id
+        ? surfaceFormsOf(id).some(form => q.question.includes(form))
+        : q.question.includes(noun);
+      if (!named) out.push(`${q.generator_id}: «${text}» against a stem that never says ${noun}`);
     }
   }
   return out;

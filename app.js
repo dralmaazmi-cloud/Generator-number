@@ -1,4 +1,5 @@
 import {buildPrintReportHtml} from './report.js';
+import {generatePracticeForJourney, clearPracticeJourney, readPracticeJourney} from './practice-journey.js';
 
 // RC2-021. The UI and the engine ship as one bundle, so they carry one version.
 // A second literal here is exactly the duplication the RC1 audit caught: the
@@ -59,6 +60,16 @@ async function bootstrap(){
     setTimeout(()=>boot.classList.add('hidden'),1100);
     window.__NUM_GENERATOR_READY__=true;
     window.__NUM_GENERATOR_ENGINE__=state.engine;
+    // RC2.9.1. Starting the practice journey over is a deliberate act and has
+    // no button, because the app has no clear-progress screen and this release
+    // does not invent one. It is exposed so that the action exists, so a test
+    // can take it, and so a future clear-progress control has one thing to
+    // call. Deleting a saved session and discarding a sitting deliberately do
+    // NOT come through here.
+    window.numericalGenerator={
+      resetPracticeJourney:()=>clearPracticeJourney(localStorage),
+      practiceJourney:()=>readPracticeJourney(localStorage)
+    };
     await runSmokeModeIfRequested();
   }catch(err){
     console.error(err);
@@ -321,7 +332,12 @@ function createSession(settings){
     base.letterSchedule=buildLetterSchedule(settings.count,`${settings.seed}|letters`);
     base.questions.push(generateAdaptiveAtIndex(base,0));
   }else{
-    const set=state.engine.generatePractice({families:settings.families,difficulty:settings.difficulty,count:settings.count,seed:settings.seed});
+    // RC2.9.1. Through the journey, never straight at the engine. The engine
+    // returns the diversity history a continuing journey needs and the product
+    // is what has to keep it; calling generatePractice directly here is the
+    // defect this release fixes, and tests/rc291-product-journey.test.mjs
+    // asserts that this file has no such call.
+    const set=generatePracticeForJourney({engine:state.engine,storage:localStorage,options:{families:settings.families,difficulty:settings.difficulty,count:settings.count,seed:settings.seed}});
     base.questions=set.questions;base.engineValidation=set.validation;
   }
   base.responses=Array(settings.count).fill(null).map(()=>emptyResponse());

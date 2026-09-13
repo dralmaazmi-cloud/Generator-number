@@ -28,7 +28,7 @@ const STAGE = '.rc29-package';
 /** The engine itself, plus everything needed to run and re-verify it. */
 const INCLUDE = [
   'src', 'tests', 'tools',
-  'app.js', 'index.html', 'report.js', 'styles.css',
+  'app.js', 'index.html', 'report.js', 'practice-journey.js', 'styles.css',
   'question.schema.json', 'generator_manifest.json', 'package.json', 'vercel.json',
   'README_DEPLOY.txt', 'ENGINE_README.md'
 ];

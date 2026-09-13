@@ -1,6 +1,7 @@
 {
   "engine_version": "1.5.0",
-  "template_count": 107,
+  "template_count": 155,
+  "generated_by": "tools/audit/rc291-manifest.mjs — derived from the engine, never edited by hand",
   "families": {
     "sequences": {
       "family_ar": "المتتاليات العددية",
@@ -8,11 +9,11 @@
         "easy": [
           {
             "id": "SEQ_E_ARITH",
-            "subskill": "فرق ثابت"
+            "subskill": "فرق ثابت مع حد مفقود في الوسط"
           },
           {
             "id": "SEQ_E_GEO",
-            "subskill": "ضرب ثابت"
+            "subskill": "قسمة ثابتة"
           }
         ],
         "medium": [
@@ -21,22 +22,66 @@
             "subskill": "تناوب جمع وضرب بأعداد متدرجة"
           },
           {
+            "id": "SEQ_M_CANDIDATE",
+            "subskill": "اختيار عدد ينتمي إلى المتتالية"
+          },
+          {
+            "id": "SEQ_M_CYCLE3",
+            "subskill": "دورة من ثلاث عمليات تتكرر"
+          },
+          {
             "id": "SEQ_M_DOUBLE_DIFF",
             "subskill": "فروق تتضاعف"
           },
           {
             "id": "SEQ_M_INC_DIFF",
-            "subskill": "فروق تتزايد بنمط ثابت"
+            "subskill": "فروق تتزايد مع حد مفقود"
           },
           {
             "id": "SEQ_M_INTERLEAVED",
             "subskill": "سلسلتان متداخلتان"
+          },
+          {
+            "id": "SEQ_M_LINEAR_RECUR",
+            "subskill": "قاعدة ضرب وجمع مع حد أبعد"
+          },
+          {
+            "id": "SEQ_M_MISSING_OP",
+            "subskill": "العملية المفقودة بين حدين"
+          },
+          {
+            "id": "SEQ_M_PAIR_RULE",
+            "subskill": "حدود مزدوجة: الثاني دالة في الأول"
+          },
+          {
+            "id": "SEQ_M_RULE_APPLY",
+            "subskill": "تطبيق قاعدة معطاة لبناء متتالية"
+          },
+          {
+            "id": "SEQ_M_RULE_ID",
+            "subskill": "استنتاج قاعدة المتتالية"
+          },
+          {
+            "id": "SEQ_M_WRONG_TERM",
+            "subskill": "تحديد الحد الذي يخالف القاعدة"
           }
         ],
         "hard": [
           {
             "id": "SEQ_H_ALT_DIV",
             "subskill": "تناوب طرح ثابت مع قسمة متدرجة"
+          },
+          {
+            "id": "SEQ_H_DIGIT_PRODUCT",
+            "subskill": "الزيادة تساوي حاصل ضرب أرقام الحد"
+          },
+          {
+            "id": "SEQ_H_DIGIT_SUM",
+            "subskill": "خطوة تعتمد على أرقام الحد نفسه"
+          },
+          {
+            "id": "SEQ_H_INDEX_MULT",
+            "subskill": "مضروب متزايد مع ثابت مضاف، لحد أبعد"
           },
           {
             "id": "SEQ_H_POW_INDEX",
@@ -64,8 +109,22 @@
         ],
         "medium": [
           {
+            "id": "RAT_H_TRANSFER",
+            "subskill": "نقل كمية بين طرفين وتغير النسبة"
+          },
+          {
             "id": "RAT_M_ADD_SIDE",
             "subskill": "تغير النسبة بعد إضافة كمية إلى أحد الطرفين"
+          }
+        ],
+        "hard": [
+          {
+            "id": "RAT_H_MAX_PART",
+            "subskill": "أكبر نصيب ممكن تحت حد أعلى"
+          },
+          {
+            "id": "RAT_H_TWO_COMB",
+            "subskill": "توحيد نسبتين ثم استخدام مجموع مركب"
           },
           {
             "id": "RAT_M_COMMON_DIFF",
@@ -74,16 +133,6 @@
           {
             "id": "RAT_M_COMMON_SUM",
             "subskill": "نسبتان بحد مشترك مع مجموع الطرفين الخارجيين"
-          }
-        ],
-        "hard": [
-          {
-            "id": "RAT_H_TRANSFER",
-            "subskill": "نقل كمية بين طرفين وتغير النسبة"
-          },
-          {
-            "id": "RAT_H_TWO_COMB",
-            "subskill": "توحيد نسبتين ثم استخدام مجموع مركب"
           }
         ]
       }
@@ -97,32 +146,40 @@
             "subskill": "حساب نسبة مئوية من قيمة"
           },
           {
-            "id": "PCT_E_REVERSE_ONE",
-            "subskill": "استرجاع الأصل بعد تغير واحد"
-          }
-        ],
-        "medium": [
-          {
             "id": "PCT_M_REMAIN",
             "subskill": "نسبتان من الباقي"
-          },
-          {
-            "id": "PCT_M_SUCCESSIVE",
-            "subskill": "تغيران مئويان متتاليان"
           },
           {
             "id": "PCT_M_UNIT_PRICE",
             "subskill": "معدل وحدوي ثم زيادة مئوية"
           }
         ],
-        "hard": [
+        "medium": [
+          {
+            "id": "PCT_E_REVERSE_ONE",
+            "subskill": "استرجاع الأصل بعد تغير واحد"
+          },
           {
             "id": "PCT_H_CHAIN_VALUE",
             "subskill": "خصم ثم زيادة على القيمة الجديدة"
           },
           {
+            "id": "PCT_H_MIXTURE",
+            "subskill": "خلط محلولين بتركيزين مختلفين"
+          },
+          {
             "id": "PCT_H_REVERSE_CHAIN",
             "subskill": "استرجاع الأصل بعد تغيرين متتاليين"
+          },
+          {
+            "id": "PCT_M_SUCCESSIVE",
+            "subskill": "تغيران مئويان متتاليان"
+          }
+        ],
+        "hard": [
+          {
+            "id": "PCT_H_TWO_GROUP_CHANGE",
+            "subskill": "مجموعتان تتغيران في اتجاهين متضادين، مع طلب القسم المنخفض"
           }
         ]
       }
@@ -142,6 +199,18 @@
         ],
         "medium": [
           {
+            "id": "AVG_H_COMB_ADD",
+            "subskill": "دمج مجموعتين ثم إضافة قيمة جديدة"
+          },
+          {
+            "id": "AVG_H_SPLIT_SIZE",
+            "subskill": "حجم إحدى المجموعتين من ثلاثة متوسطات"
+          },
+          {
+            "id": "AVG_H_TARGET",
+            "subskill": "إيجاد قيمة مطلوبة للوصول إلى متوسط مستهدف"
+          },
+          {
             "id": "AVG_M_ADD_PAIR",
             "subskill": "إضافة قيمتين بمتوسط معلوم"
           },
@@ -156,12 +225,8 @@
         ],
         "hard": [
           {
-            "id": "AVG_H_COMB_ADD",
-            "subskill": "دمج مجموعتين ثم إضافة قيمة جديدة"
-          },
-          {
-            "id": "AVG_H_TARGET",
-            "subskill": "إيجاد قيمة مطلوبة للوصول إلى متوسط مستهدف"
+            "id": "AVG_H_OVERLAP",
+            "subskill": "قيمة مشتركة بين مجموعتين متداخلتين"
           }
         ]
       }
@@ -171,15 +236,27 @@
       "templates": {
         "easy": [
           {
-            "id": "AGE_E_MULT_DIFF",
-            "subskill": "مضاعف عمر مع فرق معلوم"
-          },
-          {
             "id": "AGE_E_SUM_DIFF",
             "subskill": "مجموع وفرق عمرين حاليين"
           }
         ],
         "medium": [
+          {
+            "id": "AGE_E_MULT_DIFF",
+            "subskill": "مضاعف عمر مع فرق معلوم"
+          },
+          {
+            "id": "AGE_H_THREE_SIBLINGS",
+            "subskill": "ثلاثة إخوة مرتبطون بفروق ومجموع"
+          },
+          {
+            "id": "AGE_H_TWO_TIME",
+            "subskill": "فرق حالي وعلاقة نسبية مستقبلية"
+          },
+          {
+            "id": "AGE_M_DIFFERENCE_INVARIANT",
+            "subskill": "الفرق العمري من نسبتين في زمنين"
+          },
           {
             "id": "AGE_M_FUT_RATIO",
             "subskill": "علاقة عمرية في المستقبل"
@@ -189,18 +266,22 @@
             "subskill": "فرق ثابت مع مجموع مستقبلي"
           },
           {
+            "id": "AGE_M_PAST_RATIO",
+            "subskill": "عمر حالي من علاقة ماضية"
+          },
+          {
             "id": "AGE_M_RATIO_FUT_SUM",
             "subskill": "نسبة عمرية حالية مع مجموع مستقبلي"
+          },
+          {
+            "id": "AGE_M_WHEN_RATIO",
+            "subskill": "زمن تحقق نسبة عمرية"
           }
         ],
         "hard": [
           {
             "id": "AGE_H_PAST_FUT",
             "subskill": "علاقة في الماضي مع مجموع مستقبلي"
-          },
-          {
-            "id": "AGE_H_TWO_TIME",
-            "subskill": "فرق حالي وعلاقة نسبية مستقبلية"
           }
         ]
       }
@@ -220,6 +301,18 @@
         ],
         "medium": [
           {
+            "id": "SPD_H_CATCH",
+            "subskill": "لحاق مع انطلاق متأخر"
+          },
+          {
+            "id": "SPD_H_MEET_DELAY",
+            "subskill": "التقاء مركبتين مع انطلاق متأخر"
+          },
+          {
+            "id": "SPD_H_TIME_DIFF",
+            "subskill": "استنتاج المسافة من فرق الزمن"
+          },
+          {
             "id": "SPD_M_AVG",
             "subskill": "متوسط السرعة مع مدد زمنية مختلفة"
           },
@@ -234,16 +327,12 @@
         ],
         "hard": [
           {
-            "id": "SPD_H_CATCH",
-            "subskill": "لحاق مع انطلاق متأخر"
+            "id": "SPD_H_CURRENT",
+            "subskill": "سرعة التيار من رحلتي ذهاب وعودة"
           },
           {
-            "id": "SPD_H_MEET_DELAY",
-            "subskill": "التقاء مركبتين مع انطلاق متأخر"
-          },
-          {
-            "id": "SPD_H_TIME_DIFF",
-            "subskill": "استنتاج المسافة من فرق الزمن"
+            "id": "SPD_H_LEG_SPLIT",
+            "subskill": "طول مرحلة من مسافة كلية وزمن كلي وسرعتين"
           }
         ]
       }
@@ -259,16 +348,32 @@
           {
             "id": "WORK_E_VOLUME",
             "subskill": "زيادة حجم العمل مع ثبات الزمن"
-          }
-        ],
-        "medium": [
-          {
-            "id": "WORK_M_CHANGE",
-            "subskill": "تغير عدد العمال بعد إنجاز جزء من العمل"
           },
           {
             "id": "WORK_M_EFF",
             "subskill": "زيادة كفاءة العمال مع ثبات العدد"
+          }
+        ],
+        "medium": [
+          {
+            "id": "WORK_H_EXTRA_WORKERS",
+            "subskill": "عدد العمال الإضافيين من توفير في المدة"
+          },
+          {
+            "id": "WORK_H_JOINT_SOLO",
+            "subskill": "زمن الطرف الثاني من الزمن المشترك وزمن الأول"
+          },
+          {
+            "id": "WORK_H_TWO_STAGE",
+            "subskill": "تغير العمال عبر مرحلتين قبل حساب المتبقي"
+          },
+          {
+            "id": "WORK_H_WORKERS_EFF",
+            "subskill": "تغير عدد العمال والكفاءة بعد بدء العمل"
+          },
+          {
+            "id": "WORK_M_CHANGE",
+            "subskill": "تغير عدد العمال بعد إنجاز جزء من العمل"
           },
           {
             "id": "WORK_M_TARGET",
@@ -277,12 +382,12 @@
         ],
         "hard": [
           {
-            "id": "WORK_H_TWO_STAGE",
-            "subskill": "تغير العمال عبر مرحلتين قبل حساب المتبقي"
+            "id": "WORK_H_SOLO_GAP",
+            "subskill": "زمن كل عامل وحده من زمن مشترك وفرق بين الزمنين"
           },
           {
-            "id": "WORK_H_WORKERS_EFF",
-            "subskill": "تغير عدد العمال والكفاءة بعد بدء العمل"
+            "id": "WORK_H_THREE_PAIRS",
+            "subskill": "زمن ثلاثة معًا من أزمنة الأزواج"
           }
         ]
       }
@@ -294,13 +399,29 @@
           {
             "id": "MACH_E_HOURS",
             "subskill": "معدل آلة واحدة من آلة-ساعة"
-          },
-          {
-            "id": "MACH_E_REQUIRED",
-            "subskill": "إيجاد عدد الآلات المطلوبة"
           }
         ],
         "medium": [
+          {
+            "id": "MACH_E_REQUIRED",
+            "subskill": "إيجاد عدد الآلات المطلوبة"
+          },
+          {
+            "id": "MACH_H_STAGE_UP",
+            "subskill": "مرحلتان مع تطوير جزء من الآلات"
+          },
+          {
+            "id": "MACH_H_STOPPAGE_TIME",
+            "subskill": "زمن توقف آلة من نقص الإنتاج"
+          },
+          {
+            "id": "MACH_H_TWO_CONFIG",
+            "subskill": "معدل آلة من مجموعتين مختلطتين"
+          },
+          {
+            "id": "MACH_H_TWO_TYPES",
+            "subskill": "نوعان من الآلات بمعدلين مختلفين"
+          },
           {
             "id": "MACH_M_NEW_FAST",
             "subskill": "آلة قديمة وآلة أسرع بنسبة معلومة"
@@ -316,12 +437,8 @@
         ],
         "hard": [
           {
-            "id": "MACH_H_STAGE_UP",
-            "subskill": "مرحلتان مع تطوير جزء من الآلات"
-          },
-          {
-            "id": "MACH_H_TWO_TYPES",
-            "subskill": "نوعان من الآلات بمعدلين مختلفين"
+            "id": "MACH_H_MIN_SECOND_TYPE",
+            "subskill": "أقل عدد آلات من نوع ثانٍ لبلوغ هدف"
           }
         ]
       }
@@ -332,14 +449,16 @@
         "easy": [
           {
             "id": "PROP_E_COST",
-            "subskill": "تكلفة عدد أكبر من وحدات متطابقة"
+            "subskill": "تكلفة عدد أكبر من وحدات بالسعر نفسه"
           },
           {
             "id": "PROP_E_ITEMS",
-            "subskill": "معدل ثابت بين عدد وحدات وكمية"
-          }
-        ],
-        "medium": [
+            "subskill": "معدل ثابت بين عدد وحدات وكمية — إيجاد عدد الوحدات"
+          },
+          {
+            "id": "PROP_H_COST_PLUS",
+            "subskill": "تكلفة وحدات مع رسم ثابت"
+          },
           {
             "id": "PROP_M_FRAC_UNIT",
             "subskill": "قيمة وحدة كسرية ثم التوسع"
@@ -350,17 +469,31 @@
           },
           {
             "id": "PROP_M_RECIPE",
-            "subskill": "تكبير وصفة بنسبة ثابتة"
+            "subskill": "تكبير وصفة بعامل ثابت"
+          }
+        ],
+        "medium": [
+          {
+            "id": "PROP_H_COMPOUND",
+            "subskill": "تناسب مباشر ثم زيادة احتياط"
+          },
+          {
+            "id": "PROP_H_TWO_ITEM_SYSTEM",
+            "subskill": "سعر الوحدة من خليطين مختلفين"
           }
         ],
         "hard": [
           {
-            "id": "PROP_H_COMPOUND",
-            "subskill": "تناسب مباشر ثم زيادة إضافية"
+            "id": "PROP_H_BREAK_EVEN",
+            "subskill": "نقطة تفوق خطة على أخرى"
           },
           {
-            "id": "PROP_H_COST_PLUS",
-            "subskill": "تكلفة وحدات مع رسم ثابت"
+            "id": "PROP_H_CAPITAL_TIME",
+            "subskill": "اقتسام ربح بحسب رأس المال والمدة، بطلب نصيب الشريك الثاني"
+          },
+          {
+            "id": "PROP_H_REPLACE",
+            "subskill": "كمية مستبدلة من نسبة قبل وبعد"
           }
         ]
       }
@@ -372,20 +505,23 @@
           {
             "id": "FRAC_E_2",
             "subskill": "2 كسور مباشرة متتابعة من عدد معلوم"
-          }
-        ],
-        "medium": [
+          },
+          {
+            "id": "FRAC_H_4",
+            "subskill": "4 كسور متتابعة — إيجاد العدد الأصلي"
+          },
           {
             "id": "FRAC_M_3",
             "subskill": "3 كسور مباشرة متتابعة من عدد معلوم"
           }
         ],
-        "hard": [
+        "medium": [
           {
-            "id": "FRAC_H_4",
-            "subskill": "4 كسور مباشرة متتابعة من عدد معلوم"
+            "id": "FRAC_M_REMAIN",
+            "subskill": "الباقي بعد إنفاق كسرين متتاليين"
           }
-        ]
+        ],
+        "hard": []
       }
     },
     "unit_rate": {
@@ -399,9 +535,7 @@
           {
             "id": "RATE_E_TIME",
             "subskill": "معدل وحدوي ثم إيجاد الزمن"
-          }
-        ],
-        "medium": [
+          },
           {
             "id": "RATE_M_PERCENT",
             "subskill": "معدل وحدوي ثم زيادة مئوية"
@@ -411,7 +545,7 @@
             "subskill": "استخراج معدل وحدة ثم التوسع"
           }
         ],
-        "hard": [
+        "medium": [
           {
             "id": "RATE_H_TARGET",
             "subskill": "معدل محسن ثم زمن لهدف جديد"
@@ -419,6 +553,12 @@
           {
             "id": "RATE_H_TWO_PHASE",
             "subskill": "معدل يتغير بين مرحلتين"
+          }
+        ],
+        "hard": [
+          {
+            "id": "RATE_H_RATE_FROM_GAP",
+            "subskill": "المعدل الأصلي من توفير في الزمن"
           }
         ]
       }
@@ -432,11 +572,23 @@
             "subskill": "جمع معدلين خلال مدة معلومة"
           },
           {
+            "id": "COMB_E_THREE",
+            "subskill": "ثلاثة معدلات تعمل معًا"
+          },
+          {
             "id": "COMB_E_TIME",
             "subskill": "جمع معدلين ثم إيجاد الزمن"
           }
         ],
         "medium": [
+          {
+            "id": "COMB_H_STAGED",
+            "subskill": "ثلاث مراحل بمعدلات مختلفة"
+          },
+          {
+            "id": "COMB_H_TEAM_SIZE",
+            "subskill": "عدد أفراد الفريق من إنجاز مرحلتين"
+          },
           {
             "id": "COMB_M_SOLO_THEN",
             "subskill": "عمل منفرد أولًا ثم عمل مشترك"
@@ -448,12 +600,8 @@
         ],
         "hard": [
           {
-            "id": "COMB_H_STAGED",
-            "subskill": "ثلاث مراحل بمعدلات مختلفة"
-          },
-          {
-            "id": "COMB_H_THREE",
-            "subskill": "ثلاثة معدلات تعمل معًا"
+            "id": "COMB_H_TWO_PUMPS",
+            "subskill": "زمن المضخة الثانية وحدها من زمن مشترك ومرحلتين منفردتين"
           }
         ]
       }
@@ -464,7 +612,7 @@
         "easy": [
           {
             "id": "REL_E_BETWEEN",
-            "subskill": "تحديد شخص بين طرفين"
+            "subskill": "تحديد شخص في مركز من ترتيب كامل"
           },
           {
             "id": "REL_E_CHAIN",
@@ -473,8 +621,12 @@
         ],
         "medium": [
           {
-            "id": "REL_M_BRANCH_UNRES",
-            "subskill": "فرعان وعلاقة غير محسومة"
+            "id": "REL_H_GUARANTEE",
+            "subskill": "استنتاج مضمون رغم وجود فروع غير محسومة"
+          },
+          {
+            "id": "REL_M_CHAIN6",
+            "subskill": "ترتيب كامل وتحديد مركز"
           },
           {
             "id": "REL_M_CONFIRM",
@@ -487,12 +639,16 @@
         ],
         "hard": [
           {
-            "id": "REL_H_GUARANTEE",
-            "subskill": "استنتاج مضمون رغم وجود فرعين"
+            "id": "REL_H_COUNT_BRANCHED",
+            "subskill": "عدّ المؤكد تفوقهم عبر فرعين"
           },
           {
-            "id": "REL_H_POSITION_UNCERTAIN",
-            "subskill": "مركز غير محسوم في ترتيب جزئي"
+            "id": "REL_H_POSITION",
+            "subskill": "مركز محسوم في ترتيب جزئي"
+          },
+          {
+            "id": "REL_M_BRANCH_UNRES",
+            "subskill": "فروع وعلاقة غير محسومة"
           }
         ]
       }
@@ -508,19 +664,7 @@
           {
             "id": "CAL_E_TOM",
             "subskill": "معرفة اليوم من الغد"
-          }
-        ],
-        "medium": [
-          {
-            "id": "CAL_M_COMPOUND",
-            "subskill": "بعد ثلاثة أيام من غد"
           },
-          {
-            "id": "CAL_M_TWO_SHIFT",
-            "subskill": "تحديد اليوم الحالي ثم الرجوع عدة أيام"
-          }
-        ],
-        "hard": [
           {
             "id": "CAL_H_LONG",
             "subskill": "إزاحة تتجاوز أسبوعًا"
@@ -528,6 +672,30 @@
           {
             "id": "CAL_H_NESTED",
             "subskill": "إزاحة زمنية مركبة أمامية وخلفية"
+          },
+          {
+            "id": "CAL_M_COMPOUND",
+            "subskill": "إزاحة مركبة أمامية من الغد"
+          },
+          {
+            "id": "CAL_M_TWO_SHIFT",
+            "subskill": "تحديد اليوم الحالي ثم الرجوع عدة أيام"
+          }
+        ],
+        "medium": [
+          {
+            "id": "CAL_H_CYCLE_MEET",
+            "subskill": "لقاء دورتين مختلفتين ويوم الأسبوع"
+          }
+        ],
+        "hard": [
+          {
+            "id": "CAL_H_MONTH_LENGTH",
+            "subskill": "طول شهر من يومين معلومين في شهرين متتاليين"
+          },
+          {
+            "id": "CAL_H_OFFSET_CYCLES",
+            "subskill": "أول يوم يجتمع فيه حدثان دوريان مختلفا البداية"
           }
         ]
       }
@@ -538,14 +706,12 @@
         "easy": [
           {
             "id": "ODD_E_MULT",
-            "subskill": "مضاعفات العدد 7"
+            "subskill": "مضاعفات العدد 6"
           },
           {
             "id": "ODD_E_SQUARES",
             "subskill": "مربعات كاملة"
-          }
-        ],
-        "medium": [
+          },
           {
             "id": "ODD_M_CUBES",
             "subskill": "مكعبات كاملة"
@@ -559,16 +725,25 @@
             "subskill": "حاصل ضرب عددين صحيحين متتاليين"
           }
         ],
-        "hard": [
-          {
-            "id": "ODD_H_PRIME_OFFSET",
-            "subskill": "عدد أولي مع إزاحة ثابتة"
-          },
+        "medium": [
           {
             "id": "ODD_H_SQ_MINUS",
             "subskill": "أعداد أقل بواحد من مربع كامل"
+          },
+          {
+            "id": "ODD_H_TRIANGULAR",
+            "subskill": "أعداد مثلثية"
+          },
+          {
+            "id": "ODD_M_EXTEND",
+            "subskill": "ضمّ عدد جديد إلى مجموعة بخاصية واحدة"
+          },
+          {
+            "id": "ODD_M_PROPERTY",
+            "subskill": "تسمية الخاصية المشتركة"
           }
-        ]
+        ],
+        "hard": []
       }
     },
     "profit_loss": {
@@ -582,9 +757,25 @@
           {
             "id": "PL_E_PROFIT",
             "subskill": "نسبة ربح من سعر الشراء"
+          },
+          {
+            "id": "PL_H_REVERSE",
+            "subskill": "استرجاع التكلفة من سعر بيع وربح معلوم"
           }
         ],
         "medium": [
+          {
+            "id": "PL_H_CHAIN",
+            "subskill": "خصم ثم زيادة وحساب التغير النهائي"
+          },
+          {
+            "id": "PL_H_MARKUP_DISCOUNT",
+            "subskill": "التكلفة من زيادة ثم خصم وربح معلوم"
+          },
+          {
+            "id": "PL_H_TWO_OUTCOMES",
+            "subskill": "التكلفة من حالتي ربح وخسارة"
+          },
           {
             "id": "PL_M_DISC_MARK",
             "subskill": "خصم على سعر ثم إضافة ربح"
@@ -596,12 +787,12 @@
         ],
         "hard": [
           {
-            "id": "PL_H_CHAIN",
-            "subskill": "خصم ثم زيادة وحساب التغير النهائي"
+            "id": "PL_H_REST_MARGIN",
+            "subskill": "نسبة ربح الجزء الباقي لبلوغ ربح كلي مطلوب"
           },
           {
-            "id": "PL_H_REVERSE",
-            "subskill": "استرجاع التكلفة من سعر بيع وربح معلوم"
+            "id": "PL_H_SAME_PRICE_PAIR",
+            "subskill": "ربح وخسارة بنسبتين متساويتين وسعرَي بيع متساويين"
           }
         ]
       }

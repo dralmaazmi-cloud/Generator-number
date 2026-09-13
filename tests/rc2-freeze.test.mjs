@@ -157,7 +157,8 @@ test('§24: production is identical at the gated commit and the frozen commit', 
 
   const diff = execFileSync('git', [
     'diff', '--name-only', gateHead, f.RC2_COMMIT, '--',
-    'src', 'report.js', 'app.js', 'index.html', 'generator_manifest.json', 'package.json'
+    'src', 'report.js', 'app.js', 'practice-journey.js', 'index.html',
+    'generator_manifest.json', 'package.json'
   ], {encoding: 'utf8'}).trim();
   assert.equal(diff, '', `production moved between the gated commit and the freeze:\n${diff}`);
 });

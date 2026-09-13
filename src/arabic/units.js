@@ -118,6 +118,38 @@ export const INVARIANT_UNITS = Object.freeze({
   none: ''
 });
 
+/**
+ * RC2.9.1. Which rate symbols have a COUNTED NOUN on top.
+ *
+ * «كم/ساعة» is an abbreviation over a time word and never inflects. «زجاجة/ساعة»
+ * is a noun over a time word, and a noun after a number agrees with it: the
+ * engine published «5 زجاجة/ساعة», «4 صفحة/ساعة» and «6 قميص/ساعة», each of
+ * which reads to an Arabic speaker as a number with the wrong plural on it.
+ *
+ * The slash stays. It keeps an option compact, it is what the stem/option unit
+ * check reads, and «5 زجاجات/ساعة» is how this is written in Arabic technical
+ * prose. Only the noun moves.
+ */
+export const RATE_NUMERATOR = Object.freeze({
+  unitPerHour: ['unit', 'ساعة'], unitPerMinute: ['unit', 'دقيقة'],
+  piecePerHour: ['piece', 'ساعة'], piecePerMinute: ['piece', 'دقيقة'],
+  pagePerHour: ['page', 'ساعة'], pagePerMinute: ['page', 'دقيقة'],
+  canPerHour: ['can', 'ساعة'], canPerMinute: ['can', 'دقيقة'],
+  bottlePerHour: ['bottle', 'ساعة'], bottlePerMinute: ['bottle', 'دقيقة'],
+  loafPerHour: ['loaf', 'ساعة'], loafPerMinute: ['loaf', 'دقيقة'],
+  loafPerHourAlt: ['loaf', 'ساعة'],
+  shirtPerHour: ['shirt', 'ساعة'], shirtPerMinute: ['shirt', 'دقيقة'],
+  panelPerHour: ['panel', 'ساعة'], panelPerMinute: ['panel', 'دقيقة'],
+  seedlingPerHour: ['seedling', 'ساعة'],
+  orderPerHour: ['order', 'ساعة'],
+  bookPerHour: ['book', 'ساعة'],
+  cardPerMinute: ['card', 'دقيقة'],
+  literPerHour: ['liter', 'ساعة'], literPerMinute: ['liter', 'دقيقة'],
+  wordPerMinute: ['word', 'دقيقة']
+  // kmPerHour and kmPerLiter are deliberately absent: «كم» is an abbreviation,
+  // not a counted noun, and «5 كيلومترات/ساعة» is not how a speed is written.
+});
+
 /** Short aliases so templates can say `km` or `كم` interchangeably. */
 export const UNIT_ALIASES = Object.freeze({
   days:'day', hours:'hour', minutes:'minute', years:'year', workers:'worker',
@@ -158,6 +190,24 @@ export function displayNumber(n, maxDecimals = 6) {
  */
 export function formatNumberWithUnit(n, unitId, grammaticalContext = 'nominative') {
   if (unitId in INVARIANT_UNITS) {
+    const rate = RATE_NUMERATOR[unitId];
+    if (rate) {
+      const [countId, per] = rate;
+      const u = UNITS[countId];
+      const num = Number(n);
+      // One and two carry their own words rather than a digit, exactly as a
+      // plain counted noun does: «زجاجة/ساعة»، «زجاجتان/ساعة».
+      //
+      // Above that the noun takes the plural for three to ten and the bare
+      // singular otherwise — never the accusative «12 قميصًا/ساعة». The
+      // accusative tanwīn marks a تمييز, and the noun over a rate's slash is not
+      // one: it is «قميص في الساعة», written short.
+      if (num === 1) return `${u.singular}/${per}`;
+      if (num === 2) return `${u.dual}/${per}`;
+      const tail = Number.isInteger(num) ? Math.abs(num) % 100 : -1;
+      const word = tail >= 3 && tail <= 10 ? u.plural : u.singular;
+      return `${displayNumber(n)} ${word}/${per}`;
+    }
     const label = INVARIANT_UNITS[unitId];
     return label ? `${displayNumber(n)} ${label}` : displayNumber(n);
   }
@@ -312,12 +362,20 @@ export function theSingleUnit(unitId) {
  */
 function formOf(u, n) {
   if (!Number.isInteger(n)) return u.accSing;
-  const tail = Math.abs(n) % 100;
-  if (tail === 0 && Math.abs(n) >= 100) return u.singular;
-  if (tail === 1) return u.singular;
-  if (tail === 2) return u.dual;
+  const abs = Math.abs(n);
+  // The dual and the lone singular belong to the numbers one and two
+  // THEMSELVES. RC2.9 let them apply to any number ending in one or two, which
+  // published «302 علبتان» — a dual noun after three hundred and two. In a
+  // compound the تمييز of the hundred governs: «ثلاثمئة واثنتان» is counted
+  // «302 علبة».
+  if (abs === 1) return u.singular;
+  if (abs === 2) return u.dual;
+  const tail = abs % 100;
   if (tail >= 3 && tail <= 10) return u.plural;
-  return u.accSing;
+  if (tail >= 11 && tail <= 99) return u.accSing;
+  // Everything left ends in a round hundred or thousand, or in a one or a two
+  // carried by one: a singular in the genitive, which is the bare form.
+  return u.singular;
 }
 
 export function unitWordFor(n, unitId) {
@@ -342,6 +400,22 @@ const ALL_FORMS = (() => {
   }
   return map;
 })();
+
+/**
+ * Which unit a surface word is a form of, or null.
+ *
+ * RC2.9.1. A rate's numerator inflects now — «5 زجاجات/ساعة», «20 زجاجة/ساعة» —
+ * so «does the stem contain this word?» stopped being a fair test of whether an
+ * answer is in the unit the question asked about. What has to match is the
+ * UNIT, not the spelling of it, and the lexicon is what knows the difference.
+ */
+export const unitIdOfWord = word => ALL_FORMS.get(String(word ?? '').trim())?.id ?? null;
+
+/** Every surface form a unit can take, for checking a stem against an option. */
+export const surfaceFormsOf = unitId => {
+  const u = UNITS[resolveUnitId(unitId)];
+  return u ? [u.singular, u.dual, u.dualOblique, u.plural, u.accSing] : [];
+};
 
 const NUMBER_UNIT_RE = /(\d+(?:\.\d+)?)\s+([ء-يٰٱً-ْ]+)/g;
 
