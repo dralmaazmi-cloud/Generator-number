@@ -64,7 +64,8 @@ test('RC2.3-1: every template is adjudicated, and every adjudication is reachabl
   // RC2.4 added eighteen HARD templates across eleven families; RC2.5 split the
   // relational count question into its routine and its branch-combining form,
   // making 126. The count is pinned so a silent loss is still caught.
-  assert.equal(adjudicated.length, 145, 'the engine holds 145 templates');
+  // RC2.8 added six: the six jobs listed in tests/rc2-degeneracy.test.mjs.
+  assert.equal(adjudicated.length, 151, 'the engine holds 151 templates');
 });
 
 test('RC2.3-1: a hard template names a structural criterion, and nothing else may', () => {
@@ -113,7 +114,13 @@ test('RC2.3-1: family capability is derived, never asserted twice', () => {
   // what produced the routine "hard" items in the first place, and RC2.4 widened
   // hard coverage by ADDING structures rather than by relaxing the criteria —
   // so the two families that genuinely cannot reach hard still do not.
-  assert.deepEqual(FAMILY_MAP.fractions.difficulties, ['easy']);
+  // RC2.8-4: fractions reaches medium, and not by re-labelling a chain. The
+  // capability comes from FRAC_M_REMAIN, which asks what is LEFT after two
+  // successive shares — the complement at each stage rather than the part — and
+  // hands back a fraction of the original instead of a number. Narrow families
+  // stay narrow; this one grew by gaining a job it did not have.
+  assert.deepEqual(FAMILY_MAP.fractions.difficulties, ['easy', 'medium']);
+  assert.ok(!FAMILY_MAP.fractions.difficulties.includes('hard'));
   assert.ok(!FAMILY_MAP.odd_one_out.difficulties.includes('hard'));
   // RC2.6: machines no longer reaches hard. Its one hard structure,
   // MACH_H_TWO_CONFIG, was demoted after direct sampling showed it drawing a
@@ -232,8 +239,11 @@ test('RC2.3-2: a family that cannot reach a band refuses rather than substitutin
       assert.ok(threw, `${f.id}/${band} neither produced nor refused`);
     }
   }
-  // Two families still cannot reach hard, and fractions cannot reach medium.
-  assert.ok(checked >= 3, 'this test is only meaningful while some band is unreachable');
+  // Two families still cannot reach hard. RC2.8-4 gave fractions a medium job —
+  // «what fraction is left» — so the third unreachable pair is gone; the guard
+  // counts down to what is actually unreachable rather than pinning a number
+  // that honest new coverage would break.
+  assert.ok(checked >= 2, 'this test is only meaningful while some band is unreachable');
 });
 
 // --- repetition -------------------------------------------------------------
@@ -248,7 +258,16 @@ test('RC2.3-5: no template takes more than its share of a session', () => {
       // RC2.7-R2: the reachable pool of distinct core ideas under the
       // per-template share is about 45 easy, 50+ medium and 35 hard, and the
       // core rule is absolute, so each band is asked for what it can supply.
-      const s = e.generatePractice({count: band === 'medium' ? 50 : band === 'easy' ? 40 : 30, difficulty: band, family: 'random', seed: `RC23-SHARE-${band}-${i}`});
+      // RC2.8-3: the single-band ceilings the engine honestly delivers are
+      // about 35 easy, 55+ medium and 30 hard. They moved because the session is
+      // now planned over distinct IDEAS rather than rotated over families: a
+      // blueprint is not reused while an unused one exists, and the core
+      // construction ban is still absolute on top of that, so a single-band
+      // session runs out of genuinely distinct material sooner than one that was
+      // free to redraw the same idea from another family. A session past the
+      // ceiling is refused by name — tests/rc28-blueprints.test.mjs asserts that
+      // — and is not filled with reskins, which is the trade this release makes.
+      const s = e.generatePractice({count: band === 'medium' ? 50 : band === 'easy' ? 35 : 30, difficulty: band, family: 'random', seed: `RC23-SHARE-${band}-${i}`});
       const counts = {};
       for (const q of s.questions) counts[q.generator_id] = (counts[q.generator_id] ?? 0) + 1;
       const worst = Math.max(...Object.values(counts));

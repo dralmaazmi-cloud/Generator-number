@@ -7,6 +7,8 @@ import {GenerationAnalytics} from './qa/analytics.js';
 import {GenerationTelemetry} from './qa/telemetry.js';
 import {structuralBandOf} from './qa/structure.js';
 import {NoveltyScheduler, CORE} from './compose/novelty.js';
+import {BlueprintScheduler, capacityFor} from './compose/blueprint-scheduler.js';
+import {blueprintFor, blueprintId, presentationOf} from './compose/blueprints.js';
 
 import {generateSequences} from './families/sequences.js';
 import {generateRatios} from './families/ratios.js';
@@ -110,7 +112,16 @@ export class NumericalQuestionGeneratorEngine {
       maxTemplateIdRepeatsPerSession: config.maxTemplateIdRepeatsPerSession ?? 4,
       slidingWindow: config.slidingWindow ?? 20,
       preferredRepeatsPerWindow: config.preferredRepeatsPerWindow ?? 1,
-      diversityAttempts: config.diversityAttempts ?? 24,
+      // RC2.8-3. Raised from 24. The retry budget is now spent very differently:
+      // an ordinary slot takes ONE candidate, because the idea was chosen before
+      // anything was rendered, so the budget is only drawn on where a slot is
+      // genuinely hard to fill — the fifth session of a long batch, a band near
+      // its ceiling. Twenty-four was enough to work through twelve ideas at two
+      // seeds each; thirty-six reaches eighteen, which is what the last session
+      // of a 230-question sitting needs before the batch's shared allowances are
+      // exhausted. It relaxes no bar: every retry is still judged by the same
+      // controls, and a slot that cannot be filled is still refused.
+      diversityAttempts: config.diversityAttempts ?? 36,
       // Section 13-C: a small, non-persistent memory of recent sessions.
       recentFingerprintMemory: config.recentFingerprintMemory ?? 150
     };
@@ -264,9 +275,19 @@ export class NumericalQuestionGeneratorEngine {
       try {
         base = generator({
           difficulty, rng: rng.fork('content'), seed, engineVersion: this.version,
-          telemetry: this.telemetry
+          telemetry: this.telemetry,
+          // RC2.8-2. The blueprint the scheduler decided on, when there is one.
+          // Without a pin this is null and the draw is exactly what it was.
+          pinTemplate: options.templateId ?? null,
+          // RC2.8-2. And WHICH unknown the blueprint wants asked, where the
+          // template can ask more than one.
+          pinTargets: options.targets ?? null
         });
       } catch (err) {
+        // RC2.8-2. A pin the family cannot honour is a caller error, not a bad
+        // draw: retrying it 12 times produces 12 identical failures and then an
+        // exhaustion that names the wrong cause.
+        if (err.code === 'TEMPLATE_PIN_UNAVAILABLE') throw err;
         // RC2.2-1. A thrown error carries a code; use the declared reason it
         // maps to rather than minting a new one from its message.
         const reasonCode = err.reason
@@ -446,6 +467,63 @@ export class NumericalQuestionGeneratorEngine {
     const novelty = new NoveltyScheduler(count, undefined,
       options.batchEntityCounts ?? null, options.batchQuestionCount ?? null,
       options.batchCoreConstructions ?? null, options.batchReasoningTargets ?? null);
+    // RC2.8-3. The semantic plan, decided before anything is rendered.
+    //
+    // This is the inversion the release is about. The loop below used to draw a
+    // question and then ask whether it was too similar to what it already had —
+    // 621 candidates for 100 published questions, and the repetition still
+    // landed, because a filter cannot aim at what a session is short of. The
+    // scheduler picks the IDEA for every slot first, over the 159 blueprints in
+    // src/compose/blueprints.js, balancing jobs, layouts and families and
+    // backtracking when a slot has nothing admissible. The renderer is then told
+    // which blueprint to realise.
+    //
+    // Difficulty is untouched: the band of every slot is the band the difficulty
+    // schedule already decided, and the planner may not move one.
+    const blueprints = new BlueprintScheduler({
+      bandSchedule: difficultySchedule,
+      familyPreference: familySchedule,
+      familyPool: selectedFamilies,
+      rng: rng.fork('blueprints'),
+      recentBlueprints: options.recentBlueprints instanceof Set ? options.recentBlueprints : null,
+      batchPresentations: options.batchPresentations ?? null,
+      batchBlueprints: options.batchBlueprints ?? null,
+      batchCount: options.batchQuestionCount ?? null
+    });
+    // RC2.8-4. Which mathematical ideas each family has already shown.
+    //
+    // The family acceptance rule asks a family seen four times or more to show
+    // at least two genuinely different IDEAS, not just two different jobs. The
+    // blueprint plan guarantees different jobs; it cannot see the idea, because
+    // that depends on the graph or the equation the draw produces — two
+    // orderings can be a chain and a branched partial order under one template.
+    // So the idea is checked after rendering, as a staged preference: honoured
+    // while there is another shape to be had, given up rather than failing the
+    // slot.
+    const familySubIdeas = new Map();
+    const blueprintPlan = blueprints.plan();
+    if (!blueprintPlan.complete) {
+      // The shortfall is named with the arithmetic behind it rather than filled
+      // with reskins. `capacityFor` says how many distinct ideas each band of
+      // this request actually holds.
+      throw Object.assign(
+        new Error(
+          `INSUFFICIENT_CONSTRUCTION_BREADTH: ${blueprintPlan.filled} of ${count} slots could be `
+          + 'planned with a distinct question idea. '
+          + capacityFor(difficultySchedule, selectedFamilies)
+            .map(c => `${c.band}: ${c.slots} slots against ${c.blueprints} ideas`).join('; ')
+          + '. Add genuine constructions; no diversity control was relaxed to produce this.'
+        ),
+        {
+          code: 'INSUFFICIENT_CONSTRUCTION_BREADTH',
+          delivered: blueprintPlan.filled, requested: count,
+          distinctCoreConstructions: blueprintPlan.distinctBlueprints,
+          capacity: capacityFor(difficultySchedule, selectedFamilies)
+        }
+      );
+    }
+    blueprints.beginRealization();
+    const blueprintEvents = [];
     // RC2-004. Two generation modes, named and documented, because the RC1
     // engine silently had both and called the result reproducible.
     //
@@ -482,29 +560,58 @@ export class NumericalQuestionGeneratorEngine {
         {cap: this.config.maxTemplateRepeatsPerSession, window: this.config.preferredRepeatsPerWindow},
         {cap: this.config.maxTemplateRepeatsPerSession, window: Infinity}
       ];
+      // RC2.8-3. The ideas this slot may be filled with, best first: the one the
+      // plan chose, then the alternatives that are still admissible against what
+      // has ACTUALLY been published — which can differ from the plan, because a
+      // pinned template can exhaust its parameter space on a given seed.
+      //
+      // Two seeds are spent on each idea before moving to the next, so a slot
+      // works through twelve genuinely different ideas within the same retry
+      // budget the old loop spent rotating families and hoping.
+      const plannedBlueprint = blueprintPlan.plan[i];
+      // Ideas the PLAN has reserved for later slots. Taking one of them here
+      // because this slot's own idea is momentarily unavailable is how a single
+      // substitution cascades into a session that cannot be finished: the plan
+      // proved 100 slots were fillable, and then realization spent slot 84's
+      // material at slot 40. Alternatives are drawn from outside the reservation
+      // first, and only from inside it when there is nothing else.
+      const reserved = new Set(blueprintPlan.plan.slice(i + 1).filter(Boolean).map(blueprintId));
+      reserved.add(blueprintId(plannedBlueprint));
+      const free = blueprints.admissibleAt(i, reserved).blueprints;
+      const fromReserve = blueprints.admissibleAt(i, new Set([blueprintId(plannedBlueprint)])).blueprints
+        .filter(b => reserved.has(blueprintId(b)));
+      const alternatives = [...free, ...fromReserve];
+      // The plan leads only while it is still admissible. An earlier slot that
+      // fell through to an alternative can have spent the quota this slot's
+      // planned idea was counting on, and following the plan regardless is how
+      // a presentation cluster grows past its cap.
+      const slotBlueprints = (blueprints.stillAdmissible(i, plannedBlueprint)
+        ? [plannedBlueprint, ...alternatives]
+        : [...alternatives, plannedBlueprint]
+      ).slice(0, Math.ceil(this.config.diversityAttempts / 2));
+      const SEEDS_PER_BLUEPRINT = 2;
       for (let retry = 0; retry < this.config.diversityAttempts; retry++) {
         const stage = stages[Math.min(stages.length - 1, Math.floor(retry / Math.ceil(this.config.diversityAttempts / stages.length)))];
+        // Cycled, not clamped. Late in a single-band session most ideas are
+        // already spent and this list is short; stopping on its last entry meant
+        // the remaining twenty retries all redrew one idea, and a slot failed
+        // with other ideas in the list untried. Cycling spends the retry budget
+        // across everything still admissible.
+        const bp = slotBlueprints[Math.floor(retry / SEEDS_PER_BLUEPRINT) % slotBlueprints.length];
         let q;
         try {
-          // RC2.2-1. The slot's band fixes which families are eligible; the
-          // retry rotates among them. Pinning one family for all 24 retries
-          // made a slot fail outright once that family's instances were used
-          // up, even though the engine had ~1,900 distinct hard instances
-          // available across the others.
-          const eligible = eligibleFamilies(difficultySchedule[i]);
-          const primary = familySchedule[i];
-          const familyForAttempt = retry === 0 || !eligible.length
-            ? primary
-            : eligible[(eligible.indexOf(primary) + retry) % eligible.length];
           q = this.generateQuestion({
-            family: familyForAttempt,
+            family: bp.family,
+            templateId: bp.templateId,
+            targets: bp.targets,
             difficulty: difficultySchedule[i],
             seed: `${seed}|Q${i + 1}|${retry}`,
             preferredCorrectLetter: letterSchedule[i],
             adaptiveStats: options.adaptiveStats
           });
         } catch (err) {
-          if (err.code === 'QUESTION_GENERATION_EXHAUSTED' && retry < this.config.diversityAttempts - 1) continue;
+          if ((err.code === 'QUESTION_GENERATION_EXHAUSTED' || err.code === 'TEMPLATE_PIN_UNAVAILABLE')
+            && retry < this.config.diversityAttempts - 1) continue;
           throw err;
         }
         // RC2.1-1. Counted here, where the session builder actually receives a
@@ -559,6 +666,36 @@ export class NumericalQuestionGeneratorEngine {
         // This branch runs BEFORE the novelty assessment below, and without the
         // guard a core repeat could be parked as `relaxed` and delivered later
         // without the assessment ever being consulted.
+        // RC2.8-3. The idea this FINISHED question actually realises, checked
+        // against the session's hard limits before anything else looks at it.
+        // A pinned template does not always deliver the job it was asked for —
+        // a sequence with no whole predecessor cannot be asked backwards — and
+        // the question then belongs to a presentation this slot may have no
+        // room for. Checked here rather than at selection, because this is
+        // where what the reader will see is finally known.
+        const realizedBlueprint = blueprintFor(
+          q.generator_id, q.metadata?.task_signature ?? '?', q.family,
+          difficultySchedule[i], q.metadata?.information_structure ?? 'DIRECT_GIVENS'
+        );
+        const hardBreach = blueprints.hardViolation(i, realizedBlueprint);
+        if (hardBreach) {
+          this.telemetry.sessionDiscard({
+            family: q.family, templateId: q.generator_id,
+            reasonCode: REASON.NOVELTY_DIMENSION_DOMINANCE, seed, attempt: retry + 1,
+            detail: `BLUEPRINT: ${hardBreach}`
+          });
+          continue;
+        }
+        const subIdea = q.metadata?.sub_idea_signature ?? null;
+        const familySeen = familySubIdeas.get(q.family);
+        if (subIdea && familySeen?.has(subIdea) && retry < Math.floor(this.config.diversityAttempts * 2 / 3)) {
+          this.telemetry.sessionDiscard({
+            family: q.family, templateId: q.generator_id,
+            reasonCode: REASON.NOVELTY_DIMENSION_DOMINANCE, seed, attempt: retry + 1,
+            detail: 'family_sub_idea: this family has already shown this mathematical idea'
+          });
+          continue;
+        }
         const coreVerdict = novelty.assess(q);
         const candidate = {q, fingerprint, used, usedTemplate, variant, discardEvent: null};
         if (coreVerdict.level !== CORE && (!relaxed || (!within(relaxed) && within(candidate)))) {
@@ -686,7 +823,11 @@ export class NumericalQuestionGeneratorEngine {
             {
               code: 'INSUFFICIENT_CONSTRUCTION_BREADTH', index: i + 1, delivered: i, requested: count,
               distinctCoreConstructions: novelty.coreConstructions.size,
-              band: difficultySchedule[i]
+              band: difficultySchedule[i],
+              // RC2.8-3. Both refusal paths say how much material the request
+              // actually has to work with, so a caller never has to guess
+              // whether the shortfall is in this band or another.
+              capacity: capacityFor(difficultySchedule, selectedFamilies)
             }
           );
         }
@@ -727,6 +868,30 @@ export class NumericalQuestionGeneratorEngine {
       }
 
       fingerprints.add(chosen.fingerprint);
+      // RC2.8-3. Record the idea that was ACTUALLY delivered, which is not
+      // always the one planned: a slot may have fallen through to an
+      // alternative, and the live state the next slot is planned against has to
+      // reflect what the reader will see rather than what was intended.
+      const deliveredBlueprint = blueprintFor(
+        chosen.q.generator_id, chosen.q.metadata?.task_signature ?? '?',
+        chosen.q.family, difficultySchedule[i],
+        chosen.q.metadata?.information_structure ?? 'DIRECT_GIVENS'
+      );
+      blueprints.record(i, deliveredBlueprint);
+      const deliveredSubIdea = chosen.q.metadata?.sub_idea_signature ?? null;
+      if (deliveredSubIdea) {
+        if (!familySubIdeas.has(chosen.q.family)) familySubIdeas.set(chosen.q.family, new Set());
+        familySubIdeas.get(chosen.q.family).add(deliveredSubIdea);
+      }
+      if (blueprintId(deliveredBlueprint) !== blueprintId(plannedBlueprint)) {
+        blueprintEvents.push({
+          index: i + 1,
+          planned: blueprintId(plannedBlueprint),
+          delivered: blueprintId(deliveredBlueprint),
+          presentation: presentationOf(deliveredBlueprint),
+          note: 'the planned idea could not be realised at this slot; the next admissible idea was used'
+        });
+      }
       // The verdict is taken HERE, on the question actually being delivered,
       // rather than carried from wherever the candidate was chosen. The relaxed
       // fallback can arrive from a branch that never consulted the scheduler,
@@ -833,6 +998,13 @@ export class NumericalQuestionGeneratorEngine {
     // the next one.
     const batchCoreConstructions = new Map();
     const batchReasoningTargets = new Map();
+    // RC2.8-3. And the ideas and layouts the PLANNER has already spent, so the
+    // second session of a sitting is planned against what the first one
+    // delivered rather than starting from an empty page. A user who sits four
+    // sessions in a row is the 100-to-200-question experience the brief is
+    // about, and it crosses session boundaries.
+    const batchBlueprints = new Map();
+    const batchPresentations = new Map();
     const sessions = specs.map((spec, k) => this.generatePractice({
       ...options.defaults,
       ...spec,
@@ -842,7 +1014,9 @@ export class NumericalQuestionGeneratorEngine {
       batchEntityCounts,
       batchQuestionCount,
       batchCoreConstructions,
-      batchReasoningTargets
+      batchReasoningTargets,
+      batchBlueprints,
+      batchPresentations
     }));
     return {
       engine_version: this.version,

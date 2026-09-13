@@ -104,11 +104,23 @@ test('RC2-007/008/009: nothing AMBIGUOUS or UNDISCOVERABLE is ever published', (
   const engine = new Engine();
   const seen = {};
   const templates = new Set();
+  let outlierItems = 0;
   for (let i = 0; i < 900; i++) {
     const q = engine.generateQuestion({family: 'odd_one_out', difficulty: 'mixed', seed: `rc2-amb-${i}`});
+    templates.add(q.generator_id);
+    // RC2.8-4. This family now asks three questions, and only one of them is
+    // «which does not belong». The odd-one-out verdict is about THAT question:
+    // it asks whether a rule singles out the published key. Applied to «name the
+    // property these share» it has no key to test, and applied to «which number
+    // would join them» it reads a member that FITS as a key nothing supports —
+    // which is the opposite of what it means. Those two carry their own oracle
+    // (src/qa/pipeline.js, kind 'property'), which requires the shown set to
+    // have exactly one discoverable shared rule; the count below makes sure this
+    // check still sees plenty of the question it IS about.
+    if (q.metadata.asked_unknown !== 'outlier') continue;
+    outlierItems++;
     const v = q.metadata.ambiguity_verdict;
     seen[v] = (seen[v] || 0) + 1;
-    templates.add(q.generator_id);
     // Re-derive independently from the published numbers rather than trusting
     // the recorded verdict.
     const nums = (q.display_expression || '').match(/\d+/g).map(Number);
@@ -121,6 +133,8 @@ test('RC2-007/008/009: nothing AMBIGUOUS or UNDISCOVERABLE is ever published', (
   assert.equal(seen[VERDICT.AMBIGUOUS] ?? 0, 0);
   assert.equal(seen[VERDICT.UNDISCOVERABLE] ?? 0, 0);
   assert.ok(templates.size >= 7, `every odd-one-out template must still publish, saw ${[...templates].join(', ')}`);
+  assert.ok(outlierItems > 400,
+    `only ${outlierItems} of 900 draws asked «which does not belong» — too few for this check to mean anything`);
 });
 
 test('RC2-009: the retired prime-offset rule is gone, and the inventory is not smaller', () => {
@@ -131,5 +145,11 @@ test('RC2-009: the retired prime-offset rule is gone, and the inventory is not s
   }
   assert.ok(!templates.has('ODD_H_PRIME_OFFSET'), 'the undiscoverable rule must no longer publish');
   assert.ok(templates.has('ODD_H_TRIANGULAR'), 'and must have been replaced, not dropped');
-  assert.equal(templates.size, 7, `expected 7 templates, saw ${templates.size}: ${[...templates].join(', ')}`);
+  // RC2.8-4 added two templates that ask about the same number sets from the
+  // other two directions — name the shared property, and find a number that
+  // would join it. The point of this assertion is that the inventory never
+  // SHRINKS when a rule is retired, so it counts up rather than pinning a
+  // number that any honest addition would break.
+  assert.ok(templates.size >= 9,
+    `expected at least 9 templates, saw ${templates.size}: ${[...templates].join(', ')}`);
 });

@@ -10,8 +10,8 @@ import {avgOfOther} from '../compose/scenarios.js';
 // «قيم».
 const fmtFor = sc => (sc.fmtUnit ? unitFormat(sc.fmtUnit) : plain);
 
-export function generateAverages({difficulty, rng, seed, engineVersion, telemetry}) {
-  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'averages', family_ar: 'المتوسط الحسابي', category: 'المتوسط الحسابي'};
+export function generateAverages({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'averages', family_ar: 'المتوسط الحسابي', category: 'المتوسط الحسابي'};
   // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
   // eligible for the requested band is decided by the structural adjudication in
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
@@ -25,7 +25,7 @@ export function generateAverages({difficulty, rng, seed, engineVersion, telemetr
     ['AVG_H_TARGET', missingValueForTarget],
     ['AVG_H_OVERLAP', overlappingSubsets],
     ['AVG_H_SPLIT_SIZE', splitGroupSize]
-  ])(ctx);
+  ], pinTemplate)(ctx);
 }
 
 const plain = v => num(v);

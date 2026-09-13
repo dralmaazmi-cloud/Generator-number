@@ -1,8 +1,8 @@
 import {Fraction} from '../qa/fraction.js';
 import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool, unitWordKam, composeSentences} from './_shared.js';
 
-export function generateWorkTime({difficulty, rng, seed, engineVersion, telemetry}) {
-  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'work_time', family_ar: 'العمال والزمن', category: 'العمال والزمن'};
+export function generateWorkTime({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'work_time', family_ar: 'العمال والزمن', category: 'العمال والزمن'};
   // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
   // eligible for the requested band is decided by the structural adjudication in
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
@@ -18,7 +18,7 @@ export function generateWorkTime({difficulty, rng, seed, engineVersion, telemetr
     ['WORK_H_EXTRA_WORKERS', extraWorkersSaveDays],
     ['WORK_H_THREE_PAIRS', threePairwiseRates],
     ['WORK_H_SOLO_GAP', pairWithSoloGap]
-  ])(ctx);
+  ], pinTemplate)(ctx);
 }
 
 function inverseDirect(ctx) {

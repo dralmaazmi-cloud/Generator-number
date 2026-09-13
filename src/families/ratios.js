@@ -1,8 +1,8 @@
 import {gcd} from '../utils.js';
 import {mk, usable, u, num, buildBase, eq, X, add, sub, mul, mod, resample, bandPool, composeSentences} from './_shared.js';
 
-export function generateRatios({difficulty, rng, seed, engineVersion, telemetry}) {
-  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'ratios', family_ar: 'النسب وتقسيم الكميات', category: 'النسب وتقسيم الكميات'};
+export function generateRatios({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'ratios', family_ar: 'النسب وتقسيم الكميات', category: 'النسب وتقسيم الكميات'};
   // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
   // eligible for the requested band is decided by the structural adjudication in
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
@@ -16,7 +16,7 @@ export function generateRatios({difficulty, rng, seed, engineVersion, telemetry}
     ['RAT_H_TRANSFER', transferBetweenSides],
     // RC2.7-3. A largest admissible value.
     ['RAT_H_MAX_PART', largestAdmissiblePart]
-  ])(ctx);
+  ], pinTemplate)(ctx);
 }
 
 const plain = v => num(v);

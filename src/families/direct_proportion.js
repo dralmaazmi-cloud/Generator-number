@@ -7,11 +7,11 @@
 // satisfy the stated proportion. Nothing is announced without being derived.
 
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, div, factorLine, resample, unitWord, unitWordKam, theSingle, defPlural, bandPool, composeSentences} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, div, factorLine, resample, unitWord, unitWordKam, theSingle, defPlural, bandPool, composeSentences, askOf} from './_shared.js';
 
-export function generateDirectProportion({difficulty, rng, seed, engineVersion, telemetry}) {
+export function generateDirectProportion({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
   const ctx = {
-    difficulty, rng, seed, engineVersion,
+    difficulty, rng, seed, engineVersion, pinTargets,
     family: 'direct_proportion', family_ar: 'التناسب المباشر', category: 'التناسب المباشر البسيط'
   };
   // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
@@ -30,7 +30,7 @@ export function generateDirectProportion({difficulty, rng, seed, engineVersion, 
     ['PROP_H_CAPITAL_TIME', investmentTimeShare],
     // RC2.7-3. Comparison of alternatives.
     ['PROP_H_BREAK_EVEN', breakEvenQuantity]
-  ])(ctx);
+  ], pinTemplate)(ctx);
 }
 
 // ---------------------------------------------------------------------------
@@ -146,7 +146,7 @@ function unitItems(ctx) {
   const boxes = rng.pick([3, 4, 5, 6]);
   const per = rng.pick([6, 8, 10, 12].filter(v => v !== boxes));
   const total = boxes * per;
-  const forward = rng.bool(0.65);
+  const forward = askOf(ctx, rng, ['scaledOutput', 'requiredInput']) === 'scaledOutput';
   const targetCount = rng.pick([5, 7, 8, 9, 10, 12].filter(v => v !== boxes));
 
   if (forward) {
@@ -257,7 +257,9 @@ function unitCost(ctx) {
   const total = n * unitPrice;
   const targetCount = rng.pick([7, 8, 9, 10, 12].filter(v => v !== n));
   // Section 17-A: the same rate, asked the other way round.
-  if (rng.bool(0.4)) return unitCostReverse(ctx, n, unitPrice, total, targetCount);
+  if (askOf(ctx, rng, ['scaledOutput', 'requiredInput']) === 'requiredInput') {
+    return unitCostReverse(ctx, n, unitPrice, total, targetCount);
+  }
   const params = {baseCount: n, baseAmount: total, targetCount};
   const s = solve(params, 'scaledOutput');
   const correct = s.answer;
@@ -784,7 +786,10 @@ function twoItemPrices(ctx) {
     mk(lhs, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${t1} × ${d} − ${t2} × ${b}`, 1)
   ]);
 
-  const stem = composeSentences(ctx, `ثمن ${u(a, 'box')} و${u(b, 'piece')} معًا ${u(t1, 'dirham')}. وثمن ${u(c, 'box')} و${u(d, 'piece')} معًا ${u(t2, 'dirham')}. فما ثمن الصندوق الواحد؟`);
+  const stem = composeSentences(ctx, // RC2.8-6. «ثمن» governs what follows in the genitive, so the counted nouns
+  // take their oblique forms: «ثمن صندوقين وقطعتين», never «ثمن صندوقان وقطعتان».
+  // The lexicon has had both forms all along; the stem was asking for the wrong one.
+  `ثمن ${u(a, 'box', 'oblique')} و${u(b, 'piece', 'oblique')} معًا ${u(t1, 'dirham')}. وثمن ${u(c, 'box', 'oblique')} و${u(d, 'piece', 'oblique')} معًا ${u(t2, 'dirham')}. فما ثمن الصندوق الواحد؟`);
   return buildBase(ctx, {
     templateId: 'PROP_H_TWO_ITEM_SYSTEM',
     subskill: 'سعر الوحدة من خليطين مختلفين',

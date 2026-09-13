@@ -6,7 +6,7 @@
 import {REASON, verdict, mergeVerdicts} from './reasons.js';
 import {Fraction} from './fraction.js';
 import {searchDomain} from './oracle-engine.js';
-import {checkOddOneOutAmbiguity, oracleOddOneOut} from './ambiguity.js';
+import {checkOddOneOutAmbiguity, oracleOddOneOut, approvedRules, DISCOVERABILITY_CEILING} from './ambiguity.js';
 import {buildOrderOracle} from './relational-oracle.js';
 import {validateTextMatchesParams} from './text-params.js';
 import {validatePedagogy} from './pedagogy.js';
@@ -60,6 +60,66 @@ export function runOracle(base, q) {
     // is not a publishable question, however correct the arithmetic is.
     if (amb.undiscoverable) reasons.push(REASON.UNDISCOVERABLE_INTENDED_RULE);
     return {ran: true, reasons, answer: claimed, detail: {outliers: sweep.outliers, competing: amb.competing.length}};
+  }
+
+  if (spec.kind === 'property') {
+    // RC2.8-4. Two jobs over a set of numbers that are not «find the intruder»:
+    // naming the property the set shares, and finding a number that would join
+    // it. Both are checked by re-testing the APPROVED rule library against the
+    // numbers as printed — the generator's intention is not consulted.
+    const rules = new Map(approvedRules().map(r => [r.id, r]));
+    const numbers = (spec.numbers ?? []).map(Number);
+    const intended = rules.get(spec.intendedRuleId) ?? null;
+    const reasons = [];
+    if (!intended) return {ran: false, reasons: [], detail: `unknown rule ${spec.intendedRuleId}`};
+    // In both modes the shown set must have exactly ONE shared property within
+    // the discoverable part of the library, or the question has more than one
+    // defensible reading.
+    // Digit-count rules are not a property of the numbers, only of how they are
+    // written, so they neither qualify a set nor make one ambiguous. The
+    // template that builds these sets excludes them for the same reason.
+    const shared = [...rules.values()].filter(r =>
+      r.salience <= DISCOVERABILITY_CEILING && !/^digits\d+$/.test(r.id)
+      && numbers.every(n => r.test(n)));
+    if (!shared.some(r => r.id === intended.id)) reasons.push(REASON.ORACLE_DISAGREEMENT);
+    if (shared.length > 1) reasons.push(REASON.AMBIGUOUS_ODD_ONE_OUT);
+    if (spec.mode === 'extend') {
+      const fits = (spec.options ?? []).map(Number).filter(n => intended.test(n));
+      if (fits.length !== 1) reasons.push(REASON.ORACLE_NON_UNIQUE);
+      if (fits.length && Number(base.correct) !== fits[0]) reasons.push(REASON.ORACLE_DISAGREEMENT);
+      const answer = fits.length === 1 ? fits[0] : null;
+      return {ran: true, reasons, answer, display: answer === null ? [] : [String(answer)],
+        detail: {numbers, shared: shared.map(r => r.id)}};
+    }
+    if (String(base.correct) !== String(intended.ar)) reasons.push(REASON.ORACLE_DISAGREEMENT);
+    return {ran: true, reasons, answer: intended.ar, display: [String(intended.ar)],
+      detail: {numbers, shared: shared.map(r => r.id)}};
+  }
+
+  if (spec.kind === 'ruleChoice') {
+    // RC2.8-5. The independent check the brief asks for by name: the intended
+    // rule must explain EVERY shown term, and no other offered rule may explain
+    // them all. Both halves are checked here, from the terms as printed, not
+    // from anything the generator believed while it was building them.
+    //
+    // A rule is declared as the pair (a, b) of «next = a × current + b», so the
+    // oracle re-derives the run rather than trusting a function the template
+    // handed it.
+    const terms = (spec.terms ?? []).map(Number);
+    const explains = c => terms.every((v, i) =>
+      i === 0 || Math.abs(v - (c.a * terms[i - 1] + c.b)) < 1e-9);
+    const fitting = (spec.candidates ?? []).filter(explains);
+    const intended = (spec.candidates ?? []).find(c => c.id === spec.intendedId) ?? null;
+    const reasons = [];
+    if (!intended || !explains(intended)) reasons.push(REASON.ORACLE_DISAGREEMENT);
+    if (fitting.length > 1) reasons.push(REASON.ORACLE_NON_UNIQUE);
+    if (!fitting.length) reasons.push(REASON.ORACLE_NO_SOLUTION);
+    const label = intended ? intended.label : null;
+    if (intended && String(base.correct) !== String(label)) reasons.push(REASON.ORACLE_DISAGREEMENT);
+    return {
+      ran: true, reasons, answer: label, display: label == null ? [] : [String(label)],
+      detail: {terms, fitting: fitting.map(c => c.id)}
+    };
   }
 
   if (spec.kind === 'order') {
@@ -202,7 +262,7 @@ export function validateUniqueAnswer(base, q, oracleResult) {
     let matches;
     if (spec.kind === 'ruleset') {
       matches = LETTERS.filter(l => parseLeadingNumber(q.options[l]) === Number(base.correct)).length;
-    } else if (spec.kind === 'order') {
+    } else if (spec.kind === 'order' || spec.kind === 'ruleChoice' || spec.kind === 'property') {
       const allowed = new Set((oracleResult.display || []).map(String));
       matches = LETTERS.filter(l => allowed.has(String(q.options[l]))).length;
     } else if (spec.labels) {

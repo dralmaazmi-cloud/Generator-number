@@ -1,8 +1,8 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool, unitWordKam, composeSentences} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool, unitWordKam, composeSentences, dropByPercentPhrase} from './_shared.js';
 
-export function generatePercentages({difficulty, rng, seed, engineVersion, telemetry}) {
-  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'percentages', family_ar: 'النسب المئوية', category: 'النسب المئوية'};
+export function generatePercentages({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'percentages', family_ar: 'النسب المئوية', category: 'النسب المئوية'};
   // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
   // eligible for the requested band is decided by the structural adjudication in
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
@@ -16,7 +16,7 @@ export function generatePercentages({difficulty, rng, seed, engineVersion, telem
     ['PCT_H_REVERSE_CHAIN', reverseSuccessive],
     ['PCT_H_MIXTURE', mixtureConcentration],
     ['PCT_H_TWO_GROUP_CHANGE', twoGroupOppositeChange]
-  ])(ctx);
+  ], pinTemplate)(ctx);
 }
 
 const plain = v => num(v);
@@ -97,7 +97,9 @@ function reverseOneChange(ctx) {
     mk(final + final * pct / 100, 'TREATED_PERCENT_AS_AMOUNT', `${final} + ${final} × ${pct} ÷ 100`),
     mk(Fraction.from(original).mul(factor).mul(factor).toNumber(), 'APPLIED_STEP_TWICE', `${original} × ${factor.toDecimalString()} × ${factor.toDecimalString()}`)
   ]);
-  const stem = composeSentences(ctx, `تغيرت قيمة بـ${inc ? 'زيادة' : 'انخفاض'} نسبته ${pct}% فأصبحت ${final}. فما القيمة الأصلية؟`);
+  const stem = composeSentences(ctx, inc
+    ? `ارتفعت قيمة سلعة ${riseByPercentPhrase(pct)} فأصبحت ${final}. فما قيمتها الأصلية؟`
+    : `انخفضت قيمة سلعة ${dropByPercentPhrase(pct)} فأصبحت ${final}. فما قيمتها الأصلية؟`);
   return buildBase(ctx, {
     templateId: 'PCT_E_REVERSE_ONE',
     subskill: 'استرجاع الأصل بعد تغير واحد',

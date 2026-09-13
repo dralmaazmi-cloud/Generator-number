@@ -1,8 +1,8 @@
 import {Fraction} from '../qa/fraction.js';
 import {mk, usable, u, num, approx, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool, composeSentences, sceneFor} from './_shared.js';
 
-export function generateProfitLoss({difficulty, rng, seed, engineVersion, telemetry}) {
-  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'profit_loss', family_ar: 'الربح والخسارة والأسعار', category: 'الربح والخسارة والأسعار'};
+export function generateProfitLoss({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'profit_loss', family_ar: 'الربح والخسارة والأسعار', category: 'الربح والخسارة والأسعار'};
   // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
   // eligible for the requested band is decided by the structural adjudication in
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
@@ -17,7 +17,7 @@ export function generateProfitLoss({difficulty, rng, seed, engineVersion, teleme
     ['PL_H_MARKUP_DISCOUNT', costFromMarkupThenDiscount],
     ['PL_H_SAME_PRICE_PAIR', samePriceGainAndLoss],
     ['PL_H_REST_MARGIN', remainderMarginToTarget]
-  ])(ctx);
+  ], pinTemplate)(ctx);
 }
 
 const pct = v => `${num(v)}%`;

@@ -147,9 +147,12 @@ test('RC2.3-6: no published stem states a rise with the ambiguous «بنسبة»
 test('RC2.3-6: a chain of fractions is said one step at a time', () => {
   // «ثلث نصف ربع سُدس عدد» stacks four scopes with no syntax between them. The
   // chain is written in the order the solution applies it.
-  assert.equal(fractionChainPhrase(['ثلث'], 'العدد 12'), 'ثلث العدد 12');
+  assert.equal(fractionChainPhrase(['ثلث'], 'العدد 12'), 'أُخذ ثلث العدد 12');
+  // RC2.8-6 added the verb: the chain used to be a run of noun phrases with no
+  // verb anywhere in it, which is not a sentence. What this test is about — one
+  // scope at a time, in the order the solution applies them — is unchanged.
   assert.equal(fractionChainPhrase(['ثلث', 'نصف', 'ربع'], 'عدد'),
-    'ثلث عدد، ثم نصف الناتج، ثم ربع الناتج');
+    'أُخذ ثلث عدد، ثم نصف الناتج، ثم ربع الناتج');
   const frac = CORPUS.filter(q => q.family === 'fractions');
   assert.ok(frac.length > 80, `only ${frac.length} fraction questions (RC2.5 moved ten templates into the easy band, so a fixed-size corpus reaches fractions a little less often; this is a sample-size guard, not a quality bar)`);
   for (const q of frac) {

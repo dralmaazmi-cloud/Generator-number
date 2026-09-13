@@ -6,14 +6,14 @@
 // complicated competing rule is not grounds for rejection, and a set with one
 // genuine rule must pass.
 
-import {mk, usable, buildBase, bandPool} from './_shared.js';
-import {checkOddOneOutAmbiguity, DISCOVERABILITY_CEILING} from '../qa/ambiguity.js';
+import {mk, usable, buildBase, bandPool, resample} from './_shared.js';
+import {checkOddOneOutAmbiguity, DISCOVERABILITY_CEILING, approvedRules} from '../qa/ambiguity.js';
 import {canonicalNumberSet} from '../qa/fingerprint.js';
 
 const PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
 
-export function generateOddOneOut({difficulty, rng, seed, engineVersion, telemetry}) {
-  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'odd_one_out', family_ar: 'العدد الذي لا ينتمي', category: 'العدد الذي لا ينتمي إلى المجموعة'};
+export function generateOddOneOut({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'odd_one_out', family_ar: 'العدد الذي لا ينتمي', category: 'العدد الذي لا ينتمي إلى المجموعة'};
   // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
   // eligible for the requested band is decided by the structural adjudication in
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
@@ -24,8 +24,11 @@ export function generateOddOneOut({difficulty, rng, seed, engineVersion, telemet
     ['ODD_M_PRIME2', primeDoubles],
     ['ODD_M_CUBES', cubes],
     ['ODD_H_SQ_MINUS', squareMinusOne],
-    ['ODD_H_TRIANGULAR', triangularPattern]
-  ])(ctx);
+    ['ODD_H_TRIANGULAR', triangularPattern],
+    // RC2.8-4. Two jobs over a number set that are not «find the intruder».
+    ['ODD_M_PROPERTY', sharedProperty],
+    ['ODD_M_EXTEND', extendTheSet]
+  ], pinTemplate)(ctx);
 }
 
 /**
@@ -319,3 +322,202 @@ function isSquare(n) { return n >= 0 && Number.isInteger(Math.sqrt(n)); }
 function isCube(n) { if (n < 0) return false; const r = Math.round(Math.cbrt(n)); return r ** 3 === n; }
 function isPronic(n) { for (let k = 1; k * (k + 1) <= n; k++) if (k * (k + 1) === n) return true; return false; }
 function isTriangular(n) { return n > 0 && isSquare(8 * n + 1); }
+
+// --- RC2.8-4. Naming a property, and extending a set -------------------------
+//
+// Seven templates in this family and one question between them: «which number
+// does not belong». The property changed — multiples, squares, cubes, pronics,
+// triangulars — but the job never did, so a solver meeting the family three
+// times in a hundred questions met the same job three times.
+//
+// These two ask about the same number sets from the other two directions a
+// person naturally asks them from:
+//
+//   ODD_M_PROPERTY  every number belongs. Name what they share. The answer is a
+//                   property, not a number, and nothing is eliminated.
+//   ODD_M_EXTEND    every number belongs, and one MORE would. Find it. The set
+//                   is a given rather than the thing under suspicion.
+//
+// Both are checked by re-testing the approved rule library against the printed
+// numbers, in src/qa/pipeline.js: the shown set must share exactly one
+// discoverable property, or the question has more than one defensible answer.
+
+/**
+ * Rules a solver can be expected to find, with enough room to build a set.
+ *
+ * Digit-count rules are excluded. «All of these have two digits» is a fact about
+ * how the numbers are written, not about the numbers, and a set built on it is
+ * five consecutive integers with nothing to discover — 13، 14، 15، 16، 17 was
+ * the first thing this template produced. The ambiguity sweep still knows about
+ * those rules, because a solver can still offer one; they just cannot be the
+ * property a question is BUILT on.
+ */
+function buildableRules() {
+  // «All of these are even» is a property, but it is not a question: five
+  // consecutive even numbers give a solver nothing to find. Parity stays in the
+  // distractor pool, where it is a real temptation, and out of the answer.
+  const TOO_PLAIN = new Set(['even', 'odd']);
+  return approvedRules().filter(r =>
+    r.salience <= DISCOVERABILITY_CEILING && r.uniquePositive
+    && !TOO_PLAIN.has(r.id) && !/^digits\d+$/.test(r.id));
+}
+
+/** The first `count` positive values above `from` that satisfy `rule`. */
+function valuesFor(rule, from, count, limit = 4000) {
+  const out = [];
+  for (let n = from; n <= limit && out.length < count; n++) if (rule.test(n)) out.push(n);
+  return out.length === count ? out : null;
+}
+
+/**
+ * The discoverable properties that hold for EVERY number in a set.
+ *
+ * A set built on one rule often satisfies another by construction — five
+ * multiples of four are also five even numbers — and then there is no single
+ * right answer to «what do these share». Checked here so the item is drawn
+ * again rather than built and refused by the oracle.
+ */
+function sharedRulesOf(numbers) {
+  return approvedRules().filter(r =>
+    r.salience <= DISCOVERABILITY_CEILING && !/^digits\d+$/.test(r.id)
+    && numbers.every(n => r.test(n)));
+}
+
+function sharedProperty(ctx) {
+  const {rng} = ctx;
+  const rules = buildableRules();
+  const rule = rng.pick(rules);
+  const set = valuesFor(rule, rng.int(2, 30), 5);
+  if (!set) return resampleOdd(ctx, sharedProperty);
+  const shared = sharedRulesOf(set);
+  if (shared.length !== 1 || shared[0].id !== rule.id) return resampleOdd(ctx, sharedProperty);
+  // The other readings a solver might offer: properties that hold for SOME of
+  // the shown numbers but not all. A property that holds for none is not a
+  // temptation and would make the option list easy to thin out by inspection.
+  // Drawn from the WHOLE approved library, not only from the rules a set can be
+  // built on: «its digits add to a multiple of three» is a poor foundation for a
+  // set and an excellent wrong answer. Restricting the distractor pool to
+  // buildable rules left so few partial matches that only triangular numbers
+  // ever survived — forty draws, forty triangular sets.
+  const partial = approvedRules()
+    // …but not the digit-count rules. «عدد من 2 خانة» puts a numeral in front of
+    // a noun the units lexicon does not govern, which the Arabic construction
+    // classifier correctly refuses; and the rule is about spelling rather than
+    // about the number, so it is a poor wrong answer as well as an unsayable one.
+    .filter(r => r.id !== rule.id && !/^digits\d+$/.test(r.id))
+    .map(r => ({rule: r, hits: set.filter(n => r.test(n)).length}))
+    .filter(x => x.hits >= 1 && x.hits < set.length);
+  // Five wrong readings are needed to fill an option set, and a set that
+  // cannot offer five genuine partial matches is drawn again rather than padded
+  // with a property nothing in the set satisfies.
+  if (partial.length < 5) return resampleOdd(ctx, sharedProperty);
+  const chosen = rng.sample(partial, 5);
+  const distractors = usable(ctx, chosen.map(x =>
+    mk(x.rule.ar, 'CHECKED_ONLY_PART_OF_THE_SET',
+      `«${x.rule.ar}» تنطبق على ${x.hits} من أعداد المجموعة فقط`)));
+  return buildBase(ctx, {
+    templateId: 'ODD_M_PROPERTY',
+    subskill: 'تسمية الخاصية المشتركة',
+    difficulty: 'medium',
+    question: 'ما الخاصية التي تشترك فيها كل أعداد المجموعة الآتية؟',
+    displayExpression: set.join('، '),
+    correct: rule.ar, distractors, format: v => String(v),
+    steps: [
+      `نختبر الخاصية على كل عدد: ${set.map(n => `${n} ✓`).join('، ')}.`,
+      `الخاصية «${rule.ar}» تصحّ على الأعداد كلها، لا على بعضها.`,
+      'الخيارات الأخرى تصحّ على جزء من المجموعة فقط، والمطلوب ما يجمعها كلها.'
+    ],
+    howToStart: 'اختبر كل خاصية على أصغر عدد وأكبر عدد أولًا؛ ما يفشل على أحدهما يسقط.',
+    remember: 'الخاصية المشتركة هي التي تصحّ على كل عضو، لا على أغلبهم.',
+    fastMethod: 'ابدأ بالخصائص البسيطة — زوجي، مربع، أولي — ثم انتقل إلى ما هو أدق.',
+    estimatedSteps: 2, conceptTags: ['number-properties', 'rule-discovery'],
+    parameters: {numbers: set},
+    commutative: {numberSet: canonicalNumberSet(set)},
+    orderInsensitive: ['numbers'],
+    oracle: {kind: 'property', mode: 'shared', numbers: set, intendedRuleId: rule.id},
+    askedUnknown: 'sharedProperty', stageCount: 2,
+    pedagogy: {
+      targetSkill: `NAME_RULE_${rule.id}`, targetMisconception: 'CHECKED_ONLY_PART_OF_THE_SET',
+      // The wrong method is settling on a property after checking part of the
+      // set. It cannot coincide with the key: every offered wrong property is
+      // chosen BECAUSE it fails on at least one shown number, and the set is
+      // drawn again unless exactly one discoverable rule holds for all of them.
+      wrongMethodValue: chosen[0].rule.ar,
+      degenerateWhen: [{when: false,
+        note: 'the offered wrong properties each fail on at least one member by construction'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, ruleSearchDepth: rule.salience + 1, arithmeticBurden: 2},
+    textParams: false
+  });
+}
+
+function extendTheSet(ctx) {
+  const {rng} = ctx;
+  const rules = buildableRules();
+  const rule = rng.pick(rules);
+  const set = valuesFor(rule, rng.int(2, 24), 4);
+  if (!set) return resampleOdd(ctx, extendTheSet);
+  const shared = sharedRulesOf(set);
+  if (shared.length !== 1 || shared[0].id !== rule.id) return resampleOdd(ctx, extendTheSet);
+  const next = valuesFor(rule, set.at(-1) + 1, 1);
+  if (!next) return resampleOdd(ctx, extendTheSet);
+  const correct = next[0];
+  // Wrong options are numbers a solver lands on by reading the set as something
+  // simpler than it is: the arithmetic next step, one either side of the true
+  // member, and a value that merely shares the surface look of the set.
+  const gap = set.at(-1) - set.at(-2);
+  const near = [set.at(-1) + gap, correct - 1, correct + 1, correct + 2, correct - 2,
+    set.at(-1) + 2 * gap, correct + 3]
+    .filter(v => v > 0 && !rule.test(v) && !set.includes(v));
+  const unique = [...new Set(near)];
+  if (unique.length < 5) return resampleOdd(ctx, extendTheSet);
+  const offered = unique.slice(0, 5);
+  const distractors = usable(ctx, offered.map((v, i) =>
+    mk(v, i === 0 ? 'CONTINUED_THE_SET_ARITHMETICALLY' : 'NEAR_MISS_ON_THE_PROPERTY',
+      i === 0 ? `${set.at(-1)} + ${gap}` : `${v} لا يحقق الخاصية «${rule.ar}»`)));
+  return buildBase(ctx, {
+    templateId: 'ODD_M_EXTEND',
+    subskill: 'ضمّ عدد جديد إلى مجموعة بخاصية واحدة',
+    difficulty: 'medium',
+    question: 'أعداد المجموعة الآتية تشترك في خاصية واحدة. أي عدد يمكن ضمّه إليها؟',
+    displayExpression: set.join('، '),
+    correct, distractors, format: v => String(v),
+    steps: [
+      `أعداد المجموعة كلها تحقق الخاصية «${rule.ar}».`,
+      `نختبر الخيارات على الخاصية نفسها، فنجد ${correct} وحده يحققها.`
+    ],
+    howToStart: 'اكتشف الخاصية من المجموعة أولًا، ثم اختبر بها الخيارات.',
+    remember: 'فرق ثابت بين الأعداد لا يعني أن القاعدة جمع؛ اختبر الخاصية نفسها.',
+    fastMethod: `ابحث عن أصغر عدد بعد ${set.at(-1)} يحقق «${rule.ar}».`,
+    estimatedSteps: 2, conceptTags: ['number-properties', 'set-extension'],
+    // The answer is a declared parameter as well as the key: the worked steps
+    // name it, and a value the explanation states has to be sourced.
+    parameters: {numbers: set, joiningNumber: correct},
+    commutative: {numberSet: canonicalNumberSet(set)},
+    orderInsensitive: ['numbers'],
+    oracle: {kind: 'property', mode: 'extend', numbers: set, intendedRuleId: rule.id,
+      options: [correct, ...offered]},
+    askedUnknown: 'setMember', stageCount: 2,
+    pedagogy: {
+      targetSkill: `EXTEND_RULE_${rule.id}`, targetMisconception: 'CONTINUED_THE_SET_ARITHMETICALLY',
+      // The wrong method is continuing the last visible gap instead of the
+      // property. It would coincide if that value happened to satisfy the rule,
+      // which is filtered out before the options are built, so the item is never
+      // degenerate — and the filter is what makes that true, not luck.
+      wrongMethodValue: set.at(-1) + gap,
+      degenerateWhen: [{when: rule.test(set.at(-1) + gap),
+        note: 'the arithmetic continuation would also satisfy the property'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, ruleSearchDepth: rule.salience + 1, arithmeticBurden: 2},
+    textParams: false
+  });
+}
+
+/**
+ * This family's own retry. `attempt` above wraps the odd-one-out builders and
+ * expects a null to mean "ambiguous set, draw again"; these two report the same
+ * way, so they share the mechanism rather than inventing a second one.
+ */
+function resampleOdd(ctx, self) {
+  return resample(ctx, self);
+}

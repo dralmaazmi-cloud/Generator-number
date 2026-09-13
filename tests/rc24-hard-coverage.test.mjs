@@ -102,8 +102,16 @@ test('RC2.4: routine structure still never reaches hard', () => {
 
 test('RC2.4: the two families at their honest ceiling stay there', () => {
   // A chain of unit fractions and a single-property search do not become hard by
-  // adding layers, and the brief says to leave them alone.
-  assert.deepEqual(FAMILY_MAP.fractions.difficulties, ['easy']);
+  // adding layers, and the brief says to leave them alone. Neither reaches hard,
+  // which is what this test is about.
+  //
+  // RC2.8-4: both reach MEDIUM now, and not by adding layers to what they had.
+  // Fractions gained «what fraction is left after two successive shares», which
+  // works with the complement at each stage and answers with a fraction of the
+  // original; odd-one-out gained «name the shared property» and «which number
+  // would join the set». Each is a job the family could not ask, not a longer
+  // version of one it could.
+  assert.ok(!FAMILY_MAP.fractions.difficulties.includes('hard'));
   assert.ok(!FAMILY_MAP.odd_one_out.difficulties.includes('hard'));
 });
 

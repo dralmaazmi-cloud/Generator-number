@@ -1,8 +1,8 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, gt, gte, isInt, X, add, sub, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool, composeSentences, sceneFor, unitWordKam} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, gt, gte, isInt, X, add, sub, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool, composeSentences, sceneFor, unitWordKam, pastVerb} from './_shared.js';
 
-export function generateMachines({difficulty, rng, seed, engineVersion, telemetry}) {
-  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'machines', family_ar: 'الآلات والإنتاج', category: 'الآلات والإنتاج'};
+export function generateMachines({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'machines', family_ar: 'الآلات والإنتاج', category: 'الآلات والإنتاج'};
   // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
   // eligible for the requested band is decided by the structural adjudication in
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
@@ -18,7 +18,7 @@ export function generateMachines({difficulty, rng, seed, engineVersion, telemetr
     ['MACH_H_STOPPAGE_TIME', stoppageTime],
     // RC2.7-3. A smallest admissible count.
     ['MACH_H_MIN_SECOND_TYPE', minimumSecondType]
-  ])(ctx);
+  ], pinTemplate)(ctx);
 }
 
 function machineHours(ctx) {
@@ -216,7 +216,7 @@ function oneStops(ctx) {
     mk(machines * rate * h1 + machines * rate * h2, 'IGNORED_STOPPAGE', `${machines} × ${rate} × ${h1} + ${machines} × ${rate} × ${h2}`),
     mk(rate * (h1 + h2), 'STOPPED_AT_UNIT_RATE', `${rate} × (${h1} + ${h2})`)
   ]);
-  const stem = composeSentences(ctx, `تنتج كل آلة من ${u(machines, 'machine')} ${rate} ${sc.rateWord}. عملت الآلات كلها ${u(h1, 'hour', 'oblique')}، ثم توقفت ${u(stopped, 'machine')} وعملت البقية ${u(h2, 'hour', 'oblique')} ${adj(h2, 'hour', 'إضافي')}. كم ${unitWordKam(sc.out)} أُنتجت؟`);
+  const stem = composeSentences(ctx, `تنتج كل آلة من ${u(machines, 'machine')} ${rate} ${sc.rateWord}. عملت الآلات كلها ${u(h1, 'hour', 'oblique')}، ثم توقفت ${u(stopped, 'machine')} وعملت البقية ${u(h2, 'hour', 'oblique')} ${adj(h2, 'hour', 'إضافي')}. كم ${unitWordKam(sc.out)} ${pastVerb(sc.out, 'أُنتج', 'أُنتجت')}؟`);
   return buildBase(ctx, {
     templateId: 'MACH_M_STOP',
     scenario: sc.key,

@@ -67,10 +67,28 @@ test('RC2.1-1: no session discard is anonymous', () => {
   const attributed = named.reduce((a, r) => a + (t.byReason[r] ?? 0), 0);
   assert.equal(attributed, t.sessionDiscards,
     `${t.sessionDiscards} discards but only ${attributed} carry a session reason code`);
-  // The cap branches are the ones that used to be silent. If they ever stop
-  // reporting, this test is the thing that notices.
-  assert.ok((t.byReason[REASON.SESSION_TEMPLATE_CAP] ?? 0) + (t.byReason[REASON.SESSION_WINDOW_CAP] ?? 0) > 0,
-    'the previously-silent cap branches reported nothing');
+  // RC2.8-3. The template and window cap branches no longer fire in a mixed
+  // session, and that is the change rather than a regression: the session is
+  // planned over distinct IDEAS before anything is rendered, so a candidate that
+  // would breach a template's share is never drawn to be refused. The property
+  // those caps existed to guarantee is asserted directly instead — no template
+  // may take more than its share — because a branch that stops firing because
+  // the defect stopped happening should not be kept alive by a test.
+  const shares = new Map();
+  for (const q of e.generatePractice({count: 50, difficulty: 'mixed', family: 'random', seed: 'RC21-NAMED-SHARE'}).questions) {
+    shares.set(q.generator_id, (shares.get(q.generator_id) ?? 0) + 1);
+  }
+  const over = [...shares].filter(([, v]) => v > 4);
+  assert.deepEqual(over, [], `a template over its share: ${over.map(([k, v]) => `${k}×${v}`).join(', ')}`);
+  // And a session that DOES discard still names every discard it makes: an
+  // all-easy session near the band ceiling is the shape that still does.
+  const narrow = new Engine();
+  narrow.resetTelemetry();
+  narrow.generatePractice({count: 35, difficulty: 'easy', family: 'random', seed: 'RC21-NAMED-NARROW'});
+  const nt = narrow.getTelemetry();
+  assert.ok(nt.sessionDiscards > 0, 'an all-easy session at the ceiling is known to discard');
+  assert.equal(named.reduce((a, r) => a + (nt.byReason[r] ?? 0), 0), nt.sessionDiscards,
+    'a discard with no reason code is a discard nobody can account for');
 });
 
 test('RC2.1-1: the identity survives the relaxed fallback', () => {
@@ -100,11 +118,21 @@ test('RC2.1-1: the identity survives the relaxed fallback', () => {
   // so a hard ratios session longer than four is refused rather than reskinned.
   // A MIXED ratios session still binds the surface caps partway through, which
   // is what this test is about.
+  // RC2.8-3: the relaxed fallback is no longer REACHED. Sixty shapes across
+  // four bands and five lengths produce not one diversity warning, because the
+  // session is planned over distinct ideas rather than filtered after the fact:
+  // when a slot cannot be filled the session is refused by name, not completed
+  // from a parked candidate. So this checks the two things that still have
+  // content — the identity holds, and IF a fallback is ever used it is recorded
+  // rather than silent — instead of demanding a path the engine stopped taking.
   const s = e.generatePractice({count: 45, difficulty: 'mixed', family: 'random', seed: 'RLX-0'});
   const r = e.getTelemetry().sessionReconciliation;
-  assert.ok(s.validation.diversity_warnings.length > 0, 'this setup is meant to exercise the fallback');
   assert.equal(r.publishedToSessions, r.delivered + r.sessionDiscards);
   assert.equal(r.difference, 0);
+  for (const w of s.validation.diversity_warnings) {
+    assert.ok(w.reason, 'a fallback used without naming what it relaxed is the silent path this test exists for');
+    assert.ok(Number.isInteger(w.index), 'a recorded relaxation must say which slot it happened at');
+  }
 });
 
 test('RC2.1-1: engine-level and session-level cost are reported separately', () => {
@@ -120,11 +148,15 @@ test('RC2.1-1: engine-level and session-level cost are reported separately', () 
   // stage key is simply absent. An assertion that `undefined >= 0` was never
   // testing anything; a session that DOES discard is, so the stage is checked
   // where it actually occurs.
+  // RC2.8-3: a twelve-question mixed session no longer discards anything — the
+  // plan aims at ideas it can deliver. The shape that still exercises the stage
+  // is a band run near its ceiling, where the distinct-idea pool genuinely runs
+  // short and candidates are refused.
   const d = new Engine();
   d.resetTelemetry();
-  d.generatePractice({count: 12, difficulty: 'mixed', family: 'random', seed: 'RC21-SPLIT-DISCARD'});
+  d.generatePractice({count: 35, difficulty: 'easy', family: 'random', seed: 'RC21-SPLIT-DISCARD'});
   assert.ok((d.getTelemetry().byStage.session_discard ?? 0) > 0,
-    'a session that hits its caps must record session-level discards under their own stage');
+    'a session that runs short of distinct ideas must record its refusals under their own stage');
 });
 
 test('RC2.1-1: each session reports its own cost', () => {

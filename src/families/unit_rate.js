@@ -1,8 +1,8 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool, composeSentences, sceneFor, unitWordKam} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool, composeSentences, sceneFor, unitWordKam, askOf} from './_shared.js';
 
-export function generateUnitRate({difficulty, rng, seed, engineVersion, telemetry}) {
-  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'unit_rate', family_ar: 'المعدل الوحدوي', category: 'المعدل الوحدوي'};
+export function generateUnitRate({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'unit_rate', family_ar: 'المعدل الوحدوي', category: 'المعدل الوحدوي'};
   // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
   // eligible for the requested band is decided by the structural adjudication in
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
@@ -14,7 +14,7 @@ export function generateUnitRate({difficulty, rng, seed, engineVersion, telemetr
     ['RATE_H_TARGET', rateChangeTarget],
     ['RATE_H_TWO_PHASE', twoPhaseRate],
     ['RATE_H_RATE_FROM_GAP', rateFromTimeSaved]
-  ])(ctx);
+  ], pinTemplate)(ctx);
 }
 
 function directRate(ctx) {
@@ -391,7 +391,7 @@ function rateFromTimeSaved(ctx) {
   // rate increase, and the RC2.5 wording rule reads it as asking for a rate —
   // correctly. Answering it in hours would be arguing with a guard instead of
   // respecting it, so this template offers the two RATE targets only.
-  const ask = rng.pick(['originalRate', 'increasedRate']);
+  const ask = askOf(ctx, rng, ['originalRate', 'increasedRate']);
   const correct = ask === 'increasedRate' ? rate + bump : rate;
   const params = {totalUnits: total, rateIncrease: bump, hoursSaved: saved};
 
@@ -419,7 +419,12 @@ function rateFromTimeSaved(ctx) {
     stemStructure: stem.structure, informationOrder: stem.order,
     // RC2.5-4. The answer is a RATE. It was rendered «60 وحدة», which states a
     // quantity and answers a different question than the stem asks.
-    correct, distractors, format: unitFormat('unitPerHour'),
+    //
+    // RC2.8-6. And it is a rate of the thing the STEM counts. «وحدة/ساعة» was
+    // hard-coded here, so a stem that spoke of loaves throughout offered its
+    // answer in generic units — twenty-six items in an eight-hundred-question
+    // scan. The scenario already carries its own rate unit; the answer uses it.
+    correct, distractors, format: unitFormat(sc.rateUnitId ?? 'unitPerHour'),
     steps: [
       `نفرض المعدل الأصلي = س، فالزمن الأول = ${total} ÷ س، والزمن بعد الزيادة = ${total} ÷ (س + ${bump})، والفرق بينهما ${saved}.`,
       `بضرب طرفي المعادلة في س وفي (س + ${bump}) تصبح: س × (س + ${bump}) = ${total} × ${bump} ÷ ${saved}.`,

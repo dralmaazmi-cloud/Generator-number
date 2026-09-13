@@ -90,7 +90,14 @@ test('RC2.5-4: the two rate-answer templates now carry a per-hour unit', () => {
   // bands. The rate-unit guarantee is about what the options say, not about
   // which band the template sits in.
   const engine = new Engine();
-  const want = {RATE_H_RATE_FROM_GAP: 'unitPerHour', MACH_H_TWO_CONFIG: 'piecePerHour'};
+  // RC2.8-6: RATE_H_RATE_FROM_GAP no longer answers in generic «وحدة/ساعة». The
+  // stem counts whatever its scenario produces — loaves, pages, panels — and the
+  // answer is a rate of THAT; a stem about loaves offering «60 وحدة/ساعة» answers
+  // a question it did not ask. So the expected unit is the scenario's, and what
+  // this test checks is unchanged: the answer is a rate, and every option is one.
+  const RATE_UNITS = new Set(['unitPerHour', 'piecePerHour', 'pagePerHour', 'loafPerHour',
+    'bottlePerHour', 'shirtPerHour', 'canPerHour', 'panelPerHour']);
+  const want = {RATE_H_RATE_FROM_GAP: RATE_UNITS, MACH_H_TWO_CONFIG: new Set(['piecePerHour'])};
   const seen = new Set();
   for (let i = 0; i < 2400 && seen.size < 2; i++) {
     let q;
@@ -100,7 +107,8 @@ test('RC2.5-4: the two rate-answer templates now carry a per-hour unit', () => {
     const id = q.metadata.template_id;
     if (!want[id]) continue;
     seen.add(id);
-    assert.equal(q.metadata.answer_unit_id, want[id], `${id} answer unit`);
+    assert.ok(want[id].has(q.metadata.answer_unit_id),
+      `${id} answer unit ${q.metadata.answer_unit_id} is not a per-hour rate of what the stem counts`);
     for (const l of ['A', 'B', 'C', 'D', 'E', 'F']) {
       assert.ok(/\//.test(q.options[l]), `${id} option ${l} is not a rate: ${q.options[l]}`);
     }

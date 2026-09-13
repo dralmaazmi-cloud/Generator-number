@@ -258,7 +258,11 @@ test('RC2-005: every template in the engine is classified, and every classificat
   // smallest admissible count.
   // RC2.6: 137. Ten new HARD structures in the five families the RC2.5
   // calibration left with none.
-  assert.equal(report.totals.templates, 145, 'every declared template is reachable');
+  // RC2.8: 151. Six templates that ask jobs no family in the engine could ask —
+  // «after how many years», «name the rule», «apply a stated rule», «name the
+  // shared property», «which number would join the set», «what fraction is
+  // left». The count is pinned so a silent LOSS is still caught.
+  assert.equal(report.totals.templates, 151, 'every declared template is reachable');
   assert.deepEqual(report.totals.unclassified, []);
   assert.deepEqual(report.totals.declaredButAbsentFromEngine, []);
   assert.equal(report.totals.rc1TemplatesWithNoModel, 23, 'the RC1 gap was 23 templates');

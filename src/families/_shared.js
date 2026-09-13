@@ -6,7 +6,7 @@
 //   * a number and an Arabic unit only ever meet inside `u` / `plain`, which
 //     delegate to the central lexicon (Section 12).
 
-import {agreeingAdjective, singularOf, accusativeSingularOf, definitePlural, theSingleUnit, formatNumberWithUnit, unitWordFor, displayNumber, isCountUnit} from '../arabic/units.js';
+import {agreeingAdjective, singularOf, accusativeSingularOf, definitePlural, theSingleUnit, formatNumberWithUnit, unitWordFor, displayNumber, isCountUnit, unitIsFeminine, agreeingPastVerb} from '../arabic/units.js';
 import {deriveDependencyDepth, deriveOperationProfile, deriveAffectedStep} from '../qa/complexity.js';
 import {partitionByPlausibility} from '../qa/distractor-plausibility.js';
 import {Fraction} from '../qa/fraction.js';
@@ -161,15 +161,59 @@ export function pickTemplate(rng, list, family, difficulty) {
  * @param {'easy'|'medium'|'hard'} difficulty
  * @param {Array<[string, Function]>} entries  [templateId, generator]
  */
-export function bandPool(rng, family, difficulty, entries) {
-  const list = entries.filter(([id]) => structuralBandOf(id) === difficulty).map(([, fn]) => fn);
-  return pickTemplate(rng, list, family, difficulty);
+export function bandPool(rng, family, difficulty, entries, pin = null) {
+  const eligible = entries.filter(([id]) => structuralBandOf(id) === difficulty);
+  // RC2.8-2. The scheduler chooses the semantic blueprint BEFORE anything is
+  // rendered, and a blueprint names the template that realises it. Honouring
+  // the pin here is what turns "draw and hope" into "draw what was decided":
+  // the session no longer discovers what it got by inspecting the finished
+  // question. An unavailable pin is a loud failure rather than a silent
+  // substitution, because a substituted template is a different blueprint and
+  // the scheduler's accounting would be a fiction.
+  if (pin) {
+    const hit = eligible.find(([id]) => id === pin);
+    if (!hit) {
+      throw Object.assign(
+        new Error(`TEMPLATE_PIN_UNAVAILABLE: ${pin} is not a ${difficulty} template of ${family}`),
+        {code: 'TEMPLATE_PIN_UNAVAILABLE', family, difficulty, pin}
+      );
+    }
+    return hit[1];
+  }
+  return pickTemplate(rng, eligible.map(([, fn]) => fn), family, difficulty);
+}
+
+/**
+ * RC2.8-2. Which unknown this instance asks for, honouring the blueprint.
+ *
+ * Several templates can ask for more than one thing — a sequence run can be
+ * asked forward, backward or from the middle; a fraction chain can be run
+ * forwards or inverted — and which one it asks is the difference between two
+ * genuinely different questions. Leaving that to an unconstrained draw meant
+ * the scheduler planned one job and the renderer delivered another, so the
+ * session's accounting of what it contained was a guess.
+ *
+ * With no pin this is exactly `rng.pick(options)` and nothing changes. With a
+ * pin that the template cannot honour it still draws rather than failing: the
+ * scheduler records what was ACTUALLY delivered, so a missed pin costs accuracy
+ * of aim, never correctness.
+ */
+export function askOf(ctx, rng, options) {
+  const pin = ctx?.pinTargets;
+  if (Array.isArray(pin) && pin.length) {
+    const allowed = options.filter(o => pin.includes(o));
+    if (allowed.length) return rng.pick(allowed);
+  }
+  return rng.pick(options);
 }
 
 export const u = (n, unitId, ctx = 'nominative') => formatNumberWithUnit(n, unitId, ctx);
 
 export const adj = (n, unitId, stem, ctx = 'oblique') => agreeingAdjective(n, unitId, stem, ctx);
 export const unitWord = unitId => singularOf(unitId);
+/** RC2.8-6. Verb agreement with a counted noun, from the lexicon's own gender. */
+export const pastVerb = (unitId, masculine, feminine) => agreeingPastVerb(unitId, masculine, feminine);
+export const isFeminineUnit = unitId => unitIsFeminine(unitId);
 export const unitWordKam = unitId => accusativeSingularOf(unitId);
 export const theSingle = unitId => theSingleUnit(unitId);
 export const defPlural = unitId => definitePlural(unitId);
@@ -200,6 +244,19 @@ export const defPlural = unitId => definitePlural(unitId);
  * and is not rendered here; tests/rc21-language.test.mjs holds the pair up
  * against each other and checks no stem can be read as the one it does not mean.
  */
+/**
+ * RC2.8-6. And how a percentage FALL is said, for the same reason.
+ *
+ * The reverse-percentage stem said «تغيرت قيمة بـزيادة نسبته 20%». Two faults in
+ * five words: «بـ» is the form that separates the preposition from a NUMERAL and
+ * has no business in front of an Arabic word, and «نسبته» agreed with nothing —
+ * «زيادة» is feminine. It is said the same way a rise is said, with the additive
+ * «بمقدار» that cannot be read as a result.
+ */
+export function dropByPercentPhrase(pct) {
+  return `بمقدار ${pct}% من القيمة السابقة`;
+}
+
 export function riseByPercentPhrase(pct) {
   // No numeral beyond `pct` itself: an earlier attempt appended a computed
   // «(أي صارت 250%…)» and the text-params guard correctly rejected every
@@ -222,10 +279,18 @@ export function riseByPercentPhrase(pct) {
  * @param {string}   subject  what the first fraction is taken of, as an idafa
  *                            complement — «العدد 360», «عدد»
  */
+/**
+ * RC2.8-6. The chain, as a SENTENCE.
+ *
+ * This used to hand back «سُدس العدد 2880، ثم ثُمن الناتج، ثم خُمس الناتج» — a
+ * run of noun phrases with no verb in it, which is not Arabic anybody writes.
+ * The verb is the whole fix: «أُخذ سُدس العدد 2880، ثم ثُمن الناتج…» says what
+ * happened, and the clauses after it hang off it correctly.
+ */
 export function fractionChainPhrase(names, subject) {
   const [first, ...rest] = names;
   const steps = rest.map(n => `ثم ${n} الناتج`);
-  return `${first} ${subject}` + (steps.length ? `، ${steps.join('، ')}` : '');
+  return `أُخذ ${first} ${subject}` + (steps.length ? `، ${steps.join('، ')}` : '');
 }
 export const word = (n, unitId) => unitWordFor(n, unitId);
 export const num = n => displayNumber(n);
@@ -438,7 +503,16 @@ export function buildBase(ctx, spec) {
     // RC2.6-3. What SITUATION this template tells and which way its reasoning
     // runs. Declared by the template because only the template knows; defaulted
     // so an undeclared template is still measurable rather than invisible.
-    scenario: spec.scenario ?? templateId,
+    // RC2.8-1. A template that tells no particular situation reports that it
+    // tells no particular situation.
+    //
+    // This used to default to the template id, so `scenario_signature` read
+    // «ratios/RAT_H_TRANSFER» and the count of distinct SCENARIOS was really a
+    // count of distinct TEMPLATES — a measure that rose every time a template
+    // was added, whether or not a reader met a new situation. Templates that do
+    // draw a scene still declare one; the rest say `unnamed`, which is the truth
+    // and which the novelty cap can then bind meaningfully.
+    scenario: spec.scenario ?? 'unnamed',
     direction: spec.direction ?? 'forward',
     // RC2.7-3.
     stemStructure: stemStructure ?? 'fixed',

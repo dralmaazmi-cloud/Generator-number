@@ -190,6 +190,26 @@ export function formatNumberWithUnit(n, unitId, grammaticalContext = 'nominative
 const isFeminine = u => u.one.endsWith('واحدة');
 
 /**
+ * RC2.8-6. Whether a unit's noun is feminine, so a template can agree a VERB
+ * with it.
+ *
+ * «كم قميصًا أُنتجت؟» was published: the verb agreed with nothing in the
+ * sentence. The lexicon already knows the gender of every unit — it uses it for
+ * adjectives — and the only reason a stem could disagree with its own noun was
+ * that the knowledge was not reachable from outside this module.
+ */
+export function unitIsFeminine(id) {
+  const u = UNITS[id];
+  if (!u) throw new Error(`UNKNOWN_UNIT_ID: ${id}`);
+  return isFeminine(u);
+}
+
+/** A past-tense verb agreed with the unit's noun: أُنتج / أُنتجت. */
+export function agreeingPastVerb(id, masculine, feminine) {
+  return unitIsFeminine(id) ? feminine : masculine;
+}
+
+/**
  * An attributive adjective agreeing with a counted noun, e.g.
  * `${u(2,'day','oblique')} ${adj(2,'day','إضافي')}` -> «يومين إضافيين».
  *

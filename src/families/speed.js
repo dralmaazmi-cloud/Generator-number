@@ -1,8 +1,8 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, approx, bandPool, composeSentences, sceneFor} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, approx, bandPool, composeSentences, sceneFor, askOf} from './_shared.js';
 
-export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry}) {
-  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'speed', family_ar: 'السرعة والمسافة والزمن', category: 'السرعة والمسافة والزمن'};
+export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'speed', family_ar: 'السرعة والمسافة والزمن', category: 'السرعة والمسافة والزمن'};
   // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
   // eligible for the requested band is decided by the structural adjudication in
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
@@ -17,7 +17,7 @@ export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry})
     ['SPD_H_TIME_DIFF', sameDistanceTimeDifference],
     ['SPD_H_CURRENT', boatAgainstCurrent],
     ['SPD_H_LEG_SPLIT', twoLegSplit]
-  ])(ctx);
+  ], pinTemplate)(ctx);
 }
 
 const kmh = v => `${num(v)} كم/ساعة`;
@@ -622,7 +622,7 @@ function twoLegSplit(ctx) {
   // leg, or the TIME spent on the second. Different unknown, different final
   // step, same two conditions — which is what makes it a different construction
   // rather than the same question with new numbers.
-  const askHours = rng.bool(0.5);
+  const askHours = askOf(ctx, rng, ['secondLegHours', 'firstLegDistance']) === 'secondLegHours';
   const correct = askHours ? t2 : d1;
   const params = {totalDistance: total, totalHours: hours, firstSpeed: s1, secondSpeed: s2};
 

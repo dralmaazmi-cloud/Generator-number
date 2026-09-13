@@ -222,6 +222,20 @@ export class NoveltyScheduler {
     for (const [k, cap] of Object.entries(this.caps)) {
       const v = dim(candidate, k);
       if (v == null) continue;
+      // RC2.8-3. «none» is not a value of the entity pattern — it is the
+      // ABSENCE of one. A sequence, a set of numbers and a chain of fractions
+      // name no person, no site and no device, so they all land in one bucket
+      // that then behaves as if they were the same entity arrangement over and
+      // over. Measured on a 100-question sitting: 62 of 100 items carried it,
+      // against a scaled cap of 40, so from the fortieth question onwards every
+      // abstract-stemmed candidate was refused on a dimension it does not have.
+      // That single bucket was responsible for 874 of the session's refusals and
+      // most of its 84% rejection rate.
+      //
+      // Exempting it does not loosen an entity control. Concentration of actual
+      // entities is bounded by `entity_word` below, which is untouched and
+      // which is the measure a reader perceives — meeting «خالد» eight times.
+      if (k === 'entity_pattern' && v === 'none') continue;
       if ((this.tallies[k].get(v) ?? 0) >= cap) {
         return {ok: false, level: SURFACE, reason: REASON.NOVELTY_DIMENSION_DOMINANCE, dimension: k};
       }

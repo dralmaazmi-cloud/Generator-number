@@ -2,8 +2,8 @@ import {DAYS_AR, dayShift} from '../utils.js';
 import {mk, usable, u, unitFormat, buildBase, eq, X, add, sub, mod, resample, adj, bandPool, composeSentences} from './_shared.js';
 import {grid} from '../qa/oracle-engine.js';
 
-export function generateCalendar({difficulty, rng, seed, engineVersion, telemetry}) {
-  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'calendar', family_ar: 'الاستدلال الزمني وأيام الأسبوع', category: 'الاستدلال الزمني وأيام الأسبوع'};
+export function generateCalendar({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'calendar', family_ar: 'الاستدلال الزمني وأيام الأسبوع', category: 'الاستدلال الزمني وأيام الأسبوع'};
   // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
   // eligible for the requested band is decided by the structural adjudication in
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
@@ -17,7 +17,7 @@ export function generateCalendar({difficulty, rng, seed, engineVersion, telemetr
     ['CAL_H_CYCLE_MEET', twoCyclesMeet],
     ['CAL_H_MONTH_LENGTH', monthLengthFromTwoDates],
     ['CAL_H_OFFSET_CYCLES', offsetCyclesMeet]
-  ])(ctx);
+  ], pinTemplate)(ctx);
 }
 
 const dayName = i => DAYS_AR[((i % 7) + 7) % 7];

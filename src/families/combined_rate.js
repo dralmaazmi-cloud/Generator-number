@@ -1,7 +1,7 @@
 import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool, unitWordKam, composeSentences, sceneFor} from './_shared.js';
 
-export function generateCombinedRate({difficulty, rng, seed, engineVersion, telemetry}) {
-  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'combined_rate', family_ar: 'المعدل المشترك', category: 'المعدل المشترك'};
+export function generateCombinedRate({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'combined_rate', family_ar: 'المعدل المشترك', category: 'المعدل المشترك'};
   // RC2-015. threeRates was declared hard while being one addition and one
   // multiplication — the RC1 audit flagged S5/28 for exactly that. The
   // recalibrated model scores it 5.80, between COMB_E_OUTPUT (5.30) and
@@ -20,7 +20,7 @@ export function generateCombinedRate({difficulty, rng, seed, engineVersion, tele
     ['COMB_H_STAGED', stagedTarget],
     ['COMB_H_TWO_PUMPS', twoPumpsFromStages],
     ['COMB_H_TEAM_SIZE', teamSizeFromTotal]
-  ])(ctx);
+  ], pinTemplate)(ctx);
 }
 
 function togetherOutput(ctx) {

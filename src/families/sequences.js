@@ -5,11 +5,11 @@
 // not all obey the stated rule yields no surviving candidate at all, so a
 // malformed run is rejected rather than published with a plausible-looking key.
 
-import {mk, usable, num, buildBase, eq, X, add, sub, mul, div, resample, bandPool} from './_shared.js';
+import {mk, usable, num, buildBase, eq, X, add, sub, mul, div, resample, bandPool, askOf} from './_shared.js';
 
-export function generateSequences({difficulty, rng, seed, engineVersion, telemetry}) {
+export function generateSequences({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
   const ctx = {
-    difficulty, rng, seed, engineVersion,
+    difficulty, rng, seed, engineVersion, pinTargets,
     family: 'sequences', family_ar: 'المتتاليات العددية', category: 'المتتاليات العددية'
   };
   // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
@@ -32,8 +32,11 @@ export function generateSequences({difficulty, rng, seed, engineVersion, telemet
     ['SEQ_M_CYCLE3', operationCycle],
     ['SEQ_M_PAIR_RULE', pairedRule],
     ['SEQ_H_DIGIT_PRODUCT', digitProductStep],
-    ['SEQ_M_WRONG_TERM', wrongTerm]
-  ])(ctx);
+    ['SEQ_M_WRONG_TERM', wrongTerm],
+    // RC2.8-5. Two jobs that are not «compute a term».
+    ['SEQ_M_RULE_ID', ruleIdentification],
+    ['SEQ_M_RULE_APPLY', ruleApplication]
+  ], pinTemplate)(ctx);
 }
 
 /** Differences written as the subtractions that produce them (Section 8-C). */
@@ -84,7 +87,7 @@ function arithmetic(ctx) {
   // Section 17-A / 27: the gap moves — the term after the run, a term inside it,
   // or the term before it. Changing the numbers is not diversity; changing which
   // term is unknown is.
-  const direction = rng.pick(['nextTerm', 'missingMiddleTerm', 'previousTerm']);
+  const direction = askOf(ctx, rng, ['nextTerm', 'missingMiddleTerm', 'previousTerm']);
   const askMiddle = direction === 'missingMiddleTerm';
   const askPrevious = direction === 'previousTerm';
   const hiddenIndex = askMiddle ? rng.int(1, 3) : 5;
@@ -192,7 +195,7 @@ function geometric(ctx) {
   const directions = seq.length >= 4
     ? (previousIsWhole ? ['nextTerm', 'missingMiddleTerm', 'previousTerm'] : ['nextTerm', 'missingMiddleTerm'])
     : ['nextTerm'];
-  const direction = rng.pick(directions);
+  const direction = askOf(ctx, rng, directions);
   const askMiddle = direction === 'missingMiddleTerm';
   const askPrevious = direction === 'previousTerm';
   const hiddenIndex = askMiddle ? rng.int(1, seq.length - 2) : -1;
@@ -741,8 +744,9 @@ function powersPlusIndex(ctx) {
   // BEFORE the run and the term two places past it are both well posed. Each is
   // a different core construction: the relation pins a different position and
   // the reasoning enters from a different end.
-  const ask = startIndex > 1 ? rng.pick(['nextTerm', 'previousTerm', 'termAfterNext'])
-    : rng.pick(['nextTerm', 'termAfterNext']);
+  const ask = askOf(ctx, rng, startIndex > 1
+    ? ['nextTerm', 'previousTerm', 'termAfterNext']
+    : ['nextTerm', 'termAfterNext']);
   const askedIndex = ask === 'previousTerm' ? startIndex - 1 : ask === 'termAfterNext' ? n + 2 : n + 1;
   const correct = basePow ** askedIndex + askedIndex;
   const p = basePow ** askedIndex;
@@ -1028,7 +1032,7 @@ function linearRecurrence(ctx) {
   // The previous term only exists as a whole number when the arithmetic runs
   // backwards cleanly; asking for it otherwise would have no printable answer.
   const priorExists = (start - c) % k === 0 && (start - c) / k > 0;
-  const direction = rng.pick(priorExists
+  const direction = askOf(ctx, rng, priorExists
     ? ['nextTerm', 'previousTerm', 'termAfterNext']
     : ['nextTerm', 'termAfterNext']);
   const next = seq.at(-1) * k + c;
@@ -1375,5 +1379,158 @@ function wrongTerm(ctx) {
     pedagogy: {targetSkill: 'RULE_CHECK', targetMisconception: 'TERM_OBEYS_THE_RULE'},
     complexityFactors: {reasoningTransformations: 2, conceptCount: 2, stageCount: 2, arithmeticBurden: 3, ruleSearchDepth: 1},
     textParams: false
+  });
+}
+
+// --- RC2.8-5. Two jobs this family could not ask -----------------------------
+//
+// Sixteen sequence templates, and every one of them asked the same thing in the
+// end: hand back a NUMBER that belongs in the run. Next term, missing term,
+// previous term, the wrong term — four labels for "read the rule, then compute
+// a term with it". Measured over a hundred questions, «ما العدد التالي» alone
+// took more than half the family's slots.
+//
+// The two below ask about the RULE rather than about a term, from opposite
+// directions:
+//
+//   SEQ_M_RULE_ID     the run is shown, the rule is not, and the answer IS the
+//                     rule. Nothing is computed; a rule is found and then tested
+//                     against every printed term.
+//   SEQ_M_RULE_APPLY  the rule is stated in words and NO run is shown. The
+//                     information layout is inverted — the thing that is
+//                     normally inferred is given, and the thing that is normally
+//                     given has to be built.
+
+/** Rules as «next = a × current + b», which is what the oracle re-derives. */
+function ruleLabel(a, b) {
+  if (a === 1) return b > 0 ? `أضف ${b}` : `اطرح ${Math.abs(b)}`;
+  if (b === 0) return `اضرب في ${a}`;
+  return b > 0 ? `اضرب في ${a} ثم أضف ${b}` : `اضرب في ${a} ثم اطرح ${Math.abs(b)}`;
+}
+
+function ruleIdentification(ctx) {
+  const {rng} = ctx;
+  const a = rng.pick([2, 3, 4]);
+  const b = rng.pick([1, 2, 3, 4, 5, -1, -2, -3]);
+  const start = rng.int(2, 9);
+  const terms = [start];
+  for (let i = 1; i < 5; i++) terms.push(terms.at(-1) * a + b);
+  if (terms.some(v => v <= 0 || v > 20000)) return resample(ctx, ruleIdentification);
+  const correct = ruleLabel(a, b);
+  // The offered rules a solver could plausibly settle on: the right multiplier
+  // with the offset read off the first step only, the multiplier alone, the
+  // addition alone, and the two halves swapped. Each is a real way of reading
+  // this run, and the oracle rejects the item if any of them also explains it.
+  const firstStepOffset = terms[1] - terms[0];
+  const candidates = [
+    {id: 'intended', a, b, label: correct},
+    {id: 'mulOnly', a, b: 0, label: ruleLabel(a, 0)},
+    {id: 'addOnly', a: 1, b: firstStepOffset, label: ruleLabel(1, firstStepOffset)},
+    {id: 'swapped', a: b === 0 ? a : Math.abs(b), b: a, label: ruleLabel(b === 0 ? a : Math.abs(b), a)},
+    {id: 'offByOne', a: a + 1, b, label: ruleLabel(a + 1, b)}
+  ];
+  const wrong = [
+    mk(candidates[1].label, 'IGNORED_THE_OFFSET', 'قراءة الضرب وحده من أول انتقال', 2),
+    mk(candidates[2].label, 'CHECKED_ONLY_THE_FIRST_STEP', 'تعميم فرق الانتقال الأول على المتتالية كلها', 1),
+    mk(candidates[3].label, 'SWAPPED_THE_TWO_PARTS_OF_THE_RULE', 'تبديل موضعي الضرب والجمع', 2),
+    mk(candidates[4].label, 'READ_THE_OFFSET_FROM_THE_WRONG_STEP', 'قراءة مقدار الضرب من انتقال لا يخصه', 2),
+    mk(ruleLabel(1, terms[2] - terms[1]), 'CHECKED_ONLY_THE_FIRST_STEP', 'تعميم فرق الانتقال الثاني على المتتالية كلها', 1)
+  ];
+  // Two of the offered readings can collapse onto the same wording — «multiply
+  // by 2» is both the multiplier alone and the swap when the offset is 2 — and
+  // an option list with a repeated choice is not a question. Drawn again rather
+  // than padded.
+  const seenLabels = new Set([correct]);
+  const distractors = wrong.filter(d => !seenLabels.has(d.value) && seenLabels.add(d.value));
+  if (distractors.length < 4) return resample(ctx, ruleIdentification);
+  return buildBase(ctx, {
+    templateId: 'SEQ_M_RULE_ID',
+    subskill: 'استنتاج قاعدة المتتالية',
+    difficulty: 'medium',
+    question: 'أيُّ القواعد الآتية تولّد كل حد من الحد الذي قبله في هذه المتتالية؟',
+    displayExpression: terms.join('، '),
+    correct, distractors, format: v => String(v),
+    steps: [
+      `الفرق الأول = ${terms[1]} − ${terms[0]} = ${terms[1] - terms[0]}.`,
+      `الفرق الثاني = ${terms[2]} − ${terms[1]} = ${terms[2] - terms[1]}، وهو يخالف الأول، فالقاعدة ليست جمع مقدار ثابت.`,
+      `نجرب الضرب في ${a}: ${terms[0]} × ${a} = ${terms[0] * a}، ثم ${terms[0] * a} ${b >= 0 ? '+' : '−'} ${Math.abs(b)} = ${terms[1]}.`,
+      `نتحقق من القاعدة نفسها على الحد التالي: ${terms[1]} × ${a} = ${terms[1] * a}، ثم ${terms[1] * a} ${b >= 0 ? '+' : '−'} ${Math.abs(b)} = ${terms[2]}.`,
+      `وعلى الحد الذي يليه: ${terms[2]} × ${a} = ${terms[2] * a}، ثم ${terms[2] * a} ${b >= 0 ? '+' : '−'} ${Math.abs(b)} = ${terms[3]}.`
+    ],
+    howToStart: 'قارن الفروق أولًا: إن اختلفت فالقاعدة ليست جمعًا ثابتًا.',
+    remember: 'القاعدة الصحيحة هي التي تصحّ على كل الحدود، لا على أول انتقال فقط.',
+    fastMethod: 'اقسم كل حد على الذي قبله لتقدير مقدار الضرب، ثم اقرأ الباقي الثابت.',
+    estimatedSteps: 3, conceptTags: ['sequence', 'rule-discovery'],
+    // Every printed term is a declared parameter, so the worked explanation can
+    // name them without inventing a value the item never showed.
+    parameters: {multiplier: a, offset: b, firstTerm: start, shownTerms: terms},
+    oracle: {kind: 'ruleChoice', terms, candidates, intendedId: 'intended'},
+    askedUnknown: 'generatingRule', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'FIND_THE_RULE', targetMisconception: 'CHECKED_ONLY_THE_FIRST_STEP',
+      wrongMethodValue: candidates[2].label,
+      degenerateWhen: [{when: b === 0, note: 'a pure multiplier needs no offset to be found'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 2, stageCount: 2, arithmeticBurden: 3},
+    textParams: false
+  });
+}
+
+function ruleApplication(ctx) {
+  const {rng} = ctx;
+  const a = rng.pick([2, 3]);
+  const b = rng.pick([2, 3, 4, 5, 6, 7]);
+  const start = rng.int(3, 12);
+  const steps = rng.int(3, 4);
+  const run = [start];
+  for (let i = 0; i < steps; i++) run.push(run.at(-1) * a + b);
+  const correct = run.at(-1);
+  if (correct > 20000) return resample(ctx, ruleApplication);
+  const ordinal = {3: 'الرابع', 4: 'الخامس'}[steps];
+  // The slips are the ones the STATED rule invites: doing the addition before
+  // the multiplication, dropping one half of it, or stopping one term short.
+  // Built as an expression as well as a value: a derivation that does not
+  // evaluate to the option beside it is a false claim, and the pipeline refuses
+  // the item rather than printing one.
+  let wrongOrder = start;
+  let wrongOrderExpr = String(start);
+  for (let i = 0; i < steps; i++) {
+    wrongOrder = (wrongOrder + b) * a;
+    wrongOrderExpr = `(${wrongOrderExpr} + ${b}) × ${a}`;
+  }
+  let mulOnly = start;
+  for (let i = 0; i < steps; i++) mulOnly *= a;
+  const distractors = usable(ctx, [
+    mk(wrongOrder, 'APPLIED_THE_STEPS_IN_THE_WRONG_ORDER', wrongOrderExpr, 1),
+    mk(mulOnly, 'IGNORED_THE_OFFSET', [start, ...Array(steps).fill(a)].join(' × '), 1),
+    mk(start + steps * b, 'IGNORED_THE_MULTIPLIER', `${start} + ${steps} × ${b}`, 1),
+    mk(run[steps - 1], 'APPLIED_THE_RULE_TO_THE_WRONG_TERM', `${run[steps - 2]} × ${a} + ${b}`, 2),
+    mk(run.at(-1) * a + b, 'APPLIED_STEP_TWICE', `${run.at(-1)} × ${a} + ${b}`, 2)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'SEQ_M_RULE_APPLY',
+    subskill: 'تطبيق قاعدة معطاة لبناء متتالية',
+    difficulty: 'medium',
+    question: `متتالية حدها الأول ${start}، وكل حد بعده يُحسب بضرب الحد السابق في ${a} ثم إضافة ${b}. ما الحد ${ordinal}؟`,
+    correct, distractors, format: v => num(v),
+    steps: run.slice(1).map((v, i) =>
+      `الحد ${['الثاني', 'الثالث', 'الرابع', 'الخامس'][i]} = ${run[i]} × ${a} + ${b} = ${v}.`),
+    howToStart: 'ابدأ من الحد الأول وطبّق القاعدة خطوة بخطوة.',
+    remember: 'رتّب العمليتين كما نصّت القاعدة: الضرب أولًا ثم الإضافة.',
+    fastMethod: 'اكتب الحدود واحدًا تلو الآخر؛ القاعدة قصيرة والخطأ يأتي من عكس ترتيبها.',
+    estimatedSteps: steps, conceptTags: ['sequence', 'rule-application'],
+    parameters: {firstTerm: start, multiplier: a, offset: b, termIndex: steps + 1},
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(X, run.at(-1))]
+    },
+    askedUnknown: 'termFromStatedRule', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'APPLY_A_STATED_RULE', targetMisconception: 'APPLIED_THE_STEPS_IN_THE_WRONG_ORDER',
+      wrongMethodValue: wrongOrder,
+      degenerateWhen: [{when: b === 0, note: 'with no offset the order of the two steps cannot be got wrong'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: steps},
+    textParams: {essentialParams: ['firstTerm', 'multiplier', 'offset']}
   });
 }

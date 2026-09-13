@@ -1,7 +1,7 @@
 import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool, composeSentences} from './_shared.js';
 
-export function generateAges({difficulty, rng, seed, engineVersion, telemetry}) {
-  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'ages', family_ar: 'مسائل الأعمار', category: 'مسائل الأعمار'};
+export function generateAges({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'ages', family_ar: 'مسائل الأعمار', category: 'مسائل الأعمار'};
   // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
   // eligible for the requested band is decided by the structural adjudication in
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
@@ -13,8 +13,9 @@ export function generateAges({difficulty, rng, seed, engineVersion, telemetry}) 
     ['AGE_M_FUT_RATIO', futureRatio],
     ['AGE_H_PAST_FUT', pastRatioFutureSum],
     ['AGE_H_TWO_TIME', twoTimeRatio],
-    ['AGE_H_THREE_SIBLINGS', threeSiblingsFuture]
-  ])(ctx);
+    ['AGE_H_THREE_SIBLINGS', threeSiblingsFuture],
+    ['AGE_M_WHEN_RATIO', yearsUntilRatio]
+  ], pinTemplate)(ctx);
 }
 
 const years = unitFormat('year');
@@ -520,5 +521,78 @@ function threeSiblingsFuture(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, conditionCount: 2, equationSolving: 1, stageCount: 3, arithmeticBurden: 5},
     textParams: {essentialParams: ['totalAge', 'eldestGap', 'middleGap', 'years']}
+  });
+}
+
+/**
+ * RC2.8-4. «After how many years…» — the one thing this family never asked.
+ *
+ * Every ages template before this handed back an AGE. Seven templates, one
+ * answer class, so a solver meeting the family twice met the same job twice
+ * however different the algebra was: the ratio was in the future, the sum was in
+ * the past, the answer was always somebody's age in years-of-life.
+ *
+ * This asks for the TIME instead. The givens are two ages now and a relation
+ * that does not hold yet; the unknown is how far forward the clock has to run
+ * before it does. The equation is inverted in the other direction — not «what
+ * was the age», but «when does the relation become true» — and the answer is a
+ * duration, not an age, which is what the family was missing.
+ */
+function yearsUntilRatio(ctx) {
+  const {rng} = ctx;
+  const ratio = rng.pick([2, 3]);
+  const wait = rng.int(3, 12);
+  const younger = rng.int(4, 16);
+  // Built forwards from the answer so the arithmetic closes on whole years:
+  // at `wait` years from now the older age is exactly `ratio` times the younger.
+  const older = ratio * (younger + wait) - wait;
+  if (older <= younger || older > 62) return resample(ctx, yearsUntilRatio);
+  const diff = older - younger;
+  const correct = wait;
+  const params = {youngerAge: younger, olderAge: older, ratio};
+  const ratioWord = ratio === 2 ? 'ضعف' : 'ثلاثة أمثال';
+  const distractors = usable(ctx, [
+    mk(diff, 'USED_AGE_DIFFERENCE_AS_ANSWER', `الفرق المعطى ${diff}`, 1),
+    mk(younger + wait, 'ANSWERED_FUTURE_AGE', `${younger} + ${wait}`, 3),
+    mk(diff - younger, 'FORGOT_BOTH_AGES_GROW', `${diff} − ${younger}`, 2),
+    mk(older - ratio * younger, 'FORGOT_BOTH_AGES_GROW', `${older} − ${ratio} × ${younger}`, 2),
+    mk(diff * ratio, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${diff} × ${ratio}`, 2),
+    mk(Math.round(diff / (ratio + 1)), 'RATE_APPLIED_TO_WRONG_COUNT', `${diff} ÷ (${ratio} + 1)`, 2),
+    mk(older - younger - wait, 'SUBTRACTED_INSTEAD_OF_ADDED', `${diff} − ${wait}`, 3)
+  ]);
+  const stem = composeSentences(ctx,
+    `عمر الأب الآن ${u(older, 'year')} وعمر ابنه ${u(younger, 'year')}. `
+    + `بعد كم سنة يصبح عمر الأب ${ratioWord} عمر ابنه؟`);
+  return buildBase(ctx, {
+    templateId: 'AGE_M_WHEN_RATIO',
+    subskill: 'زمن تحقق نسبة عمرية',
+    difficulty: 'medium',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: years,
+    steps: [
+      `نفرض عدد السنوات = س، فيصبح عمر الأب ${older} + س وعمر الابن ${younger} + س.`,
+      `شرط المسألة: ${older} + س = ${ratio} × (${younger} + س).`,
+      `بفك القوس: ${ratio} × ${younger} = ${ratio * younger}، فتصير ${older} + س = ${ratio * younger} + ${ratio} س.`,
+      `بجمع الحدود: (${ratio} − 1) س = ${older} − ${ratio * younger} = ${older - ratio * younger}.`,
+      `س = ${older - ratio * younger} ÷ ${ratio - 1} = ${wait}.`
+    ],
+    howToStart: 'اجعل عدد السنوات مجهولًا وأضفه إلى العمرين معًا.',
+    remember: 'العمران يكبران بالمقدار نفسه، فالنسبة بينهما تتغير بينما الفرق ثابت.',
+    fastMethod: `النسبة تتحقق حين يصير عمر الابن ${diff} ÷ (${ratio} − 1) = ${diff / (ratio - 1)}، أي بعد ${wait}.`,
+    estimatedSteps: 4, conceptTags: ['age', 'time-shift', 'inverse'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(add(older, X), mul(ratio, add(younger, X)))]
+    },
+    askedUnknown: 'yearsUntilRatio', stageCount: 3, direction: 'reverse',
+    realism: {ages: [older, younger], siblingGap: diff},
+    pedagogy: {
+      targetSkill: 'TIME_SHIFT_RATIO', targetMisconception: 'FORGOT_BOTH_AGES_GROW',
+      wrongMethodValue: older - ratio * younger,
+      degenerateWhen: [{when: ratio === 1, note: 'a ratio of one is never reached'}]
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 3, arithmeticBurden: 3},
+    textParams: {essentialParams: ['youngerAge', 'olderAge']}
   });
 }

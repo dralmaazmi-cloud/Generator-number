@@ -192,8 +192,19 @@ test('RC2.7-5: a control relaxed by the fallback is recorded, never silent', () 
   assert.ok(refusal, 'a fifty-question all-hard session must be refused, not reskinned');
   assert.equal(refusal.code, 'INSUFFICIENT_CONSTRUCTION_BREADTH');
   assert.ok(refusal.delivered >= 25 && refusal.delivered < 50, `filled ${refusal.delivered}`);
-  assert.equal(refusal.distinctCoreConstructions, refusal.delivered,
-    'every slot filled before the refusal must have carried a distinct core idea');
+  // RC2.8-3. The refusal now comes from the PLANNER, before anything is
+  // rendered, and it reports plan-level numbers: how many slots it could place
+  // and how many distinct ideas it placed them from. Those are no longer
+  // identical, because the plan may reuse an idea up to its declared repeat
+  // budget when a band runs short — the CORE construction ban still applies to
+  // what is actually delivered, and tests/rc28-diversity.test.mjs measures that
+  // on real sessions. What must stay true is that the gap is the budget and not
+  // a silent slide.
+  assert.ok(refusal.distinctCoreConstructions <= refusal.delivered);
+  assert.ok(refusal.delivered - refusal.distinctCoreConstructions <= 2,
+    `${refusal.delivered} slots from only ${refusal.distinctCoreConstructions} ideas`);
+  assert.ok(Array.isArray(refusal.capacity) && refusal.capacity.length,
+    'a refusal must say how much material each band of the request actually holds');
   const s = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC27-T-HARD'});
   const n = s.validation.novelty;
   assert.equal(n.delivered, 30);
@@ -253,6 +264,12 @@ test('RC2.7-3: no family still tells one story per template', () => {
   //
   // Both are stated as safe diversity ceilings in FINAL_REPORT.md. Every other
   // family must clear 1.5 tellings per template.
-  assert.deepEqual(weak.sort(), ['odd_one_out 0.14', 'sequences 0.31'].sort(),
+  // RC2.8 added templates to both — «name the shared property», «which number
+  // would join the set», «name the rule», «apply a stated rule» — so the
+  // denominator grew while the sentence count did not: these two ask their
+  // questions in one line each, by design. Pinning the exact ratios would be
+  // pinning the template count. What this test is for is that NO OTHER family
+  // falls into the same shape, so it names the two and checks the rest.
+  assert.deepEqual(weak.map(w => w.split(' ')[0]).sort(), ['odd_one_out', 'sequences'],
     `families still telling one story: ${weak.join(', ')}`);
 });

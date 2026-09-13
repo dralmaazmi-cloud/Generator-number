@@ -35,8 +35,8 @@ function positionWord(k) {
   return w;
 }
 
-export function generateRelational({difficulty, rng, seed, engineVersion, telemetry}) {
-  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'relational', family_ar: 'المقارنة والترتيب العلاقاتي', category: 'المقارنة والترتيب العلاقاتي'};
+export function generateRelational({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'relational', family_ar: 'المقارنة والترتيب العلاقاتي', category: 'المقارنة والترتيب العلاقاتي'};
   // RC2.3-1. The catalogue, not a set of per-band pools: which of these is
   // eligible for the requested band is decided by the structural adjudication in
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
@@ -50,7 +50,7 @@ export function generateRelational({difficulty, rng, seed, engineVersion, teleme
     ['REL_H_COUNT_BRANCHED', countAboveAcrossBranches],
     ['REL_H_POSITION', partialOrderPosition],
     ['REL_H_GUARANTEE', branchGuaranteed]
-  ])(ctx);
+  ], pinTemplate)(ctx);
 }
 
 // --- graph construction ----------------------------------------------------

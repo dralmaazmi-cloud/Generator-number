@@ -1,8 +1,8 @@
-import {mk, usable, buildBase, eq, X, mul, fractionChainPhrase, composeSentences} from './_shared.js';
+import {mk, usable, buildBase, eq, X, mul, sub, resample, fractionChainPhrase, composeSentences, askOf} from './_shared.js';
 import {grid} from '../qa/oracle-engine.js';
 import {structuralBandOf} from '../qa/structure.js';
 
-const FRACTION_TEMPLATE_IDS = ['FRAC_E_2', 'FRAC_M_3', 'FRAC_H_4'];
+const FRACTION_TEMPLATE_IDS = ['FRAC_E_2', 'FRAC_M_3', 'FRAC_H_4', 'FRAC_M_REMAIN'];
 const FRACTION_BANDS = new Set(FRACTION_TEMPLATE_IDS.map(structuralBandOf));
 
 const FRACS = [
@@ -14,8 +14,8 @@ const FRACS = [
   {d: 8, n: 'ثُمن', def: 'الثُمن'}
 ];
 
-export function generateFractions({difficulty, rng, seed, engineVersion, telemetry}) {
-  const ctx = {difficulty, rng, seed, engineVersion, telemetry, family: 'fractions', family_ar: 'الكسور المتتابعة', category: 'الكسور المتتابعة المباشرة'};
+export function generateFractions({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
+  const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'fractions', family_ar: 'الكسور المتتابعة', category: 'الكسور المتتابعة المباشرة'};
   // RC2.2-1/2. This family chains one operation — take a fraction of — and the
   // chain length is what used to set its band. Under the RC2.2 scorer that is
   // workload, not reasoning depth: two, three and four links all compute easy,
@@ -33,11 +33,37 @@ export function generateFractions({difficulty, rng, seed, engineVersion, telemet
       {code: 'NO_TEMPLATE_AT_DIFFICULTY', family: 'fractions', difficulty}
     );
   }
-  const count = rng.pick([2, 3, 4]);
+  // RC2.8-4. The one job this family could not do.
+  //
+  // Three templates, and all three ran the same chain of «a fraction of a
+  // fraction of» — forward, or inverted to find the number, or inverted to find
+  // the fraction. Every one of them handed back a NUMBER. What a reader meets
+  // three times is «another chained-fractions question», because that is what it
+  // is. This asks what is LEFT instead: the parts are taken away one after the
+  // other and the answer is the fraction of the original that survives, which is
+  // a different quantity, a different layout (a whole being partitioned rather
+  // than a chain being walked) and a different piece of reasoning — the
+  // complement at each stage, not the part.
+  if (pinTemplate === 'FRAC_M_REMAIN') return remainingFraction(ctx);
+  if (!pinTemplate && difficulty === 'medium') return remainingFraction(ctx);
+  // RC2.8-2. Every other template id in this family IS its chain length, so a
+  // pin on the id pins the length; everything else still varies with the seed.
+  const PIN_LENGTH = {FRAC_E_2: 2, FRAC_M_3: 3, FRAC_H_4: 4};
+  if (pinTemplate && !PIN_LENGTH[pinTemplate]) {
+    throw Object.assign(
+      new Error(`TEMPLATE_PIN_UNAVAILABLE: ${pinTemplate} is not a template of fractions`),
+      {code: 'TEMPLATE_PIN_UNAVAILABLE', family: 'fractions', difficulty, pin: pinTemplate}
+    );
+  }
+  const count = pinTemplate ? PIN_LENGTH[pinTemplate] : rng.pick([2, 3, 4]);
   // Section 17-A / 27: the audit found every item in this family pointing the
   // same way. The template is unchanged; what rotates is which quantity is
   // unknown, so the direction of reasoning genuinely varies.
-  const direction = rng.pick(['forward', 'findNumber', 'findFraction']);
+  // RC2.8-2. The three directions ARE the three unknowns this family can ask
+  // for, so the blueprint's target pin selects among them directly. One draw,
+  // whether or not a pin is present, so the seed means the same thing either way.
+  const TARGET_DIRECTION = {chainResult: 'forward', startNumber: 'findNumber', hiddenFraction: 'findFraction'};
+  const direction = TARGET_DIRECTION[askOf(ctx, rng, Object.keys(TARGET_DIRECTION))];
   return buildFractionItem(ctx, count, direction);
 }
 
@@ -176,7 +202,9 @@ function buildFractionItem(ctx, count, direction) {
     FRACS.filter(f => f.d !== hidden.d).map(f =>
       mk(f.def, 'MISSED_ONE_FRACTION_STAGE', `القسمة على ${f.d} بدل ${hidden.d}`))
   );
-  const stem = composeSentences(ctx, `${fractionChainPhrase(knownNames, `العدد ${total}`)}، ثم كسرٌ من الناتج، فكان الناتج ${result}. فما هذا الكسر؟`);
+  const stem = composeSentences(ctx, // RC2.8-6. «ثم كسرٌ من الناتج» named neither what the fraction is nor which
+    // result it acts on. «كسرٌ مجهول من الناتج الأخير» says both.
+    `${fractionChainPhrase(knownNames, `العدد ${total}`)}، ثم كسرٌ مجهول من الناتج الأخير، فكان الناتج ${result}. فما هذا الكسر؟`);
   return buildBase(ctx, {
     ...shared,
     subskill: `${count} كسور متتابعة — تحديد الكسر المجهول`,
@@ -212,5 +240,113 @@ function buildFractionItem(ctx, count, direction) {
       targetSkill: 'IDENTIFY_FRACTION', targetMisconception: 'MISSED_ONE_FRACTION_STAGE'
     },
     textParams: {essentialParams: ['startNumber', 'chainResult']}
+  });
+}
+
+/** Greatest common divisor, for reducing the surviving fraction. */
+function gcd(a, b) { return b === 0 ? Math.abs(a) : gcd(b, a % b); }
+
+/**
+ * RC2.8-4. «What is left», as a fraction of the original.
+ *
+ * A third of a sum is spent, then a fifth of what remains. The answer is not a
+ * quantity — no total is ever given — but the fraction of the original amount
+ * that survives: (1 − 1/3) × (1 − 1/5) = 8/15. The solver has to work with the
+ * complement at each stage, which is the move the forward chain never asks for,
+ * and the temptation the wrong options carry is to subtract the two fractions
+ * from one instead of composing the remainders.
+ */
+function remainingFraction(ctx) {
+  const {rng} = ctx;
+  const [first, second] = rng.sample(FRACS.filter(f => f.d >= 3), 2);
+  const num = (first.d - 1) * (second.d - 1);
+  const den = first.d * second.d;
+  const g = gcd(num, den);
+  const correct = `${num / g}/${den / g}`;
+  const asFraction = (n, d) => {
+    const k = gcd(n, d);
+    return `${n / k}/${d / k}`;
+  };
+  // Each wrong option is a real way of composing the two fractions: subtracting
+  // both from the whole, taking the second share of the ORIGINAL rather than of
+  // the remainder, keeping the part instead of the remainder, and stopping after
+  // the first stage.
+  const naive = den - second.d - first.d;
+  const offered = [
+    [asFraction(naive > 0 ? naive : 1, den), 'SUBTRACTED_BOTH_FROM_THE_WHOLE',
+      `1 − 1/${first.d} − 1/${second.d}`],
+    [asFraction(1, den), 'APPLIED_FRACTION_TO_ORIGINAL', `1/${first.d} × 1/${second.d}`],
+    [asFraction(first.d - 1, first.d), 'STOPPED_AT_INTERMEDIATE_TOTAL', `1 − 1/${first.d}`],
+    [asFraction(second.d - 1, second.d), 'STOPPED_AT_INTERMEDIATE_TOTAL', `1 − 1/${second.d}`],
+    [asFraction(first.d + second.d - 2, den), 'SUBTRACTED_BOTH_FROM_THE_WHOLE',
+      `(${first.d} − 1) + (${second.d} − 1) على ${den}`],
+    [asFraction(num, den + first.d), 'APPLIED_FRACTION_TO_ORIGINAL',
+      `الباقي على ${den + first.d} بدل ${den}`],
+    [asFraction(first.d * second.d - first.d - second.d + 2, den), 'SUBTRACTED_BOTH_FROM_THE_WHOLE',
+      `الطرح مرة واحدة زائدة عن اللازم`],
+    [asFraction(second.d - 1, first.d), 'APPLIED_FRACTION_TO_ORIGINAL',
+      `بسط المرحلة الثانية على مقام المرحلة الأولى`]
+  ];
+  // Several of these collapse onto the same reduced fraction for some pairs of
+  // denominators — a repeated option is not a choice — so the list is deduped
+  // and the item is drawn again if fewer than five survive.
+  // «1/1» is not a fraction anybody writes, and an option that reduces to the
+  // whole is not a mistake a learner makes — it is a rendering accident.
+  const seenValues = new Set([correct]);
+  const distractors = usable(ctx, offered
+    .filter(([v]) => !/^\d+\/1$/.test(v) && v !== '1/1')
+    .filter(([v]) => !seenValues.has(v) && seenValues.add(v))
+    .map(([v, id, why]) => mk(v, id, why)));
+  if (distractors.length < 5) return resample(ctx, remainingFraction);
+  const stem = composeSentences(ctx,
+    `أُنفق ${first.n} مبلغٍ من المال، ثم أُنفق ${second.n} ما تبقى منه. `
+    + 'ما الكسر الذي يمثل ما بقي من المبلغ الأصلي؟');
+  return buildBase(ctx, {
+    templateId: 'FRAC_M_REMAIN',
+    subskill: 'الباقي بعد إنفاق كسرين متتاليين',
+    difficulty: 'medium',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: v => String(v),
+    steps: [
+      `بعد إنفاق ${first.n} يبقى 1 − 1/${first.d} = ${first.d - 1}/${first.d} من المبلغ.`,
+      `ثم يُنفق ${second.n} هذا الباقي، فيبقى منه 1 − 1/${second.d} = ${second.d - 1}/${second.d}.`,
+      `الباقي من المبلغ الأصلي = ${first.d - 1}/${first.d} × ${second.d - 1}/${second.d} = ${asFraction(num, den)}.`
+    ],
+    howToStart: 'احسب ما يبقى بعد كل إنفاق، لا ما يُنفق.',
+    remember: 'الكسر الثاني يُؤخذ من الباقي، فالكسران يُضربان ولا يُطرحان.',
+    fastMethod: `اضرب المتبقيين مباشرة: ${first.d - 1}/${first.d} × ${second.d - 1}/${second.d}.`,
+    estimatedSteps: 3, conceptTags: ['fractions', 'complement', 'partition'],
+    parameters: {firstDenominator: first.d, secondDenominator: second.d},
+    // The two stages are NOT interchangeable: a third then a fifth of the rest
+    // leaves the same fraction as a fifth then a third of the rest, so the pair
+    // is order-insensitive and two spoken orders are one question.
+    commutative: {denominators: [first.d, second.d].sort((a, b) => a - b)},
+    orderInsensitive: ['denominators'],
+    // The oracle re-derives the surviving numerator from the two denominators
+    // rather than being handed it: over the common denominator d₁ × d₂, what is
+    // left after a share of each stage is (d₁ − 1)(d₂ − 1). The label maps that
+    // integer onto the reduced fraction the item prints.
+    oracle: {
+      kind: 'search', answerKind: 'number',
+      domain: grid(1, first.d * second.d),
+      constraints: [eq(X, mul(sub(first.d, 1), sub(second.d, 1)))],
+      labels: {[String(num)]: correct}
+    },
+    askedUnknown: 'remainingFraction', stageCount: 2, direction: 'forward',
+    pedagogy: {
+      targetSkill: 'COMPOSE_REMAINDERS', targetMisconception: 'SUBTRACTED_BOTH_FROM_THE_WHOLE',
+      // The wrong method is «1 − 1/d₁ − 1/d₂», taking both shares from the
+      // original. It can never coincide with the key: the key is
+      // (d₁−1)(d₂−1)/d₁d₂ = (d₁d₂ − d₁ − d₂ + 1)/d₁d₂, which is exactly one
+      // over d₁d₂ MORE than the wrong method, for every pair of denominators.
+      // So the item is never degenerate, and this says so rather than leaving
+      // the model absent.
+      wrongMethodValue: asFraction(naive > 0 ? naive : 1, den),
+      degenerateWhen: [{when: false,
+        note: 'taking both shares from the original always falls short of the key by exactly 1/(d₁d₂)'}]
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 3, dependencyDepth: 2},
+    textParams: false
   });
 }

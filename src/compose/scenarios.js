@@ -150,21 +150,21 @@ export const avgOfOther = (sc, n) => `${sc.avgOf(n)} ${sc.otherAdj}`;
 // --- production: an agent turning time into countable output -----------------
 
 export const PRODUCTION = Object.freeze([
-  {key: 'abstract_pieces', out: 'piece', rateWord: 'قطعة/ساعة', rateWordMinute: 'قطعة/دقيقة',
+  {key: 'abstract_pieces', out: 'piece', rateUnitId: 'piecePerHour', rateWord: 'قطعة/ساعة', rateWordMinute: 'قطعة/دقيقة',
     site: 'مصنع', outDef: 'القطع', verb: 'تنتج'},
-  {key: 'press_pages', out: 'page', rateWord: 'صفحة/ساعة', rateWordMinute: 'صفحة/دقيقة',
+  {key: 'press_pages', out: 'page', rateUnitId: 'pagePerHour', rateWord: 'صفحة/ساعة', rateWordMinute: 'صفحة/دقيقة',
     site: 'مطبعة', outDef: 'الصفحات', verb: 'تطبع'},
-  {key: 'bakery_loaves', out: 'loaf', rateWord: 'رغيف/ساعة', rateWordMinute: 'رغيف/دقيقة',
+  {key: 'bakery_loaves', out: 'loaf', rateUnitId: 'loafPerHour', rateWord: 'رغيف/ساعة', rateWordMinute: 'رغيف/دقيقة',
     site: 'مخبز', outDef: 'الأرغفة', verb: 'تخبز'},
-  {key: 'dairy_bottles', out: 'bottle', rateWord: 'زجاجة/ساعة', rateWordMinute: 'زجاجة/دقيقة',
+  {key: 'dairy_bottles', out: 'bottle', rateUnitId: 'bottlePerHour', rateWord: 'زجاجة/ساعة', rateWordMinute: 'زجاجة/دقيقة',
     site: 'معمل ألبان', outDef: 'الزجاجات', verb: 'تعبئ'},
-  {key: 'textile_shirts', out: 'shirt', rateWord: 'قميص/ساعة', rateWordMinute: 'قميص/دقيقة',
+  {key: 'textile_shirts', out: 'shirt', rateUnitId: 'shirtPerHour', rateWord: 'قميص/ساعة', rateWordMinute: 'قميص/دقيقة',
     site: 'مشغل خياطة', outDef: 'القمصان', verb: 'تخيط'},
-  {key: 'cannery_cans', out: 'can', rateWord: 'علبة/ساعة', rateWordMinute: 'علبة/دقيقة',
+  {key: 'cannery_cans', out: 'can', rateUnitId: 'canPerHour', rateWord: 'علبة/ساعة', rateWordMinute: 'علبة/دقيقة',
     site: 'مصنع تعليب', outDef: 'العلب', verb: 'تملأ'},
-  {key: 'solar_panels', out: 'panel', rateWord: 'لوح/ساعة', rateWordMinute: 'لوح/دقيقة',
+  {key: 'solar_panels', out: 'panel', rateUnitId: 'panelPerHour', rateWord: 'لوح/ساعة', rateWordMinute: 'لوح/دقيقة',
     site: 'مصنع ألواح', outDef: 'الألواح', verb: 'تجمع'},
-  {key: 'abstract_units', out: 'unit', rateWord: 'وحدة/ساعة', rateWordMinute: 'وحدة/دقيقة',
+  {key: 'abstract_units', out: 'unit', rateUnitId: 'unitPerHour', rateWord: 'وحدة/ساعة', rateWordMinute: 'وحدة/دقيقة',
     site: 'منشأة', outDef: 'الوحدات', verb: 'تنجز'}
 ]);
 

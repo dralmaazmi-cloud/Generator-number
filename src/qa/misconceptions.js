@@ -132,7 +132,19 @@ export const MISCONCEPTIONS = Object.freeze({
   CONTINUED_THE_SECOND_RUN_INSTEAD: 'تابعت ثواني الأزواج كأنها سلسلة مستقلة، وهي مرتبطة بأوائلها.',
   APPLIED_THE_RULE_TO_THE_WRONG_TERM: 'طبّقت القاعدة على حد غير الحد المطلوب.',
   USED_DIGIT_SUM_INSTEAD_OF_PRODUCT: 'جمعت أرقام الحد بدل أن تضربها.',
+  SUBTRACTED_BOTH_FROM_THE_WHOLE: 'طرحت الكسرين معًا من الواحد الصحيح، والكسر الثاني يُؤخذ من الباقي لا من الأصل.',
+  CHECKED_ONLY_PART_OF_THE_SET: 'اخترت خاصية تصحّ على بعض أعداد المجموعة لا على كلها.',
+  CONTINUED_THE_SET_ARITHMETICALLY: 'أضفت الفرق بين آخر عددين، والمجموعة مبنية على خاصية لا على فرق ثابت.',
+  NEAR_MISS_ON_THE_PROPERTY: 'اخترت عددًا قريبًا من العدد الصحيح لكنه لا يحقق الخاصية.',
   TERM_OBEYS_THE_RULE: 'اخترت حدًا يتفق مع القاعدة؛ المطلوب هو الحد الوحيد الذي يخالفها.',
+
+  // RC2.8-5. Naming a rule is a different job from applying one, and the slips
+  // it produces are slips of READING the run: a rule checked on the first step
+  // only, a rule that gets the multiplier right and the offset wrong, or the two
+  // halves of the rule swapped.
+  CHECKED_ONLY_THE_FIRST_STEP: 'تحققت من القاعدة على أول انتقال فقط، وهي لا تصح على بقية الحدود.',
+  READ_THE_OFFSET_FROM_THE_WRONG_STEP: 'أخذت المقدار الثابت من انتقال غير الذي يخصه.',
+  SWAPPED_THE_TWO_PARTS_OF_THE_RULE: 'بدّلت موضعي الضرب والجمع في القاعدة.',
 
   // RC2.7-3. The slips the comparison and minimum/maximum forms produce.
   STOPPED_AT_THE_EQUAL_POINT: 'توقفت عند العدد الذي تتساوى عنده الخطتان، والمطلوب أول عدد تصبح عنده إحداهما أقل فعلًا.',

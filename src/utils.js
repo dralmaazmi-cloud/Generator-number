@@ -10,6 +10,7 @@ import {NAME_POOL, entityKindsIn} from './compose/entities.js';
 import {deriveOperationProfile, computeComplexity} from './qa/complexity.js';
 import {structuralBandOf, criteriaOf} from './qa/structure.js';
 import {coreConstructionSignature, reasoningTargetPair} from './qa/core-construction.js';
+import {userPerceptualSignature, taskSignature, subIdeaSignature, infoStructureOf} from './qa/perceptual.js';
 import {stemSkeleton, scenarioSignature, constructionSignature,
   skillSignature, entityPattern, parameterizationSignature} from './qa/construction.js';
 import {buildFingerprint, buildSemanticFingerprint, buildStructuralSignature, questionFingerprint} from './qa/fingerprint.js';
@@ -297,6 +298,13 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
   };
   const userConstructionSignature = coreConstructionSignature(coreSpec);
   const reasoningTarget = reasoningTargetPair(coreSpec);
+  // RC2.8-1. The perceptual identity. Coarser than the core signature on
+  // purpose: it normalises what a reader does not perceive as a difference —
+  // commutative operand order, a product split across two steps, which SEAT of
+  // an ordering is asked about — and adds the axis the core signature has no
+  // view of at all, how the information is laid out. See src/qa/perceptual.js.
+  const perceptualSpec = {...coreSpec, templateId: base.template_id};
+  const perceptualSignature = userPerceptualSignature(perceptualSpec);
   const structuralSignature = buildStructuralSignature({
     family: base.family,
     templateId: base.template_id,
@@ -386,6 +394,15 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
       // review asks to be reported on its own.
       user_construction_signature: userConstructionSignature,
       reasoning_target_pair: reasoningTarget,
+      // RC2.8-1. The perceptual identity and the two axes it is built from,
+      // published separately so a diversity claim can be checked on the axis it
+      // is made about rather than on one aggregate.
+      user_perceptual_signature: perceptualSignature,
+      task_signature: taskSignature(perceptualSpec),
+      sub_idea_signature: subIdeaSignature(perceptualSpec),
+      information_structure: infoStructureOf(base.template_id),
+      entry_direction: base.direction ?? 'forward',
+      operation_kinds: operationKinds,
       target_signature: base.askedUnknown ?? 'default',
       stem_structure: base.stemStructure ?? 'fixed',
       information_order: base.informationOrder ?? 'given',
