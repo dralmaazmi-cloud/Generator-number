@@ -1,16 +1,14 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-13T18:51:35.691Z",
+  "evaluatedAt": "2026-09-13T18:54:21.254Z",
   "engineVersion": "1.5.0",
-  "headCommit": "5962388894e26814371ce2061a8bb5342b8f976c",
+  "headCommit": "de862210bb27eb8e40f10b36f411ea9a487d5aad",
   "branch": "claude/numerical-generator-upgrade-b3fc8s",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "FAIL",
+  "verdict": "PASS",
   "conditions": 39,
-  "failedConditions": [
-    "STRUCTURE_ADJUDICATION_COMPLETE"
-  ],
+  "failedConditions": [],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -319,7 +317,7 @@
     {
       "id": "STRUCTURE_ADJUDICATION_COMPLETE",
       "requirement": "RC2.3-1 — every template is adjudicated and every adjudication is reachable",
-      "pass": false,
+      "pass": true,
       "detail": {
         "templates": 155,
         "byBand": {
