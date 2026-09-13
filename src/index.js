@@ -504,6 +504,10 @@ export class NumericalQuestionGeneratorEngine {
     // HERE, before a single blueprint is allocated, rather than used to reject
     // candidates after they have been rendered.
     const journey = new JourneyMemory(options.diversityHistory);
+    // Where this sitting sits in the journey. Every cooldown is measured from a
+    // question's absolute position, so the first slot of a third sitting is
+    // Q101 and not Q1 — which is what lets an idea from Q1 expire exactly there.
+    const journeyStart = journey.questionsSeen;
     const blueprints = new BlueprintScheduler({
       bandSchedule: difficultySchedule,
       familyPreference: familySchedule,
@@ -617,7 +621,16 @@ export class NumericalQuestionGeneratorEngine {
         : [...alternatives, plannedBlueprint]
       ).slice(0, Math.ceil(this.config.diversityAttempts / 2));
       const SEEDS_PER_BLUEPRINT = 2;
-      for (let retry = 0; retry < this.config.diversityAttempts; retry++) {
+      // RC2.9.2. How long it is worth looking. When every construction this
+      // band can offer is still inside its cooldown, the guard below will
+      // refuse all of them and the search is already over; the slot takes its
+      // fallback after a short look instead of rendering three dozen questions
+      // that cannot be published. Nothing is relaxed by this — the same
+      // candidate is delivered either way.
+      const budget = blueprints.hasFreeConstructionAt(i)
+        ? this.config.diversityAttempts
+        : Math.min(this.config.diversityAttempts, SEEDS_PER_BLUEPRINT * 3);
+      for (let retry = 0; retry < budget; retry++) {
         const stage = stages[Math.min(stages.length - 1, Math.floor(retry / Math.ceil(this.config.diversityAttempts / stages.length)))];
         // Cycled, not clamped. Late in a single-band session most ideas are
         // already spent and this list is short; stopping on its last entry meant
@@ -638,7 +651,7 @@ export class NumericalQuestionGeneratorEngine {
           });
         } catch (err) {
           if ((err.code === 'QUESTION_GENERATION_EXHAUSTED' || err.code === 'TEMPLATE_PIN_UNAVAILABLE')
-            && retry < this.config.diversityAttempts - 1) continue;
+            && retry < budget - 1) continue;
           throw err;
         }
         // RC2.1-1. Counted here, where the session builder actually receives a
@@ -708,25 +721,55 @@ export class NumericalQuestionGeneratorEngine {
         // exact construction, in an earlier session of the same journey?
         //
         // Checked on the FINISHED item, because that is where the stem and the
-        // perceptual identity are finally known, and checked on every retry —
-        // never staged. A construction the user has met is not a surface
-        // similarity to be relaxed under pressure; it is the defect this
-        // release exists to remove.
+        // perceptual identity are finally known, and checked on every retry.
+        //
+        // RC2.9.2. The question is how RECENTLY, not whether ever. Both
+        // identities carry a cooldown measured from the position this slot is
+        // being asked at, so an idea whose window has closed passes here the
+        // same way it passes the planner.
         const journeyStem = q.metadata?.normalized_stem_identity ?? null;
         const journeyPerceptual = q.metadata?.user_perceptual_signature ?? null;
-        // The stem is checked against the WHOLE journey — a literal repeat is
-        // a defect wherever it falls — and the construction against earlier
-        // sessions only, because spreading constructions inside one session is
-        // the scheduler's staged job and was already being done.
-        const solvedBefore = journey.hasMet('stem', journeyStem) ? 'stem'
-          : journey.hasSolved('perceptual', journeyPerceptual) ? 'perceptual'
+        const atPosition = journeyStart + i + 1;
+        // The STEM is checked against everything, this sitting included: the
+        // same sentence twice is the most visible repeat there is. The
+        // CONSTRUCTION is checked against earlier sittings, because how often
+        // one may appear inside a single sitting is the scheduler's cluster
+        // cap, and two controls answering the same question differently is how
+        // a planner ends up asking for what a guard will refuse.
+        const inCooldown = journey.isProtected('stem', journeyStem, atPosition) ? 'stem'
+          : journey.carriedIn('perceptual', journeyPerceptual, atPosition) ? 'perceptual'
           : null;
-        if (solvedBefore) {
+        if (inCooldown) {
           this.telemetry.sessionDiscard({
             family: q.family, templateId: q.generator_id,
             reasonCode: REASON.NOVELTY_CORE_CONSTRUCTION_REPEAT, seed, attempt: retry + 1,
-            detail: `JOURNEY: already solved in an earlier session (${solvedBefore})`
+            detail: `JOURNEY: ${inCooldown} still inside its cooldown`
           });
+          // A STEM is never relaxed: the same sentence twice is the most
+          // visible repeat there is, and stems are plentiful. A CONSTRUCTION is
+          // kept as the last resort the slot falls back on, so a journey whose
+          // pool is momentarily thin delivers a slightly older idea instead of
+          // refusing the sitting. The acceptance run reports how often this
+          // fires, and it is expected to be zero.
+          //
+          // It is kept ONLY if this session could deliver it anyway. The core
+          // construction rule inside a sitting is absolute — `novelty.accept`
+          // throws rather than publish a repeat of it — so a fallback that
+          // ignored that would trade a refused session for a thrown one.
+          // RC2.9.2. When the slot has to fall back, it falls back on the idea
+          // the user met LONGEST ago, not on whichever refusal came first. The
+          // distance is reported in the session, so «the cooldown held except
+          // here, and here it was ninety-seven questions back» is a statement a
+          // reviewer can check rather than take on trust.
+          if (inCooldown === 'perceptual' && novelty.assess(q).level !== CORE) {
+            const lastSeen = journey.lastSeen('perceptual', journeyPerceptual);
+            const distance = lastSeen == null ? Infinity : atPosition - lastSeen;
+            if (!relaxed || (relaxed.journeyRefusal && distance > relaxed.journeyRefusal.distance)) {
+              relaxed = {q, fingerprint, used, usedTemplate, variant, discardEvent: null,
+                journeyRefusal: {dimension: 'perceptual', key: journeyPerceptual,
+                  at: atPosition, lastSeen, distance}};
+            }
+          }
           continue;
         }
         const hardBreach = blueprints.hardViolation(i, realizedBlueprint);
@@ -750,7 +793,10 @@ export class NumericalQuestionGeneratorEngine {
         }
         const coreVerdict = novelty.assess(q);
         const candidate = {q, fingerprint, used, usedTemplate, variant, discardEvent: null};
-        if (coreVerdict.level !== CORE && (!relaxed || (!within(relaxed) && within(candidate)))) {
+        if (coreVerdict.level !== CORE
+          && (!relaxed || relaxed.journeyRefusal || (!within(relaxed) && within(candidate)))) {
+          // A candidate that is merely inside its journey cooldown is the worst
+          // fallback available, so anything reaching here displaces it.
           relaxed = candidate;
         }
         // RC2.2-4. A CAP, not a ban. Before RC2.2 a reasoning signature existed
@@ -934,7 +980,12 @@ export class NumericalQuestionGeneratorEngine {
       // RC2.9-1. The journey remembers what it delivered, from the identities
       // the question itself publishes, so the memory and the measurement can
       // never disagree about what the user was shown.
-      journey.record(keysOf(chosen.q, {entityWords: [...entityWordsIn(chosen.q.question)]}));
+      journey.record(keysOf(chosen.q, {entityWords: [...entityWordsIn(chosen.q.question)]}),
+        journeyStart + i + 1);
+      // A slot that had to fall back on an idea still inside its cooldown is
+      // recorded by name, so the acceptance run can report how often the last
+      // resort was needed rather than leaving it invisible.
+      if (chosen.journeyRefusal) journey.noteProtectedReuse({index: i + 1, ...chosen.journeyRefusal});
       const deliveredSubIdea = chosen.q.metadata?.sub_idea_signature ?? null;
       if (deliveredSubIdea) {
         if (!familySubIdeas.has(chosen.q.family)) familySubIdeas.set(chosen.q.family, new Set());
@@ -1006,6 +1057,18 @@ export class NumericalQuestionGeneratorEngine {
     // scheduler controls, published beside the warnings so a claim about
     // perceived variety can be checked from the session itself.
     validation.novelty = novelty.report();
+    // RC2.9.2. Slots that had to fall back on a construction still inside its
+    // cooldown, named with how far back it was. Published rather than counted,
+    // because «the cooldown held» is a claim a reviewer must be able to check
+    // against the session itself; an empty list is the expected state.
+    validation.journey = {
+      questions_before: journeyStart,
+      questions_after: journey.questionsSeen,
+      protected_reuses: journey.protectedReuses.map(r => ({
+        index: r.index, dimension: r.dimension, at: r.at, last_seen: r.lastSeen,
+        distance: r.lastSeen == null ? null : r.at - r.lastSeen
+      }))
+    };
     return {
       engine_version: this.version,
       seed,

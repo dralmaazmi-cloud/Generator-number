@@ -62,7 +62,7 @@ test('RC2.9.1: the shipped page carries the journey from one sitting to the next
   assert.equal(r.calls[0].questionsSeenAfter, 50, 'and the engine hands one back');
   assert.equal(r.calls[1].had, true, 'the second sitting must be handed the first one\'s history');
   assert.equal(r.calls[1].questionsSeenBefore, 50);
-  assert.equal(r.calls[1].schema, 'rc29-diversity-history-v1');
+  assert.equal(r.calls[1].schema, 'rc292-diversity-history-v2');
   assert.equal(r.calls[1].questionsSeenAfter, 100);
 
   // And the product kept it, under its own schema, in its own storage.

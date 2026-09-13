@@ -127,8 +127,22 @@ export async function playProductSession(page, {seed, count = 50, difficulty = '
   await page.selectOption('#count', 'custom');
   await page.fill('#customCount', String(count));
   await page.dispatchEvent('#customCount', 'change');
+  // RC2.9.2. A session the engine refuses surfaces in the UI as an alert and
+  // the page stays on the setup view. That is a real product outcome, so it is
+  // captured rather than allowed to hang: `refusal` carries what the user was
+  // told, and the harness reports a short sitting instead of timing out.
+  let refusal = null;
+  const onDialog = async d => { refusal = d.message(); await d.dismiss(); };
+  page.on('dialog', onDialog);
   await page.click('#generate');
-  await page.waitForSelector('#viewSession:not(.hidden)', {timeout: 120000});
+  try {
+    await page.waitForSelector('#viewSession:not(.hidden)', {timeout: 120000});
+  } catch (err) {
+    page.off('dialog', onDialog);
+    if (refusal) return {questions: [], exit, refusal};
+    throw err;
+  }
+  page.off('dialog', onDialog);
 
   // Leave the sitting the way the app offers. Saving is what a user who means
   // to come back does; discarding is what a user who is done does.
@@ -139,7 +153,7 @@ export async function playProductSession(page, {seed, count = 50, difficulty = '
 
   const saved = await page.evaluate(k => localStorage.getItem(k), STORAGE_KEY);
   const questions = saved ? (JSON.parse(saved).questions ?? []) : [];
-  return {questions, exit};
+  return {questions, exit, refusal};
 }
 
 /** What the product is holding for this journey, read from its own storage. */

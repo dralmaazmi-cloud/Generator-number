@@ -36,15 +36,19 @@ import {BLUEPRINTS, blueprintsForBand, blueprintId, presentationOf} from './blue
 
 /** Relaxation stages, in the order they are given up. Reported by name. */
 /**
- * How many times one CONSTRUCTION may appear in a session.
+ * How many times one CONSTRUCTION may be PLANNED into a session.
  *
  * Two, which is what the acceptance gates leave room for rather than a number
- * chosen for its own sake: the largest perceptual cluster in a hundred may be
- * three, and each occurrence after the first is also counted as a near
- * duplicate, of which a hundred may carry five. A cap of three satisfied the
- * cluster gate and produced six near duplicates; two satisfies both. It is held
- * as a plan-level bound so the session is composed under it rather than
- * filtered against it afterwards, and it is read off what was DELIVERED.
+ * chosen for its own sake: the largest perceptual cluster in a rolling hundred
+ * may be three, and each occurrence after the first also counts as a near
+ * duplicate, of which a hundred may carry five.
+ *
+ * RC2.9.2 keeps it at two and is explicit about why it is a SEPARATE control
+ * from the cooldown. The cooldown says when a construction may come back to a
+ * user at all, across sittings; this says how often one may appear inside a
+ * single sitting. With both in force a rolling hundred can hold a construction
+ * twice — it recurs inside one sitting or not at all, because the next sitting
+ * is still inside its cooldown — which is inside the gate.
  */
 export const CONSTRUCTION_CLUSTER_CAP = 2;
 
@@ -217,21 +221,28 @@ export class BlueprintScheduler {
     const presHere = (state.presentationUse.get(pres) ?? 0)
       + (this.batchPresentations?.get(pres) ?? 0);
     // --- hard --------------------------------------------------------------
-    // RC2.9-3. An idea this user has already solved is treated exactly as one
-    // this session has already used: not eligible while the band holds an idea
-    // they have not met. Given up only at the same last stage the in-session
-    // rule is, and recorded there by name — never silently, and never as a
-    // surface relaxation.
-    if (stage < 5 && this.journey?.hasSolved('blueprint', id)) return 'SOLVED_IN_EARLIER_SESSION';
-    // RC2.9-2. And the CONSTRUCTION, not only the blueprint. A fourth
-    // proportion told about boxes and one told about machines are two
-    // blueprints and one question; planning the second as fresh meant the
-    // realisation guard threw it away, fifty-one times in one session, and the
-    // session ran out before it was full. The catalogue records what each
-    // blueprint realises, so the planner knows this before it allocates.
+    // RC2.9-3 / RC2.9.2. An idea this user met RECENTLY is treated exactly as
+    // one this session has already used: not eligible while the band holds an
+    // idea whose cooldown has elapsed. Given up only at the same last stage the
+    // in-session rule is, and recorded there by name.
+    //
+    // «Recently» is the whole of RC2.9.2. RC2.9 asked «has this user ever met
+    // it», which is a lifetime ban, and a lifetime ban runs out of universe: the
+    // third sitting of a journey filled fifteen of its fifty slots and refused
+    // itself. The question is now how far back, measured from the position this
+    // slot will actually be asked at, so a construction expires mid-session
+    // exactly when it should.
+    const at = this.journey ? this.journey.positionOf(i) : 0;
+    if (stage < 5 && this.journey?.carriedIn('blueprint', id, at)) return 'BLUEPRINT_STILL_IN_COOLDOWN';
+    // And the CONSTRUCTION, not only the blueprint. A fourth proportion told
+    // about boxes and one told about machines are two blueprints and one
+    // question; planning the second as fresh meant the realisation guard threw
+    // it away, fifty-one times in one session, and the session ran out before it
+    // was full. The catalogue records what each blueprint realises, so the
+    // planner knows this before it allocates.
     if (stage < 5 && this.journey && (b.signatures ?? []).length
-      && (b.signatures ?? []).every(sig => this.journey.hasSolved('perceptual', sig))) {
-      return 'CONSTRUCTION_SOLVED_IN_EARLIER_SESSION';
+      && (b.signatures ?? []).every(sig => this.journey.carriedIn('perceptual', sig, at))) {
+      return 'CONSTRUCTION_STILL_IN_COOLDOWN';
     }
     // Within THIS session the same construction is bounded rather than banned.
     //
@@ -294,6 +305,7 @@ export class BlueprintScheduler {
   _rank(candidates, i, state) {
     const want = this.familyPreference[i] ?? null;
     this._reach ??= this._presentationReach();
+    const at = this.journey ? this.journey.positionOf(i) : 0;
     const scored = candidates.map(b => {
       const pres = presentationOf(b);
       return {
@@ -303,14 +315,27 @@ export class BlueprintScheduler {
         taskUse: state.taskUse.get(b.task) ?? 0,
         familyUse: state.familyUse.get(b.family) ?? 0,
         recent: this.recentBlueprints?.has(blueprintId(b)) ? 1 : 0,
-        // Ranked before everything else: an idea the user has never met beats
-        // one they have, whatever else is equal.
-        solvedBefore: this.journey?.hasSolved('blueprint', blueprintId(b)) ? 1 : 0,
-        constructionSolved: this.journey && (b.signatures ?? []).length
-          && (b.signatures ?? []).some(sig => this.journey.hasSolved('perceptual', sig)) ? 1 : 0,
-        journeyPresentation: this.journey?.timesRecently('presentation', pres) ?? 0,
-        journeyTask: this.journey?.timesRecently('task', b.task) ?? 0,
-        journeyFamily: this.journey?.timesRecently('family', b.family) ?? 0,
+        // RC2.9.2. Ranked before everything else, and LEAST RECENTLY USED
+        // first: an idea the user has never met sorts ahead of one met a
+        // hundred questions ago, which sorts ahead of one met eighty ago. When
+        // several constructions come out of cooldown together, the oldest is
+        // the one offered — which is what turns a pool into a rotation rather
+        // than a lottery among whatever happens to be free.
+        //
+        // The scores are NEGATIVE distances so that a plain ascending sort puts
+        // the furthest-away first; never-seen is -Infinity and therefore first.
+        solvedBefore: -(this.journey?.distanceSince('blueprint', blueprintId(b), at) ?? Infinity),
+        constructionSolved: -Math.min(...((b.signatures ?? []).length && this.journey
+          ? (b.signatures ?? []).map(sig => this.journey.distanceSince('perceptual', sig, at))
+          : [Infinity])),
+        // How often this LAYOUT has come round lately. For sequences the layout
+        // is the rule class, so this is what keeps one rule from taking half
+        // the family's slots — ranked above the task and the family because a
+        // reader notices the rule before either.
+        journeyLayout: this.journey?.timesRecently('layout', `${b.family}|${b.info}`, at) ?? 0,
+        journeyPresentation: this.journey?.timesRecently('presentation', pres, at) ?? 0,
+        journeyTask: this.journey?.timesRecently('task', b.task, at) ?? 0,
+        journeyFamily: this.journey?.timesRecently('family', b.family, at) ?? 0,
         // How often the BATCH has already used this idea. Without it each
         // session of a sitting plans from an empty page and happily re-picks
         // what the previous session used, up to the batch cap: a 150-question
@@ -327,6 +352,7 @@ export class BlueprintScheduler {
       || x.constructionSolved - y.constructionSolved
       || x.recent - y.recent
       || x.batchUse - y.batchUse
+      || x.journeyLayout - y.journeyLayout
       || x.journeyPresentation - y.journeyPresentation
       || x.presUse - y.presUse
       || x.journeyTask - y.journeyTask
@@ -355,13 +381,19 @@ export class BlueprintScheduler {
     state.presentationUse.set(pres, (state.presentationUse.get(pres) ?? 0) + 1);
     state.taskUse.set(b.task, (state.taskUse.get(b.task) ?? 0) + 1);
     state.familyUse.set(b.family, (state.familyUse.get(b.family) ?? 0) + 1);
-    // Which CONSTRUCTION this placement put on the page. During realization the
-    // caller knows it exactly, because the question has been rendered; during
-    // the plan it is known only when the blueprint can realise just one, and a
-    // guess is worse than nothing, so nothing is counted for the rest.
-    const sig = realized ?? ((b.signatures ?? []).length === 1 ? b.signatures[0] : null);
-    state.placedSignature[i] = sig;
-    if (sig) state.signatureUse.set(sig, (state.signatureUse.get(sig) ?? 0) + 1);
+    // Which CONSTRUCTION this placement put on the page.
+    //
+    // During realization the caller knows it exactly, because the question has
+    // been rendered. During the PLAN it is not yet drawn, and RC2.9.1 counted
+    // nothing for a blueprint that could realise more than one — which let the
+    // plan place two blueprints that then came out as the same construction,
+    // and the guard threw the second away. So the plan charges EVERY
+    // construction the blueprint could produce: a conservative claim, and the
+    // right direction to be wrong in, because over-claiming costs one
+    // alternative while under-claiming costs a rendered question.
+    const sigs = realized ? [realized] : (b.signatures ?? []);
+    state.placedSignature[i] = sigs;
+    for (const sig of sigs) state.signatureUse.set(sig, (state.signatureUse.get(sig) ?? 0) + 1);
     if (!state.familyTasks.has(b.family)) state.familyTasks.set(b.family, new Map());
     const ft = state.familyTasks.get(b.family);
     ft.set(b.task, (ft.get(b.task) ?? 0) + 1);
@@ -379,7 +411,7 @@ export class BlueprintScheduler {
     dec(state.presentationUse, pres);
     dec(state.taskUse, b.task);
     dec(state.familyUse, b.family);
-    if (state.placedSignature[i]) dec(state.signatureUse, state.placedSignature[i]);
+    for (const sig of state.placedSignature[i] ?? []) dec(state.signatureUse, sig);
     state.placedSignature[i] = null;
     const ft = state.familyTasks.get(b.family);
     if (ft) { dec(ft, b.task); if (!ft.size) state.familyTasks.delete(b.family); }
@@ -496,6 +528,28 @@ export class BlueprintScheduler {
       signatureUse: new Map(), placedSignature: new Array(this.count).fill(null)
     };
     return this.live;
+  }
+
+  /**
+   * Does this band still hold a construction the user is free to meet at slot
+   * `i`, or is every one of them inside its cooldown?
+   *
+   * RC2.9.2. When the answer is no, no amount of redrawing can produce a
+   * question that passes: the realisation guard will refuse every candidate for
+   * the same reason, and the slot spends its whole retry budget rendering
+   * questions that were never going to be published. Seven such slots in one
+   * sitting were two hundred and fifty wasted renders, and two thirds of the
+   * candidates a hundred-question sitting was charged for.
+   *
+   * This weakens nothing: the slot still falls back exactly as it did, to
+   * exactly the same candidate. It just stops working for an answer that is not
+   * there.
+   */
+  hasFreeConstructionAt(i) {
+    if (!this.journey) return true;
+    const at = this.journey.positionOf(i);
+    return this._pool(this.bands[i]).some(b =>
+      (b.signatures ?? []).some(sig => !this.journey.carriedIn('perceptual', sig, at)));
   }
 
   /**
