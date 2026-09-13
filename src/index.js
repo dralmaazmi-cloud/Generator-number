@@ -6,6 +6,7 @@ import {REASON} from './qa/reasons.js';
 import {GenerationAnalytics} from './qa/analytics.js';
 import {GenerationTelemetry} from './qa/telemetry.js';
 import {structuralBandOf} from './qa/structure.js';
+import {NoveltyScheduler} from './compose/novelty.js';
 
 import {generateSequences} from './families/sequences.js';
 import {generateRatios} from './families/ratios.js';
@@ -435,6 +436,14 @@ export class NumericalQuestionGeneratorEngine {
     const batchReasoningCounts = options.batchReasoningCounts ?? null;
     const recentVariants = [];
     const diversityWarnings = [];
+    // RC2.7-5. The novelty scheduler. It binds what the older caps could not:
+    // the exact combination of reasoning, construction, target and stem; how
+    // similar two CONSECUTIVE questions may be; and how far one construction,
+    // target, scenario, entity pattern or sentence shape may spread through a
+    // session. It never bypasses itself — a candidate delivered against its
+    // judgement is delivered as a recorded breach, the same way the template
+    // and reasoning caps report theirs.
+    const novelty = new NoveltyScheduler(count);
     // RC2-004. Two generation modes, named and documented, because the RC1
     // engine silently had both and called the result reproducible.
     //
@@ -604,7 +613,35 @@ export class NumericalQuestionGeneratorEngine {
           if (relaxed && relaxed.q === q) relaxed.discardEvent = ev;
           continue;
         }
-        chosen = {q, fingerprint, variant};
+        // RC2.7-5. Last, because it is the finest of the controls: a candidate
+        // that has satisfied every cap can still read as the question before it.
+        //
+        // And staged, for the same reason the template preference is staged. The
+        // novelty controls are the newest and the strictest, and a veto that
+        // holds to the last retry does not make a session more varied — it makes
+        // the loop fall through to the relaxed fallback, which is free to breach
+        // the OLDER caps that bound reasoning and template share. Vetoing for the
+        // first two thirds of the budget keeps novelty binding in every ordinary
+        // case and leaves the last third to the caps that were there first.
+        // Whatever is finally delivered is re-assessed at commit, so a
+        // relaxation here is still recorded rather than lost.
+        const noveltyVetoes = retry < Math.floor(this.config.diversityAttempts * 2 / 3);
+        const verdict = noveltyVetoes ? novelty.assess(q) : {ok: true};
+        if (!verdict.ok) {
+          const ev = this.telemetry.sessionDiscard({
+            family: q.family, templateId: q.generator_id, reasonCode: verdict.reason,
+            seed, attempt: retry + 1, detail: `dimension: ${verdict.dimension}`
+          });
+          if (relaxed && relaxed.q === q) relaxed.discardEvent = ev;
+          // A candidate refused only on novelty is still the best fallback
+          // available if nothing better turns up, so it is remembered as one —
+          // ranked behind any candidate that satisfies the scheduler.
+          if (!relaxed || relaxed.noveltyRefusal) {
+            relaxed = {q, fingerprint, used, usedTemplate, variant, discardEvent: ev, noveltyRefusal: verdict};
+          }
+          continue;
+        }
+        chosen = {q, fingerprint, variant, noveltyRefusal: null};
         break;
       }
 
@@ -651,6 +688,22 @@ export class NumericalQuestionGeneratorEngine {
       }
 
       fingerprints.add(chosen.fingerprint);
+      // The verdict is taken HERE, on the question actually being delivered,
+      // rather than carried from wherever the candidate was chosen. The relaxed
+      // fallback can arrive from a branch that never consulted the scheduler,
+      // and a control that is only consulted on some paths is a control that
+      // can be bypassed without anybody being told.
+      const noveltyAtCommit = novelty.assess(chosen.q);
+      novelty.accept(chosen.q, {index: i + 1, forced: noveltyAtCommit.ok ? null : noveltyAtCommit});
+      if (!noveltyAtCommit.ok) {
+        diversityWarnings.push({
+          index: i + 1,
+          template_id: chosen.q.generator_id,
+          reason: REASON.NOVELTY_FALLBACK,
+          dimension: noveltyAtCommit.dimension,
+          note: `novelty control relaxed by the fallback on ${noveltyAtCommit.dimension}: no candidate satisfying it was available`
+        });
+      }
       const chosenSignature = chosen.q.metadata?.structural_reasoning_signature;
       if (chosenSignature) {
         reasoningCounts.set(chosenSignature, (reasoningCounts.get(chosenSignature) ?? 0) + 1);
@@ -684,6 +737,10 @@ export class NumericalQuestionGeneratorEngine {
       delivered: questions.length,
       discarded: sessionCandidates - questions.length
     };
+    // RC2.7-5. What the session actually looks like on every dimension the
+    // scheduler controls, published beside the warnings so a claim about
+    // perceived variety can be checked from the session itself.
+    validation.novelty = novelty.report();
     return {
       engine_version: this.version,
       seed,

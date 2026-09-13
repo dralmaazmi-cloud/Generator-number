@@ -224,7 +224,14 @@ test('RC2-003: a session reports telemetry for every question it published', () 
   const session = engine.generatePractice({count: 12, difficulty: 'mixed', seed: 'rc2-tel-session'});
   const s = engine.getTelemetry();
   assert.equal(session.questions.length, 12);
-  assert.equal(s.published, 12);
+  // RC2.7-5: a session now REFUSES candidates on novelty as well as on the
+  // template and reasoning caps, so the engine publishes more candidates than
+  // the session delivers. What must hold is that every published candidate is
+  // accounted for — which is the reconciliation below — not that the two
+  // numbers coincide, which they only did while nothing was being refused.
+  assert.ok(s.published >= 12, `${s.published} published for 12 delivered`);
+  assert.equal(s.sessionReconciliation.delivered, 12);
+  assert.equal(s.sessionReconciliation.balanced, true, JSON.stringify(s.sessionReconciliation));
   assert.equal(s.reconciliation.balanced, true, JSON.stringify(s.reconciliation));
   // Per-template accounting must agree with the totals. A proposal is recorded
   // before the sampler has chosen a template, so `proposals` is only populated

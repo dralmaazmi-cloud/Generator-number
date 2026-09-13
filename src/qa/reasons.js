@@ -54,6 +54,16 @@ export const REASON = Object.freeze({
   // RC2.2-4. The reasoning path has already been used its allowance of times
   // across this multi-session batch.
   REPEATED_REASONING_PATTERN_IN_BATCH: 'REPEATED_REASONING_PATTERN_IN_BATCH',
+
+  // RC2.7-5. The novelty scheduler. Each names the DIMENSION a candidate
+  // repeated on, because "too similar" without a dimension is not a finding a
+  // reader can check.
+  NOVELTY_REPEATED_COMBINATION: 'NOVELTY_REPEATED_COMBINATION',
+  NOVELTY_CONSECUTIVE_SIMILARITY: 'NOVELTY_CONSECUTIVE_SIMILARITY',
+  NOVELTY_DIMENSION_DOMINANCE: 'NOVELTY_DIMENSION_DOMINANCE',
+  NOVELTY_MULTI_DIMENSION_SIMILARITY: 'NOVELTY_MULTI_DIMENSION_SIMILARITY',
+  NOVELTY_FALLBACK: 'NOVELTY_FALLBACK',
+  NOVELTY_EXHAUSTED: 'NOVELTY_EXHAUSTED',
   INVALID_ARABIC_NUMBER_UNIT: 'INVALID_ARABIC_NUMBER_UNIT',
   // RC2.5-4. «مرتبة» asserting a numeric sort where the stem means position in
   // a list, and a rate answer whose options are rendered as a bare quantity.

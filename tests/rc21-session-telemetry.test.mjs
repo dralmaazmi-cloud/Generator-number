@@ -48,7 +48,12 @@ test('RC2.1-1: no session discard is anonymous', () => {
   const named = [
     REASON.DUPLICATE_FINGERPRINT, REASON.REPEATED_REASONING_PATTERN,
     REASON.SESSION_RECENT_MEMORY, REASON.SESSION_TEMPLATE_CAP,
-    REASON.SESSION_WINDOW_CAP, REASON.SESSION_BATCH_DUPLICATE
+    REASON.SESSION_WINDOW_CAP, REASON.SESSION_BATCH_DUPLICATE,
+    // RC2.7-5. The novelty scheduler's refusals are session discards too, and
+    // each names the dimension it refused on.
+    REASON.NOVELTY_REPEATED_COMBINATION, REASON.NOVELTY_CONSECUTIVE_SIMILARITY,
+    REASON.NOVELTY_DIMENSION_DOMINANCE, REASON.NOVELTY_MULTI_DIMENSION_SIMILARITY,
+    REASON.REPEATED_REASONING_PATTERN_IN_BATCH
   ];
   const attributed = named.reduce((a, r) => a + (t.byReason[r] ?? 0), 0);
   assert.equal(attributed, t.sessionDiscards,
