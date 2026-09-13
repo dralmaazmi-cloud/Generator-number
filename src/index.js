@@ -39,10 +39,15 @@ import {generateProfitLoss} from './families/profit_loss.js';
 // returns the history to carry forward, which is a new term in the contract
 // between the product and the engine. Nothing already published changes shape.
 //
-// RC2.9.1 moves the patch. The contract is unchanged — what changed is that the
-// APPLICATION now honours it, and that four Arabic renderer defects are fixed,
-// so the same seed renders different text and callers should be able to tell.
-export const ENGINE_VERSION = '1.5.1';
+// RC2.9.1 moved the patch. The contract was unchanged — what changed is that
+// the APPLICATION now honours it, and that four Arabic renderer defects are
+// fixed, so the same seed renders different text and callers can tell.
+//
+// RC2.9.2 moves it again. The `diversity_history` VALUE has a new shape — it
+// records when each identity was last seen rather than that it was seen — and a
+// stored RC2.9.1 history is migrated into it. Callers that only hand the value
+// back are unaffected, which is every caller there is.
+export const ENGINE_VERSION = '1.5.2';
 
 const GENERATORS = {
   sequences: generateSequences,

@@ -1,5 +1,5 @@
 {
-  "engine_version": "1.5.1",
+  "engine_version": "1.5.2",
   "template_count": 155,
   "generated_by": "tools/audit/rc291-manifest.mjs — derived from the engine, never edited by hand",
   "families": {
