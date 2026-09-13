@@ -1,16 +1,14 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-13T15:46:44.541Z",
+  "evaluatedAt": "2026-09-13T15:48:51.985Z",
   "engineVersion": "1.4.0",
-  "headCommit": "372222438524eca7728925ff885950fe8f4e9a9a",
+  "headCommit": "58f8dc400bf0de0c6eedccdb6c91e6c944adcd1a",
   "branch": "claude/numerical-generator-upgrade-b3fc8s",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "FAIL",
+  "verdict": "PASS",
   "conditions": 39,
-  "failedConditions": [
-    "TREE_CLEAN"
-  ],
+  "failedConditions": [],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -567,10 +565,8 @@
     {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": false,
-      "detail": [
-        "R  rc2/FREEZE.json -> rc2/FREEZE.RC2_8A.json"
-      ]
+      "pass": true,
+      "detail": "clean"
     }
   ]
 }
