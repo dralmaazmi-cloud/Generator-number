@@ -7,7 +7,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {readFileSync, existsSync} from 'node:fs';
 import {gunzipSync} from 'node:zlib';
 
 import Engine from '../src/index.js';
@@ -183,7 +183,14 @@ const HOLDOUT_B_DUPLICATE_PAIRS = [
     semantic: '{askedUnknown:outlier,commutative:{numberSet:[2,10,14,22,26,34]},family:odd_one_out,named:{numbers:[2,10,14,22,26,34],primes:[5,7,11,13,17]},reasoningGraph:null,stageCount:1,templateId:ODD_M_PRIME2}'}
 ];
 
-test('RC2.1-5: the holdout B pairs were duplicates on the semantic fingerprint', () => {
+// RC2.9-7. Holdout B is sealed evidence and no delivery package carries it, so
+// the check states its input and skips when it is absent rather than failing in
+// a reviewer's hands over a file the package is right not to contain.
+const holdoutBPresent = existsSync('rc2/holdout.jsonl.gz');
+
+test('RC2.1-5: the holdout B pairs were duplicates on the semantic fingerprint', {
+  skip: holdoutBPresent ? false : 'holdout B is sealed evidence and is not shipped'
+}, () => {
   // Read out of the preserved holdout rather than asserted, so this checks the
   // evidence rather than restating the fixture. The point is that the
   // fingerprint the batch set compares on is the one that actually identifies

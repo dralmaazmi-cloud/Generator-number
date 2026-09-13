@@ -131,7 +131,22 @@ whenFrozen('§24 meta: the check can detect a change', () => {
   }
 });
 
-whenFrozen('§24: production is identical at the gated commit and the frozen commit', () => {
+// RC2.9-7. A delivery package carries the engine and its evidence but not the
+// repository, so this one check has an input the ZIP cannot contain. It says so
+// and skips, rather than failing in a reviewer's hands for a reason that is
+// nothing to do with the engine: the same fact is already settled inside the
+// repository, and `verifyFreeze` — which the ZIP CAN run — is what proves the
+// shipped production files are the frozen ones.
+const inARepository = (() => {
+  try { execFileSync('git', ['rev-parse', '--git-dir'], {stdio: 'ignore'}); return true; }
+  catch { return false; }
+})();
+
+test('§24: production is identical at the gated commit and the frozen commit', {
+  skip: !frozen ? 'no freeze taken yet (§24 follows §23)'
+    : !inARepository ? 'not a git checkout — this runs in the repository, not from the delivery package'
+    : false
+}, () => {
   // The freeze claims a gate verdict. That claim is only worth anything if the
   // engine the gate saw is the engine that was frozen. git can settle it, so
   // it is settled rather than asserted: no production file may differ between
