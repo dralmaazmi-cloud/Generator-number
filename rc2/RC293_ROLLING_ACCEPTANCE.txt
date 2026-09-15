@@ -1,0 +1,132 @@
+=== THREE REAL 50 → 50 → 50 JOURNEYS, THROUGH THE PRODUCT ===
+
+--- R1 — 3 ordinary sittings ---
+          GD   HSR   PV   ND   PV+ND
+Q1–50      16    32    0    2       2
+Q51–100    16    33    0    1       1
+Q101–150   16    30    1    3       4
+
+  rolling windows
+          GD   HSR   PV   ND   PV+ND  cluster  streak  dup
+Q1–100     16    80    0    4       4        2       2    0
+Q51–150    16    79    1    4       5        2       1    0
+
+  history at each engine call
+    sitting 1: history present NO  · questionsSeen before   0 → after  50
+    sitting 2: history present YES · questionsSeen before  50 → after 100
+    sitting 3: history present YES · questionsSeen before 100 → after 150
+
+  a construction seen twice inside one sitting: 6 (the cluster cap allows two; the window figures above say how it reads)
+  reintroduced ACROSS sittings after its cooldown expired: 28 · closest 100 apart
+    Q1 → Q116 (115 apart)  PCT_H_REVERSE_CHAIN
+    Q5 → Q117 (112 apart)  AVG_M_COMBINE
+    Q12 → Q118 (106 apart)  CAL_H_LONG
+    Q7 → Q119 (112 apart)  SPD_M_AVG
+  reintroduced across sittings while STILL protected: 1
+    Q6 → Q99 (93 apart)  FRAC_E_2
+  sequences: 15 rendered · 9 rule families · 6 tasks
+    alternating-operations, constant-difference, constant-ratio, growing-difference, linear-recurrence, operation-cycle, second-difference, two-interleaved-runs, within-pair-function
+  arabic: 0 invalid · 0 unclassified
+
+--- R2 — 3 ordinary sittings ---
+          GD   HSR   PV   ND   PV+ND
+Q1–50      16    32    0    2       2
+Q51–100    16    33    0    1       1
+Q101–150   16    30    0    4       4
+
+  rolling windows
+          GD   HSR   PV   ND   PV+ND  cluster  streak  dup
+Q1–100     16    81    0    3       3        2       1    0
+Q51–150    16    79    0    5       5        2       1    0
+
+  history at each engine call
+    sitting 1: history present NO  · questionsSeen before   0 → after  50
+    sitting 2: history present YES · questionsSeen before  50 → after 100
+    sitting 3: history present YES · questionsSeen before 100 → after 150
+
+  a construction seen twice inside one sitting: 7 (the cluster cap allows two; the window figures above say how it reads)
+  reintroduced ACROSS sittings after its cooldown expired: 27 · closest 100 apart
+    Q2 → Q113 (111 apart)  RATE_H_TWO_PHASE
+    Q6 → Q114 (108 apart)  FRAC_E_2
+    Q13 → Q115 (102 apart)  CAL_H_LONG
+    Q3 → Q116 (113 apart)  COMB_M_TOGETHER_SOLO
+  reintroduced across sittings while STILL protected: 0
+  sequences: 13 rendered · 8 rule families · 6 tasks
+    alternating-operations, constant-difference, constant-ratio, growing-difference, linear-recurrence, operation-cycle, second-difference, within-pair-function
+  arabic: 0 invalid · 0 unclassified
+
+--- R3 — 3 ordinary sittings ---
+          GD   HSR   PV   ND   PV+ND
+Q1–50      16    33    0    1       1
+Q51–100    16    33    0    1       1
+Q101–150   16    31    0    3       3
+
+  rolling windows
+          GD   HSR   PV   ND   PV+ND  cluster  streak  dup
+Q1–100     16    80    2    2       4        2       2    0
+Q51–150    16    80    0    4       4        2       1    0
+
+  history at each engine call
+    sitting 1: history present NO  · questionsSeen before   0 → after  50
+    sitting 2: history present YES · questionsSeen before  50 → after 100
+    sitting 3: history present YES · questionsSeen before 100 → after 150
+
+  a construction seen twice inside one sitting: 5 (the cluster cap allows two; the window figures above say how it reads)
+  reintroduced ACROSS sittings after its cooldown expired: 28 · closest 107 apart
+    Q7 → Q115 (108 apart)  FRAC_E_2
+    Q1 → Q116 (115 apart)  RAT_M_ADD_SIDE
+    Q2 → Q117 (115 apart)  PCT_E_REVERSE_ONE
+    Q5 → Q118 (113 apart)  PL_H_TWO_OUTCOMES
+  reintroduced across sittings while STILL protected: 0
+  sequences: 15 rendered · 9 rule families · 6 tasks
+    alternating-operations, constant-difference, constant-ratio, growing-difference, linear-recurrence, operation-cycle, second-difference, two-interleaved-runs, within-pair-function
+  arabic: 0 invalid · 0 unclassified
+
+
+=== THE LONG RUN: 50 → 50 → 50 → 50 ===
+
+--- S1 — 4 ordinary sittings ---
+          GD   HSR   PV   ND   PV+ND
+Q1–50      16    32    0    2       2
+Q51–100    16    32    0    2       2
+Q101–150   16    32    0    2       2
+Q151–200   16    31    0    3       3
+
+  rolling windows
+          GD   HSR   PV   ND   PV+ND  cluster  streak  dup
+Q1–100     16    77    3    4       7        2       1    0
+Q51–150    16    80    0    4       4        2       2    0
+Q101–200   16    79    0    5       5        2       2    0
+
+  history at each engine call
+    sitting 1: history present NO  · questionsSeen before   0 → after  50
+    sitting 2: history present YES · questionsSeen before  50 → after 100
+    sitting 3: history present YES · questionsSeen before 100 → after 150
+    sitting 4: history present YES · questionsSeen before 150 → after 200
+
+  a construction seen twice inside one sitting: 9 (the cluster cap allows two; the window figures above say how it reads)
+  reintroduced ACROSS sittings after its cooldown expired: 64 · closest 101 apart
+    Q2 → Q118 (116 apart)  CAL_H_LONG
+    Q18 → Q120 (102 apart)  RAT_E_SPLIT
+    Q1 → Q124 (123 apart)  AVG_M_COMBINE
+    Q9 → Q125 (116 apart)  PROP_H_COMPOUND
+  reintroduced across sittings while STILL protected: 2
+    Q4 → Q94 (90 apart)  SPD_M_TWO_TIME
+    Q10 → Q100 (90 apart)  FRAC_M_REMAIN
+  sequences: 20 rendered · 9 rule families · 6 tasks
+    alternating-operations, constant-difference, constant-ratio, growing-difference, linear-recurrence, operation-cycle, second-difference, two-interleaved-runs, within-pair-function
+  arabic: 0 invalid · 0 unclassified
+
+=== THE WHOLE PRODUCT CORPUS ===
+
+questions: 650
+sequences rendered: 63 · rule families 9 · task archetypes 6
+  alternating-operations, constant-difference, constant-ratio, growing-difference, linear-recurrence, operation-cycle, second-difference, two-interleaved-runs, within-pair-function
+arabic: 0 invalid · 0 unclassified
+duplicate option sets: 0 · keys not among the options: 0
+
+=== CONDITIONS ===
+
+
+112 of 112 conditions pass.
+ROLLING ACCEPTANCE: PASS

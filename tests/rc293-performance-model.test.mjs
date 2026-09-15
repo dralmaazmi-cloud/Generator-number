@@ -169,7 +169,7 @@ test('Profile F: the same denominator misconception, again and again', () => {
   assert.equal(r.errorPatterns[0].confidence, 'medium');
   assert.equal(r.errorPatterns[0].errorType, ERROR_TYPE.METHOD);
   const patterns = r.text.find(s => s.id === 'patterns').lines.join(' ');
-  assert.ok(patterns.includes(MISCONCEPTIONS[ID]));
+  assert.ok(patterns.includes(MISCONCEPTIONS[ID].replace(/\.$/, '')), 'the pattern names the misconception in the learner\'s own feedback words');
   // No double counting: the pattern and any family weakness it causes are one recommendation.
   assert.equal(new Set(r.recommendations.map(x => x.family)).size, r.recommendations.length);
 });

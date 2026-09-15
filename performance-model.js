@@ -125,6 +125,10 @@ export const ERROR_TYPE_AR = Object.freeze({
 });
 
 const round = (v, d = 0) => { const p = 10 ** d; return Math.round(v * p) / p; };
+/** «سؤال واحد»، «سؤالين»، «5 أسئلة»، «12 سؤالًا». */
+export const questionsWord = n => (n === 1 ? 'سؤال واحد' : n === 2 ? 'سؤالين' : n >= 3 && n <= 10 ? `${n} أسئلة` : `${n} سؤالًا`);
+/** A feedback sentence without its closing period, for use mid-sentence. */
+const clause = s => String(s ?? '').replace(/[.。]\s*$/, '');
 const pctOf = (c, n) => (n ? Math.round((c / n) * 100) : 0);
 
 export function confidenceFor(n) {
@@ -294,12 +298,12 @@ function recommend({families, tasks, patterns, misconceptionText}) {
     if (!rec.reasons.includes(reason)) rec.reasons.push(reason);
   };
   for (const f of families) {
-    if (f.status === STATUS.WEAKNESS) add(f.id, f.label, `دقة ${f.percentage}% في ${f.n} أسئلة`, 8);
+    if (f.status === STATUS.WEAKNESS) add(f.id, f.label, `دقة ${f.percentage}% في ${questionsWord(f.n)}`, 8);
   }
   for (const p of patterns) {
     const family = p.families[0];
     const label = families.find(f => f.id === family)?.label ?? family;
-    add(family, label, `خطأ متكرر (${p.count} مرات): ${misconceptionText(p.id)}`, 6);
+    add(family, label, `خطأ متكرر (${p.count} مرات): ${clause(misconceptionText(p.id))}`, 6);
   }
   for (const t of tasks) {
     if (t.status !== STATUS.WEAKNESS) continue;
@@ -307,7 +311,7 @@ function recommend({families, tasks, patterns, misconceptionText}) {
     const family = t.topFamily;
     if (!family || byFamily.has(family)) continue;
     const label = families.find(f => f.id === family)?.label ?? family;
-    add(family, label, `ضعف في نوع المهمة «${t.label}» (${t.percentage}% في ${t.n} أسئلة)`, 6);
+    add(family, label, `ضعف في نوع المهمة «${t.label}» (${t.percentage}% في ${questionsWord(t.n)})`, 6);
   }
   return [...byFamily.values()].slice(0, 4);
 }
@@ -387,7 +391,7 @@ export function performanceText(report, misconceptionText = id => id) {
   else {
     overall.push(`أجبت عن ${o.answered} من ${o.asked}، منها ${o.correct} صحيحة (${o.percentage}% من الأسئلة${o.unanswered ? `، و${o.unanswered} بلا إجابة` : ''}).`);
     if (o.avgTimeSeconds !== null) overall.push(`متوسط زمن السؤال ${o.avgTimeSeconds} ثانية.`);
-    if (o.status === STATUS.INSUFFICIENT) overall.push(`عدد الإجابات أقل من ${EVIDENCE.minForClaim}، فلا يُبنى عليها حكم عام (${conf('none')}).`);
+    if (o.status === STATUS.INSUFFICIENT) overall.push(`عدد الإجابات أقل من ${questionsWord(EVIDENCE.minForClaim)}، فلا يُبنى عليها حكم عام (${conf('none')}).`);
     else overall.push(`${o.status === STATUS.STRENGTH ? 'أداء عام قوي' : o.status === STATUS.WEAKNESS ? 'أداء عام يحتاج إلى تدريب' : 'أداء عام متوسط'} (${conf(o.confidence)}).`);
     if (report.trend.status === 'MEASURED' && report.trend.direction !== 'STABLE') {
       overall.push(`${report.trend.direction === 'IMPROVING' ? 'تحسّن واضح خلال الجلسة' : 'تراجع خلال الجلسة'}: ${report.trend.firstHalf.percentage}% في النصف الأول مقابل ${report.trend.secondHalf.percentage}% في النصف الثاني (${conf(report.trend.confidence)}).`);
@@ -412,13 +416,15 @@ export function performanceText(report, misconceptionText = id => id) {
     ? 'لا توجد أدلة كافية بعد لتحديد ما يحتاج إلى تحسين.'
     : 'لا توجد نقطة ضعف مؤكدة بالأدلة المتاحة.');
   if (report.insufficient.length && o.answered >= EVIDENCE.minForClaim) {
-    improve.push(`أدلة غير كافية (أقل من ${EVIDENCE.minForClaim} أسئلة): ${report.insufficient.map(f => f.label).join('، ')}.`);
+    improve.push(`أدلة غير كافية (أقل من ${questionsWord(EVIDENCE.minForClaim)}): ${report.insufficient.map(f => f.label).join('، ')}.`);
   }
   sections.push({id: 'improve', heading: 'ما يحتاج إلى تحسين', lines: improve});
 
   const patterns = report.errorPatterns.map(p =>
-    `تكرر ${p.count} مرات (${Math.round(p.share * 100)}% من الأخطاء): ${misconceptionText(p.id)} — ${ERROR_TYPE_AR[p.errorType]} (${conf(p.confidence)}).`);
-  if (report.errorTypes.dominant) {
+    `تكرر ${p.count} مرات (${Math.round(p.share * 100)}% من الأخطاء): ${clause(misconceptionText(p.id))} — ${ERROR_TYPE_AR[p.errorType]} (${conf(p.confidence)}).`);
+  // The dominant TYPE is worth a line only when no named pattern already says
+  // what the errors are; beside a pattern it would count the same errors twice.
+  if (report.errorTypes.dominant && !report.errorPatterns.length) {
     patterns.push(`أغلب أخطائك (${report.errorTypes.dominant.count} من ${report.errorTypes.wrong}) من نوع: ${ERROR_TYPE_AR[report.errorTypes.dominant.type]}.`);
   }
   if (!patterns.length) patterns.push(report.errorTypes.wrong < EVIDENCE.pattern.minCount
@@ -426,7 +432,7 @@ export function performanceText(report, misconceptionText = id => id) {
     : 'لا يوجد نمط خطأ متكرر؛ الأخطاء متفرقة.');
   sections.push({id: 'patterns', heading: 'أنماط الأخطاء', lines: patterns});
 
-  const practice = report.recommendations.map(r => `${r.label}: ${r.questions} أسئلة — ${r.reasons.join('؛ ')}.`);
+  const practice = report.recommendations.map(r => `${r.label}: ${questionsWord(r.questions)} — ${r.reasons.join('؛ ')}.`);
   if (!practice.length) practice.push(o.answered < EVIDENCE.minForClaim
     ? 'أكمل جلسة أطول لتظهر توصيات مبنية على أدلة.'
     : 'لا توصية محددة؛ تابع التدريب المختلط للحفاظ على المستوى.');
