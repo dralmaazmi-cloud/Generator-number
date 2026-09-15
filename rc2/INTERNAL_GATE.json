@@ -1,9 +1,9 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-13T22:38:52.791Z",
-  "engineVersion": "1.5.2",
-  "headCommit": "41c52421fcc7c5e7c2bae5a56ea7697e7f9595da",
+  "evaluatedAt": "2026-09-15T16:31:04.381Z",
+  "engineVersion": "1.5.3",
+  "headCommit": "edb1405529e46342b268972936155a241f9ca2a7",
   "branch": "claude/numerical-generator-upgrade-b3fc8s",
   "holdoutSeed": "AUDIT-2026-09-12-B",
   "verdict": "PASS",
@@ -39,7 +39,7 @@
       "requirement": "The whole test suite passes",
       "pass": true,
       "detail": {
-        "passed": 509,
+        "passed": 524,
         "failed": 0
       }
     },
@@ -88,6 +88,7 @@
           "rc2/FREEZE.RC2_8_PREVIOUS.json",
           "rc2/FREEZE.RC2_9.json",
           "rc2/FREEZE.RC2_9_1.json",
+          "rc2/FREEZE.RC2_9_2.json",
           "rc2/FREEZE_RC2.json",
           "rc2/FREEZE_RC2_1.json",
           "rc2/FREEZE_RC2_2.json",
@@ -110,6 +111,7 @@
           "rc2/RC28_DEVELOPMENT_CORPUS.json",
           "rc2/RC291_DEVELOPMENT_CORPUS.json",
           "rc2/RC292_DEVELOPMENT_CORPUS.json",
+          "rc2/RC293_DEVELOPMENT_CORPUS.json",
           "rc2/RC29_DEVELOPMENT_CORPUS.json",
           "rc2/RC2_IMPLEMENTATION_REPORT.md",
           "rc2/SUPERSEDED_FREEZES.json",
@@ -313,8 +315,8 @@
       "pass": true,
       "detail": {
         "wrong": 4500,
-        "linked": 2218,
-        "share": 0.493,
+        "linked": 2189,
+        "share": 0.486,
         "outOfRange": 0
       }
     },
