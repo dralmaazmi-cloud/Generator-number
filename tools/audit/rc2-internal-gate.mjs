@@ -360,7 +360,12 @@ function conditions() {
     // structures rather than from the collapse being undone: a hidden operation
     // and a membership test in sequences, a past ratio and an invariant
     // difference in ages.
-    return {pass: c.total === 155 && orphans.length === 0,
+    // RC2.9.4: 184. Twenty-nine EASY and MEDIUM constructions for the cells the
+    // independent sign-off found thin (one or two templates in twenty draws):
+    // eighteen at EASY across ages, machines, ratios, relational, averages,
+    // speed and sequences; eleven at MEDIUM across fractions, calendar, ratios,
+    // direct_proportion and unit_rate.
+    return {pass: c.total === 184 && orphans.length === 0,
       detail: {templates: c.total, byBand: c.byBand, orphans}};
   });
 

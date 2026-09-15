@@ -180,7 +180,33 @@ export function claimedOperations(sentence) {
 }
 
 /** The sentence for an id at a site: template variant, family variant, neutral, catalogue. */
-export function sentenceFor(misconceptionId, {family, templateId} = {}) {
+/**
+ * RC2.9.4-B11 (feedback only). One id is used for two different slips, and the
+ * DERIVATION says which: «total + new» added the original amount to the asked
+ * one, «المجموع المعطى 56» handed the original back, «sell ÷ buy × 100» took
+ * the whole ratio of two prices as the change between them. The sign-off
+ * quoted MACH_E_HOURS C — «450 + 375» explained as «used the original number
+ * instead of the number after the change» — as a rationale that does not
+ * describe its derivation. The sentence is chosen by the shape of the
+ * derivation, and only then by template and family.
+ */
+export const DERIVATION_VARIANTS = Object.freeze({
+  USED_ORIGINAL_TOTAL: [
+    {when: /^\s*[\d.,]+\s*[÷/]\s*[\d.,]+\s*×\s*100\s*$|^\s*[\d.,]+\s*×\s*100\s*[÷/]\s*[\d.,]+\s*$/u,
+      text: 'أخذت نسبة السعرين كاملة بدل الفرق بينهما، فحسبت المئة الأصلية ضمن النسبة.'},
+    {when: /\(100\s*\+\s*\d+\)/u,
+      text: 'طبّقت النسبة على القيمة كزيادة عليها، بينما المطلوب هو مقدار النسبة وحده.'},
+    {when: /\+/u,
+      text: 'أضفت الكمية الأصلية إلى الناتج المطلوب، والمطلوب هو ناتج الوضع الجديد وحده.'}
+  ]
+});
+
+export function sentenceFor(misconceptionId, {family, templateId, derivation} = {}) {
+  const byDerivation = DERIVATION_VARIANTS[misconceptionId];
+  if (byDerivation && derivation != null) {
+    const hit = byDerivation.find(x => x.when.test(String(derivation)));
+    if (hit) return hit.text;
+  }
   const v = VARIANTS[misconceptionId];
   if (v) {
     if (templateId && v[templateId]) return v[templateId];
@@ -255,7 +281,7 @@ export function renderRationale({optionText, value, misconceptionId, derivation,
   if (!isKnownMisconception(misconceptionId)) return null;
   const shown = shownDerivation(derivation, value);
   const head = shown ? `اخترت ${optionText}، وهي ناتج ${shown}.` : `اخترت ${optionText}.`;
-  const sentence = sentenceFor(misconceptionId, {family, templateId});
+  const sentence = sentenceFor(misconceptionId, {family, templateId, derivation});
   const candidate = `${head} ${sentence}`;
   const problems = rationaleProblems({text: candidate, derivation, family, value, optionText})
     .filter(p => p !== 'VACUOUS_DERIVATION');

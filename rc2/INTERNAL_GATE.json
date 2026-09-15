@@ -1,14 +1,17 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-15T16:31:04.381Z",
-  "engineVersion": "1.5.3",
-  "headCommit": "edb1405529e46342b268972936155a241f9ca2a7",
+  "evaluatedAt": "2026-09-15T22:23:29.699Z",
+  "engineVersion": "1.5.4",
+  "headCommit": "907a09fbce4b5787bbbd7be7ac0f30a01d503f33",
   "branch": "claude/numerical-generator-upgrade-b3fc8s",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "PASS",
+  "verdict": "FAIL",
   "conditions": 39,
-  "failedConditions": [],
+  "failedConditions": [
+    "STRUCTURE_ADJUDICATION_COMPLETE",
+    "TREE_CLEAN"
+  ],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -39,7 +42,7 @@
       "requirement": "The whole test suite passes",
       "pass": true,
       "detail": {
-        "passed": 524,
+        "passed": 593,
         "failed": 0
       }
     },
@@ -89,6 +92,7 @@
           "rc2/FREEZE.RC2_9.json",
           "rc2/FREEZE.RC2_9_1.json",
           "rc2/FREEZE.RC2_9_2.json",
+          "rc2/FREEZE.RC2_9_3.json",
           "rc2/FREEZE_RC2.json",
           "rc2/FREEZE_RC2_1.json",
           "rc2/FREEZE_RC2_2.json",
@@ -112,6 +116,7 @@
           "rc2/RC291_DEVELOPMENT_CORPUS.json",
           "rc2/RC292_DEVELOPMENT_CORPUS.json",
           "rc2/RC293_DEVELOPMENT_CORPUS.json",
+          "rc2/RC294_DEVELOPMENT_CORPUS.json",
           "rc2/RC29_DEVELOPMENT_CORPUS.json",
           "rc2/RC2_IMPLEMENTATION_REPORT.md",
           "rc2/SUPERSEDED_FREEZES.json",
@@ -224,16 +229,15 @@
       "requirement": "RC2.1-1 — every published candidate a session sees is delivered or dispositioned",
       "pass": true,
       "detail": {
-        "publishedToSessions": 244,
+        "publishedToSessions": 235,
         "delivered": 230,
-        "sessionDiscards": 14,
-        "accountedFor": 244,
+        "sessionDiscards": 5,
+        "accountedFor": 235,
         "balanced": true,
         "difference": 0,
         "byReason": {
-          "NOVELTY_DIMENSION_DOMINANCE": 6,
-          "NOVELTY_CONSECUTIVE_SIMILARITY": 6,
-          "NOVELTY_MULTI_DIMENSION_SIMILARITY": 2
+          "NOVELTY_MULTI_DIMENSION_SIMILARITY": 4,
+          "NOVELTY_REASONING_TARGET_REPEAT": 1
         },
         "anonymous": 0,
         "note": "published candidates offered to sessions = delivered + every recorded session-level discard"
@@ -302,7 +306,7 @@
       "detail": {
         "exactRepeats": 0,
         "semanticRepeats": 0,
-        "reasoningPaths": 155,
+        "reasoningPaths": 170,
         "maxRepetition": 3,
         "cap": 5,
         "breachesRecorded": 0,
@@ -315,20 +319,20 @@
       "pass": true,
       "detail": {
         "wrong": 4500,
-        "linked": 2189,
-        "share": 0.486,
+        "linked": 2299,
+        "share": 0.511,
         "outOfRange": 0
       }
     },
     {
       "id": "STRUCTURE_ADJUDICATION_COMPLETE",
       "requirement": "RC2.3-1 — every template is adjudicated and every adjudication is reachable",
-      "pass": true,
+      "pass": false,
       "detail": {
-        "templates": 155,
+        "templates": 184,
         "byBand": {
-          "easy": 48,
-          "medium": 77,
+          "easy": 66,
+          "medium": 88,
           "hard": 30
         },
         "orphans": []
@@ -358,7 +362,7 @@
         "filler": 0,
         "failedSessions": 0,
         "families": 14,
-        "templates": 29
+        "templates": 30
       }
     },
     {
@@ -423,9 +427,9 @@
       "requirement": "RC2.3-4 — a count of indivisible things is not offered as a fraction",
       "pass": true,
       "detail": {
-        "published": 1885,
-        "fractional": 18,
-        "share": 0.0095
+        "published": 1800,
+        "fractional": 15,
+        "share": 0.0083
       }
     },
     {
@@ -434,7 +438,7 @@
       "pass": true,
       "detail": {
         "sampled": 6300,
-        "stemsWithARiseOf100OrMore": 83,
+        "stemsWithARiseOf100OrMore": 82,
         "ambiguous": 0
       }
     },
@@ -542,14 +546,14 @@
         "acrossAllSessions": {
           "templates": {
             "distinct": 30,
-            "max": 7
+            "max": 6
           },
           "families": {
             "distinct": 14,
-            "max": 16
+            "max": 18
           },
           "reasoning": {
-            "distinct": 46,
+            "distinct": 47,
             "max": 4
           }
         }
@@ -577,8 +581,10 @@
     {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": true,
-      "detail": "clean"
+      "pass": false,
+      "detail": [
+        "M src/qa/rationale.js"
+      ]
     }
   ]
 }
