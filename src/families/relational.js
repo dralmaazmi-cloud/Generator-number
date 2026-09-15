@@ -11,7 +11,7 @@
 // undecidable when they disagree, so nothing here re-derives the generator's
 // reasoning.
 
-import {mk, usable, buildBase, resample, bandPool} from './_shared.js';
+import {mk, usable, buildBase, resample, bandPool, u, unitFormat, composeSentences, distinctValues, eq, X, add, sub} from './_shared.js';
 import {buildOrderOracle} from '../qa/relational-oracle.js';
 import {graphComplexity, partialOrderBand} from '../qa/partial-order.js';
 import {canonicalGraph} from '../qa/fingerprint.js';
@@ -49,7 +49,10 @@ export function generateRelational({difficulty, rng, seed, engineVersion, teleme
     ['REL_M_COUNT', countAboveOnOneChain],
     ['REL_H_COUNT_BRANCHED', countAboveAcrossBranches],
     ['REL_H_POSITION', partialOrderPosition],
-    ['REL_H_GUARANTEE', branchGuaranteed]
+    ['REL_H_GUARANTEE', branchGuaranteed],
+    // RC2.9.4-B2. Two EASY jobs beyond reading a position.
+    ['REL_E_STATEMENT_TRUE', chainStatementTrue],
+    ['REL_E_GAP_CHAIN', quantifiedChain]
   ], pinTemplate)(ctx);
 }
 
@@ -827,5 +830,131 @@ function partialOrderPosition(ctx) {
     metadata: {graph_shape: shape, position_determined: determined, ...po.metadata},
     complexityFactors: {reasoningTransformations: 3, conceptCount: 3, graphDepth: nodes.length, conditionCount: edges.length, dependencyDepth: 3},
     textParams: false
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.9.4-B2. Two more EASY constructions. Both EASY templates this family held
+// read a POSITION off a chain. These ask two different jobs: which statement
+// the chain guarantees (a truth judgement over a total order, where every
+// wrong option contradicts a stated relation), and a QUANTIFIED chain — each
+// statement carries a gap, and the asked gap is composed from them.
+// ---------------------------------------------------------------------------
+
+function chainStatementTrue(ctx) {
+  const {rng} = ctx;
+  const {nodes, edges} = chainGraph(rng, 4);
+  const oracle = buildOrderOracle(nodes, edges);
+  const verb = 'أكبر سنًّا من';
+  const stated = new Set(edges.map(([a, b]) => `${a}>${b}`));
+  const guaranteed = [];
+  const contradicted = [];
+  for (const a of nodes) {
+    for (const b of nodes) {
+      if (a === b) continue;
+      const text = `${a} ${verb} ${b}`;
+      if (oracle.definitelyAbove(a, b)) guaranteed.push({a, b, text, direct: stated.has(`${a}>${b}`)});
+      else contradicted.push({a, b, text});
+    }
+  }
+  // The key must need transitivity: a sentence copied from the stem is reading.
+  const indirect = guaranteed.filter(g => !g.direct);
+  if (!indirect.length || contradicted.length < 5) return resample(ctx, chainStatementTrue);
+  const pick = rng.pick(indirect);
+  const correct = pick.text;
+  const distractors = usable(ctx, rng.shuffle(contradicted).slice(0, 6).map(s => mk(
+    s.text, 'RELATION_CONTRADICTS_STATEMENT',
+    `المعطيات تثبت العكس: ${s.b} ${verb} ${s.a}`
+  )));
+  const {reasoningGraph, parameters} = graphMeta(nodes, edges);
+  return buildBase(ctx, {
+    templateId: 'REL_E_STATEMENT_TRUE',
+    subskill: 'اختيار العبارة الصحيحة من ترتيب كامل',
+    difficulty: 'easy',
+    question: `${sentences(rng, edges, verb)} أي العبارات التالية صحيحة؟`,
+    correct, distractors, format: v => String(v),
+    steps: [
+      `نربط الجمل في ترتيب واحد: ${oracle.extensions[0].join(' > ')}.`,
+      `في هذا الترتيب يسبق ${pick.a} ${pick.b}، فالعبارة «${correct}» صحيحة.`,
+      'كل عبارة أخرى تعكس علاقة يثبتها الترتيب.'
+    ],
+    howToStart: 'رتّب الأشخاص من الأكبر إلى الأصغر أولًا.',
+    remember: 'إذا كان أ أكبر من ب، وب أكبر من ج، فإن أ أكبر من ج.',
+    fastMethod: 'اكتب الترتيب الكامل ثم افحص كل عبارة عليه.',
+    estimatedSteps: 2, conceptTags: ['ordering', 'transitivity'], parameters,
+    reasoningGraph,
+    oracle: orderOracleSpec(nodes, edges, {
+      type: 'guaranteed',
+      statements: [{id: correct, above: pick.a, below: pick.b}]
+    }, [correct], correct),
+    askedUnknown: 'trueStatementInChain', stageCount: 1,
+    pedagogy: {
+      targetSkill: 'TRANSITIVE_CONCLUSION_ON_A_CHAIN', targetMisconception: 'RELATION_CONTRADICTS_STATEMENT',
+      degenerateWhen: [{when: pick.direct, note: 'the true statement is a sentence of the stem'}]
+    },
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, graphDepth: nodes.length, dependencyDepth: 1},
+    textParams: false
+  });
+}
+
+function quantifiedChain(ctx) {
+  const {rng} = ctx;
+  const [a, b, c] = rng.sample(NAMES, 3);
+  const d1 = rng.pick([3, 4, 5, 6, 7, 8, 9, 10, 12]);
+  // Three and up: the lexicon spells «two» as a word, and «بـ» may only
+  // precede a numeral (RC2.8-6).
+  const d2 = rng.pick([3, 4, 5, 6, 7, 8, 9, 11].filter(v => v !== d1));
+  // Two directions: b sits between a and c (gaps add), or b is above both
+  // (gaps subtract). Which one is drawn decides the operation, never the names.
+  const same = rng.bool();
+  const correct = same ? d1 + d2 : Math.abs(d1 - d2);
+  const [hi, lo] = d1 > d2 ? [d1, d2] : [d2, d1];
+  const params = {firstGap: d1, secondGap: d2};
+  const distractors = usable(ctx, [
+    mk(same ? Math.abs(d1 - d2) : d1 + d2, same ? 'SUBTRACTED_INSTEAD_OF_ADDED' : 'ADDED_WHERE_A_DIFFERENCE_BELONGS',
+      same ? `${hi} − ${lo}` : `${d1} + ${d2}`, 2),
+    mk(d1, 'USED_GIVEN_VALUE_AS_ANSWER', `الفرق المعطى ${d1}`),
+    mk(d2, 'USED_GIVEN_VALUE_AS_ANSWER', `الفرق المعطى ${d2}`),
+    mk(d1 * d2, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${d1} × ${d2}`, 2),
+    mk(2 * d1 + d2, 'APPLIED_STEP_TWICE', `2 × ${d1} + ${d2}`, 2),
+    mk(d1 + 2 * d2, 'APPLIED_STEP_TWICE', `${d1} + 2 × ${d2}`, 2)
+  ], {allowZero: false});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5 || correct === 0) return resample(ctx, quantifiedChain);
+  const second = same
+    ? `${b} أطول من ${c} بـ${u(d2, 'cm', 'oblique')}`
+    : `${c} أقصر من ${a} بـ${u(d2, 'cm', 'oblique')}`;
+  const ask = same ? `بكم سنتيمترًا يزيد طول ${a} على طول ${c}؟`
+    : `بكم سنتيمترًا يختلف طول ${b} عن طول ${c}؟`;
+  const facts = rng.shuffle([`${a} أطول من ${b} بـ${u(d1, 'cm', 'oblique')}`, second]);
+  const stem = composeSentences(ctx, `${facts.join('، و')}. ${ask}`);
+  return buildBase(ctx, {
+    templateId: 'REL_E_GAP_CHAIN',
+    subskill: same ? 'تركيب فرقين على سلسلة واحدة' : 'فرق بين طرفين قيس كلٌّ منهما من الشخص نفسه',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('cm'),
+    steps: same ? [
+      `${a} يزيد على ${b} بـ${d1}، و${b} يزيد على ${c} بـ${d2}.`,
+      `الفرق بين ${a} و${c} = ${d1} + ${d2} = ${correct}.`
+    ] : [
+      `${b} أقصر من ${a} بـ${d1}، و${c} أقصر من ${a} بـ${d2}، فكلاهما قيس من ${a}.`,
+      `الفرق بينهما = ${hi} − ${lo} = ${correct}.`
+    ],
+    howToStart: 'حدد أولًا مَن الأطول ومَن الأقصر في كل جملة.',
+    remember: same ? 'إذا كان الشخص الأوسط بين الطرفين جُمعت المسافتان.' : 'إذا قيس الطرفان من الشخص نفسه طُرحت المسافتان.',
+    fastMethod: same ? `الأوسط بين الطرفين: اجمع الفرقين — هنا ${d1} + ${d2}.` : `الطرفان مقيسان من الشخص نفسه: اطرح الفرقين — هنا ${hi} − ${lo}.`,
+    estimatedSteps: 2, conceptTags: ['ordering', 'quantified-comparison'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, same ? add(d1, d2) : sub(hi, lo))]},
+    askedUnknown: 'chainedGap', stageCount: 1,
+    direction: same ? 'forward' : 'backward',
+    pedagogy: {
+      targetSkill: 'COMPOSE_STATED_GAPS',
+      targetMisconception: same ? 'SUBTRACTED_INSTEAD_OF_ADDED' : 'ADDED_WHERE_A_DIFFERENCE_BELONGS',
+      wrongMethodValue: same ? Math.abs(d1 - d2) : d1 + d2,
+      degenerateWhen: [{when: d1 === d2, note: 'equal gaps: the difference direction collapses to zero'}]
+    },
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, graphDepth: 3, dependencyDepth: 1},
+    textParams: {essentialParams: ['firstGap', 'secondGap']}
   });
 }

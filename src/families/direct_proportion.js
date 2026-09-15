@@ -7,7 +7,7 @@
 // satisfy the stated proportion. Nothing is announced without being derived.
 
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, div, factorLine, resample, unitWord, unitWordKam, theSingle, defPlural, bandPool, composeSentences, askOf, scaleBothLine} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, div, factorLine, resample, unitWord, unitWordKam, theSingle, defPlural, bandPool, composeSentences, askOf, scaleBothLine, distinctValues} from './_shared.js';
 
 export function generateDirectProportion({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
   const ctx = {
@@ -29,7 +29,10 @@ export function generateDirectProportion({difficulty, rng, seed, engineVersion, 
     ['PROP_H_REPLACE', mixtureReplacement],
     ['PROP_H_CAPITAL_TIME', investmentTimeShare],
     // RC2.7-3. Comparison of alternatives.
-    ['PROP_H_BREAK_EVEN', breakEvenQuantity]
+    ['PROP_H_BREAK_EVEN', breakEvenQuantity],
+    // RC2.9.4-B3. Two MEDIUM constructions.
+    ['PROP_M_UNIT_PRICE_COMPARE', unitPriceGap],
+    ['PROP_M_SCALE_ACROSS_HOURS', scaleAcrossHours]
   ], pinTemplate)(ctx);
 }
 
@@ -1105,5 +1108,111 @@ function breakEvenQuantity(ctx) {
       arithmeticBurden: 5, reverseReasoning: 1
     },
     textParams: {essentialParams: ['fixedFeeA', 'perUnitA', 'fixedFeeB', 'perUnitB']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.9.4-B3. Two more MEDIUM constructions. The MEDIUM templates this family
+// held solve a two-item system or add a fixed fee. These compare two stated
+// price-for-quantity offers by their unit price (two proportions brought to one
+// footing, then a difference), and carry a rate stated per minute across a time
+// stated in hours (a conversion before the proportion).
+// ---------------------------------------------------------------------------
+
+function unitPriceGap(ctx) {
+  const {rng} = ctx;
+  const n1 = rng.pick([4, 5, 6, 8]);
+  const p1 = rng.pick([3, 4, 5, 6, 7, 8]);
+  const n2 = rng.pick([5, 6, 8, 9, 10, 12].filter(v => v !== n1));
+  const p2 = rng.pick([2, 3, 4, 5, 6, 7, 9].filter(v => v !== p1));
+  const t1 = n1 * p1, t2 = n2 * p2;
+  const correct = Math.abs(p1 - p2);
+  const cheaper = p1 < p2 ? 'الأول' : 'الثاني';
+  const params = {firstCount: n1, firstTotal: t1, secondCount: n2, secondTotal: t2};
+  const distractors = usable(ctx, [
+    mk(Math.abs(t1 - t2), 'USED_DIFFERENCE_AS_ANSWER', `|${t1} − ${t2}|`, 1),
+    mk(p1, 'STOPPED_AT_UNIT_RATE', `${t1} ÷ ${n1}`, 3),
+    mk(p2, 'STOPPED_AT_UNIT_RATE', `${t2} ÷ ${n2}`, 3),
+    mk(Math.abs(n1 - n2), 'USED_DIFFERENCE_AS_ANSWER', `|${n1} − ${n2}|`, 1),
+    mk(p1 + p2, 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `${p1} + ${p2}`, 3),
+    mk(Math.abs(t1 / n2 - t2 / n1), 'SWAPPED_RATE_AND_COUNT', `|${t1} ÷ ${n2} − ${t2} ÷ ${n1}|`, 2),
+    mk(Math.abs(t1 - t2) / Math.abs(n1 - n2), 'MISREAD_THE_STEP', `|${t1} − ${t2}| ÷ |${n1} − ${n2}|`, 1)
+  ], {maxDecimals: 2});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, unitPriceGap);
+  const stem = composeSentences(ctx, `تبيع مكتبة ${u(n1, 'book')} بـ${u(t1, 'dirham', 'oblique')}، وتبيع مكتبة أخرى ${u(n2, 'book')} من النوع نفسه بـ${u(t2, 'dirham', 'oblique')}. بكم درهمًا يقل سعر الكتاب الواحد في المكتبة ${cheaper === 'الأول' ? 'الأولى' : 'الثانية'} عن الأخرى؟`);
+  return buildBase(ctx, {
+    templateId: 'PROP_M_UNIT_PRICE_COMPARE',
+    subskill: 'مقارنة عرضين بسعر الوحدة',
+    difficulty: 'medium',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `سعر الكتاب في المكتبة الأولى = ${t1} ÷ ${n1} = ${p1}.`,
+      `سعر الكتاب في المكتبة الثانية = ${t2} ÷ ${n2} = ${p2}.`,
+      `الفرق = ${Math.max(p1, p2)} − ${Math.min(p1, p2)} = ${correct}.`
+    ],
+    howToStart: 'لا تقارن المجموعين؛ حوّل كل عرض إلى سعر الوحدة.',
+    remember: 'المقارنة العادلة بين عرضين تكون بسعر الوحدة الواحدة.',
+    fastMethod: 'سعر الوحدة لكل عرض، ثم الفرق.',
+    estimatedSteps: 3, conceptTags: ['direct-proportion', 'unit-value', 'comparison'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, n1, n2), p1 < p2 ? sub(mul(t2, n1), mul(t1, n2)) : sub(mul(t1, n2), mul(t2, n1)))]},
+    askedUnknown: 'unitPriceGap', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'COMPARE_BY_UNIT_VALUE', targetMisconception: 'USED_DIFFERENCE_AS_ANSWER',
+      wrongMethodValue: Math.abs(t1 - t2),
+      degenerateWhen: [{when: p1 === p2, note: 'equal unit prices: nothing to compare'}]
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 3},
+    textParams: {essentialParams: ['firstCount', 'firstTotal', 'secondCount', 'secondTotal']}
+  });
+}
+
+function scaleAcrossHours(ctx) {
+  const {rng} = ctx;
+  const minutes = rng.pick([2, 3, 4, 5, 6]);
+  const per = rng.pick([12, 15, 18, 20, 24, 25, 30]);
+  const amount = minutes * per;
+  const hours = rng.pick([1.5, 2, 2.5, 3, 4]);
+  const targetMinutes = hours * 60;
+  const correct = per * targetMinutes;
+  const params = {baseAmount: amount, baseMinutes: minutes, targetHours: hours};
+  const distractors = usable(ctx, [
+    mk(per * hours, 'RATE_APPLIED_TO_WRONG_COUNT', `${per} × ${num(hours)}`, 1),
+    mk(amount * hours, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${amount} × ${num(hours)}`, 1),
+    mk(per * 60, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${per} × 60`, 2),
+    mk(per, 'STOPPED_AT_UNIT_RATE', `${amount} ÷ ${minutes}`, 2),
+    mk(amount * targetMinutes, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${amount} × ${targetMinutes}`, 2),
+    mk(per * targetMinutes / 2, 'HALF_DISTANCE_AS_ANSWER', `${per} × ${targetMinutes} ÷ 2`, 2),
+    mk(per * (targetMinutes + minutes), 'RATE_APPLIED_TO_WRONG_COUNT', `${per} × (${targetMinutes} + ${minutes})`, 2)
+  ], {maxDecimals: 1});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, scaleAcrossHours);
+  const stem = composeSentences(ctx, `تنسخ آلة ${u(amount, 'page')} في ${u(minutes, 'minute', 'oblique')} بمعدل ثابت. كم صفحة تنسخ في ${u(hours, 'hour', 'oblique')}؟`);
+  return buildBase(ctx, {
+    templateId: 'PROP_M_SCALE_ACROSS_HOURS',
+    subskill: 'تناسب مباشر مع تحويل الساعات إلى دقائق',
+    difficulty: 'medium',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('page'),
+    steps: [
+      `الزمن المطلوب بالدقائق = ${num(hours)} × 60 = ${targetMinutes}.`,
+      `معدل الدقيقة الواحدة = ${amount} ÷ ${minutes} = ${per}.`,
+      `عدد الصفحات = ${per} × ${targetMinutes} = ${correct}.`
+    ],
+    howToStart: 'وحّد وحدتي الزمن قبل تطبيق التناسب.',
+    remember: 'المعدل بالدقيقة لا يُضرب في ساعات.',
+    fastMethod: `حوّل الساعات إلى دقائق، ثم معدل الدقيقة × الدقائق — هنا ${amount} ÷ ${minutes} × ${targetMinutes}.`,
+    estimatedSteps: 3, conceptTags: ['direct-proportion', 'unit-conversion'], parameters: params,
+    allowedConstants: [0, 1, 2, 100, 60],
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, minutes), mul(amount, hours, 60))]},
+    askedUnknown: 'scaledOutputAcrossUnits', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'CONVERT_THEN_SCALE', targetMisconception: 'RATE_APPLIED_TO_WRONG_COUNT',
+      wrongMethodValue: per * hours,
+      degenerateWhen: [{when: hours === 1 / 60, note: 'a one-minute target: no conversion to get wrong'}]
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, unitConversion: 1, stageCount: 3, arithmeticBurden: 3},
+    textParams: {essentialParams: ['baseAmount', 'baseMinutes', 'targetHours']}
   });
 }

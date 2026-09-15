@@ -268,7 +268,9 @@ test('RC2-003 cost: the rejection activity is cheap, and the cheapness is measur
   // mix, and this fixed-size corpus now records 296 rather than ~340. The bar
   // exists to show the activity is substantial enough for the cost report to
   // mean something, not to pin a particular number.
-  assert.ok(report.activity.samplerResamples > 250,
+  // RC2.9.4 lowered from 250 to 200: twenty-nine new easy/medium constructions
+  // that resample less often changed the mix again; the corpus records ~220.
+  assert.ok(report.activity.samplerResamples > 200,
     `only ${report.activity.samplerResamples} sampler resamples`);
 
   // ...and it really is cheap, because a drop costs no attempt until it pushes a

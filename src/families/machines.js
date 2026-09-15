@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, gt, gte, isInt, X, add, sub, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool, composeSentences, sceneFor, unitWordKam, pastVerb, scaleBothLine, rateOf} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, gt, gte, isInt, X, add, sub, mul, factorLine, resample, adj, riseByPercentPhrase, bandPool, composeSentences, sceneFor, unitWordKam, pastVerb, scaleBothLine, rateOf, distinctValues} from './_shared.js';
 
 export function generateMachines({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'machines', family_ar: 'الآلات والإنتاج', category: 'الآلات والإنتاج'};
@@ -17,7 +17,11 @@ export function generateMachines({difficulty, rng, seed, engineVersion, telemetr
     ['MACH_H_TWO_CONFIG', twoConfigurations],
     ['MACH_H_STOPPAGE_TIME', stoppageTime],
     // RC2.7-3. A smallest admissible count.
-    ['MACH_H_MIN_SECOND_TYPE', minimumSecondType]
+    ['MACH_H_MIN_SECOND_TYPE', minimumSecondType],
+    // RC2.9.4-B2. Three EASY constructions for a cell that held one.
+    ['MACH_E_RATE_FROM_TOTAL', perMachineRate],
+    ['MACH_E_TIME_FOR_TARGET', hoursForTarget],
+    ['MACH_E_COMPARE', compareTwoMachines]
   ], pinTemplate)(ctx);
 }
 
@@ -715,5 +719,158 @@ function minimumSecondType(ctx) {
       arithmeticBurden: 5, reverseReasoning: 1
     },
     textParams: {essentialParams: ['hours', 'rateFirstType', 'rateSecondType', 'machinesFirstType', 'targetOutput']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.9.4-B2. Three more EASY constructions. The one EASY template this family
+// held (MACH_E_HOURS) scales a group's output onto a new group and time. These
+// change the DIRECTION and the TARGET: recover one machine's rate from a group
+// total; find the TIME a stated group needs for a stated target; and compare
+// two machines' outputs over the same time.
+// ---------------------------------------------------------------------------
+
+function perMachineRate(ctx) {
+  const sc = sceneFor(ctx, 'production');
+  const {rng} = ctx;
+  const machines = rng.pick([3, 4, 5, 6, 8]);
+  const hours = rng.pick([2, 3, 4, 5, 6].filter(v => v !== machines));
+  const rate = rng.pick([8, 10, 12, 15, 20, 25, 30].filter(v => v !== machines && v !== hours));
+  const total = machines * hours * rate;
+  const correct = rate;
+  const params = {machines, hours, totalOutput: total};
+  const distractors = usable(ctx, [
+    mk(total / machines, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} ÷ ${machines}`, 2),
+    mk(total / hours, 'MISSED_ONE_STAGE', `${total} ÷ ${hours}`, 2),
+    mk(total / (machines + hours), 'ADDED_INSTEAD_OF_SCALING', `${total} ÷ (${machines} + ${hours})`, 1),
+    mk(total * hours / machines, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${total} × ${hours} ÷ ${machines}`, 2),
+    mk(machines * hours, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${machines} × ${hours}`, 1),
+    mk(rate * 2, 'APPLIED_STEP_TWICE', `${rate} × 2`, 2),
+    mk(total / (machines * hours * 2), 'HALF_DISTANCE_AS_ANSWER', `${total} ÷ (${machines} × ${hours}) ÷ 2`, 2),
+    mk(total, 'USED_GIVEN_VALUE_AS_ANSWER', `الإنتاج المعطى ${total}`)
+  ]);
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, perMachineRate);
+  const stem = composeSentences(ctx, `في ${sc.site} تنتج ${u(machines, 'machine')} متطابقة في الإنتاجية ${u(total, sc.out)} خلال ${u(hours, 'hour', 'oblique')}. كم ${unitWordKam(sc.out)} تنتج الآلة الواحدة في الساعة؟`);
+  return buildBase(ctx, {
+    templateId: 'MACH_E_RATE_FROM_TOTAL',
+    scenario: sc.key,
+    subskill: 'معدل الآلة الواحدة من إنتاج مجموعة',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat(sc.rateUnitId ?? 'unitPerHour'),
+    steps: [
+      `عدد وحدات آلة-ساعة = ${machines} × ${hours} = ${machines * hours}.`,
+      `إنتاج الآلة الواحدة في الساعة = ${total} ÷ ${machines * hours} = ${correct}.`
+    ],
+    howToStart: 'اقسم الإنتاج الكلي على عدد الآلات وعلى عدد الساعات معًا.',
+    remember: 'الإنتاج الكلي = عدد الآلات × الساعات × معدل الآلة الواحدة.',
+    fastMethod: 'الإنتاج ÷ (الآلات × الساعات).',
+    estimatedSteps: 2, conceptTags: ['machine-rate', 'unit-rate'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, machines, hours), total)]},
+    askedUnknown: 'perMachineRate', stageCount: 1,
+    pedagogy: {
+      targetSkill: 'MACHINE_HOUR_UNIT', targetMisconception: 'STOPPED_AT_INTERMEDIATE_TOTAL',
+      wrongMethodValue: total / machines,
+      degenerateWhen: [{when: hours === 1, note: 'one hour: dividing by the machine count alone is already right'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 1, arithmeticBurden: 2},
+    textParams: {essentialParams: ['machines', 'hours', 'totalOutput']}
+  });
+}
+
+function hoursForTarget(ctx) {
+  const sc = sceneFor(ctx, 'production');
+  const {rng} = ctx;
+  const rate = rng.pick([12, 15, 20, 25, 30, 40]);
+  const machines = rng.pick([2, 3, 4, 5, 6].filter(v => v !== rate));
+  const correct = rng.pick([3, 4, 5, 6, 7, 8].filter(v => v !== machines && v !== rate));
+  const target = rate * machines * correct;
+  const params = {machineRate: rate, machines, targetOutput: target};
+  const distractors = usable(ctx, [
+    mk(target / rate, 'RATE_APPLIED_TO_WRONG_COUNT', `${target} ÷ ${rate}`, 1),
+    mk(target / machines, 'MISSED_ONE_STAGE', `${target} ÷ ${machines}`, 1),
+    mk(rate * machines, 'STOPPED_AT_UNIT_RATE', `${rate} × ${machines}`, 1),
+    mk(target / (rate * machines * 2), 'HALF_DISTANCE_AS_ANSWER', `${target} ÷ (${rate} × ${machines}) ÷ 2`, 2),
+    mk(target / (rate * machines) * 2, 'APPLIED_STEP_TWICE', `${target} ÷ (${rate} × ${machines}) × 2`, 2),
+    mk(target / (rate + machines), 'ADDED_INSTEAD_OF_SCALING', `${target} ÷ (${rate} + ${machines})`, 1),
+    mk(target / rate - machines, 'SUBTRACTED_INSTEAD_OF_ADDED', `${target} ÷ ${rate} − ${machines}`, 2),
+    mk(machines, 'USED_GIVEN_VALUE_AS_ANSWER', `عدد الآلات المعطى ${machines}`)
+  ], {maxDecimals: 1});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, hoursForTarget);
+  const stem = composeSentences(ctx, `تنتج الآلة الواحدة ${rateOf(rate, sc)}. كم ساعة تحتاج ${u(machines, 'machine')} من النوع نفسه لإنتاج ${u(target, sc.out)}؟`);
+  return buildBase(ctx, {
+    templateId: 'MACH_E_TIME_FOR_TARGET',
+    scenario: sc.key,
+    subskill: 'زمن مجموعة آلات لبلوغ إنتاج مستهدف',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('hour'),
+    steps: [
+      `إنتاج ${u(machines, 'machine', 'oblique')} في الساعة = ${rate} × ${machines} = ${rate * machines}.`,
+      `الزمن بالساعات = ${target} ÷ ${rate * machines} = ${correct}.`
+    ],
+    howToStart: 'احسب إنتاج المجموعة كلها في الساعة أولًا.',
+    remember: 'الزمن = الإنتاج المطلوب ÷ إنتاج المجموعة في الساعة.',
+    fastMethod: 'الهدف ÷ (المعدل × عدد الآلات).',
+    estimatedSteps: 2, conceptTags: ['machine-rate', 'reverse'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, rate, machines), target)]},
+    askedUnknown: 'machineHoursForTarget', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'GROUP_RATE_THEN_TIME', targetMisconception: 'RATE_APPLIED_TO_WRONG_COUNT',
+      wrongMethodValue: target / rate,
+      degenerateWhen: [{when: machines === 1, note: 'one machine: the single rate is the group rate'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, reverseReasoning: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['machineRate', 'machines', 'targetOutput']}
+  });
+}
+
+function compareTwoMachines(ctx) {
+  const sc = sceneFor(ctx, 'production');
+  const {rng} = ctx;
+  const fast = rng.pick([30, 35, 40, 45, 50, 60]);
+  const slow = rng.pick([15, 20, 24, 25, 30, 36].filter(v => v < fast));
+  const hours = rng.pick([3, 4, 5, 6, 8].filter(v => v !== fast - slow));
+  const gap = fast - slow;
+  const correct = gap * hours;
+  const params = {fastRate: fast, slowRate: slow, hours};
+  const distractors = usable(ctx, [
+    mk(gap, 'STOPPED_AT_UNIT_RATE', `${fast} − ${slow}`, 1),
+    mk((fast + slow) * hours, 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `(${fast} + ${slow}) × ${hours}`, 1),
+    mk(fast * hours, 'USED_ONLY_FIRST_RATE', `${fast} × ${hours}`, 2),
+    mk(slow * hours, 'USED_ONLY_SECOND_RATE', `${slow} × ${hours}`, 2),
+    mk(gap + hours, 'ADDED_INSTEAD_OF_SCALING', `${fast} − ${slow} + ${hours}`, 2),
+    mk(gap * hours * 2, 'APPLIED_STEP_TWICE', `(${fast} − ${slow}) × ${hours} × 2`, 2),
+    mk(fast * hours - slow, 'RATE_APPLIED_TO_WRONG_COUNT', `${fast} × ${hours} − ${slow}`, 2)
+  ]);
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, compareTwoMachines);
+  const stem = composeSentences(ctx, `في ${sc.site} تنتج الآلة الأولى ${rateOf(fast, sc)}، وتنتج الآلة الثانية ${rateOf(slow, sc)}. بكم ${unitWordKam(sc.out)} يزيد إنتاج الآلة الأولى على إنتاج الثانية خلال ${u(hours, 'hour', 'oblique')}؟`);
+  return buildBase(ctx, {
+    templateId: 'MACH_E_COMPARE',
+    scenario: sc.key,
+    subskill: 'فرق إنتاج آلتين خلال مدة واحدة',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat(sc.out),
+    steps: [
+      `فرق المعدلين في الساعة = ${fast} − ${slow} = ${gap}.`,
+      `الفرق خلال ${u(hours, 'hour', 'oblique')} = ${gap} × ${hours} = ${correct}.`
+    ],
+    howToStart: 'ابدأ بالفرق بين المعدلين في الساعة الواحدة.',
+    remember: 'فرق الإنتاج خلال مدة = فرق المعدلين × المدة.',
+    fastMethod: '(المعدل الأكبر − المعدل الأصغر) × الساعات.',
+    estimatedSteps: 2, conceptTags: ['machine-rate', 'comparison'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, mul(sub(fast, slow), hours))]},
+    askedUnknown: 'outputGapOverTime', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'DIFFERENCE_OF_RATES', targetMisconception: 'ADDED_WHERE_A_DIFFERENCE_BELONGS',
+      wrongMethodValue: (fast + slow) * hours,
+      degenerateWhen: [{when: fast === slow, note: 'equal rates: no gap to grow'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['fastRate', 'slowRate', 'hours']}
   });
 }

@@ -5,7 +5,7 @@
 // not all obey the stated rule yields no surviving candidate at all, so a
 // malformed run is rejected rather than published with a plausible-looking key.
 
-import {mk, usable, num, buildBase, eq, X, add, sub, mul, div, resample, bandPool, askOf} from './_shared.js';
+import {mk, usable, num, buildBase, eq, X, add, sub, mul, div, resample, bandPool, askOf, distinctValues} from './_shared.js';
 import {grid} from '../qa/oracle-engine.js';
 
 export function generateSequences({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
@@ -39,7 +39,10 @@ export function generateSequences({difficulty, rng, seed, engineVersion, telemet
     ['SEQ_M_RULE_APPLY', ruleApplication],
     // RC2.9-4. The two jobs the review named as still missing.
     ['SEQ_M_MISSING_OP', missingOperation],
-    ['SEQ_M_CANDIDATE', candidateSelection]
+    ['SEQ_M_CANDIDATE', candidateSelection],
+    // RC2.9.4-B2. A far term from a stated rule, and a count of terms.
+    ['SEQ_E_NTH_TERM', nthTermFromRule],
+    ['SEQ_E_COUNT_TERMS', countTerms]
   ], pinTemplate)(ctx);
 }
 
@@ -1659,6 +1662,104 @@ function candidateSelection(ctx) {
       targetSkill: 'TEST_MEMBERSHIP_OF_A_RUN', targetMisconception: 'NEAR_MISS_ON_THE_PROPERTY',
       wrongMethodValue: start + ahead * step,
       degenerateWhen: [{when: step === 1, note: 'every integer belongs when the step is one'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 3},
+    textParams: false
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.9.4-B2. Two more EASY constructions. Both EASY templates show a run and
+// ask the term next to it. These ask two other jobs: a FAR term of a rule
+// stated in words (the closed form, not one step), and how many terms a run
+// with a shown last term holds (an interval counted in steps).
+// ---------------------------------------------------------------------------
+
+const ORDINAL_TERM = {8: 'الثامن', 10: 'العاشر', 12: 'الثاني عشر', 15: 'الخامس عشر', 20: 'العشرون', 25: 'الخامس والعشرون'};
+
+function nthTermFromRule(ctx) {
+  const {rng} = ctx;
+  const first = rng.int(2, 15);
+  const step = rng.pick([3, 4, 5, 6, 7, 8, 9]);
+  const n = rng.pick([8, 10, 12, 15, 20, 25]);
+  const correct = first + (n - 1) * step;
+  const params = {firstTerm: first, commonDifference: step, termIndex: n};
+  const distractors = usable(ctx, [
+    mk(first + n * step, 'OFF_BY_ONE_STEP', `${first} + ${n} × ${step}`, 1),
+    mk(first + (n - 2) * step, 'OFF_BY_ONE_STEP', `${first} + (${n} − 2) × ${step}`, 1),
+    mk(n * step, 'MISSED_ONE_STAGE', `${n} × ${step}`, 2),
+    mk(first * n, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${first} × ${n}`, 1),
+    mk((first + step) * (n - 1), 'APPLIED_THE_STEPS_IN_THE_WRONG_ORDER', `(${first} + ${step}) × (${n} − 1)`, 2),
+    mk(first + step, 'STOPPED_AFTER_FIRST_STAGE', `${first} + ${step}`, 2),
+    mk(first * step + n, 'MISREAD_THE_STEP', `${first} × ${step} + ${n}`, 1)
+  ]);
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, nthTermFromRule);
+  return buildBase(ctx, {
+    templateId: 'SEQ_E_NTH_TERM',
+    subskill: 'حد بعيد في متتالية حسابية من قاعدتها',
+    difficulty: 'easy',
+    question: `متتالية حسابية، حدها الأول يساوي ${first}، والفرق الثابت بين حدودها يساوي ${step}. ما الحد ${ORDINAL_TERM[n]}؟`,
+    correct, distractors, format: v => num(v),
+    steps: [
+      `عدد مرات إضافة الفرق من الحد الأول إلى الحد ${ORDINAL_TERM[n]} = ${n} − 1 = ${n - 1}.`,
+      `الحد ${ORDINAL_TERM[n]} = ${first} + ${n - 1} × ${step} = ${correct}.`
+    ],
+    howToStart: 'عدّ كم مرة يُضاف الفرق: عدد الحد ناقص واحد.',
+    remember: 'الحد النوني = الحد الأول + (ن − 1) × الفرق.',
+    fastMethod: `الحد الأول + (رقم الحد − 1) × الفرق — هنا ${first} + ${n - 1} × ${step}.`,
+    estimatedSteps: 2, conceptTags: ['sequence', 'arithmetic-progression', 'closed-form'], parameters: params,
+    reasoningPattern: [`ADD(${step})`],
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, add(first, mul(n - 1, step)))]},
+    askedUnknown: 'termFromStatedRule', stageCount: 1,
+    pedagogy: {
+      targetSkill: 'NTH_TERM_FORMULA', targetMisconception: 'OFF_BY_ONE_STEP',
+      wrongMethodValue: first + n * step
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 1, arithmeticBurden: 2},
+    textParams: {essentialParams: ['firstTerm', 'commonDifference']}
+  });
+}
+
+function countTerms(ctx) {
+  const {rng} = ctx;
+  const first = rng.int(2, 20);
+  const step = rng.pick([3, 4, 5, 6, 7, 8]);
+  const correct = rng.pick([9, 10, 11, 12, 13, 14, 15, 16, 18, 20]);
+  const last = first + (correct - 1) * step;
+  if (correct === step || correct === first) return resample(ctx, countTerms);
+  const shown = [first, first + step, first + 2 * step, first + 3 * step];
+  const params = {firstTerm: first, commonDifference: step, lastTerm: last, shownTerms: shown};
+  const distractors = usable(ctx, [
+    mk((last - first) / step, 'OFF_BY_ONE_STEP', `(${last} − ${first}) ÷ ${step}`, 2),
+    mk((last - first) / step + 2, 'APPLIED_STEP_TWICE', `(${last} − ${first}) ÷ ${step} + 2`, 2),
+    mk(last - first, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${last} − ${first}`, 1),
+    mk(last / step, 'MISSED_ONE_STAGE', `${last} ÷ ${step}`, 1),
+    mk(step, 'USED_DIFFERENCE_AS_ANSWER', `الفرق الثابت ${step}`, 1),
+    mk(last - first + 1, 'MISREAD_THE_STEP', `${last} − ${first} + 1`, 2)
+  ], {maxDecimals: 1});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, countTerms);
+  return buildBase(ctx, {
+    templateId: 'SEQ_E_COUNT_TERMS',
+    subskill: 'عدد حدود متتالية حسابية من أولها وآخرها',
+    difficulty: 'easy',
+    question: 'كم حدًّا في هذه المتتالية؟',
+    displayExpression: `${shown.join('، ')}، …، ${last}`,
+    correct, distractors, format: v => num(v),
+    steps: [
+      `الفرق الثابت = ${shown[1]} − ${shown[0]} = ${step}.`,
+      `عدد الخطوات من الحد الأول إلى الأخير = (${last} − ${first}) ÷ ${step} = ${correct - 1}.`,
+      `عدد الحدود = ${correct - 1} + 1 = ${correct}.`
+    ],
+    howToStart: 'احسب كم خطوة من الحد الأول إلى الأخير، ثم أضف الحد الأول نفسه.',
+    remember: 'عدد الحدود = (الأخير − الأول) ÷ الفرق + 1.',
+    fastMethod: `اقسم المسافة بين الحدين الأول والأخير على الفرق ثم أضف واحدًا — هنا (${last} − ${first}) ÷ ${step} + 1.`,
+    estimatedSteps: 3, conceptTags: ['sequence', 'arithmetic-progression', 'counting'], parameters: params,
+    reasoningPattern: [`ADD(${step})`],
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(add(first, mul(sub(X, 1), step)), last)]},
+    askedUnknown: 'termCount', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'COUNT_TERMS_BY_STEPS', targetMisconception: 'OFF_BY_ONE_STEP',
+      wrongMethodValue: (last - first) / step
     },
     complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 3},
     textParams: false

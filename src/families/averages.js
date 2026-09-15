@@ -1,5 +1,5 @@
 import {mk, usable, num, buildBase, eq, X, add, sub, mul, resample, bandPool,
-  sceneFor, composeStem, unitFormat} from './_shared.js';
+  sceneFor, composeStem, unitFormat, composeSentences, distinctValues} from './_shared.js';
 import {avgOfOther, pluralVerb} from '../compose/scenarios.js';
 
 // RC2.7-3. Every template here draws a SITUATION and has its finished clauses
@@ -24,7 +24,10 @@ export function generateAverages({difficulty, rng, seed, engineVersion, telemetr
     ['AVG_H_COMB_ADD', combineThenAdd],
     ['AVG_H_TARGET', missingValueForTarget],
     ['AVG_H_OVERLAP', overlappingSubsets],
-    ['AVG_H_SPLIT_SIZE', splitGroupSize]
+    ['AVG_H_SPLIT_SIZE', splitGroupSize],
+    // RC2.9.4-B2. The definition, and a missing member.
+    ['AVG_E_LIST', meanOfList],
+    ['AVG_E_MISSING_VALUE', missingMember]
   ], pinTemplate)(ctx);
 }
 
@@ -698,5 +701,122 @@ function splitGroupSize(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, conditionCount: 2, equationSolving: 1, stageCount: 3, arithmeticBurden: 5},
     textParams: {essentialParams: ['count', 'average', 'firstAverage', 'secondAverage']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.9.4-B2. Two more EASY constructions. AVG_E_ADD and AVG_E_REMOVE both
+// move an average through ONE change. These ask the two jobs the family never
+// asked at this band: compute the mean of a shown list (the definition), and
+// recover the member that is missing when the mean and the others are known.
+// ---------------------------------------------------------------------------
+
+const COUNT_WORDS = {3: 'ثلاثة', 4: 'أربعة', 5: 'خمسة', 6: 'ستة'};
+const ORDINAL_MEMBER = {3: 'الثالث', 4: 'الرابع', 5: 'الخامس', 6: 'السادس'};
+
+function meanOfList(ctx) {
+  const {rng} = ctx;
+  const n = rng.pick([4, 5]);
+  const mean = rng.int(10, 40);
+  // Members spread around the mean with a zero-sum set of offsets, so the mean
+  // is exact and no member equals it (the midrange and the middle member are
+  // then genuine wrong routes rather than accidental keys).
+  const offsets = [];
+  let acc = 0;
+  for (let i = 0; i < n - 1; i++) { const o = rng.pick([-9, -7, -6, -5, -4, -3, 3, 4, 5, 6, 7, 9]); offsets.push(o); acc += o; }
+  offsets.push(-acc);
+  const values = offsets.map(o => mean + o);
+  if (values.some(v => v <= 0 || v === mean) || new Set(values).size < n || Math.abs(acc) > 12) return resample(ctx, meanOfList);
+  const sum = values.reduce((a, b) => a + b, 0);
+  const correct = mean;
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = sorted[Math.floor((n - 1) / 2)];
+  const distractors = usable(ctx, [
+    mk(sum, 'STOPPED_AT_INTERMEDIATE_TOTAL', values.join(' + '), 1),
+    mk(sum / (n - 1), 'OFF_BY_ONE_STEP', `${sum} ÷ ${n - 1}`, 2),
+    mk(sum / (n + 1), 'OFF_BY_ONE_STEP', `${sum} ÷ ${n + 1}`, 2),
+    mk(middle, 'USED_THE_MIDDLE_MEMBER', `العدد الأوسط بعد الترتيب ${middle}`, 2),
+    mk((sorted[0] + sorted.at(-1)) / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${sorted[0]} + ${sorted.at(-1)}) ÷ 2`, 2),
+    mk(sorted.at(-1) - sorted[0], 'USED_DIFFERENCE_AS_ANSWER', `${sorted.at(-1)} − ${sorted[0]}`, 2),
+    mk(mean * 2, 'APPLIED_STEP_TWICE', `${sum} ÷ ${n} × 2`, 2)
+  ], {maxDecimals: 1});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, meanOfList);
+  return buildBase(ctx, {
+    templateId: 'AVG_E_LIST',
+    subskill: 'حساب المتوسط الحسابي لقائمة أعداد',
+    difficulty: 'easy',
+    question: `ما المتوسط الحسابي للأعداد التالية؟`,
+    displayExpression: values.join('، '),
+    correct, distractors, format: plain,
+    steps: [
+      `المجموع = ${values.join(' + ')} = ${sum}.`,
+      `المتوسط = ${sum} ÷ ${n} = ${correct}.`
+    ],
+    howToStart: 'اجمع الأعداد كلها ثم اقسم على عددها.',
+    remember: 'المتوسط الحسابي = المجموع ÷ عدد القيم، وليس القيمة الوسطى.',
+    fastMethod: `المجموع ÷ عدد القيم — هنا ${sum} ÷ ${n}.`,
+    estimatedSteps: 2, conceptTags: ['average', 'definition'], parameters: {values, count: n},
+    orderInsensitive: ['values'],
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, n), sum)]},
+    askedUnknown: 'meanOfList', stageCount: 1,
+    pedagogy: {
+      targetSkill: 'MEAN_DEFINITION', targetMisconception: 'USED_THE_MIDDLE_MEMBER',
+      wrongMethodValue: middle,
+      degenerateWhen: [{when: middle === mean, note: 'the middle member equals the mean'}]
+    },
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 2},
+    textParams: false
+  });
+}
+
+function missingMember(ctx) {
+  const {rng} = ctx;
+  const n = rng.pick([3, 4, 5]);
+  const mean = rng.int(12, 30);
+  const known = [];
+  for (let i = 0; i < n - 1; i++) known.push(mean + rng.pick([-8, -6, -5, -4, -3, -2, 2, 3, 4, 5, 6, 8]));
+  const total = mean * n;
+  const knownSum = known.reduce((a, b) => a + b, 0);
+  const correct = total - knownSum;
+  if (correct <= 0 || correct === mean || known.includes(correct) || new Set(known).size < known.length) return resample(ctx, missingMember);
+  const params = {count: n, average: mean, knownValues: known};
+  const distractors = usable(ctx, [
+    mk(mean, 'USED_GIVEN_VALUE_AS_ANSWER', `المتوسط المعطى ${mean}`),
+    mk(total, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${mean} × ${n}`, 1),
+    mk(mean * (n - 1) - knownSum, 'FAILED_TO_UPDATE_COUNT', `${mean} × ${n - 1} − ${knownSum}`, 1),
+    mk(total - known[0], 'MISSED_ONE_STAGE', `${total} − ${known[0]}`, 2),
+    mk(knownSum, 'STOPPED_AT_INTERMEDIATE_TOTAL', known.join(' + '), 2),
+    mk(mean * (n + 1) - knownSum, 'FAILED_TO_UPDATE_COUNT', `${mean} × ${n + 1} − ${knownSum}`, 1),
+    mk(Math.abs(knownSum - total), 'SUBTRACTED_INSTEAD_OF_ADDED', `${knownSum} − ${total}`, 3)
+  ], {maxDecimals: 1, allowNegative: false});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, missingMember);
+  const listed = known.length === 2 ? `${known[0]} و${known[1]}` : `${known.slice(0, -1).join('، ')}، و${known.at(-1)}`;
+  const stem = composeSentences(ctx, `المتوسط الحسابي لـ${COUNT_WORDS[n]} أعداد هو ${mean}، ومنها ${known.length === 2 ? 'عددان هما' : 'ثلاثة أعداد هي'} ${listed}. ما العدد ${ORDINAL_MEMBER[n]}؟`);
+  return buildBase(ctx, {
+    templateId: 'AVG_E_MISSING_VALUE',
+    subskill: 'استرجاع عدد مفقود من متوسط معلوم',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: plain,
+    steps: [
+      `مجموع الأعداد كلها = ${mean} × ${n} = ${total}.`,
+      `مجموع الأعداد المعلومة = ${known.join(' + ')} = ${knownSum}.`,
+      `العدد ${ORDINAL_MEMBER[n]} = ${total} − ${knownSum} = ${correct}.`
+    ],
+    howToStart: 'حوّل المتوسط إلى مجموع كلي أولًا.',
+    remember: 'العدد المفقود = المتوسط × العدد − مجموع المعلوم.',
+    fastMethod: `المتوسط × العدد − مجموع المعلوم — هنا ${mean} × ${n} − ${knownSum}.`,
+    estimatedSteps: 3, conceptTags: ['average', 'sum', 'missing-member'], parameters: params,
+    orderInsensitive: ['knownValues'],
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(add(X, knownSum), mul(mean, n))]},
+    askedUnknown: 'missingMember', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'MEAN_TO_SUM', targetMisconception: 'FAILED_TO_UPDATE_COUNT',
+      wrongMethodValue: mean * (n - 1) - knownSum,
+      degenerateWhen: [{when: correct === mean, note: 'the missing member equals the mean'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 3},
+    textParams: {essentialParams: ['average']}
   });
 }

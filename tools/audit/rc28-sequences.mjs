@@ -24,6 +24,9 @@ export const SEQUENCE_CONDITIONS = Object.freeze({
  */
 export const RULE_FAMILY = Object.freeze({
   SEQ_E_ARITH: 'constant-difference',
+  // RC2.9.4-B2. Both are the constant-difference rule asked two other ways.
+  SEQ_E_NTH_TERM: 'constant-difference',
+  SEQ_E_COUNT_TERMS: 'constant-difference',
   SEQ_E_GEO: 'constant-ratio',
   SEQ_M_INC_DIFF: 'growing-difference',
   SEQ_M_DOUBLE_DIFF: 'second-difference',

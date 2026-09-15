@@ -105,6 +105,12 @@ export const COOLDOWN = Object.freeze({
  * come round again inside a hundred questions, it just may not dominate.
  */
 export const WINDOW = Object.freeze({
+  // RC2.9.4-B9. How many times a CONSTRUCTION appeared in the last hundred —
+  // the rolling cluster the acceptance measures, which spans sittings. The
+  // cooldown above says whether it may come back at all; this says how many
+  // of it the window already holds. A history from before this key reads as
+  // an empty count, which `normalizeHistory` already guarantees.
+  perceptual: 100,
   task: 60,
   presentation: 60,
   layout: 100,
@@ -121,7 +127,7 @@ const EMPTY = Object.freeze({
   schema: HISTORY_SCHEMA,
   questionsSeen: 0,
   seen: {perceptual: [], stem: [], reasoning: [], blueprint: [], skeleton: []},
-  recent: {task: [], presentation: [], layout: [], family: [], entity: []}
+  recent: {perceptual: [], task: [], presentation: [], layout: [], family: [], entity: []}
 });
 
 /** A fresh journey. A user opening the app for the first time gets this. */
@@ -306,6 +312,41 @@ export class JourneyMemory {
   /** Note that a slot had to fall back onto an idea still inside its cooldown. */
   noteProtectedReuse(entry) {
     this.protectedReuses.push(entry);
+  }
+
+  /**
+   * RC2.9.4-B9. What was delivered at an absolute position, on the axes the
+   * streak measure reads: family, task and construction. Read back from the
+   * count and recency maps, so nothing new is stored.
+   */
+  keysAtPosition(position) {
+    const find = kind => { for (const [k, hits] of this.occurrences[kind] ?? []) if (hits.includes(position)) return k; return null; };
+    let perceptual = null;
+    for (const [k, at] of this.lastSeenAt.perceptual ?? []) if (at === position) { perceptual = k; break; }
+    return {family: find('family'), task: find('task'), perceptual};
+  }
+
+  /** Is a blueprint similar (family+task, or construction) to what was at `position`? */
+  similarTo(blueprint, position) {
+    if (position < 1) return false;
+    const k = this.keysAtPosition(position);
+    if (!k.family && !k.perceptual) return false;
+    return (k.family === blueprint.family && k.task === blueprint.task)
+      || (k.perceptual != null && (blueprint.signatures ?? []).includes(k.perceptual));
+  }
+
+  /** Would this blueprint, asked first in the sitting, make a run of three with the previous sitting's last two? */
+  similarRunInto(blueprint) {
+    const last = this.sessionStart;
+    if (last < 2) return false;
+    if (!this.similarTo(blueprint, last)) return false;
+    const a = this.keysAtPosition(last), b = this.keysAtPosition(last - 1);
+    return (a.family && a.family === b.family && a.task === b.task) || (a.perceptual != null && a.perceptual === b.perceptual);
+  }
+
+  /** Was the previous sitting's last question similar to this blueprint? */
+  lastWasSimilar(blueprint) {
+    return this.sessionStart >= 1 && this.similarTo(blueprint, this.sessionStart);
   }
 
   /**

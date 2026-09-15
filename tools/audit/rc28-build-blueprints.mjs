@@ -47,6 +47,11 @@ export function deriveBlueprints({samples = SAMPLES_PER_TEMPLATE} = {}) {
     // session ran out before it was full. With the signatures in the catalogue
     // the planner knows before it allocates.
     const signatures = new Map();
+    // RC2.9.4-B5. And the two axes realization holds absolutely inside one
+    // sitting — the reasoning target and the core construction — so the plan
+    // can see them before it allocates.
+    const targetPairs = new Map();
+    const cores = new Map();
     for (let i = 0; i < samples; i++) {
       let q;
       try {
@@ -61,6 +66,10 @@ export function deriveBlueprints({samples = SAMPLES_PER_TEMPLATE} = {}) {
       tasks.get(task).add(q.metadata.asked_unknown);
       if (!signatures.has(task)) signatures.set(task, new Set());
       signatures.get(task).add(q.metadata.user_perceptual_signature);
+      if (!targetPairs.has(task)) targetPairs.set(task, new Set());
+      if (q.metadata.reasoning_target_pair) targetPairs.get(task).add(q.metadata.reasoning_target_pair);
+      if (!cores.has(task)) cores.set(task, new Set());
+      if (q.metadata.user_construction_signature) cores.get(task).add(q.metadata.user_construction_signature);
     }
     if (!tasks.size) { unreachable.push(templateId); continue; }
     for (const [task, targets] of tasks) {
@@ -68,7 +77,9 @@ export function deriveBlueprints({samples = SAMPLES_PER_TEMPLATE} = {}) {
         templateId, family, band: entry.band, task,
         info: INFO_STRUCTURE_BY_TEMPLATE[templateId] ?? 'DIRECT_GIVENS',
         targets: [...targets].sort(),
-        signatures: [...(signatures.get(task) ?? [])].sort()
+        signatures: [...(signatures.get(task) ?? [])].sort(),
+        targetPairs: [...(targetPairs.get(task) ?? [])].sort(),
+        cores: [...(cores.get(task) ?? [])].sort()
       });
     }
   }
@@ -108,6 +119,9 @@ const HEAD = `// RC2.8-2. The blueprint catalogue: the SEMANTIC space the schedu
 // \`signatures\` lists the perceptual identities it was observed to realise, and
 // IS an input to selection: an idea whose signature this user has already met is
 // not offered again while the band holds one they have not.
+// \`targetPairs\` and \`cores\` (RC2.9.4-B5) list the reasoning targets and core
+// constructions it was observed to realise. Both are ABSOLUTE inside a sitting,
+// so a blueprint with nothing unused left on either axis is never planned.
 
 /**
  * @typedef {object} Blueprint
@@ -118,6 +132,8 @@ const HEAD = `// RC2.8-2. The blueprint catalogue: the SEMANTIC space the schedu
  * @property {string} info        how the information is laid out
  * @property {string[]} targets   the unknowns observed for this task
  * @property {string[]} signatures the perceptual identities it was observed to realise
+ * @property {string[]} targetPairs the reasoning targets it was observed to realise
+ * @property {string[]} cores      the core constructions it was observed to realise
  */
 
 /** @type {Blueprint[]} */
@@ -179,7 +195,9 @@ export function render(rows) {
     `  {templateId: '${r.templateId}', family: '${r.family}', band: '${r.band}', `
     + `task: '${r.task}', info: '${r.info}', `
     + `targets: [${r.targets.map(t => `'${t}'`).join(', ')}], `
-    + `signatures: [${r.signatures.map(t => `'${t.replace(/'/g, "\\'")}'`).join(', ')}]}`).join(',\n');
+    + `signatures: [${r.signatures.map(t => `'${t.replace(/'/g, "\\'")}'`).join(', ')}], `
+    + `targetPairs: [${(r.targetPairs ?? []).map(t => `'${t.replace(/'/g, "\\'")}'`).join(', ')}], `
+    + `cores: [${(r.cores ?? []).map(t => `'${t.replace(/'/g, "\\'")}'`).join(', ')}]}`).join(',\n');
   return HEAD + body + TAIL;
 }
 

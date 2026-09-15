@@ -1,8 +1,11 @@
-import {mk, usable, buildBase, eq, X, mul, sub, resample, fractionChainPhrase, composeSentences, askOf} from './_shared.js';
+import {mk, usable, buildBase, eq, X, mul, sub, resample, fractionChainPhrase, composeSentences, askOf, u, unitFormat, distinctValues} from './_shared.js';
 import {grid} from '../qa/oracle-engine.js';
+import {PERSONS} from '../compose/entities.js';
+
+const MALE_NAMES = PERSONS.filter(p => p.g === 'm').map(p => p.w);
 import {structuralBandOf} from '../qa/structure.js';
 
-const FRACTION_TEMPLATE_IDS = ['FRAC_E_2', 'FRAC_M_3', 'FRAC_H_4', 'FRAC_M_REMAIN'];
+const FRACTION_TEMPLATE_IDS = ['FRAC_E_2', 'FRAC_M_3', 'FRAC_H_4', 'FRAC_M_REMAIN', 'FRAC_M_REMAIN_VALUE', 'FRAC_M_START_FROM_REMAINDER', 'FRAC_M_COMPARE_SHARES'];
 const FRACTION_BANDS = new Set(FRACTION_TEMPLATE_IDS.map(structuralBandOf));
 
 const FRACS = [
@@ -44,8 +47,12 @@ export function generateFractions({difficulty, rng, seed, engineVersion, telemet
   // a different quantity, a different layout (a whole being partitioned rather
   // than a chain being walked) and a different piece of reasoning — the
   // complement at each stage, not the part.
-  if (pinTemplate === 'FRAC_M_REMAIN') return remainingFraction(ctx);
-  if (!pinTemplate && difficulty === 'medium') return remainingFraction(ctx);
+  // RC2.9.4-B3. The MEDIUM band now holds four constructions; an unpinned
+  // medium draw picks among them.
+  const MEDIUM = {FRAC_M_REMAIN: remainingFraction, FRAC_M_REMAIN_VALUE: remainingAmount,
+    FRAC_M_START_FROM_REMAINDER: startFromRemainder, FRAC_M_COMPARE_SHARES: compareShares};
+  if (pinTemplate && MEDIUM[pinTemplate]) return MEDIUM[pinTemplate](ctx);
+  if (!pinTemplate && difficulty === 'medium') return rng.pick(Object.values(MEDIUM))(ctx);
   // RC2.8-2. Every other template id in this family IS its chain length, so a
   // pin on the id pins the length; everything else still varies with the seed.
   const PIN_LENGTH = {FRAC_E_2: 2, FRAC_M_3: 3, FRAC_H_4: 4};
@@ -348,5 +355,170 @@ function remainingFraction(ctx) {
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 3, dependencyDepth: 2},
     textParams: false
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.9.4-B3. Three more MEDIUM constructions. FRAC_M_REMAIN asks the surviving
+// FRACTION with no amount in sight. These put an AMOUNT on the page and run the
+// remainder idea three other ways: forward to what is left of a stated sum;
+// backward from what is left to the sum that was started with; and a non-unit
+// share of a whole compared against its complement.
+// ---------------------------------------------------------------------------
+
+/** Non-unit fractions above one half, as Arabic words, with p/q and 2p − q ≠ 1
+ *  so that «one part of the whole» can never coincide with the share gap. */
+const SHARE_FRACS = [
+  {p: 3, q: 4, n: 'ثلاثة أرباع'}, {p: 5, q: 8, n: 'خمسة أثمان'}, {p: 4, q: 5, n: 'أربعة أخماس'},
+  {p: 5, q: 6, n: 'خمسة أسداس'}, {p: 7, q: 10, n: 'سبعة أعشار'}, {p: 5, q: 7, n: 'خمسة أسباع'},
+  {p: 7, q: 9, n: 'سبعة أتساع'}, {p: 9, q: 10, n: 'تسعة أعشار'}
+];
+
+function remainingAmount(ctx) {
+  const {rng} = ctx;
+  const [first, second] = rng.sample(FRACS.filter(f => f.d >= 3), 2);
+  const k = rng.pick([10, 15, 20, 25, 30, 40, 50]);
+  const total = first.d * second.d * k;
+  const afterFirst = total - total / first.d;
+  const correct = afterFirst - afterFirst / second.d;
+  const spent1 = total / first.d;
+  const spent2 = afterFirst / second.d;
+  const params = {startAmount: total, firstDenominator: first.d, secondDenominator: second.d};
+  const distractors = usable(ctx, [
+    mk(total - spent1 - total / second.d, 'SUBTRACTED_BOTH_FROM_THE_WHOLE', `${total} − ${spent1} − ${total / second.d}`, 2),
+    mk(afterFirst, 'STOPPED_AFTER_FIRST_STAGE', `${total} − ${spent1}`, 2),
+    mk(spent1 + spent2, 'ANSWERED_THE_OTHER_COMPONENT', `${spent1} + ${spent2}`, 3),
+    mk(total / first.d / second.d, 'APPLIED_FRACTION_TO_ORIGINAL', `${total} ÷ ${first.d} ÷ ${second.d}`, 2),
+    mk(spent2, 'ANSWERED_THE_OTHER_COMPONENT', `${afterFirst} ÷ ${second.d}`, 3),
+    mk(total - spent2, 'MISSED_ONE_FRACTION_STAGE', `${total} − ${spent2}`, 3),
+    mk(afterFirst - total / second.d, 'APPLIED_FRACTION_TO_ORIGINAL', `${afterFirst} − ${total / second.d}`, 2)
+  ]);
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, remainingAmount);
+  const name = rng.pick(MALE_NAMES);
+  const stem = composeSentences(ctx, `كان مع ${name} ${u(total, 'dirham')}، فأنفق ${first.n}ها، ثم أنفق ${second.n} ما تبقى. كم درهمًا بقي معه؟`);
+  return buildBase(ctx, {
+    templateId: 'FRAC_M_REMAIN_VALUE',
+    subskill: 'المبلغ الباقي بعد إنفاق كسر ثم كسر من الباقي',
+    difficulty: 'medium',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `الإنفاق الأول = ${total} ÷ ${first.d} = ${spent1}، فيبقى ${total} − ${spent1} = ${afterFirst}.`,
+      `الإنفاق الثاني يُؤخذ من الباقي: ${afterFirst} ÷ ${second.d} = ${spent2}.`,
+      `الباقي = ${afterFirst} − ${spent2} = ${correct}.`
+    ],
+    howToStart: 'احسب الباقي بعد الإنفاق الأول قبل تطبيق الكسر الثاني.',
+    remember: 'الكسر الثاني يُؤخذ من الباقي، لا من المبلغ الأصلي.',
+    fastMethod: `اضرب المبلغ في الباقيين مباشرة — هنا ${total} × ${first.d - 1}/${first.d} × ${second.d - 1}/${second.d}.`,
+    estimatedSteps: 3, conceptTags: ['fractions', 'complement', 'remainder'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, first.d, second.d), mul(total, sub(first.d, 1), sub(second.d, 1)))]},
+    askedUnknown: 'remainingAmount', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'COMPOSE_REMAINDERS', targetMisconception: 'SUBTRACTED_BOTH_FROM_THE_WHOLE',
+      wrongMethodValue: total - spent1 - total / second.d,
+      degenerateWhen: [{when: false, note: 'taking the second share from the original always differs from the key by total/(d₁d₂)'}]
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 4},
+    textParams: {essentialParams: ['startAmount']}
+  });
+}
+
+function startFromRemainder(ctx) {
+  const {rng} = ctx;
+  const [first, second] = rng.sample(FRACS.filter(f => f.d >= 3), 2);
+  const k = rng.pick([10, 15, 20, 25, 30, 40]);
+  const correct = first.d * second.d * k;
+  const afterFirst = correct - correct / first.d;
+  const rem = afterFirst - afterFirst / second.d;
+  const params = {remainingAmount: rem, firstDenominator: first.d, secondDenominator: second.d};
+  const keptNum = (first.d - 1) * (second.d - 1);
+  const den = first.d * second.d;
+  const distractors = usable(ctx, [
+    mk(rem * first.d / (first.d - 1), 'REVERSED_ONE_STAGE_ONLY', `${rem} × ${first.d} ÷ ${first.d - 1}`, 2),
+    mk(rem * second.d / (second.d - 1), 'REVERSED_ONE_STAGE_ONLY', `${rem} × ${second.d} ÷ ${second.d - 1}`, 2),
+    mk(rem * den / (den - first.d - second.d), 'SUBTRACTED_BOTH_FROM_THE_WHOLE', `${rem} ÷ (1 − 1/${first.d} − 1/${second.d})`, 1),
+    mk(rem + rem / first.d + rem / second.d, 'APPLIED_FRACTION_TO_ORIGINAL', `${rem} + ${rem} ÷ ${first.d} + ${rem} ÷ ${second.d}`, 1),
+    mk(rem * den, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${rem} × ${den}`, 2),
+    mk(rem * keptNum / den, 'APPLIED_OPERATION_IN_REVERSE', `${rem} × ${keptNum} ÷ ${den}`, 2),
+    mk(rem + correct / first.d, 'MISSED_ONE_FRACTION_STAGE', `${rem} + ${correct / first.d}`, 2)
+  ], {maxDecimals: 1});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, startFromRemainder);
+  const name = rng.pick(MALE_NAMES);
+  const stem = composeSentences(ctx, `أنفق ${name} ${first.n} ما معه من المال، ثم أنفق ${second.n} ما تبقى، فبقي معه ${u(rem, 'dirham')}. كم درهمًا كان معه في البداية؟`);
+  return buildBase(ctx, {
+    templateId: 'FRAC_M_START_FROM_REMAINDER',
+    subskill: 'المبلغ الأصلي من الباقي بعد كسرين متتاليين',
+    difficulty: 'medium',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `بعد الإنفاق الأول يبقى 1 − 1/${first.d} = ${first.d - 1}/${first.d} من المبلغ، وبعد الثاني يبقى 1 − 1/${second.d} = ${second.d - 1}/${second.d} من ذلك الباقي.`,
+      `الباقي من المبلغ الأصلي = ${first.d - 1}/${first.d} × ${second.d - 1}/${second.d} = ${keptNum}/${den}.`,
+      `المبلغ الأصلي = ${rem} × ${den} ÷ ${keptNum} = ${correct}.`
+    ],
+    howToStart: 'اكتب الجزء الباقي من المبلغ الأصلي ككسر واحد أولًا.',
+    remember: 'الباقي بعد مرحلتين = حاصل ضرب الباقيين، ثم يُقسم المبلغ الباقي على هذا الكسر.',
+    fastMethod: `اقسم الباقي على حاصل ضرب الباقيين — هنا ${rem} ÷ (${keptNum}/${den}).`,
+    estimatedSteps: 3, conceptTags: ['fractions', 'complement', 'reverse'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, keptNum), mul(rem, den))]},
+    askedUnknown: 'startFromRemainder', stageCount: 2, direction: 'backward',
+    pedagogy: {
+      targetSkill: 'REVERSE_COMPOSED_REMAINDERS', targetMisconception: 'REVERSED_ONE_STAGE_ONLY',
+      wrongMethodValue: rem * first.d / (first.d - 1),
+      degenerateWhen: [{when: second.d === 1, note: 'no second stage to reverse'}]
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, reverseReasoning: 1, stageCount: 2, arithmeticBurden: 4},
+    textParams: {essentialParams: ['remainingAmount']}
+  });
+}
+
+function compareShares(ctx) {
+  const {rng} = ctx;
+  const f = rng.pick(SHARE_FRACS);
+  const k = rng.pick([10, 15, 20, 25, 30, 40, 50]);
+  const total = f.q * k;
+  const mine = f.p * k;
+  const other = total - mine;
+  const correct = mine - other;
+  const params = {total, numerator: f.p, denominator: f.q};
+  const distractors = usable(ctx, [
+    mk(mine, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${total} × ${f.p} ÷ ${f.q}`, 1),
+    mk(other, 'ANSWERED_THE_OTHER_COMPONENT', `${total} − ${mine}`, 2),
+    mk(k, 'USED_PART_VALUE_AS_ANSWER', `${total} ÷ ${f.q}`, 1),
+    mk(2 * f.p - f.q, 'USED_DIFFERENCE_AS_ANSWER', `${f.p} − (${f.q} − ${f.p})`, 3),
+    mk(mine + k, 'APPLIED_STEP_TWICE', `${mine} + ${k}`, 3),
+    mk(total - k, 'MISSED_ONE_STAGE', `${total} − ${k}`, 2),
+    mk(mine - k, 'SUBTRACTED_INSTEAD_OF_ADDED', `${mine} − ${k}`, 3)
+  ]);
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, compareShares);
+  const [a, b] = rng.sample(MALE_NAMES, 2);
+  const stem = composeSentences(ctx, `اقتسم ${a} و${b} مبلغ ${u(total, 'dirham')}، فأخذ ${a} ${f.n} المبلغ وأخذ ${b} الباقي. بكم درهمًا يزيد نصيب ${a} على نصيب ${b}؟`);
+  return buildBase(ctx, {
+    templateId: 'FRAC_M_COMPARE_SHARES',
+    subskill: 'فرق نصيبين من كسر غير وحدوي ومتممه',
+    difficulty: 'medium',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `نصيب ${a} = ${total} × ${f.p} ÷ ${f.q} = ${mine}.`,
+      `نصيب ${b} = ${total} − ${mine} = ${other}.`,
+      `الفرق = ${mine} − ${other} = ${correct}.`
+    ],
+    howToStart: 'احسب نصيب صاحب الكسر، ثم الباقي هو نصيب الآخر.',
+    remember: 'الباقي بعد كسر من الكل هو متمم ذلك الكسر، وفرق النصيبين ليس قيمة الجزء الواحد.',
+    fastMethod: `الجزء الواحد ${k}، والفرق بالأجزاء ${2 * f.p - f.q}، فالفرق = ${2 * f.p - f.q} × ${k}.`,
+    estimatedSteps: 3, conceptTags: ['fractions', 'complement', 'comparison'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, f.q), mul(total, sub(mul(2, f.p), f.q)))]},
+    askedUnknown: 'shareGap', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'SHARE_AND_COMPLEMENT', targetMisconception: 'ANSWERED_THE_OTHER_COMPONENT',
+      wrongMethodValue: other,
+      degenerateWhen: [{when: 2 * f.p === f.q, note: 'equal halves: no gap'}]
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 3},
+    textParams: {essentialParams: ['total']}
   });
 }

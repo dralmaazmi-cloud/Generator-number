@@ -1,5 +1,5 @@
 import {DAYS_AR, dayShift} from '../utils.js';
-import {mk, usable, u, unitFormat, buildBase, eq, X, add, sub, mod, resample, adj, bandPool, composeSentences} from './_shared.js';
+import {mk, usable, u, unitFormat, buildBase, eq, X, add, sub, mul, mod, resample, adj, bandPool, composeSentences} from './_shared.js';
 import {grid} from '../qa/oracle-engine.js';
 
 export function generateCalendar({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
@@ -16,7 +16,10 @@ export function generateCalendar({difficulty, rng, seed, engineVersion, telemetr
     ['CAL_H_NESTED', nestedOffset],
     ['CAL_H_CYCLE_MEET', twoCyclesMeet],
     ['CAL_H_MONTH_LENGTH', monthLengthFromTwoDates],
-    ['CAL_H_OFFSET_CYCLES', offsetCyclesMeet]
+    ['CAL_H_OFFSET_CYCLES', offsetCyclesMeet],
+    // RC2.9.4-B3. Two MEDIUM routes onto a weekday.
+    ['CAL_M_DATE_WEEKDAY', weekdayOfDate],
+    ['CAL_M_NTH_VISIT', nthVisitWeekday]
   ], pinTemplate)(ctx);
 }
 
@@ -657,5 +660,114 @@ function offsetCyclesMeet(ctx) {
     allowedConstants: [0, 1, 2, 7, 100],
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, conditionCount: 2, stageCount: 3, arithmeticBurden: 5},
     textParams: false
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.9.4-B3. Two more MEDIUM constructions. The one MEDIUM template this
+// family held maps the LCM of two cycles onto a weekday. These carry a weekday
+// across two DATES of one month (a difference of dates, then the remainder), and
+// along ONE repeating cycle to its n-th occurrence (a count of gaps, then the
+// remainder) — two routes onto the weekday that the offset templates never take.
+// ---------------------------------------------------------------------------
+
+function weekdayOfDate(ctx) {
+  const {rng} = ctx;
+  const d1 = rng.int(1, 9);
+  const d2 = rng.int(d1 + 8, 30);
+  const offset = d2 - d1;
+  const rem = offset % 7;
+  const weeks = Math.floor(offset / 7);
+  // A remainder of zero makes «the same weekday» the key and the stated day the
+  // trap; the item then reads as a trick, so it is not drawn.
+  // A remainder of six is degenerate the other way: an inclusive count of the
+  // two dates moves a whole week and lands on the key.
+  if (rem === 0 || rem === 6) return resample(ctx, weekdayOfDate);
+  const start = rng.int(0, 6);
+  const target = dayShift(start, rem);
+  const correct = DAYS_AR[target];
+  const distractors = dayDistractors(ctx, target, -rem, [
+    {index: start - rem, misconceptionId: 'SHIFTED_WRONG_DIRECTION', derivation: `الرجوع ${u(rem, 'day', 'oblique')} بدل التقدم`},
+    {index: start + rem + 1, misconceptionId: 'OFF_BY_ONE_STEP', derivation: `عدّ اليومين ${d1} و${d2} كليهما، فصار الفرق ${offset + 1}`},
+    {index: start, misconceptionId: 'USED_GIVEN_VALUE_AS_ANSWER', derivation: `اليوم المذكور نفسه ${DAYS_AR[start]}`},
+    {index: start + weeks, misconceptionId: 'IGNORED_NET_OFFSET', derivation: 'التحرك بعدد الأسابيع الكاملة بدل الباقي'}
+  ]);
+  const stem = composeSentences(ctx, `صادف يوم ${d1} من شهر ما يوم ${DAYS_AR[start]}. ما يوم الأسبوع الذي يصادف يوم ${d2} من الشهر نفسه؟`);
+  return buildBase(ctx, {
+    templateId: 'CAL_M_DATE_WEEKDAY',
+    subskill: 'يوم الأسبوع لتاريخ آخر في الشهر نفسه',
+    difficulty: 'medium',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: v => String(v),
+    steps: [
+      `عدد الأيام بين التاريخين = ${d2} − ${d1} = ${offset}.`,
+      `نطرح أسبوعًا كاملًا في كل مرة: ${weekSubtractionLine(offset)}، فالباقي ${rem}.`,
+      `نتقدم ${u(rem, 'day', 'oblique')} من ${DAYS_AR[start]} فنصل إلى ${correct}.`
+    ],
+    howToStart: 'احسب الفرق بين التاريخين أولًا، ثم باقي قسمته على 7.',
+    remember: 'الفرق بين تاريخين هو طرحهما، لا عدّهما معًا.',
+    fastMethod: `فرق التاريخين، ثم باقي قسمته على 7 — هنا باقي ${offset} على 7 هو ${rem}، فتقدم به من ${DAYS_AR[start]}.`,
+    estimatedSteps: 3, conceptTags: ['calendar', 'modulo', 'dates'],
+    parameters: {firstDate: d1, secondDate: d2, startDayIndex: start},
+    allowedConstants: [0, 1, 2, 7, 100],
+    oracle: {kind: 'search', answerKind: 'dayIndex', domain: grid(0, 6), constraints: [eq(mod(add(start, offset), 7), X)]},
+    askedUnknown: 'weekdayOfDate', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'DATE_DIFFERENCE_MOD_SEVEN', targetMisconception: 'OFF_BY_ONE_STEP',
+      wrongMethodValue: dayName(start + rem + 1),
+      degenerateWhen: [{when: rem === 6, note: 'an inclusive count lands one week ahead, on the key'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 2, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['firstDate', 'secondDate']}
+  });
+}
+
+const VISIT_ORDINAL = {3: 'الثالثة', 4: 'الرابعة', 5: 'الخامسة', 6: 'السادسة', 7: 'السابعة', 8: 'الثامنة', 9: 'التاسعة', 10: 'العاشرة'};
+
+function nthVisitWeekday(ctx) {
+  const {rng} = ctx;
+  const gap = rng.pick([3, 4, 5, 6, 8, 9, 10]);
+  const n = rng.pick([3, 4, 5, 6, 7, 8, 9, 10]);
+  const offset = (n - 1) * gap;
+  const rem = offset % 7;
+  if (rem === 0) return resample(ctx, nthVisitWeekday);
+  const start = rng.int(0, 6);
+  const target = dayShift(start, rem);
+  const correct = DAYS_AR[target];
+  const distractors = dayDistractors(ctx, target, -rem, [
+    {index: start + n * gap, misconceptionId: 'OFF_BY_ONE_STEP', derivation: `التقدم ${u(n * gap, 'day', 'oblique')} بعدّ ${n} بدل ${n - 1}`},
+    {index: start + (n - 1), misconceptionId: 'COUNTED_THE_TURNS_AS_DAYS', derivation: `التقدم ${u(n - 1, 'day', 'oblique')} بدل ${u(offset, 'day', 'oblique')}`},
+    {index: start - rem, misconceptionId: 'SHIFTED_WRONG_DIRECTION', derivation: `الرجوع ${u(rem, 'day', 'oblique')} بدل التقدم`},
+    {index: start, misconceptionId: 'USED_GIVEN_VALUE_AS_ANSWER', derivation: `يوم الزيارة الأولى نفسه ${DAYS_AR[start]}`}
+  ]);
+  const stem = composeSentences(ctx, `يزور مفتش مصنعًا مرة كل ${u(gap, 'day', 'oblique')}، وكانت زيارته الأولى يوم ${DAYS_AR[start]}. في أي يوم من الأسبوع تكون زيارته ${VISIT_ORDINAL[n]}؟`);
+  return buildBase(ctx, {
+    templateId: 'CAL_M_NTH_VISIT',
+    subskill: 'يوم الأسبوع للتكرار النوني لدورة واحدة',
+    difficulty: 'medium',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: v => String(v),
+    steps: [
+      `عدد الفترات بين الزيارة الأولى والزيارة ${VISIT_ORDINAL[n]} = ${n} − 1 = ${n - 1}.`,
+      `عدد الأيام = ${n - 1} × ${gap} = ${offset}، ثم ${weekSubtractionLine(offset)}، فالباقي ${rem}.`,
+      `نتقدم ${u(rem, 'day', 'oblique')} من ${DAYS_AR[start]} فنصل إلى ${correct}.`
+    ],
+    howToStart: 'عدّ الفترات بين الزيارتين، لا الزيارات نفسها.',
+    remember: 'بين الزيارة الأولى والزيارة النونية (ن − 1) فترة.',
+    fastMethod: `(رقم الزيارة − 1) × طول الدورة، ثم الباقي على 7 — هنا (${n} − 1) × ${gap} = ${offset}.`,
+    estimatedSteps: 3, conceptTags: ['calendar', 'modulo', 'cycle'],
+    parameters: {cycleDays: gap, visitIndex: n, startDayIndex: start},
+    allowedConstants: [0, 1, 2, 7, 100],
+    oracle: {kind: 'search', answerKind: 'dayIndex', domain: grid(0, 6), constraints: [eq(mod(add(start, mul(n - 1, gap)), 7), X)]},
+    askedUnknown: 'nthOccurrenceWeekday', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'COUNT_GAPS_THEN_MOD_SEVEN', targetMisconception: 'OFF_BY_ONE_STEP',
+      wrongMethodValue: dayName(start + n * gap),
+      degenerateWhen: [{when: gap % 7 === 0, note: 'a whole-week cycle lands every visit on the same day'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 2, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['cycleDays']}
   });
 }

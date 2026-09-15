@@ -1,6 +1,6 @@
 {
-  "engine_version": "1.5.3",
-  "template_count": 155,
+  "engine_version": "1.5.4",
+  "template_count": 184,
   "generated_by": "tools/audit/rc291-manifest.mjs — derived from the engine, never edited by hand",
   "families": {
     "sequences": {
@@ -9,11 +9,19 @@
         "easy": [
           {
             "id": "SEQ_E_ARITH",
-            "subskill": "فرق ثابت مع حد مفقود في الوسط"
+            "subskill": "فرق ثابت"
+          },
+          {
+            "id": "SEQ_E_COUNT_TERMS",
+            "subskill": "عدد حدود متتالية حسابية من أولها وآخرها"
           },
           {
             "id": "SEQ_E_GEO",
             "subskill": "قسمة ثابتة"
+          },
+          {
+            "id": "SEQ_E_NTH_TERM",
+            "subskill": "حد بعيد في متتالية حسابية من قاعدتها"
           }
         ],
         "medium": [
@@ -99,12 +107,24 @@
       "templates": {
         "easy": [
           {
+            "id": "RAT_E_DIFF_SPLIT",
+            "subskill": "إيجاد طرف من نسبة وفرق معلوم"
+          },
+          {
             "id": "RAT_E_KNOWN",
             "subskill": "استخدام قيمة طرف معلوم في نسبة"
           },
           {
             "id": "RAT_E_SPLIT",
             "subskill": "تقسيم مجموع وفق نسبة"
+          },
+          {
+            "id": "RAT_E_THREE_WAY",
+            "subskill": "تقسيم مبلغ ثلاثيًا وفق نسبة"
+          },
+          {
+            "id": "RAT_E_TOTAL_FROM_PART",
+            "subskill": "إيجاد المجموع من طرف معلوم في نسبة"
           }
         ],
         "medium": [
@@ -115,6 +135,14 @@
           {
             "id": "RAT_M_ADD_SIDE",
             "subskill": "تغير النسبة بعد إضافة كمية إلى أحد الطرفين"
+          },
+          {
+            "id": "RAT_M_THIRD_FROM_GAP",
+            "subskill": "نصيب ثالث من نسبة ثلاثية وفرق نصيبين"
+          },
+          {
+            "id": "RAT_M_TOTAL_FROM_GAP",
+            "subskill": "المجموع الكلي من نسبة وفرق النصيبين"
           }
         ],
         "hard": [
@@ -193,6 +221,14 @@
             "subskill": "إضافة قيمة جديدة إلى مجموعة"
           },
           {
+            "id": "AVG_E_LIST",
+            "subskill": "حساب المتوسط الحسابي لقائمة أعداد"
+          },
+          {
+            "id": "AVG_E_MISSING_VALUE",
+            "subskill": "استرجاع عدد مفقود من متوسط معلوم"
+          },
+          {
             "id": "AVG_E_REMOVE",
             "subskill": "حذف قيمة من مجموعة"
           }
@@ -236,8 +272,20 @@
       "templates": {
         "easy": [
           {
+            "id": "AGE_E_RATIO_SUM",
+            "subskill": "مضاعف عمر مع مجموع معلوم"
+          },
+          {
             "id": "AGE_E_SUM_DIFF",
             "subskill": "مجموع وفرق عمرين حاليين"
+          },
+          {
+            "id": "AGE_E_TIME_SHIFT",
+            "subskill": "عمر شخص آخر في المستقبل من عمر حالي وفرق"
+          },
+          {
+            "id": "AGE_E_YEARS_TO_SUM",
+            "subskill": "عدد السنوات حتى يبلغ مجموع العمرين قيمة معلومة"
           }
         ],
         "medium": [
@@ -295,8 +343,20 @@
             "subskill": "إيجاد المسافة من السرعة والزمن"
           },
           {
+            "id": "SPD_E_SAME_DIRECTION_GAP",
+            "subskill": "المسافة بين متحركين في الاتجاه نفسه"
+          },
+          {
+            "id": "SPD_E_SPEED",
+            "subskill": "إيجاد السرعة من المسافة والزمن"
+          },
+          {
             "id": "SPD_E_TIME",
             "subskill": "إيجاد الزمن من المسافة والسرعة"
+          },
+          {
+            "id": "SPD_E_UNIT_MINUTES",
+            "subskill": "مسافة من سرعة بالساعة وزمن بالدقائق"
           }
         ],
         "medium": [
@@ -397,8 +457,20 @@
       "templates": {
         "easy": [
           {
+            "id": "MACH_E_COMPARE",
+            "subskill": "فرق إنتاج آلتين خلال مدة واحدة"
+          },
+          {
             "id": "MACH_E_HOURS",
             "subskill": "معدل آلة واحدة من آلة-ساعة"
+          },
+          {
+            "id": "MACH_E_RATE_FROM_TOTAL",
+            "subskill": "معدل الآلة الواحدة من إنتاج مجموعة"
+          },
+          {
+            "id": "MACH_E_TIME_FOR_TARGET",
+            "subskill": "زمن مجموعة آلات لبلوغ إنتاج مستهدف"
           }
         ],
         "medium": [
@@ -480,6 +552,14 @@
           {
             "id": "PROP_H_TWO_ITEM_SYSTEM",
             "subskill": "سعر الوحدة من خليطين مختلفين"
+          },
+          {
+            "id": "PROP_M_SCALE_ACROSS_HOURS",
+            "subskill": "تناسب مباشر مع تحويل الساعات إلى دقائق"
+          },
+          {
+            "id": "PROP_M_UNIT_PRICE_COMPARE",
+            "subskill": "مقارنة عرضين بسعر الوحدة"
           }
         ],
         "hard": [
@@ -517,8 +597,20 @@
         ],
         "medium": [
           {
+            "id": "FRAC_M_COMPARE_SHARES",
+            "subskill": "فرق نصيبين من كسر غير وحدوي ومتممه"
+          },
+          {
             "id": "FRAC_M_REMAIN",
             "subskill": "الباقي بعد إنفاق كسرين متتاليين"
+          },
+          {
+            "id": "FRAC_M_REMAIN_VALUE",
+            "subskill": "المبلغ الباقي بعد إنفاق كسر ثم كسر من الباقي"
+          },
+          {
+            "id": "FRAC_M_START_FROM_REMAINDER",
+            "subskill": "المبلغ الأصلي من الباقي بعد كسرين متتاليين"
           }
         ],
         "hard": []
@@ -553,6 +645,14 @@
           {
             "id": "RATE_H_TWO_PHASE",
             "subskill": "معدل يتغير بين مرحلتين"
+          },
+          {
+            "id": "RATE_M_COMPARE",
+            "subskill": "فرق معدلين وحدويين من كميتين وزمنين مختلفين"
+          },
+          {
+            "id": "RATE_M_HOURS_FROM_MINUTE_RATE",
+            "subskill": "زمن بالساعات من معدل بالدقيقة"
           }
         ],
         "hard": [
@@ -617,6 +717,14 @@
           {
             "id": "REL_E_CHAIN",
             "subskill": "ترتيب كامل وتحديد مركز"
+          },
+          {
+            "id": "REL_E_GAP_CHAIN",
+            "subskill": "فرق بين طرفين قيس كلٌّ منهما من الشخص نفسه"
+          },
+          {
+            "id": "REL_E_STATEMENT_TRUE",
+            "subskill": "اختيار العبارة الصحيحة من ترتيب كامل"
           }
         ],
         "medium": [
@@ -686,6 +794,14 @@
           {
             "id": "CAL_H_CYCLE_MEET",
             "subskill": "لقاء دورتين مختلفتين ويوم الأسبوع"
+          },
+          {
+            "id": "CAL_M_DATE_WEEKDAY",
+            "subskill": "يوم الأسبوع لتاريخ آخر في الشهر نفسه"
+          },
+          {
+            "id": "CAL_M_NTH_VISIT",
+            "subskill": "يوم الأسبوع للتكرار النوني لدورة واحدة"
           }
         ],
         "hard": [

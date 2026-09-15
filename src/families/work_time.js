@@ -31,6 +31,10 @@ function inverseDirect(ctx) {
   const w2 = rng.pick(candidates);
   const correct = work / w2;
   if (correct === d1) return resample(ctx, inverseDirect);
+  // RC2.9.4-B7. Mirrored givens are a tell: with w2 = d1 the answer is w1,
+  // and with w1 = d1 the answer is d1²/w2 — a number already on the page,
+  // guessable without the inverse proportion. The answer is never a given.
+  if (w2 === d1 || w1 === d1 || correct === w1 || correct === w2) return resample(ctx, inverseDirect);
   const params = {workers: w1, days: d1, newWorkers: w2};
   const distractors = usable(ctx, [
     mk(d1, 'USED_GIVEN_VALUE_AS_ANSWER', `عدد الأيام المعطى ${d1}`),

@@ -1,5 +1,10 @@
 import {gcd} from '../utils.js';
-import {mk, usable, u, num, buildBase, eq, X, add, sub, mul, mod, resample, bandPool, composeSentences} from './_shared.js';
+import {PERSONS} from '../compose/entities.js';
+
+const MALE_NAMES = PERSONS.filter(p => p.g === 'm').map(p => p.w);
+/** Three parts, pairwise coprime, so every pair printed is in lowest terms. */
+const pairwiseCoprime = p => gcd(p[0], p[1]) === 1 && gcd(p[1], p[2]) === 1 && gcd(p[0], p[2]) === 1;
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, mod, resample, bandPool, composeSentences, distinctValues} from './_shared.js';
 
 export function generateRatios({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'ratios', family_ar: 'النسب وتقسيم الكميات', category: 'النسب وتقسيم الكميات'};
@@ -15,7 +20,14 @@ export function generateRatios({difficulty, rng, seed, engineVersion, telemetry,
     ['RAT_M_ADD_SIDE', addToOneSide],
     ['RAT_H_TRANSFER', transferBetweenSides],
     // RC2.7-3. A largest admissible value.
-    ['RAT_H_MAX_PART', largestAdmissiblePart]
+    ['RAT_H_MAX_PART', largestAdmissiblePart],
+    // RC2.9.4-B2. Three EASY constructions for a cell that held one.
+    ['RAT_E_DIFF_SPLIT', differenceSplit],
+    ['RAT_E_THREE_WAY', threeWaySplit],
+    ['RAT_E_TOTAL_FROM_PART', totalFromOneSide],
+    // RC2.9.4-B3. Two MEDIUM constructions on a stated gap.
+    ['RAT_M_TOTAL_FROM_GAP', totalFromShareGap],
+    ['RAT_M_THIRD_FROM_GAP', thirdShareFromGap]
   ], pinTemplate)(ctx);
 }
 
@@ -596,5 +608,294 @@ function largestAdmissiblePart(ctx) {
       arithmeticBurden: 4, reverseReasoning: 1
     },
     textParams: {essentialParams: ['firstTerm', 'secondTerm', 'upperBound']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.9.4-B2. Three more EASY constructions. RAT_E_KNOWN gives one side and
+// asks the other. These give a DIFFERENCE and ask a side, split a whole THREE
+// ways, and give one side and ask the WHOLE — three routes the family did not
+// offer at this band.
+// ---------------------------------------------------------------------------
+
+function differenceSplit(ctx) {
+  const {rng} = ctx;
+  const [a, b] = reducedUnequalPair(rng, 5, 9);
+  const big = Math.max(a, b), small = Math.min(a, b);
+  const k = rng.int(3, 12);
+  const diff = (big - small) * k;
+  const askLarger = rng.bool();
+  const mine = askLarger ? big : small;
+  const other = askLarger ? small : big;
+  const correct = mine * k;
+  const params = {partA: a, partB: b, difference: diff};
+  const distractors = usable(ctx, [
+    mk(other * k, 'USED_WRONG_SIDE_OF_RATIO', `${other} × ${k}`, 3),
+    mk(k, 'USED_PART_VALUE_AS_ANSWER', `${diff} ÷ (${big} − ${small})`, 2),
+    mk((a + b) * k, 'USED_SUM_OF_PARTS', `(${a} + ${b}) × ${k}`, 3),
+    mk(diff * mine, 'RATE_APPLIED_TO_WRONG_COUNT', `${diff} × ${mine}`, 2),
+    mk(diff / (a + b) * mine, 'MISREAD_THE_STEP', `${diff} ÷ (${a} + ${b}) × ${mine}`, 2),
+    mk(diff + mine, 'ADDED_INSTEAD_OF_SCALING', `${diff} + ${mine}`, 2),
+    mk(diff, 'USED_GIVEN_VALUE_AS_ANSWER', `الفرق المعطى ${diff}`),
+    mk(mine * k * 2, 'APPLIED_STEP_TWICE', `${mine} × ${k} × 2`, 3)
+  ], {maxDecimals: 1});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, differenceSplit);
+  const stem = composeSentences(ctx, `النسبة بين عددين هي ${big} : ${small}، والفرق بينهما ${diff}. ما العدد ${askLarger ? 'الأكبر' : 'الأصغر'}؟`);
+  return buildBase(ctx, {
+    templateId: 'RAT_E_DIFF_SPLIT',
+    subskill: 'إيجاد طرف من نسبة وفرق معلوم',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: plain,
+    steps: [
+      `فرق أجزاء النسبة = ${big} − ${small} = ${big - small}.`,
+      `قيمة الجزء الواحد = ${diff} ÷ ${big - small} = ${k}.`,
+      `العدد ${askLarger ? 'الأكبر' : 'الأصغر'} = ${mine} × ${k} = ${correct}.`
+    ],
+    howToStart: 'قارن الفرق المعطى بفرق أجزاء النسبة.',
+    remember: 'الفرق بين العددين يقابل فرق الأجزاء، لا مجموعها.',
+    fastMethod: 'الفرق ÷ فرق الأجزاء، ثم اضرب في أجزاء الطرف المطلوب.',
+    estimatedSteps: 3, conceptTags: ['ratio', 'difference'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, big - small), mul(diff, mine))]},
+    askedUnknown: 'sideFromDifference', stageCount: 2,
+    ratio: {a: big, b: small, requireReduced: true, requireDistinctSides: true, label: 'given'},
+    pedagogy: {
+      targetSkill: 'SPLIT_BY_RATIO_DIFFERENCE', targetMisconception: 'MISREAD_THE_STEP',
+      wrongMethodValue: diff / (a + b) * mine
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['partA', 'partB', 'difference']}
+  });
+}
+
+const ORDINAL_PERSON = ['الأول', 'الثاني', 'الثالث'];
+
+function threeWaySplit(ctx) {
+  const {rng} = ctx;
+  let parts;
+  for (let t = 0; t < 40; t++) {
+    const p = [rng.int(1, 5), rng.int(1, 6), rng.int(2, 7)];
+    if (new Set(p).size < 3) continue;
+    if (!pairwiseCoprime(p)) continue;
+    parts = p; break;
+  }
+  if (!parts) parts = [2, 3, 5];
+  const sumParts = parts[0] + parts[1] + parts[2];
+  const k = rng.pick([5, 8, 10, 12, 15, 20]);
+  const total = sumParts * k;
+  const who = rng.int(0, 2);
+  const mine = parts[who];
+  // An equal three-way split must not land on the asked share, or the slip it
+  // targets is the key.
+  if (mine * 3 === sumParts) return resample(ctx, threeWaySplit);
+  const others = parts.filter((_, i) => i !== who);
+  const correct = mine * k;
+  const params = {partA: parts[0], partB: parts[1], partC: parts[2], total};
+  const distractors = usable(ctx, [
+    mk(k, 'USED_PART_VALUE_AS_ANSWER', `${total} ÷ ${sumParts}`, 2),
+    mk(others[0] * k, 'USED_WRONG_SIDE_OF_RATIO', `${others[0]} × ${k}`, 3),
+    mk(others[1] * k, 'USED_WRONG_SIDE_OF_RATIO', `${others[1]} × ${k}`, 3),
+    mk(total / 3, 'ASSUMED_EQUAL_SHARES', `${total} ÷ 3`, 1),
+    mk(total / (sumParts - mine) * mine, 'MISSED_ONE_STAGE', `${total} ÷ (${others[0]} + ${others[1]}) × ${mine}`, 1),
+    mk(total / mine, 'REVERSED_DIRECT_PROPORTION', `${total} ÷ ${mine}`, 2),
+    mk(mine * k * 2, 'APPLIED_STEP_TWICE', `${mine} × ${k} × 2`, 3),
+    mk(total - mine * k, 'USED_SUM_OF_PARTS', `${total} − ${mine * k}`, 3)
+  ], {maxDecimals: 1});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, threeWaySplit);
+  const names = rng.sample(MALE_NAMES, 3);
+  const stem = composeSentences(ctx, `قُسم مبلغ ${u(total, 'dirham')} بين ${names[0]} و${names[1]} و${names[2]} بنسبة ${parts.join(' : ')} على الترتيب. كم نصيب ${names[who]}؟`);
+  return buildBase(ctx, {
+    templateId: 'RAT_E_THREE_WAY',
+    subskill: 'تقسيم مبلغ ثلاثيًا وفق نسبة',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `مجموع أجزاء النسبة = ${parts.join(' + ')} = ${sumParts}.`,
+      `قيمة الجزء الواحد = ${total} ÷ ${sumParts} = ${k}.`,
+      `نصيب ${names[who]} = ${mine} × ${k} = ${correct}.`
+    ],
+    howToStart: 'اجمع أجزاء النسبة الثلاثة كلها قبل القسمة.',
+    remember: 'قيمة الجزء الواحد تُحسب من مجموع كل الأجزاء، لا من جزأين.',
+    fastMethod: 'المبلغ ÷ مجموع الأجزاء الثلاثة، ثم اضرب في نصيب المطلوب.',
+    estimatedSteps: 3, conceptTags: ['ratio', 'three-way-split'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, sumParts), mul(total, mine))]},
+    askedUnknown: 'shareOfThree', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'SPLIT_BY_RATIO', targetMisconception: 'ASSUMED_EQUAL_SHARES',
+      wrongMethodValue: total / 3,
+      degenerateWhen: [{when: mine * 3 === sumParts, note: 'an equal split lands on the asked share'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['partA', 'partB', 'partC', 'total']}
+  });
+}
+
+function totalFromOneSide(ctx) {
+  const {rng} = ctx;
+  const [a, b] = reducedUnequalPair(rng, 5, 8);
+  const k = rng.int(2, 9);
+  const givenA = rng.bool();
+  const givenParts = givenA ? a : b;
+  const otherParts = givenA ? b : a;
+  const given = givenParts * k;
+  const correct = (a + b) * k;
+  const params = {partA: a, partB: b, givenValue: given};
+  const distractors = usable(ctx, [
+    mk(otherParts * k, 'USED_WRONG_SIDE_OF_RATIO', `${otherParts} × ${k}`, 3),
+    mk(k, 'USED_PART_VALUE_AS_ANSWER', `${given} ÷ ${givenParts}`, 2),
+    mk(given + a + b, 'ADDED_INSTEAD_OF_SCALING', `${given} + ${a} + ${b}`, 1),
+    mk(given * (a + b), 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${given} × (${a} + ${b})`, 1),
+    mk(given * otherParts, 'RATE_APPLIED_TO_WRONG_COUNT', `${given} × ${otherParts}`, 3),
+    mk(given * (a + b) / otherParts, 'REVERSED_DIRECT_PROPORTION', `${given} × (${a} + ${b}) ÷ ${otherParts}`, 2),
+    mk(given, 'USED_GIVEN_VALUE_AS_ANSWER', `العدد المعطى ${given}`),
+    mk(given * 2, 'ASSUMED_EQUAL_SHARES', `${given} × 2`, 3)
+  ], {maxDecimals: 1});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, totalFromOneSide);
+  const stem = composeSentences(ctx, `النسبة بين عدد الأولاد وعدد البنات في صف هي ${a} : ${b}. إذا كان عدد ${givenA ? 'الأولاد' : 'البنات'} يساوي ${given}، فكم عدد طلاب الصف جميعًا؟`);
+  return buildBase(ctx, {
+    templateId: 'RAT_E_TOTAL_FROM_PART',
+    subskill: 'إيجاد المجموع من طرف معلوم في نسبة',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('student'),
+    steps: [
+      `قيمة الجزء الواحد = ${given} ÷ ${givenParts} = ${k}.`,
+      `مجموع الأجزاء = ${a} + ${b} = ${a + b}.`,
+      `عدد الطلاب جميعًا = ${a + b} × ${k} = ${correct}.`
+    ],
+    howToStart: 'استخرج قيمة الجزء الواحد من الطرف المعلوم، ثم اضربها في مجموع الأجزاء.',
+    remember: 'المجموع يقابل مجموع أجزاء النسبة، لا الطرف الآخر وحده.',
+    fastMethod: 'المعطى ÷ أجزائه × مجموع الأجزاء.',
+    estimatedSteps: 3, conceptTags: ['ratio', 'whole-from-part'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, givenParts), mul(given, a + b))]},
+    askedUnknown: 'totalFromOneSide', stageCount: 2,
+    ratio: {a, b, requireReduced: true, requireDistinctSides: true, label: 'given'},
+    pedagogy: {
+      targetSkill: 'WHOLE_FROM_RATIO_PART', targetMisconception: 'USED_WRONG_SIDE_OF_RATIO',
+      wrongMethodValue: otherParts * k
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['partA', 'partB', 'givenValue']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.9.4-B3. Two more MEDIUM constructions. The one MEDIUM template this
+// family held changes one side and asks the sum before the change. These give a
+// two-way ratio and the GAP between the shares and ask the WHOLE, and a
+// three-way ratio with the gap between two named shares asking the THIRD — in
+// both the given gap has to be read against a difference of parts before any
+// share or total can be formed.
+// ---------------------------------------------------------------------------
+
+function totalFromShareGap(ctx) {
+  const {rng} = ctx;
+  const [a, b] = reducedUnequalPair(rng, 5, 9);
+  const big = Math.max(a, b), small = Math.min(a, b);
+  // A part difference of one makes the gap the part value itself, so the
+  // «multiply the gap by the parts» slip lands on the key.
+  if (big - small < 2) return resample(ctx, totalFromShareGap);
+  const k = rng.pick([5, 8, 10, 12, 15, 20, 25]);
+  const gap = (big - small) * k;
+  const correct = (a + b) * k;
+  const params = {partA: small, partB: big, shareGap: gap};
+  const distractors = usable(ctx, [
+    mk(k, 'USED_PART_VALUE_AS_ANSWER', `${gap} ÷ (${big} − ${small})`, 2),
+    mk(big * k, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${big} × ${k}`, 3),
+    mk(gap * (a + b), 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${gap} × (${a} + ${b})`, 1),
+    mk(gap / (a + b) * (a + b) + gap, 'MISREAD_THE_STEP', `${gap} + ${gap}`, 1),
+    mk(gap * big, 'RATE_APPLIED_TO_WRONG_COUNT', `${gap} × ${big}`, 2),
+    mk(gap + a + b, 'ADDED_INSTEAD_OF_SCALING', `${gap} + ${a} + ${b}`, 1),
+    mk(small * k, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${small} × ${k}`, 3)
+  ], {maxDecimals: 1});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, totalFromShareGap);
+  const [p1, p2] = rng.sample(MALE_NAMES, 2);
+  const stem = composeSentences(ctx, `قُسم مبلغ بين ${p1} و${p2} بنسبة ${small} : ${big}، فكان نصيب ${p2} أكثر من نصيب ${p1} بـ${u(gap, 'dirham', 'oblique')}. ما المبلغ الكلي؟`);
+  return buildBase(ctx, {
+    templateId: 'RAT_M_TOTAL_FROM_GAP',
+    subskill: 'المجموع الكلي من نسبة وفرق النصيبين',
+    difficulty: 'medium',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `فرق الأجزاء = ${big} − ${small} = ${big - small}، وهو يقابل ${gap}.`,
+      `قيمة الجزء الواحد = ${gap} ÷ ${big - small} = ${k}.`,
+      `المبلغ الكلي = (${small} + ${big}) × ${k} = ${correct}.`
+    ],
+    howToStart: 'قابل الفرق المعطى بفرق أجزاء النسبة أولًا.',
+    remember: 'الفرق يقابل فرق الأجزاء، والمجموع يقابل مجموع الأجزاء.',
+    fastMethod: `الفرق ÷ فرق الأجزاء × مجموع الأجزاء — هنا ${gap} ÷ ${big - small} × ${a + b}.`,
+    estimatedSteps: 3, conceptTags: ['ratio', 'difference', 'whole-from-gap'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, big - small), mul(gap, a + b))]},
+    askedUnknown: 'totalFromShareGap', stageCount: 2, direction: 'backward',
+    ratio: {a: small, b: big, requireReduced: true, requireDistinctSides: true, label: 'given'},
+    pedagogy: {
+      targetSkill: 'SPLIT_BY_RATIO_DIFFERENCE', targetMisconception: 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE',
+      wrongMethodValue: gap * (a + b),
+      degenerateWhen: [{when: big - small === 1, note: 'unit part difference: the gap is the part value itself'}]
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, reverseReasoning: 1, stageCount: 2, arithmeticBurden: 3},
+    textParams: {essentialParams: ['partA', 'partB', 'shareGap']}
+  });
+}
+
+function thirdShareFromGap(ctx) {
+  const {rng} = ctx;
+  let parts;
+  for (let t = 0; t < 40; t++) {
+    const p = [rng.int(1, 4), rng.int(2, 6), rng.int(3, 8)];
+    if (new Set(p).size < 3) continue;
+    if (!pairwiseCoprime(p)) continue;
+    parts = p; break;
+  }
+  if (!parts) parts = [2, 3, 5];
+  const [i, j] = rng.shuffle([0, 1, 2]).slice(0, 2);
+  const hiIdx = parts[i] > parts[j] ? i : j, loIdx = hiIdx === i ? j : i;
+  const askIdx = [0, 1, 2].find(x => x !== i && x !== j);
+  const k = rng.pick([5, 8, 10, 12, 15, 20]);
+  const gap = (parts[hiIdx] - parts[loIdx]) * k;
+  const correct = parts[askIdx] * k;
+  const sumParts = parts[0] + parts[1] + parts[2];
+  const params = {partA: parts[0], partB: parts[1], partC: parts[2], shareGap: gap};
+  const distractors = usable(ctx, [
+    mk(k, 'USED_PART_VALUE_AS_ANSWER', `${gap} ÷ (${parts[hiIdx]} − ${parts[loIdx]})`, 2),
+    mk(parts[hiIdx] * k, 'USED_WRONG_SIDE_OF_RATIO', `${parts[hiIdx]} × ${k}`, 3),
+    mk(parts[loIdx] * k, 'USED_WRONG_SIDE_OF_RATIO', `${parts[loIdx]} × ${k}`, 3),
+    mk(gap * parts[askIdx] / sumParts, 'MISREAD_THE_STEP', `${gap} × ${parts[askIdx]} ÷ ${sumParts}`, 1),
+    mk(gap * parts[askIdx], 'RATE_APPLIED_TO_WRONG_COUNT', `${gap} × ${parts[askIdx]}`, 2),
+    mk(gap, 'USED_GIVEN_VALUE_AS_ANSWER', `الفرق المعطى ${gap}`),
+    mk(sumParts * k, 'USED_SUM_OF_PARTS', `${sumParts} × ${k}`, 3)
+  ], {maxDecimals: 1});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, thirdShareFromGap);
+  const stem = composeSentences(ctx, `قُسمت جائزة بين ثلاثة أشخاص بنسبة ${parts.join(' : ')}. إذا كان نصيب الشخص ${ORDINAL_PERSON[hiIdx]} يزيد على نصيب الشخص ${ORDINAL_PERSON[loIdx]} بـ${u(gap, 'dirham', 'oblique')}، فما نصيب الشخص ${ORDINAL_PERSON[askIdx]}؟`);
+  return buildBase(ctx, {
+    templateId: 'RAT_M_THIRD_FROM_GAP',
+    subskill: 'نصيب ثالث من نسبة ثلاثية وفرق نصيبين',
+    difficulty: 'medium',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `فرق الأجزاء بين ${ORDINAL_PERSON[hiIdx]} و${ORDINAL_PERSON[loIdx]} = ${parts[hiIdx]} − ${parts[loIdx]} = ${parts[hiIdx] - parts[loIdx]}.`,
+      `قيمة الجزء الواحد = ${gap} ÷ ${parts[hiIdx] - parts[loIdx]} = ${k}.`,
+      `نصيب الشخص ${ORDINAL_PERSON[askIdx]} = ${parts[askIdx]} × ${k} = ${correct}.`
+    ],
+    howToStart: 'حدد أي جزأين يقابلهما الفرق المعطى.',
+    remember: 'الفرق المعطى بين نصيبين يقابل فرق جزأيهما فقط، لا مجموع الأجزاء الثلاثة.',
+    fastMethod: `الفرق ÷ فرق جزأي الشخصين × أجزاء المطلوب — هنا ${gap} ÷ ${parts[hiIdx] - parts[loIdx]} × ${parts[askIdx]}.`,
+    estimatedSteps: 3, conceptTags: ['ratio', 'three-way-split', 'difference'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, parts[hiIdx] - parts[loIdx]), mul(gap, parts[askIdx]))]},
+    askedUnknown: 'thirdShareFromGap', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'SPLIT_BY_RATIO_DIFFERENCE', targetMisconception: 'MISREAD_THE_STEP',
+      wrongMethodValue: gap * parts[askIdx] / sumParts
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 3},
+    textParams: {essentialParams: ['partA', 'partB', 'partC', 'shareGap']}
   });
 }

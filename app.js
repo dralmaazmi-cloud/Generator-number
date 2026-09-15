@@ -56,6 +56,7 @@ async function bootstrap(){
     restoreLastSettings();
     if(!state.selectedFamilies.size) setFamilySelectionMode('mixed');
     bindEvents();
+    syncCountCapacity();
     refreshSavedSessionCard();
     refreshFavoritesCard();
     refreshWeakHint();
@@ -87,7 +88,8 @@ function bindEvents(){
   $('modeTraining').onclick=()=>setMode('training');
   $('modeExam').onclick=()=>setMode('exam');
   $('difficulty').onchange=handleDifficultyChange;
-  $('count').onchange=()=>$('customCountWrap').classList.toggle('hidden',$('count').value!=='custom');
+  $('count').onchange=()=>{$('customCountWrap').classList.toggle('hidden',$('count').value!=='custom');syncCountCapacity()};
+  $('customCount').onchange=syncCountCapacity;
   $('timeMode').onchange=()=>$('customTimeWrap').classList.toggle('hidden',$('timeMode').value!=='custom');
   $('familySelect').onchange=handleFamilySelectChange;
   $('selectAllFamilies').onclick=()=>{selectAllFamilies(false);state.familySelectionMode='custom';syncFamilySelectionUi()};
@@ -203,6 +205,7 @@ function applyFamilyModal(){
   if(!state.selectedFamilies.size){alert('اختر عائلة واحدة على الأقل.');return}
   state.familySelectionMode=state.selectedFamilies.size===state.families.length?'mixed':'custom';
   state.familySelectionSnapshot=null;syncFamilySelectionUi();$('familyModal').classList.add('hidden');
+  syncCountCapacity();
 }
 function getStoredStats(){
   try{return JSON.parse(localStorage.getItem(STATS_KEY)||'{}')||{}}catch{return {}}
@@ -279,11 +282,49 @@ function handleDifficultyChange(){
   const adaptive=$('difficulty').value==='adaptive';
   $('adaptiveHint').classList.toggle('hidden',!adaptive);
   if(adaptive&&state.mode==='exam'){$('difficulty').value='mixed';$('adaptiveHint').classList.add('hidden')}
+  syncCountCapacity();
+}
+// RC2.9.4-B8. The largest sitting the engine can hold for the chosen difficulty
+// and families, read from the engine BEFORE a count is offered. A preset the
+// engine would refuse is disabled, the custom field is capped, and a count above
+// the ceiling can never reach the generator. The ceiling is the engine's own
+// arithmetic (distinct reasoning targets and core constructions at the band),
+// not a number the product invents.
+function sessionCapacity(){
+  try{
+    if(!state.engine||typeof state.engine.sessionCapacity!=='function') return null;
+    return state.engine.sessionCapacity({difficulty:$('difficulty').value||'mixed',families:[...state.selectedFamilies]});
+  }catch(err){console.error(err);return null}
+}
+function syncCountCapacity(){
+  const cap=sessionCapacity();
+  const max=cap?Math.max(1,Math.min(50,cap.maxCount)):50;
+  state.countCapacity=max;
+  const select=$('count');
+  for(const opt of select.options){
+    if(opt.value==='custom') continue;
+    const n=Number(opt.value);
+    opt.disabled=n>max;
+    opt.textContent=opt.dataset.label||(opt.dataset.label=opt.textContent);
+    if(n>max) opt.textContent=`${opt.dataset.label} — غير متاح لهذا المستوى`;
+  }
+  if(select.value!=='custom'&&Number(select.value)>max){
+    const best=[...select.options].filter(o=>o.value!=='custom'&&!o.disabled).map(o=>Number(o.value)).sort((a,b)=>b-a)[0];
+    select.value=best?String(best):'custom';
+    $('customCountWrap').classList.toggle('hidden',select.value!=='custom');
+  }
+  const custom=$('customCount');
+  custom.max=String(max);
+  if(Number(custom.value)>max) custom.value=String(max);
+  const hint=$('countCapacityHint');
+  if(hint){hint.textContent=`الحد الأقصى لعدد الأسئلة في هذا المستوى: ${max}`;hint.classList.remove('hidden')}
+  const small=$('customCountRange');if(small) small.textContent=`1–${max}`;
 }
 
 function getCount(){
-  if($('count').value==='custom') return clamp(Number($('customCount').value||10),1,50);
-  return Number($('count').value||10);
+  const max=state.countCapacity||50;
+  if($('count').value==='custom') return clamp(Number($('customCount').value||10),1,max);
+  return clamp(Number($('count').value||10),1,max);
 }
 function getTimeLimitSeconds(){
   if($('timeMode').value==='none') return null;
@@ -323,7 +364,10 @@ function restoreLastSettings(){
 function startNewSession(){
   try{
     if(!state.selectedFamilies.size){alert('اختر عائلة واحدة على الأقل.');return}
+    syncCountCapacity();
     const settings=currentSettings();
+    // RC2.9.4-B8. Never ask the engine for a count it cannot hold.
+    if(state.countCapacity&&settings.count>state.countCapacity){alert(`الحد الأقصى لعدد الأسئلة في هذا المستوى هو ${state.countCapacity}.`);return}
     storeLastSettings(settings);
     state.session=createSession(settings);
     clearSavedSession();

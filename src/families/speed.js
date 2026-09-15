@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, approx, bandPool, composeSentences, sceneFor, askOf, journeySceneFor} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, approx, bandPool, composeSentences, sceneFor, askOf, journeySceneFor, distinctValues} from './_shared.js';
 
 export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'speed', family_ar: 'السرعة والمسافة والزمن', category: 'السرعة والمسافة والزمن'};
@@ -16,7 +16,11 @@ export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry, 
     ['SPD_M_EQUAL_DIST', equalDistanceTotalTime],
     ['SPD_H_TIME_DIFF', sameDistanceTimeDifference],
     ['SPD_H_CURRENT', boatAgainstCurrent],
-    ['SPD_H_LEG_SPLIT', twoLegSplit]
+    ['SPD_H_LEG_SPLIT', twoLegSplit],
+    // RC2.9.4-B2. Three EASY constructions beyond distance-from and time-from.
+    ['SPD_E_SPEED', simpleSpeed],
+    ['SPD_E_UNIT_MINUTES', distanceInMinutes],
+    ['SPD_E_SAME_DIRECTION_GAP', sameDirectionGap]
   ], pinTemplate)(ctx);
 }
 
@@ -705,5 +709,164 @@ function twoLegSplit(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, stageCount: 3, arithmeticBurden: 5},
     textParams: {essentialParams: ['totalDistance', 'totalHours', 'firstSpeed', 'secondSpeed']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.9.4-B2. Three more EASY constructions. The two EASY templates this
+// family held compute a distance or a time from the other two givens. These
+// recover the SPEED (the third direction of the one relation), carry a speed
+// stated per hour across a time stated in MINUTES (a unit conversion on the
+// route), and follow two movers in the same direction and ask the gap that
+// opens between them.
+// ---------------------------------------------------------------------------
+
+function simpleSpeed(ctx) {
+  let sc = sceneFor(ctx, 'journey');
+  const {rng} = ctx;
+  const correct = rng.pick([30, 40, 45, 50, 60, 70, 75, 80, 90, 100]);
+  sc = journeySceneFor(ctx, sc, correct);
+  const hours = rng.pick([2, 2.5, 3, 4, 4.5, 5, 6]);
+  const distance = correct * hours;
+  if (!Number.isInteger(distance) || distance === correct) return resample(ctx, simpleSpeed);
+  const params = {distance, hours};
+  const distractors = usable(ctx, [
+    mk(distance * hours, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${distance} × ${num(hours)}`, 2),
+    mk(hours / distance, 'INVERTED_SPEED_TIME', `${num(hours)} ÷ ${distance}`, 2),
+    mk(distance - hours, 'SUBTRACTED_INSTEAD_OF_ADDED', `${distance} − ${num(hours)}`, 2),
+    mk(distance / (hours + 1), 'OFF_BY_ONE_STEP', `${distance} ÷ (${num(hours)} + 1)`, 2),
+    mk(distance / (hours - 1), 'OFF_BY_ONE_STEP', `${distance} ÷ (${num(hours)} − 1)`, 2),
+    mk(distance / hours / 2, 'HALF_DISTANCE_AS_ANSWER', `${distance} ÷ ${num(hours)} ÷ 2`, 2),
+    mk(distance / hours * 2, 'APPLIED_STEP_TWICE', `${distance} ÷ ${num(hours)} × 2`, 2),
+    mk(distance, 'USED_GIVEN_VALUE_AS_ANSWER', `المسافة المعطاة ${distance}`)
+  ], {maxDecimals: 1});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, simpleSpeed);
+  const stem = composeSentences(ctx, `قطعت ${sc.one} ${u(distance, 'km')} في ${u(hours, 'hour', 'oblique')} بسرعة ثابتة. ما سرعتها؟`);
+  return buildBase(ctx, {
+    templateId: 'SPD_E_SPEED',
+    scenario: sc.key,
+    subskill: 'إيجاد السرعة من المسافة والزمن',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('kmPerHour'),
+    steps: [
+      'السرعة = المسافة ÷ الزمن.',
+      `السرعة = ${distance} ÷ ${num(hours)} = ${correct}.`
+    ],
+    howToStart: 'استخدم العلاقة: السرعة = المسافة ÷ الزمن.',
+    remember: 'السرعة كم تقطع في الساعة الواحدة، فالقسمة على الساعات.',
+    fastMethod: 'اقسم المسافة على الزمن.',
+    estimatedSteps: 2, conceptTags: ['speed'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, hours), distance)]},
+    askedUnknown: 'speed', stageCount: 1,
+    pedagogy: {
+      targetSkill: 'DISTANCE_SPEED_TIME', targetMisconception: 'MULTIPLIED_INSTEAD_OF_DIVIDED',
+      wrongMethodValue: distance * hours
+    },
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {essentialParams: ['distance', 'hours']}
+  });
+}
+
+function distanceInMinutes(ctx) {
+  let sc = sceneFor(ctx, 'journey');
+  const {rng} = ctx;
+  const speed = rng.pick([48, 54, 60, 66, 72, 78, 84, 90, 96, 108, 120]);
+  sc = journeySceneFor(ctx, sc, speed);
+  // Minutes whose hour fraction is an exact short decimal, so the conversion
+  // step prints what it computes (0.25, 0.4, 0.75…) and never a rounded value.
+  const minutes = rng.pick([12, 15, 24, 30, 36, 45, 48]);
+  const correct = speed * minutes / 60;
+  if (!Number.isInteger(correct) || correct === minutes || correct === speed) return resample(ctx, distanceInMinutes);
+  const params = {speed, minutes};
+  const distractors = usable(ctx, [
+    mk(speed * minutes, 'RATE_APPLIED_TO_WRONG_COUNT', `${speed} × ${minutes}`, 1),
+    mk(speed * minutes / 100, 'MISREAD_THE_STEP', `${speed} × ${minutes} ÷ 100`, 1),
+    mk(speed / minutes, 'INVERTED_SPEED_TIME', `${speed} ÷ ${minutes}`, 2),
+    mk(speed * 60 / minutes, 'APPLIED_OPERATION_IN_REVERSE', `${speed} × 60 ÷ ${minutes}`, 1),
+    mk(speed + minutes, 'ADDED_INSTEAD_OF_SCALING', `${speed} + ${minutes}`, 2),
+    mk(speed * minutes / 60 * 2, 'APPLIED_STEP_TWICE', `${speed} × ${minutes} ÷ 60 × 2`, 2),
+    mk(speed - minutes, 'SUBTRACTED_INSTEAD_OF_ADDED', `${speed} − ${minutes}`, 2),
+    mk(speed * minutes / 30, 'MISREAD_THE_STEP', `${speed} × ${minutes} ÷ 30`, 1)
+  ], {maxDecimals: 1});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, distanceInMinutes);
+  const stem = composeSentences(ctx, `تسير ${sc.one} بسرعة ${speed} كم/ساعة. ما المسافة التي تقطعها في ${u(minutes, 'minute', 'oblique')}؟`);
+  return buildBase(ctx, {
+    templateId: 'SPD_E_UNIT_MINUTES',
+    scenario: sc.key,
+    subskill: 'مسافة من سرعة بالساعة وزمن بالدقائق',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('km'),
+    steps: [
+      `الزمن بالساعات = ${minutes} ÷ 60 = ${num(minutes / 60)}.`,
+      `المسافة = ${speed} × ${num(minutes / 60)} = ${correct}.`
+    ],
+    howToStart: 'حوّل الدقائق إلى ساعات قبل استخدام السرعة.',
+    remember: 'السرعة بالكيلومتر في الساعة لا تُضرب في دقائق.',
+    fastMethod: `السرعة × الدقائق ÷ 60 — هنا ${speed} × ${minutes} ÷ 60.`,
+    estimatedSteps: 2, conceptTags: ['speed', 'unit-conversion'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, 60), mul(speed, minutes))]},
+    askedUnknown: 'distanceFromMinutes', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'CONVERT_MINUTES_THEN_SCALE', targetMisconception: 'RATE_APPLIED_TO_WRONG_COUNT',
+      wrongMethodValue: speed * minutes,
+      degenerateWhen: [{when: minutes === 60, note: 'a full hour: no conversion to get wrong'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, unitConversion: 1, stageCount: 2, arithmeticBurden: 2},
+    // Sixty minutes to the hour is the conversion the item is about.
+    allowedConstants: [0, 1, 2, 100, 60],
+    textParams: {essentialParams: ['speed', 'minutes']}
+  });
+}
+
+function sameDirectionGap(ctx) {
+  let sc = sceneFor(ctx, 'journey');
+  const {rng} = ctx;
+  const fast = rng.pick([60, 70, 75, 80, 90, 100]);
+  const slow = rng.pick([40, 45, 50, 55, 60, 65, 70].filter(v => v < fast));
+  sc = journeySceneFor(ctx, sc, fast, slow);
+  const hours = rng.pick([2, 3, 4, 5].filter(v => v !== fast - slow));
+  const gap = fast - slow;
+  const correct = gap * hours;
+  const params = {fastSpeed: fast, slowSpeed: slow, hours};
+  const distractors = usable(ctx, [
+    mk((fast + slow) * hours, 'USED_SUM_WHERE_DIFFERENCE_BELONGS', `(${fast} + ${slow}) × ${hours}`, 1),
+    mk(gap, 'USED_DIFFERENCE_AS_ANSWER', `${fast} − ${slow}`, 1),
+    mk(fast * hours, 'USED_ONLY_FIRST_RATE', `${fast} × ${hours}`, 2),
+    mk(slow * hours, 'USED_ONLY_SECOND_RATE', `${slow} × ${hours}`, 2),
+    mk(gap + hours, 'ADDED_INSTEAD_OF_SCALING', `${fast} − ${slow} + ${hours}`, 2),
+    mk(gap * hours * 2, 'APPLIED_STEP_TWICE', `(${fast} − ${slow}) × ${hours} × 2`, 2),
+    mk(fast * hours - slow, 'RATE_APPLIED_TO_WRONG_COUNT', `${fast} × ${hours} − ${slow}`, 2)
+  ]);
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, sameDirectionGap);
+  const stem = composeSentences(ctx, `انطلقت ${sc.dual} من المكان نفسه في الوقت نفسه وفي الاتجاه نفسه، الأولى بسرعة ${fast} كم/ساعة والثانية بسرعة ${slow} كم/ساعة. ما المسافة بينهما بعد ${u(hours, 'hour', 'oblique')}؟`);
+  return buildBase(ctx, {
+    templateId: 'SPD_E_SAME_DIRECTION_GAP',
+    scenario: sc.key,
+    subskill: 'المسافة بين متحركين في الاتجاه نفسه',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('km'),
+    steps: [
+      `فرق السرعتين = ${fast} − ${slow} = ${gap} كم/ساعة.`,
+      `المسافة بينهما = ${gap} × ${hours} = ${correct}.`
+    ],
+    howToStart: 'في الاتجاه نفسه، ما يهم هو فرق السرعتين.',
+    remember: 'الاتجاه نفسه: الفرق. الاتجاهان المتعاكسان: المجموع.',
+    fastMethod: '(السرعة الأكبر − السرعة الأصغر) × الزمن.',
+    estimatedSteps: 2, conceptTags: ['speed', 'relative-speed'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, mul(sub(fast, slow), hours))]},
+    askedUnknown: 'gapAfterTime', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'RELATIVE_SPEED_SAME_DIRECTION', targetMisconception: 'USED_SUM_WHERE_DIFFERENCE_BELONGS',
+      wrongMethodValue: (fast + slow) * hours,
+      degenerateWhen: [{when: fast === slow, note: 'equal speeds: no gap opens'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['fastSpeed', 'slowSpeed', 'hours']}
   });
 }

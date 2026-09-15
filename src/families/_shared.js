@@ -392,6 +392,15 @@ export function scaleBothLine({d, b, out1, out2, what}) {
   return `نضرب العبارة الأولى في ${d} والثانية في ${b} ليتساوى ${what}: ${out1} × ${d} = ${out1 * d}، و${out2} × ${b} = ${out2 * b}.`;
 }
 
+/**
+ * RC2.9.4-B2. How many DISTINCT wrong values a distractor list holds. A template
+ * that can collapse two slips onto one value on some draws checks this and
+ * resamples, rather than letting the option builder fail the candidate.
+ */
+export function distinctValues(distractors) {
+  return new Set((distractors ?? []).map(d => String(d?.value))).size;
+}
+
 export function resample(ctx, fn, reason = REASON.SAMPLER_CONSTRAINT) {
   ctx.telemetry?.familyResample({
     family: ctx.family, templateId: fn.name, reasonCode: reason, seed: ctx.seed

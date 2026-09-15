@@ -1,4 +1,8 @@
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool, composeSentences} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, bandPool, composeSentences, distinctValues} from './_shared.js';
+import {PERSONS} from '../compose/entities.js';
+
+const MALE_NAMES = PERSONS.filter(p => p.g === 'm').map(p => p.w);
+const FEMALE_NAMES = PERSONS.filter(p => p.g === 'f').map(p => p.w);
 
 export function generateAges({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'ages', family_ar: 'مسائل الأعمار', category: 'مسائل الأعمار'};
@@ -17,7 +21,11 @@ export function generateAges({difficulty, rng, seed, engineVersion, telemetry, p
     ['AGE_M_WHEN_RATIO', yearsUntilRatio],
     // RC2.9-5. Two more time structures, not two more names.
     ['AGE_M_PAST_RATIO', pastRatioPresentAge],
-    ['AGE_M_DIFFERENCE_INVARIANT', differenceFromTwoRatios]
+    ['AGE_M_DIFFERENCE_INVARIANT', differenceFromTwoRatios],
+    // RC2.9.4-B2. Three EASY constructions for a cell that held one.
+    ['AGE_E_RATIO_SUM', ratioSum],
+    ['AGE_E_TIME_SHIFT', relatedAgeAtOtherTime],
+    ['AGE_E_YEARS_TO_SUM', yearsUntilSum]
   ], pinTemplate)(ctx);
 }
 
@@ -759,5 +767,185 @@ function differenceFromTwoRatios(ctx) {
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 3, arithmeticBurden: 3},
     textParams: {essentialParams: ['yearsAhead']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.9.4-B2. Three more EASY constructions. Each changes what is GIVEN and
+// what has to be RECOVERED, not the names or the numbers: a ratio with a sum
+// (parts of a whole), one present age with a relation at another time (two
+// shifts, one person to the other), and two present ages asking WHEN a sum is
+// reached (the sum moves two years per year).
+// ---------------------------------------------------------------------------
+
+function ratioSum(ctx) {
+  const {rng} = ctx;
+  const mult = rng.pick([3, 4, 5]);
+  // Section 11: the parent was at least 18 at the birth, so the gap
+  // younger × (mult − 1) must reach 18 and stay under 45.
+  const minYounger = Math.ceil(18 / (mult - 1));
+  const maxYounger = Math.floor(45 / (mult - 1));
+  const younger = rng.int(minYounger, maxYounger);
+  const older = mult * younger;
+  const sum = older + younger;
+  const correct = younger;
+  const params = {multiple: mult, ageSum: sum};
+  const multWord = {3: 'ثلاثة أمثال', 4: 'أربعة أمثال', 5: 'خمسة أمثال'}[mult];
+  const distractors = usable(ctx, [
+    mk(older, 'ANSWERED_OTHER_PERSON', `${sum} − ${younger}`, 3),
+    mk(sum / 2, 'HALVED_THE_SUM', `${sum} ÷ 2`),
+    mk(sum / mult, 'RATE_APPLIED_TO_WRONG_COUNT', `${sum} ÷ ${mult}`),
+    mk(sum / (mult - 1), 'RATE_APPLIED_TO_WRONG_COUNT', `${sum} ÷ (${mult} − 1)`),
+    mk(sum - mult, 'SUBTRACTED_INSTEAD_OF_ADDED', `${sum} − ${mult}`),
+    mk(older - younger, 'USED_AGE_DIFFERENCE_AS_ANSWER', `${older} − ${younger}`, 3),
+    mk(sum, 'USED_GIVEN_VALUE_AS_ANSWER', `المجموع المعطى ${sum}`),
+    mk(younger * 2, 'APPLIED_STEP_TWICE', `${younger} × 2`, 3),
+    mk(younger + mult, 'ADDED_INSTEAD_OF_SCALING', `${younger} + ${mult}`, 3),
+    mk(sum / (mult + 2), 'RATE_APPLIED_TO_WRONG_COUNT', `${sum} ÷ (${mult} + 2)`),
+    mk(sum - older, 'ANSWERED_OTHER_PERSON', `${sum} − ${older}`, 3)
+  ], {maxDecimals: 0});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, ratioSum);
+  const girl = rng.pick(FEMALE_NAMES);
+  const stem = composeSentences(ctx, `عمر أم ${girl} يساوي ${multWord} عمر ${girl}، ومجموع عمريهما ${u(sum, 'year')}. كم عمر ${girl}؟`);
+  return buildBase(ctx, {
+    templateId: 'AGE_E_RATIO_SUM',
+    subskill: 'مضاعف عمر مع مجموع معلوم',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: years,
+    steps: [
+      `عمر الابنة جزء واحد، وعمر الأم ${u(mult, 'part')}.`,
+      `مجموع الأجزاء = ${mult} + 1 = ${mult + 1}.`,
+      `الجزء الواحد = ${sum} ÷ ${mult + 1} = ${younger}.`
+    ],
+    howToStart: 'حوّل المضاعف إلى أجزاء واجمعها.',
+    remember: `مجموع العمرين يساوي ${u(mult + 1, 'part', 'oblique')}، لا ${u(mult, 'part', 'oblique')}.`,
+    fastMethod: `اقسم المجموع على عدد الأجزاء كلها (المضاعف + 1) — هنا ${sum} ÷ ${mult + 1}.`,
+    estimatedSteps: 3, conceptTags: ['age', 'ratio', 'sum'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(add(mul(mult, X), X), sum)]},
+    askedUnknown: 'youngerAge', stageCount: 2,
+    realism: {parentAgeAtBirth: older - younger, ages: [older, younger]},
+    pedagogy: {
+      targetSkill: 'MULTIPLE_AS_PARTS', targetMisconception: 'RATE_APPLIED_TO_WRONG_COUNT',
+      wrongMethodValue: sum / mult,
+      degenerateWhen: [{when: mult === 1, note: 'no multiple to reason about'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 2, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['ageSum']}
+  });
+}
+
+function relatedAgeAtOtherTime(ctx) {
+  const {rng} = ctx;
+  const mine = rng.int(10, 30);
+  const gap = rng.pick([3, 4, 5, 6, 7, 8]);
+  const shift = rng.pick([2, 3, 4, 5, 6]);
+  // Four genuinely different dependency directions: the other person is older
+  // or younger, and the time asked about is in the past or the future.
+  const otherOlder = rng.bool();
+  const future = rng.bool();
+  const otherNow = otherOlder ? mine + gap : mine - gap;
+  const correct = future ? otherNow + shift : otherNow - shift;
+  if (correct < 4 || otherNow < 6) return resample(ctx, relatedAgeAtOtherTime);
+  const params = {myAge: mine, ageGap: gap, yearsShift: shift};
+  const relWord = otherOlder ? `يكبره بـ${u(gap, 'year', 'oblique')}` : `يصغره بـ${u(gap, 'year', 'oblique')}`;
+  const whenWord = future ? `بعد ${u(shift, 'year', 'oblique')}` : `قبل ${u(shift, 'year', 'oblique')}`;
+  const sg = otherOlder ? '+' : '−';
+  const ss = future ? '+' : '−';
+  const distractors = usable(ctx, [
+    mk(otherNow, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${mine} ${sg} ${gap}`, 2),
+    mk(future ? otherNow - shift : otherNow + shift, 'SHIFTED_WRONG_DIRECTION', `${otherNow} ${future ? '−' : '+'} ${shift}`, 2),
+    mk(future ? mine + shift : mine - shift, 'ANSWERED_OTHER_PERSON', `${mine} ${ss} ${shift}`, 2),
+    mk(otherOlder ? mine - gap + (future ? shift : -shift) : mine + gap + (future ? shift : -shift),
+      'SUBTRACTED_INSTEAD_OF_ADDED', `${mine} ${otherOlder ? '−' : '+'} ${gap} ${ss} ${shift}`, 1),
+    mk(mine, 'USED_GIVEN_VALUE_AS_ANSWER', `العمر المعطى ${mine}`),
+    mk(gap + shift, 'USED_AGE_DIFFERENCE_AS_ANSWER', `${gap} + ${shift}`),
+    mk(otherNow + (future ? 2 * shift : -2 * shift), 'APPLIED_STEP_TWICE', `${otherNow} ${ss} 2 × ${shift}`, 2),
+    mk(mine + gap + shift, 'ADDED_INSTEAD_OF_SUBTRACTED', `${mine} + ${gap} + ${shift}`, 1)
+  ]);
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, relatedAgeAtOtherTime);
+  const name = rng.pick(MALE_NAMES);
+  const stem = composeSentences(ctx, `عمر ${name} الآن ${u(mine, 'year')}، وله أخ ${relWord}. كم ${future ? 'سيكون' : 'كان'} عمر أخيه ${whenWord}؟`);
+  return buildBase(ctx, {
+    templateId: 'AGE_E_TIME_SHIFT',
+    subskill: `عمر شخص آخر ${future ? 'في المستقبل' : 'في الماضي'} من عمر حالي وفرق`,
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: years,
+    steps: [
+      `عمر الأخ الآن = ${mine} ${sg} ${gap} = ${otherNow}.`,
+      `${future ? 'بعد' : 'قبل'} ${u(shift, 'year', 'oblique')}: ${otherNow} ${ss} ${shift} = ${correct}.`
+    ],
+    howToStart: 'حدد عمر الشخص الآخر الآن، ثم انتقل في الزمن.',
+    remember: 'الفرق بين العمرين ثابت، أما الزمن فيُضاف أو يُطرح من كليهما.',
+    fastMethod: `عمر الآخر الآن أولًا، ثم أضف السنوات أو اطرحها — هنا ${mine} ${sg} ${gap} ${ss} ${shift}.`,
+    estimatedSteps: 2, conceptTags: ['age', 'time-shift'], parameters: params,
+    oracle: {
+      kind: 'constraint', answerKind: 'number',
+      constraints: [eq(X, future ? add(otherOlder ? add(mine, gap) : sub(mine, gap), shift)
+        : sub(otherOlder ? add(mine, gap) : sub(mine, gap), shift))]
+    },
+    askedUnknown: 'relatedAgeAtOtherTime', stageCount: 2,
+    direction: future ? 'forward' : 'backward',
+    realism: {ages: [mine, otherNow], siblingGap: gap},
+    pedagogy: {
+      targetSkill: 'SHIFT_ANOTHER_PERSONS_AGE', targetMisconception: 'SHIFTED_WRONG_DIRECTION',
+      wrongMethodValue: future ? otherNow - shift : otherNow + shift,
+      degenerateWhen: [{when: shift === 0, note: 'no time shift to apply'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['myAge', 'ageGap', 'yearsShift']}
+  });
+}
+
+function yearsUntilSum(ctx) {
+  const {rng} = ctx;
+  const child = rng.int(5, 14);
+  const parent = child + rng.pick([22, 24, 26, 28, 30, 32]);
+  const now = child + parent;
+  const elapsed = rng.pick([3, 4, 5, 6, 7, 8, 9, 10]);
+  const target = now + 2 * elapsed;
+  const correct = elapsed;
+  const params = {firstAge: child, secondAge: parent, targetSum: target};
+  const distractors = usable(ctx, [
+    mk(target - now, 'FORGOT_BOTH_AGES_GROW', `${target} − ${now}`, 2),
+    mk(now, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${child} + ${parent}`, 1),
+    mk(target - parent, 'MISREAD_THE_STEP', `${target} − ${parent}`, 1),
+    mk(target / 2 - child, 'HALVED_THE_SUM', `${target} ÷ 2 − ${child}`),
+    mk((target - now) * 2, 'APPLIED_OPERATION_IN_REVERSE', `(${target} − ${now}) × 2`, 2),
+    mk(target - now - elapsed, 'APPLIED_STEP_TWICE', `${target} − ${now} − ${elapsed}`, 2),
+    mk(target / 2 - parent + child, 'ANSWERED_OTHER_PERSON', `${target} ÷ 2 − ${parent} + ${child}`)
+  ], {maxDecimals: 0});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, yearsUntilSum);
+  const kid = rng.pick(PERSONS);
+  const stem = composeSentences(ctx, `عمر ${kid.w} ${u(child, 'year')} وعمر ${kid.g === 'f' ? 'والدها' : 'والده'} ${u(parent, 'year')}. بعد كم سنة يصبح مجموع عمريهما ${u(target, 'year')}؟`);
+  return buildBase(ctx, {
+    templateId: 'AGE_E_YEARS_TO_SUM',
+    subskill: 'عدد السنوات حتى يبلغ مجموع العمرين قيمة معلومة',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: years,
+    steps: [
+      `مجموع العمرين الآن = ${child} + ${parent} = ${now}.`,
+      `المجموع يزيد سنتين كل سنة، والزيادة المطلوبة = ${target} − ${now} = ${target - now}.`,
+      `عدد السنوات = ${target - now} ÷ 2 = ${correct}.`
+    ],
+    howToStart: 'احسب المجموع الحالي، ثم كم يزيد المجموع كل سنة.',
+    remember: 'كل سنة تمر يزيد مجموع عمري شخصين بمقدار سنتين.',
+    fastMethod: `اطرح المجموع الحالي من المجموع المطلوب واقسم على 2 — هنا (${target} − ${now}) ÷ 2.`,
+    estimatedSteps: 3, conceptTags: ['age', 'time-shift', 'sum'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(add(add(child, X), add(parent, X)), target)]},
+    askedUnknown: 'yearsUntilSum', stageCount: 2,
+    realism: {ages: [parent, child], parentAgeAtBirth: parent - child},
+    pedagogy: {
+      targetSkill: 'SUM_GROWS_TWICE', targetMisconception: 'FORGOT_BOTH_AGES_GROW',
+      wrongMethodValue: target - now,
+      degenerateWhen: [{when: target === now, note: 'the sum is already reached'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 2, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['firstAge', 'secondAge', 'targetSum']}
   });
 }

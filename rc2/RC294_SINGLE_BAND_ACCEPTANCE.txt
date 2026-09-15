@@ -1,0 +1,53 @@
+RC2.9.4-B9 single-band acceptance — product path (browser), 6 journeys × 4 sittings × 30 per band
+gates per rolling 100: PV+ND ≤ 8, ND ≤ 5, cluster ≤ 3, streak ≤ 2, duplicate stems = 0
+
+=== EASY journeys ===
+journey            questions refusals | worst window: PV  ND PV+ND cluster run dup | windows breaching PV+ND≤8
+easy-j1             120   0      |  41   9    48      3    2   0 | 3/3
+  flagged pairs in Q1–100 of easy-j1 (for human inspection):
+   [ND] RAT_E_THREE_WAY #1: قُسم مبلغ 120 درهمًا بين سالم ويوسف وأحمد بنسبة 1 : 3 : 4 على الترتيب. كم نصيب أحمد؟
+        ~ RAT_E_DIFF_SPLIT #52: النسبة بين عددين هي 5 : 2، والفرق بينهما 33. ما العدد الأصغر؟
+   [ND] WORK_E_VOLUME #6: يستطيع 10 عمال إنجاز مهمتين خلال 8 أيام. كم عاملًا نحتاج لإنجاز 4 مهام خلال 8 أيام بالكفاء
+        ~ RATE_E_TIME #56: يكتب شخص 1000 كلمة خلال 25 دقيقة بمعدل ثابت. كم دقيقة يحتاج لكتابة 2400 كلمة؟
+   [ND] PROP_M_FRAC_UNIT #8: تتساوى العناصر في الوزن. إذا كان وزن 5 عناصر هو 4 كيلوجرامات، فما وزن 12 عنصرًا من النوع ن
+        ~ MACH_E_HOURS #58: تنتج 6 آلات متطابقة في الإنتاجية 216 صفحة خلال 3 ساعات. كم صفحة تنتج 5 آلات من النوع نفسه 
+   [ND] FRAC_E_2 #18: أُخذ ثلث العدد 225، ثم خُمس الناتج. ما الناتج؟
+        ~ FRAC_H_4 #66: أُخذ نصف العدد 1728، ثم ثلث الناتج، ثم ثُمن الناتج، ثم سُدس الناتج. ما الناتج؟
+   [ND] SPD_E_UNIT_MINUTES #20: تسير مركبة بسرعة 90 كم/ساعة. ما المسافة التي تقطعها في 48 دقيقة؟
+        ~ WORK_E_INVERSE #67: يستطيع 8 عمال إنجاز عمل في 18 يومًا. إذا عمل 16 عاملًا بالكفاءة نفسها، فكم يومًا يحتاجون؟
+   [ND] PROP_M_FRAC_UNIT #8: تتساوى العناصر في الوزن. إذا كان وزن 5 عناصر هو 4 كيلوجرامات، فما وزن 12 عنصرًا من النوع ن
+        ~ RATE_E_DIRECT #96: تنجز آلة 320 قميصًا خلال 8 دقائق بمعدل ثابت. كم قميصًا تنجز خلال 3 دقائق؟
+easy-j2             120   0      |  41  10    48      3    2   0 | 3/3
+easy-j3             120   0      |  41   9    48      3    2   0 | 3/3
+easy-j4             120   0      |  41   9    48      3    2   0 | 3/3
+easy-j5             120   0      |  42   8    48      3    2   0 | 3/3
+easy-j6             120   0      |  38  11    48      3    2   0 | 3/3
+
+--- EASY presets through the product (one fresh journey per preset, 2 sittings) ---
+preset  5: delivered 5 + 5
+preset 10: delivered 10 + 10
+preset 14: delivered 14 + 14
+preset 20: delivered 20 + 20
+preset 30: delivered 30 + 30
+--- EASY custom 40 / 50 through the product ---
+custom 40: delivered 40
+custom 50: delivered 50
+
+=== MEDIUM journeys ===
+journey            questions refusals | worst window: PV  ND PV+ND cluster run dup | windows breaching PV+ND≤8
+medium-j1           120   0      |  15   1    15      2    1   0 | 3/3
+medium-j2           120   0      |  15   1    15      2    2   0 | 3/3
+medium-j3           120   0      |  13   2    15      2    2   0 | 3/3
+medium-j4           120   0      |  13   4    17      3    2   0 | 3/3
+medium-j5           120   0      |  14   1    15      2    1   0 | 3/3
+medium-j6           120   0      |  14   2    15      3    2   0 | 3/3
+
+--- MEDIUM presets through the product (one fresh journey per preset, 2 sittings) ---
+preset  5: delivered 5 + 5
+preset 10: delivered 10 + 10
+preset 14: delivered 14 + 14
+preset 20: delivered 20 + 20
+preset 30: delivered 30 + 30
+--- MEDIUM custom 40 / 50 through the product ---
+custom 40: delivered 40
+custom 50: delivered 50

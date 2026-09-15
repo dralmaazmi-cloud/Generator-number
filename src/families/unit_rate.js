@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool, composeSentences, sceneFor, unitWordKam, askOf, rateOf} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool, composeSentences, sceneFor, unitWordKam, askOf, rateOf, distinctValues} from './_shared.js';
 
 export function generateUnitRate({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'unit_rate', family_ar: 'المعدل الوحدوي', category: 'المعدل الوحدوي'};
@@ -13,7 +13,10 @@ export function generateUnitRate({difficulty, rng, seed, engineVersion, telemetr
     ['RATE_M_PERCENT', rateThenPercent],
     ['RATE_H_TARGET', rateChangeTarget],
     ['RATE_H_TWO_PHASE', twoPhaseRate],
-    ['RATE_H_RATE_FROM_GAP', rateFromTimeSaved]
+    ['RATE_H_RATE_FROM_GAP', rateFromTimeSaved],
+    // RC2.9.4-B3. Two MEDIUM constructions.
+    ['RATE_M_COMPARE', rateGap],
+    ['RATE_M_HOURS_FROM_MINUTE_RATE', hoursFromMinuteRate]
   ], pinTemplate)(ctx);
 }
 
@@ -453,5 +456,112 @@ function rateFromTimeSaved(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, reverseReasoning: 1, stageCount: 3, arithmeticBurden: 5},
     textParams: {essentialParams: ['totalUnits', 'rateIncrease', 'hoursSaved']}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// RC2.9.4-B3. Two more MEDIUM constructions. The MEDIUM templates this family
+// held adjust one rate by a percentage. These bring TWO stated rates onto one
+// footing and compare them (a gap in a rate), and recover a TIME whose unit
+// differs from the rate's (a conversion after the division).
+// ---------------------------------------------------------------------------
+
+function rateGap(ctx) {
+  const sc = sceneFor(ctx, 'production');
+  const {rng} = ctx;
+  const r1 = rng.pick([20, 24, 25, 30, 32, 36, 40, 45]);
+  const r2 = rng.pick([15, 18, 20, 24, 25, 28, 30, 35].filter(v => v !== r1));
+  const m1 = rng.pick([6, 8, 10, 12, 15]);
+  const m2 = rng.pick([5, 6, 9, 10, 12, 20].filter(v => v !== m1));
+  const t1 = r1 * m1, t2 = r2 * m2;
+  const correct = Math.abs(r1 - r2);
+  if (Math.abs(t1 - t2) === correct || Math.abs(m1 - m2) === correct) return resample(ctx, rateGap);
+  const first = r1 > r2;
+  const params = {firstAmount: t1, firstMinutes: m1, secondAmount: t2, secondMinutes: m2};
+  const distractors = usable(ctx, [
+    mk(Math.abs(t1 - t2), 'USED_DIFFERENCE_AS_ANSWER', `|${t1} − ${t2}|`, 1),
+    mk(r1, 'STOPPED_AT_UNIT_RATE', `${t1} ÷ ${m1}`, 3),
+    mk(r2, 'STOPPED_AT_UNIT_RATE', `${t2} ÷ ${m2}`, 3),
+    mk(r1 + r2, 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `${r1} + ${r2}`, 3),
+    mk(Math.abs(t1 / m2 - t2 / m1), 'SWAPPED_RATE_AND_COUNT', `|${t1} ÷ ${m2} − ${t2} ÷ ${m1}|`, 2),
+    mk(Math.abs(t1 - t2) / Math.abs(m1 - m2), 'MISREAD_THE_STEP', `|${t1} − ${t2}| ÷ |${m1} − ${m2}|`, 1),
+    mk(Math.abs(m1 - m2), 'USED_DIFFERENCE_AS_ANSWER', `|${m1} − ${m2}|`, 1)
+  ], {maxDecimals: 2});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, rateGap);
+  const stem = composeSentences(ctx, `تنجز الآلة الأولى ${u(t1, sc.out)} في ${u(m1, 'minute', 'oblique')}، وتنجز الآلة الثانية ${u(t2, sc.out)} في ${u(m2, 'minute', 'oblique')}. بكم ${unitWordKam(sc.out)} في الدقيقة يزيد معدل الآلة ${first ? 'الأولى' : 'الثانية'} على معدل الأخرى؟`);
+  return buildBase(ctx, {
+    templateId: 'RATE_M_COMPARE',
+    scenario: sc.key,
+    subskill: 'فرق معدلين وحدويين من كميتين وزمنين مختلفين',
+    difficulty: 'medium',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    // Every production scene has a per-minute rate unit beside its per-hour one.
+    correct, distractors, format: unitFormat((sc.rateUnitId ?? 'unitPerHour').replace('PerHour', 'PerMinute')),
+    steps: [
+      `معدل الآلة الأولى في الدقيقة = ${t1} ÷ ${m1} = ${r1}.`,
+      `معدل الآلة الثانية في الدقيقة = ${t2} ÷ ${m2} = ${r2}.`,
+      `الفرق = ${Math.max(r1, r2)} − ${Math.min(r1, r2)} = ${correct}.`
+    ],
+    howToStart: 'الكميتان لزمنين مختلفين، فلا تُقارنان مباشرة؛ احسب معدل الدقيقة لكل آلة.',
+    remember: 'قارن المعدلات بعد توحيد وحدة الزمن، لا الكميات الكلية.',
+    fastMethod: 'معدل كل آلة، ثم الفرق.',
+    estimatedSteps: 3, conceptTags: ['unit-rate', 'comparison'], parameters: params,
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, m1, m2), first ? sub(mul(t1, m2), mul(t2, m1)) : sub(mul(t2, m1), mul(t1, m2)))]},
+    askedUnknown: 'rateGap', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'COMPARE_UNIT_RATES', targetMisconception: 'USED_DIFFERENCE_AS_ANSWER',
+      wrongMethodValue: Math.abs(t1 - t2),
+      degenerateWhen: [{when: r1 === r2, note: 'equal rates: nothing to compare'}]
+    },
+    complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 3},
+    textParams: {essentialParams: ['firstAmount', 'firstMinutes', 'secondAmount', 'secondMinutes']}
+  });
+}
+
+function hoursFromMinuteRate(ctx) {
+  const {rng} = ctx;
+  const rate = rng.pick([20, 25, 30, 40, 45, 50, 60]);
+  const correct = rng.pick([1.5, 2, 2.5, 3, 4, 5]);
+  const target = rate * 60 * correct;
+  if (!Number.isInteger(target) || target > 20000) return resample(ctx, hoursFromMinuteRate);
+  const minutes = target / rate;
+  const params = {minuteRate: rate, targetVolume: target};
+  const distractors = usable(ctx, [
+    mk(minutes, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${target} ÷ ${rate}`, 1),
+    mk(minutes * 60, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${target} ÷ ${rate} × 60`, 2),
+    mk(rate * 60, 'STOPPED_AT_UNIT_RATE', `${rate} × 60`, 1),
+    mk(target / 60, 'MISSED_ONE_STAGE', `${target} ÷ 60`, 1),
+    mk(minutes / 60 / 2, 'HALF_DISTANCE_AS_ANSWER', `${target} ÷ ${rate} ÷ 60 ÷ 2`, 2),
+    mk(minutes / 60 * 2, 'APPLIED_STEP_TWICE', `${target} ÷ ${rate} ÷ 60 × 2`, 2),
+    mk(minutes / 100, 'MISREAD_THE_STEP', `${target} ÷ ${rate} ÷ 100`, 2)
+  ], {maxDecimals: 2});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, hoursFromMinuteRate);
+  const stem = composeSentences(ctx, `تضخ مضخة الماء بمعدل ${u(rate, 'literPerMinute')}. كم ساعة تحتاج لملء خزان سعته ${u(target, 'liter')}؟`);
+  return buildBase(ctx, {
+    templateId: 'RATE_M_HOURS_FROM_MINUTE_RATE',
+    subskill: 'زمن بالساعات من معدل بالدقيقة',
+    difficulty: 'medium',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('hour'),
+    steps: [
+      `الزمن بالدقائق = ${target} ÷ ${rate} = ${minutes}.`,
+      `الزمن بالساعات = ${minutes} ÷ 60 = ${num(correct)}.`
+    ],
+    howToStart: 'اقسم السعة على المعدل لتحصل على الدقائق، ثم حوّل إلى ساعات.',
+    remember: 'المعدل بالدقيقة يعطي زمنًا بالدقائق؛ الساعات تحتاج قسمة على 60.',
+    fastMethod: `السعة ÷ المعدل يعطي دقائق، ثم ÷ 60 للساعات — هنا ${target} ÷ ${rate} ÷ 60.`,
+    estimatedSteps: 2, conceptTags: ['unit-rate', 'unit-conversion', 'reverse'], parameters: params,
+    allowedConstants: [0, 1, 2, 100, 60],
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, rate, 60), target)]},
+    askedUnknown: 'requiredHoursFromMinuteRate', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'TIME_THEN_CONVERT', targetMisconception: 'STOPPED_AT_INTERMEDIATE_TOTAL',
+      wrongMethodValue: minutes,
+      degenerateWhen: [{when: minutes === correct, note: 'minutes equal hours only at zero'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, unitConversion: 1, reverseReasoning: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['minuteRate', 'targetVolume']}
   });
 }

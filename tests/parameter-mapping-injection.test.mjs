@@ -91,8 +91,15 @@ function assertCaught(report, what) {
 // --- 1. arithmetic / proportion --------------------------------------------
 
 test('parameter mapping: direct_proportion solver reads baseCount and targetCount swapped', async () => {
-  const item = await cleanItem('direct_proportion', 'medium', 'dp1');
-  assert.ok(item, 'need a clean direct_proportion item');
+  // RC2.9.4-B3 added two medium templates to this family that do not run on
+  // the proportion solver, so the fixture is the first clean item that does:
+  // the test is about the solver's parameter wiring, not about one seed.
+  let item = null;
+  for (let i = 1; i <= 12 && !item; i++) {
+    const c = await cleanItem('direct_proportion', 'medium', `dp${i}`);
+    if (c && 'baseCount' in c.base.parameters && 'targetCount' in c.base.parameters) item = c;
+  }
+  assert.ok(item, 'need a clean direct_proportion item on the proportion solver');
   const {base, q, rng} = item;
   assert.equal(validateCandidate(base, q).valid, true, 'MUST_ACCEPT: the untouched item passes');
 

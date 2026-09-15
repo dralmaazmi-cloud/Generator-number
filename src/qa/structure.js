@@ -97,6 +97,11 @@ const R = ROUTINE_MARKERS;
  */
 export const TEMPLATE_STRUCTURE = Object.freeze({
   // ---------------------------------------------------------------- sequences
+  // RC2.9.4-B2. A far term from a stated arithmetic rule, and a count of terms between two shown ends.
+  SEQ_E_NTH_TERM: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. First term plus (n − 1) steps. The rule is stated; one formula applied once.'},
+  SEQ_E_COUNT_TERMS: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. (last − first) ÷ step, plus one. One formula with a fencepost.'},
   SEQ_E_GEO: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Constant ratio between adjacent terms; the first thing a solver checks is the answer.'},
   SEQ_E_ARITH: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -152,6 +157,13 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
   // ------------------------------------------------------------------- ratios
   RAT_E_KNOWN: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'One part is given; divide and multiply.'},
+  // RC2.9.4-B2. Three EASY shapes on the parts idea, each a different given and a different asked quantity.
+  RAT_E_DIFF_SPLIT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. Difference ÷ difference of parts gives the part value; one side then follows.'},
+  RAT_E_THREE_WAY: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. Whole ÷ sum of three parts, then one share. Same routine as a two-way split, one more addend.'},
+  RAT_E_TOTAL_FROM_PART: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. One side gives the part value; the whole is the sum of parts times it.'},
   RAT_E_SPLIT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Simple ratio split — named by the brief as not hard, and it is not medium either: total ÷ parts × share.'},
   RAT_M_COMMON_SUM: {band: 'hard', criteria: ['CROSS_PART_INTEGRATION', 'STRATEGY_SELECTION'],
@@ -160,6 +172,11 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'As RAT_M_COMMON_SUM, with the joint condition given as a difference.'},
   RAT_H_TWO_COMB: {band: 'hard', criteria: ['CROSS_PART_INTEGRATION', 'STRATEGY_SELECTION'],
     why: 'As RAT_M_COMMON_SUM, asking for the term that was not part of the given combination.'},
+  // RC2.9.4-B3. Two MEDIUM shapes where a stated GAP has to be read against a difference of parts first.
+  RAT_M_TOTAL_FROM_GAP: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'RC2.9.4-B3. Gap ÷ difference of parts gives the part value, then sum of parts × part value. Two stages, each routine, the second not stated by the sentence.'},
+  RAT_M_THIRD_FROM_GAP: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'RC2.9.4-B3. Three parts, a gap between two named shares, the third asked: the gap has to be matched to the right pair of parts before the part value exists.'},
   RAT_M_ADD_SIDE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
     why: 'RC2.5 demotion on the Holdout E blind verdicts. Ratio changed by an addition to one side. Holdout E: 0 of 1 judged hard (same cluster, 0 of 3).'},
   RAT_H_TRANSFER: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
@@ -186,6 +203,11 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'A rise in one group and a fall in the other are known only through two totals; neither percentage can be applied until the split is found, and the split follows only from both conditions at once.'},
 
   // ----------------------------------------------------------------- averages
+  // RC2.9.4-B2. The definition itself, and one member recovered from the mean.
+  AVG_E_LIST: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. Sum the shown members, divide by their count. The definition applied once.'},
+  AVG_E_MISSING_VALUE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. Mean × count gives the total; the missing member is the total minus the known ones.'},
   AVG_E_ADD: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Total from average, adjust, re-average. One relationship used twice.'},
   AVG_E_REMOVE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -208,6 +230,15 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
   // --------------------------------------------------------------------- ages
   AGE_E_SUM_DIFF: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'RC2.5 demotion on the Holdout E blind verdicts. Holdout E: 0 of 1 judged medium. Single verdict, agreeing with the template’s own SINGLE_FORMULA marker.'},
+  // RC2.9.4-B2. Ratio and sum at one time point: parts arithmetic in the direction the
+  // sentence states, no second time point — the same shape the sum-and-difference
+  // template was judged easy for.
+  AGE_E_RATIO_SUM: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. A multiple and a sum at the present: parts, then one division. Single relationship, applied once.'},
+  AGE_E_TIME_SHIFT: {band: 'easy', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'RC2.9.4-B2. One stated age, one stated gap, one stated shift: two additions in the order the sentence gives them.'},
+  AGE_E_YEARS_TO_SUM: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. Two present ages and a target sum; the sum grows by two per year, so one subtraction and one halving.'},
   AGE_E_MULT_DIFF: {band: 'medium', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Ratio and difference at one time point; parts arithmetic, no second time point.'},
   AGE_M_FUT_SUM_DIFF: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
@@ -235,6 +266,13 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Three time points: a future sum must be carried back through the present to a past ratio before either condition can be used.'},
 
   // -------------------------------------------------------------------- speed
+  // RC2.9.4-B2. The third direction of the one relation, a minutes-to-hours route, and a same-direction gap.
+  SPD_E_SPEED: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. Distance ÷ time. One relation, inverted once.'},
+  SPD_E_UNIT_MINUTES: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. Minutes to hours, then speed × time. One conversion on a single relation.'},
+  SPD_E_SAME_DIRECTION_GAP: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. Difference of the two stated speeds, times the stated time. The direction is stated, so no case to consider.'},
   SPD_E_DISTANCE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'distance = speed × time.'},
   SPD_E_TIME: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -298,6 +336,13 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Two group rates summed, then multiplied by a time.'},
   MACH_E_REQUIRED: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
     why: 'machine-hour rate, then the count needed. Routine both ways.'},
+  // RC2.9.4-B2. Three EASY shapes: one division, one group rate then a division, one difference then a product.
+  MACH_E_RATE_FROM_TOTAL: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. Total ÷ (machines × hours). One named relationship inverted once.'},
+  MACH_E_TIME_FOR_TARGET: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. Group rate is rate × count, then target ÷ group rate. Stated in the order used.'},
+  MACH_E_COMPARE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. Difference of two stated rates, times the stated hours.'},
   MACH_E_HOURS: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'RC2.5 demotion on the Holdout E blind verdicts. Holdout E: 0 of 3 judged medium.'},
   MACH_M_STOP: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
@@ -318,6 +363,11 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Unit value then scale.'},
   PROP_E_COST: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Unit price then scale, or the same rate read the other way.'},
+  // RC2.9.4-B3. Two MEDIUM shapes: two offers brought to unit price and compared; a rate carried across a unit change.
+  PROP_M_UNIT_PRICE_COMPARE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'RC2.9.4-B3. Two unit prices, then a difference. Each division is routine; the comparison needs both before it can be made.'},
+  PROP_M_SCALE_ACROSS_HOURS: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'RC2.9.4-B3. Hours to minutes, unit rate, scale. A conversion stage on the unit-value pipeline.'},
   PROP_M_FRAC_UNIT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Unit weight then scale; the unit value is fractional, which is arithmetic, not reasoning.'},
   PROP_M_RECIPE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -334,6 +384,13 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
   // ---------------------------------------------------------------- fractions
   FRAC_M_REMAIN: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
     why: 'RC2.8-4. Two stages, and each one asks for the COMPLEMENT rather than the part, which is a move the chained-fraction templates never make — they are the reason this family was adjudicated easy. Composing remainders is one concept above applying a fraction repeatedly, and no further; medium, not hard.'},
+  // RC2.9.4-B3. Three MEDIUM shapes on the remainder idea, each with an amount on the page.
+  FRAC_M_REMAIN_VALUE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'RC2.9.4-B3. Spend a fraction, then a fraction of the remainder, report the amount left: two complement stages in the stated order.'},
+  FRAC_M_START_FROM_REMAINDER: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'RC2.9.4-B3. The same two complement stages inverted as one composed fraction. One inversion of one composition is routine.'},
+  FRAC_M_COMPARE_SHARES: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'RC2.9.4-B3. A non-unit share of a whole, its complement, then their difference: three routine steps in sequence.'},
   FRAC_E_2: {band: 'easy', criteria: [], routine: ['REPEATED_OPERATION'],
     why: 'Two successive fractions of one number.'},
   FRAC_M_3: {band: 'easy', criteria: [], routine: ['REPEATED_OPERATION'],
@@ -342,6 +399,11 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Four successive fractions — the item the Holdout C review first named as scored hard while being one idea repeated.'},
 
   // ---------------------------------------------------------------- unit_rate
+  // RC2.9.4-B3. Two MEDIUM shapes: two rates compared, and a time whose unit differs from the rate's.
+  RATE_M_COMPARE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'RC2.9.4-B3. Two unit rates from two amount-and-time pairs, then a difference. Two divisions and a subtraction in sequence.'},
+  RATE_M_HOURS_FROM_MINUTE_RATE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'RC2.9.4-B3. Volume ÷ rate gives minutes; minutes ÷ 60 gives hours. Division then conversion, in the stated order.'},
   RATE_E_DIRECT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Rate then scale.'},
   RATE_E_TIME: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -376,6 +438,11 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'RC2.5 demotion on the Holdout E blind verdicts. Team size from an equation with one later joiner. Holdout E: 0 of 3 judged hard.'},
 
   // --------------------------------------------------------------- relational
+  // RC2.9.4-B2. Two EASY jobs on a settled order: a truth judgement, and stated gaps composed.
+  REL_E_STATEMENT_TRUE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. Four people in one chain; every wrong option reverses a settled relation. One transitive step.'},
+  REL_E_GAP_CHAIN: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.4-B2. Two stated gaps on three people; the asked gap is their sum or their difference, decided by who sits between.'},
   REL_E_BETWEEN: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Four statements that chain into one total order; read off the position.'},
   REL_E_CHAIN: {band: 'easy', criteria: [], routine: ['FIXED_PIPELINE'],
@@ -409,6 +476,11 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Who holds a position on an order that stays partial with more than one open pair and a proof depth of three or more. The routine case — an order the statements settle — is REL_E_CHAIN, so it is not drawn here.'},
 
   // ----------------------------------------------------------------- calendar
+  // RC2.9.4-B3. Two MEDIUM routes onto a weekday: a difference of dates then the remainder, and a count of gaps then the remainder.
+  CAL_M_DATE_WEEKDAY: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'RC2.9.4-B3. Subtract the dates, take the remainder modulo seven, step forward. The subtraction is a stage the plain offset templates never have; medium, as CAL_H_CYCLE_MEET is medium for its setup stage.'},
+  CAL_M_NTH_VISIT: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
+    why: 'RC2.9.4-B3. Count the gaps (n − 1, a fencepost), multiply by the cycle, remainder, step. Three stages the sentence orders.'},
   CAL_E_TOM: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'One day back.'},
   CAL_E_AFTER: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],

@@ -177,6 +177,15 @@ export class BlueprintScheduler {
     return reach;
   }
 
+  /** RC2.9.4-B6. How many blueprints each family holds across this request's bands. */
+  _familyPoolSizes() {
+    const m = new Map();
+    for (const band of new Set(this.bands)) {
+      for (const b of this._pool(band)) m.set(b.family, (m.get(b.family) ?? 0) + 1);
+    }
+    return m;
+  }
+
   /** How many distinct jobs each family can offer this request at all. */
   _familyTaskPool() {
     const m = new Map();
@@ -255,9 +264,57 @@ export class BlueprintScheduler {
     // actually asks for — no construction may be the third thing a reader
     // recognises — and it is read off what was DELIVERED, not off what a
     // blueprint might have produced.
+    // RC2.9.4-B9. The cluster is measured over a ROLLING hundred, which spans
+    // sittings; a construction carried in from the previous hundred has one
+    // fewer use to give inside this sitting. Counted as one, because a carried
+    // construction was itself bounded when it was delivered.
+    // The count is exact: the journey records every construction delivered in
+    // the last hundred, this sitting's included once they are delivered, so the
+    // live state adds nothing on top of it and the plan adds what it has placed.
+    const inWindow = sig => (this.journey ? this.journey.timesRecently('perceptual', sig, at) : 0)
+      + ((this.journey && state === this.live) ? 0 : (state.signatureUse?.get(sig) ?? 0));
     if (stage < 4 && (b.signatures ?? []).length
-      && (b.signatures ?? []).every(sig => (state.signatureUse?.get(sig) ?? 0) >= CONSTRUCTION_CLUSTER_CAP)) {
+      && (b.signatures ?? []).every(sig => inWindow(sig) >= CONSTRUCTION_CLUSTER_CAP)) {
       return 'CONSTRUCTION_CLUSTER_CAP';
+    }
+    // And never a FOURTH inside any rolling hundred, at any stage: the largest
+    // perceptual cluster the acceptance allows is three, and no band is so thin
+    // that a fourth use of one construction is ever the only way to fill a slot.
+    if ((b.signatures ?? []).length
+      && (b.signatures ?? []).every(sig => inWindow(sig) > CONSTRUCTION_CLUSTER_CAP)) {
+      return 'ROLLING_CLUSTER_LIMIT';
+    }
+    // RC2.9.4-B9. No run of three similar questions — similar as the classifier
+    // reads it: same family and job, or the same construction. The adjacency
+    // rules below forbid the pair; this forbids the triple, and holds one stage
+    // longer because a streak is what a reader notices first.
+    if (stage < 5) {
+      const sim = (p, q) => p && q && ((p.family === q.family && p.task === q.task)
+        || (p.signatures ?? []).some(s => (q.signatures ?? []).includes(s)));
+      const l1 = state.placed[i - 1], l2 = state.placed[i - 2], r1 = state.placed[i + 1], r2 = state.placed[i + 2];
+      if ((sim(l1, b) && sim(l2, l1)) || (sim(r1, b) && sim(r2, r1)) || (sim(l1, b) && sim(b, r1))) return 'SIMILAR_RUN';
+      // Across the sitting boundary: the last two questions of the previous
+      // sitting are in the journey.
+      if (i === 0 && this.journey?.similarRunInto?.(b)) return 'SIMILAR_RUN';
+      if (i === 1 && l1 && sim(l1, b) && this.journey?.lastWasSimilar?.(l1)) return 'SIMILAR_RUN';
+    }
+    // RC2.9.4-B5. The two rules realization holds ABSOLUTELY inside a sitting
+    // — no reasoning target twice, no core construction twice — were invisible
+    // to the plan. The plan happily placed a fifth odd-one-out blueprint whose
+    // every reasoning target the sitting had already used, and the slot then
+    // rendered thirty-six candidates the novelty guard refused one by one and
+    // the sitting was thrown away at question twenty-one. The catalogue now
+    // records what each blueprint can realise on both axes, and a blueprint
+    // with nothing left to offer on either is not planned, at any stage: a
+    // request the band cannot fill is refused BEFORE rendering, with the
+    // arithmetic named, which is what the brief asks for.
+    if ((b.targetPairs ?? []).length
+      && (b.targetPairs ?? []).every(t => (state.targetUse?.get(t) ?? 0) > 0)) {
+      return 'REASONING_TARGET_EXHAUSTED';
+    }
+    if ((b.cores ?? []).length
+      && (b.cores ?? []).every(c => (state.coreUse?.get(c) ?? 0) > 0)) {
+      return 'CORE_CONSTRUCTION_EXHAUSTED';
     }
     if (presHere >= this.presentationCap) return 'PRESENTATION_CLUSTER_CAP';
     if (usedHere > 0 && stage < 4) return 'BLUEPRINT_ALREADY_USED';
@@ -306,10 +363,38 @@ export class BlueprintScheduler {
     const want = this.familyPreference[i] ?? null;
     this._reach ??= this._presentationReach();
     const at = this.journey ? this.journey.positionOf(i) : 0;
+    this._familyPoolSize ??= this._familyPoolSizes();
     const scored = candidates.map(b => {
       const pres = presentationOf(b);
+      // RC2.9.4-B5. How many times THIS SESSION has already put one of this
+      // blueprint's constructions on the page. The in-session cluster cap only
+      // binds at two; below it nothing preferred a construction the session had
+      // not used yet, so a second use could outrank a first use of another
+      // idea whenever the journey keys tied — which, in a single-band sitting
+      // where most of the pool is equally fresh, they do. Ranked right after
+      // the cross-sitting cooldown keys: never seen in the journey, then never
+      // seen in this sitting, then everything else.
+      const sigs = b.signatures ?? [];
+      const sigUse = sigs.length ? Math.max(...sigs.map(sig => state.signatureUse?.get(sig) ?? 0)) : 0;
+      // How much of this blueprint's reasoning-target and core-construction
+      // material the sitting has already spent: the share of its targets used,
+      // then the share of its cores used. A blueprint with one target left of
+      // three sorts behind one with all three free.
+      const pairs = b.targetPairs ?? [];
+      const targetSpent = pairs.length ? pairs.filter(t => (state.targetUse?.get(t) ?? 0) > 0).length / pairs.length : 0;
+      const cores = b.cores ?? [];
+      const coreSpent = cores.length ? cores.filter(c => (state.coreUse?.get(c) ?? 0) > 0).length / cores.length : 0;
       return {
         b,
+        sigUse,
+        targetSpent,
+        coreSpent,
+        templateUse: state.templateUse?.get(b.templateId) ?? 0,
+        // RC2.9.4-B6. A family's share of ITS OWN pool already spent. A family
+        // with two ideas at this band is at half its capacity after one use,
+        // one with fifteen is not; ranking by the raw count treated them alike
+        // and sent the narrow family back too soon.
+        familyLoad: (state.familyUse.get(b.family) ?? 0) / (this._familyPoolSize.get(b.family) ?? 1),
         presUse: (state.presentationUse.get(pres) ?? 0) + (this.batchPresentations?.get(pres) ?? 0),
         familyTaskUse: state.familyTasks.get(b.family)?.get(b.task) ?? 0,
         taskUse: state.taskUse.get(b.task) ?? 0,
@@ -347,9 +432,19 @@ export class BlueprintScheduler {
         jitter: this.rng.next()
       };
     });
+    // RC2.9.4-B10. A construction already on THIS sitting's page is the most
+    // immediate repeat a reader can meet, so it sorts behind everything —
+    // including behind an idea met a hundred questions ago. Ranked first, ahead
+    // of the journey keys: two never-seen blueprints that realise one
+    // construction used to tie on freshness and both get placed, which was a
+    // near-duplicate the window then counted.
     scored.sort((x, y) =>
-      x.solvedBefore - y.solvedBefore
+      x.sigUse - y.sigUse
+      || x.solvedBefore - y.solvedBefore
       || x.constructionSolved - y.constructionSolved
+      || x.targetSpent - y.targetSpent
+      || x.coreSpent - y.coreSpent
+      || x.templateUse - y.templateUse
       || x.recent - y.recent
       || x.batchUse - y.batchUse
       || x.journeyLayout - y.journeyLayout
@@ -360,6 +455,7 @@ export class BlueprintScheduler {
       || x.reach - y.reach
       || x.familyTaskUse - y.familyTaskUse
       || x.taskUse - y.taskUse
+      || x.familyLoad - y.familyLoad
       || x.familyUse - y.familyUse
       || x.wanted - y.wanted
       || x.jitter - y.jitter);
@@ -391,9 +487,20 @@ export class BlueprintScheduler {
     // construction the blueprint could produce: a conservative claim, and the
     // right direction to be wrong in, because over-claiming costs one
     // alternative while under-claiming costs a rendered question.
-    const sigs = realized ? [realized] : (b.signatures ?? []);
+    const sigs = realized?.signature ? [realized.signature]
+      : (typeof realized === 'string' ? [realized] : (b.signatures ?? []));
     state.placedSignature[i] = sigs;
     for (const sig of sigs) state.signatureUse.set(sig, (state.signatureUse.get(sig) ?? 0) + 1);
+    // RC2.9.4-B5. The same conservative charging on the two absolute axes: the
+    // plan charges every target and core the blueprint could produce, the live
+    // state charges the one it did.
+    const pairs = realized?.targetPair ? [realized.targetPair] : (realized ? [] : (b.targetPairs ?? []));
+    const cores = realized?.core ? [realized.core] : (realized ? [] : (b.cores ?? []));
+    state.placedTarget[i] = pairs;
+    state.placedCore[i] = cores;
+    for (const t of pairs) state.targetUse.set(t, (state.targetUse.get(t) ?? 0) + 1);
+    for (const c of cores) state.coreUse.set(c, (state.coreUse.get(c) ?? 0) + 1);
+    state.templateUse.set(b.templateId, (state.templateUse.get(b.templateId) ?? 0) + 1);
     if (!state.familyTasks.has(b.family)) state.familyTasks.set(b.family, new Map());
     const ft = state.familyTasks.get(b.family);
     ft.set(b.task, (ft.get(b.task) ?? 0) + 1);
@@ -413,6 +520,10 @@ export class BlueprintScheduler {
     dec(state.familyUse, b.family);
     for (const sig of state.placedSignature[i] ?? []) dec(state.signatureUse, sig);
     state.placedSignature[i] = null;
+    for (const t of state.placedTarget[i] ?? []) dec(state.targetUse, t);
+    for (const c of state.placedCore[i] ?? []) dec(state.coreUse, c);
+    state.placedTarget[i] = null; state.placedCore[i] = null;
+    dec(state.templateUse, b.templateId);
     const ft = state.familyTasks.get(b.family);
     if (ft) { dec(ft, b.task); if (!ft.size) state.familyTasks.delete(b.family); }
     state.placed[i] = null;
@@ -431,7 +542,9 @@ export class BlueprintScheduler {
       blueprintUse: new Map(), presentationUse: new Map(),
       taskUse: new Map(), familyUse: new Map(), repeats: 0,
       familyTasks: new Map(), familyTaskPool: this._familyTaskPool(),
-      signatureUse: new Map(), placedSignature: new Array(this.count).fill(null)
+      signatureUse: new Map(), placedSignature: new Array(this.count).fill(null),
+      targetUse: new Map(), coreUse: new Map(), templateUse: new Map(),
+      placedTarget: new Array(this.count).fill(null), placedCore: new Array(this.count).fill(null)
     };
     const choices = new Array(this.count).fill(null);
     const cursors = new Array(this.count).fill(0);
@@ -525,7 +638,9 @@ export class BlueprintScheduler {
       blueprintUse: new Map(), presentationUse: new Map(),
       taskUse: new Map(), familyUse: new Map(), repeats: 0,
       familyTasks: new Map(), familyTaskPool: this._familyTaskPool(),
-      signatureUse: new Map(), placedSignature: new Array(this.count).fill(null)
+      signatureUse: new Map(), placedSignature: new Array(this.count).fill(null),
+      targetUse: new Map(), coreUse: new Map(), templateUse: new Map(),
+      placedTarget: new Array(this.count).fill(null), placedCore: new Array(this.count).fill(null)
     };
     return this.live;
   }
@@ -606,9 +721,12 @@ export class BlueprintScheduler {
     return this._violation(blueprint, i, this.live, STAGES.length - 1);
   }
 
-  /** Commit what was actually published to the live state. */
-  record(i, blueprint, realizedSignature = null) {
-    this._commit(this.live, blueprint, i, realizedSignature);
+  /**
+   * Commit what was actually published to the live state.
+   * @param {string|{signature?:string,targetPair?:string,core?:string}|null} realized
+   */
+  record(i, blueprint, realized = null) {
+    this._commit(this.live, blueprint, i, realized);
   }
 
   /** What the realised session looks like on the axes this scheduler controls. */
@@ -628,13 +746,32 @@ export class BlueprintScheduler {
   }
 }
 
-/** Capacity of a request, for a refusal that can name what is missing. */
+/**
+ * Capacity of a request, for a refusal that can name what is missing.
+ *
+ * RC2.9.4-B8. Beyond the blueprint count, the two numbers that actually bound
+ * one sitting: how many distinct reasoning targets and how many distinct core
+ * constructions the band can realise. Both are absolute inside a sitting, so
+ * no sitting at this band can hold more questions than the smaller of the two.
+ * `maxSitting` is that bound.
+ */
 export function capacityFor(bandSchedule, familyPool = null) {
   const need = {};
   for (const b of bandSchedule) need[b] = (need[b] ?? 0) + 1;
-  return Object.entries(need).map(([band, slots]) => ({
-    band, slots, blueprints: blueprintsForBand(band, familyPool).length
-  }));
+  return Object.entries(need).map(([band, slots]) => {
+    const pool = blueprintsForBand(band, familyPool);
+    const targets = new Set(), cores = new Set(), constructions = new Set();
+    for (const b of pool) {
+      for (const t of b.targetPairs ?? []) targets.add(t);
+      for (const c of b.cores ?? []) cores.add(c);
+      for (const s of b.signatures ?? []) constructions.add(s);
+    }
+    return {
+      band, slots, blueprints: pool.length,
+      reasoningTargets: targets.size, coreConstructions: cores.size, constructions: constructions.size,
+      maxSitting: Math.min(targets.size || Infinity, cores.size || Infinity, pool.length)
+    };
+  });
 }
 
 export {BLUEPRINTS};

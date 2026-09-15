@@ -303,7 +303,14 @@ export function computeComplexity(f = {}) {
  * evidence field, `complexity_band`, and the `score_agrees_with_structure` flag
  * derived from it.
  */
-export const BAND_BOUNDARIES = Object.freeze({easyMedium: 10.4, mediumHard: 15.6});
+// RC2.9.4-B2/B3. Twenty-nine EASY and MEDIUM constructions were added to the
+// thin cells, and — as in RC2.4 and RC2.6 — the population the tertiles
+// partition moved with them: 184 templates, tertiles at 9.4 and 14.8 (measured
+// by tests/rc22-difficulty.test.mjs on the ungated population). This constant
+// feeds `complexity_band`, which is EVIDENCE beside the structural band and is
+// not the band a question is published at, so following the rule here changes
+// no label.
+export const BAND_BOUNDARIES = Object.freeze({easyMedium: 9.4, mediumHard: 14.8});
 
 export function bandFor(score) {
   if (score <= BAND_BOUNDARIES.easyMedium) return 'easy';

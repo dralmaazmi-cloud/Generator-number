@@ -47,7 +47,7 @@ import {generateProfitLoss} from './families/profit_loss.js';
 // records when each identity was last seen rather than that it was seen — and a
 // stored RC2.9.1 history is migrated into it. Callers that only hand the value
 // back are unaffected, which is every caller there is.
-export const ENGINE_VERSION = '1.5.3';
+export const ENGINE_VERSION = '1.5.4';
 
 const GENERATORS = {
   sequences: generateSequences,
@@ -537,6 +537,16 @@ export class NumericalQuestionGeneratorEngine {
     // while there is another shape to be had, given up rather than failing the
     // slot.
     const familySubIdeas = new Map();
+    // RC2.9.4-B9. Similarity as the classifier reads it, for the streak rule.
+    const similarQ = (a, b) => a && b && (a.perceptual === b.perceptual || (a.family === b.family && a.task === b.task));
+    const deliveredKeys = [];
+    const keysBefore = pos => (pos > journeyStart ? deliveredKeys[pos - journeyStart - 1] : journey.keysAtPosition(pos)) ?? null;
+    const closesSimilarRun = (q, slot) => {
+      const at = journeyStart + slot + 1;
+      const me = {family: q.family, task: q.metadata?.task_signature ?? null, perceptual: q.metadata?.user_perceptual_signature ?? null};
+      const p1 = keysBefore(at - 1), p2 = keysBefore(at - 2);
+      return similarQ(me, p1) && similarQ(p1, p2);
+    };
     const blueprintPlan = blueprints.plan();
     if (!blueprintPlan.complete) {
       // The shortfall is named with the arithmetic behind it rather than filled
@@ -632,10 +642,17 @@ export class NumericalQuestionGeneratorEngine {
       // fallback after a short look instead of rendering three dozen questions
       // that cannot be published. Nothing is relaxed by this — the same
       // candidate is delivered either way.
-      const budget = blueprints.hasFreeConstructionAt(i)
-        ? this.config.diversityAttempts
-        : Math.min(this.config.diversityAttempts, SEEDS_PER_BLUEPRINT * 3);
+      const shortLook = Math.min(this.config.diversityAttempts, SEEDS_PER_BLUEPRINT * 3);
+      const budget = this.config.diversityAttempts;
       for (let retry = 0; retry < budget; retry++) {
+        // RC2.9.4-B8. The short look stays short only once it has found
+        // something to deliver. A slot whose every construction is inside its
+        // cooldown used to stop after six candidates whether or not one of them
+        // was deliverable, and when the six were all in-session repeats the
+        // sitting was refused with ideas still untried. Cheapness is kept where
+        // it was cheap — the look ends as soon as a fallback exists — and the
+        // search continues only where stopping would cost the sitting.
+        if (retry >= shortLook && !blueprints.hasFreeConstructionAt(i) && relaxed) break;
         const stage = stages[Math.min(stages.length - 1, Math.floor(retry / Math.ceil(this.config.diversityAttempts / stages.length)))];
         // Cycled, not clamped. Late in a single-band session most ideas are
         // already spent and this list is short; stopping on its last entry meant
@@ -775,6 +792,18 @@ export class NumericalQuestionGeneratorEngine {
                   at: atPosition, lastSeen, distance}};
             }
           }
+          continue;
+        }
+        // RC2.9.4-B9. The streak, on the FINISHED question: same family and
+        // job, or the same construction, as the two delivered before it (the
+        // previous sitting's last two included). Staged like the sub-idea rule,
+        // so a slot with nothing else left still delivers.
+        if (retry < Math.floor(this.config.diversityAttempts * 2 / 3) && closesSimilarRun(q, i)) {
+          this.telemetry.sessionDiscard({
+            family: q.family, templateId: q.generator_id,
+            reasonCode: REASON.NOVELTY_CONSECUTIVE_SIMILARITY, seed, attempt: retry + 1,
+            detail: 'streak: a third similar question in a row'
+          });
           continue;
         }
         const hardBreach = blueprints.hardViolation(i, realizedBlueprint);
@@ -980,13 +1009,18 @@ export class NumericalQuestionGeneratorEngine {
         chosen.q.family, difficultySchedule[i],
         chosen.q.metadata?.information_structure ?? 'DIRECT_GIVENS'
       );
-      blueprints.record(i, deliveredBlueprint,
-        chosen.q.metadata?.user_perceptual_signature ?? null);
+      blueprints.record(i, deliveredBlueprint, {
+        signature: chosen.q.metadata?.user_perceptual_signature ?? null,
+        targetPair: chosen.q.metadata?.reasoning_target_pair ?? null,
+        core: chosen.q.metadata?.user_construction_signature ?? null
+      });
       // RC2.9-1. The journey remembers what it delivered, from the identities
       // the question itself publishes, so the memory and the measurement can
       // never disagree about what the user was shown.
       journey.record(keysOf(chosen.q, {entityWords: [...entityWordsIn(chosen.q.question)]}),
         journeyStart + i + 1);
+      deliveredKeys[i] = {family: chosen.q.family, task: chosen.q.metadata?.task_signature ?? null,
+        perceptual: chosen.q.metadata?.user_perceptual_signature ?? null};
       // A slot that had to fall back on an idea still inside its cooldown is
       // recorded by name, so the acceptance run can report how often the last
       // resort was needed rather than leaving it invisible.
@@ -1198,6 +1232,48 @@ export class NumericalQuestionGeneratorEngine {
       distinctTemplates: perFamily.reduce((n, f) => n + f.count, 0),
       familiesWith: perFamily.filter(f => f.count > 0).map(f => f.family),
       familiesWithout: perFamily.filter(f => f.count === 0).map(f => f.family)
+    };
+  }
+
+  /**
+   * RC2.9.4-B8. How many questions ONE sitting at a difficulty can hold, from
+   * the catalogue rather than from a trial generation.
+   *
+   * Two rules are absolute inside a sitting — no reasoning target twice, no
+   * core construction twice — so a sitting can never hold more questions than
+   * the band offers distinct values on the tighter axis. The product reads this
+   * BEFORE offering a count, so a count the engine will refuse is never
+   * offered. For a mixed schedule the bound is the sum of the per-band bounds
+   * weighted as the schedule draws them, capped at the engine maximum.
+   *
+   * This is a ceiling on what is possible, not a promise for every seed: the
+   * journey cooldown can still make a particular sitting fall back on older
+   * ideas, which the session reports. `maxCount` is what the product may offer;
+   * `recommendedMax` is the largest preset that the acceptance run delivered on
+   * every journey, and is what the product should default to.
+   *
+   * @param {{difficulty?:string, families?:string[]}} options
+   */
+  sessionCapacity(options = {}) {
+    const difficulty = options.difficulty ?? 'mixed';
+    const selectedFamilies = this._resolveFamilyPool(options);
+    const perBand = capacityFor(['easy', 'medium', 'hard'], selectedFamilies);
+    const bound = band => perBand.find(c => c.band === band)?.maxSitting ?? 0;
+    const hardMax = 100;
+    let maxCount;
+    if (['easy', 'medium', 'hard'].includes(difficulty)) maxCount = Math.min(hardMax, bound(difficulty));
+    else if (difficulty === 'mixed') {
+      // The mixed schedule is 25% easy, 15% hard, the rest medium (see
+      // _buildDifficultySchedule); the count is bounded by whichever band runs
+      // out first at that share.
+      maxCount = Math.min(hardMax, Math.floor(bound('easy') / 0.25), Math.floor(bound('hard') / 0.15), Math.floor(bound('medium') / 0.6));
+    } else maxCount = hardMax; // adaptive draws one question at a time
+    return {
+      difficulty, families: selectedFamilies, maxCount: Math.max(1, maxCount),
+      perBand: Object.fromEntries(perBand.map(c => [c.band, {
+        blueprints: c.blueprints, reasoningTargets: c.reasoningTargets,
+        coreConstructions: c.coreConstructions, constructions: c.constructions, maxSitting: c.maxSitting
+      }]))
     };
   }
 

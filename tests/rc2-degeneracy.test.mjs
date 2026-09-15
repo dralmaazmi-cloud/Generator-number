@@ -123,7 +123,9 @@ test('RC2-005 MUST_REJECT: a chain position that reads the same from either end'
   // second or fourth seat, so the condition cannot arise there by construction;
   // that is asserted below rather than fixtured. REL_E_CHAIN still can, and
   // the guard is still what catches it.
-  for (const [seed, template] of [['fx-rel-8', 'REL_E_CHAIN']]) {
+  // RC2.9.4-B2 added two EASY relational templates, which moves the seed a
+  // five-person chain lands on. Re-found, same condition.
+  for (const [seed, template] of [['fx-rel-2', 'REL_E_CHAIN']]) {
     const {base, verdict} = draw(generateRelational, await bandOfTemplate('relational', template), seed);
     assert.equal(base.template_id, template);
     assert.equal(base.parameters.nodeCount, 5);
@@ -280,7 +282,7 @@ test('RC2-005: every template in the engine is classified, and every classificat
   // that were only parameter variants, so the breadth the journeys need had to
   // come from four real structures: a hidden operation and a membership test in
   // sequences, a past ratio and an invariant difference in ages.
-  assert.equal(report.totals.templates, 155, 'every declared template is reachable');
+  assert.equal(report.totals.templates, 184, 'every declared template is reachable');
   assert.deepEqual(report.totals.unclassified, []);
   assert.deepEqual(report.totals.declaredButAbsentFromEngine, []);
   assert.equal(report.totals.rc1TemplatesWithNoModel, 23, 'the RC1 gap was 23 templates');
