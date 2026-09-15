@@ -83,8 +83,10 @@ const NON_COUNT_FOLLOWERS = {
   // the numeral is an exponent, an ordinal or a percentage, not a quantity
   'أُس': 'EXPONENT', 'مرفوعًا': 'EXPONENT', 'بالترتيب': 'ORDINAL', 'بالمئة': 'PERCENT_WORD',
   'إشارة': 'PREDICATE', 'أطول': 'PREDICATE',
-  // the algebraic unknown, written joined to its coefficient: 4ك
-  'ك': 'ALGEBRAIC_SYMBOL'
+  // the algebraic unknown, written joined to its coefficient: 4ك، 5س
+  'ك': 'ALGEBRAIC_SYMBOL', 'س': 'ALGEBRAIC_SYMBOL',
+  // RC2.9.3-2. The narrated eliminations: «3 : 1 تعني أن …», «في 3 ونُبقي الثانية».
+  'تعني': 'VERB', 'ونُبقي': 'VERB'
 };
 
 /** Shapes that carry numerals but are not counted-noun constructions at all. */

@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool, composeSentences, sceneFor, unitWordKam, askOf} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, factorLine, resample, riseByPercentPhrase, bandPool, composeSentences, sceneFor, unitWordKam, askOf, rateOf} from './_shared.js';
 
 export function generateUnitRate({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'unit_rate', family_ar: 'المعدل الوحدوي', category: 'المعدل الوحدوي'};
@@ -310,7 +310,7 @@ function twoPhaseRate(ctx) {
     mk(r1 * h1 + r1 * h2, 'USED_RATE_BEFORE_CHANGE', `${r1} × ${h1} + ${r1} × ${h2}`),
     mk(r2n * h1 + r2n * h2, 'USED_ONLY_SECOND_RATE', `${r2n} × ${h1} + ${r2n} × ${h2}`)
   ]);
-  const stem = composeSentences(ctx, `يعمل جهاز بمعدل ${r1} ${sc.rateWord} لمدة ${u(h1, 'hour', 'oblique')}، ثم ارتفع معدله ${riseByPercentPhrase(pct)} وعمل ${u(h2, 'hour', 'oblique')} أخرى. كم ${unitWordKam(sc.out)} أنجز إجمالًا؟`);
+  const stem = composeSentences(ctx, `يعمل جهاز بمعدل ${rateOf(r1, sc)} لمدة ${u(h1, 'hour', 'oblique')}، ثم ارتفع معدله ${riseByPercentPhrase(pct)} وعمل ${u(h2, 'hour', 'oblique')} أخرى. كم ${unitWordKam(sc.out)} أنجز إجمالًا؟`);
   return buildBase(ctx, {
     templateId: 'RATE_H_TWO_PHASE',
     scenario: sc.key,
@@ -408,7 +408,7 @@ function rateFromTimeSaved(ctx) {
     mk(rate + 2 * bump, 'APPLIED_STEP_TWICE', `${rate} + ${bump} × 2`)
   ]);
 
-  const stem = composeSentences(ctx, `ينجز جهاز ${u(total, sc.out)} بمعدل ثابت. ولو زاد معدله بمقدار ${bump} ${sc.rateWord} لأنجز العمل نفسه في ${u(saved, 'hour', 'oblique')} أقل. ${ask === 'increasedRate' ? 'فما معدله بعد الزيادة؟' : 'فما معدله الأصلي؟'}`);
+  const stem = composeSentences(ctx, `ينجز جهاز ${u(total, sc.out)} بمعدل ثابت. ولو زاد معدله بمقدار ${rateOf(bump, sc)} لأنجز العمل نفسه في ${u(saved, 'hour', 'oblique')} أقل. ${ask === 'increasedRate' ? 'فما معدله بعد الزيادة؟' : 'فما معدله الأصلي؟'}`);
   return buildBase(ctx, {
     templateId: 'RATE_H_RATE_FROM_GAP',
     scenario: sc.key,

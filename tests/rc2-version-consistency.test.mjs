@@ -53,7 +53,7 @@ test('RC2.9.1: the manifest describes the engine that ships with it', async () =
 
 test('RC2-021: no shipped file hard-codes a different version', () => {
   const offenders = [];
-  for (const file of ['index.html', 'report.js', 'app.js', 'practice-journey.js',
+  for (const file of ['index.html', 'report.js', 'app.js', 'practice-journey.js', 'performance-model.js',
     'generator_manifest.json', 'package.json']) {
     // Comments may name a historical version on purpose — the note in app.js
     // records the very defect this test guards — so only code is scanned.

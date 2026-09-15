@@ -117,7 +117,7 @@ function multipleDifference(ctx) {
       `الجزء الواحد = ${diff} ÷ ${mult - 1} = ${younger}.`
     ],
     howToStart: 'حوّل المضاعف إلى أجزاء.',
-    remember: `الفرق بين عمر الأب وعمر الابن يساوي ${u(mult - 1, 'part')}.`,
+    remember: `الفرق بين عمر الأب وعمر الابن يساوي ${u(mult - 1, 'part', 'oblique')}.`,
     fastMethod: `اقسم الفرق على ${mult - 1}.`,
     estimatedSteps: 3, conceptTags: ['age', 'ratio'], parameters: params,
     oracle: {
@@ -732,15 +732,17 @@ function differenceFromTwoRatios(ctx) {
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: years,
+    // RC2.9.3-2. Narrated as a tutor solves it: both ages now, both ages
+    // later, the second relation as an equation, expand, gather, solve.
     steps: [
-      `نفرض عمر الابن الآن س، فعمر الأب يساوي س مضروبًا في ${now}.`,
-      `بعد ${u(ahead, 'year', 'oblique')} يصير عمر الابن س + ${ahead}، وعمر الأب أكبر منه بالفرق نفسه.`,
-      `ومن العلاقة الثانية نكتب المعادلة: (س × ${now}) + ${ahead} = (س + ${ahead}) × ${later}.`,
-      `بفك القوس وجمع الحدود تصير س مضروبة في (${now} − ${later}) تساوي ${ahead} × (${later} − 1) = ${numerator}.`,
-      `ومنها س = ${numerator} ÷ ${denominator} = ${younger}، وعمر الأب = ${younger} × ${now} = ${older}.`,
+      `نفرض عمر الابن الآن س، فعمر الأب الآن ${now}س.`,
+      `بعد ${u(ahead, 'year', 'oblique')} يصير عمر الابن س + ${ahead}، وعمر الأب ${now}س + ${ahead}.`,
+      `العلاقة الثانية تعطي المعادلة: ${now}س + ${ahead} = ${later} × (س + ${ahead})، وبفك القوس ${later} × ${ahead} = ${later * ahead}، فيصير الطرف الأيسر ${later}س + ${later * ahead}.`,
+      `نجمع حدود س في طرف والأعداد في الطرف الآخر: معامل س = ${now} − ${later} = ${denominator}، والعدد المقابل = ${later * ahead} − ${ahead} = ${numerator}${denominator === 1 ? '' : `؛ فتصير ${denominator}س = ${numerator}`}.`,
+      `س = ${numerator} ÷ ${denominator} = ${younger}، وعمر الأب = ${younger} × ${now} = ${older}.`,
       `الفرق = ${older} − ${younger} = ${correct}.`
     ],
-    howToStart: 'اكتب العمرين بدلالة مجهول واحد، ثم طبّق العلاقة الثانية.',
+    howToStart: 'الفرق بين العمرين لا يتغير مع السنين. اكتب العمرين الآن بدلالة مجهول واحد، ثم طبّق العلاقة الثانية.',
     remember: 'الفرق العمري ثابت، وهو ما تبحث عنه المسألة وليس أحد العمرين.',
     fastMethod: 'النسبتان في زمنين تكفيان لتحديد العمرين، والفرق يُقرأ بعدهما مباشرة.',
     estimatedSteps: 4, conceptTags: ['age', 'invariant', 'two-conditions'], parameters: params,

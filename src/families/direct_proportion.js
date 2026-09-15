@@ -7,7 +7,7 @@
 // satisfy the stated proportion. Nothing is announced without being derived.
 
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, div, factorLine, resample, unitWord, unitWordKam, theSingle, defPlural, bandPool, composeSentences, askOf} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, div, factorLine, resample, unitWord, unitWordKam, theSingle, defPlural, bandPool, composeSentences, askOf, scaleBothLine} from './_shared.js';
 
 export function generateDirectProportion({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
   const ctx = {
@@ -798,7 +798,8 @@ function twoItemPrices(ctx) {
     stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('dirham'),
     steps: [
-      `نضرب العبارة الأولى في ${d} والثانية في ${b} ليتساوى عدد القطع فيهما: ${t1} × ${d} = ${t1 * d}، و${t2} × ${b} = ${t2 * b}.`,
+      // RC2.9.3-2. «والثانية في 1» is not an instruction anyone gives.
+      scaleBothLine({d, b, out1: t1, out2: t2, what: 'عدد القطع فيهما'}),
       `بالطرح تختفي القطع ويبقى الفرق في الثمن = ${t1 * d} − ${t2 * b} = ${lhs}.`,
       `وعدد الصناديق المقابل = ${a} × ${d} − ${c} × ${b} = ${det}.`,
       `ثمن الصندوق الواحد = ${lhs} ÷ ${det} = ${correct}.`

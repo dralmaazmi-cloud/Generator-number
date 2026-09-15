@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// RC2.9-7. The delivery package.
+// RC2.9.3-6. The delivery package (RC2.9-7's, carried forward).
 //
 // What goes in: the engine as frozen, the tests that hold it there, the audit
 // tools a reviewer needs to re-run the evidence themselves, and the evidence
@@ -22,8 +22,8 @@ import {createHash} from 'node:crypto';
 import {readFileSync, rmSync, mkdirSync, cpSync, writeFileSync, existsSync, readdirSync, statSync} from 'node:fs';
 import {join} from 'node:path';
 
-const OUT = 'RC2_9_2_GENERATOR_READY.zip';
-const STAGE = '.rc292-package';
+const OUT = 'RC2_9_3_GENERATOR_READY.zip';
+const STAGE = '.rc293-package';
 
 /** The engine itself, plus everything needed to run and re-verify it. */
 const INCLUDE = [

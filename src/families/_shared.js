@@ -13,7 +13,7 @@ import {Fraction} from '../qa/fraction.js';
 import {isKnownMisconception} from '../qa/misconceptions.js';
 import {REASON} from '../qa/reasons.js';
 import {realizeStem} from '../compose/realize.js';
-import {pickScenario} from '../compose/scenarios.js';
+import {pickScenario, fitJourneyScene} from '../compose/scenarios.js';
 import {structuralBandOf} from '../qa/structure.js';
 
 /**
@@ -32,6 +32,11 @@ import {structuralBandOf} from '../qa/structure.js';
 // seed is what it was, whatever sentence shape comes out.
 export function sceneFor(ctx, frame) {
   return pickScenario(ctx.rng.fork('scenario'), frame);
+}
+
+/** RC2.9.3-4. A journey scene that can plausibly travel at these speeds. */
+export function journeySceneFor(ctx, scene, ...speeds) {
+  return fitJourneyScene(ctx.rng, scene, speeds.filter(Number.isFinite));
 }
 
 export function composeStem(ctx, spec) {
@@ -209,6 +214,17 @@ export function askOf(ctx, rng, options) {
 
 export const u = (n, unitId, ctx = 'nominative') => formatNumberWithUnit(n, unitId, ctx);
 
+/**
+ * RC2.9.3-3. A rate in a STEM, with its numerator inflected: «8 قطع/ساعة»,
+ * never «8 قطعة/ساعة». The options have been inflected this way since RC2.5-4;
+ * the stems were still gluing the numeral to the scene's fixed word. One and
+ * two keep the numeral (the lexicon would spell them out, and the text-params
+ * guard needs the digit on the page).
+ */
+export const rateOf = (n, sc) => (Number.isInteger(n) && n >= 3 && sc?.rateUnitId
+  ? formatNumberWithUnit(n, sc.rateUnitId)
+  : `${displayNumber(n)} ${sc.rateWord}`);
+
 export const adj = (n, unitId, stem, ctx = 'oblique') => agreeingAdjective(n, unitId, stem, ctx);
 export const unitWord = unitId => singularOf(unitId);
 /** RC2.8-6. Verb agreement with a counted noun, from the lexicon's own gender. */
@@ -354,6 +370,28 @@ export const abs = a => ({abs: a});
  * internal resample invisible to telemetry. The call is routed through here so
  * the event is counted at the stage where it actually happens.
  */
+/**
+ * RC2.9.3-2. The first line of a two-equation elimination: scale each
+ * statement so one unknown has the same coefficient in both. Where a
+ * multiplier is one the statement is kept as it is and said to be — «والثانية
+ * في 1» is a formula talking, not a tutor. The line keeps the same operators
+ * whichever branch it takes, so the operation profile the identity signatures
+ * read from it does not depend on the draw.
+ *
+ * @param {{d:number,b:number,out1:number,out2:number,what:string}} spec
+ *   `d` scales the first statement, `b` the second; `out1`/`out2` are their
+ *   totals; `what` names what becomes equal («عدد القطع فيهما»).
+ */
+export function scaleBothLine({d, b, out1, out2, what}) {
+  if (b === 1) {
+    return `نضرب العبارة الأولى في ${d} ونُبقي الثانية كما هي ليتساوى ${what}: ${out1} × ${d} = ${out1 * d}.`;
+  }
+  if (d === 1) {
+    return `نُبقي العبارة الأولى كما هي ونضرب الثانية في ${b} ليتساوى ${what}: ${out2} × ${b} = ${out2 * b}.`;
+  }
+  return `نضرب العبارة الأولى في ${d} والثانية في ${b} ليتساوى ${what}: ${out1} × ${d} = ${out1 * d}، و${out2} × ${b} = ${out2 * b}.`;
+}
+
 export function resample(ctx, fn, reason = REASON.SAMPLER_CONSTRAINT) {
   ctx.telemetry?.familyResample({
     family: ctx.family, templateId: fn.name, reasonCode: reason, seed: ctx.seed

@@ -103,7 +103,7 @@ function workVolume(ctx) {
     stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('worker'),
     steps: [
-      `العمل يتضاعف بنسبة ${newUnits} إلى ${oldUnits}، والزمن ثابت.`,
+      `العمل يتغير بنسبة ${newUnits} إلى ${oldUnits}، والزمن ثابت.`,
       `عدد العمال المطلوب = ${workers} × ${newUnits} ÷ ${oldUnits} = ${correct}.`
     ],
     howToStart: 'مع ثبات الزمن، عدد العمال يتناسب مباشرة مع حجم العمل.',

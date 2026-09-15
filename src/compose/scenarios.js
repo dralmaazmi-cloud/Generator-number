@@ -226,13 +226,18 @@ export const JOURNEY = Object.freeze([
   // قطعت، تلتقي — already agree that way, and a masculine mover would need each
   // of them rewritten per instance; a table that cannot produce wrong agreement
   // is better than one that can and relies on being used carefully.
-  {key: 'car', one: 'سيارة', def: 'السيارة', dual: 'السيارتان', distUnit: 'km', speedWord: 'كم/ساعة'},
-  {key: 'bus', one: 'حافلة', def: 'الحافلة', dual: 'الحافلتان', distUnit: 'km', speedWord: 'كم/ساعة'},
-  {key: 'truck', one: 'شاحنة', def: 'الشاحنة', dual: 'الشاحنتان', distUnit: 'km', speedWord: 'كم/ساعة'},
-  {key: 'bicycle', one: 'دراجة', def: 'الدراجة', dual: 'الدراجتان', distUnit: 'km', speedWord: 'كم/ساعة'},
-  {key: 'ferry', one: 'عبّارة', def: 'العبّارة', dual: 'العبّارتان', distUnit: 'km', speedWord: 'كم/ساعة'},
-  {key: 'minibus', one: 'مركبة', def: 'المركبة', dual: 'المركبتان', distUnit: 'km', speedWord: 'كم/ساعة'},
-  {key: 'tram', one: 'عربة', def: 'العربة', dual: 'العربتان', distUnit: 'km', speedWord: 'كم/ساعة'}
+  // RC2.9.3-4. `speeds` is the range, in km/h, a reader accepts for the
+  // vehicle. A speed template draws its numbers first and then asks for a
+  // scene that fits them (see `fitJourneyScene`), so a bicycle no longer does
+  // 90 km/h and a ferry no longer does 120. The bicycle became a motorbike:
+  // every speed pool in the family starts at 30 km/h and a bicycle fits none.
+  {key: 'car', one: 'سيارة', def: 'السيارة', dual: 'السيارتان', distUnit: 'km', speedWord: 'كم/ساعة', speeds: [20, 150]},
+  {key: 'bus', one: 'حافلة', def: 'الحافلة', dual: 'الحافلتان', distUnit: 'km', speedWord: 'كم/ساعة', speeds: [20, 110]},
+  {key: 'truck', one: 'شاحنة', def: 'الشاحنة', dual: 'الشاحنتان', distUnit: 'km', speedWord: 'كم/ساعة', speeds: [20, 100]},
+  {key: 'motorbike', one: 'دراجة نارية', def: 'الدراجة النارية', dual: 'الدراجتان الناريتان', distUnit: 'km', speedWord: 'كم/ساعة', speeds: [20, 150]},
+  {key: 'ferry', one: 'عبّارة', def: 'العبّارة', dual: 'العبّارتان', distUnit: 'km', speedWord: 'كم/ساعة', speeds: [20, 60]},
+  {key: 'minibus', one: 'مركبة', def: 'المركبة', dual: 'المركبتان', distUnit: 'km', speedWord: 'كم/ساعة', speeds: [20, 110]},
+  {key: 'tram', one: 'عربة', def: 'العربة', dual: 'العربتان', distUnit: 'km', speedWord: 'كم/ساعة', speeds: [20, 70]}
 ]);
 
 // --- population: a quantity that changes by a percentage ---------------------
@@ -291,3 +296,15 @@ export function pickScenario(rng, frame) {
 }
 
 export const scenarioKeys = frame => (POOLS[frame] ?? []).map(s => s.key);
+
+/**
+ * RC2.9.3-4. The journey scene for a set of speeds. The scene already drawn is
+ * kept when every speed lies in its range; otherwise one that fits is drawn
+ * from its own fork, so the parameter draw beneath is untouched either way.
+ */
+export function fitJourneyScene(rng, scene, speeds) {
+  const fits = s => !s.speeds || speeds.every(v => v >= s.speeds[0] && v <= s.speeds[1]);
+  if (fits(scene)) return scene;
+  const candidates = POOLS.journey.filter(fits);
+  return candidates.length ? rng.fork('scenario-fit').pick(candidates) : scene;
+}

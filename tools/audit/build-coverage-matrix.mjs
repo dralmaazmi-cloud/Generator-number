@@ -177,7 +177,7 @@ const EVIDENCE = {
     status: 'FIXED'
   },
   'RC2-021': {
-    affectedProductionPath: ['src/index.js', 'report.js', 'index.html', 'app.js', 'practice-journey.js', 'generator_manifest.json', 'package.json'],
+    affectedProductionPath: ['src/index.js', 'report.js', 'index.html', 'app.js', 'practice-journey.js', 'performance-model.js', 'generator_manifest.json', 'package.json'],
     rootCause: 'ENGINE_VERSION said 1.3.0 while the PDF footer and the UI pill were hard-coded to 1.2.0.',
     remediation: 'One authoritative source; every surface interpolates it, and a test fails if any shipped file hard-codes a different version.',
     developmentCorpusMetric: 'every declared version agrees with ENGINE_VERSION',

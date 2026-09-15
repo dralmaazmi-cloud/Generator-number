@@ -426,7 +426,7 @@ function twoCyclesMeet(ctx) {
     {index: today + weeks, misconceptionId: 'IGNORED_NET_OFFSET', derivation: 'التحرك بعدد الأسابيع الكاملة بدل الباقي'}
   ]);
 
-  const stem = composeSentences(ctx, `يزور أحدهما المكتبة كل ${u(first, 'day', 'oblique')} ويزورها الآخر كل ${u(second, 'day', 'oblique')}. التقيا فيها اليوم، وكان يوم ${DAYS_AR[today]}. في أي يوم من أيام الأسبوع يلتقيان فيها مرة أخرى؟`);
+  const stem = composeSentences(ctx, `يزور صديقان المكتبة: الأول كل ${u(first, 'day', 'oblique')} والثاني كل ${u(second, 'day', 'oblique')}. التقيا فيها اليوم، وكان يوم ${DAYS_AR[today]}. في أي يوم من أيام الأسبوع يلتقيان فيها مرة أخرى؟`);
   return buildBase(ctx, {
     templateId: 'CAL_H_CYCLE_MEET',
     subskill: 'لقاء دورتين مختلفتين ويوم الأسبوع',
@@ -438,7 +438,7 @@ function twoCyclesMeet(ctx) {
       `لا يلتقيان إلا حين تكتمل الدورتان معًا، أي بعد عدد من الأيام يقبل القسمة على كلٍّ من الدورتين.`,
       `أصغر عدد كذلك = ${first} × ${lcm / first} = ${lcm}، وهو نفسه ${second} × ${lcm / second} = ${lcm}.`,
       `كل ${u(7, 'day')} تعيد اسم اليوم نفسه، فنطرح الأسابيع الكاملة: ${weeks} × 7 = ${weeks * 7}، ثم ${lcm} − ${weeks * 7} = ${rem}.`,
-      `نتحرك ${u(rem, 'day', 'oblique')} من ${DAYS_AR[today]} فنصل إلى ${correct}.`
+      `نتقدم بمقدار ${u(rem, 'day', 'oblique')} من ${DAYS_AR[today]} فنصل إلى ${correct}.`
     ],
     howToStart: 'ابحث أولًا عن عدد الأيام حتى اللقاء التالي، ثم حوّله إلى يوم من أيام الأسبوع.',
     remember: 'اللقاء يتطلب اكتمال الدورتين معًا، لا إحداهما.',

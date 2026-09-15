@@ -119,13 +119,27 @@ test('RC2-005 MUST_REJECT: a chain position that reads the same from either end'
   // the CONDITION — a position that reads the same from either end — not the draw.
   // RC2.5-2 split REL_M_COUNT and re-banded two relational templates, which
   // moves the pool a seed lands in again. Re-found, same condition.
-  for (const [seed, template] of [['fx-rel-8', 'REL_E_CHAIN'], ['fx-rel-14', 'REL_E_BETWEEN']]) {
+  // RC2.9.3-4. REL_E_BETWEEN now draws five people and asks only for the
+  // second or fourth seat, so the condition cannot arise there by construction;
+  // that is asserted below rather than fixtured. REL_E_CHAIN still can, and
+  // the guard is still what catches it.
+  for (const [seed, template] of [['fx-rel-8', 'REL_E_CHAIN']]) {
     const {base, verdict} = draw(generateRelational, await bandOfTemplate('relational', template), seed);
     assert.equal(base.template_id, template);
     assert.equal(base.parameters.nodeCount, 5);
     assert.equal(base.pedagogy.wrongMethodValue, base.correct);
     assert.ok(verdict.reasons.includes(REASON.DEGENERATE_WRONG_METHOD_EQUALS_KEY), `${template}: ${verdict.reasons}`);
   }
+  let between = 0;
+  for (let i = 0; i < 300 && between < 40; i++) {
+    let d;
+    try { d = draw(generateRelational, await bandOfTemplate('relational', 'REL_E_BETWEEN'), `rel-between-${i}`); } catch { continue; }
+    if (d.base.template_id !== 'REL_E_BETWEEN') continue;
+    between++;
+    assert.equal(d.base.parameters.nodeCount, 5);
+    assert.notEqual(d.base.pedagogy.wrongMethodValue, d.base.correct, 'the middle seat must never be asked');
+  }
+  assert.ok(between >= 20, `REL_E_BETWEEN must still be reachable, saw ${between}`);
 });
 
 test('RC2-005 MUST_ACCEPT: an off-centre position in the same template passes', async () => {

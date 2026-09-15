@@ -23,6 +23,18 @@ export function generateProfitLoss({difficulty, rng, seed, engineVersion, teleme
 const pct = v => `${num(v)}%`;
 const money = unitFormat('dirham');
 
+// RC2.9.3-4. The answer to «what percentage profit?» is a whole number in
+// these two templates, and an option such as «16.7%» beside five whole ones
+// is a format outlier a candidate strikes out without solving. Whenever five
+// distinct slips come out whole they are the pool; otherwise the rounded ones
+// stay in as before, so no draw is pushed into resampling. The ratio slips are
+// rounded to the whole percent the paper shows (RC2-014 accepts a derivation
+// that rounds to its value), so five whole ones nearly always exist.
+function wholePercentPool(candidates) {
+  const whole = candidates.filter(d => Number.isInteger(d.value));
+  return new Set(whole.map(d => d.value)).size >= 5 ? whole : candidates;
+}
+
 function simpleProfit(ctx) {
   const sc = sceneFor(ctx, 'trade');
   const {rng} = ctx;
@@ -36,18 +48,18 @@ function simpleProfit(ctx) {
   const sell = buy + profit;
   const correct = percent;
   const params = {buyPrice: buy, sellPrice: sell};
-  const distractors = usable(ctx, [
+  const distractors = wholePercentPool(usable(ctx, [
     mk(profit, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${sell} − ${buy}`),
-    mk(approx(sell / buy * 100), 'USED_ORIGINAL_TOTAL', `${sell} ÷ ${buy} × 100`),
-    mk(approx(profit / sell * 100), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} ÷ ${sell} × 100`),
+    mk(approx(sell / buy * 100, 0), 'USED_ORIGINAL_TOTAL', `${sell} ÷ ${buy} × 100`),
+    mk(approx(profit / sell * 100, 0), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} ÷ ${sell} × 100`),
     // RC2-012: four key-neighbour pads replaced by slips on the two prices.
-    mk(approx(profit * 200 / buy), 'APPLIED_STEP_TWICE', `${profit} × 200 ÷ ${buy}`),
-    mk(approx(sell * 100 / buy), 'USED_ORIGINAL_TOTAL', `${sell} × 100 ÷ ${buy}`),
+    mk(approx(profit * 200 / buy, 0), 'APPLIED_STEP_TWICE', `${profit} × 200 ÷ ${buy}`),
+    mk(approx(sell * 100 / buy, 0), 'USED_ORIGINAL_TOTAL', `${sell} × 100 ÷ ${buy}`),
     mk(100 - percent, 'TOOK_COMPLEMENT_PERCENT', `100 − ${percent}`),
-    mk(approx(profit * 100 / (buy - profit)), 'USED_PURCHASE_PRICE_AS_DENOMINATOR', `${profit} × 100 ÷ (${buy} − ${profit})`),
-    mk(approx(profit * 100 / (buy + sell)), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} × 100 ÷ (${buy} + ${sell})`),
-    mk(approx(profit * 50 / buy), 'APPLIED_STEP_TWICE', `${profit} × 50 ÷ ${buy}`)
-  ]);
+    mk(approx(profit * 100 / (buy - profit), 0), 'USED_PURCHASE_PRICE_AS_DENOMINATOR', `${profit} × 100 ÷ (${buy} − ${profit})`),
+    mk(approx(profit * 100 / (buy + sell), 0), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} × 100 ÷ (${buy} + ${sell})`),
+    mk(approx(profit * 50 / buy, 0), 'APPLIED_STEP_TWICE', `${profit} × 50 ÷ ${buy}`)
+  ]));
   const stem = composeSentences(ctx, `${sc.bought} ${sc.good} بـ${u(buy, 'dirham', 'oblique')} وباع${sc.pron} بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الربح من سعر الشراء؟`);
   return buildBase(ctx, {
     templateId: 'PL_E_PROFIT',
@@ -87,17 +99,17 @@ function simpleLoss(ctx) {
   const sell = buy - loss;
   const correct = percent;
   const params = {buyPrice: buy, sellPrice: sell};
-  const distractors = usable(ctx, [
+  const distractors = wholePercentPool(usable(ctx, [
     mk(loss, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${buy} − ${sell}`),
-    mk(approx(loss / sell * 100), 'USED_SALE_PRICE_AS_DENOMINATOR', `${loss} ÷ ${sell} × 100`),
-    mk(approx(loss * 200 / buy), 'APPLIED_STEP_TWICE', `${loss} × 200 ÷ ${buy}`),
-    mk(approx(buy * 100 / sell), 'USED_ORIGINAL_TOTAL', `${buy} × 100 ÷ ${sell}`),
-    mk(approx(sell / buy * 100), 'TOOK_COMPLEMENT_PERCENT', `${sell} ÷ ${buy} × 100`),
+    mk(approx(loss / sell * 100, 0), 'USED_SALE_PRICE_AS_DENOMINATOR', `${loss} ÷ ${sell} × 100`),
+    mk(approx(loss * 200 / buy, 0), 'APPLIED_STEP_TWICE', `${loss} × 200 ÷ ${buy}`),
+    mk(approx(buy * 100 / sell, 0), 'USED_ORIGINAL_TOTAL', `${buy} × 100 ÷ ${sell}`),
+    mk(approx(sell / buy * 100, 0), 'TOOK_COMPLEMENT_PERCENT', `${sell} ÷ ${buy} × 100`),
     mk(100 - percent, 'TOOK_COMPLEMENT_PERCENT', `100 − ${percent}`),
-    mk(approx(loss * 100 / (buy - loss)), 'USED_PURCHASE_PRICE_AS_DENOMINATOR', `${loss} × 100 ÷ (${buy} − ${loss})`),
-    mk(approx(loss * 100 / (buy + sell)), 'USED_SALE_PRICE_AS_DENOMINATOR', `${loss} × 100 ÷ (${buy} + ${sell})`),
-    mk(approx(loss * 50 / buy), 'APPLIED_STEP_TWICE', `${loss} × 50 ÷ ${buy}`)
-  ]);
+    mk(approx(loss * 100 / (buy - loss), 0), 'USED_PURCHASE_PRICE_AS_DENOMINATOR', `${loss} × 100 ÷ (${buy} − ${loss})`),
+    mk(approx(loss * 100 / (buy + sell), 0), 'USED_SALE_PRICE_AS_DENOMINATOR', `${loss} × 100 ÷ (${buy} + ${sell})`),
+    mk(approx(loss * 50 / buy, 0), 'APPLIED_STEP_TWICE', `${loss} × 50 ÷ ${buy}`)
+  ]));
   const stem = composeSentences(ctx, `${sc.bought} ${sc.good} بـ${u(buy, 'dirham', 'oblique')} وباع${sc.pron} بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الخسارة من سعر الشراء؟`);
   return buildBase(ctx, {
     templateId: 'PL_E_LOSS',
@@ -140,15 +152,15 @@ function totalCostProfit(ctx) {
   const sell = total + profit;
   const correct = percent;
   const params = {buyPrice: buy, shipping, sellPrice: sell};
-  const distractors = usable(ctx, [
-    mk(approx((sell - buy) / buy * 100), 'IGNORED_EXTRA_COST', `(${sell} − ${buy}) ÷ ${buy} × 100`),
-    mk(approx(profit / buy * 100), 'USED_PURCHASE_PRICE_AS_DENOMINATOR', `${profit} ÷ ${buy} × 100`),
-    mk(approx(profit / sell * 100), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} ÷ ${sell} × 100`),
-    mk(approx((sell - buy - shipping) * 200 / total), 'APPLIED_STEP_TWICE', `${sell - buy - shipping} × 200 ÷ ${total}`),
-    mk(approx(sell * 100 / total), 'USED_ORIGINAL_TOTAL', `${sell} × 100 ÷ ${total}`),
-    mk(approx(shipping / total * 100), 'TREATED_PERCENT_AS_AMOUNT', `${shipping} ÷ ${total} × 100`),
+  const distractors = wholePercentPool(usable(ctx, [
+    mk(approx((sell - buy) / buy * 100, 0), 'IGNORED_EXTRA_COST', `(${sell} − ${buy}) ÷ ${buy} × 100`),
+    mk(approx(profit / buy * 100, 0), 'USED_PURCHASE_PRICE_AS_DENOMINATOR', `${profit} ÷ ${buy} × 100`),
+    mk(approx(profit / sell * 100, 0), 'USED_SALE_PRICE_AS_DENOMINATOR', `${profit} ÷ ${sell} × 100`),
+    mk(approx((sell - buy - shipping) * 200 / total, 0), 'APPLIED_STEP_TWICE', `${sell - buy - shipping} × 200 ÷ ${total}`),
+    mk(approx(sell * 100 / total, 0), 'USED_ORIGINAL_TOTAL', `${sell} × 100 ÷ ${total}`),
+    mk(approx(shipping / total * 100, 0), 'TREATED_PERCENT_AS_AMOUNT', `${shipping} ÷ ${total} × 100`),
     mk(profit, 'REPORTED_AMOUNT_INSTEAD_OF_PERCENT', `${sell} − ${total}`)
-  ]);
+  ]));
   const stem = composeSentences(ctx, `${sc.bought} ${sc.good} بـ${u(buy, 'dirham', 'oblique')} و${sc.paid} ${u(shipping, 'dirham')} شحنًا وتجهيزًا، ثم باع${sc.pron} بـ${u(sell, 'dirham', 'oblique')}. ما نسبة الربح من إجمالي التكلفة؟`);
   return buildBase(ctx, {
     templateId: 'PL_M_TOTAL_COST',
@@ -489,11 +501,14 @@ function costFromMarkupThenDiscount(ctx) {
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('dirham'),
+    // RC2.9.3-2. The two factors compose into one net factor on the cost, and
+    // the profit is that factor's excess over one — said in those terms rather
+    // than «per 10000 of the cost».
     steps: [
       `معامل الزيادة = 100 + ${markup} = ${100 + markup}، ومعامل الخصم = 100 − ${discount} = ${100 - discount}.`,
-      `سعر البيع يساوي التكلفة مضروبة في المعاملين معًا، وحاصل ضربهما = ${100 + markup} × ${100 - discount} = ${(100 + markup) * (100 - discount)}.`,
-      `سعر البيع إذن هو التكلفة مضروبة في ${(100 + markup) * (100 - discount)}، ومقسومة على 10000، فما زاد على التكلفة = ${(100 + markup) * (100 - discount)} − 10000 = ${netNum}، وهو ما يقابل كل 10000 من التكلفة.`,
-      `التكلفة = ${profit} × 10000 ÷ ${netNum} = ${correct}.`
+      `سعر البيع = التكلفة × ${100 + markup} × ${100 - discount} ÷ 10000، وحاصل ضرب المعاملين = ${100 + markup} × ${100 - discount} = ${(100 + markup) * (100 - discount)}.`,
+      `أي أن سعر البيع = ${(100 + markup) * (100 - discount)} ÷ 10000 = ${num((100 + markup) * (100 - discount) / 10000)} من التكلفة، فالربح = ${num((100 + markup) * (100 - discount) / 10000)} − 1 = ${num(netNum / 10000)} من التكلفة.`,
+      `التكلفة = ${profit} ÷ ${num(netNum / 10000)} = ${correct}.`
     ],
     howToStart: 'اضرب معاملي الزيادة والخصم للحصول على معامل واحد، ثم قارنه بـ1.',
     remember: 'الزيادة ثم الخصم لا تُجمع نسبتاهما؛ معاملاهما يُضربان.',

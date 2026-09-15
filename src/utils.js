@@ -8,6 +8,7 @@ import {REASON} from './qa/reasons.js';
 // drifted apart.
 import {NAME_POOL, entityKindsIn} from './compose/entities.js';
 import {deriveOperationProfile, computeComplexity} from './qa/complexity.js';
+import {tidyArithmetic, tidyArithmeticAll} from './arabic/tidy-arithmetic.js';
 import {structuralBandOf, criteriaOf} from './qa/structure.js';
 import {coreConstructionSignature, reasoningTargetPair} from './qa/core-construction.js';
 import {userPerceptualSignature, taskSignature, subIdeaSignature, infoStructureOf} from './qa/perceptual.js';
@@ -342,13 +343,19 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
     options: optionSet.options,
     correct_option: optionSet.correct_option,
     correct_value: optionSet.correct_value,
+    // RC2.9.3-1. The explanation the learner reads is tidied HERE, at the last
+    // step before publication: every signal computed above (operation kinds,
+    // complexity, provenance, the step a wrong option points at) was read from
+    // the raw text, so no scoring or identity decision moves because a «× 1»
+    // stopped being printed. See src/arabic/tidy-arithmetic.js.
     explanation: {
-      how_to_start: base.explanation.how_to_start,
-      steps: base.explanation.steps,
+      how_to_start: tidyArithmetic(base.explanation.how_to_start),
+      steps: tidyArithmeticAll(base.explanation.steps),
       answer: base.explanation.answer || `الإجابة الصحيحة: ${optionSet.correct_value}.`,
-      fast_method: base.explanation.fast_method || null,
-      remember: base.explanation.remember,
-      distractor_analysis: optionSet.distractor_analysis
+      fast_method: tidyArithmetic(base.explanation.fast_method || null),
+      remember: tidyArithmetic(base.explanation.remember),
+      distractor_analysis: Object.fromEntries(Object.entries(optionSet.distractor_analysis)
+        .map(([letter, text]) => [letter, tidyArithmetic(text)]))
     },
     metadata: {
       generated: true,

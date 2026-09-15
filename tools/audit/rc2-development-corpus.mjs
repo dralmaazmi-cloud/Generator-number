@@ -153,6 +153,19 @@ export const RC292_DEVELOPMENT_SEEDS = RC291_DEVELOPMENT_SEEDS;
 export const RC292_SIGNOFF_SEED = 'AUDIT-2026-09-13-K';
 
 /**
+ * RC2.9.3, on the same seeds again: this release changes what the renderer
+ * prints (explanations, rate words, a few stems and option pools), not which
+ * question a seed draws, so the two corpora read line for line.
+ */
+export const RC293_DEVELOPMENT_SEEDS = RC292_DEVELOPMENT_SEEDS;
+
+/**
+ * RC2.9.3 names its sign-off holdout and does not generate it; its brief
+ * forbids generating one. RC2.9.2's K is spent by being frozen against.
+ */
+export const RC293_SIGNOFF_SEED = 'AUDIT-2026-09-13-L';
+
+/**
  * Which release a corpus run belongs to, and where its evidence lands. The RC2.1
  * and RC2.2 corpora were built by calling `build` with a seed list by hand and
  * writing the files by hand, which left no record of how to reproduce them.
@@ -167,7 +180,8 @@ export const RELEASES = Object.freeze({
   rc28: {seeds: RC28_DEVELOPMENT_SEEDS, json: 'rc2/RC28_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc28-development-corpus.jsonl.gz'},
   rc29: {seeds: RC29_DEVELOPMENT_SEEDS, json: 'rc2/RC29_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc29-development-corpus.jsonl.gz'},
   rc291: {seeds: RC291_DEVELOPMENT_SEEDS, json: 'rc2/RC291_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc291-development-corpus.jsonl.gz'},
-  rc292: {seeds: RC292_DEVELOPMENT_SEEDS, json: 'rc2/RC292_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc292-development-corpus.jsonl.gz'}
+  rc292: {seeds: RC292_DEVELOPMENT_SEEDS, json: 'rc2/RC292_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc292-development-corpus.jsonl.gz'},
+  rc293: {seeds: RC293_DEVELOPMENT_SEEDS, json: 'rc2/RC293_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc293-development-corpus.jsonl.gz'}
 });
 
 const BANDS = ['easy', 'medium', 'hard'];

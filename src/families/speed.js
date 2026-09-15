@@ -1,5 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
-import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, approx, bandPool, composeSentences, sceneFor, askOf} from './_shared.js';
+import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, approx, bandPool, composeSentences, sceneFor, askOf, journeySceneFor} from './_shared.js';
 
 export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
   const ctx = {difficulty, rng, seed, engineVersion, telemetry, pinTargets, family: 'speed', family_ar: 'السرعة والمسافة والزمن', category: 'السرعة والمسافة والزمن'};
@@ -23,10 +23,11 @@ export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry, 
 const kmh = v => `${num(v)} كم/ساعة`;
 
 function simpleTime(ctx) {
-  const sc = sceneFor(ctx, 'journey');
+  let sc = sceneFor(ctx, 'journey');
   const {rng} = ctx;
   // RC2-011. The answer is the number of hours, and it came from five values.
   const speed = rng.pick([30, 40, 45, 50, 60, 70, 75, 80, 90, 100, 120]);
+  sc = journeySceneFor(ctx, sc, speed);
   const hours = rng.pick([1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8]);
   const distance = speed * hours;
   const correct = hours;
@@ -78,9 +79,10 @@ function simpleTime(ctx) {
 }
 
 function simpleDistance(ctx) {
-  const sc = sceneFor(ctx, 'journey');
+  let sc = sceneFor(ctx, 'journey');
   const {rng} = ctx;
   const speed = rng.pick([40, 50, 60, 70, 80, 90]);
+  sc = journeySceneFor(ctx, sc, speed);
   const hours = rng.pick([1.5, 2, 2.5, 3, 4]);
   const correct = speed * hours;
   const params = {speed, hours};
@@ -123,10 +125,11 @@ function simpleDistance(ctx) {
 }
 
 function twoStageTime(ctx) {
-  const sc = sceneFor(ctx, 'journey');
+  let sc = sceneFor(ctx, 'journey');
   const {rng} = ctx;
   const s1 = rng.pick([50, 60, 70, 80]);
   const s2 = rng.pick([40, 60, 80, 90].filter(v => v !== s1));
+  sc = journeySceneFor(ctx, sc, s1, s2);
   const t1 = rng.pick([1, 1.5, 2, 2.5]);
   const t2 = rng.pick([1, 1.5, 2, 2.5, 3].filter(v => v !== t1));
   const d1 = s1 * t1, d2 = s2 * t2;
@@ -182,10 +185,11 @@ function twoStageTime(ctx) {
 }
 
 function averageSpeedUnequalTime(ctx) {
-  const sc = sceneFor(ctx, 'journey');
+  let sc = sceneFor(ctx, 'journey');
   const {rng} = ctx;
   const s1 = rng.pick([50, 60, 70, 80]);
   const s2 = rng.pick([80, 90, 100, 120]);
+  sc = journeySceneFor(ctx, sc, s1, s2);
   if (s1 === s2) return resample(ctx, averageSpeedUnequalTime);
   const t1 = rng.pick([1, 1.5, 2]);
   const t2 = rng.pick([2, 2.5, 3]);
@@ -258,17 +262,20 @@ function averageSpeedUnequalTime(ctx) {
 }
 
 function equalDistanceTotalTime(ctx) {
-  const sc = sceneFor(ctx, 'journey');
+  let sc = sceneFor(ctx, 'journey');
   const {rng} = ctx;
   // RC2-011. The answer is twice the half-distance, so the answer space was the
   // length of the half-distance list: four values. Widened at design time.
   const s1 = rng.pick([50, 60, 70, 75, 80, 90, 100, 120]);
   const s2 = rng.pick([25, 30, 35, 40, 45, 50, 60, 70]);
+  sc = journeySceneFor(ctx, sc, s1, s2);
   if (s1 === s2) return resample(ctx, equalDistanceTotalTime);
   const half = rng.pick([120, 140, 150, 175, 180, 210, 240, 280, 300, 350, 360, 420, 450, 480, 540, 600]);
   if (half % s1 || half % s2) return resample(ctx, equalDistanceTotalTime);
   const t1 = half / s1, t2 = half / s2;
   const total = t1 + t2;
+  // RC2.9.3-4. A journey a reader believes: the whole trip within a long day.
+  if (total > 12) return resample(ctx, equalDistanceTotalTime);
   const correct = 2 * half;
   const params = {speedA: s1, speedB: s2, totalHours: total};
   const distractors = usable(ctx, [
@@ -289,14 +296,16 @@ function equalDistanceTotalTime(ctx) {
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('km'),
+    // RC2.9.3-2. The inverse-ratio route the fast method already names: over
+    // equal distances the times are in the inverse ratio of the speeds, so the
+    // total time splits in that ratio and one half's distance follows directly.
     steps: [
-      `نفرض نصف المسافة = ن، فزمن النصف الأول = ن ÷ ${s1} وزمن النصف الثاني = ن ÷ ${s2}، ومجموعهما ${num(total)}.`,
-      `بضرب طرفي المعادلة في ${s1} × ${s2} = ${s1 * s2}: ن × (${s2} + ${s1}) = ${num(total)} × ${s1 * s2}.`,
-      `نحسب الطرفين: ${s2} + ${s1} = ${s1 + s2}، و${num(total)} × ${s1 * s2} = ${total * s1 * s2}.`,
-      `ن = ${total * s1 * s2} ÷ ${s1 + s2} = ${half}.`,
+      `المسافتان متساويتان، فالزمنان يتناسبان عكسيًا مع السرعتين؛ نسبة زمن النصف الأول إلى زمن الثاني تساوي ${s2} ÷ ${s1}.`,
+      `نقسم الزمن الكلي ${num(total)} بهذه النسبة: زمن النصف الأول = ${num(total)} × ${s2} ÷ (${s1} + ${s2}) = ${num(t1)}.`,
+      `نصف المسافة = ${s1} × ${num(t1)} = ${half}.`,
       `المسافة الكلية = ${half} + ${half} = ${correct}.`
     ],
-    howToStart: 'انتبه: النصفان متساويان في المسافة لا في الزمن.',
+    howToStart: 'انتبه: النصفان متساويان في المسافة لا في الزمن، فالنصف الأبطأ يأخذ نصيبًا أكبر من الزمن.',
     remember: 'عند تساوي المسافتين، الجزء الأبطأ يستغرق زمنًا أطول.',
     fastMethod: 'قسّم الزمن بنسبة عكس السرعتين.',
     estimatedSteps: 4, conceptTags: ['speed', 'harmonic'], parameters: params,
@@ -316,12 +325,13 @@ function equalDistanceTotalTime(ctx) {
 }
 
 function meetingDelayed(ctx) {
-  const sc = sceneFor(ctx, 'journey');
+  let sc = sceneFor(ctx, 'journey');
   const {rng} = ctx;
   const total = rng.pick([300, 360, 420, 480]);
   const sA = rng.pick([50, 60, 70, 80]);
   const delay = rng.pick([1, 1.5, 2]);
   const sB = rng.pick([70, 80, 90, 100]);
+  sc = journeySceneFor(ctx, sc, sA, sB);
   const remaining = total - sA * delay;
   const t = Fraction.from(remaining).div(sA + sB);
   if (t.lte(0) || !t.isExactDecimal || t.decimalPlaces > 1) return resample(ctx, meetingDelayed);
@@ -359,7 +369,7 @@ function meetingDelayed(ctx) {
       `سرعة الاقتراب = ${sA} + ${sB} = ${sA + sB}.`,
       `الزمن بالساعات = ${num(remaining)} ÷ ${sA + sB} = ${num(correct)}.`
     ],
-    howToStart: 'احسب أولًا ما قطعته ${sc.def} التي بدأت مبكرًا.',
+    howToStart: `احسب أولًا ما قطعته ${sc.def} التي بدأت مبكرًا.`,
     remember: 'في التقاء مركبتين متقابلتين بعد بدء الاثنتين، استخدم مجموع السرعتين.',
     fastMethod: 'المسافة المتبقية ÷ مجموع السرعتين.',
     estimatedSteps: 4, conceptTags: ['speed', 'relative-motion'], parameters: params,
@@ -379,15 +389,18 @@ function meetingDelayed(ctx) {
 }
 
 function catchupDelayed(ctx) {
-  const sc = sceneFor(ctx, 'journey');
+  let sc = sceneFor(ctx, 'journey');
   const {rng} = ctx;
   const sA = rng.pick([50, 60, 72, 80]);
   const sB = rng.pick([80, 90, 96, 100, 120]);
+  sc = journeySceneFor(ctx, sc, sA, sB);
   if (sB <= sA) return resample(ctx, catchupDelayed);
   const delay = rng.pick([1, 1.5, 2]);
   const lead = sA * delay;
   const t = Fraction.from(lead).div(sB - sA);
   if (!t.isExactDecimal || t.decimalPlaces > 1) return resample(ctx, catchupDelayed);
+  // RC2.9.3-4. A chase a reader believes: caught within a working day.
+  if (t.gt(8)) return resample(ctx, catchupDelayed);
   const correct = t.toNumber();
   const params = {speedA: sA, speedB: sB, delayHours: delay};
   const distractors = usable(ctx, [
@@ -443,15 +456,18 @@ function catchupDelayed(ctx) {
 }
 
 function sameDistanceTimeDifference(ctx) {
-  const sc = sceneFor(ctx, 'journey');
+  let sc = sceneFor(ctx, 'journey');
   const {rng} = ctx;
   // RC2-011. The answer is the distance, drawn from five values.
   const s1 = rng.pick([30, 40, 45, 50, 60, 70, 75]);
   const s2 = rng.pick([80, 90, 100, 105, 120, 125, 140, 150]);
+  sc = journeySceneFor(ctx, sc, s1, s2);
   const distance = rng.pick([120, 150, 180, 210, 240, 270, 300, 350, 360, 420, 450, 480, 525, 540, 600, 630, 700, 720]);
   if (distance % s1 || distance % s2) return resample(ctx, sameDistanceTimeDifference);
   const diff = distance / s1 - distance / s2;
   if (diff <= 0) return resample(ctx, sameDistanceTimeDifference);
+  // RC2.9.3-4. The slower journey still fits in a day.
+  if (distance / s1 > 12) return resample(ctx, sameDistanceTimeDifference);
   const correct = distance;
   const params = {speedA: s1, speedB: s2, timeDifference: diff};
   const distractors = usable(ctx, [
@@ -480,14 +496,16 @@ function sameDistanceTimeDifference(ctx) {
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: unitFormat('km'),
+    // RC2.9.3-2. Each line says what it is doing: the two times, their known
+    // gap, clearing the division, gathering, solving.
     steps: [
-      `نفرض المسافة = س، فالزمن عند ${s1} هو س ÷ ${s1}، وعند ${s2} هو س ÷ ${s2}.`,
-      `الفرق: س ÷ ${s1} − س ÷ ${s2} = ${num(diff)}.`,
-      `بضرب الطرفين في ${s1} × ${s2} = ${s1 * s2}: س × (${s2} − ${s1}) = ${num(diff)} × ${s1 * s2}.`,
-      `${s2} − ${s1} = ${s2 - s1}، و${num(diff)} × ${s1 * s2} = ${diff * s1 * s2}.`,
+      `نفرض المسافة س، فزمن الرحلة بالسرعة الأبطأ س ÷ ${s1}، وبالسرعة الأسرع س ÷ ${s2}.`,
+      `الفرق بين الزمنين معلوم: س ÷ ${s1} − س ÷ ${s2} = ${num(diff)}.`,
+      `نتخلص من القسمة بضرب الطرفين في ${s1} × ${s2} = ${s1 * s2}، فيصير ${s2}س − ${s1}س = ${num(diff)} × ${s1 * s2}.`,
+      `معامل س = ${s2} − ${s1} = ${s2 - s1}، والعدد المقابل = ${num(diff)} × ${s1 * s2} = ${diff * s1 * s2}؛ فتصير المعادلة ${s2 - s1}س = ${diff * s1 * s2}.`,
       `س = ${diff * s1 * s2} ÷ ${s2 - s1} = ${correct}.`
     ],
-    howToStart: 'اكتب الزمنين بدلالة المسافة ثم استخدم فرق الزمن.',
+    howToStart: 'الزمن = المسافة ÷ السرعة. اكتب الزمنين بدلالة المسافة، ثم استخدم فرق الزمن المعطى.',
     remember: 'عند ثبات المسافة، السرعة الأعلى تعني زمنًا أقل.',
     // RC2-019: a reusable rule first, then this instance.
     fastMethod: `عند ثبات المسافة، حل المعادلة: المسافة × (1 ÷ السرعة الأبطأ − 1 ÷ السرعة الأسرع) = فرق الزمن — هنا س × (1 ÷ ${s1} − 1 ÷ ${s2}) = ${num(diff)}.`,
@@ -517,7 +535,7 @@ function sameDistanceTimeDifference(ctx) {
  * current and subtracting them isolates it — a strategy the stem does not give.
  */
 function boatAgainstCurrent(ctx) {
-  const sc = sceneFor(ctx, 'journey');
+  let sc = sceneFor(ctx, 'journey');
   const {rng} = ctx;
   let found = null;
   for (let t = 0; t < 300; t++) {
@@ -600,7 +618,7 @@ function boatAgainstCurrent(ctx) {
  * number that is on the paper and is wrong.
  */
 function twoLegSplit(ctx) {
-  const sc = sceneFor(ctx, 'journey');
+  let sc = sceneFor(ctx, 'journey');
   const {rng} = ctx;
   let found = null;
   for (let t = 0; t < 300; t++) {
@@ -618,6 +636,7 @@ function twoLegSplit(ctx) {
   }
   if (!found) return resample(ctx, twoLegSplit);
   const {s1, s2, t1, t2, d1, d2, total, hours} = found;
+  sc = journeySceneFor(ctx, sc, s1, s2);
   // RC2.6-3. Two constructions over the same relation: the LENGTH of the first
   // leg, or the TIME spent on the second. Different unknown, different final
   // step, same two conditions — which is what makes it a different construction

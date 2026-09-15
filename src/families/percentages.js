@@ -253,9 +253,12 @@ function remainingChain(ctx) {
 function unitPriceChange(ctx) {
   const {rng} = ctx;
   const qty1 = rng.pick([4, 5, 8]);
-  const unitPrice = rng.pick([5, 6, 8, 10, 12]);
-  const total1 = qty1 * unitPrice;
+  // RC2.9.3-4. The rise is drawn first and the unit price from the values it
+  // lifts to a whole number: a learner should never meet «6.6 درهم للوحدة» on
+  // the way to the answer.
   const pct = rng.pick([10, 20, 25, 50]);
+  const unitPrice = rng.pick({10: [10, 20, 30], 20: [5, 10, 15, 20, 25], 25: [8, 12, 16, 20, 24], 50: [6, 8, 10, 12, 14, 16]}[pct]);
+  const total1 = qty1 * unitPrice;
   const qty2 = rng.pick([5, 10, 12, 15].filter(v => v !== qty1));
   const {factor, text: factorText} = factorLine(pct, 'up', 'معامل الزيادة');
   const newUnit = Fraction.from(unitPrice).mul(factor);

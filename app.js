@@ -1,5 +1,10 @@
 import {buildPrintReportHtml} from './report.js';
 import {generatePracticeForJourney, clearPracticeJourney, readPracticeJourney} from './practice-journey.js';
+import {buildPerformanceReport, weakFamiliesFrom, EVIDENCE} from './performance-model.js';
+import {MISCONCEPTIONS} from './src/qa/misconceptions.js';
+// RC2.9.3-5. The learner's feedback sentence for a misconception id, for the
+// error-pattern section of the report.
+const misconceptionText=id=>MISCONCEPTIONS[id]??id;
 
 // RC2-021. The UI and the engine ship as one bundle, so they carry one version.
 // A second literal here is exactly the duplication the RC1 audit caught: the
@@ -231,27 +236,33 @@ function startFavoritesPractice(){
 
 function selectWeakFamilies({fromModal=false}={}){
   const stats=getStoredStats();
-  const candidates=state.families.map(f=>{
-    const s=stats[f.id]||{};const attempts=Number(s.attempts||0);const accuracy=attempts?Number(s.correct||0)/attempts:1;
-    return {id:f.id,attempts,accuracy};
-  }).filter(x=>x.attempts>=2).sort((a,b)=>a.accuracy-b.accuracy||b.attempts-a.attempts);
+  // RC2.9.3-5. The same evidence rule the report uses: a family is weak only
+  // after enough attempts, never after two. Families below the weakness line
+  // come first; if none reaches it, the weakest families with enough evidence
+  // that are not yet strengths are offered instead.
+  const ids=state.families.map(f=>f.id);
+  let candidates=weakFamiliesFrom(stats,ids);
+  if(!candidates.length){
+    candidates=ids.map(id=>{const s=stats[id]||{};const attempts=Number(s.attempts||0);return {id,attempts,accuracy:attempts?Number(s.correct||0)/attempts:null}})
+      .filter(x=>x.attempts>=EVIDENCE.minForClaim&&x.accuracy!==null&&x.accuracy<EVIDENCE.strength).sort((a,b)=>a.accuracy-b.accuracy||b.attempts-a.attempts);
+  }
   if(!candidates.length){
     state.familySelectionMode='mixed';selectAllFamilies(false);syncFamilySelectionUi();
-    $('weakHint').textContent='لا توجد بيانات كافية عن نقاط الضعف بعد. سيتم استخدام التوزيع المختلط مؤقتًا.';
+    $('weakHint').textContent=`لا توجد أدلة كافية عن نقاط الضعف بعد (يلزم ${EVIDENCE.minForClaim} أسئلة على الأقل في العائلة). سيتم استخدام التوزيع المختلط مؤقتًا.`;
     $('weakHint').classList.remove('hidden');
     return;
   }
   const picked=candidates.slice(0,Math.min(4,candidates.length));
   state.selectedFamilies=new Set(picked.map(x=>x.id));state.familySelectionMode=fromModal?'custom':'weak';syncFamilySelectionUi();
-  $('weakHint').textContent=`تم اختيار أضعف ${picked.length} عائلات لديك بناءً على الجلسات السابقة.`;
+  $('weakHint').textContent=`تم اختيار ${picked.length} ${picked.length===1?'عائلة':'عائلات'} بناءً على أدلة الجلسات السابقة (${EVIDENCE.minForClaim} أسئلة على الأقل لكل عائلة).`;
   $('weakHint').classList.remove('hidden');
 }
 function refreshWeakHint(){
   const stats=getStoredStats();
   const attempts=Object.values(stats).reduce((a,s)=>a+Number(s.attempts||0),0);
   if(attempts<5){$('weakHint').classList.add('hidden');return}
-  const weakest=state.families.map(f=>{const s=stats[f.id]||{};const n=Number(s.attempts||0);return {ar:f.ar,n,acc:n?Math.round(Number(s.correct||0)/n*100):null}}).filter(x=>x.n>=2&&x.acc!==null).sort((a,b)=>a.acc-b.acc).slice(0,3);
-  if(weakest.length){$('weakHint').textContent=`نقاط تحتاج مزيدًا من التدريب: ${weakest.map(x=>`${x.ar} (${x.acc}%)`).join('، ')}.`;$('weakHint').classList.remove('hidden')}
+  const weakest=state.families.map(f=>{const s=stats[f.id]||{};const n=Number(s.attempts||0);return {ar:f.ar,n,acc:n?Math.round(Number(s.correct||0)/n*100):null}}).filter(x=>x.n>=EVIDENCE.minForClaim&&x.acc!==null&&x.acc<=EVIDENCE.weakness*100).sort((a,b)=>a.acc-b.acc).slice(0,3);
+  if(weakest.length){$('weakHint').textContent=`نقاط تحتاج مزيدًا من التدريب: ${weakest.map(x=>`${x.ar} (${x.acc}% في ${x.n} أسئلة)`).join('، ')}.`;$('weakHint').classList.remove('hidden')}else{$('weakHint').classList.add('hidden')}
 }
 
 function setMode(mode){
@@ -481,6 +492,9 @@ function finishSession(reason='user'){
   });
   Object.values(byDifficulty).forEach(x=>x.avgTime=Math.round(avg(x.time)));Object.values(byFamily).forEach(x=>x.avgTime=Math.round(avg(x.time)));
   s.summary={answered,correct,wrong,unanswered,percentage:pct,byDifficulty,byFamily,avgTimeSeconds:Math.round(avg(times))};
+  // RC2.9.3-5. The evidence-based reading of the sitting, computed once and
+  // kept with the session so the screen, the PDF and a later reload agree.
+  s.summary.performance=buildPerformanceReport(s,misconceptionText);
   updatePersistentStats(s);clearSavedSession();showResult();
 }
 function updatePersistentStats(s){
@@ -497,7 +511,12 @@ function showResult(){
   renderAnalytics();$('reviewPanel').classList.add('hidden');$('reviewPanel').innerHTML='';$('reviewAnswers').textContent='مراجعة الإجابات';
   $('practiceMistakes').disabled=r.wrong+r.unanswered===0;
 }
+function renderPerformance(){
+  const s=state.session;const perf=s.summary.performance||(s.summary.performance=buildPerformanceReport(s,misconceptionText));
+  $('performanceReport').innerHTML=perf.text.map(sec=>`<section class="perf-section"><h3>${escapeHtml(sec.heading)}</h3><ul>${sec.lines.map(l=>`<li>${escapeHtml(l)}</li>`).join('')}</ul></section>`).join('');
+}
 function renderAnalytics(){
+  renderPerformance();
   const s=state.session;const byFamily=s.summary.byFamily;
   $('familyAnalytics').innerHTML=Object.entries(byFamily).sort((a,b)=>(a[1].c/a[1].n)-(b[1].c/b[1].n)).map(([id,x])=>{
     const pct=Math.round(x.c/x.n*100);return `<div class="analytic-item"><div><strong>${escapeHtml(x.ar)}</strong><span>${x.c}/${x.n} · متوسط ${formatClock(x.avgTime)}</span></div><b>${pct}%</b><div class="mini-bar"><i style="width:${pct}%"></i></div></div>`

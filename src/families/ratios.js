@@ -318,7 +318,7 @@ function addToOneSide(ctx) {
     mk(newB, 'USED_POST_ADDITION_VALUE', `${r} × ${k}`),
     mk(A + newB, 'USED_NEW_TOTAL', `${A} + ${newB}`),
     mk(B, 'USED_WRONG_SIDE_OF_RATIO', `${q} × ${k}`),
-    mk(k, 'USED_PART_VALUE_AS_ANSWER', `${crossRightC} ÷ ${coefficient}`),
+    mk(k, 'USED_PART_VALUE_AS_ANSWER', `${addUnits} ÷ ${r - q}`),
     mk(addUnits, 'USED_GIVEN_VALUE_AS_ANSWER', `الكمية المضافة ${addUnits}`),
     mk(A - B, 'SUBTRACTED_INSTEAD_OF_ADDED', `${A} − ${B}`),
     mk((p + q) * (k + 1), 'OFF_BY_ONE_STEP', `(${p} + ${q}) × (${k} + 1)`),
@@ -333,18 +333,19 @@ function addToOneSide(ctx) {
     question: stem.text,
     stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: plain,
+    // RC2.9.3-2. The idea, not the cross-multiplication: أ did not change and
+    // keeps its p parts in both ratios, so the part is the same size before
+    // and after, and what was added is exactly (r − q) parts of it.
     steps: [
-      `نضع أ = ${p}ك وب = ${q}ك، حيث ك قيمة الجزء.`,
-      `بعد الإضافة تصبح ب = ${q}ك + ${addUnits}، والنسبة أ : ب = ${p} : ${r}.`,
-      `بالضرب التبادلي: ${r} × ${p}ك = ${p} × (${q}ك + ${addUnits}).`,
-      `نحسب المعاملات: ${r} × ${p} = ${crossLeft} و${p} × ${q} = ${crossRightK} و${p} × ${addUnits} = ${crossRightC}؛ فتصير المعادلة ${crossLeft}ك = ${crossRightK}ك + ${crossRightC}.`,
-      `بطرح الحدين المتشابهين: ${crossLeft} − ${crossRightK} = ${coefficient}، إذن ${coefficient}ك = ${crossRightC}.`,
-      `ك = ${crossRightC} ÷ ${coefficient} = ${k}.`,
+      `الطرف أ لم يتغير، وله ${u(p, 'part')} في النسبتين؛ إذن قيمة الجزء (ك) واحدة قبل الإضافة وبعدها.`,
+      `حصة ب قبل الإضافة ${q}ك، وبعدها ${q}ك + ${addUnits}، وهي تساوي ${r}ك لأن النسبة صارت ${p} : ${r}.`,
+      `الأجزاء التي أُضيفت إلى ب = ${r} − ${q} = ${r - q}، أي ${r - q} × ك = ${addUnits}.`,
+      `ك = ${addUnits} ÷ ${r - q} = ${k}.`,
       `المجموع قبل الإضافة = ${p} × ${k} + ${q} × ${k} = ${correct}.`
     ],
-    howToStart: 'ثبت الطرف الذي لم يتغير، ثم اكتب معادلة النسبة بعد الإضافة.',
+    howToStart: 'ثبّت الطرف الذي لم يتغير: أجزاؤه هي نفسها قبل الإضافة وبعدها، فالإضافة كلها تقع في أجزاء الطرف الآخر.',
     remember: 'في تغير النسبة، ميّز بوضوح بين القيم الأصلية والقيم بعد التغيير.',
-    fastMethod: 'اكتب الطرفين بدلالة ك ثم حل معادلة الضرب التبادلي.',
+    fastMethod: 'الطرف الثابت يحفظ قيمة الجزء: المضاف ÷ (أجزاء الطرف الآخر بعد − قبل) = قيمة الجزء.',
     estimatedSteps: 4, conceptTags: ['ratio', 'equation'], parameters: params,
     oracle: {
       kind: 'constraint', answerKind: 'number',
@@ -406,13 +407,23 @@ function transferBetweenSides(ctx) {
     mk((askA ? p : q) * (k - 1), 'OFF_BY_ONE_STEP', `${askA ? p : q} × (${k} − 1)`),
     mk(A + B - x, 'USED_POST_TRANSFER_VALUE', `${A + B} − ${x}`)
   ]);
+  // RC2.9.3-2. The same algebra, narrated as a tutor does it: expand the
+  // brackets, gather like terms, solve. A product with a factor of one is not
+  // written out — «9 × 1 = 9» tells the reader nothing.
+  const coefficient = nrB * p - nrA * q;
+  const constant = nrA * x + nrB * x;
+  const products = [[nrB, p], [nrB, x], [nrA, q], [nrA, x]]
+    .filter(([m, n]) => m !== 1 && n !== 1)
+    .map(([m, n]) => `${m} × ${n} = ${m * n}`);
   const steps = [
-    `نضع أ = ${p}ك وب = ${q}ك.`,
-    `بعد النقل: أ = ${p}ك − ${x}، وب = ${q}ك + ${x}، والمجموع لم يتغير.`,
-    `النسبة الجديدة ${nrA} : ${nrB} تعطي المعادلة ${nrB} × (${p}ك − ${x}) = ${nrA} × (${q}ك + ${x}).`,
-    `نحسب المعاملات: ${nrB} × ${p} = ${nrB * p} و${nrA} × ${q} = ${nrA * q} و${nrB} × ${x} = ${nrB * x} و${nrA} × ${x} = ${nrA * x}.`,
-    `فتصير المعادلة ${nrB * p}ك − ${nrB * x} = ${nrA * q}ك + ${nrA * x}، ومنها ${nrB * p} − ${nrA * q} = ${nrB * p - nrA * q} و${nrB * x} + ${nrA * x} = ${nrB * x + nrA * x}.`,
-    `ك = ${nrB * x + nrA * x} ÷ ${nrB * p - nrA * q} = ${k}.`,
+    `نضع أ = ${p}ك وب = ${q}ك، والمجموع لا يتغير بالنقل.`,
+    `بعد النقل: أ = ${p}ك − ${x}، وب = ${q}ك + ${x}.`,
+    `النسبة الجديدة ${nrA} : ${nrB} تعني أن ${nrB} × (${p}ك − ${x}) = ${nrA} × (${q}ك + ${x}).`,
+    products.length
+      ? `نفك الأقواس: ${products.join('، ')}؛ فتصير المعادلة ${nrB * p}ك − ${nrB * x} = ${nrA * q}ك + ${nrA * x}.`
+      : `نفك الأقواس، فتصير المعادلة ${nrB * p}ك − ${nrB * x} = ${nrA * q}ك + ${nrA * x}.`,
+    `نجمع حدود ك في طرف والأعداد في الطرف الآخر: معامل ك = ${nrB * p} − ${nrA * q} = ${coefficient}، والعدد المقابل = ${nrA * x} + ${nrB * x} = ${constant}${coefficient === 1 ? '' : `؛ فتصير ${coefficient}ك = ${constant}`}.`,
+    `ك = ${constant} ÷ ${coefficient} = ${k}.`,
     `${askA ? 'أ' : 'ب'} قبل النقل = ${askA ? p : q} × ${k} = ${correct}.`
   ];
   const stem = composeSentences(ctx, `النسبة بين أ : ب = ${p} : ${q}. نُقلت ${u(x, 'unit')} من أ إلى ب فأصبحت النسبة أ : ب = ${nrA} : ${nrB}. فما قيمة ${askA ? 'أ' : 'ب'} قبل النقل؟`);
@@ -426,7 +437,7 @@ function transferBetweenSides(ctx) {
     steps,
     howToStart: 'اكتب الطرفين على صورة أجزاء ثم طبّق النقل على الطرفين معًا.',
     remember: 'في النقل، المجموع ثابت لكن كل طرف يتغير بعكس الآخر.',
-    fastMethod: 'استخدم بقاء المجموع وثبات مقدار النقل لتحديد مقياس النسبة.',
+    fastMethod: 'اكتب الطرفين بعد النقل بدلالة ك، ثم حل معادلة النسبة الجديدة بالضرب التبادلي.',
     estimatedSteps: 5, conceptTags: ['ratio', 'transfer', 'equation'], parameters: params,
     oracle: {
       kind: 'constraint', answerKind: 'number',

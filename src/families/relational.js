@@ -288,10 +288,12 @@ function fullChainPosition(ctx, size, templateId, band, self) {
 
 function betweenRelation(ctx) {
   const {rng} = ctx;
-  const size = rng.pick([4, 5]);
+  const size = 5;
   const {nodes, edges} = chainGraph(rng, size);
   const oracle = buildOrderOracle(nodes, edges);
-  const targetPos = rng.int(2, size - 1);
+  // Second or fourth: the third seat of five reads the same from either end,
+  // which RC2-005 rejects as measuring nothing.
+  const targetPos = rng.pick([2, 4]);
   const correct = oracle.whoAtPosition(targetPos);
   if (!correct) return resample(ctx, betweenRelation);
   const distractors = usable(ctx, [
@@ -299,8 +301,11 @@ function betweenRelation(ctx) {
       const pos = oracle.positionsOf(n)[0];
       return mk(n, 'COUNTED_DIRECT_RELATIONS_ONLY', `قراءة المركز ${positionWord(pos)} بدل ${positionWord(targetPos)}`);
     }),
-    mk(UNDETERMINED, 'RESOLVED_AN_UNRESOLVED_PAIR', 'اعتبار الترتيب غير محسوم رغم اكتمال السلسلة'),
-    mk('لا أحد', 'RELATION_CONTRADICTS_STATEMENT', 'نفي وجود شخص في هذا المركز رغم تحديده')
+    // RC2.9.3-4. «لا أحد» is not an answer to «who is third?» — a complete
+    // chain has someone in every place, and a choice a candidate can strike out
+    // without reading the chain is not a choice. The pool is the other four
+    // people and «cannot be determined», which needs five people in the chain.
+    mk(UNDETERMINED, 'RESOLVED_AN_UNRESOLVED_PAIR', 'اعتبار الترتيب غير محسوم رغم اكتمال السلسلة')
   ]);
   const {reasoningGraph, parameters} = graphMeta(nodes, edges);
   return buildBase(ctx, {
@@ -527,7 +532,7 @@ function countAboveAt(ctx, requiredBand, templateId, self) {
     steps: [
       `نبني كل المسارات التي تنتهي عند ${target}.`,
       `نستخدم الاستنتاج الانتقالي: إذا كان أ أسرع من ب وب أسرع من ج، فأ أسرع من ج.`,
-      `${count ? `المؤكد تفوقهم على ${target} هم: ${above.join('، ')}` : `لا أحد يثبت تفوقه على ${target}`}؛ إذن الإجابة ${correct}.`
+      `${count ? `من نعرف يقينًا أنهم أسرع من ${target}: ${above.join('، ')}` : `لا أحد نعرف يقينًا أنه أسرع من ${target}`}؛ إذن الإجابة ${correct}.`
     ],
     howToStart: 'ابنِ كل المسارات التي تنتهي بالشخص المطلوب ثم عدّ من فوقه.',
     remember: 'استخدم الاستنتاج الانتقالي، ولا تعدّ إلا من له مسار مؤكد.',

@@ -1,9 +1,14 @@
+import {buildPerformanceReport} from './performance-model.js';
+import {MISCONCEPTIONS} from './src/qa/misconceptions.js';
 import {ENGINE_VERSION} from './src/index.js';
 
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function fmtClock(sec){sec=Math.max(0,Math.floor(sec||0));return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`}
 function diffAr(d){return d==='easy'?'سهل':d==='medium'?'متوسط':d==='hard'?'صعب':d==='adaptive'?'تكيفي':'مختلط'}
 function modeAr(m){return m==='exam'?'امتحان':'تدريب'}
+// RC2.9.3-5. The evidence-based reading kept with the session, or computed
+// here for a session finished before it existed.
+function performanceOf(s){return s?.summary?.performance||buildPerformanceReport(s,id=>MISCONCEPTIONS[id]??id)}
 
 /**
  * RC2-006. The report's full content as logical-order Unicode.
@@ -48,6 +53,11 @@ export function buildReportTextLayer(s){
   for(const d of ['easy','medium','hard']){
     const x=r.byDifficulty?.[d]; if(!x) continue;
     L.push(`${diffAr(d)}: ${x.c}/${x.n} · ${Math.round((x.c||0)/(x.n||1)*100)}% · ${fmtClock(x.avgTime||0)}`);
+  }
+  for(const sec of performanceOf(s).text){
+    L.push('');
+    L.push(sec.heading);
+    for(const line of sec.lines) L.push(`- ${line}`);
   }
   (s.questions||[]).forEach((q,i)=>{
     const resp=s.responses?.[i]||{};
@@ -94,10 +104,11 @@ export function buildPrintReportHtml(s){
   }).join('');
 
   return `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>تقرير التدريب العددي المتجدد</title><style>
-  @page{size:A4;margin:13mm}*{box-sizing:border-box}body{font-family:Arial,Tahoma,sans-serif;color:#172033;margin:0;background:#fff}.cover{border-bottom:2px solid #263c67;padding-bottom:14px;margin-bottom:14px}.kicker{font-size:9px;letter-spacing:.14em;color:#52688e;font-weight:bold}.cover h1{font-size:23px;margin:5px 0}.meta{font-size:11px;line-height:1.7;color:#667085}.score{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.score span{border:1px solid #dce3ee;border-radius:8px;padding:6px 9px;font-size:10px}.summary-table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:10px}.summary-table th,.summary-table td{border:1px solid #e0e5ed;padding:6px;text-align:right}.summary-table th{background:#f4f6f9}.question{page-break-inside:avoid;border:1px solid #dfe5ee;border-radius:12px;padding:12px;margin:0 0 12px}.qhead{display:flex;justify-content:space-between;gap:12px;font-size:9px;color:#667085}.question h3{font-size:13px;line-height:1.75;margin:9px 0}.expr{direction:ltr;text-align:center;background:#f5f7fa;border:1px solid #e1e6ee;border-radius:8px;padding:7px;font-weight:700;margin-bottom:8px}.opts{display:grid;grid-template-columns:1fr 1fr;gap:5px}.opt{display:flex;gap:6px;border:1px solid #e1e6ee;border-radius:7px;padding:6px;font-size:9px}.opt b{direction:ltr}.opt.correct{background:#edf9f3;border-color:#a9dbc1}.opt.wrong{background:#fff2f0;border-color:#efbdb7}.answer{font-size:9px;background:#f6f8fb;padding:7px;border-radius:7px;margin-top:8px;line-height:1.6}.ex{font-size:9px;line-height:1.65;border-top:1px solid #e6e9ef;margin-top:9px;padding-top:8px}.ex p{margin:4px 0}.ex ol{margin:5px 0;padding-right:18px}.footer{font-size:8px;color:#8a94a5;text-align:center;margin-top:14px}@media print{.question{break-inside:avoid}}</style></head><body>
+  @page{size:A4;margin:13mm}*{box-sizing:border-box}body{font-family:Arial,Tahoma,sans-serif;color:#172033;margin:0;background:#fff}.cover{border-bottom:2px solid #263c67;padding-bottom:14px;margin-bottom:14px}.kicker{font-size:9px;letter-spacing:.14em;color:#52688e;font-weight:bold}.cover h1{font-size:23px;margin:5px 0}.meta{font-size:11px;line-height:1.7;color:#667085}.score{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.score span{border:1px solid #dce3ee;border-radius:8px;padding:6px 9px;font-size:10px}.summary-table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:10px}.perf-list{margin:4px 0 10px;padding-inline-start:18px;font-size:12px;line-height:1.7}.summary-table th,.summary-table td{border:1px solid #e0e5ed;padding:6px;text-align:right}.summary-table th{background:#f4f6f9}.question{page-break-inside:avoid;border:1px solid #dfe5ee;border-radius:12px;padding:12px;margin:0 0 12px}.qhead{display:flex;justify-content:space-between;gap:12px;font-size:9px;color:#667085}.question h3{font-size:13px;line-height:1.75;margin:9px 0}.expr{direction:ltr;text-align:center;background:#f5f7fa;border:1px solid #e1e6ee;border-radius:8px;padding:7px;font-weight:700;margin-bottom:8px}.opts{display:grid;grid-template-columns:1fr 1fr;gap:5px}.opt{display:flex;gap:6px;border:1px solid #e1e6ee;border-radius:7px;padding:6px;font-size:9px}.opt b{direction:ltr}.opt.correct{background:#edf9f3;border-color:#a9dbc1}.opt.wrong{background:#fff2f0;border-color:#efbdb7}.answer{font-size:9px;background:#f6f8fb;padding:7px;border-radius:7px;margin-top:8px;line-height:1.6}.ex{font-size:9px;line-height:1.65;border-top:1px solid #e6e9ef;margin-top:9px;padding-top:8px}.ex p{margin:4px 0}.ex ol{margin:5px 0;padding-right:18px}.footer{font-size:8px;color:#8a94a5;text-align:center;margin-top:14px}@media print{.question{break-inside:avoid}}</style></head><body>
   <header class="cover"><div class="kicker">NUMERICAL GENERATED PRACTICE</div><h1>تقرير ${modeAr(s.settings?.mode)} عددي متجدد</h1><div class="meta">التاريخ: ${esc(date)}<br>الوضع: ${modeAr(s.settings?.mode)} · الصعوبة: ${diffAr(s.settings?.difficulty)} · عدد الأسئلة: ${Number(s.settings?.count||s.questions?.length||0)}<br>العائلات: ${esc(familyLabel)}${s.settings?.timeLimitSeconds?`<br>الوقت المحدد: ${fmtClock(s.settings.timeLimitSeconds)}`:''}</div><div class="score"><span>النتيجة: <b>${r.percentage||0}%</b></span><span>الصحيح: <b>${r.correct||0}</b></span><span>الخطأ: <b>${r.wrong||0}</b></span><span>غير المجاب: <b>${r.unanswered||0}</b></span><span>الزمن: <b>${fmtClock(s.elapsedSeconds)}</b></span><span>متوسط السؤال: <b>${fmtClock(r.avgTimeSeconds||0)}</b></span></div></header>
   <h2 style="font-size:14px">الأداء حسب العائلة</h2><table class="summary-table"><thead><tr><th>العائلة</th><th>الصحيح</th><th>النسبة</th><th>متوسط الزمن</th></tr></thead><tbody>${familyRows}</tbody></table>
   <h2 style="font-size:14px">الأداء حسب الصعوبة</h2><table class="summary-table"><thead><tr><th>الصعوبة</th><th>الصحيح</th><th>النسبة</th><th>متوسط الزمن</th></tr></thead><tbody>${difficultyRows}</tbody></table>
+  ${performanceOf(s).text.map(sec=>`<h2 style="font-size:14px">${esc(sec.heading)}</h2><ul class="perf-list">${sec.lines.map(l=>`<li>${esc(l)}</li>`).join('')}</ul>`).join('')}
   ${questions}<div class="footer">تم إنشاء هذا التقرير محليًا بواسطة Numerical Question Generator Engine v${esc(ENGINE_VERSION)}.</div>
   <script type="application/json" id="report-logical-text">${JSON.stringify({
     schema: 'rc2-006-logical-text-layer-v1',
