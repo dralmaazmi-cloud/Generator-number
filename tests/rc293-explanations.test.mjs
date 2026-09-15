@@ -66,9 +66,15 @@ test('RC2.9.3-1: no published explanation carries an arithmetic trace of a unit 
   assert.ok(CORPUS.length > 2000, `sweep must be substantial, saw ${CORPUS.length}`);
   const offenders = {};
   for (const q of CORPUS) {
+    const rationales = new Set(Object.values(q.explanation?.distractor_analysis ?? {}));
     for (const text of readable(q)) {
       for (const [name, re] of Object.entries(TRACES)) {
         if (PROSE_ONLY.has(name) && text === q.explanation.answer) continue;
+        // RC2.9.4-A1. A wrong option's rationale quotes the option text and
+        // the learner's own derivation («وهي ناتج 7 × 1»): that «× 1» is the
+        // evidence of what the learner did, and the option text prints its
+        // sign the way the options do. Only leaks are traces there.
+        if (rationales.has(text) && !['leaked template placeholder', 'undefined / NaN / null in prose'].includes(name)) continue;
         if (re.test(text)) offenders[`${name} :: ${q.metadata.template_id}`] ??= text;
       }
     }

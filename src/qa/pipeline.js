@@ -14,6 +14,7 @@ import {validateMisconceptionContext} from './misconception-context.js';
 import {validateDistractorProvenance} from './distractor-provenance.js';
 import {validateFeedbackTruthfulness} from './feedback-metrics.js';
 import {validateDisplayedEquations, validateExplanationSourcing, numbersIn} from './equations.js';
+import {rationaleProblems} from './rationale.js';
 import {checkArabicNumberUnitsDeep} from '../arabic/units.js';
 import {classifyQuestionConstructions, STATUS as AR_STATUS} from '../arabic/constructions.js';
 import {checkOrderingWords, checkRateAnswerUnit} from './wording.js';
@@ -399,6 +400,10 @@ export function validateCandidate(base, q) {
   const provenanceVerdict = validateDistractorProvenance(base);
   // RC2-014: the derivation a wrong option shows must actually produce it.
   const feedbackVerdict = validateFeedbackTruthfulness(q);
+  // RC2.9.4-A1: the sentence shown beside that derivation must describe it —
+  // no claimed operation the derivation lacks, no vocabulary from another
+  // family, no «وهي ناتج X» about X itself. A contradiction is a rejection.
+  const rationaleVerdict = validateRationales(q);
 
   return mergeVerdicts(
     structuralVerdict,
@@ -411,6 +416,20 @@ export function validateCandidate(base, q) {
     distractorVerdict,
     contextVerdict,
     provenanceVerdict,
-    feedbackVerdict
+    feedbackVerdict,
+    rationaleVerdict
   );
+}
+
+/** RC2.9.4-A1. Every rendered rationale must be consistent with its provenance. */
+export function validateRationales(q) {
+  const meta = q.metadata?.options_meta || {};
+  const offenders = [];
+  for (const [letter, m] of Object.entries(meta)) {
+    if (m.correct) continue;
+    const text = q.explanation?.distractor_analysis?.[letter];
+    const problems = rationaleProblems({text, derivation: m.derivation, family: q.family, value: m.value, optionText: q.options?.[letter]});
+    if (problems.length) offenders.push({letter, misconceptionId: m.misconceptionId, problems, text});
+  }
+  return verdict(offenders.length ? [REASON.RATIONALE_INCONSISTENT] : [], {rationaleOffenders: offenders});
 }

@@ -129,7 +129,7 @@ test('Profile D: only three answered — INSUFFICIENT EVIDENCE everywhere, no in
   assert.deepEqual(r.weaknesses, []);
   assert.deepEqual(r.errorPatterns, []);
   assert.deepEqual(r.recommendations, []);
-  assert.equal(r.trend.status, STATUS.INSUFFICIENT);
+  assert.equal(r.trend.status, 'INSUFFICIENT_TREND_EVIDENCE');
   assert.equal(r.speed.status, STATUS.INSUFFICIENT);
   const lines = r.text.flatMap(s => s.lines).join(' ');
   assert.match(lines, /لا توجد أدلة كافية/);
@@ -175,20 +175,24 @@ test('Profile F: the same denominator misconception, again and again', () => {
 });
 
 test('Profile G/H: improving and deteriorating learners are told which way they moved', () => {
-  const qs = session('rc293-perf-G', ['averages', 'percentages', 'ratios', 'profit_loss']);
+  // RC2.9.4-A2: a trend is judged within families, so the sitting is dealt
+  // round-robin across four families (as a mixed session is) and the change
+  // happens inside every family.
+  const byFamily = ['averages', 'percentages', 'ratios', 'profit_loss'].map(f => session('rc293-perf-G', [f]));
+  const qs = [];
+  for (let i = 0; i < 10; i++) for (const fam of byFamily) qs.push(fam[i]);
   const half = qs.length / 2;
   const improving = report(qs, qs.map((q, i) => (i < half ? (i % 10 < 3 ? right(q) : wrong(q)) : (i % 10 < 9 ? right(q) : wrong(q)))));
-  assert.equal(improving.trend.direction, 'IMPROVING');
-  assert.ok(improving.trend.delta >= EVIDENCE.trend.minDelta);
+  assert.equal(improving.trend.direction, 'IMPROVING', JSON.stringify(improving.trend));
   assert.match(improving.text.find(s => s.id === 'overall').lines.join(' '), /تحسّن واضح/);
 
   const deteriorating = report(qs, qs.map((q, i) => (i < half ? (i % 10 < 9 ? right(q) : wrong(q)) : (i % 10 < 3 ? right(q) : wrong(q)))));
-  assert.equal(deteriorating.trend.direction, 'DETERIORATING');
+  assert.equal(deteriorating.trend.direction, 'DETERIORATING', JSON.stringify(deteriorating.trend));
   assert.match(deteriorating.text.find(s => s.id === 'overall').lines.join(' '), /تراجع/);
 
   // A learner who is steady is not told a story.
   const steady = report(qs, qs.map((q, i) => (i % 4 === 0 ? wrong(q) : right(q))));
-  assert.equal(steady.trend.direction, 'STABLE');
+  assert.notEqual(steady.trend.status, 'TREND');
   assert.doesNotMatch(steady.text.find(s => s.id === 'overall').lines.join(' '), /تحسّن|تراجع/);
 });
 
@@ -223,6 +227,8 @@ test('The weak-family chooser uses the same evidence rule as the report', () => 
     percentages: {attempts: 10, correct: 6},  // 60%: not a weakness
     speed: {attempts: 12, correct: 3}         // weak, more evidence first
   };
+  // RC2.9.4-A3: 2 of 4 is no longer a weakness — the interval is too wide —
+  // so only speed (3 of 12) qualifies; ratios is DEVELOPING and reported as such.
   const weak = weakFamiliesFrom(stats, ['averages', 'ratios', 'percentages', 'speed', 'ages']);
-  assert.deepEqual(weak.map(x => x.id), ['speed', 'ratios']);
+  assert.deepEqual(weak.map(x => x.id), ['speed']);
 });

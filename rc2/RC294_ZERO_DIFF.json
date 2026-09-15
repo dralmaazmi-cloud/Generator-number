@@ -1,0 +1,47 @@
+{
+  "schema": "rc294-zero-diff-v1",
+  "baseline": {
+    "commit": "bde7058e31e92fb6b3d98562f1ef46d81c2f6742",
+    "release": "RC2.9.3",
+    "drawn": 10000,
+    "exhausted": 0,
+    "digest": "7fc9dfb7b5378db8f1ac0ec838037b016c4a48c600a6a591dd3eef3bd164c59f"
+  },
+  "phaseA": {
+    "drawn": 10000,
+    "exhausted": 0,
+    "digest": "7fc9dfb7b5378db8f1ac0ec838037b016c4a48c600a6a591dd3eef3bd164c59f"
+  },
+  "surface": [
+    "template",
+    "family",
+    "difficulty",
+    "question",
+    "display",
+    "options",
+    "correct_option",
+    "correct_value",
+    "parameters",
+    "user_perceptual_signature",
+    "user_construction_signature",
+    "sub_idea_signature",
+    "task_signature",
+    "normalized_stem_identity",
+    "reasoning_target_pair",
+    "skill_signature",
+    "steps",
+    "how_to_start",
+    "fast_method",
+    "remember",
+    "options_meta value/misconceptionId/derivation"
+  ],
+  "seeds": "RC293_DEVELOPMENT_SEEDS, 10,000 draws as the development corpus makes them",
+  "compare": {
+    "same": true,
+    "drawsA": 10000,
+    "drawsB": 10000,
+    "differ": [],
+    "differCount": 0
+  },
+  "manifests": "rc2/rc294-zero-diff-manifests.json.gz"
+}

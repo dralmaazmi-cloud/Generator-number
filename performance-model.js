@@ -39,9 +39,20 @@ export const EVIDENCE = Object.freeze({
   // share of all wrong answers. One slip is a slip; three of the same are a
   // pattern.
   pattern: {minCount: 3, minShare: 0.4},
-  // A trend needs enough answered questions to split into two halves that can
-  // each carry a claim, and a difference a reader would notice.
-  trend: {minAnswered: 12, minPerHalf: 6, minDelta: 0.25},
+  // RC2.9.4-A2. A trend is a chronological change AFTER controlling for what
+  // was being tested: only strata (families) answered in both halves of the
+  // sitting are compared, the effect is the stratified difference in
+  // accuracy, and the null distribution comes from permuting answers within
+  // each stratum. A claim needs enough comparable evidence, a difference a
+  // reader would notice, and a permutation p-value the noise cannot reach.
+  trend: {minComparable: 18, minPerHalf: 8, minPerStratumHalf: 2, minDelta: 0.25, maxP: 0.02, permutations: 600},
+  // RC2.9.4-A3. A status is a claim about the true accuracy, made from a
+  // Wilson interval (z = 1.28, an 80% interval): STRENGTH needs the observed
+  // accuracy at or above `strength` AND the interval's lower bound at or
+  // above `strengthFloor`; WEAKNESS needs the accuracy at or below `weakness`
+  // AND the upper bound at or below `weaknessCeiling`. Everything in between
+  // is DEVELOPING, shown with the way it leans — never hidden.
+  status: {z: 1.28, strengthFloor: 0.6, weaknessCeiling: 0.65, leanStrong: 0.7, leanWeak: 0.55},
   // Speed is only ever a low-confidence note. A wrong answer given in less
   // than half the reference time is "rushed"; three of them are worth saying.
   speed: {rushedFactor: 0.5, slowFactor: 1.6, minCount: 3, minAnswered: 6},
@@ -51,7 +62,17 @@ export const EVIDENCE = Object.freeze({
 
 /** Statuses a unit can carry. */
 export const STATUS = Object.freeze({
-  STRENGTH: 'STRENGTH', WEAKNESS: 'WEAKNESS', MIXED: 'MIXED', INSUFFICIENT: 'INSUFFICIENT_EVIDENCE'
+  STRENGTH: 'STRENGTH', WEAKNESS: 'WEAKNESS', DEVELOPING: 'DEVELOPING', INSUFFICIENT: 'INSUFFICIENT_EVIDENCE',
+  /** @deprecated RC2.9.3 name for DEVELOPING; kept so older callers read the same value. */
+  MIXED: 'DEVELOPING'
+});
+
+/** How a DEVELOPING unit leans, from its observed accuracy. */
+export const LEAN = Object.freeze({STRONG: 'STRONG', MIXED: 'MIXED', WEAK: 'WEAK'});
+
+/** Trend statuses. */
+export const TREND = Object.freeze({
+  INSUFFICIENT: 'INSUFFICIENT_TREND_EVIDENCE', NONE: 'NO_TREND_DETECTED', TREND: 'TREND'
 });
 
 /** Arabic for the confidence labels. */
@@ -139,13 +160,29 @@ export function confidenceFor(n) {
   return 'none';
 }
 
-function statusFor(correct, n) {
-  if (n < EVIDENCE.minForClaim) return STATUS.INSUFFICIENT;
-  const acc = correct / n;
-  if (acc >= EVIDENCE.strength) return STATUS.STRENGTH;
-  if (acc <= EVIDENCE.weakness) return STATUS.WEAKNESS;
-  return STATUS.MIXED;
+/** Wilson score interval for c successes in n trials. */
+export function wilson(correct, n, z = EVIDENCE.status.z) {
+  if (!n) return {lo: 0, hi: 1};
+  const p = correct / n, z2 = z * z;
+  const denom = 1 + z2 / n;
+  const centre = (p + z2 / (2 * n)) / denom;
+  const half = (z * Math.sqrt((p * (1 - p)) / n + z2 / (4 * n * n))) / denom;
+  return {lo: Math.max(0, centre - half), hi: Math.min(1, centre + half)};
 }
+
+/** RC2.9.4-A3. Status and lean for c correct of n, with the interval that decided it. */
+export function judge(correct, n) {
+  if (n < EVIDENCE.minForClaim) return {status: STATUS.INSUFFICIENT, lean: null, interval: null};
+  const acc = correct / n;
+  const {lo, hi} = wilson(correct, n);
+  const s = EVIDENCE.status;
+  if (acc >= EVIDENCE.strength && lo >= s.strengthFloor) return {status: STATUS.STRENGTH, lean: null, interval: {lo, hi}};
+  if (acc <= EVIDENCE.weakness && hi <= s.weaknessCeiling) return {status: STATUS.WEAKNESS, lean: null, interval: {lo, hi}};
+  const lean = acc >= s.leanStrong ? LEAN.STRONG : acc <= s.leanWeak ? LEAN.WEAK : LEAN.MIXED;
+  return {status: STATUS.DEVELOPING, lean, interval: {lo, hi}};
+}
+
+function statusFor(correct, n) { return judge(correct, n).status; }
 
 function referenceSecondsFor(q) {
   const steps = Number(q?.metadata?.estimated_steps);
@@ -198,40 +235,123 @@ function tally(rows, keyOf, labelOf) {
   return [...units.values()].map(u => {
     // The label is the one most of the unit's questions carry.
     const label = [...u.labels.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? u.label;
-    const status = statusFor(u.correct, u.n);
+    const {status, lean, interval} = judge(u.correct, u.n);
     return {
       id: u.id, label, n: u.n, correct: u.correct, wrong: u.wrong,
       accuracy: u.n ? round(u.correct / u.n, 3) : null,
       percentage: pctOf(u.correct, u.n),
       avgTimeSeconds: u.times.length ? Math.round(u.times.reduce((a, b) => a + b, 0) / u.times.length) : null,
-      status,
+      status, lean, interval,
       confidence: status === STATUS.INSUFFICIENT ? 'none' : confidenceFor(u.n)
     };
   }).sort((a, b) => (a.accuracy ?? 2) - (b.accuracy ?? 2) || b.n - a.n || String(a.id).localeCompare(String(b.id)));
 }
 
-function trendOf(rows) {
-  const answered = rows.filter(r => r.answered);
-  const t = EVIDENCE.trend;
-  if (answered.length < t.minAnswered) {
-    return {status: STATUS.INSUFFICIENT, direction: null, firstHalf: null, secondHalf: null, confidence: 'none', answered: answered.length};
-  }
-  const half = Math.floor(answered.length / 2);
-  const first = answered.slice(0, half), second = answered.slice(answered.length - half);
-  if (first.length < t.minPerHalf || second.length < t.minPerHalf) {
-    return {status: STATUS.INSUFFICIENT, direction: null, firstHalf: null, secondHalf: null, confidence: 'none', answered: answered.length};
-  }
-  const acc = xs => xs.filter(r => r.correct).length / xs.length;
-  const a = acc(first), b = acc(second);
-  const delta = round(b - a, 3);
-  const direction = delta >= t.minDelta ? 'IMPROVING' : delta <= -t.minDelta ? 'DETERIORATING' : 'STABLE';
-  return {
-    status: 'MEASURED', direction, delta,
-    firstHalf: {n: first.length, correct: first.filter(r => r.correct).length, percentage: pctOf(first.filter(r => r.correct).length, first.length)},
-    secondHalf: {n: second.length, correct: second.filter(r => r.correct).length, percentage: pctOf(second.filter(r => r.correct).length, second.length)},
-    confidence: confidenceFor(half), answered: answered.length
+// A small deterministic PRNG (mulberry32) so a report is reproducible: the
+// permutations are seeded from the answers themselves.
+function prng(seed) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
+const hashOf = str => { let h = 2166136261; for (const ch of String(str)) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
+
+/**
+ * RC2.9.4-A2. The skill-stratified trend.
+ *
+ * The RC2.9.3 model compared the raw accuracy of the first half of a sitting
+ * with the second. When the two halves tested different things — a strong
+ * family early, a weak one late — it reported a decline that was only the
+ * order of the families, and the same evidence in the other order reported
+ * an improvement. This model compares like with like:
+ *
+ *   • the sitting is split chronologically into two halves of answered
+ *     questions;
+ *   • each FAMILY answered at least `minPerStratumHalf` times in BOTH halves
+ *     is a comparable stratum; the rest is not evidence about change;
+ *   • the effect is the weighted mean, over comparable strata, of
+ *     (second-half accuracy − first-half accuracy), weighted by the harmonic
+ *     size n1·n2/(n1+n2);
+ *   • the null distribution is obtained by permuting the answers within each
+ *     stratum (which keeps every stratum's overall accuracy and its split
+ *     between the halves), `permutations` times, deterministically;
+ *   • a trend is claimed only with at least `minComparable` comparable
+ *     answers (`minPerHalf` on each side), |effect| ≥ `minDelta`, and a
+ *     two-sided permutation p ≤ `maxP`.
+ *
+ * With too little comparable evidence the status is
+ * INSUFFICIENT_TREND_EVIDENCE and nothing is said — not even "stable".
+ */
+export function stratifiedTrend(rows, opts = EVIDENCE.trend) {
+  const answered = rows.filter(r => r.answered);
+  const empty = status => ({status, direction: null, effect: null, p: null, comparable: 0, comparableFirst: 0, comparableSecond: 0,
+    strata: [], firstHalf: null, secondHalf: null, confidence: 'none', answered: answered.length});
+  if (answered.length < opts.minComparable) return empty(TREND.INSUFFICIENT);
+  const half = Math.floor(answered.length / 2);
+  const first = answered.slice(0, half), second = answered.slice(half);
+  const byStratum = new Map();
+  const add = (r, side) => {
+    if (!byStratum.has(r.family)) byStratum.set(r.family, {id: r.family, first: [], second: []});
+    byStratum.get(r.family)[side].push(r.correct ? 1 : 0);
+  };
+  for (const r of first) add(r, 'first');
+  for (const r of second) add(r, 'second');
+  const strata = [...byStratum.values()].filter(s => s.first.length >= opts.minPerStratumHalf && s.second.length >= opts.minPerStratumHalf);
+  const comparableFirst = strata.reduce((a, s) => a + s.first.length, 0);
+  const comparableSecond = strata.reduce((a, s) => a + s.second.length, 0);
+  const comparable = comparableFirst + comparableSecond;
+  if (comparable < opts.minComparable || comparableFirst < opts.minPerHalf || comparableSecond < opts.minPerHalf) {
+    return {...empty(TREND.INSUFFICIENT), comparable, comparableFirst, comparableSecond,
+      strata: strata.map(s => ({id: s.id, n1: s.first.length, n2: s.second.length}))};
+  }
+  const mean = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
+  const effectOf = groups => {
+    let num = 0, den = 0;
+    for (const g of groups) {
+      const w = (g.first.length * g.second.length) / (g.first.length + g.second.length);
+      num += w * (mean(g.second) - mean(g.first));
+      den += w;
+    }
+    return den ? num / den : 0;
+  };
+  const effect = effectOf(strata);
+  // Permutation null: shuffle each stratum's answers across its two halves.
+  const seed = hashOf(strata.map(s => `${s.id}:${s.first.join('')}|${s.second.join('')}`).join(';'));
+  const rand = prng(seed);
+  let atLeast = 0;
+  const pooled = strata.map(s => ({n1: s.first.length, all: [...s.first, ...s.second]}));
+  for (let k = 0; k < opts.permutations; k++) {
+    const groups = pooled.map(({n1, all}) => {
+      const arr = all.slice();
+      for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
+      return {first: arr.slice(0, n1), second: arr.slice(n1)};
+    });
+    if (Math.abs(effectOf(groups)) >= Math.abs(effect) - 1e-12) atLeast++;
+  }
+  const p = (atLeast + 1) / (opts.permutations + 1);
+  const firstStats = {n: comparableFirst, correct: strata.reduce((a, s) => a + s.first.reduce((x, y) => x + y, 0), 0)};
+  const secondStats = {n: comparableSecond, correct: strata.reduce((a, s) => a + s.second.reduce((x, y) => x + y, 0), 0)};
+  const base = {
+    effect: round(effect, 3), p: round(p, 4), comparable, comparableFirst, comparableSecond,
+    strata: strata.map(s => ({id: s.id, n1: s.first.length, n2: s.second.length, acc1: round(mean(s.first), 3), acc2: round(mean(s.second), 3)})),
+    firstHalf: {...firstStats, percentage: pctOf(firstStats.correct, firstStats.n)},
+    secondHalf: {...secondStats, percentage: pctOf(secondStats.correct, secondStats.n)},
+    answered: answered.length
+  };
+  const claim = Math.abs(effect) >= opts.minDelta && p <= opts.maxP;
+  if (!claim) return {...base, status: TREND.NONE, direction: null, confidence: 'none'};
+  // Confidence reflects both the comparable evidence and the strength of the
+  // evidence against chance — never the raw size of the difference alone.
+  const confidence = comparable >= 30 && p <= 0.002 ? 'high' : comparable >= 20 && p <= 0.01 ? 'medium' : 'low';
+  return {...base, status: TREND.TREND, direction: effect > 0 ? 'IMPROVING' : 'DETERIORATING', confidence};
+}
+
+const trendOf = rows => stratifiedTrend(rows);
 
 function speedOf(rows) {
   const timed = rows.filter(r => r.answered && r.time !== null);
@@ -299,6 +419,7 @@ function recommend({families, tasks, patterns, misconceptionText}) {
   };
   for (const f of families) {
     if (f.status === STATUS.WEAKNESS) add(f.id, f.label, `دقة ${f.percentage}% في ${questionsWord(f.n)}`, 8);
+    else if (f.status === STATUS.DEVELOPING && f.lean === LEAN.WEAK) add(f.id, f.label, `دقة ${f.percentage}% في ${questionsWord(f.n)}؛ الأدلة لا تكفي بعد لحكم مؤكد`, 6);
   }
   for (const p of patterns) {
     const family = p.families[0];
@@ -348,17 +469,28 @@ export function buildPerformanceReport(session, misconceptionText = id => id) {
   const trend = trendOf(rows);
   const speed = speedOf(rows);
 
+  // RC2.9.4-A4. Completion and accuracy are two different numbers. The score
+  // over all questions (unanswered counted wrong) is an exam rule and is
+  // reported as such only in exam mode; the report's own accuracy is over
+  // what was answered.
+  const examMode = session?.settings?.mode === 'exam';
+  const verdict = judge(correct, answered);
   const overall = {
     asked: questions.length, answered, correct, wrong: answered - correct, unanswered: questions.length - answered,
+    examMode,
     percentage: pctOf(correct, questions.length || 1),
+    accuracyPercentage: answered ? pctOf(correct, answered) : null,
     accuracyOfAnswered: answered ? round(correct / answered, 3) : null,
     avgTimeSeconds: times.length ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : null,
-    status: statusFor(correct, answered),
+    status: verdict.status, lean: verdict.lean, interval: verdict.interval,
     confidence: answered >= EVIDENCE.minForClaim ? confidenceFor(answered) : 'none'
   };
 
   const strengths = families.filter(f => f.status === STATUS.STRENGTH).sort((a, b) => b.accuracy - a.accuracy || b.n - a.n);
   const weaknesses = families.filter(f => f.status === STATUS.WEAKNESS);
+  // RC2.9.4-A3. Nothing between the two lines disappears: every DEVELOPING
+  // family is reported with the way it leans.
+  const developing = families.filter(f => f.status === STATUS.DEVELOPING).sort((a, b) => b.accuracy - a.accuracy || b.n - a.n);
   const hiddenWeakTasks = tasks.filter(t => t.status === STATUS.WEAKNESS
     && !weaknesses.some(f => f.id === t.topFamily));
   const insufficient = families.filter(f => f.status === STATUS.INSUFFICIENT);
@@ -369,7 +501,7 @@ export function buildPerformanceReport(session, misconceptionText = id => id) {
     evidence: EVIDENCE,
     overall,
     levels: {family: families, task: tasks, subIdea: subIdeas, skill: skills},
-    strengths, weaknesses, hiddenWeakTasks, insufficient,
+    strengths, weaknesses, developing, hiddenWeakTasks, insufficient,
     errorPatterns: patterns, errorTypes, trend, speed, recommendations
   };
   report.text = performanceText(report, misconceptionText);
@@ -377,6 +509,18 @@ export function buildPerformanceReport(session, misconceptionText = id => id) {
 }
 
 const conf = c => `الثقة: ${CONFIDENCE_AR[c] ?? c}`;
+
+/** RC2.9.4-A3. The line for one unit, whatever its status. */
+export function unitLine(f) {
+  const head = `${f.label}: ${f.correct}/${f.n}`;
+  if (f.status === STATUS.INSUFFICIENT) return `${head} — أدلة غير كافية (أقل من ${questionsWord(EVIDENCE.minForClaim)}).`;
+  const pct = `${head} (${f.percentage}%)`;
+  if (f.status === STATUS.STRENGTH) return `${pct} — نقطة قوة (${conf(f.confidence)}).`;
+  if (f.status === STATUS.WEAKNESS) return `${pct} — نقطة ضعف (${conf(f.confidence)}).`;
+  if (f.lean === LEAN.STRONG) return `${pct} — أداء جيد لم يتأكد بعد؛ يلزم مزيد من الأسئلة لاعتباره نقطة قوة.`;
+  if (f.lean === LEAN.WEAK) return `${pct} — أداء يميل إلى الضعف، والأدلة لا تكفي بعد لحكم مؤكد.`;
+  return `${pct} — أداء متوسط؛ الأدلة الحالية لا تحسم قوة أو ضعفًا.`;
+}
 
 /**
  * The five sections a learner reads, as plain lines. The same lines feed the
@@ -387,14 +531,18 @@ export function performanceText(report, misconceptionText = id => id) {
   const sections = [];
 
   const overall = [];
-  if (o.answered === 0) overall.push('لم تُسجَّل أي إجابة، فلا يمكن تقييم الأداء.');
+  if (o.answered === 0) overall.push(`لم تُسجَّل أي إجابة من ${questionsWord(o.asked)}، فلا يمكن تقييم الأداء.`);
   else {
-    overall.push(`أجبت عن ${o.answered} من ${o.asked}، منها ${o.correct} صحيحة (${o.percentage}% من الأسئلة${o.unanswered ? `، و${o.unanswered} بلا إجابة` : ''}).`);
+    // Completion first, accuracy second, and never the one dressed as the other.
+    overall.push(`أجبت عن ${o.answered} من ${questionsWord(o.asked)}${o.unanswered ? `، و${questionsWord(o.unanswered)} بلا إجابة` : ''}.`);
+    overall.push(`${o.correct} من ${o.answered} إجابات صحيحة (${o.accuracyPercentage}% من المُجاب عنه).`);
+    if (o.examMode && o.unanswered) overall.push(`نتيجة الامتحان على مجموع الأسئلة: ${o.percentage}% (في وضع الامتحان يُحسب غير المجاب خطأً).`);
     if (o.avgTimeSeconds !== null) overall.push(`متوسط زمن السؤال ${o.avgTimeSeconds} ثانية.`);
-    if (o.status === STATUS.INSUFFICIENT) overall.push(`عدد الإجابات أقل من ${questionsWord(EVIDENCE.minForClaim)}، فلا يُبنى عليها حكم عام (${conf('none')}).`);
-    else overall.push(`${o.status === STATUS.STRENGTH ? 'أداء عام قوي' : o.status === STATUS.WEAKNESS ? 'أداء عام يحتاج إلى تدريب' : 'أداء عام متوسط'} (${conf(o.confidence)}).`);
-    if (report.trend.status === 'MEASURED' && report.trend.direction !== 'STABLE') {
-      overall.push(`${report.trend.direction === 'IMPROVING' ? 'تحسّن واضح خلال الجلسة' : 'تراجع خلال الجلسة'}: ${report.trend.firstHalf.percentage}% في النصف الأول مقابل ${report.trend.secondHalf.percentage}% في النصف الثاني (${conf(report.trend.confidence)}).`);
+    if (o.status === STATUS.INSUFFICIENT) overall.push('لا توجد بيانات كافية بعد لاستخلاص نقاط قوة أو ضعف موثوقة.');
+    else overall.push(`${o.status === STATUS.STRENGTH ? 'أداء عام قوي' : o.status === STATUS.WEAKNESS ? 'أداء عام يحتاج إلى تدريب'
+      : o.lean === LEAN.STRONG ? 'أداء عام جيد لم يتأكد بعد' : o.lean === LEAN.WEAK ? 'أداء عام يميل إلى الضعف' : 'أداء عام متوسط'} (${conf(o.confidence)}).`);
+    if (report.trend.status === TREND.TREND) {
+      overall.push(`${report.trend.direction === 'IMPROVING' ? 'تحسّن واضح خلال الجلسة' : 'تراجع خلال الجلسة'} عند مقارنة المهارات نفسها: ${report.trend.firstHalf.percentage}% في النصف الأول مقابل ${report.trend.secondHalf.percentage}% في النصف الثاني على ${questionsWord(report.trend.comparable)} قابلة للمقارنة (${conf(report.trend.confidence)}).`);
     }
     for (const note of report.speed.notes ?? []) {
       if (note.kind === 'ACCURATE_BUT_SLOW') overall.push(`دقتك عالية لكن زمنك أطول من الزمن المرجعي التقريبي؛ هذه ملاحظة عن السرعة لا عن الفهم (${conf('low')}).`);
@@ -404,14 +552,16 @@ export function performanceText(report, misconceptionText = id => id) {
   }
   sections.push({id: 'overall', heading: 'الأداء العام', lines: overall});
 
-  const strengths = report.strengths.map(f => `${f.label}: ${f.correct}/${f.n} (${f.percentage}%) — ${conf(f.confidence)}.`);
+  const strengths = report.strengths.map(f => `${f.label}: ${f.correct}/${f.n} (${f.percentage}%) — نقطة قوة (${conf(f.confidence)}).`);
+  for (const f of (report.developing ?? []).filter(f => f.lean === LEAN.STRONG)) strengths.push(unitLine(f));
   if (!strengths.length) strengths.push(o.answered < EVIDENCE.minForClaim || report.levels.family.every(f => f.status === STATUS.INSUFFICIENT)
     ? 'لا توجد أدلة كافية بعد لتحديد نقاط قوة.'
     : 'لم تبلغ أي عائلة حد القوة في هذه الجلسة.');
   sections.push({id: 'strengths', heading: 'نقاط القوة', lines: strengths});
 
-  const improve = report.weaknesses.map(f => `${f.label}: ${f.correct}/${f.n} (${f.percentage}%) — ${conf(f.confidence)}.`);
-  for (const t of report.hiddenWeakTasks) improve.push(`نوع المهمة «${t.label}»: ${t.correct}/${t.n} (${t.percentage}%) — ${conf(t.confidence)}.`);
+  const improve = report.weaknesses.map(f => `${f.label}: ${f.correct}/${f.n} (${f.percentage}%) — نقطة ضعف (${conf(f.confidence)}).`);
+  for (const f of (report.developing ?? []).filter(f => f.lean !== LEAN.STRONG)) improve.push(unitLine(f));
+  for (const t of report.hiddenWeakTasks) improve.push(`نوع المهمة «${t.label}»: ${t.correct}/${t.n} (${t.percentage}%) — نقطة ضعف (${conf(t.confidence)}).`);
   if (!improve.length) improve.push(o.answered < EVIDENCE.minForClaim || report.levels.family.every(f => f.status === STATUS.INSUFFICIENT)
     ? 'لا توجد أدلة كافية بعد لتحديد ما يحتاج إلى تحسين.'
     : 'لا توجد نقطة ضعف مؤكدة بالأدلة المتاحة.');
@@ -455,6 +605,7 @@ export function weakFamiliesFrom(stats, familyIds) {
       const accuracy = attempts ? Number(s.correct || 0) / attempts : null;
       return {id, attempts, accuracy};
     })
-    .filter(x => x.attempts >= EVIDENCE.minForClaim && x.accuracy !== null && x.accuracy <= EVIDENCE.weakness)
+    .filter(x => x.attempts >= EVIDENCE.minForClaim && x.accuracy !== null
+      && judge(Math.round(x.accuracy * x.attempts), x.attempts).status === STATUS.WEAKNESS)
     .sort((a, b) => a.accuracy - b.accuracy || b.attempts - a.attempts);
 }

@@ -1,4 +1,5 @@
-import {isKnownMisconception, buildOptionFeedback, CORRECT_FEEDBACK} from './qa/misconceptions.js';
+import {isKnownMisconception, CORRECT_FEEDBACK} from './qa/misconceptions.js';
+import {renderRationale} from './qa/rationale.js';
 import {REASON} from './qa/reasons.js';
 
 // RC2.6-3. Every personal name the generators draw from, so the stem skeleton
@@ -93,7 +94,11 @@ export function makeOptionSet({
   distractors,
   rng,
   format = v => String(v),
-  preferredCorrectLetter = null
+  preferredCorrectLetter = null,
+  // RC2.9.4-A1. Where the options are shown, so the rationale can be rendered
+  // for this family and template rather than from a family-blind sentence.
+  family = null,
+  templateId = null
 }) {
   const correctFormatted = format(correct);
   const seenFormatted = new Set([correctFormatted]);
@@ -176,10 +181,14 @@ export function makeOptionSet({
     } else {
       const item = shuffledWrong[wi++];
       options[letter] = item.formatted;
-      distractorAnalysis[letter] = buildOptionFeedback({
+      // RC2.9.4-A1. Rendered from the option's own provenance and the site it
+      // is shown at; see src/qa/rationale.js.
+      distractorAnalysis[letter] = renderRationale({
         optionText: item.formatted,
+        value: item.value,
         misconceptionId: item.misconceptionId,
-        derivation: item.derivation
+        derivation: item.derivation,
+        family, templateId
       });
       // RC2-012: which step of the published solution this error corrupts.
       optionsMeta[letter] = {correct: false, value: item.value, misconceptionId: item.misconceptionId, derivation: item.derivation, reasoningStepAffected: item.reasoningStepAffected};
@@ -260,7 +269,9 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
     distractors: base.distractors,
     rng,
     format: base.format || (v => String(v)),
-    preferredCorrectLetter
+    preferredCorrectLetter,
+    family: base.family,
+    templateId: base.template_id
   });
 
   const complexity = computeComplexity(base.complexityFactors || {});
@@ -354,8 +365,10 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
       answer: base.explanation.answer || `الإجابة الصحيحة: ${optionSet.correct_value}.`,
       fast_method: tidyArithmetic(base.explanation.fast_method || null),
       remember: tidyArithmetic(base.explanation.remember),
-      distractor_analysis: Object.fromEntries(Object.entries(optionSet.distractor_analysis)
-        .map(([letter, text]) => [letter, tidyArithmetic(text)]))
+      // RC2.9.4-A1. Not tidied here: the rationale renderer decides what of a
+      // derivation to print, and a whole-text tidy is what turned «1 × 4» into
+      // «وهي ناتج 4».
+      distractor_analysis: optionSet.distractor_analysis
     },
     metadata: {
       generated: true,
