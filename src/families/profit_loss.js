@@ -753,7 +753,7 @@ function sellPriceFromProfitRate(ctx) {
     ],
     howToStart: 'احسب مقدار الربح من التكلفة، ثم أضفه إليها.',
     remember: 'نسبة الربح تُحسب من التكلفة، وسعر البيع = التكلفة + الربح.',
-    fastMethod: `${cost} + (${cost} × ${pct} ÷ 100).`,
+    fastMethod: `سعر البيع = التكلفة + ربحها — هنا ${cost} + (${cost} × ${pct} ÷ 100).`,
     estimatedSteps: 2, conceptTags: ['profit', 'forward'],
     parameters: {costPrice: cost, profitPercent: pct},
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, 100), mul(cost, 100 + pct))]},
@@ -795,7 +795,7 @@ function costFromProfitAmount(ctx) {
     ],
     howToStart: 'اكتب العلاقة بين الربح والتكلفة، ثم اعكسها.',
     remember: 'مقدار الربح جزء من التكلفة، فالتكلفة أكبر منه دائمًا.',
-    fastMethod: `${profit} × 100 ÷ ${pct}.`,
+    fastMethod: `التكلفة = مقدار الربح × 100 ÷ نسبته — هنا ${profit} × 100 ÷ ${pct}.`,
     estimatedSteps: 2, conceptTags: ['profit', 'recover-original'],
     parameters: {profitAmount: profit, profitPercent: pct},
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, pct), mul(profit, 100))]},
@@ -827,8 +827,9 @@ function betterSale(ctx) {
     mk(aCost * bPct / 100, 'RATE_APPLIED_TO_WRONG_COUNT', `${aCost} × ${bPct} ÷ 100`),
     mk(bCost * aPct / 100, 'RATE_APPLIED_TO_WRONG_COUNT', `${bCost} × ${aPct} ÷ 100`)
   ], {maxDecimals: 2});
+  const shop = rng.pick(['متجر', 'معرض أثاث', 'محل إلكترونيات', 'بقالة', 'متجر أدوات']);
   const stem = composeSentences(ctx,
-    `المعطيات: صفقة أولى تكلفتها ${u(aCost, 'dirham')} وربحها ${aPct}%؛ صفقة ثانية تكلفتها ${u(bCost, 'dirham')} وربحها ${bPct}%. المطلوب: أكبر ربح بالدرهم بين الصفقتين.`);
+    `في ${shop} صفقة أولى تكلفتها ${u(aCost, 'dirham')} وربحها ${aPct}%، وصفقة ثانية تكلفتها ${u(bCost, 'dirham')} وربحها ${bPct}%. ما أكبر ربح بالدرهم بين الصفقتين؟`);
   return buildBase(ctx, {
     templateId: 'PL_E_BETTER_SALE',
     subskill: 'المقارنة بين ربحي صفقتين',

@@ -86,7 +86,11 @@ test('RC2-015: the RC1 boundaries put the median easy question in medium', () =>
   // literal: the tertile rule moves the boundaries whenever the template
   // population changes (RC2.4, RC2.7), and a pinned score would make this test
   // fail on a legitimate recalibration instead of on the defect it guards.
-  const typicalMedium = BAND_BOUNDARIES.easyMedium + 0.4;
+  // RC2.9.5. Taken from the MIDDLE of the medium band rather than just above its
+  // floor: this release moved the tertiles to 8.0/13.2, and a probe sitting 0.4
+  // above the floor is inside RC1's medium band too, which would have made the
+  // test report a pass for the wrong reason.
+  const typicalMedium = (BAND_BOUNDARIES.easyMedium + BAND_BOUNDARIES.mediumHard) / 2;
   assert.equal(rc1Band(6.4), 'medium', 'the median easy question read as medium under RC1');
   assert.equal(rc1Band(typicalMedium), 'hard', 'and a typical medium question read as hard');
   assert.equal(bandFor(6.4), 'easy');

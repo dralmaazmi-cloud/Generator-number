@@ -45,7 +45,11 @@ export const RULE_FAMILY = Object.freeze({
   SEQ_M_RULE_ID: 'linear-recurrence',
   SEQ_M_RULE_APPLY: 'linear-recurrence',
   SEQ_M_MISSING_OP: 'alternating-operations',
-  SEQ_M_CANDIDATE: 'constant-difference'
+  SEQ_M_CANDIDATE: 'constant-difference',
+  // RC2.9.5 §4. Two EASY jobs over a constant-difference run: the first term
+  // past a bound, and the sum of the terms shown.
+  SEQ_E_FIRST_ABOVE: 'constant-difference',
+  SEQ_E_SUM_SHOWN: 'constant-difference'
 });
 
 /** Targets that are «what comes next», however the template labels them. */

@@ -11,6 +11,10 @@ export function generateAges({difficulty, rng, seed, engineVersion, telemetry, p
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
   return bandPool(rng, 'ages', difficulty, [
     ['AGE_E_SUM_DIFF', sumDifference],
+    // RC2.9.5 §4. Two EASY jobs: the gap between two stated ages, and the sum
+    // of two ages at a later time.
+    ['AGE_E_GAP', ageGap],
+    ['AGE_E_TOTAL_AFTER', totalAfterYears],
     ['AGE_E_MULT_DIFF', multipleDifference],
     ['AGE_M_FUT_SUM_DIFF', futureSumDifference],
     ['AGE_M_RATIO_FUT_SUM', currentRatioFutureSum],
@@ -947,5 +951,88 @@ function yearsUntilSum(ctx) {
     },
     complexityFactors: {reasoningTransformations: 2, conceptCount: 2, stageCount: 2, arithmeticBurden: 2},
     textParams: {essentialParams: ['firstAge', 'secondAge', 'targetSum']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: the gap between two stated ages. */
+function ageGap(ctx) {
+  const {rng} = ctx;
+  const [a, b] = rng.sample(MALE_NAMES, 2);
+  const older = rng.int(28, 52);
+  const younger = older - rng.pick([4, 6, 7, 9, 11, 13]);
+  if (younger < 8) return resample(ctx, ageGap);
+  const correct = older - younger;
+  const distractors = usable(ctx, [
+    mk(older + younger, 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `${older} + ${younger}`),
+    mk(older, 'USED_GIVEN_VALUE_AS_ANSWER', `العمر المعطى ${older}`),
+    mk(younger, 'USED_GIVEN_VALUE_AS_ANSWER', `العمر المعطى ${younger}`),
+    mk(Math.round((older + younger) / 2), 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${older} + ${younger}) ÷ 2`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `(${older} − ${younger}) × 2`),
+    mk(correct + 1, 'OFF_BY_ONE_STEP', `${older} − ${younger} + 1`),
+    mk(Math.round(older / younger), 'REVERSED_DIRECT_PROPORTION', `${older} ÷ ${younger}`)
+  ], {maxDecimals: 1});
+  const stem = composeSentences(ctx, `عمر ${a} ${u(older, 'year')} وعمر ${b} ${u(younger, 'year')}. كم سنة الفرق بين عمريهما؟`);
+  return buildBase(ctx, {
+    templateId: 'AGE_E_GAP',
+    subskill: 'الفرق بين عمرين معلومين',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('year'),
+    steps: [`الفرق = ${older} − ${younger} = ${correct}.`],
+    howToStart: 'اطرح العمر الأصغر من الأكبر.',
+    remember: 'الفرق بين عمرين ثابت مهما مرت السنوات.',
+    fastMethod: `الفرق = العمر الأكبر − العمر الأصغر — هنا ${older} − ${younger}.`,
+    estimatedSteps: 1, conceptTags: ['ages', 'difference'],
+    parameters: {olderAge: older, youngerAge: younger},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(add(X, younger), older)]},
+    askedUnknown: 'ageGapNow', stageCount: 1,
+    pedagogy: {targetSkill: 'AGE_DIFFERENCE', targetMisconception: 'ADDED_WHERE_A_DIFFERENCE_BELONGS',
+      wrongMethodValue: older + younger},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {essentialParams: ['olderAge', 'youngerAge']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: the SUM of two ages a stated number of years from now. */
+function totalAfterYears(ctx) {
+  const {rng} = ctx;
+  const [a, b] = rng.sample(MALE_NAMES, 2);
+  const first = rng.int(9, 24);
+  const second = rng.int(9, 24);
+  const years = rng.pick([3, 4, 5, 6, 8]);
+  if (first === second) return resample(ctx, totalAfterYears);
+  const correct = first + second + 2 * years;
+  const distractors = usable(ctx, [
+    mk(first + second, 'MISSED_ONE_STAGE', `${first} + ${second}`),
+    mk(first + second + years, 'RATE_APPLIED_TO_WRONG_COUNT', `${first} + ${second} + ${years}`),
+    mk(first + years, 'SOLVED_ONE_CONDITION_ONLY', `${first} + ${years}`),
+    mk(second + years, 'SOLVED_ONE_CONDITION_ONLY', `${second} + ${years}`),
+    mk(Math.abs(first - second) + 2 * years, 'USED_DIFFERENCE_AS_ANSWER', `(${Math.max(first, second)} − ${Math.min(first, second)}) + ${years} × 2`),
+    mk(first + second + 4 * years, 'APPLIED_STEP_TWICE', `${first} + ${second} + ${years} × 4`),
+    mk(first + second + 2 * years + 1, 'OFF_BY_ONE_STEP', `${first} + ${second} + ${years} × 2 + 1`)
+  ]);
+  const stem = composeSentences(ctx, `عمر ${a} اليوم ${u(first, 'year')} وعمر ${b} ${u(second, 'year')}. ما مجموع عمريهما بعد ${u(years, 'year')}؟`);
+  return buildBase(ctx, {
+    templateId: 'AGE_E_TOTAL_AFTER',
+    subskill: 'مجموع عمرين بعد عدد من السنوات',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('year'),
+    steps: [
+      `كل منهما يكبر ${years} سنوات، فالزيادة على المجموع = ${years} × 2 = ${2 * years}.`,
+      `المجموع بعد ${years} سنوات = ${first} + ${second} + ${2 * years} = ${correct}.`
+    ],
+    howToStart: 'لاحظ أن كل شخص يكبر بالعدد نفسه، فالمجموع يزيد ضعف تلك السنوات.',
+    remember: 'مجموع عمرين يزيد بمقدار السنوات مضروبة في عدد الأشخاص.',
+    fastMethod: `المجموع لاحقًا = المجموع الآن + السنوات × عدد الأشخاص — هنا ${first} + ${second} + ${years} × 2.`,
+    estimatedSteps: 2, conceptTags: ['ages', 'combine'],
+    parameters: {firstAge: first, secondAge: second, yearsAhead: years},
+    oracle: {kind: 'constraint', answerKind: 'number',
+      constraints: [eq(X, add(first, second, mul(2, years)))]},
+    askedUnknown: 'sumOfAgesAfterYears', stageCount: 2,
+    pedagogy: {targetSkill: 'AGES_SUM_LATER', targetMisconception: 'RATE_APPLIED_TO_WRONG_COUNT',
+      wrongMethodValue: first + second + years},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['firstAge', 'secondAge', 'yearsAhead']}
   });
 }

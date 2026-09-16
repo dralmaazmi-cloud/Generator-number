@@ -84,6 +84,18 @@ export function runOracle(base, q) {
       && numbers.every(n => r.test(n)));
     if (!shared.some(r => r.id === intended.id)) reasons.push(REASON.ORACLE_DISAGREEMENT);
     if (shared.length > 1) reasons.push(REASON.AMBIGUOUS_ODD_ONE_OUT);
+    // RC2.9.5 §4. A third job over the same set: how many of the printed
+    // numbers satisfy a property the question STATES. The rule is named in the
+    // stem, so the set need not share it — what must hold is that the count is
+    // read from the numbers as printed, which is what this recomputes.
+    if (spec.mode === 'count') {
+      const hits = numbers.filter(n => intended.test(n)).length;
+      const clean = reasons.filter(r => r !== REASON.ORACLE_DISAGREEMENT && r !== REASON.AMBIGUOUS_ODD_ONE_OUT);
+      if (Number(base.correct) !== hits) clean.push(REASON.ORACLE_DISAGREEMENT);
+      if (hits === 0 || hits === numbers.length) clean.push(REASON.ORACLE_NON_UNIQUE);
+      return {ran: true, reasons: clean, answer: hits, display: [String(hits)],
+        detail: {numbers, rule: intended.id, hits}};
+    }
     if (spec.mode === 'extend') {
       const fits = (spec.options ?? []).map(Number).filter(n => intended.test(n));
       if (fits.length !== 1) reasons.push(REASON.ORACLE_NON_UNIQUE);

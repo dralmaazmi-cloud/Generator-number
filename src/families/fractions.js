@@ -553,10 +553,9 @@ function partOfQuantity(ctx) {
     mk(unitCount - correct, 'ANSWERED_THE_OTHER_COMPONENT', `${unitCount} − ${correct}`),
     mk(unitCount, 'USED_GIVEN_VALUE_AS_ANSWER', `الكمية المعطاة ${unitCount}`),
     mk(unitCount * den / num_, 'REVERSED_DIRECT_PROPORTION', `${unitCount} × ${den} ÷ ${num_}`),
-    mk(correct + one, 'OFF_BY_ONE_STEP', `${correct} + ${one}`),
-    mk(correct - one, 'OFF_BY_ONE_STEP', `${correct} − ${one}`),
-    mk(unitCount / (den + num_), 'RATE_APPLIED_TO_WRONG_COUNT', `${unitCount} ÷ (${den} + ${num_})`),
     mk(one * (num_ + 1), 'OFF_BY_ONE_STEP', `${one} × (${num_} + 1)`),
+    mk(one * Math.max(1, num_ - 1), 'MISREAD_THE_STEP', `${one} × (${num_} − 1)`),
+    mk(unitCount / (den + num_), 'RATE_APPLIED_TO_WRONG_COUNT', `${unitCount} ÷ (${den} + ${num_})`),
     mk(unitCount - one, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${unitCount} − ${one}`),
     mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`)
   ], {maxDecimals: 2});
@@ -573,7 +572,7 @@ function partOfQuantity(ctx) {
     ],
     howToStart: 'اقسم الكمية على المقام لتعرف الجزء الواحد، ثم اضرب في البسط.',
     remember: 'الكسر من كمية: قسمة على المقام ثم ضرب في البسط.',
-    fastMethod: `${unitCount} ÷ ${den} × ${num_}.`,
+    fastMethod: `الكسر من كمية = القسمة على المقام ثم الضرب في البسط — هنا ${unitCount} ÷ ${den} × ${num_}.`,
     estimatedSteps: 2, conceptTags: ['fractions', 'part-of-quantity'],
     parameters: {quantity: unitCount, denominator: den, numerator: num_},
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, den), mul(unitCount, num_))]},
@@ -594,15 +593,21 @@ function partOfQuantity(ctx) {
 /** RC2.9.5 §4. EASY: the fraction that SURVIVES one taking — the complement, not the part. */
 function remainingFractionEasy(ctx) {
   const {rng} = ctx;
-  const den = rng.pick([4, 5, 6, 8, 10]);
-  const num_ = rng.pick([1, 2, 3]).valueOf();
-  if (num_ >= den) return resample(ctx, remainingFractionEasy);
+  // The fraction is SAID here too, so the same closed list of sayable fractions
+  // applies: a numeral in front of a fraction plural («2 أثمان») is not Arabic.
+  const SAID = [
+    {n: 1, den: 4, ar: 'ربع'}, {n: 3, den: 4, ar: 'ثلاثة أرباع'},
+    {n: 1, den: 5, ar: 'خُمس'}, {n: 3, den: 5, ar: 'ثلاثة أخماس'},
+    {n: 1, den: 6, ar: 'سدس'}, {n: 1, den: 8, ar: 'ثُمن'},
+    {n: 3, den: 8, ar: 'ثلاثة أثمان'}, {n: 1, den: 10, ar: 'عُشر'},
+    {n: 3, den: 10, ar: 'ثلاثة أعشار'}
+  ];
+  const chosen = rng.pick(SAID);
+  const den = chosen.den, num_ = chosen.n, said = chosen.ar;
   const total = den * rng.pick([6, 8, 9, 12]);
   const taken = total / den * num_;
   const correct = total - taken;
-  const NAMES = {4: 'ربع', 5: 'خُمس', 6: 'سدس', 8: 'ثُمن', 10: 'عُشر'};
-  const PLURAL = {4: 'أرباع', 5: 'أخماس', 6: 'أسداس', 8: 'أثمان', 10: 'أعشار'};
-  const said = num_ === 1 ? NAMES[den] : `${num_} ${PLURAL[den]}`;
+  const seller = rng.pick(PERSONS);
   const distractors = usable(ctx, [
     mk(taken, 'ANSWERED_THE_OTHER_COMPONENT', `${total} ÷ ${den} × ${num_}`),
     mk(total, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `الكمية الكلية ${total}`),
@@ -615,7 +620,7 @@ function remainingFractionEasy(ctx) {
     mk(total + taken, 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `${total} + ${taken}`),
     mk(taken * (den - num_), 'RATE_APPLIED_TO_WRONG_COUNT', `${taken} × (${den} − ${num_})`)
   ], {maxDecimals: 2});
-  const stem = composeSentences(ctx, `عند بائع ${u(total, 'dirham')}. أنفق ${said} هذا المبلغ. كم درهمًا بقي معه؟`);
+  const stem = composeSentences(ctx, `عند ${seller.w} ${u(total, 'dirham')}. أنفق${seller.g === 'f' ? 'ت' : ''} ${said} هذا المبلغ. كم درهمًا بقي مع${seller.g === 'f' ? 'ها' : 'ه'}؟`);
   return buildBase(ctx, {
     templateId: 'FRAC_E_REMAINING_FRACTION',
     subskill: 'حساب الباقي بعد أخذ جزء كسري واحد',
@@ -628,7 +633,7 @@ function remainingFractionEasy(ctx) {
     ],
     howToStart: 'احسب الجزء المأخوذ أولًا، ثم اطرحه من الكل.',
     remember: 'السؤال عن الباقي لا عن المأخوذ: الخطوة الأخيرة طرح.',
-    fastMethod: `${total} − (${total} ÷ ${den} × ${num_}).`,
+    fastMethod: `الباقي = الكل − الجزء المأخوذ — هنا ${total} − (${total} ÷ ${den} × ${num_}).`,
     estimatedSteps: 2, conceptTags: ['fractions', 'remainder'],
     parameters: {amount: total, denominator: den, numerator: num_, takenAmount: taken},
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, sub(total, taken))]},
@@ -667,7 +672,7 @@ function countParts(ctx) {
     steps: [`عدد الصناديق = ${total} ÷ ${partSize} = ${correct}.`],
     howToStart: 'اقسم الكمية الكلية على سعة الصندوق الواحد.',
     remember: 'عدد الأجزاء = الكمية ÷ حجم الجزء، لا العكس.',
-    fastMethod: `${total} ÷ ${partSize}.`,
+    fastMethod: `عدد الأجزاء = الكمية ÷ حجم الجزء — هنا ${total} ÷ ${partSize}.`,
     estimatedSteps: 1, conceptTags: ['fractions', 'partition'],
     parameters: {quantity: total, partSize},
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, partSize), total)]},

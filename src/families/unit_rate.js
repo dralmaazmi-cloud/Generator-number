@@ -598,7 +598,7 @@ function unitPriceFromTotal(ctx) {
     steps: [`سعر الكتاب الواحد = ${total} ÷ ${count} = ${correct}.`],
     howToStart: 'اقسم المبلغ الكلي على عدد الوحدات.',
     remember: 'قيمة الوحدة الواحدة هي المبلغ مقسومًا على العدد، لا مضروبًا فيه.',
-    fastMethod: `${total} ÷ ${count}.`,
+    fastMethod: `سعر الوحدة = المبلغ ÷ العدد — هنا ${total} ÷ ${count}.`,
     estimatedSteps: 1, conceptTags: ['unit-rate', 'unit-value'],
     parameters: {itemCount: count, totalPrice: total},
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, count), total)]},
@@ -637,7 +637,7 @@ function countWithinBudget(ctx) {
     steps: [`عدد الكتب = ${budget} ÷ ${unitPrice} = ${correct}.`],
     howToStart: 'اقسم المبلغ على سعر الوحدة الواحدة.',
     remember: 'السؤال عن عدد لا عن سعر، فالقسمة على السعر لا على العدد.',
-    fastMethod: `${budget} ÷ ${unitPrice}.`,
+    fastMethod: `عدد الوحدات = المبلغ ÷ سعر الوحدة — هنا ${budget} ÷ ${unitPrice}.`,
     estimatedSteps: 1, conceptTags: ['unit-rate', 'count'],
     parameters: {budget, unitPrice},
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, unitPrice), budget)]},
@@ -670,8 +670,11 @@ function cheaperPerUnit(ctx) {
     mk((aTotal + bTotal) / (aCount + bCount), 'ANSWERED_THE_OTHER_COMPONENT', `(${aTotal} + ${bTotal}) ÷ (${aCount} + ${bCount})`),
     mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`)
   ], {maxDecimals: 2});
+  const SHOPS = ['بقالة', 'متجر', 'مخبز', 'متجر أدوات', 'مكتبة'];
+  const shopA = rng.pick(SHOPS);
+  const shopB = rng.pick(SHOPS.filter(s => s !== shopA));
   const stem = composeSentences(ctx,
-    `العرض الأول: ${u(aCount, 'can')} بمبلغ ${u(aTotal, 'dirham')}. العرض الثاني: ${u(bCount, 'can')} بمبلغ ${u(bTotal, 'dirham')}. ما سعر العلبة الواحدة في العرض الأوفر؟`);
+    `في ${shopA} تُباع ${u(aCount, 'can', 'oblique')} بمبلغ ${u(aTotal, 'dirham')}، وفي ${shopB} تُباع ${u(bCount, 'can', 'oblique')} بمبلغ ${u(bTotal, 'dirham')}. ما سعر العلبة الواحدة في العرض الأوفر؟`);
   return buildBase(ctx, {
     templateId: 'RATE_E_BETTER_DEAL',
     subskill: 'المقارنة بين عرضين بسعر الوحدة',

@@ -13,6 +13,12 @@ export function generateRatios({difficulty, rng, seed, engineVersion, telemetry,
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
   return bandPool(rng, 'ratios', difficulty, [
     ['RAT_E_KNOWN', scaleKnown],
+    // RC2.9.5 §4. Three EASY jobs on a ratio that are not «find the other
+    // side»: counting its parts, the gap between two shares, and naming the
+    // ratio in its simplest form.
+    ['RAT_E_PART_COUNT', totalParts],
+    ['RAT_E_SHARE_GAP', shareGapFromTotal],
+    ['RAT_E_COMMON_FACTOR', commonFactorOfTerms],
     ['RAT_E_SPLIT', splitTotal],
     ['RAT_M_COMMON_SUM', commonTermSum],
     ['RAT_M_COMMON_DIFF', commonTermDifference],
@@ -897,5 +903,142 @@ function thirdShareFromGap(ctx) {
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 3},
     textParams: {essentialParams: ['partA', 'partB', 'partC', 'shareGap']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: how many equal parts a ratio divides a whole into. */
+function totalParts(ctx) {
+  const {rng} = ctx;
+  const a = rng.pick([2, 3, 4, 5, 7]);
+  const b = rng.pick([3, 5, 6, 8, 9].filter(v => v !== a && gcd(v, a) === 1));
+  const correct = a + b;
+  const distractors = usable(ctx, [
+    mk(a, 'USED_GIVEN_VALUE_AS_ANSWER', `الطرف الأول المعطى ${a}`),
+    mk(b, 'USED_GIVEN_VALUE_AS_ANSWER', `الطرف الثاني المعطى ${b}`),
+    mk(Math.abs(b - a), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(a, b)} − ${Math.min(a, b)}`),
+    mk(a * b, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${a} × ${b}`),
+    mk(correct - 1, 'OFF_BY_ONE_STEP', `${a} + ${b} − 1`),
+    mk(correct + 1, 'OFF_BY_ONE_STEP', `${a} + ${b} + 1`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `(${a} + ${b}) × 2`)
+  ]);
+  const stem = composeSentences(ctx, `قُسم مبلغ بين شخصين بنسبة ${a} : ${b}. إلى كم جزءًا متساويًا قُسم المبلغ؟`);
+  return buildBase(ctx, {
+    templateId: 'RAT_E_PART_COUNT',
+    subskill: 'عدد أجزاء النسبة',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: v => String(v),
+    steps: [`عدد الأجزاء = ${a} + ${b} = ${correct}.`],
+    howToStart: 'اجمع طرفَي النسبة: هما عدد الأجزاء المتساوية.',
+    remember: 'النسبة تقسم الكل إلى مجموع طرفيها من الأجزاء.',
+    fastMethod: `عدد الأجزاء = مجموع طرفَي النسبة — هنا ${a} + ${b}.`,
+    estimatedSteps: 1, conceptTags: ['ratio', 'parts'],
+    parameters: {firstPart: a, secondPart: b},
+    orderInsensitive: [],
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, add(a, b))]},
+    askedUnknown: 'ratioPartCount', stageCount: 1,
+    pedagogy: {targetSkill: 'RATIO_PARTS', targetMisconception: 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE',
+      wrongMethodValue: a * b},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {essentialParams: ['firstPart', 'secondPart']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: the GAP between two shares, not either share. */
+function shareGapFromTotal(ctx) {
+  const {rng} = ctx;
+  const a = rng.pick([2, 3, 4, 5]);
+  const b = rng.pick([5, 7, 8, 9].filter(v => v > a && gcd(v, a) === 1));
+  const unit = rng.pick([6, 8, 9, 12, 15]);
+  const total = (a + b) * unit;
+  const correct = (b - a) * unit;
+  if (total > 400) return resample(ctx, shareGapFromTotal);
+  const distractors = usable(ctx, [
+    mk(total, 'USED_GIVEN_VALUE_AS_ANSWER', `المبلغ المعطى ${total}`),
+    mk(b * unit, 'ANSWERED_THE_OTHER_COMPONENT', `${b} × ${unit}`),
+    mk(a * unit, 'ANSWERED_THE_OTHER_COMPONENT', `${a} × ${unit}`),
+    mk(b - a, 'MISSED_ONE_STAGE', `${b} − ${a}`),
+    mk(unit, 'STOPPED_AT_UNIT_RATE', `${total} ÷ ${a + b}`),
+    mk(total / 2, 'ASSUMED_EQUAL_SHARES', `${total} ÷ 2`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `(${b} − ${a}) × ${unit} × 2`)
+  ]);
+  const stem = composeSentences(ctx, `قُسم مبلغ قدره ${u(total, 'dirham')} بين شخصين بنسبة ${a} : ${b}. ما الفرق بين نصيبيهما؟`);
+  return buildBase(ctx, {
+    templateId: 'RAT_E_SHARE_GAP',
+    subskill: 'الفرق بين نصيبين في قسمة نسبية',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `قيمة الجزء الواحد = ${total} ÷ (${a} + ${b}) = ${unit}.`,
+      `الفرق = (${b} − ${a}) × ${unit} = ${correct}.`
+    ],
+    howToStart: 'اقسم المبلغ على مجموع الأجزاء، ثم اضرب فرق الأجزاء في قيمة الجزء.',
+    remember: 'الفرق بين النصيبين يقابل فرق الأجزاء، لا مجموعها.',
+    fastMethod: `الفرق = فرق الأجزاء × قيمة الجزء — هنا (${b} − ${a}) × ${total} ÷ (${a} + ${b}).`,
+    estimatedSteps: 2, conceptTags: ['ratio', 'difference'],
+    parameters: {firstPart: a, secondPart: b, totalAmount: total},
+    oracle: {kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, a + b), mul(total, b - a))]},
+    askedUnknown: 'ratioShareGap', stageCount: 2,
+    pedagogy: {targetSkill: 'RATIO_SHARE_GAP', targetMisconception: 'ASSUMED_EQUAL_SHARES',
+      wrongMethodValue: total / 2},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {derivedFromParams: [], essentialParams: ['firstPart', 'secondPart', 'totalAmount']}
+  });
+}
+
+/**
+ * RC2.9.5 §4. EASY: the largest number that divides both terms of a ratio.
+ *
+ * The job is IDENTIFY_RULE — a fact about the pair rather than a quantity
+ * computed from a story — and it is the step simplification rests on.
+ */
+function commonFactorOfTerms(ctx) {
+  const {rng} = ctx;
+  const a = rng.pick([2, 3, 4, 5, 7]);
+  const b = rng.pick([3, 5, 6, 8, 9].filter(v => v !== a && gcd(v, a) === 1));
+  // The shared factor must differ from both simplified terms: if k equalled a,
+  // the "answered the simplified term" distractor would BE the key, and the
+  // item would have two correct options.
+  const k = rng.pick([3, 4, 5, 6, 7, 8, 9].filter(v => v !== a && v !== b));
+  const A = a * k, B = b * k;
+  const hi = Math.max(A, B), lo = Math.min(A, B);
+  const correct = k;
+  const distractors = usable(ctx, [
+    mk(a, 'ANSWERED_THE_OTHER_COMPONENT', `الطرف المبسط الأول ${a}`),
+    mk(b, 'ANSWERED_THE_OTHER_COMPONENT', `الطرف المبسط الثاني ${b}`),
+    mk(hi - lo, 'USED_DIFFERENCE_AS_ANSWER', `${hi} − ${lo}`),
+    mk((hi - lo) * 2, 'APPLIED_STEP_TWICE', `(${hi} − ${lo}) × 2`),
+    mk(a + b, 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `${a} + ${b}`),
+    mk(lo, 'USED_GIVEN_VALUE_AS_ANSWER', `أصغر الطرفين ${lo}`),
+    mk(hi, 'USED_GIVEN_VALUE_AS_ANSWER', `أكبر الطرفين ${hi}`),
+    mk(A + B, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${A} + ${B}`),
+    mk(a * b, 'MULTIPLIED_COUNTS_INSTEAD_OF_RATE', `${a} × ${b}`),
+    mk(hi + lo - (a + b), 'STOPPED_AT_INTERMEDIATE_TOTAL', `(${hi} + ${lo}) − (${a} + ${b})`),
+    mk(Math.round(hi / lo * 2), 'REVERSED_DIRECT_PROPORTION', `${hi} ÷ ${lo} × 2`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'RAT_E_COMMON_FACTOR',
+    subskill: 'القاسم المشترك الأكبر لطرفي نسبة',
+    difficulty: 'easy',
+    question: `ما أكبر عدد يقسم طرفَي النسبة ${A} : ${B} معًا؟`,
+    correct, distractors, format: v => String(v),
+    steps: [
+      `${A} ÷ ${k} = ${a}، وهو عدد صحيح.`,
+      `${B} ÷ ${k} = ${b}، وهو عدد صحيح، ولا يقسمهما معًا عدد أكبر من ${k}.`
+    ],
+    howToStart: 'جرّب أكبر الأعداد التي تقسم الطرف الأصغر، ثم اختبرها على الطرف الآخر.',
+    remember: 'القاسم المشترك الأكبر هو ما يبسّط النسبة دفعة واحدة.',
+    fastMethod: `القاسم المشترك الأكبر يقسم الطرفين بلا باقٍ — هنا ابحث عن أكبر عدد يقسم ${A} و${B} معًا.`,
+    estimatedSteps: 2, conceptTags: ['ratio', 'common-factor'],
+    parameters: {firstTerm: A, secondTerm: B, simplifiedFirst: a, simplifiedSecond: b},
+    oracle: {kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, a), A), eq(mul(X, b), B)]},
+    askedUnknown: 'ratioCommonFactor', stageCount: 1,
+    pedagogy: {targetSkill: 'GREATEST_COMMON_FACTOR', targetMisconception: 'ANSWERED_THE_OTHER_COMPONENT',
+      wrongMethodValue: a},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 2},
+    textParams: {derivedFromParams: ['simplifiedFirst', 'simplifiedSecond'], essentialParams: ['firstTerm', 'secondTerm']}
   });
 }

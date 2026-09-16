@@ -588,8 +588,9 @@ function shareOfOutput(ctx) {
     mk(aRate * (hours + 1), 'OFF_BY_ONE_STEP', `${aRate} × (${hours} + 1)`),
     mk(joint - correct * 2, 'APPLIED_STEP_TWICE', `${joint} − ${correct} × 2`)
   ], {maxDecimals: 2});
+  const site = rng.pick(['مصنع', 'ورشة', 'مطبعة', 'معمل ألبان', 'مصنع تعليب']);
   const stem = composeSentences(ctx,
-    `تعمل آلتان معًا ${u(hours, 'hour')}. تنتج الأولى ${u(aRate, 'piecePerHour')} وتنتج الثانية ${u(bRate, 'piecePerHour')}. كم قطعة أنتجت الآلة الأولى وحدها؟`);
+    `في ${site} تعمل آلتان معًا ${u(hours, 'hour')}. تنتج الأولى ${u(aRate, 'piecePerHour')} وتنتج الثانية ${u(bRate, 'piecePerHour')}. كم قطعة أنتجت الآلة الأولى وحدها؟`);
   return buildBase(ctx, {
     templateId: 'COMB_E_SHARE_OF_OUTPUT',
     subskill: 'نصيب أحد الطرفين من الإنتاج المشترك',
@@ -599,7 +600,7 @@ function shareOfOutput(ctx) {
     steps: [`إنتاج الآلة الأولى = ${aRate} × ${hours} = ${correct}.`],
     howToStart: 'السؤال عن آلة واحدة، فاضرب معدلها وحدها في الزمن.',
     remember: 'الإنتاج المشترك لا يلزم لحساب نصيب طرف واحد.',
-    fastMethod: `${aRate} × ${hours}.`,
+    fastMethod: `نصيب طرف = معدله وحده × الزمن — هنا ${aRate} × ${hours}.`,
     estimatedSteps: 1, conceptTags: ['combined-rate', 'share'],
     parameters: {firstRate: aRate, secondRate: bRate, hours},
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, mul(aRate, hours))]},
@@ -643,7 +644,7 @@ function timeForTarget(ctx) {
     ],
     howToStart: 'اجمع المعدلين أولًا، ثم اقسم الهدف على المجموع.',
     remember: 'المعدلات المتوازية تُجمع، والزمن يُحسب بعد الجمع لا قبله.',
-    fastMethod: `${target} ÷ (${aRate} + ${bRate}).`,
+    fastMethod: `الزمن = الهدف ÷ مجموع المعدلين — هنا ${target} ÷ (${aRate} + ${bRate}).`,
     estimatedSteps: 2, conceptTags: ['combined-rate', 'time'],
     parameters: {firstRate: aRate, secondRate: bRate, targetOutput: target},
     oracle: {kind: 'constraint', answerKind: 'number',
@@ -682,7 +683,7 @@ function oneRateFromJoint(ctx) {
     steps: [`معدل الثانية = ${joint} − ${known} = ${correct}.`],
     howToStart: 'المعدل المشترك مجموع المعدلين، فاطرح المعروف منه.',
     remember: 'ما يُجمع في الاتجاه الأول يُطرح في الاتجاه العكسي.',
-    fastMethod: `${joint} − ${known}.`,
+    fastMethod: `معدل الطرف الثاني = المعدل المشترك − المعدل المعروف — هنا ${joint} − ${known}.`,
     estimatedSteps: 1, conceptTags: ['combined-rate', 'decompose'],
     parameters: {jointRate: joint, knownRate: known},
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(add(X, known), joint)]},

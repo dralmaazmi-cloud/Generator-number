@@ -5,7 +5,7 @@
 // not all obey the stated rule yields no surviving candidate at all, so a
 // malformed run is rejected rather than published with a plausible-looking key.
 
-import {mk, usable, num, buildBase, eq, X, add, sub, mul, div, resample, bandPool, askOf, distinctValues} from './_shared.js';
+import {mk, usable, num, buildBase, eq, gt, gte, X, add, sub, mul, div, resample, bandPool, askOf, distinctValues} from './_shared.js';
 import {grid} from '../qa/oracle-engine.js';
 
 export function generateSequences({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
@@ -42,6 +42,11 @@ export function generateSequences({difficulty, rng, seed, engineVersion, telemet
     ['SEQ_M_CANDIDATE', candidateSelection],
     // RC2.9.4-B2. A far term from a stated rule, and a count of terms.
     ['SEQ_E_NTH_TERM', nthTermFromRule],
+    // RC2.9.5 §4. Two EASY jobs on an arithmetic run that are neither «what
+    // comes next» nor «what is the nth term»: the first term to pass a stated
+    // bound, and the sum of the terms shown.
+    ['SEQ_E_FIRST_ABOVE', firstTermAbove],
+    ['SEQ_E_SUM_SHOWN', sumOfShownTerms],
     ['SEQ_E_COUNT_TERMS', countTerms]
   ], pinTemplate)(ctx);
 }
@@ -1763,5 +1768,102 @@ function countTerms(ctx) {
     },
     complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 3},
     textParams: false
+  });
+}
+
+/**
+ * RC2.9.5 §4. EASY: the first term of an arithmetic run that passes a bound.
+ *
+ * FIND_THRESHOLD, which the EASY band did not hold: the solver walks the run
+ * forward until a condition turns, rather than reading a term off a position.
+ */
+function firstTermAbove(ctx) {
+  const {rng} = ctx;
+  const first = rng.int(3, 12);
+  const step = rng.pick([4, 5, 6, 7, 8]);
+  const shown = [first, first + step, first + 2 * step, first + 3 * step];
+  const jumps = rng.int(5, 9);
+  const bound = first + jumps * step - rng.int(1, step - 1);
+  const k = Math.ceil((bound - shown[0] + 1) / step);
+  const correct = shown[0] + k * step;
+  if (correct <= shown.at(-1) || correct > 400) return resample(ctx, firstTermAbove);
+  // Every derivation is written from the GIVENS — the first term, the step and
+  // the bound — so no wrong option is explained by the answer's own value.
+  const distractors = usable(ctx, [
+    mk(first + (k - 1) * step, 'OFF_BY_ONE_STEP', `${first} + ${step} × ${k - 1}`),
+    mk(first + (k + 1) * step, 'OFF_BY_ONE_STEP', `${first} + ${step} × ${k + 1}`),
+    mk(bound, 'USED_GIVEN_VALUE_AS_ANSWER', `الحد المعطى في الشرط ${bound}`),
+    mk(bound + step, 'APPLIED_STEP_TWICE', `${bound} + ${step}`),
+    mk(shown.at(-1) + step, 'STOPPED_AFTER_FIRST_STAGE', `${shown.at(-1)} + ${step}`),
+    mk(first + (k + 2) * step, 'APPLIED_STEP_TWICE', `${first} + ${step} × ${k + 2}`),
+    mk(first + (k - 2) * step, 'MISREAD_THE_STEP', `${first} + ${step} × ${k - 2}`)
+  ]);
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, firstTermAbove);
+  return buildBase(ctx, {
+    templateId: 'SEQ_E_FIRST_ABOVE',
+    subskill: 'أول حد يتجاوز قيمة معلومة',
+    difficulty: 'easy',
+    question: `متتالية حسابية تبدأ بالحد ${first} وفرقها الثابت ${step}. ما أول حد فيها يتجاوز ${bound}؟`,
+    displayExpression: `${shown.join('، ')}، …`,
+    correct, distractors, format: v => num(v),
+    steps: [
+      `نتقدم بالفرق ${step} من ${first} حتى نتجاوز ${bound}.`,
+      `أول حد يتجاوزه هو ${correct}.`
+    ],
+    howToStart: 'تقدّم بالفرق حدًّا حدًّا حتى تتجاوز القيمة المذكورة، ثم توقف.',
+    remember: '«يتجاوز» تعني أكبر منها تمامًا، لا مساوية لها.',
+    fastMethod: `أضف الفرق الثابت تكرارًا حتى تتجاوز القيمة — هنا ابدأ من ${first} وأضف ${step} حتى تتخطى ${bound}.`,
+    estimatedSteps: 2, conceptTags: ['sequence', 'threshold'],
+    parameters: {firstTerm: first, commonDifference: step, bound, jumpCount: k, answerTerm: correct, shownTerms: shown},
+    reasoningPattern: [`ADD(${step})`],
+    oracle: {kind: 'search', answerKind: 'number', domain: grid(first, first + 60 * step, step),
+      constraints: [gt(X, bound), gte(add(bound, 1), sub(X, step - 1))]},
+    askedUnknown: 'firstTermAboveBound', stageCount: 1,
+    pedagogy: {targetSkill: 'WALK_TO_THRESHOLD', targetMisconception: 'OFF_BY_ONE_STEP',
+      wrongMethodValue: correct - step},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 1, arithmeticBurden: 2},
+    textParams: {derivedFromParams: ['jumpCount', 'answerTerm', 'shownTerms'],
+      essentialParams: ['firstTerm', 'commonDifference', 'bound']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: the sum of the terms shown — a total, not a term. */
+function sumOfShownTerms(ctx) {
+  const {rng} = ctx;
+  const first = rng.int(2, 14);
+  const step = rng.pick([3, 4, 5, 6, 7]);
+  const count = rng.pick([4, 5]);
+  const terms = Array.from({length: count}, (_, i) => first + i * step);
+  const correct = terms.reduce((a, b) => a + b, 0);
+  const distractors = usable(ctx, [
+    mk(terms.at(-1), 'STOPPED_AFTER_FIRST_STAGE', `آخر حد معروض ${terms.at(-1)}`),
+    mk(correct - terms.at(-1), 'MISSED_ONE_STAGE', `${terms.slice(0, -1).join(' + ')}`),
+    mk(terms.reduce((a, b) => a + b, terms.at(-1) + step), 'OFF_BY_ONE_STEP', `${terms.join(' + ')} + ${terms.at(-1) + step}`),
+    mk(terms[0] * count, 'RATE_APPLIED_TO_WRONG_COUNT', `${terms[0]} × ${count}`),
+    mk(terms.at(-1) * count, 'RATE_APPLIED_TO_WRONG_COUNT', `${terms.at(-1)} × ${count}`),
+    mk(terms.reduce((a, b) => a + b, 0) * 2, 'APPLIED_STEP_TWICE', `(${terms.join(' + ')}) × 2`),
+    mk(terms.slice(1).reduce((a, b) => a + b, 0), 'MISSED_ONE_STAGE', `${terms.slice(1).join(' + ')}`)
+  ]);
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, sumOfShownTerms);
+  return buildBase(ctx, {
+    templateId: 'SEQ_E_SUM_SHOWN',
+    subskill: 'مجموع حدود متتالية معروضة',
+    difficulty: 'easy',
+    question: 'ما مجموع الحدود المعروضة في المتتالية الآتية؟',
+    displayExpression: terms.join('، '),
+    correct, distractors, format: v => num(v),
+    steps: [`المجموع = ${terms.join(' + ')} = ${correct}.`],
+    howToStart: 'اجمع الحدود المعروضة كما هي؛ لا يلزم إيجاد حد جديد.',
+    remember: 'السؤال عن مجموع ما هو معروض، لا عن الحد التالي.',
+    fastMethod: `مجموع حدود معروضة = جمعها كما هي — هنا ${terms.join(' + ')}.`,
+    estimatedSteps: 1, conceptTags: ['sequence', 'sum'],
+    parameters: {terms},
+    orderInsensitive: ['terms'],
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, correct)]},
+    askedUnknown: 'sumOfShownTerms', stageCount: 1,
+    pedagogy: {targetSkill: 'SUM_SHOWN_TERMS', targetMisconception: 'STOPPED_AFTER_FIRST_STAGE',
+      wrongMethodValue: terms.at(-1)},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 2},
+    textParams: {essentialParams: ['terms']}
   });
 }

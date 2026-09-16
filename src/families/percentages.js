@@ -21,7 +21,8 @@ export function generatePercentages({difficulty, rng, seed, engineVersion, telem
     // offers. Each changes what is asked and how the givens are laid out.
     ['PCT_E_SHARE_PERCENT', shareAsPercent],
     ['PCT_E_WHOLE', wholeFromPart],
-    ['PCT_E_WHICH_OFFER', whichOfferSavesMore]
+    ['PCT_E_WHICH_OFFER', whichOfferSavesMore],
+    ['PCT_E_REMAINING_PERCENT', remainingPercent]
   ], pinTemplate)(ctx);
 }
 
@@ -654,7 +655,7 @@ function shareAsPercent(ctx) {
   const scene = rng.pick([
     {ar: 'في صف من الطلاب', unit: 'student', verb: 'يشاركون في نادي العلوم', pron: 'منهم'},
     {ar: 'في مكتبة صغيرة', unit: 'book', verb: 'مصنفة في العلوم', pron: 'منها'},
-    {ar: 'في موقف للسيارات', unit: 'car', verb: 'بيضاء اللون', pron: 'منها'}
+    {ar: 'في مشتل صغير', unit: 'seedling', verb: 'جاهزة للزراعة', pron: 'منها'}
   ]);
   const correct = pct;
   const distractors = usable(ctx, [
@@ -681,7 +682,7 @@ function shareAsPercent(ctx) {
     ],
     howToStart: 'اقسم الجزء على الكل أولًا، ثم اضرب في 100.',
     remember: 'النسبة المئوية = (الجزء ÷ الكل) × 100، والترتيب مهم.',
-    fastMethod: `${part} من ${whole} تعني ${part} ÷ ${whole} ثم × 100.`,
+    fastMethod: `النسبة المئوية = (الجزء ÷ الكل) × 100 — هنا ${part} ÷ ${whole} ثم × 100.`,
     estimatedSteps: 2, conceptTags: ['percentage', 'part-of-whole'],
     parameters: {wholeCount: whole, partCount: part},
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, whole), mul(part, 100))]},
@@ -733,7 +734,7 @@ function wholeFromPart(ctx) {
     ],
     howToStart: 'اكتب العلاقة كما تقرأها، ثم اعكسها لتصل إلى العدد الكلي.',
     remember: 'الجزء معلوم والنسبة معلومة، فالكل = الجزء ÷ النسبة × 100.',
-    fastMethod: pct === 50 ? `النصف معلوم، فالعدد ضعف ${part}.` : `${part} × 100 ÷ ${pct}.`,
+    fastMethod: pct === 50 ? `عند 50% يكون العدد ضعف الجزء — هنا ضعف ${part}.` : `العدد الكلي = الجزء × 100 ÷ النسبة — هنا ${part} × 100 ÷ ${pct}.`,
     estimatedSteps: 2, conceptTags: ['percentage', 'recover-original'],
     parameters: {percent: pct, partValue: part},
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, pct), mul(part, 100))]},
@@ -803,5 +804,46 @@ function whichOfferSavesMore(ctx) {
     },
     complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 3, arithmeticBurden: 3},
     textParams: {essentialParams: ['firstPrice', 'firstPercent', 'secondPrice', 'secondPercent']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: what PERCENTAGE is left after a stated share is used. */
+function remainingPercent(ctx) {
+  const {rng} = ctx;
+  const first = rng.pick([15, 20, 25, 30, 35, 40]);
+  const second = rng.pick([10, 15, 20, 25].filter(v => v + first < 95));
+  const correct = 100 - first - second;
+  const distractors = usable(ctx, [
+    mk(first + second, 'ANSWERED_THE_OTHER_COMPONENT', `${first} + ${second}`),
+    mk(100 - first, 'MISSED_ONE_STAGE', `100 − ${first}`),
+    mk(100 - second, 'MISSED_ONE_STAGE', `100 − ${second}`),
+    mk(100 - first * second / 100, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `100 − ${first} × ${second} ÷ 100`),
+    mk(correct - second, 'APPLIED_STEP_TWICE', `100 − ${first} − ${second} − ${second}`),
+    mk(correct + second, 'OFF_BY_ONE_STEP', `100 − ${first}`),
+    mk(Math.abs(first - second), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(first, second)} − ${Math.min(first, second)}`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx,
+    `أنفقت أسرة ${first}% من دخلها الشهري على السكن، و${second}% منه على الطعام. كم نسبة ما تبقّى من الدخل؟`);
+  return buildBase(ctx, {
+    templateId: 'PCT_E_REMAINING_PERCENT',
+    subskill: 'النسبة المتبقية بعد نسبتين منفقتين',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: v => `${num(v)}%`,
+    steps: [
+      `المنفق = ${first} + ${second} = ${first + second} بالمئة.`,
+      `المتبقي = 100 − ${first + second} = ${correct} بالمئة.`
+    ],
+    howToStart: 'اجمع النسبتين المنفقتين ثم اطرح المجموع من 100.',
+    remember: 'النسب من الدخل نفسه تُجمع، والباقي مكمّلها إلى 100.',
+    fastMethod: `الباقي = 100 ناقص مجموع النسب المنفقة — هنا 100 − (${first} + ${second}).`,
+    estimatedSteps: 2, conceptTags: ['percentage', 'remainder'],
+    parameters: {housingPercent: first, foodPercent: second},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(add(X, first, second), 100)]},
+    askedUnknown: 'remainingPercent', stageCount: 2,
+    pedagogy: {targetSkill: 'COMPLEMENT_OF_TWO_PERCENTS', targetMisconception: 'ANSWERED_THE_OTHER_COMPONENT',
+      wrongMethodValue: first + second},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['housingPercent', 'foodPercent']}
   });
 }

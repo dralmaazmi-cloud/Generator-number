@@ -7,6 +7,7 @@
 // satisfy the stated proportion. Nothing is announced without being derived.
 
 import {Fraction} from '../qa/fraction.js';
+import {PERSONS} from '../compose/entities.js';
 import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, div, factorLine, resample, unitWord, unitWordKam, theSingle, defPlural, bandPool, composeSentences, askOf, scaleBothLine, distinctValues} from './_shared.js';
 
 export function generateDirectProportion({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
@@ -20,6 +21,10 @@ export function generateDirectProportion({difficulty, rng, seed, engineVersion, 
   return bandPool(rng, 'direct_proportion', difficulty, [
     ['PROP_E_ITEMS', unitItems],
     ['PROP_E_COST', unitCost],
+    // RC2.9.5 §4. The unit value asked for in its own right, and two different
+    // items totalled.
+    ['PROP_E_UNIT_VALUE', unitValueOnly],
+    ['PROP_E_TOTAL_TWO_ITEMS', totalOfTwoItems],
     ['PROP_M_FRAC_UNIT', fractionalUnit],
     ['PROP_M_RECIPE', recipeScale],
     ['PROP_M_MAP', mapScale],
@@ -1214,5 +1219,89 @@ function scaleAcrossHours(ctx) {
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, unitConversion: 1, stageCount: 3, arithmeticBurden: 3},
     textParams: {essentialParams: ['baseAmount', 'baseMinutes', 'targetHours']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: the value of ONE unit, which the scaling templates pass through. */
+function unitValueOnly(ctx) {
+  const {rng} = ctx;
+  const count = rng.pick([3, 4, 6, 8, 9]);
+  const unit = rng.pick([7, 9, 11, 13, 14].filter(v => v !== count));
+  const total = count * unit;
+  const correct = unit;
+  const distractors = usable(ctx, [
+    mk(total, 'USED_GIVEN_VALUE_AS_ANSWER', `المبلغ المعطى ${total}`),
+    mk(count, 'SWAPPED_THE_TWO_UNKNOWNS', `العدد المعطى ${count}`),
+    mk(total * count, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${total} × ${count}`),
+    mk(total - count, 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `${total} − ${count}`),
+    mk(unit + 1, 'OFF_BY_ONE_STEP', `${total} ÷ ${count} + 1`),
+    mk(unit - 1, 'OFF_BY_ONE_STEP', `${total} ÷ ${count} − 1`),
+    mk(total / (count - 1), 'RATE_APPLIED_TO_WRONG_COUNT', `${total} ÷ (${count} − 1)`)
+  ], {maxDecimals: 2});
+  return buildBase(ctx, {
+    templateId: 'PROP_E_UNIT_VALUE',
+    subskill: 'قيمة الوحدة الواحدة',
+    difficulty: 'easy',
+    question: `المعطيات: ${u(count, 'box')} متماثلة بمبلغ ${u(total, 'dirham')}. المطلوب: ثمن الصندوق الواحد.`,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [`ثمن الصندوق الواحد = ${total} ÷ ${count} = ${correct}.`],
+    howToStart: 'اقسم المبلغ على عدد الصناديق.',
+    remember: 'قيمة الوحدة هي أول خطوة في كل تناسب مباشر.',
+    fastMethod: `قيمة الوحدة = المبلغ ÷ العدد — هنا ${total} ÷ ${count}.`,
+    estimatedSteps: 1, conceptTags: ['direct-proportion', 'unit-value'],
+    parameters: {boxCount: count, totalPrice: total},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, count), total)]},
+    askedUnknown: 'unitValueOnly', stageCount: 1,
+    pedagogy: {targetSkill: 'UNIT_VALUE_ONLY', targetMisconception: 'MULTIPLIED_INSTEAD_OF_DIVIDED',
+      wrongMethodValue: total * count},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {essentialParams: ['boxCount', 'totalPrice']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: two different items, each at its own price, totalled. */
+function totalOfTwoItems(ctx) {
+  const {rng} = ctx;
+  const buyer = rng.pick(PERSONS);
+  const shop = rng.pick(['متجر', 'بقالة', 'مكتبة', 'متجر أدوات']);
+  const aCount = rng.pick([2, 3, 4, 5]);
+  const aPrice = rng.pick([6, 8, 9, 12]);
+  const bCount = rng.pick([3, 4, 6, 7].filter(v => v !== aCount));
+  const bPrice = rng.pick([5, 7, 10, 15].filter(v => v !== aPrice));
+  const correct = aCount * aPrice + bCount * bPrice;
+  const distractors = usable(ctx, [
+    mk(aCount * aPrice, 'USED_ONLY_FIRST_RATE', `${aCount} × ${aPrice}`),
+    mk(bCount * bPrice, 'USED_ONLY_SECOND_RATE', `${bCount} × ${bPrice}`),
+    mk((aCount + bCount) * (aPrice + bPrice), 'RATE_APPLIED_TO_WRONG_COUNT', `(${aCount} + ${bCount}) × (${aPrice} + ${bPrice})`),
+    mk((aCount + bCount) * aPrice, 'RATE_APPLIED_TO_WRONG_COUNT', `(${aCount} + ${bCount}) × ${aPrice}`),
+    mk(Math.abs(aCount * aPrice - bCount * bPrice), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(aCount * aPrice, bCount * bPrice)} − ${Math.min(aCount * aPrice, bCount * bPrice)}`),
+    mk(aPrice + bPrice, 'MISSED_ONE_STAGE', `${aPrice} + ${bPrice}`),
+    mk(correct + aPrice, 'OFF_BY_ONE_STEP', `${aCount} × ${aPrice} + ${bCount} × ${bPrice} + ${aPrice}`)
+  ]);
+  const stem = composeSentences(ctx,
+    `في ${shop}، اشترى${buyer.g === 'f' ? 'ت' : ''} ${buyer.w} ${u(aCount, 'book', 'oblique')} ثمن الواحد ${u(aPrice, 'dirham')}، و${u(bCount, 'card', 'oblique')} ثمن الواحدة ${u(bPrice, 'dirham')}. كم دفع${buyer.g === 'f' ? 'ت' : ''} في المجموع؟`);
+  return buildBase(ctx, {
+    templateId: 'PROP_E_TOTAL_TWO_ITEMS',
+    subskill: 'مجموع ثمن صنفين مختلفين',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `ثمن الكتب = ${aCount} × ${aPrice} = ${aCount * aPrice}.`,
+      `ثمن البطاقات = ${bCount} × ${bPrice} = ${bCount * bPrice}.`,
+      `المجموع = ${aCount * aPrice} + ${bCount * bPrice} = ${correct}.`
+    ],
+    howToStart: 'احسب ثمن كل صنف وحده ثم اجمع.',
+    remember: 'لكل صنف سعره: لا تجمع الأعداد مع الأسعار.',
+    fastMethod: `المجموع = ثمن كل صنف مجموعًا — هنا (${aCount} × ${aPrice}) + (${bCount} × ${bPrice}).`,
+    estimatedSteps: 3, conceptTags: ['direct-proportion', 'combine'],
+    parameters: {firstCount: aCount, firstPrice: aPrice, secondCount: bCount, secondPrice: bPrice},
+    oracle: {kind: 'constraint', answerKind: 'number',
+      constraints: [eq(X, add(mul(aCount, aPrice), mul(bCount, bPrice)))]},
+    askedUnknown: 'totalOfTwoItems', stageCount: 3,
+    pedagogy: {targetSkill: 'TOTAL_TWO_ITEMS', targetMisconception: 'RATE_APPLIED_TO_WRONG_COUNT',
+      wrongMethodValue: (aCount + bCount) * (aPrice + bPrice)},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 3, arithmeticBurden: 3},
+    textParams: {essentialParams: ['firstCount', 'firstPrice', 'secondCount', 'secondPrice']}
   });
 }

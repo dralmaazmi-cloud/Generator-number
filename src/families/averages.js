@@ -33,7 +33,8 @@ export function generateAverages({difficulty, rng, seed, engineVersion, telemetr
     // asks for a different quantity and lays its givens out differently.
     ['AVG_E_TOTAL_FROM_MEAN', totalFromMean],
     ['AVG_E_COUNT_FROM_MEAN', countFromMean],
-    ['AVG_E_COMPARE_MEANS', compareTwoMeans]
+    ['AVG_E_COMPARE_MEANS', compareTwoMeans],
+    ['AVG_E_RANGE', rangeOfList]
   ], pinTemplate)(ctx);
 }
 
@@ -859,7 +860,7 @@ function totalFromMean(ctx) {
     steps: [`المجموع = المتوسط × عدد القيم = ${mean} × ${count} = ${correct}.`],
     howToStart: 'اقرأ تعريف المتوسط من طرفه الآخر: المجموع = المتوسط × العدد.',
     remember: 'المتوسط ليس قيمة مستقلة: هو المجموع موزعًا على عدد القيم.',
-    fastMethod: `${mean} × ${count}.`,
+    fastMethod: `المجموع = المتوسط × عدد القيم — هنا ${mean} × ${count}.`,
     estimatedSteps: 1, conceptTags: ['average', 'recover-total'],
     parameters: {valueCount: count, meanValue: mean},
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, mul(mean, count))]},
@@ -899,7 +900,7 @@ function countFromMean(ctx) {
     steps: [`عدد القيم = المجموع ÷ المتوسط = ${total} ÷ ${mean} = ${correct}.`],
     howToStart: 'المتوسط يقسم المجموع على عدد القيم، فاقسم المجموع على المتوسط.',
     remember: 'من بين الثلاثة — المجموع والمتوسط والعدد — أي اثنين يعطيان الثالث.',
-    fastMethod: `${total} ÷ ${mean}.`,
+    fastMethod: `عدد القيم = المجموع ÷ المتوسط — هنا ${total} ÷ ${mean}.`,
     estimatedSteps: 1, conceptTags: ['average', 'recover-count'],
     parameters: {totalValue: total, meanValue: mean},
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, mean), total)]},
@@ -931,6 +932,7 @@ function compareTwoMeans(ctx) {
   // The item is only worth asking when the bigger total is not the bigger mean.
   if ((aTotal > bTotal) === (aMean > bMean)) return resample(ctx, compareTwoMeans);
   const correct = Math.max(aMean, bMean);
+  const venue = rng.pick(['مدرسة', 'مختبر', 'مكتبة', 'نادٍ', 'مصنع']);
   const distractors = usable(ctx, [
     mk(Math.min(aMean, bMean), 'SOLVED_ONE_CONDITION_ONLY', `${Math.min(aMean, bMean)} — متوسط المجموعة الأخرى`),
     mk(Math.max(aTotal, bTotal), 'STOPPED_AT_INTERMEDIATE_TOTAL', `المجموع الأكبر ${Math.max(aTotal, bTotal)}`),
@@ -944,7 +946,7 @@ function compareTwoMeans(ctx) {
     templateId: 'AVG_E_COMPARE_MEANS',
     subskill: 'المقارنة بين متوسطي مجموعتين',
     difficulty: 'easy',
-    question: `المجموعة الأولى ${aCount} قيم مجموعها ${aTotal}، والمجموعة الثانية ${bCount} قيم مجموعها ${bTotal}. ما المتوسط الأعلى بين المجموعتين؟`,
+    question: `في ${venue} سُجّلت مجموعتان: الأولى ${aCount} قيم مجموعها ${aTotal}، والثانية ${bCount} قيم مجموعها ${bTotal}. ما المتوسط الأعلى بين المجموعتين؟`,
     correct, distractors, format: plain,
     steps: [
       `متوسط الأولى = ${aTotal} ÷ ${aCount} = ${aMean}.`,
@@ -966,5 +968,59 @@ function compareTwoMeans(ctx) {
     },
     complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 3, arithmeticBurden: 3},
     textParams: {essentialParams: ['firstCount', 'firstTotal', 'secondCount', 'secondTotal']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: the spread of a short list — the largest minus the smallest. */
+function rangeOfList(ctx) {
+  const {rng} = ctx;
+  const n = rng.pick([4, 5]);
+  const base = rng.int(8, 30);
+  const values = [];
+  while (values.length < n) {
+    const v = base + rng.int(0, 24);
+    if (!values.includes(v)) values.push(v);
+  }
+  const sorted = [...values].sort((a, b) => a - b);
+  const correct = sorted.at(-1) - sorted[0];
+  const sum = values.reduce((a, b) => a + b, 0);
+  if (correct < 4) return resample(ctx, rangeOfList);
+  // The mean is offered only when it is exact: a rounded value would not equal
+  // the derivation printed beside it.
+  const meanIsExact = Number.isInteger(sum / n) && sum / n !== correct;
+  const distractors = usable(ctx, [
+    mk(sorted.at(-1), 'USED_GIVEN_VALUE_AS_ANSWER', `أكبر قيمة ${sorted.at(-1)}`),
+    mk(sorted[0], 'USED_GIVEN_VALUE_AS_ANSWER', `أصغر قيمة ${sorted[0]}`),
+    mk(sorted.at(-1) + sorted[0], 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `${sorted.at(-1)} + ${sorted[0]}`),
+    ...(meanIsExact ? [mk(sum / n, 'ANSWERED_THE_OTHER_COMPONENT', `${values.join(' + ')} ÷ ${n}`)] : []),
+    mk(sorted.at(-1) - sorted[1] + sorted[0], 'MISREAD_THE_STEP', `${sorted.at(-1)} − ${sorted[1]} + ${sorted[0]}`),
+    mk(sorted.at(-1) - sorted[1], 'OFF_BY_ONE_STEP', `${sorted.at(-1)} − ${sorted[1]}`),
+    mk(sorted.at(-2) - sorted[0], 'OFF_BY_ONE_STEP', `${sorted.at(-2)} − ${sorted[0]}`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `(${sorted.at(-1)} − ${sorted[0]}) × 2`)
+  ], {maxDecimals: 1});
+  if (distinctValues(distractors.filter(d => d.value !== correct)) < 5) return resample(ctx, rangeOfList);
+  return buildBase(ctx, {
+    templateId: 'AVG_E_RANGE',
+    subskill: 'المدى بين أكبر قيمة وأصغرها',
+    difficulty: 'easy',
+    question: 'ما الفرق بين أكبر قيمة وأصغر قيمة في القائمة الآتية؟',
+    displayExpression: values.join('، '),
+    correct, distractors, format: plain,
+    steps: [
+      `أكبر قيمة ${sorted.at(-1)} وأصغر قيمة ${sorted[0]}.`,
+      `الفرق = ${sorted.at(-1)} − ${sorted[0]} = ${correct}.`
+    ],
+    howToStart: 'حدّد أكبر قيمة وأصغر قيمة، ثم اطرح.',
+    remember: 'المدى يقيس اتساع القيم، وهو غير المتوسط.',
+    fastMethod: `المدى = أكبر قيمة − أصغر قيمة — هنا ${sorted.at(-1)} − ${sorted[0]}.`,
+    estimatedSteps: 1, conceptTags: ['average', 'spread'],
+    parameters: {values, count: n},
+    orderInsensitive: ['values'],
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(add(X, sorted[0]), sorted.at(-1))]},
+    askedUnknown: 'rangeOfValues', stageCount: 1,
+    pedagogy: {targetSkill: 'RANGE_OF_LIST', targetMisconception: 'ADDED_WHERE_A_DIFFERENCE_BELONGS',
+      wrongMethodValue: sorted.at(-1) + sorted[0]},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {essentialParams: ['values']}
   });
 }

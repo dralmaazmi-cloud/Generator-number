@@ -104,6 +104,11 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'RC2.9.4-B2. (last − first) ÷ step, plus one. One formula with a fencepost.'},
   SEQ_E_GEO: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Constant ratio between adjacent terms; the first thing a solver checks is the answer.'},
+  // RC2.9.5 §4.
+  SEQ_E_FIRST_ABOVE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Walk a constant difference until a bound is passed: one rule, applied repeatedly.'},
+  SEQ_E_SUM_SHOWN: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Add the terms on the page; no term has to be derived.'},
   SEQ_E_ARITH: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Constant difference; found by the first check.'},
   SEQ_M_INTERLEAVED: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
@@ -155,6 +160,13 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'The multiplier itself advances by one each step with a constant added, so neither a fixed ratio nor a fixed difference is ever found and the two parts must be identified together.'},
 
   // ------------------------------------------------------------------- ratios
+  // RC2.9.5 §4.
+  RAT_E_PART_COUNT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One addition: the two terms are the parts.'},
+  RAT_E_SHARE_GAP: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Part value, then the difference in parts: two steps on one relationship.'},
+  RAT_E_COMMON_FACTOR: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. The largest number dividing both terms: one fact about two numbers.'},
   RAT_E_KNOWN: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'One part is given; divide and multiply.'},
   // RC2.9.4-B2. Three EASY shapes on the parts idea, each a different given and a different asked quantity.
@@ -243,6 +255,11 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'RC2.5 demotion on the Holdout E blind verdicts. Group size from an overall mean and two subgroup means. Holdout E: 0 of 2 judged hard.'},
 
   // --------------------------------------------------------------------- ages
+  // RC2.9.5 §4.
+  AGE_E_GAP: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One subtraction between two stated ages.'},
+  AGE_E_TOTAL_AFTER: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Both ages move by the same years; the sum moves by twice them.'},
   AGE_E_SUM_DIFF: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'RC2.5 demotion on the Holdout E blind verdicts. Holdout E: 0 of 1 judged medium. Single verdict, agreeing with the template’s own SINGLE_FORMULA marker.'},
   // RC2.9.4-B2. Ratio and sum at one time point: parts arithmetic in the direction the
@@ -288,6 +305,13 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'RC2.9.4-B2. Minutes to hours, then speed × time. One conversion on a single relation.'},
   SPD_E_SAME_DIRECTION_GAP: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'RC2.9.4-B2. Difference of the two stated speeds, times the stated time. The direction is stated, so no case to consider.'},
+  // RC2.9.5 §4.
+  SPD_E_COMPARE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Two independent divisions and a comparison.'},
+  SPD_E_REMAINING: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Distance covered, then subtracted from the road: two steps, one relationship.'},
+  SPD_E_TOTAL_TRIP: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Two independent products added; neither leg depends on the other.'},
   SPD_E_DISTANCE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'distance = speed × time.'},
   SPD_E_TIME: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -363,6 +387,11 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'RC2.9.4-B2. Group rate is rate × count, then target ÷ group rate. Stated in the order used.'},
   MACH_E_COMPARE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'RC2.9.4-B2. Difference of two stated rates, times the stated hours.'},
+  // RC2.9.5 §4.
+  MACH_E_TOTAL_TWO_TYPES: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Two independent products added; neither group depends on the other.'},
+  MACH_E_LOST_OUTPUT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One product: the stopped machines over the stopped hours.'},
   MACH_E_HOURS: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'RC2.5 demotion on the Holdout E blind verdicts. Holdout E: 0 of 3 judged medium.'},
   MACH_M_STOP: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE', 'REPEATED_OPERATION'],
@@ -381,6 +410,19 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
   // -------------------------------------------------------- direct_proportion
   PROP_E_ITEMS: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Unit value then scale.'},
+  // RC2.9.5 §4.
+  PROP_E_UNIT_VALUE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One division, stopping where the scaling templates pass through.'},
+  PROP_E_TOTAL_TWO_ITEMS: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Two independent products added.'},
+  PCT_E_REMAINING_PERCENT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Two shares of one base added, then taken from a hundred.'},
+  WORK_E_RATE_FROM_TOTAL: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One division: the daily rate behind a total.'},
+  AVG_E_RANGE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Largest minus smallest, read off the list.'},
+  ODD_E_COUNT_MATCHING: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One stated property tested on each member and counted.'},
   PROP_E_COST: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Unit price then scale, or the same rate read the other way.'},
   // RC2.9.4-B3. Two MEDIUM shapes: two offers brought to unit price and compared; a rate carried across a unit change.
@@ -486,6 +528,11 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'RC2.9.4-B2. Two stated gaps on three people; the asked gap is their sum or their difference, decided by who sits between.'},
   REL_E_BETWEEN: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Four statements that chain into one total order; read off the position.'},
+  // RC2.9.5 §4.
+  REL_E_COUNT_BELOW: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One complete chain, read once and counted in one direction.'},
+  REL_E_FALSE_STATEMENT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One complete chain; the impossible statement is the reversed edge.'},
   REL_E_CHAIN: {band: 'easy', criteria: [], routine: ['FIXED_PIPELINE'],
     why: 'RC2.5 split by chain length. A five-person chain: Holdout E judged both such items easy.'},
   REL_M_CHAIN6: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
@@ -522,6 +569,11 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'RC2.9.4-B3. Subtract the dates, take the remainder modulo seven, step forward. The subtraction is a stage the plain offset templates never have; medium, as CAL_H_CYCLE_MEET is medium for its setup stage.'},
   CAL_M_NTH_VISIT: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
     why: 'RC2.9.4-B3. Count the gaps (n − 1, a fencepost), multiply by the cycle, remainder, step. Three stages the sentence orders.'},
+  // RC2.9.5 §4.
+  CAL_E_DAYS_BETWEEN: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Count forward across the week: one step, answered as a count.'},
+  CAL_E_BEFORE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One backward offset; the direction is the whole of the work.'},
   CAL_E_TOM: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'One day back.'},
   CAL_E_AFTER: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],

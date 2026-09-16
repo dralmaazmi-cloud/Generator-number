@@ -1,4 +1,5 @@
 import {Fraction} from '../qa/fraction.js';
+import {people} from '../compose/entities.js';
 import {mk, usable, u, num, unitFormat, buildBase, eq, X, add, sub, mul, resample, approx, bandPool, composeSentences, sceneFor, askOf, journeySceneFor, distinctValues} from './_shared.js';
 
 export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry, pinTemplate = null, pinTargets = null}) {
@@ -8,6 +9,11 @@ export function generateSpeed({difficulty, rng, seed, engineVersion, telemetry, 
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
   return bandPool(rng, 'speed', difficulty, [
     ['SPD_E_DISTANCE', simpleDistance],
+    // RC2.9.5 §4. Three EASY readings of a trip the band did not hold: which
+    // of two is faster, what is LEFT of the road, and two legs added.
+    ['SPD_E_COMPARE', fasterOfTwo],
+    ['SPD_E_REMAINING', remainingDistance],
+    ['SPD_E_TOTAL_TRIP', twoLegTotal],
     ['SPD_E_TIME', simpleTime],
     ['SPD_M_AVG', averageSpeedUnequalTime],
     ['SPD_M_TWO_TIME', twoStageTime],
@@ -868,5 +874,145 @@ function sameDirectionGap(ctx) {
     },
     complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
     textParams: {essentialParams: ['fastSpeed', 'slowSpeed', 'hours']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: which of two vehicles is faster, reported as its speed. */
+function fasterOfTwo(ctx) {
+  const {rng} = ctx;
+  const aDist = rng.pick([120, 150, 180, 240]);
+  const aHours = rng.pick([2, 3, 4]);
+  const bHours = rng.pick([2, 3, 5].filter(v => v !== aHours));
+  const bSpeed = rng.pick([40, 45, 55, 60, 70]);
+  const aSpeed = aDist / aHours;
+  const bDist = bSpeed * bHours;
+  if (!Number.isInteger(aSpeed) || aSpeed === bSpeed) return resample(ctx, fasterOfTwo);
+  // Worth asking only when the longer distance is not the greater speed.
+  if ((aDist > bDist) === (aSpeed > bSpeed)) return resample(ctx, fasterOfTwo);
+  const correct = Math.max(aSpeed, bSpeed);
+  const distractors = usable(ctx, [
+    mk(Math.min(aSpeed, bSpeed), 'SOLVED_ONE_CONDITION_ONLY', `سرعة المركبة الأخرى ${Math.min(aSpeed, bSpeed)}`),
+    mk(Math.max(aDist, bDist), 'STOPPED_AT_INTERMEDIATE_TOTAL', `أطول مسافة ${Math.max(aDist, bDist)}`),
+    mk((aSpeed + bSpeed) / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${aSpeed} + ${bSpeed}) ÷ 2`),
+    mk(Math.abs(aSpeed - bSpeed), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(aSpeed, bSpeed)} − ${Math.min(aSpeed, bSpeed)}`),
+    mk(Math.max(aHours, bHours), 'SWAPPED_THE_TWO_UNKNOWNS', `أطول زمن ${Math.max(aHours, bHours)}`),
+    mk((aDist + bDist) / (aHours + bHours), 'ANSWERED_THE_OTHER_COMPONENT', `(${aDist} + ${bDist}) ÷ (${aHours} + ${bHours})`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`)
+  ], {maxDecimals: 2});
+  const [travA, travB] = people(rng, 2);
+  const stem = composeSentences(ctx,
+    `قطع${travA.g === 'f' ? 'ت' : ''} ${travA.w} ${u(aDist, 'km')} في ${u(aHours, 'hour', 'oblique')}، وقطع${travB.g === 'f' ? 'ت' : ''} ${travB.w} ${u(bDist, 'km')} في ${u(bHours, 'hour', 'oblique')}. ما سرعة الأسرع منهما؟`);
+  return buildBase(ctx, {
+    templateId: 'SPD_E_COMPARE',
+    subskill: 'المقارنة بين سرعتي مركبتين',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('kmPerHour'),
+    steps: [
+      `سرعة الأولى = ${aDist} ÷ ${aHours} = ${aSpeed}.`,
+      `سرعة الثانية = ${bDist} ÷ ${bHours} = ${bSpeed}.`,
+      `الأسرع سرعتها ${correct}.`
+    ],
+    howToStart: 'احسب سرعة كل مركبة على حدة، فالمسافة وحدها لا تكفي.',
+    remember: 'المسافة الأطول لا تعني سرعة أكبر: الزمن يختلف.',
+    fastMethod: 'المسافة ÷ الزمن لكل مركبة، ثم المقارنة.',
+    estimatedSteps: 3, conceptTags: ['speed', 'comparison'],
+    parameters: {firstDistance: aDist, firstHours: aHours, secondDistance: bDist, secondHours: bHours},
+    oracle: {kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, correct === aSpeed ? aHours : bHours), correct === aSpeed ? aDist : bDist)]},
+    askedUnknown: 'fasterSpeed', stageCount: 3,
+    pedagogy: {targetSkill: 'COMPARE_SPEEDS', targetMisconception: 'STOPPED_AT_INTERMEDIATE_TOTAL',
+      wrongMethodValue: Math.max(aDist, bDist),
+      degenerateWhen: [{when: aSpeed === bSpeed, note: 'the two speeds are equal'}]},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 3, arithmeticBurden: 3},
+    textParams: {essentialParams: ['firstDistance', 'firstHours', 'secondDistance', 'secondHours']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: the distance that REMAINS after part of the road is covered. */
+function remainingDistance(ctx) {
+  const {rng} = ctx;
+  const speed = rng.pick([50, 60, 70, 80, 90]);
+  const hours = rng.pick([2, 3, 4]);
+  const covered = speed * hours;
+  const total = covered + rng.pick([40, 60, 90, 120, 150]);
+  const correct = total - covered;
+  const distractors = usable(ctx, [
+    mk(covered, 'ANSWERED_THE_OTHER_COMPONENT', `${speed} × ${hours}`),
+    mk(total, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `المسافة الكلية ${total}`),
+    mk(correct / speed, 'MISSED_ONE_STAGE', `(${total} − ${covered}) ÷ ${speed}`),
+    mk(total - speed, 'RATE_APPLIED_TO_WRONG_COUNT', `${total} − ${speed}`),
+    mk(total - speed * (hours + 1), 'OFF_BY_ONE_STEP', `${total} − ${speed} × (${hours} + 1)`),
+    mk(total - speed * (hours - 1), 'OFF_BY_ONE_STEP', `${total} − ${speed} × (${hours} − 1)`),
+    mk(correct / 2, 'HALF_DISTANCE_AS_ANSWER', `(${total} − ${covered}) ÷ 2`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx,
+    `طول الطريق ${u(total, 'km')}. سارت حافلة بسرعة ${u(speed, 'kmPerHour')} مدة ${u(hours, 'hour')}. كم كيلومترًا بقي أمامها؟`);
+  return buildBase(ctx, {
+    templateId: 'SPD_E_REMAINING',
+    subskill: 'المسافة المتبقية بعد جزء من الرحلة',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('km'),
+    steps: [
+      `المقطوع = ${speed} × ${hours} = ${covered}.`,
+      `المتبقي = ${total} − ${covered} = ${correct}.`
+    ],
+    howToStart: 'احسب ما قُطع أولًا، ثم اطرحه من طول الطريق.',
+    remember: 'السؤال عن المتبقي: الخطوة الأخيرة طرح لا ضرب.',
+    fastMethod: `المتبقي = طول الطريق − المقطوع — هنا ${total} − (${speed} × ${hours}).`,
+    estimatedSteps: 2, conceptTags: ['speed', 'remainder'],
+    parameters: {roadLength: total, speed, hours},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(add(X, mul(speed, hours)), total)]},
+    askedUnknown: 'remainingDistance', stageCount: 2,
+    pedagogy: {targetSkill: 'REMAINING_DISTANCE', targetMisconception: 'ANSWERED_THE_OTHER_COMPONENT',
+      wrongMethodValue: covered},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['roadLength', 'speed', 'hours']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: two legs of one trip, added. */
+function twoLegTotal(ctx) {
+  const {rng} = ctx;
+  const s1 = rng.pick([40, 50, 60, 70]);
+  const h1 = rng.pick([2, 3]);
+  const s2 = rng.pick([30, 45, 80, 90].filter(v => v !== s1));
+  const h2 = rng.pick([1, 2, 4].filter(v => v !== h1));
+  const d1 = s1 * h1, d2 = s2 * h2;
+  const correct = d1 + d2;
+  const distractors = usable(ctx, [
+    mk(d1, 'USED_ONLY_FIRST_RATE', `${s1} × ${h1}`),
+    mk(d2, 'USED_ONLY_SECOND_RATE', `${s2} × ${h2}`),
+    mk((s1 + s2) * (h1 + h2), 'RATE_APPLIED_TO_WRONG_COUNT', `(${s1} + ${s2}) × (${h1} + ${h2})`),
+    mk((s1 + s2) / 2 * (h1 + h2), 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${s1} + ${s2}) ÷ 2 × (${h1} + ${h2})`),
+    mk(Math.abs(d1 - d2), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(d1, d2)} − ${Math.min(d1, d2)}`),
+    mk(correct / 2, 'HALF_DISTANCE_AS_ANSWER', `(${d1} + ${d2}) ÷ 2`),
+    mk(correct + s1, 'OFF_BY_ONE_STEP', `${correct} + ${s1}`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx,
+    `في رحلة من مرحلتين، سارت شاحنة بسرعة ${u(s1, 'kmPerHour')} مدة ${u(h1, 'hour')}، ثم بسرعة ${u(s2, 'kmPerHour')} مدة ${u(h2, 'hour')}. كم كيلومترًا قطعت في الرحلة كلها؟`);
+  return buildBase(ctx, {
+    templateId: 'SPD_E_TOTAL_TRIP',
+    subskill: 'مجموع مسافتي مرحلتين',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('km'),
+    steps: [
+      `مسافة المرحلة الأولى = ${s1} × ${h1} = ${d1}.`,
+      `مسافة المرحلة الثانية = ${s2} × ${h2} = ${d2}.`,
+      `المجموع = ${d1} + ${d2} = ${correct}.`
+    ],
+    howToStart: 'احسب مسافة كل مرحلة وحدها ثم اجمعهما.',
+    remember: 'السرعتان لا تُجمعان؛ المسافتان هما اللتان تُجمعان.',
+    fastMethod: `المسافة الكلية = مجموع مسافتَي المرحلتين — هنا (${s1} × ${h1}) + (${s2} × ${h2}).`,
+    estimatedSteps: 3, conceptTags: ['speed', 'combine'],
+    parameters: {firstSpeed: s1, firstHours: h1, secondSpeed: s2, secondHours: h2},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, add(mul(s1, h1), mul(s2, h2)))]},
+    askedUnknown: 'twoLegDistance', stageCount: 3,
+    pedagogy: {targetSkill: 'ADD_TWO_LEGS', targetMisconception: 'RATE_APPLIED_TO_WRONG_COUNT',
+      wrongMethodValue: (s1 + s2) * (h1 + h2)},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 3, arithmeticBurden: 3},
+    textParams: {essentialParams: ['firstSpeed', 'firstHours', 'secondSpeed', 'secondHours']}
   });
 }

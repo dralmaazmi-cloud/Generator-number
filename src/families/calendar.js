@@ -9,6 +9,11 @@ export function generateCalendar({difficulty, rng, seed, engineVersion, telemetr
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
   return bandPool(rng, 'calendar', difficulty, [
     ['CAL_E_TOM', tomorrowKnown],
+    // RC2.9.5 §4. Two EASY calendar jobs the band did not hold: counting the
+    // days BETWEEN two named days, and naming the day a stated number of days
+    // BACK — the offset read in the other direction.
+    ['CAL_E_DAYS_BETWEEN', daysBetween],
+    ['CAL_E_BEFORE', dayBefore],
     ['CAL_E_AFTER', afterTomorrow],
     ['CAL_M_COMPOUND', compoundForward],
     ['CAL_M_TWO_SHIFT', forwardThenBack],
@@ -769,5 +774,88 @@ function nthVisitWeekday(ctx) {
     },
     complexityFactors: {reasoningTransformations: 2, conceptCount: 2, stageCount: 2, arithmeticBurden: 2},
     textParams: {essentialParams: ['cycleDays']}
+  });
+}
+
+/**
+ * RC2.9.5 §4. EASY: how many days from one named day to the next occurrence of
+ * another. The answer is a COUNT rather than a day, which is the axis the
+ * calendar band never varied.
+ */
+function daysBetween(ctx) {
+  const {rng} = ctx;
+  const from = rng.int(0, 6);
+  const gap = rng.int(2, 6);
+  const to = dayShift(from, gap);
+  const correct = gap;
+  const distractors = usable(ctx, [
+    mk(7 - gap, 'SHIFTED_WRONG_DIRECTION', `العد في الاتجاه المعاكس من ${DAYS_AR[to]} إلى ${DAYS_AR[from]}`),
+    mk(gap + 1, 'OFF_BY_ONE_STEP', `عد يوم البداية ضمن الأيام`),
+    mk(gap - 1, 'OFF_BY_ONE_STEP', `إسقاط يوم من العد`),
+    mk(7, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `أيام الأسبوع كاملة`),
+    mk(7 + gap, 'APPLIED_STEP_TWICE', `أسبوع كامل مضافًا إلى ${gap}`),
+    mk(gap * 2, 'APPLIED_STEP_TWICE', `${gap} × 2`)
+  ]);
+  const stem = composeSentences(ctx, `إذا كان اليوم هو ${DAYS_AR[from]}، فكم يومًا يمر حتى يأتي يوم ${DAYS_AR[to]} التالي؟`);
+  return buildBase(ctx, {
+    templateId: 'CAL_E_DAYS_BETWEEN',
+    subskill: 'عدد الأيام بين يومين في الأسبوع',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('day'),
+    steps: [
+      `نعد من ${DAYS_AR[from]} إلى الأمام حتى ${DAYS_AR[to]}.`,
+      `عدد الأيام = ${correct}.`
+    ],
+    howToStart: 'عد إلى الأمام من اليوم المذكور حتى تصل إلى اليوم المطلوب.',
+    remember: 'العد يبدأ من اليوم التالي لا من اليوم نفسه.',
+    fastMethod: 'تقدم يومًا يومًا في ترتيب أيام الأسبوع.',
+    estimatedSteps: 1, conceptTags: ['calendar', 'interval'],
+    parameters: {fromDayIndex: from, toDayIndex: to},
+    oracle: {kind: 'search', answerKind: 'number', domain: grid(1, 6),
+      constraints: [eq(mod(add(from, X), 7), to)]},
+    askedUnknown: 'daysUntilDay', stageCount: 1,
+    pedagogy: {targetSkill: 'DAY_INTERVAL', targetMisconception: 'SHIFTED_WRONG_DIRECTION',
+      wrongMethodValue: 7 - gap},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1},
+    textParams: false
+  });
+}
+
+/** RC2.9.5 §4. EASY: the day a stated number of days BEFORE the named one. */
+function dayBefore(ctx) {
+  const {rng} = ctx;
+  const back = rng.int(2, 5);
+  const known = rng.int(0, 6);
+  const target = dayShift(known, -back);
+  const correct = DAYS_AR[target];
+  const distractors = dayDistractors(ctx, target, -back, [
+    {index: dayShift(known, back), misconceptionId: 'SHIFTED_WRONG_DIRECTION',
+      derivation: `التقدم ${back} أيام من ${DAYS_AR[known]} بدل الرجوع`},
+    {index: known, misconceptionId: 'USED_GIVEN_VALUE_AS_ANSWER', derivation: `اليوم المذكور نفسه ${DAYS_AR[known]}`}
+  ]);
+  const stem = composeSentences(ctx, `إذا كان اليوم هو ${DAYS_AR[known]}، فما اليوم الذي كان قبل ${back} أيام؟`);
+  return buildBase(ctx, {
+    templateId: 'CAL_E_BEFORE',
+    subskill: 'اليوم السابق بعدد معلوم من الأيام',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: v => String(v),
+    steps: [
+      `نرجع ${back} أيام من ${DAYS_AR[known]}.`,
+      `نصل إلى ${correct}.`
+    ],
+    howToStart: 'عد إلى الوراء بعدد الأيام المذكور.',
+    remember: 'الرجوع إلى الوراء عكس التقدم: الاتجاه هو ما يقلب الإجابة.',
+    fastMethod: `ارجع ${back} أيام في ترتيب الأسبوع.`,
+    estimatedSteps: 1, conceptTags: ['calendar', 'backward'],
+    parameters: {knownDayIndex: known, daysBack: back},
+    oracle: {kind: 'search', answerKind: 'dayIndex', domain: grid(0, 6),
+      constraints: [eq(mod(add(X, back), 7), known)]},
+    askedUnknown: 'dayBeforeOffset', direction: 'reverse', stageCount: 1,
+    pedagogy: {targetSkill: 'DAY_OFFSET_BACKWARD', targetMisconception: 'SHIFTED_WRONG_DIRECTION',
+      wrongMethodValue: DAYS_AR[dayShift(known, back)]},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, reverseReasoning: 1, stageCount: 1},
+    textParams: false
   });
 }

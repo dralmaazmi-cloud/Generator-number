@@ -310,7 +310,14 @@ export function computeComplexity(f = {}) {
 // feeds `complexity_band`, which is EVIDENCE beside the structural band and is
 // not the band a question is published at, so following the rule here changes
 // no label.
-export const BAND_BOUNDARIES = Object.freeze({easyMedium: 9.4, mediumHard: 14.8});
+// RC2.9.5 §4. The boundaries are the tertiles of the TEMPLATE POPULATION, and
+// this release added thirty-three EASY templates, so the population moved and
+// the tertiles moved with it: 9.4/14.8 → 8.0/13.2. Nothing a learner sees
+// changes — since RC2.3 the published band is the STRUCTURAL band, and
+// `complexity_band` is evidence reported beside it — but leaving the constant
+// where it was would have made the evidence describe a population that no
+// longer exists.
+export const BAND_BOUNDARIES = Object.freeze({easyMedium: 8.0, mediumHard: 13.2});
 
 export function bandFor(score) {
   if (score <= BAND_BOUNDARIES.easyMedium) return 'easy';

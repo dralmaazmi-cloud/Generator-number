@@ -52,7 +52,12 @@ export function generateRelational({difficulty, rng, seed, engineVersion, teleme
     ['REL_H_GUARANTEE', branchGuaranteed],
     // RC2.9.4-B2. Two EASY jobs beyond reading a position.
     ['REL_E_STATEMENT_TRUE', chainStatementTrue],
-    ['REL_E_GAP_CHAIN', quantifiedChain]
+    ['REL_E_GAP_CHAIN', quantifiedChain],
+    // RC2.9.5 §4. Two EASY jobs on a complete chain that are neither «read a
+    // position» nor «which statement is true»: counting who is below someone,
+    // and naming the statement the chain rules OUT.
+    ['REL_E_COUNT_BELOW', countBelowOnChain],
+    ['REL_E_FALSE_STATEMENT', chainStatementFalse]
   ], pinTemplate)(ctx);
 }
 
@@ -956,5 +961,113 @@ function quantifiedChain(ctx) {
     },
     complexityFactors: {reasoningTransformations: 1, conceptCount: 1, graphDepth: 3, dependencyDepth: 1},
     textParams: {essentialParams: ['firstGap', 'secondGap']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: how many people the chain puts BELOW a named person. */
+function countBelowOnChain(ctx) {
+  const {rng} = ctx;
+  const size = rng.pick([4, 5]);
+  const {nodes, edges} = chainGraph(rng, size);
+  const oracle = buildOrderOracle(nodes, edges);
+  const order = oracle.extensions[0];
+  // Not the last and not the first: zero and «everyone» are read off the
+  // sentence order rather than worked out.
+  const target = order[rng.int(1, size - 2)];
+  const count = order.length - 1 - order.indexOf(target);
+  const correct = COUNT_LABELS[count];
+  if (!correct || count === 0) return resample(ctx, countBelowOnChain);
+  const offered = new Set([count]);
+  const wrong = [];
+  const push = (v, id, why) => {
+    if (!Number.isInteger(v) || v < 0 || v >= COUNT_LABELS.length || offered.has(v)) return;
+    offered.add(v); wrong.push(mk(COUNT_LABELS[v], id, why));
+  };
+  push(order.indexOf(target), 'APPLIED_OPERATION_IN_REVERSE', 'عدّ من هم أعلى منه بدل من هم أدنى');
+  push(count + 1, 'OFF_BY_ONE_STEP', 'عدّ الشخص نفسه ضمن من دونه');
+  push(count - 1, 'OFF_BY_ONE_STEP', 'إسقاط أحد الأشخاص من العد');
+  push(size, 'USED_TOTAL_INSTEAD_OF_REMAINDER', 'عدّ المجموعة كلها');
+  push(size - 1, 'USED_TOTAL_INSTEAD_OF_REMAINDER', 'عدّ كل من عداه');
+  push(1, 'COUNTED_DIRECT_RELATIONS_ONLY', 'الاكتفاء بمن ذُكر بعده مباشرة في الجمل');
+  const distractors = usable(ctx, wrong);
+  const {reasoningGraph, parameters} = graphMeta(nodes, edges);
+  return buildBase(ctx, {
+    templateId: 'REL_E_COUNT_BELOW',
+    subskill: 'عدّ من هم أدنى من شخص في ترتيب كامل',
+    difficulty: 'easy',
+    question: `${sentences(rng, edges)} كم شخصًا أبطأ من ${target}؟`,
+    correct, distractors, format: v => String(v),
+    steps: [
+      `نربط الجمل في ترتيب واحد: ${order.join(' > ')}.`,
+      `بعد ${target} في هذا الترتيب ${correct}.`
+    ],
+    howToStart: 'اكتب الترتيب الكامل، ثم عدّ من يأتي بعد الشخص المطلوب.',
+    remember: 'العد يكون في اتجاه واحد: من بعده لا من قبله.',
+    fastMethod: 'رتب الجميع ثم عدّ ما بعد اسمه.',
+    estimatedSteps: 2, conceptTags: ['ordering', 'counting'], parameters,
+    reasoningGraph,
+    oracle: orderOracleSpec(nodes, edges, {type: 'countBelow', of: target, labels: COUNT_LABELS}, correct, correct, COUNT_LABELS),
+    askedUnknown: 'countBelowInChain', stageCount: 1,
+    pedagogy: {
+      targetSkill: 'COUNT_BELOW_IN_TOTAL_ORDER', targetMisconception: 'APPLIED_OPERATION_IN_REVERSE',
+      wrongMethodValue: COUNT_LABELS[order.indexOf(target)]
+    },
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, graphDepth: nodes.length, dependencyDepth: 1},
+    textParams: false
+  });
+}
+
+/** RC2.9.5 §4. EASY: the statement the chain rules OUT. */
+function chainStatementFalse(ctx) {
+  const {rng} = ctx;
+  const {nodes, edges} = chainGraph(rng, 4);
+  const oracle = buildOrderOracle(nodes, edges);
+  const verb = 'أكبر سنًّا من';
+  const stated = new Set(edges.map(([a, b]) => `${a}>${b}`));
+  const guaranteed = [], contradicted = [];
+  for (const a of nodes) {
+    for (const b of nodes) {
+      if (a === b) continue;
+      const text = `${a} ${verb} ${b}`;
+      if (oracle.definitelyAbove(a, b)) guaranteed.push({a, b, text, direct: stated.has(`${a}>${b}`)});
+      else contradicted.push({a, b, text});
+    }
+  }
+  const indirect = contradicted.filter(c => !stated.has(`${c.b}>${c.a}`));
+  if (!indirect.length || guaranteed.length < 5) return resample(ctx, chainStatementFalse);
+  const pick = rng.pick(indirect);
+  const correct = pick.text;
+  const distractors = usable(ctx, rng.shuffle(guaranteed).slice(0, 6).map(g => mk(
+    g.text, 'RELATION_CONTRADICTS_STATEMENT',
+    `الترتيب يثبت هذه العبارة: ${g.a} قبل ${g.b}`
+  )));
+  const {reasoningGraph, parameters} = graphMeta(nodes, edges);
+  return buildBase(ctx, {
+    templateId: 'REL_E_FALSE_STATEMENT',
+    subskill: 'اختيار العبارة التي يستحيل صدقها',
+    difficulty: 'easy',
+    question: `${sentences(rng, edges, verb)} أي العبارات التالية لا يمكن أن تكون صحيحة؟`,
+    correct, distractors, format: v => String(v),
+    steps: [
+      `نربط الجمل في ترتيب واحد: ${oracle.extensions[0].join(' > ')}.`,
+      `الترتيب يضع ${pick.b} قبل ${pick.a}، فالعبارة «${correct}» مستحيلة.`,
+      'كل عبارة أخرى يثبتها الترتيب نفسه.'
+    ],
+    howToStart: 'رتّب الأشخاص أولًا، ثم افحص كل عبارة على الترتيب.',
+    remember: 'ما يناقض الترتيب مستحيل، لا مجرد غير مذكور.',
+    fastMethod: 'اكتب الترتيب الكامل ثم ابحث عن العبارة المعكوسة.',
+    estimatedSteps: 2, conceptTags: ['ordering', 'transitivity'], parameters,
+    reasoningGraph,
+    oracle: orderOracleSpec(nodes, edges, {
+      type: 'impossible',
+      statements: [{id: correct, above: pick.a, below: pick.b}]
+    }, [correct], correct),
+    askedUnknown: 'impossibleStatementInChain', stageCount: 1,
+    pedagogy: {
+      targetSkill: 'CONTRADICTION_ON_A_CHAIN', targetMisconception: 'RELATION_CONTRADICTS_STATEMENT',
+      wrongMethodValue: guaranteed[0]?.text
+    },
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, graphDepth: nodes.length, dependencyDepth: 1},
+    textParams: false
   });
 }

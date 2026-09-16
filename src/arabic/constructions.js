@@ -86,7 +86,22 @@ const NON_COUNT_FOLLOWERS = {
   // the algebraic unknown, written joined to its coefficient: 4ك، 5س
   'ك': 'ALGEBRAIC_SYMBOL', 'س': 'ALGEBRAIC_SYMBOL',
   // RC2.9.3-2. The narrated eliminations: «3 : 1 تعني أن …», «في 3 ونُبقي الثانية».
-  'تعني': 'VERB', 'ونُبقي': 'VERB'
+  'تعني': 'VERB', 'ونُبقي': 'VERB',
+  // RC2.9.5 §4-§5. The new EASY stems and their steps: a numeral followed by a
+  // possessed noun («5 قيم، متوسطها الحسابي 18»), by an imperative, or by a
+  // fraction plural («ثلاثة أرباع»). None of them is a counted noun, and each
+  // is declared here rather than silently allowed.
+  'ومتوسطها': 'POSSESSED_NOUN', 'وفرقها': 'POSSESSED_NOUN', 'ومجموعها': 'POSSESSED_NOUN',
+  'وأصغر': 'PREDICATE', 'وأكبر': 'PREDICATE', 'وأضف': 'VERB', 'وأنفق': 'VERB',
+  'أرباع': 'FRACTION_WORD', 'أخماس': 'FRACTION_WORD', 'أثمان': 'FRACTION_WORD',
+  'أثلاث': 'FRACTION_WORD', 'أسداس': 'FRACTION_WORD', 'أعشار': 'FRACTION_WORD',
+  // «تعملان معًا 5 ساعات» and «12 درهمًا لكل صندوق»: an adverb and a
+  // preposition, neither of them a counted noun.
+  'معًا': 'PARTICLE', 'لكل': 'PARTICLE',
+  // An arithmetic operator SPELLED OUT in a quick method: «100 ناقص مجموع النسب»,
+  // «سرعة القارب زائد التيار». The word after the numeral is an operator, so the
+  // numeral is an operand and not a counted noun.
+  'ناقص': 'OPERATOR_WORD', 'زائد': 'OPERATOR_WORD', 'ناقصه': 'OPERATOR_WORD'
 };
 
 /** Shapes that carry numerals but are not counted-noun constructions at all. */

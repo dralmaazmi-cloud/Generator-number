@@ -1,6 +1,6 @@
 {
   "engine_version": "1.5.4",
-  "template_count": 184,
+  "template_count": 228,
   "generated_by": "tools/audit/rc291-manifest.mjs — derived from the engine, never edited by hand",
   "families": {
     "sequences": {
@@ -16,12 +16,20 @@
             "subskill": "عدد حدود متتالية حسابية من أولها وآخرها"
           },
           {
+            "id": "SEQ_E_FIRST_ABOVE",
+            "subskill": "أول حد يتجاوز قيمة معلومة"
+          },
+          {
             "id": "SEQ_E_GEO",
             "subskill": "قسمة ثابتة"
           },
           {
             "id": "SEQ_E_NTH_TERM",
             "subskill": "حد بعيد في متتالية حسابية من قاعدتها"
+          },
+          {
+            "id": "SEQ_E_SUM_SHOWN",
+            "subskill": "مجموع حدود متتالية معروضة"
           }
         ],
         "medium": [
@@ -107,12 +115,24 @@
       "templates": {
         "easy": [
           {
+            "id": "RAT_E_COMMON_FACTOR",
+            "subskill": "القاسم المشترك الأكبر لطرفي نسبة"
+          },
+          {
             "id": "RAT_E_DIFF_SPLIT",
             "subskill": "إيجاد طرف من نسبة وفرق معلوم"
           },
           {
             "id": "RAT_E_KNOWN",
             "subskill": "استخدام قيمة طرف معلوم في نسبة"
+          },
+          {
+            "id": "RAT_E_PART_COUNT",
+            "subskill": "عدد أجزاء النسبة"
+          },
+          {
+            "id": "RAT_E_SHARE_GAP",
+            "subskill": "الفرق بين نصيبين في قسمة نسبية"
           },
           {
             "id": "RAT_E_SPLIT",
@@ -174,6 +194,22 @@
             "subskill": "حساب نسبة مئوية من قيمة"
           },
           {
+            "id": "PCT_E_REMAINING_PERCENT",
+            "subskill": "النسبة المتبقية بعد نسبتين منفقتين"
+          },
+          {
+            "id": "PCT_E_SHARE_PERCENT",
+            "subskill": "التعبير عن جزء من كل بنسبة مئوية"
+          },
+          {
+            "id": "PCT_E_WHICH_OFFER",
+            "subskill": "المقارنة بين قيمتي خصم"
+          },
+          {
+            "id": "PCT_E_WHOLE",
+            "subskill": "إيجاد العدد الكلي من نسبة معلومة منه"
+          },
+          {
             "id": "PCT_M_REMAIN",
             "subskill": "نسبتان من الباقي"
           },
@@ -221,6 +257,14 @@
             "subskill": "إضافة قيمة جديدة إلى مجموعة"
           },
           {
+            "id": "AVG_E_COMPARE_MEANS",
+            "subskill": "المقارنة بين متوسطي مجموعتين"
+          },
+          {
+            "id": "AVG_E_COUNT_FROM_MEAN",
+            "subskill": "إيجاد عدد القيم من المجموع والمتوسط"
+          },
+          {
             "id": "AVG_E_LIST",
             "subskill": "حساب المتوسط الحسابي لقائمة أعداد"
           },
@@ -229,8 +273,16 @@
             "subskill": "استرجاع عدد مفقود من متوسط معلوم"
           },
           {
+            "id": "AVG_E_RANGE",
+            "subskill": "المدى بين أكبر قيمة وأصغرها"
+          },
+          {
             "id": "AVG_E_REMOVE",
             "subskill": "حذف قيمة من مجموعة"
+          },
+          {
+            "id": "AVG_E_TOTAL_FROM_MEAN",
+            "subskill": "إيجاد المجموع من المتوسط وعدد القيم"
           }
         ],
         "medium": [
@@ -272,6 +324,10 @@
       "templates": {
         "easy": [
           {
+            "id": "AGE_E_GAP",
+            "subskill": "الفرق بين عمرين معلومين"
+          },
+          {
             "id": "AGE_E_RATIO_SUM",
             "subskill": "مضاعف عمر مع مجموع معلوم"
           },
@@ -282,6 +338,10 @@
           {
             "id": "AGE_E_TIME_SHIFT",
             "subskill": "عمر شخص آخر في المستقبل من عمر حالي وفرق"
+          },
+          {
+            "id": "AGE_E_TOTAL_AFTER",
+            "subskill": "مجموع عمرين بعد عدد من السنوات"
           },
           {
             "id": "AGE_E_YEARS_TO_SUM",
@@ -339,8 +399,16 @@
       "templates": {
         "easy": [
           {
+            "id": "SPD_E_COMPARE",
+            "subskill": "المقارنة بين سرعتي مركبتين"
+          },
+          {
             "id": "SPD_E_DISTANCE",
             "subskill": "إيجاد المسافة من السرعة والزمن"
+          },
+          {
+            "id": "SPD_E_REMAINING",
+            "subskill": "المسافة المتبقية بعد جزء من الرحلة"
           },
           {
             "id": "SPD_E_SAME_DIRECTION_GAP",
@@ -353,6 +421,10 @@
           {
             "id": "SPD_E_TIME",
             "subskill": "إيجاد الزمن من المسافة والسرعة"
+          },
+          {
+            "id": "SPD_E_TOTAL_TRIP",
+            "subskill": "مجموع مسافتي مرحلتين"
           },
           {
             "id": "SPD_E_UNIT_MINUTES",
@@ -404,6 +476,18 @@
           {
             "id": "WORK_E_INVERSE",
             "subskill": "تناسب عكسي مباشر بين العمال والزمن"
+          },
+          {
+            "id": "WORK_E_OUTPUT_IN_DAYS",
+            "subskill": "حساب الإنتاج خلال عدد من الأيام بمعدل ثابت"
+          },
+          {
+            "id": "WORK_E_RATE_FROM_TOTAL",
+            "subskill": "المعدل اليومي من الإنجاز الكلي"
+          },
+          {
+            "id": "WORK_E_REMAINING_DAYS",
+            "subskill": "حساب الأيام المتبقية بعد إنجاز جزء من العمل"
           },
           {
             "id": "WORK_E_VOLUME",
@@ -465,12 +549,20 @@
             "subskill": "معدل آلة واحدة من آلة-ساعة"
           },
           {
+            "id": "MACH_E_LOST_OUTPUT",
+            "subskill": "الإنتاج المفقود بسبب توقف آلة"
+          },
+          {
             "id": "MACH_E_RATE_FROM_TOTAL",
             "subskill": "معدل الآلة الواحدة من إنتاج مجموعة"
           },
           {
             "id": "MACH_E_TIME_FOR_TARGET",
             "subskill": "زمن مجموعة آلات لبلوغ إنتاج مستهدف"
+          },
+          {
+            "id": "MACH_E_TOTAL_TWO_TYPES",
+            "subskill": "الإنتاج الكلي لنوعين من الآلات"
           }
         ],
         "medium": [
@@ -528,6 +620,14 @@
             "subskill": "معدل ثابت بين عدد وحدات وكمية — إيجاد عدد الوحدات"
           },
           {
+            "id": "PROP_E_TOTAL_TWO_ITEMS",
+            "subskill": "مجموع ثمن صنفين مختلفين"
+          },
+          {
+            "id": "PROP_E_UNIT_VALUE",
+            "subskill": "قيمة الوحدة الواحدة"
+          },
+          {
             "id": "PROP_H_COST_PLUS",
             "subskill": "تكلفة وحدات مع رسم ثابت"
           },
@@ -541,7 +641,7 @@
           },
           {
             "id": "PROP_M_RECIPE",
-            "subskill": "تكبير وصفة بعامل ثابت"
+            "subskill": "وصفة بمعدل ثابت — إيجاد عدد القطع"
           }
         ],
         "medium": [
@@ -584,15 +684,27 @@
         "easy": [
           {
             "id": "FRAC_E_2",
-            "subskill": "2 كسور مباشرة متتابعة من عدد معلوم"
+            "subskill": "2 كسور متتابعة — إيجاد العدد الأصلي"
+          },
+          {
+            "id": "FRAC_E_COUNT_PARTS",
+            "subskill": "عدد الأجزاء المتساوية داخل كمية"
+          },
+          {
+            "id": "FRAC_E_PART_OF",
+            "subskill": "حساب جزء كسري من كمية"
+          },
+          {
+            "id": "FRAC_E_REMAINING_FRACTION",
+            "subskill": "حساب الباقي بعد أخذ جزء كسري واحد"
           },
           {
             "id": "FRAC_H_4",
-            "subskill": "4 كسور متتابعة — إيجاد العدد الأصلي"
+            "subskill": "4 كسور متتابعة — تحديد الكسر المجهول"
           },
           {
             "id": "FRAC_M_3",
-            "subskill": "3 كسور مباشرة متتابعة من عدد معلوم"
+            "subskill": "3 كسور متتابعة — تحديد الكسر المجهول"
           }
         ],
         "medium": [
@@ -621,12 +733,24 @@
       "templates": {
         "easy": [
           {
+            "id": "RATE_E_BETTER_DEAL",
+            "subskill": "المقارنة بين عرضين بسعر الوحدة"
+          },
+          {
+            "id": "RATE_E_BUDGET_COUNT",
+            "subskill": "عدد الوحدات التي يشتريها مبلغ معلوم"
+          },
+          {
             "id": "RATE_E_DIRECT",
             "subskill": "معدل وحدوي ثم كمية جديدة"
           },
           {
             "id": "RATE_E_TIME",
             "subskill": "معدل وحدوي ثم إيجاد الزمن"
+          },
+          {
+            "id": "RATE_E_UNIT_PRICE",
+            "subskill": "سعر الوحدة الواحدة من مبلغ كلي"
           },
           {
             "id": "RATE_M_PERCENT",
@@ -668,8 +792,16 @@
       "templates": {
         "easy": [
           {
+            "id": "COMB_E_ONE_ALONE",
+            "subskill": "استخراج معدل آلة من المعدل المشترك"
+          },
+          {
             "id": "COMB_E_OUTPUT",
             "subskill": "جمع معدلين خلال مدة معلومة"
+          },
+          {
+            "id": "COMB_E_SHARE_OF_OUTPUT",
+            "subskill": "نصيب أحد الطرفين من الإنتاج المشترك"
           },
           {
             "id": "COMB_E_THREE",
@@ -678,6 +810,10 @@
           {
             "id": "COMB_E_TIME",
             "subskill": "جمع معدلين ثم إيجاد الزمن"
+          },
+          {
+            "id": "COMB_E_TIME_FOR_TARGET",
+            "subskill": "زمن بلوغ هدف بمعدل مشترك"
           }
         ],
         "medium": [
@@ -717,6 +853,14 @@
           {
             "id": "REL_E_CHAIN",
             "subskill": "ترتيب كامل وتحديد مركز"
+          },
+          {
+            "id": "REL_E_COUNT_BELOW",
+            "subskill": "عدّ من هم أدنى من شخص في ترتيب كامل"
+          },
+          {
+            "id": "REL_E_FALSE_STATEMENT",
+            "subskill": "اختيار العبارة التي يستحيل صدقها"
           },
           {
             "id": "REL_E_GAP_CHAIN",
@@ -770,6 +914,14 @@
             "subskill": "معرفة اليوم من بعد غد"
           },
           {
+            "id": "CAL_E_BEFORE",
+            "subskill": "اليوم السابق بعدد معلوم من الأيام"
+          },
+          {
+            "id": "CAL_E_DAYS_BETWEEN",
+            "subskill": "عدد الأيام بين يومين في الأسبوع"
+          },
+          {
             "id": "CAL_E_TOM",
             "subskill": "معرفة اليوم من الغد"
           },
@@ -821,8 +973,20 @@
       "templates": {
         "easy": [
           {
+            "id": "ODD_E_COUNT_MATCHING",
+            "subskill": "عدّ الأعداد التي تحقق خاصية معلنة"
+          },
+          {
+            "id": "ODD_E_EXTEND",
+            "subskill": "ضمّ عدد إلى مجموعة بخاصية واحدة واضحة"
+          },
+          {
             "id": "ODD_E_MULT",
             "subskill": "مضاعفات العدد 6"
+          },
+          {
+            "id": "ODD_E_PROPERTY",
+            "subskill": "تسمية الخاصية المشتركة في مجموعة صغيرة"
           },
           {
             "id": "ODD_E_SQUARES",
@@ -867,12 +1031,24 @@
       "templates": {
         "easy": [
           {
+            "id": "PL_E_BETTER_SALE",
+            "subskill": "المقارنة بين ربحي صفقتين"
+          },
+          {
+            "id": "PL_E_COST_FROM_PROFIT",
+            "subskill": "التكلفة من مقدار الربح ونسبته"
+          },
+          {
             "id": "PL_E_LOSS",
             "subskill": "نسبة خسارة من سعر الشراء"
           },
           {
             "id": "PL_E_PROFIT",
             "subskill": "نسبة ربح من سعر الشراء"
+          },
+          {
+            "id": "PL_E_SELL_PRICE",
+            "subskill": "سعر البيع من التكلفة ونسبة الربح"
           },
           {
             "id": "PL_H_REVERSE",

@@ -167,7 +167,18 @@ test('Profile F: the same denominator misconception, again and again', () => {
   assert.equal(r.errorPatterns[0].id, ID);
   assert.equal(r.errorPatterns[0].count, 5);
   assert.equal(r.errorPatterns[0].confidence, 'medium');
-  assert.equal(r.errorPatterns[0].errorType, ERROR_TYPE.METHOD);
+  // RC2.9.5. A pattern takes the error TYPE of its first occurrence, so which
+  // class it reports depends on whether the first item that offered the
+  // misconception was built to test it. That is a property of the sampled
+  // session rather than of the model, and the session changed when the mix
+  // moved to 50/40/10, so the expectation is read from the same items the
+  // learner answered instead of being pinned to one value.
+  const firstWrong = qs.findIndex((q, i) => responses[i].selected !== q.correct_option
+    && q.metadata.options_meta[responses[i].selected]?.misconceptionId === ID);
+  const firstWasTargeted = qs[firstWrong].metadata.target_misconception === ID;
+  assert.equal(r.errorPatterns[0].errorType,
+    firstWasTargeted ? ERROR_TYPE.TARGETED : ERROR_TYPE.METHOD,
+    `the first planted error was ${firstWasTargeted ? '' : 'not '}the item's own target`);
   const patterns = r.text.find(s => s.id === 'patterns').lines.join(' ');
   assert.ok(patterns.includes(MISCONCEPTIONS[ID].replace(/\.$/, '')), 'the pattern names the misconception in the learner\'s own feedback words');
   // No double counting: the pattern and any family weakness it causes are one recommendation.

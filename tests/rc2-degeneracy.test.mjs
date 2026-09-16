@@ -85,11 +85,15 @@ test('RC2-005 meta: a template with no declared target is not accused of anythin
 // --- the two defects the blind spot was hiding ------------------------------
 
 test('RC2-005 MUST_REJECT: CAL_H_LONG where whole weeks and the remainder agree', async () => {
-  // n = 24: three whole weeks, remainder three. "Move by the number of weeks"
-  // and "move by the remainder" are the same move, so the item measures nothing.
-  const {base, verdict} = draw(generateCalendar, await bandOfTemplate('calendar','CAL_H_LONG'), 'fx-cal-11');
+  // The CONDITION is what is pinned, not the draw: an offset whose whole weeks
+  // equal its remainder, so «move by the weeks» and «move by the remainder» are
+  // the same move and the item measures nothing. RC2.9.5 §4 added EASY
+  // templates to this family, which moves the seed such an offset lands on;
+  // re-found at n = 24 (three whole weeks, remainder three).
+  const {base, verdict} = draw(generateCalendar, await bandOfTemplate('calendar','CAL_H_LONG'), 'fx-cal-46');
   assert.equal(base.template_id, 'CAL_H_LONG');
   assert.equal(base.parameters.offsetDays, 24);
+  assert.equal(Math.floor(base.parameters.offsetDays / 7), base.parameters.offsetDays % 7);
   assert.equal(base.pedagogy.wrongMethodValue, base.correct);
   assert.ok(verdict.reasons.includes(REASON.DEGENERATE_WRONG_METHOD_EQUALS_KEY), verdict.reasons.join(','));
 });
@@ -125,7 +129,8 @@ test('RC2-005 MUST_REJECT: a chain position that reads the same from either end'
   // the guard is still what catches it.
   // RC2.9.4-B2 added two EASY relational templates, which moves the seed a
   // five-person chain lands on. Re-found, same condition.
-  for (const [seed, template] of [['fx-rel-2', 'REL_E_CHAIN']]) {
+  // RC2.9.5 §4 added two EASY relational templates, moving the seed again.
+  for (const [seed, template] of [['fx-rel-14', 'REL_E_CHAIN']]) {
     const {base, verdict} = draw(generateRelational, await bandOfTemplate('relational', template), seed);
     assert.equal(base.template_id, template);
     assert.equal(base.parameters.nodeCount, 5);
@@ -282,7 +287,7 @@ test('RC2-005: every template in the engine is classified, and every classificat
   // that were only parameter variants, so the breadth the journeys need had to
   // come from four real structures: a hidden operation and a membership test in
   // sequences, a past ratio and an invariant difference in ages.
-  assert.equal(report.totals.templates, 184, 'every declared template is reachable');
+  assert.equal(report.totals.templates, 228, 'every declared template is reachable');
   assert.deepEqual(report.totals.unclassified, []);
   assert.deepEqual(report.totals.declaredButAbsentFromEngine, []);
   assert.equal(report.totals.rc1TemplatesWithNoModel, 23, 'the RC1 gap was 23 templates');

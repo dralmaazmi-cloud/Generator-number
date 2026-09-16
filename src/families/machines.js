@@ -8,6 +8,10 @@ export function generateMachines({difficulty, rng, seed, engineVersion, telemetr
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
   return bandPool(rng, 'machines', difficulty, [
     ['MACH_E_HOURS', machineHours],
+    // RC2.9.5 §4. Two EASY jobs on two machine groups: what they make
+    // TOGETHER, and what is LOST when one of them stops.
+    ['MACH_E_TOTAL_TWO_TYPES', totalOfTwoTypes],
+    ['MACH_E_LOST_OUTPUT', lostOutput],
     ['MACH_E_REQUIRED', requiredMachines],
     ['MACH_M_STOP', oneStops],
     ['MACH_M_NEW_FAST', newMachineFaster],
@@ -872,5 +876,97 @@ function compareTwoMachines(ctx) {
     },
     complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
     textParams: {essentialParams: ['fastRate', 'slowRate', 'hours']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: the output of two groups of machines together. */
+function totalOfTwoTypes(ctx) {
+  const {rng} = ctx;
+  const aCount = rng.pick([2, 3, 4]);
+  const aRate = rng.pick([5, 6, 8, 10]);
+  const bCount = rng.pick([3, 5, 6].filter(v => v !== aCount));
+  const bRate = rng.pick([4, 7, 9, 12].filter(v => v !== aRate));
+  const hours = rng.pick([2, 3, 4]);
+  const aOut = aCount * aRate * hours, bOut = bCount * bRate * hours;
+  const correct = aOut + bOut;
+  if (correct > 1200) return resample(ctx, totalOfTwoTypes);
+  const distractors = usable(ctx, [
+    mk(aOut, 'USED_ONLY_FIRST_RATE', `${aCount} × ${aRate} × ${hours}`),
+    mk(bOut, 'USED_ONLY_SECOND_RATE', `${bCount} × ${bRate} × ${hours}`),
+    mk((aCount + bCount) * (aRate + bRate) * hours, 'RATE_APPLIED_TO_WRONG_COUNT',
+      `(${aCount} + ${bCount}) × (${aRate} + ${bRate}) × ${hours}`),
+    mk((aCount * aRate + bCount * bRate), 'MISSED_ONE_STAGE', `${aCount} × ${aRate} + ${bCount} × ${bRate}`),
+    mk(Math.abs(aOut - bOut), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(aOut, bOut)} − ${Math.min(aOut, bOut)}`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `(${aOut} + ${bOut}) × 2`),
+    mk((aCount + bCount) * aRate * hours, 'RATE_APPLIED_TO_WRONG_COUNT', `(${aCount} + ${bCount}) × ${aRate} × ${hours}`)
+  ]);
+  const stem = composeSentences(ctx,
+    `في مصنع ${u(aCount, 'machine')} من النوع الأول تنتج كل منها ${u(aRate, 'piecePerHour')}، و${u(bCount, 'machine')} من النوع الثاني تنتج كل منها ${u(bRate, 'piecePerHour')}. كم قطعة ينتجها المصنع في ${u(hours, 'hour', 'oblique')}؟`);
+  return buildBase(ctx, {
+    templateId: 'MACH_E_TOTAL_TWO_TYPES',
+    subskill: 'الإنتاج الكلي لنوعين من الآلات',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('piece'),
+    steps: [
+      `إنتاج النوع الأول = ${aCount} × ${aRate} × ${hours} = ${aOut}.`,
+      `إنتاج النوع الثاني = ${bCount} × ${bRate} × ${hours} = ${bOut}.`,
+      `المجموع = ${aOut} + ${bOut} = ${correct}.`
+    ],
+    howToStart: 'احسب إنتاج كل نوع وحده ثم اجمع الناتجين.',
+    remember: 'المعدلات لا تُجمع مع الأعداد: كل نوع يُحسب على حدة.',
+    fastMethod: `الإنتاج الكلي = مجموع إنتاج كل نوع — هنا (${aCount} × ${aRate} + ${bCount} × ${bRate}) × ${hours}.`,
+    estimatedSteps: 3, conceptTags: ['machines', 'combine'],
+    parameters: {firstCount: aCount, firstRate: aRate, secondCount: bCount, secondRate: bRate, hours},
+    oracle: {kind: 'constraint', answerKind: 'number',
+      constraints: [eq(X, add(mul(aCount, aRate, hours), mul(bCount, bRate, hours)))]},
+    askedUnknown: 'totalOfTwoMachineTypes', stageCount: 3,
+    pedagogy: {targetSkill: 'TWO_GROUPS_TOTAL', targetMisconception: 'RATE_APPLIED_TO_WRONG_COUNT',
+      wrongMethodValue: (aCount + bCount) * (aRate + bRate) * hours},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 3, arithmeticBurden: 3},
+    textParams: {essentialParams: ['firstCount', 'firstRate', 'secondCount', 'secondRate', 'hours']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: the output LOST while one machine is stopped. */
+function lostOutput(ctx) {
+  const {rng} = ctx;
+  const count = rng.pick([4, 5, 6, 8]);
+  const rate = rng.pick([6, 7, 9, 12]);
+  const hours = rng.pick([3, 4, 5, 6]);
+  const stopped = rng.pick([1, 2]).valueOf();
+  if (stopped >= count) return resample(ctx, lostOutput);
+  const full = count * rate * hours;
+  const actual = (count - stopped) * rate * hours;
+  const correct = full - actual;
+  const distractors = usable(ctx, [
+    mk(actual, 'ANSWERED_THE_OTHER_COMPONENT', `(${count} − ${stopped}) × ${rate} × ${hours}`),
+    mk(full, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${count} × ${rate} × ${hours}`),
+    mk(rate * hours * count / 2, 'ASSUMED_EQUAL_SHARES', `${count} × ${rate} × ${hours} ÷ 2`),
+    mk(stopped * rate, 'MISSED_ONE_STAGE', `${stopped} × ${rate}`),
+    mk(rate * hours * (stopped + 1), 'OFF_BY_ONE_STEP', `${rate} × ${hours} × (${stopped} + 1)`),
+    mk(rate * hours * (stopped + 2), 'OFF_BY_ONE_STEP', `${rate} × ${hours} × (${stopped} + 2)`),
+    mk(full + correct, 'APPLIED_STEP_TWICE', `${full} + ${stopped} × ${rate} × ${hours}`)
+  ]);
+  const stem = composeSentences(ctx,
+    `في خط إنتاج ${u(count, 'machine')} متطابقة في الإنتاجية، تنتج كل منها ${u(rate, 'piecePerHour')}. توقفت ${u(stopped, 'machine')} طوال ${u(hours, 'hour', 'oblique')}. كم قطعة فُقدت بسبب التوقف؟`);
+  return buildBase(ctx, {
+    templateId: 'MACH_E_LOST_OUTPUT',
+    subskill: 'الإنتاج المفقود بسبب توقف آلة',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('piece'),
+    steps: [`المفقود = ${stopped} × ${rate} × ${hours} = ${correct}.`],
+    howToStart: 'الآلات المتوقفة وحدها هي ما يُحسب: اضرب عددها في معدلها وفي الزمن.',
+    remember: 'المفقود يُحسب من الآلات المتوقفة، لا من الخط كله.',
+    fastMethod: `المفقود = عدد المتوقفات × معدلها × زمن التوقف — هنا ${stopped} × ${rate} × ${hours}.`,
+    estimatedSteps: 1, conceptTags: ['machines', 'remainder'],
+    parameters: {machineCount: count, ratePerMachine: rate, hours, stoppedCount: stopped},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, mul(stopped, rate, hours))]},
+    askedUnknown: 'lostOutputWhileStopped', stageCount: 1,
+    pedagogy: {targetSkill: 'LOST_OUTPUT', targetMisconception: 'USED_TOTAL_INSTEAD_OF_REMAINDER',
+      wrongMethodValue: full},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 2},
+    textParams: {essentialParams: ['machineCount', 'ratePerMachine', 'hours', 'stoppedCount']}
   });
 }

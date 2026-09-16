@@ -21,7 +21,8 @@ export function generateWorkTime({difficulty, rng, seed, engineVersion, telemetr
     // RC2.9.5 §4. Work seen as an amount produced, and work seen as what is
     // LEFT — neither of which the EASY band asked for.
     ['WORK_E_OUTPUT_IN_DAYS', outputInDays],
-    ['WORK_E_REMAINING_DAYS', remainingDays]
+    ['WORK_E_REMAINING_DAYS', remainingDays],
+    ['WORK_E_RATE_FROM_TOTAL', dailyRateFromTotal]
   ], pinTemplate)(ctx);
 }
 
@@ -798,7 +799,7 @@ function outputInDays(ctx) {
     steps: [`الإنتاج = المعدل اليومي × عدد الأيام = ${perDay} × ${days} = ${correct}.`],
     howToStart: 'اضرب ما يُنجز في اليوم في عدد الأيام.',
     remember: 'المعدل الثابت يعني أن الإنتاج يتناسب طرديًا مع الزمن.',
-    fastMethod: `${perDay} × ${days}.`,
+    fastMethod: `الإنتاج = المعدل اليومي × عدد الأيام — هنا ${perDay} × ${days}.`,
     estimatedSteps: 1, conceptTags: ['work-rate', 'forward'],
     parameters: {dailyOutput: perDay, dayCount: days},
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, mul(perDay, days))]},
@@ -834,8 +835,9 @@ function remainingDays(ctx) {
     mk(total / perDay, 'MISSED_ONE_STAGE', `${total} ÷ ${perDay}`),
     mk(done / perDay, 'MISSED_ONE_STAGE', `${done} ÷ ${perDay}`)
   ], {maxDecimals: 2});
+  const site = rng.pick(['ورشة', 'مصنع', 'مطبعة', 'مشتل', 'مشغل خياطة']);
   const stem = composeSentences(ctx,
-    `مشروع يحتاج ${u(total, 'piece')} بمعدل ثابت ${u(perDay, 'piece')} في اليوم. أُنجز منه ${u(done, 'piece')}، فكم يومًا بقي لإتمامه؟`);
+    `في ${site} مشروع يحتاج ${u(total, 'piece')} بمعدل ثابت ${u(perDay, 'piece')} في اليوم. أُنجز منه ${u(done, 'piece')}، فكم يومًا بقي لإتمامه؟`);
   return buildBase(ctx, {
     templateId: 'WORK_E_REMAINING_DAYS',
     subskill: 'حساب الأيام المتبقية بعد إنجاز جزء من العمل',
@@ -848,7 +850,7 @@ function remainingDays(ctx) {
     ],
     howToStart: 'اطرح المنجز من الكل أولًا، ثم اقسم الباقي على المعدل اليومي.',
     remember: 'السؤال عن المتبقي لا عن الكل: اطرح قبل أن تقسم.',
-    fastMethod: `(${total} − ${done}) ÷ ${perDay}.`,
+    fastMethod: `الأيام المتبقية = (الكل − المنجز) ÷ المعدل اليومي — هنا (${total} − ${done}) ÷ ${perDay}.`,
     estimatedSteps: 2, conceptTags: ['work-rate', 'remainder'],
     parameters: {dailyOutput: perDay, totalWork: total, doneWork: done},
     oracle: {kind: 'constraint', answerKind: 'number',
@@ -858,5 +860,44 @@ function remainingDays(ctx) {
       wrongMethodValue: totalDays},
     complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
     textParams: {essentialParams: ['dailyOutput', 'totalWork', 'doneWork']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: the daily rate a total and a duration imply. */
+function dailyRateFromTotal(ctx) {
+  const {rng} = ctx;
+  const days = rng.pick([4, 5, 6, 8, 9]);
+  const perDay = rng.pick([7, 9, 11, 12, 15].filter(v => v !== days));
+  const total = days * perDay;
+  const correct = perDay;
+  const distractors = usable(ctx, [
+    mk(total, 'USED_GIVEN_VALUE_AS_ANSWER', `الإنتاج الكلي المعطى ${total}`),
+    mk(days, 'SWAPPED_THE_TWO_UNKNOWNS', `عدد الأيام المعطى ${days}`),
+    mk(total * days, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${total} × ${days}`),
+    mk(total - days, 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `${total} − ${days}`),
+    mk(perDay + 1, 'OFF_BY_ONE_STEP', `${total} ÷ ${days} + 1`),
+    mk(perDay - 1, 'OFF_BY_ONE_STEP', `${total} ÷ ${days} − 1`),
+    mk(total / (days + 1), 'RATE_APPLIED_TO_WRONG_COUNT', `${total} ÷ (${days} + 1)`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx,
+    `في ورشة صيانة أنجز فريق ${u(total, 'task')} في ${u(days, 'day', 'oblique')} بوتيرة ثابتة. كم مهمة ينجز الفريق في اليوم الواحد؟`);
+  return buildBase(ctx, {
+    templateId: 'WORK_E_RATE_FROM_TOTAL',
+    subskill: 'المعدل اليومي من الإنجاز الكلي',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('task'),
+    steps: [`المعدل اليومي = ${total} ÷ ${days} = ${correct}.`],
+    howToStart: 'اقسم الإنجاز الكلي على عدد الأيام.',
+    remember: 'المعدل اليومي هو الكل مقسومًا على الزمن، لا مضروبًا فيه.',
+    fastMethod: `المعدل اليومي = الكل ÷ عدد الأيام — هنا ${total} ÷ ${days}.`,
+    estimatedSteps: 1, conceptTags: ['work-rate', 'unit-value'],
+    parameters: {totalTasks: total, dayCount: days},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, days), total)]},
+    askedUnknown: 'dailyRateFromTotal', stageCount: 1,
+    pedagogy: {targetSkill: 'RATE_FROM_TOTAL', targetMisconception: 'MULTIPLIED_INSTEAD_OF_DIVIDED',
+      wrongMethodValue: total * days},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {essentialParams: ['totalTasks', 'dayCount']}
   });
 }

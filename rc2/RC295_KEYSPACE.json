@@ -1,0 +1,1828 @@
+{
+  "easy": {
+    "band": "easy",
+    "drawn": 15315,
+    "errors": 0,
+    "templates": 110,
+    "pvKeys": 117,
+    "ndKeys": 105,
+    "edges": 132,
+    "matching": 92,
+    "floorPer100": 8,
+    "floorIfPvOnly": 0,
+    "floorIfNdOnly": 0,
+    "oneToOne": false,
+    "pvKeysWithSeveralNd": 7,
+    "ndKeysWithSeveralPv": 12,
+    "meanPvPerNd": 1.26,
+    "meanNdPerPv": 1.13,
+    "byFamily": [
+      {
+        "family": "sequences",
+        "drawn": 1291,
+        "pv": 8,
+        "nd": 17
+      },
+      {
+        "family": "ratios",
+        "drawn": 917,
+        "pv": 8,
+        "nd": 5
+      },
+      {
+        "family": "percentages",
+        "drawn": 922,
+        "pv": 7,
+        "nd": 6
+      },
+      {
+        "family": "averages",
+        "drawn": 928,
+        "pv": 8,
+        "nd": 8
+      },
+      {
+        "family": "ages",
+        "drawn": 919,
+        "pv": 6,
+        "nd": 9
+      },
+      {
+        "family": "speed",
+        "drawn": 981,
+        "pv": 8,
+        "nd": 8
+      },
+      {
+        "family": "work_time",
+        "drawn": 913,
+        "pv": 6,
+        "nd": 6
+      },
+      {
+        "family": "machines",
+        "drawn": 919,
+        "pv": 6,
+        "nd": 6
+      },
+      {
+        "family": "direct_proportion",
+        "drawn": 916,
+        "pv": 10,
+        "nd": 6
+      },
+      {
+        "family": "fractions",
+        "drawn": 958,
+        "pv": 9,
+        "nd": 6
+      },
+      {
+        "family": "unit_rate",
+        "drawn": 916,
+        "pv": 7,
+        "nd": 6
+      },
+      {
+        "family": "combined_rate",
+        "drawn": 923,
+        "pv": 6,
+        "nd": 6
+      },
+      {
+        "family": "relational",
+        "drawn": 1021,
+        "pv": 6,
+        "nd": 6
+      },
+      {
+        "family": "calendar",
+        "drawn": 931,
+        "pv": 8,
+        "nd": 7
+      },
+      {
+        "family": "odd_one_out",
+        "drawn": 950,
+        "pv": 8,
+        "nd": 8
+      },
+      {
+        "family": "profit_loss",
+        "drawn": 910,
+        "pv": 6,
+        "nd": 5
+      }
+    ],
+    "edgeSeeds": [
+      {
+        "pv": "SEQ_E_NTH_TERM|FORWARD_COMPUTE/TERM",
+        "nd": "task:FORWARD_COMPUTE|qty:TERM|rel:eq(X,add(#,mul(#,#)))|path:subtract>multiply>add|info:RULE_STATED_IN_WORDS|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|0"
+      },
+      {
+        "pv": "SEQ_E_COUNT_TERMS|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:eq(#,add(#,mul(#,sub(X,#))))|path:subtract>divide>add|info:RUN_WITH_SHOWN_LAST_TERM|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|2"
+      },
+      {
+        "pv": "SEQ_E_FIRST_ABOVE|FIND_THRESHOLD/TERM",
+        "nd": "task:FIND_THRESHOLD|qty:TERM|rel:gt(X,#) & gte(add(#,#),sub(X,#))|path:none|info:RUN_CONSTANT_DIFFERENCE|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|5"
+      },
+      {
+        "pv": "SEQ_E_SUM_SHOWN|COMBINE_PARTS/NUMBER",
+        "nd": "task:COMBINE_PARTS|qty:NUMBER|rel:eq(#,X)|path:add|info:VALUE_LIST|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|6"
+      },
+      {
+        "pv": "SEQ_E_GEO|CONTINUE_PATTERN/TERM",
+        "nd": "task:CONTINUE_PATTERN|qty:TERM|rel:eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(X,mul(#,#))|path:divide>ratio>multiply|info:RUN_CONSTANT_RATIO|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|9"
+      },
+      {
+        "pv": "SEQ_E_GEO|RECOVER_PATTERN_TERM/TERM",
+        "nd": "task:RECOVER_PATTERN_TERM|qty:TERM|rel:eq(#,mul(#,X)) & eq(X,mul(#,#))|path:divide>ratio|info:RUN_CONSTANT_RATIO|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|12"
+      },
+      {
+        "pv": "SEQ_E_GEO|RECOVER_PATTERN_TERM/TERM",
+        "nd": "task:RECOVER_PATTERN_TERM|qty:TERM|rel:eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(X,mul(#,#))|path:divide>ratio>multiply|info:RUN_CONSTANT_RATIO|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|15"
+      },
+      {
+        "pv": "SEQ_E_ARITH|RECOVER_PATTERN_TERM/TERM",
+        "nd": "task:RECOVER_PATTERN_TERM|qty:TERM|rel:eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,X))|path:subtract>ratio|info:RUN_CONSTANT_DIFFERENCE|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|20"
+      },
+      {
+        "pv": "SEQ_E_ARITH|CONTINUE_PATTERN/TERM",
+        "nd": "task:CONTINUE_PATTERN|qty:TERM|rel:eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(X,#))|path:subtract>ratio>add|info:RUN_CONSTANT_DIFFERENCE|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|21"
+      },
+      {
+        "pv": "SEQ_E_GEO|RECOVER_PATTERN_TERM/TERM",
+        "nd": "task:RECOVER_PATTERN_TERM|qty:TERM|rel:eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,X))|path:divide>ratio|info:RUN_CONSTANT_RATIO|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|23"
+      },
+      {
+        "pv": "SEQ_E_ARITH|RECOVER_PATTERN_TERM/TERM",
+        "nd": "task:RECOVER_PATTERN_TERM|qty:TERM|rel:eq(#,sub(#,X)) & eq(#,sub(X,#))|path:subtract>ratio>add|info:RUN_CONSTANT_DIFFERENCE|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|29"
+      },
+      {
+        "pv": "SEQ_E_GEO|RECOVER_PATTERN_TERM/TERM",
+        "nd": "task:RECOVER_PATTERN_TERM|qty:TERM|rel:eq(#,mul(#,X)) & eq(X,mul(#,#))|path:multiply>ratio|info:RUN_CONSTANT_RATIO|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|73"
+      },
+      {
+        "pv": "SEQ_E_GEO|CONTINUE_PATTERN/TERM",
+        "nd": "task:CONTINUE_PATTERN|qty:TERM|rel:eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(X,mul(#,#))|path:divide>ratio>multiply|info:RUN_CONSTANT_RATIO|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|81"
+      },
+      {
+        "pv": "SEQ_E_GEO|RECOVER_PATTERN_TERM/TERM",
+        "nd": "task:RECOVER_PATTERN_TERM|qty:TERM|rel:eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(X,mul(#,#))|path:divide>ratio>multiply|info:RUN_CONSTANT_RATIO|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|119"
+      },
+      {
+        "pv": "SEQ_E_GEO|CONTINUE_PATTERN/TERM",
+        "nd": "task:CONTINUE_PATTERN|qty:TERM|rel:eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,X))|path:divide>ratio|info:RUN_CONSTANT_RATIO|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|151"
+      },
+      {
+        "pv": "SEQ_E_GEO|CONTINUE_PATTERN/TERM",
+        "nd": "task:CONTINUE_PATTERN|qty:TERM|rel:eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,X))|path:divide>ratio|info:RUN_CONSTANT_RATIO|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|384"
+      },
+      {
+        "pv": "SEQ_E_GEO|RECOVER_PATTERN_TERM/TERM",
+        "nd": "task:RECOVER_PATTERN_TERM|qty:TERM|rel:eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,X))|path:divide>ratio|info:RUN_CONSTANT_RATIO|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|easy|sequences|390"
+      },
+      {
+        "pv": "RAT_E_PART_COUNT|DECOMPOSE_COMBINED/COUNT",
+        "nd": "task:DECOMPOSE_COMBINED|qty:COUNT|rel:eq(X,add(#,#))|path:add|info:PARTITION_OF_WHOLE|entry:forward",
+        "family": "ratios",
+        "seed": "rc294-keyspace|easy|ratios|0"
+      },
+      {
+        "pv": "RAT_E_DIFF_SPLIT|SHARE_PROPORTIONALLY/QUANTITY",
+        "nd": "task:SHARE_PROPORTIONALLY|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "ratios",
+        "seed": "rc294-keyspace|easy|ratios|1"
+      },
+      {
+        "pv": "RAT_E_COMMON_FACTOR|IDENTIFY_RULE/NUMBER",
+        "nd": "task:IDENTIFY_RULE|qty:NUMBER|rel:eq(#,mul(#,X)) & eq(#,mul(#,X))|path:divide|info:DIRECT_GIVENS|entry:forward",
+        "family": "ratios",
+        "seed": "rc294-keyspace|easy|ratios|2"
+      },
+      {
+        "pv": "RAT_E_SPLIT|SHARE_PROPORTIONALLY/QUANTITY",
+        "nd": "task:SHARE_PROPORTIONALLY|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "ratios",
+        "seed": "rc294-keyspace|easy|ratios|6"
+      },
+      {
+        "pv": "RAT_E_SHARE_GAP|DECOMPOSE_COMBINED/QUANTITY",
+        "nd": "task:DECOMPOSE_COMBINED|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "ratios",
+        "seed": "rc294-keyspace|easy|ratios|7"
+      },
+      {
+        "pv": "RAT_E_TOTAL_FROM_PART|COMBINE_PARTS/COUNT",
+        "nd": "task:COMBINE_PARTS|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "ratios",
+        "seed": "rc294-keyspace|easy|ratios|8"
+      },
+      {
+        "pv": "RAT_E_THREE_WAY|SHARE_PROPORTIONALLY/MONEY",
+        "nd": "task:SHARE_PROPORTIONALLY|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "ratios",
+        "seed": "rc294-keyspace|easy|ratios|15"
+      },
+      {
+        "pv": "RAT_E_KNOWN|SHARE_PROPORTIONALLY/QUANTITY",
+        "nd": "task:SHARE_PROPORTIONALLY|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "ratios",
+        "seed": "rc294-keyspace|easy|ratios|16"
+      },
+      {
+        "pv": "PCT_M_UNIT_PRICE|SCALE_PROPORTIONALLY/MONEY",
+        "nd": "task:SCALE_PROPORTIONALLY|qty:MONEY|rel:eq(mul(#,#,X),mul(#,#,add(#,#)))|path:divide>add>multiply|info:BEFORE_AFTER_CHANGE|entry:forward",
+        "family": "percentages",
+        "seed": "rc294-keyspace|easy|percentages|0"
+      },
+      {
+        "pv": "PCT_E_WHOLE|RECOVER_ORIGINAL/QUANTITY",
+        "nd": "task:RECOVER_ORIGINAL|arch:FOURTH_PROPORTION|entry:reverse",
+        "family": "percentages",
+        "seed": "rc294-keyspace|easy|percentages|1"
+      },
+      {
+        "pv": "PCT_E_SHARE_PERCENT|FORWARD_COMPUTE/PERCENT",
+        "nd": "task:FORWARD_COMPUTE|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "percentages",
+        "seed": "rc294-keyspace|easy|percentages|3"
+      },
+      {
+        "pv": "PCT_E_WHICH_OFFER|COMPARE_ALTERNATIVES/MONEY",
+        "nd": "task:COMPARE_ALTERNATIVES|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "percentages",
+        "seed": "rc294-keyspace|easy|percentages|5"
+      },
+      {
+        "pv": "PCT_M_REMAIN|APPLY_SUCCESSIVE_CHANGE/QUANTITY",
+        "nd": "task:APPLY_SUCCESSIVE_CHANGE|qty:QUANTITY|rel:eq(mul(#,X),mul(#,sub(#,#),sub(#,#)))|path:multiply>divide>subtract|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "percentages",
+        "seed": "rc294-keyspace|easy|percentages|6"
+      },
+      {
+        "pv": "PCT_E_OF|FORWARD_COMPUTE/QUANTITY",
+        "nd": "task:FORWARD_COMPUTE|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "percentages",
+        "seed": "rc294-keyspace|easy|percentages|11"
+      },
+      {
+        "pv": "PCT_E_REMAINING_PERCENT|FIND_REMAINDER/PERCENT",
+        "nd": "task:FIND_REMAINDER|qty:PERCENT|rel:eq(#,add(#,#,X))|path:add>subtract|info:REMAINDER_AFTER_PARTS|entry:forward",
+        "family": "percentages",
+        "seed": "rc294-keyspace|easy|percentages|21"
+      },
+      {
+        "pv": "AVG_E_ADD|FORWARD_COMPUTE/AVERAGE",
+        "nd": "task:FORWARD_COMPUTE|qty:AVERAGE|rel:eq(add(#,mul(#,#)),mul(#,X))|path:multiply>add>divide|info:BEFORE_AFTER_CHANGE|entry:forward",
+        "family": "averages",
+        "seed": "rc294-keyspace|easy|averages|0"
+      },
+      {
+        "pv": "AVG_E_REMOVE|FORWARD_COMPUTE/AVERAGE",
+        "nd": "task:FORWARD_COMPUTE|qty:AVERAGE|rel:eq(mul(#,X),sub(mul(#,#),#))|path:multiply>subtract>divide|info:BEFORE_AFTER_CHANGE|entry:forward",
+        "family": "averages",
+        "seed": "rc294-keyspace|easy|averages|1"
+      },
+      {
+        "pv": "AVG_E_COUNT_FROM_MEAN|DECOMPOSE_COMBINED/COUNT",
+        "nd": "task:DECOMPOSE_COMBINED|qty:COUNT|rel:eq(#,mul(#,X))|path:divide|info:GIVEN_INSIDE_THE_QUESTION|entry:forward",
+        "family": "averages",
+        "seed": "rc294-keyspace|easy|averages|2"
+      },
+      {
+        "pv": "AVG_E_TOTAL_FROM_MEAN|DECOMPOSE_COMBINED/QUANTITY",
+        "nd": "task:DECOMPOSE_COMBINED|qty:QUANTITY|rel:eq(X,mul(#,#))|path:multiply|info:GIVENS_LISTED_THEN_ASK|entry:forward",
+        "family": "averages",
+        "seed": "rc294-keyspace|easy|averages|3"
+      },
+      {
+        "pv": "AVG_E_MISSING_VALUE|DECOMPOSE_COMBINED/MEMBER_VALUE",
+        "nd": "task:DECOMPOSE_COMBINED|qty:MEMBER_VALUE|rel:eq(add(#,X),mul(#,#))|path:multiply>add>subtract|info:PARTITION_OF_WHOLE|entry:forward",
+        "family": "averages",
+        "seed": "rc294-keyspace|easy|averages|9"
+      },
+      {
+        "pv": "AVG_E_LIST|FORWARD_COMPUTE/AVERAGE",
+        "nd": "task:FORWARD_COMPUTE|qty:AVERAGE|rel:eq(#,mul(#,X))|path:add>divide|info:VALUE_LIST|entry:forward",
+        "family": "averages",
+        "seed": "rc294-keyspace|easy|averages|11"
+      },
+      {
+        "pv": "AVG_E_RANGE|COMPARE_ALTERNATIVES/QUANTITY",
+        "nd": "task:COMPARE_ALTERNATIVES|qty:QUANTITY|rel:eq(#,add(#,X))|path:subtract|info:VALUE_LIST|entry:forward",
+        "family": "averages",
+        "seed": "rc294-keyspace|easy|averages|17"
+      },
+      {
+        "pv": "AVG_E_COMPARE_MEANS|COMPARE_ALTERNATIVES/AVERAGE",
+        "nd": "task:COMPARE_ALTERNATIVES|qty:AVERAGE|rel:eq(#,mul(#,X))|path:divide|info:TWO_CONFIGURATIONS|entry:forward",
+        "family": "averages",
+        "seed": "rc294-keyspace|easy|averages|27"
+      },
+      {
+        "pv": "AGE_E_RATIO_SUM|DECOMPOSE_COMBINED/AGE",
+        "nd": "task:DECOMPOSE_COMBINED|qty:AGE|rel:eq(#,add(X,mul(#,X)))|path:add>divide|info:PRESENT_RATIO_AND_SUM|entry:forward",
+        "family": "ages",
+        "seed": "rc294-keyspace|easy|ages|0"
+      },
+      {
+        "pv": "AGE_E_GAP|COMPARE_ALTERNATIVES/AGE",
+        "nd": "task:COMPARE_ALTERNATIVES|qty:AGE|rel:eq(#,add(#,X))|path:subtract|info:DIRECT_GIVENS|entry:forward",
+        "family": "ages",
+        "seed": "rc294-keyspace|easy|ages|1"
+      },
+      {
+        "pv": "AGE_E_YEARS_TO_SUM|REQUIRED_INPUT/DURATION",
+        "nd": "task:REQUIRED_INPUT|qty:DURATION|rel:eq(#,add(add(#,X),add(#,X)))|path:add>subtract>divide|info:PRESENT_AGES_ASK_ELAPSED|entry:forward",
+        "family": "ages",
+        "seed": "rc294-keyspace|easy|ages|2"
+      },
+      {
+        "pv": "AGE_E_TOTAL_AFTER|COMBINE_PARTS/AGE",
+        "nd": "task:COMBINE_PARTS|qty:AGE|rel:eq(X,add(#,#,mul(#,#)))|path:multiply>add|info:RELATION_AT_TWO_TIMES|entry:forward",
+        "family": "ages",
+        "seed": "rc294-keyspace|easy|ages|3"
+      },
+      {
+        "pv": "AGE_E_SUM_DIFF|DECOMPOSE_COMBINED/AGE",
+        "nd": "task:DECOMPOSE_COMBINED|qty:AGE|rel:eq(#,add(X,sub(X,#)))|path:divide>ratio>add|info:PRESENT_SUM_AND_DIFFERENCE|entry:forward",
+        "family": "ages",
+        "seed": "rc294-keyspace|easy|ages|5"
+      },
+      {
+        "pv": "AGE_E_TIME_SHIFT|FORWARD_COMPUTE/AGE",
+        "nd": "task:FORWARD_COMPUTE|qty:AGE|rel:eq(X,add(#,add(#,#)))|path:add>ratio|info:PRESENT_AGE_ASK_OTHER_TIME|entry:forward",
+        "family": "ages",
+        "seed": "rc294-keyspace|easy|ages|9"
+      },
+      {
+        "pv": "AGE_E_TIME_SHIFT|FORWARD_COMPUTE/AGE",
+        "nd": "task:FORWARD_COMPUTE|qty:AGE|rel:eq(X,sub(sub(#,#),#))|path:subtract>ratio|info:PRESENT_AGE_ASK_OTHER_TIME|entry:forward",
+        "family": "ages",
+        "seed": "rc294-keyspace|easy|ages|13"
+      },
+      {
+        "pv": "AGE_E_TIME_SHIFT|FORWARD_COMPUTE/AGE",
+        "nd": "task:FORWARD_COMPUTE|qty:AGE|rel:eq(X,add(#,sub(#,#)))|path:subtract>add>ratio|info:PRESENT_AGE_ASK_OTHER_TIME|entry:forward",
+        "family": "ages",
+        "seed": "rc294-keyspace|easy|ages|16"
+      },
+      {
+        "pv": "AGE_E_TIME_SHIFT|FORWARD_COMPUTE/AGE",
+        "nd": "task:FORWARD_COMPUTE|qty:AGE|rel:eq(X,sub(add(#,#),#))|path:add>subtract>ratio|info:PRESENT_AGE_ASK_OTHER_TIME|entry:forward",
+        "family": "ages",
+        "seed": "rc294-keyspace|easy|ages|18"
+      },
+      {
+        "pv": "SPD_E_SPEED|FORWARD_COMPUTE/SPEED",
+        "nd": "task:FORWARD_COMPUTE|qty:SPEED|rel:eq(#,mul(#,X))|path:divide|info:DIRECT_GIVENS|entry:forward",
+        "family": "speed",
+        "seed": "rc294-keyspace|easy|speed|0"
+      },
+      {
+        "pv": "SPD_E_REMAINING|FIND_REMAINDER/DISTANCE",
+        "nd": "task:FIND_REMAINDER|qty:DISTANCE|rel:eq(#,add(X,mul(#,#)))|path:multiply>subtract|info:REMAINDER_AFTER_PARTS|entry:forward",
+        "family": "speed",
+        "seed": "rc294-keyspace|easy|speed|1"
+      },
+      {
+        "pv": "SPD_E_UNIT_MINUTES|FORWARD_COMPUTE/DISTANCE",
+        "nd": "task:FORWARD_COMPUTE|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "speed",
+        "seed": "rc294-keyspace|easy|speed|2"
+      },
+      {
+        "pv": "SPD_E_TIME|FORWARD_COMPUTE/DURATION",
+        "nd": "task:FORWARD_COMPUTE|qty:DURATION|rel:eq(#,mul(#,X))|path:divide|info:DIRECT_GIVENS|entry:forward",
+        "family": "speed",
+        "seed": "rc294-keyspace|easy|speed|4"
+      },
+      {
+        "pv": "SPD_E_DISTANCE|FORWARD_COMPUTE/DISTANCE",
+        "nd": "task:FORWARD_COMPUTE|qty:DISTANCE|rel:eq(X,mul(#,#))|path:multiply|info:DIRECT_GIVENS|entry:forward",
+        "family": "speed",
+        "seed": "rc294-keyspace|easy|speed|5"
+      },
+      {
+        "pv": "SPD_E_SAME_DIRECTION_GAP|COMPARE_ALTERNATIVES/DISTANCE",
+        "nd": "task:COMPARE_ALTERNATIVES|qty:DISTANCE|rel:eq(X,mul(#,sub(#,#)))|path:divide>subtract>multiply|info:TWO_MOVING_BODIES|entry:forward",
+        "family": "speed",
+        "seed": "rc294-keyspace|easy|speed|17"
+      },
+      {
+        "pv": "SPD_E_COMPARE|COMPARE_ALTERNATIVES/SPEED",
+        "nd": "task:COMPARE_ALTERNATIVES|qty:SPEED|rel:eq(#,mul(#,X))|path:divide|info:TWO_CONFIGURATIONS|entry:forward",
+        "family": "speed",
+        "seed": "rc294-keyspace|easy|speed|53"
+      },
+      {
+        "pv": "SPD_E_TOTAL_TRIP|COMBINE_PARTS/DISTANCE",
+        "nd": "task:COMBINE_PARTS|qty:DISTANCE|rel:eq(X,add(mul(#,#),mul(#,#)))|path:multiply>add|info:CONTEXT_THEN_NUMBERS|entry:forward",
+        "family": "speed",
+        "seed": "rc294-keyspace|easy|speed|80"
+      },
+      {
+        "pv": "WORK_E_INVERSE|FORWARD_COMPUTE/DURATION",
+        "nd": "task:FORWARD_COMPUTE|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "work_time",
+        "seed": "rc294-keyspace|easy|work_time|0"
+      },
+      {
+        "pv": "WORK_M_EFF|FORWARD_COMPUTE/DURATION",
+        "nd": "task:FORWARD_COMPUTE|qty:DURATION|rel:eq(mul(#,#),mul(X,add(#,#)))|path:divide>add|info:BEFORE_AFTER_CHANGE|entry:forward",
+        "family": "work_time",
+        "seed": "rc294-keyspace|easy|work_time|1"
+      },
+      {
+        "pv": "WORK_E_REMAINING_DAYS|FIND_REMAINDER/DURATION",
+        "nd": "task:FIND_REMAINDER|qty:DURATION|rel:eq(mul(#,X),sub(#,#))|path:subtract>divide|info:REMAINDER_AFTER_PARTS|entry:forward",
+        "family": "work_time",
+        "seed": "rc294-keyspace|easy|work_time|3"
+      },
+      {
+        "pv": "WORK_E_VOLUME|REQUIRED_INPUT/COUNT",
+        "nd": "task:REQUIRED_INPUT|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "work_time",
+        "seed": "rc294-keyspace|easy|work_time|4"
+      },
+      {
+        "pv": "WORK_E_OUTPUT_IN_DAYS|FORWARD_COMPUTE/QUANTITY",
+        "nd": "task:FORWARD_COMPUTE|qty:QUANTITY|rel:eq(X,mul(#,#))|path:multiply|info:CONTEXT_THEN_NUMBERS|entry:forward",
+        "family": "work_time",
+        "seed": "rc294-keyspace|easy|work_time|6"
+      },
+      {
+        "pv": "WORK_E_RATE_FROM_TOTAL|DECOMPOSE_COMBINED/RATE",
+        "nd": "task:DECOMPOSE_COMBINED|qty:RATE|rel:eq(#,mul(#,X))|path:divide|info:CONTEXT_THEN_NUMBERS|entry:forward",
+        "family": "work_time",
+        "seed": "rc294-keyspace|easy|work_time|12"
+      },
+      {
+        "pv": "MACH_E_LOST_OUTPUT|FIND_REMAINDER/QUANTITY",
+        "nd": "task:FIND_REMAINDER|qty:QUANTITY|rel:eq(X,mul(#,#,#))|path:multiply|info:TWO_CONFIGURATIONS|entry:forward",
+        "family": "machines",
+        "seed": "rc294-keyspace|easy|machines|0"
+      },
+      {
+        "pv": "MACH_E_TOTAL_TWO_TYPES|COMBINE_PARTS/QUANTITY",
+        "nd": "task:COMBINE_PARTS|qty:QUANTITY|rel:eq(X,add(mul(#,#,#),mul(#,#,#)))|path:multiply>add|info:TWO_CONFIGURATIONS|entry:forward",
+        "family": "machines",
+        "seed": "rc294-keyspace|easy|machines|4"
+      },
+      {
+        "pv": "MACH_E_COMPARE|COMPARE_ALTERNATIVES/QUANTITY",
+        "nd": "task:COMPARE_ALTERNATIVES|qty:QUANTITY|rel:eq(X,mul(#,sub(#,#)))|path:subtract>multiply|info:TWO_CONFIGURATIONS|entry:forward",
+        "family": "machines",
+        "seed": "rc294-keyspace|easy|machines|6"
+      },
+      {
+        "pv": "MACH_E_TIME_FOR_TARGET|REQUIRED_INPUT/DURATION",
+        "nd": "task:REQUIRED_INPUT|qty:DURATION|rel:eq(#,mul(#,#,X))|path:multiply>divide|info:DIRECT_GIVENS|entry:forward",
+        "family": "machines",
+        "seed": "rc294-keyspace|easy|machines|10"
+      },
+      {
+        "pv": "MACH_E_HOURS|SCALE_PROPORTIONALLY/QUANTITY",
+        "nd": "task:SCALE_PROPORTIONALLY|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "machines",
+        "seed": "rc294-keyspace|easy|machines|12"
+      },
+      {
+        "pv": "MACH_E_RATE_FROM_TOTAL|DECOMPOSE_COMBINED/RATE",
+        "nd": "task:DECOMPOSE_COMBINED|qty:RATE|rel:eq(#,mul(#,#,X))|path:multiply>subtract>divide|info:DIRECT_GIVENS|entry:forward",
+        "family": "machines",
+        "seed": "rc294-keyspace|easy|machines|18"
+      },
+      {
+        "pv": "PROP_M_FRAC_UNIT|SCALE_PROPORTIONALLY/QUANTITY",
+        "nd": "task:SCALE_PROPORTIONALLY|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "direct_proportion",
+        "seed": "rc294-keyspace|easy|direct_proportion|0"
+      },
+      {
+        "pv": "PROP_E_TOTAL_TWO_ITEMS|COMBINE_PARTS/MONEY",
+        "nd": "task:COMBINE_PARTS|qty:MONEY|rel:eq(X,add(mul(#,#),mul(#,#)))|path:multiply>add|info:TWO_CONFIGURATIONS|entry:forward",
+        "family": "direct_proportion",
+        "seed": "rc294-keyspace|easy|direct_proportion|1"
+      },
+      {
+        "pv": "PROP_E_UNIT_VALUE|DECOMPOSE_COMBINED/MONEY",
+        "nd": "task:DECOMPOSE_COMBINED|qty:MONEY|rel:eq(#,mul(#,X))|path:divide|info:GIVENS_LISTED_THEN_ASK|entry:forward",
+        "family": "direct_proportion",
+        "seed": "rc294-keyspace|easy|direct_proportion|2"
+      },
+      {
+        "pv": "PROP_E_ITEMS|REQUIRED_INPUT/QUANTITY",
+        "nd": "task:REQUIRED_INPUT|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "direct_proportion",
+        "seed": "rc294-keyspace|easy|direct_proportion|3"
+      },
+      {
+        "pv": "PROP_E_COST|SCALE_PROPORTIONALLY/QUANTITY",
+        "nd": "task:SCALE_PROPORTIONALLY|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "direct_proportion",
+        "seed": "rc294-keyspace|easy|direct_proportion|4"
+      },
+      {
+        "pv": "PROP_M_MAP|SCALE_PROPORTIONALLY/QUANTITY",
+        "nd": "task:SCALE_PROPORTIONALLY|qty:QUANTITY|rel:eq(mul(#,X),mul(#,add(#,#)))|path:add>divide>multiply|info:DIRECT_GIVENS|entry:forward",
+        "family": "direct_proportion",
+        "seed": "rc294-keyspace|easy|direct_proportion|5"
+      },
+      {
+        "pv": "PROP_E_ITEMS|SCALE_PROPORTIONALLY/QUANTITY",
+        "nd": "task:SCALE_PROPORTIONALLY|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "direct_proportion",
+        "seed": "rc294-keyspace|easy|direct_proportion|6"
+      },
+      {
+        "pv": "PROP_H_COST_PLUS|SCALE_PROPORTIONALLY/MONEY",
+        "nd": "task:SCALE_PROPORTIONALLY|qty:MONEY|rel:eq(mul(#,#),mul(#,sub(X,#)))|path:divide>multiply>add>ratio|info:DIRECT_GIVENS|entry:forward",
+        "family": "direct_proportion",
+        "seed": "rc294-keyspace|easy|direct_proportion|7"
+      },
+      {
+        "pv": "PROP_M_RECIPE|SCALE_PROPORTIONALLY/QUANTITY",
+        "nd": "task:SCALE_PROPORTIONALLY|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "direct_proportion",
+        "seed": "rc294-keyspace|easy|direct_proportion|10"
+      },
+      {
+        "pv": "PROP_E_COST|REQUIRED_INPUT/QUANTITY",
+        "nd": "task:REQUIRED_INPUT|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "direct_proportion",
+        "seed": "rc294-keyspace|easy|direct_proportion|15"
+      },
+      {
+        "pv": "FRAC_E_2|REVERSE_RECOVER/NUMBER",
+        "nd": "task:REVERSE_RECOVER|qty:NUMBER|rel:eq(X,mul(#,#))|path:multiply>divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "fractions",
+        "seed": "rc294-keyspace|easy|fractions|0"
+      },
+      {
+        "pv": "FRAC_E_COUNT_PARTS|DECOMPOSE_COMBINED/COUNT",
+        "nd": "task:DECOMPOSE_COMBINED|qty:COUNT|rel:eq(#,mul(#,X))|path:divide|info:PARTITION_OF_WHOLE|entry:forward",
+        "family": "fractions",
+        "seed": "rc294-keyspace|easy|fractions|1"
+      },
+      {
+        "pv": "FRAC_E_PART_OF|SHARE_PROPORTIONALLY/QUANTITY",
+        "nd": "task:SHARE_PROPORTIONALLY|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "fractions",
+        "seed": "rc294-keyspace|easy|fractions|2"
+      },
+      {
+        "pv": "FRAC_E_REMAINING_FRACTION|FIND_REMAINDER/QUANTITY",
+        "nd": "task:FIND_REMAINDER|qty:QUANTITY|rel:eq(X,sub(#,#))|path:multiply>divide>subtract|info:REMAINDER_AFTER_PARTS|entry:forward",
+        "family": "fractions",
+        "seed": "rc294-keyspace|easy|fractions|5"
+      },
+      {
+        "pv": "FRAC_M_3|FORWARD_COMPUTE/NUMBER",
+        "nd": "task:FORWARD_COMPUTE|qty:NUMBER|rel:eq(#,mul(#,X))|path:divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "fractions",
+        "seed": "rc294-keyspace|easy|fractions|10"
+      },
+      {
+        "pv": "FRAC_H_4|FORWARD_COMPUTE/NUMBER",
+        "nd": "task:FORWARD_COMPUTE|qty:NUMBER|rel:eq(#,mul(#,X))|path:divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "fractions",
+        "seed": "rc294-keyspace|easy|fractions|13"
+      },
+      {
+        "pv": "FRAC_M_3|REVERSE_RECOVER/NUMBER",
+        "nd": "task:REVERSE_RECOVER|qty:NUMBER|rel:eq(#,mul(X,mul(#,#)))|path:multiply>divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "fractions",
+        "seed": "rc294-keyspace|easy|fractions|16"
+      },
+      {
+        "pv": "FRAC_E_2|FORWARD_COMPUTE/NUMBER",
+        "nd": "task:FORWARD_COMPUTE|qty:NUMBER|rel:eq(#,mul(#,X))|path:divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "fractions",
+        "seed": "rc294-keyspace|easy|fractions|21"
+      },
+      {
+        "pv": "FRAC_H_4|REVERSE_RECOVER/NUMBER",
+        "nd": "task:REVERSE_RECOVER|qty:NUMBER|rel:eq(X,mul(#,#))|path:multiply>divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "fractions",
+        "seed": "rc294-keyspace|easy|fractions|23"
+      },
+      {
+        "pv": "FRAC_H_4|REVERSE_RECOVER/NUMBER",
+        "nd": "task:REVERSE_RECOVER|qty:NUMBER|rel:eq(#,mul(X,mul(#,#)))|path:multiply>divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "fractions",
+        "seed": "rc294-keyspace|easy|fractions|28"
+      },
+      {
+        "pv": "FRAC_M_3|REVERSE_RECOVER/NUMBER",
+        "nd": "task:REVERSE_RECOVER|qty:NUMBER|rel:eq(X,mul(#,#))|path:multiply>divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "fractions",
+        "seed": "rc294-keyspace|easy|fractions|57"
+      },
+      {
+        "pv": "RATE_E_TIME|REQUIRED_INPUT/DURATION",
+        "nd": "task:REQUIRED_INPUT|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "unit_rate",
+        "seed": "rc294-keyspace|easy|unit_rate|0"
+      },
+      {
+        "pv": "RATE_M_SCALE|SCALE_PROPORTIONALLY/QUANTITY",
+        "nd": "task:SCALE_PROPORTIONALLY|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "unit_rate",
+        "seed": "rc294-keyspace|easy|unit_rate|1"
+      },
+      {
+        "pv": "RATE_E_BETTER_DEAL|COMPARE_ALTERNATIVES/MONEY",
+        "nd": "task:COMPARE_ALTERNATIVES|qty:MONEY|rel:eq(#,mul(#,X))|path:divide>ratio|info:TWO_CONFIGURATIONS|entry:forward",
+        "family": "unit_rate",
+        "seed": "rc294-keyspace|easy|unit_rate|2"
+      },
+      {
+        "pv": "RATE_E_BUDGET_COUNT|REQUIRED_INPUT/COUNT",
+        "nd": "task:REQUIRED_INPUT|qty:COUNT|rel:eq(#,mul(#,X))|path:divide|info:GIVEN_INSIDE_THE_QUESTION|entry:forward",
+        "family": "unit_rate",
+        "seed": "rc294-keyspace|easy|unit_rate|3"
+      },
+      {
+        "pv": "RATE_M_PERCENT|SCALE_PROPORTIONALLY/QUANTITY",
+        "nd": "task:SCALE_PROPORTIONALLY|qty:QUANTITY|rel:eq(mul(#,#,X),mul(#,#,add(#,#)))|path:divide>add>multiply|info:BEFORE_AFTER_CHANGE|entry:forward",
+        "family": "unit_rate",
+        "seed": "rc294-keyspace|easy|unit_rate|6"
+      },
+      {
+        "pv": "RATE_E_UNIT_PRICE|DECOMPOSE_COMBINED/MONEY",
+        "nd": "task:DECOMPOSE_COMBINED|qty:MONEY|rel:eq(#,mul(#,X))|path:divide|info:CONTEXT_THEN_NUMBERS|entry:forward",
+        "family": "unit_rate",
+        "seed": "rc294-keyspace|easy|unit_rate|12"
+      },
+      {
+        "pv": "RATE_E_DIRECT|SCALE_PROPORTIONALLY/QUANTITY",
+        "nd": "task:SCALE_PROPORTIONALLY|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "unit_rate",
+        "seed": "rc294-keyspace|easy|unit_rate|15"
+      },
+      {
+        "pv": "COMB_E_OUTPUT|COMBINE_PARTS/QUANTITY",
+        "nd": "task:COMBINE_PARTS|qty:QUANTITY|rel:eq(X,add(mul(#,#),mul(#,#)))|path:add>multiply|info:DIRECT_GIVENS|entry:forward",
+        "family": "combined_rate",
+        "seed": "rc294-keyspace|easy|combined_rate|0"
+      },
+      {
+        "pv": "COMB_E_TIME_FOR_TARGET|REQUIRED_INPUT/DURATION",
+        "nd": "task:REQUIRED_INPUT|qty:DURATION|rel:eq(#,mul(X,add(#,#)))|path:add>divide|info:CONTEXT_THEN_NUMBERS|entry:forward",
+        "family": "combined_rate",
+        "seed": "rc294-keyspace|easy|combined_rate|1"
+      },
+      {
+        "pv": "COMB_E_TIME|COMBINE_PARTS/DURATION",
+        "nd": "task:COMBINE_PARTS|qty:DURATION|rel:eq(#,add(mul(#,X),mul(#,X)))|path:add>divide|info:DIRECT_GIVENS|entry:forward",
+        "family": "combined_rate",
+        "seed": "rc294-keyspace|easy|combined_rate|2"
+      },
+      {
+        "pv": "COMB_E_THREE|COMBINE_PARTS/QUANTITY",
+        "nd": "task:COMBINE_PARTS|qty:QUANTITY|rel:eq(X,add(mul(#,#),mul(#,#),mul(#,#)))|path:add>multiply|info:DIRECT_GIVENS|entry:forward",
+        "family": "combined_rate",
+        "seed": "rc294-keyspace|easy|combined_rate|3"
+      },
+      {
+        "pv": "COMB_E_SHARE_OF_OUTPUT|DECOMPOSE_COMBINED/QUANTITY",
+        "nd": "task:DECOMPOSE_COMBINED|qty:QUANTITY|rel:eq(X,mul(#,#))|path:multiply|info:TWO_CONFIGURATIONS|entry:forward",
+        "family": "combined_rate",
+        "seed": "rc294-keyspace|easy|combined_rate|8"
+      },
+      {
+        "pv": "COMB_E_ONE_ALONE|DECOMPOSE_COMBINED/RATE",
+        "nd": "task:DECOMPOSE_COMBINED|qty:RATE|rel:eq(#,add(#,X))|path:subtract|info:GIVENS_LISTED_THEN_ASK|entry:forward",
+        "family": "combined_rate",
+        "seed": "rc294-keyspace|easy|combined_rate|22"
+      },
+      {
+        "pv": "REL_E_CHAIN|LOCATE_IN_ORDER/PERSON",
+        "nd": "task:LOCATE_IN_ORDER|qty:PERSON|rel:order:small/linear/simple/mid/total|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|easy|relational|0"
+      },
+      {
+        "pv": "REL_E_GAP_CHAIN|COMBINE_PARTS/QUANTITY",
+        "nd": "task:COMBINE_PARTS|qty:QUANTITY|rel:eq(X,add(#,#))|path:add|info:QUANTIFIED_RELATIONS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|easy|relational|1"
+      },
+      {
+        "pv": "REL_E_BETWEEN|LOCATE_IN_ORDER/PERSON",
+        "nd": "task:LOCATE_IN_ORDER|qty:PERSON|rel:order:small/linear/simple/mid/total|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|easy|relational|3"
+      },
+      {
+        "pv": "REL_E_FALSE_STATEMENT|JUDGE_INDETERMINACY/STATEMENT",
+        "nd": "task:JUDGE_INDETERMINACY|qty:STATEMENT|rel:order:small/linear/simple/mid/total|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|easy|relational|4"
+      },
+      {
+        "pv": "REL_E_STATEMENT_TRUE|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:small/linear/simple/mid/total|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|easy|relational|7"
+      },
+      {
+        "pv": "REL_E_GAP_CHAIN|COMBINE_PARTS/QUANTITY",
+        "nd": "task:COMBINE_PARTS|qty:QUANTITY|rel:eq(X,sub(#,#))|path:subtract|info:QUANTIFIED_RELATIONS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|easy|relational|10"
+      },
+      {
+        "pv": "REL_E_COUNT_BELOW|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:small/linear/simple/mid/total|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|easy|relational|120"
+      },
+      {
+        "pv": "CAL_H_NESTED|REVERSE_RECOVER/DATE",
+        "nd": "task:REVERSE_RECOVER|qty:DATE|rel:eq(#,mod(add(#,X),#))|path:add>subtract>ratio|info:CALENDAR_OFFSET|entry:forward",
+        "family": "calendar",
+        "seed": "rc294-keyspace|easy|calendar|0"
+      },
+      {
+        "pv": "CAL_E_TOM|REVERSE_RECOVER/DATE",
+        "nd": "task:REVERSE_RECOVER|qty:DATE|rel:eq(#,mod(add(#,X),#))|path:none|info:CALENDAR_OFFSET|entry:forward",
+        "family": "calendar",
+        "seed": "rc294-keyspace|easy|calendar|1"
+      },
+      {
+        "pv": "CAL_E_BEFORE|REVERSE_RECOVER/DATE",
+        "nd": "task:REVERSE_RECOVER|qty:DATE|rel:eq(#,mod(add(#,X),#))|path:none|info:CALENDAR_BACKWARD|entry:reverse",
+        "family": "calendar",
+        "seed": "rc294-keyspace|easy|calendar|2"
+      },
+      {
+        "pv": "CAL_H_LONG|FORWARD_COMPUTE/DATE",
+        "nd": "task:FORWARD_COMPUTE|qty:DATE|rel:eq(X,mod(add(#,#),#))|path:subtract>ratio|info:CALENDAR_OFFSET|entry:forward",
+        "family": "calendar",
+        "seed": "rc294-keyspace|easy|calendar|4"
+      },
+      {
+        "pv": "CAL_E_AFTER|REVERSE_RECOVER/DATE",
+        "nd": "task:REVERSE_RECOVER|qty:DATE|rel:eq(#,mod(add(#,X),#))|path:none|info:CALENDAR_OFFSET|entry:forward",
+        "family": "calendar",
+        "seed": "rc294-keyspace|easy|calendar|11"
+      },
+      {
+        "pv": "CAL_M_COMPOUND|REVERSE_RECOVER/DATE",
+        "nd": "task:REVERSE_RECOVER|qty:DATE|rel:eq(#,mod(add(#,X),#))|path:add|info:CALENDAR_OFFSET|entry:forward",
+        "family": "calendar",
+        "seed": "rc294-keyspace|easy|calendar|12"
+      },
+      {
+        "pv": "CAL_M_TWO_SHIFT|REVERSE_RECOVER/DATE",
+        "nd": "task:REVERSE_RECOVER|qty:DATE|rel:eq(#,mod(add(#,X),#))|path:ratio>add|info:CALENDAR_OFFSET|entry:forward",
+        "family": "calendar",
+        "seed": "rc294-keyspace|easy|calendar|13"
+      },
+      {
+        "pv": "CAL_E_DAYS_BETWEEN|MEASURE_INTERVAL/COUNT",
+        "nd": "task:MEASURE_INTERVAL|qty:COUNT|rel:eq(#,mod(add(#,X),#))|path:none|info:TWO_ENDPOINTS|entry:forward",
+        "family": "calendar",
+        "seed": "rc294-keyspace|easy|calendar|30"
+      },
+      {
+        "pv": "ODD_E_EXTEND|EXTEND_BY_PROPERTY/NUMBER",
+        "nd": "task:EXTEND_BY_PROPERTY|qty:NUMBER|rel:none|path:none|info:SET_EXTENSION|entry:forward",
+        "family": "odd_one_out",
+        "seed": "rc294-keyspace|easy|odd_one_out|0"
+      },
+      {
+        "pv": "ODD_E_SQUARES|IDENTIFY_MEMBER/NUMBER",
+        "nd": "task:IDENTIFY_MEMBER|qty:NUMBER|rel:ruleset:SQUARE|path:multiply|info:SET_DISPLAY|entry:forward",
+        "family": "odd_one_out",
+        "seed": "rc294-keyspace|easy|odd_one_out|1"
+      },
+      {
+        "pv": "ODD_E_MULT|IDENTIFY_MEMBER/NUMBER",
+        "nd": "task:IDENTIFY_MEMBER|qty:NUMBER|rel:ruleset:MULTIPLE|path:multiply|info:SET_DISPLAY|entry:forward",
+        "family": "odd_one_out",
+        "seed": "rc294-keyspace|easy|odd_one_out|4"
+      },
+      {
+        "pv": "ODD_M_PRIME2|IDENTIFY_MEMBER/NUMBER",
+        "nd": "task:IDENTIFY_MEMBER|qty:NUMBER|rel:ruleset:PRIME_DOUBLE|path:divide|info:SET_DISPLAY|entry:forward",
+        "family": "odd_one_out",
+        "seed": "rc294-keyspace|easy|odd_one_out|7"
+      },
+      {
+        "pv": "ODD_M_PRONIC|IDENTIFY_MEMBER/NUMBER",
+        "nd": "task:IDENTIFY_MEMBER|qty:NUMBER|rel:ruleset:PRONIC|path:multiply|info:SET_DISPLAY|entry:forward",
+        "family": "odd_one_out",
+        "seed": "rc294-keyspace|easy|odd_one_out|14"
+      },
+      {
+        "pv": "ODD_M_CUBES|IDENTIFY_MEMBER/NUMBER",
+        "nd": "task:IDENTIFY_MEMBER|qty:NUMBER|rel:ruleset:CUBE|path:multiply|info:SET_DISPLAY|entry:forward",
+        "family": "odd_one_out",
+        "seed": "rc294-keyspace|easy|odd_one_out|16"
+      },
+      {
+        "pv": "ODD_E_PROPERTY|IDENTIFY_RULE/RULE",
+        "nd": "task:IDENTIFY_RULE|qty:RULE|rel:none|path:ratio|info:RULE_CHOICE|entry:forward",
+        "family": "odd_one_out",
+        "seed": "rc294-keyspace|easy|odd_one_out|45"
+      },
+      {
+        "pv": "ODD_E_COUNT_MATCHING|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:none|path:ratio|info:SET_DISPLAY|entry:forward",
+        "family": "odd_one_out",
+        "seed": "rc294-keyspace|easy|odd_one_out|49"
+      },
+      {
+        "pv": "PL_H_REVERSE|REVERSE_RECOVER/MONEY",
+        "nd": "task:REVERSE_RECOVER|qty:MONEY|rel:eq(mul(#,#),mul(X,add(#,#)))|path:add>multiply>divide|info:BEFORE_AFTER_CHANGE|entry:forward",
+        "family": "profit_loss",
+        "seed": "rc294-keyspace|easy|profit_loss|0"
+      },
+      {
+        "pv": "PL_E_PROFIT|MEASURE_CHANGE/PERCENT",
+        "nd": "task:MEASURE_CHANGE|qty:PERCENT|rel:eq(mul(#,X),mul(#,sub(#,#)))|path:subtract>multiply>divide|info:DIRECT_GIVENS|entry:forward",
+        "family": "profit_loss",
+        "seed": "rc294-keyspace|easy|profit_loss|1"
+      },
+      {
+        "pv": "PL_E_LOSS|MEASURE_CHANGE/PERCENT",
+        "nd": "task:MEASURE_CHANGE|qty:PERCENT|rel:eq(mul(#,X),mul(#,sub(#,#)))|path:subtract>multiply>divide|info:DIRECT_GIVENS|entry:forward",
+        "family": "profit_loss",
+        "seed": "rc294-keyspace|easy|profit_loss|2"
+      },
+      {
+        "pv": "PL_E_COST_FROM_PROFIT|RECOVER_ORIGINAL/MONEY",
+        "nd": "task:RECOVER_ORIGINAL|arch:FOURTH_PROPORTION|entry:reverse",
+        "family": "profit_loss",
+        "seed": "rc294-keyspace|easy|profit_loss|4"
+      },
+      {
+        "pv": "PL_E_SELL_PRICE|FORWARD_COMPUTE/MONEY",
+        "nd": "task:FORWARD_COMPUTE|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "profit_loss",
+        "seed": "rc294-keyspace|easy|profit_loss|5"
+      },
+      {
+        "pv": "PL_E_BETTER_SALE|COMPARE_ALTERNATIVES/MONEY",
+        "nd": "task:COMPARE_ALTERNATIVES|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "profit_loss",
+        "seed": "rc294-keyspace|easy|profit_loss|9"
+      }
+    ]
+  },
+  "medium": {
+    "band": "medium",
+    "drawn": 15938,
+    "errors": 0,
+    "templates": 88,
+    "pvKeys": 91,
+    "ndKeys": 121,
+    "edges": 133,
+    "matching": 85,
+    "floorPer100": 15,
+    "floorIfPvOnly": 9,
+    "floorIfNdOnly": 0,
+    "oneToOne": false,
+    "pvKeysWithSeveralNd": 11,
+    "ndKeysWithSeveralPv": 10,
+    "meanPvPerNd": 1.1,
+    "meanNdPerPv": 1.46,
+    "byFamily": [
+      {
+        "family": "sequences",
+        "drawn": 971,
+        "pv": 15,
+        "nd": 20
+      },
+      {
+        "family": "ratios",
+        "drawn": 909,
+        "pv": 4,
+        "nd": 5
+      },
+      {
+        "family": "percentages",
+        "drawn": 913,
+        "pv": 5,
+        "nd": 6
+      },
+      {
+        "family": "averages",
+        "drawn": 914,
+        "pv": 6,
+        "nd": 6
+      },
+      {
+        "family": "ages",
+        "drawn": 915,
+        "pv": 9,
+        "nd": 9
+      },
+      {
+        "family": "speed",
+        "drawn": 914,
+        "pv": 6,
+        "nd": 6
+      },
+      {
+        "family": "work_time",
+        "drawn": 922,
+        "pv": 6,
+        "nd": 7
+      },
+      {
+        "family": "machines",
+        "drawn": 924,
+        "pv": 8,
+        "nd": 8
+      },
+      {
+        "family": "direct_proportion",
+        "drawn": 904,
+        "pv": 4,
+        "nd": 4
+      },
+      {
+        "family": "fractions",
+        "drawn": 905,
+        "pv": 4,
+        "nd": 4
+      },
+      {
+        "family": "unit_rate",
+        "drawn": 907,
+        "pv": 4,
+        "nd": 4
+      },
+      {
+        "family": "combined_rate",
+        "drawn": 906,
+        "pv": 4,
+        "nd": 4
+      },
+      {
+        "family": "relational",
+        "drawn": 2210,
+        "pv": 4,
+        "nd": 33
+      },
+      {
+        "family": "calendar",
+        "drawn": 904,
+        "pv": 3,
+        "nd": 3
+      },
+      {
+        "family": "odd_one_out",
+        "drawn": 904,
+        "pv": 4,
+        "nd": 4
+      },
+      {
+        "family": "profit_loss",
+        "drawn": 916,
+        "pv": 5,
+        "nd": 5
+      }
+    ],
+    "edgeSeeds": [
+      {
+        "pv": "SEQ_M_MISSING_OP|IDENTIFY_RULE/RULE",
+        "nd": "task:IDENTIFY_RULE|qty:RULE|rel:eq(#,mul(#,X))|path:subtract>multiply>ratio|info:RUN_WITH_HIDDEN_OPERATION|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|0"
+      },
+      {
+        "pv": "SEQ_M_LINEAR_RECUR|CONTINUE_PATTERN/TERM",
+        "nd": "task:CONTINUE_PATTERN|qty:TERM|rel:eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(X,add(#,mul(#,#)))|path:multiply>add>ratio|info:RUN_AFFINE_RECURRENCE|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|1"
+      },
+      {
+        "pv": "SEQ_M_LINEAR_RECUR|RECOVER_PATTERN_TERM/TERM",
+        "nd": "task:RECOVER_PATTERN_TERM|qty:TERM|rel:eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,X)))|path:multiply>add>ratio>divide>subtract|info:RUN_AFFINE_RECURRENCE|entry:reverse",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|2"
+      },
+      {
+        "pv": "SEQ_M_ALT_OPS|CONTINUE_PATTERN/TERM",
+        "nd": "task:CONTINUE_PATTERN|qty:TERM|rel:eq(#,sub(X,#))|path:multiply>add>ratio|info:RUN_ALTERNATING_OPERATIONS|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|4"
+      },
+      {
+        "pv": "SEQ_M_INC_DIFF|RECOVER_PATTERN_TERM/TERM",
+        "nd": "task:RECOVER_PATTERN_TERM|qty:TERM|rel:eq(#,sub(#,X)) & eq(#,sub(X,#))|path:multiply>add|info:RUN_GROWING_DIFFERENCE|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|5"
+      },
+      {
+        "pv": "SEQ_M_LINEAR_RECUR|CONTINUE_PATTERN/TERM",
+        "nd": "task:CONTINUE_PATTERN|qty:TERM|rel:eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(X,add(#,mul(#,#)))|path:multiply>add>subtract>ratio|info:RUN_AFFINE_RECURRENCE|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|6"
+      },
+      {
+        "pv": "SEQ_M_PAIR_RULE|RECOVER_PATTERN_TERM/TERM",
+        "nd": "task:RECOVER_PATTERN_TERM|qty:TERM|rel:eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(X,mul(#,#))|path:ratio>subtract>multiply|info:RUN_WITHIN_PAIR|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|8"
+      },
+      {
+        "pv": "SEQ_M_LINEAR_RECUR|RECOVER_PATTERN_TERM/TERM",
+        "nd": "task:RECOVER_PATTERN_TERM|qty:TERM|rel:eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,#))) & eq(#,add(#,mul(#,X)))|path:multiply>add>subtract>ratio>divide|info:RUN_AFFINE_RECURRENCE|entry:reverse",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|10"
+      },
+      {
+        "pv": "SEQ_M_INC_DIFF|CONTINUE_PATTERN/TERM",
+        "nd": "task:CONTINUE_PATTERN|qty:TERM|rel:eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(X,#))|path:subtract>ratio>add|info:RUN_GROWING_DIFFERENCE|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|12"
+      },
+      {
+        "pv": "SEQ_M_INTERLEAVED|CONTINUE_PATTERN/TERM",
+        "nd": "task:CONTINUE_PATTERN|qty:TERM|rel:eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(X,#))|path:subtract>ratio|info:RUN_TWO_INTERLEAVED|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|14"
+      },
+      {
+        "pv": "SEQ_M_DOUBLE_DIFF|CONTINUE_PATTERN/TERM",
+        "nd": "task:CONTINUE_PATTERN|qty:TERM|rel:eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(#,sub(X,#))|path:subtract>ratio>multiply>add|info:RUN_SECOND_DIFFERENCE|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|16"
+      },
+      {
+        "pv": "SEQ_M_RULE_APPLY|FORWARD_COMPUTE/TERM",
+        "nd": "task:FORWARD_COMPUTE|qty:TERM|rel:eq(#,X)|path:multiply>add|info:RULE_STATED_IN_WORDS|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|17"
+      },
+      {
+        "pv": "SEQ_M_WRONG_TERM|DETECT_PATTERN_FAULT/TERM",
+        "nd": "task:DETECT_PATTERN_FAULT|qty:TERM|rel:eq(#,X) & eq(#,mul(#,#))|path:ratio>multiply|info:RUN_CONSTANT_DIFFERENCE|entry:comparison",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|18"
+      },
+      {
+        "pv": "SEQ_M_CYCLE3|CONTINUE_PATTERN/TERM",
+        "nd": "task:CONTINUE_PATTERN|qty:TERM|rel:eq(#,add(#,#)) & eq(#,add(#,#)) & eq(#,mul(#,#)) & eq(#,mul(#,#)) & eq(#,sub(#,#)) & eq(#,sub(#,#)) & eq(X,add(#,#))|path:multiply>add>subtract>ratio|info:RUN_OPERATION_CYCLE|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|19"
+      },
+      {
+        "pv": "SEQ_M_DOUBLE_DIFF|RECOVER_PATTERN_TERM/TERM",
+        "nd": "task:RECOVER_PATTERN_TERM|qty:TERM|rel:eq(#,sub(#,X)) & eq(#,sub(X,#))|path:multiply>add|info:RUN_SECOND_DIFFERENCE|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|21"
+      },
+      {
+        "pv": "SEQ_M_CANDIDATE|SELECT_BY_RULE/TERM",
+        "nd": "task:SELECT_BY_RULE|qty:TERM|rel:eq(X,add(#,mul(#,#)))|path:subtract>divide>ratio|info:RUN_WITH_MEMBERSHIP_CHOICE|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|23"
+      },
+      {
+        "pv": "SEQ_M_RULE_ID|IDENTIFY_RULE/RULE",
+        "nd": "task:IDENTIFY_RULE|qty:RULE|rel:none|path:subtract>multiply>ratio|info:RUN_WITH_RULE_OPTIONS|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|36"
+      },
+      {
+        "pv": "SEQ_M_WRONG_TERM|DETECT_PATTERN_FAULT/TERM",
+        "nd": "task:DETECT_PATTERN_FAULT|qty:TERM|rel:eq(#,X) & eq(#,add(#,#))|path:ratio>add|info:RUN_CONSTANT_DIFFERENCE|entry:comparison",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|40"
+      },
+      {
+        "pv": "SEQ_M_RULE_ID|IDENTIFY_RULE/RULE",
+        "nd": "task:IDENTIFY_RULE|qty:RULE|rel:none|path:subtract>multiply>add>ratio|info:RUN_WITH_RULE_OPTIONS|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|48"
+      },
+      {
+        "pv": "SEQ_M_DOUBLE_DIFF|RECOVER_PATTERN_TERM/TERM",
+        "nd": "task:RECOVER_PATTERN_TERM|qty:TERM|rel:eq(#,sub(#,X)) & eq(#,sub(X,#))|path:add|info:RUN_SECOND_DIFFERENCE|entry:forward",
+        "family": "sequences",
+        "seed": "rc294-keyspace|medium|sequences|70"
+      },
+      {
+        "pv": "RAT_M_ADD_SIDE|REVERSE_RECOVER/QUANTITY",
+        "nd": "task:REVERSE_RECOVER|qty:QUANTITY|rel:eq(#,mod(mul(#,X),#)) & eq(mul(#,#,#,X),mul(#,#,add(mul(#,#),mul(#,X))))|path:add>ratio>multiply>subtract>divide|info:BEFORE_AFTER_CHANGE|entry:forward",
+        "family": "ratios",
+        "seed": "rc294-keyspace|medium|ratios|0"
+      },
+      {
+        "pv": "RAT_M_TOTAL_FROM_GAP|REVERSE_RECOVER/MONEY",
+        "nd": "task:REVERSE_RECOVER|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "ratios",
+        "seed": "rc294-keyspace|medium|ratios|1"
+      },
+      {
+        "pv": "RAT_M_THIRD_FROM_GAP|SHARE_PROPORTIONALLY/MONEY",
+        "nd": "task:SHARE_PROPORTIONALLY|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "ratios",
+        "seed": "rc294-keyspace|medium|ratios|2"
+      },
+      {
+        "pv": "RAT_H_TRANSFER|REVERSE_RECOVER/QUANTITY",
+        "nd": "task:REVERSE_RECOVER|qty:QUANTITY|rel:eq(#,mod(X,#)) & eq(mul(#,mul(#,add(#,X))),mul(#,sub(mul(#,X),mul(#,#))))|path:add>subtract>ratio>multiply>divide|info:BEFORE_AFTER_CHANGE|entry:forward",
+        "family": "ratios",
+        "seed": "rc294-keyspace|medium|ratios|4"
+      },
+      {
+        "pv": "RAT_H_TRANSFER|REVERSE_RECOVER/QUANTITY",
+        "nd": "task:REVERSE_RECOVER|qty:QUANTITY|rel:eq(#,mod(X,#)) & eq(mul(#,#,sub(X,#)),mul(#,add(mul(#,#),mul(#,X))))|path:add>subtract>ratio>multiply>divide|info:BEFORE_AFTER_CHANGE|entry:forward",
+        "family": "ratios",
+        "seed": "rc294-keyspace|medium|ratios|8"
+      },
+      {
+        "pv": "PCT_H_CHAIN_VALUE|APPLY_SUCCESSIVE_CHANGE/MONEY",
+        "nd": "task:APPLY_SUCCESSIVE_CHANGE|qty:MONEY|rel:eq(mul(#,X),mul(#,add(#,#),sub(#,#)))|path:multiply>divide>subtract>add|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "percentages",
+        "seed": "rc294-keyspace|medium|percentages|0"
+      },
+      {
+        "pv": "PCT_E_REVERSE_ONE|REVERSE_RECOVER/MONEY",
+        "nd": "task:REVERSE_RECOVER|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "percentages",
+        "seed": "rc294-keyspace|medium|percentages|1"
+      },
+      {
+        "pv": "PCT_H_REVERSE_CHAIN|REVERSE_RECOVER/MONEY",
+        "nd": "task:REVERSE_RECOVER|qty:MONEY|rel:eq(mul(#,#),mul(X,add(#,#),sub(#,#)))|path:divide>add>subtract>multiply|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "percentages",
+        "seed": "rc294-keyspace|medium|percentages|2"
+      },
+      {
+        "pv": "PCT_M_SUCCESSIVE|MEASURE_CHANGE/PERCENT",
+        "nd": "task:MEASURE_CHANGE|qty:PERCENT|rel:eq(mul(#,X),sub(mul(#,#),#))|path:multiply>divide>subtract>add|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "percentages",
+        "seed": "rc294-keyspace|medium|percentages|6"
+      },
+      {
+        "pv": "PCT_H_MIXTURE|DECOMPOSE_COMBINED/VOLUME",
+        "nd": "task:DECOMPOSE_COMBINED|qty:VOLUME|rel:eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|path:multiply>divide>percent>subtract|info:PARTITION_OF_WHOLE|entry:forward",
+        "family": "percentages",
+        "seed": "rc294-keyspace|medium|percentages|7"
+      },
+      {
+        "pv": "PCT_M_SUCCESSIVE|MEASURE_CHANGE/PERCENT",
+        "nd": "task:MEASURE_CHANGE|qty:PERCENT|rel:eq(mul(#,X),sub(mul(#,#),#))|path:multiply>divide>add>subtract|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "percentages",
+        "seed": "rc294-keyspace|medium|percentages|12"
+      },
+      {
+        "pv": "AVG_H_TARGET|REQUIRED_INPUT/MEMBER_VALUE",
+        "nd": "task:REQUIRED_INPUT|qty:MEMBER_VALUE|rel:eq(add(X,mul(#,#)),mul(#,#))|path:multiply>subtract|info:BEFORE_AFTER_CHANGE|entry:forward",
+        "family": "averages",
+        "seed": "rc294-keyspace|medium|averages|0"
+      },
+      {
+        "pv": "AVG_M_REPLACE|FORWARD_COMPUTE/AVERAGE",
+        "nd": "task:FORWARD_COMPUTE|qty:AVERAGE|rel:eq(add(#,sub(mul(#,#),#)),mul(#,X))|path:multiply>subtract>add>divide|info:BEFORE_AFTER_CHANGE|entry:forward",
+        "family": "averages",
+        "seed": "rc294-keyspace|medium|averages|1"
+      },
+      {
+        "pv": "AVG_H_SPLIT_SIZE|DECOMPOSE_COMBINED/COUNT",
+        "nd": "task:DECOMPOSE_COMBINED|qty:COUNT|rel:eq(add(mul(#,X),mul(#,sub(#,X))),mul(#,#))|path:multiply>subtract>divide|info:PARTITION_OF_WHOLE|entry:forward",
+        "family": "averages",
+        "seed": "rc294-keyspace|medium|averages|2"
+      },
+      {
+        "pv": "AVG_H_COMB_ADD|COMBINE_PARTS/AVERAGE",
+        "nd": "task:COMBINE_PARTS|qty:AVERAGE|rel:eq(add(#,mul(#,#),mul(#,#)),mul(#,X))|path:multiply>add>divide|info:PARTITION_OF_WHOLE|entry:forward",
+        "family": "averages",
+        "seed": "rc294-keyspace|medium|averages|4"
+      },
+      {
+        "pv": "AVG_M_COMBINE|COMBINE_PARTS/AVERAGE",
+        "nd": "task:COMBINE_PARTS|qty:AVERAGE|rel:eq(add(mul(#,#),mul(#,#)),mul(#,X))|path:multiply>add>divide|info:PARTITION_OF_WHOLE|entry:forward",
+        "family": "averages",
+        "seed": "rc294-keyspace|medium|averages|6"
+      },
+      {
+        "pv": "AVG_M_ADD_PAIR|FORWARD_COMPUTE/AVERAGE",
+        "nd": "task:FORWARD_COMPUTE|qty:AVERAGE|rel:eq(add(mul(#,#),mul(#,#)),mul(#,X))|path:multiply>add>divide|info:BEFORE_AFTER_CHANGE|entry:forward",
+        "family": "averages",
+        "seed": "rc294-keyspace|medium|averages|13"
+      },
+      {
+        "pv": "AGE_M_DIFFERENCE_INVARIANT|DECOMPOSE_COMBINED/AGE",
+        "nd": "task:DECOMPOSE_COMBINED|qty:AGE|rel:eq(mul(#,sub(#,#)),mul(X,sub(#,#)))|path:add>multiply>ratio>subtract>divide|info:TWO_RATIOS_ASK_INVARIANT|entry:comparison",
+        "family": "ages",
+        "seed": "rc294-keyspace|medium|ages|0"
+      },
+      {
+        "pv": "AGE_E_MULT_DIFF|DECOMPOSE_COMBINED/AGE",
+        "nd": "task:DECOMPOSE_COMBINED|qty:AGE|rel:eq(#,sub(mul(#,X),X))|path:subtract>divide|info:PRESENT_RATIO_AND_DIFFERENCE|entry:forward",
+        "family": "ages",
+        "seed": "rc294-keyspace|medium|ages|1"
+      },
+      {
+        "pv": "AGE_M_FUT_SUM_DIFF|DECOMPOSE_COMBINED/AGE",
+        "nd": "task:DECOMPOSE_COMBINED|qty:AGE|rel:eq(#,add(add(#,X),add(#,sub(X,#))))|path:multiply>subtract>divide>add|info:PRESENT_DIFFERENCE_FUTURE_SUM|entry:forward",
+        "family": "ages",
+        "seed": "rc294-keyspace|medium|ages|2"
+      },
+      {
+        "pv": "AGE_M_RATIO_FUT_SUM|DECOMPOSE_COMBINED/AGE",
+        "nd": "task:DECOMPOSE_COMBINED|qty:AGE|rel:eq(add(X,mul(#,#,#),mul(#,X)),mul(#,#))|path:multiply>subtract>add>divide|info:PRESENT_RATIO_FUTURE_SUM|entry:forward",
+        "family": "ages",
+        "seed": "rc294-keyspace|medium|ages|4"
+      },
+      {
+        "pv": "AGE_H_THREE_SIBLINGS|FORWARD_COMPUTE/AGE",
+        "nd": "task:FORWARD_COMPUTE|qty:AGE|rel:eq(#,sub(mul(#,sub(X,#)),#))|path:add>multiply>subtract>divide|info:THREE_PERSON_SYSTEM|entry:forward",
+        "family": "ages",
+        "seed": "rc294-keyspace|medium|ages|5"
+      },
+      {
+        "pv": "AGE_M_FUT_RATIO|DECOMPOSE_COMBINED/AGE",
+        "nd": "task:DECOMPOSE_COMBINED|qty:AGE|rel:eq(add(#,#,X),mul(#,add(#,X)))|path:add>ratio>multiply>subtract>divide|info:PRESENT_DIFFERENCE_FUTURE_RATIO|entry:forward",
+        "family": "ages",
+        "seed": "rc294-keyspace|medium|ages|6"
+      },
+      {
+        "pv": "AGE_M_PAST_RATIO|DECOMPOSE_COMBINED/AGE",
+        "nd": "task:DECOMPOSE_COMBINED|qty:AGE|rel:eq(mul(#,sub(sub(X,#),#)),sub(X,#))|path:subtract>multiply>divide>add>ratio|info:PAST_RELATION_ASK_PRESENT|entry:reverse",
+        "family": "ages",
+        "seed": "rc294-keyspace|medium|ages|8"
+      },
+      {
+        "pv": "AGE_M_WHEN_RATIO|REQUIRED_INPUT/DURATION",
+        "nd": "task:REQUIRED_INPUT|qty:DURATION|rel:eq(add(#,X),mul(#,add(#,X)))|path:add>multiply>ratio>subtract>divide|info:PRESENT_AGES_ASK_ELAPSED|entry:reverse",
+        "family": "ages",
+        "seed": "rc294-keyspace|medium|ages|13"
+      },
+      {
+        "pv": "AGE_H_TWO_TIME|DECOMPOSE_COMBINED/AGE",
+        "nd": "task:DECOMPOSE_COMBINED|qty:AGE|rel:eq(add(#,#,X),mul(#,add(#,X)))|path:add>ratio>multiply>subtract>divide|info:RELATION_AT_TWO_TIMES|entry:forward",
+        "family": "ages",
+        "seed": "rc294-keyspace|medium|ages|14"
+      },
+      {
+        "pv": "SPD_M_AVG|COMBINE_PARTS/SPEED",
+        "nd": "task:COMBINE_PARTS|qty:SPEED|rel:eq(add(mul(#,#),mul(#,#)),mul(X,add(#,#)))|path:multiply>add>divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "speed",
+        "seed": "rc294-keyspace|medium|speed|0"
+      },
+      {
+        "pv": "SPD_M_TWO_TIME|COMBINE_PARTS/DURATION",
+        "nd": "task:COMBINE_PARTS|qty:DURATION|rel:eq(mul(#,#,X),mul(#,add(mul(#,#),mul(#,#))))|path:divide>add>multiply|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "speed",
+        "seed": "rc294-keyspace|medium|speed|1"
+      },
+      {
+        "pv": "SPD_H_TIME_DIFF|DECOMPOSE_COMBINED/DISTANCE",
+        "nd": "task:DECOMPOSE_COMBINED|qty:DISTANCE|rel:eq(mul(#,#,#),mul(X,sub(#,#)))|path:divide>subtract>ratio>multiply|info:TWO_CONFIGURATIONS|entry:forward",
+        "family": "speed",
+        "seed": "rc294-keyspace|medium|speed|2"
+      },
+      {
+        "pv": "SPD_M_EQUAL_DIST|COMBINE_PARTS/DISTANCE",
+        "nd": "task:COMBINE_PARTS|qty:DISTANCE|rel:eq(mul(#,#,#,#),mul(X,add(#,#)))|path:divide>multiply>add>ratio|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "speed",
+        "seed": "rc294-keyspace|medium|speed|3"
+      },
+      {
+        "pv": "SPD_H_MEET_DELAY|FIND_COINCIDENCE/DURATION",
+        "nd": "task:FIND_COINCIDENCE|qty:DURATION|rel:eq(#,add(mul(#,X),mul(#,add(#,X))))|path:multiply>subtract>add>divide|info:TWO_MOVING_BODIES|entry:forward",
+        "family": "speed",
+        "seed": "rc294-keyspace|medium|speed|4"
+      },
+      {
+        "pv": "SPD_H_CATCH|FIND_COINCIDENCE/DURATION",
+        "nd": "task:FIND_COINCIDENCE|qty:DURATION|rel:eq(mul(#,X),mul(#,add(#,X)))|path:multiply>subtract>divide|info:TWO_MOVING_BODIES|entry:forward",
+        "family": "speed",
+        "seed": "rc294-keyspace|medium|speed|13"
+      },
+      {
+        "pv": "WORK_M_TARGET|REQUIRED_INPUT/COUNT",
+        "nd": "task:REQUIRED_INPUT|qty:COUNT|rel:eq(add(mul(#,#),mul(#,X)),mul(#,#))|path:multiply>subtract>divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "work_time",
+        "seed": "rc294-keyspace|medium|work_time|0"
+      },
+      {
+        "pv": "WORK_H_JOINT_SOLO|DECOMPOSE_COMBINED/DURATION",
+        "nd": "task:DECOMPOSE_COMBINED|qty:DURATION|rel:eq(mul(#,#),mul(X,sub(#,#)))|path:divide>ratio>multiply>subtract|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "work_time",
+        "seed": "rc294-keyspace|medium|work_time|1"
+      },
+      {
+        "pv": "WORK_M_CHANGE|COMPARE_ALTERNATIVES/DURATION",
+        "nd": "task:COMPARE_ALTERNATIVES|qty:DURATION|rel:eq(add(mul(#,#),mul(#,X)),mul(#,#))|path:multiply>subtract>add>divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "work_time",
+        "seed": "rc294-keyspace|medium|work_time|2"
+      },
+      {
+        "pv": "WORK_H_WORKERS_EFF|COMPARE_ALTERNATIVES/DURATION",
+        "nd": "task:COMPARE_ALTERNATIVES|qty:DURATION|rel:eq(add(mul(#,#,#),mul(#,X,add(#,#))),mul(#,#,#))|path:multiply>subtract>divide>add|info:TWO_CONFIGURATIONS|entry:forward",
+        "family": "work_time",
+        "seed": "rc294-keyspace|medium|work_time|3"
+      },
+      {
+        "pv": "WORK_M_CHANGE|COMPARE_ALTERNATIVES/DURATION",
+        "nd": "task:COMPARE_ALTERNATIVES|qty:DURATION|rel:eq(add(mul(#,#),mul(#,X)),mul(#,#))|path:multiply>subtract>divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "work_time",
+        "seed": "rc294-keyspace|medium|work_time|10"
+      },
+      {
+        "pv": "WORK_H_EXTRA_WORKERS|REQUIRED_INPUT/COUNT",
+        "nd": "task:REQUIRED_INPUT|qty:COUNT|rel:eq(mul(#,#),mul(add(#,X),sub(#,#)))|path:multiply>subtract>divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "work_time",
+        "seed": "rc294-keyspace|medium|work_time|18"
+      },
+      {
+        "pv": "WORK_H_TWO_STAGE|COMPARE_ALTERNATIVES/DURATION",
+        "nd": "task:COMPARE_ALTERNATIVES|qty:DURATION|rel:eq(add(mul(#,#),mul(#,#),mul(#,X)),mul(#,#))|path:multiply>subtract>divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "work_time",
+        "seed": "rc294-keyspace|medium|work_time|21"
+      },
+      {
+        "pv": "MACH_H_TWO_CONFIG|DECOMPOSE_COMBINED/RATE",
+        "nd": "task:DECOMPOSE_COMBINED|arch:TWO_EQUATION_SYSTEM|entry:forward",
+        "family": "machines",
+        "seed": "rc294-keyspace|medium|machines|0"
+      },
+      {
+        "pv": "MACH_M_STOP|COMBINE_PARTS/QUANTITY",
+        "nd": "task:COMBINE_PARTS|qty:QUANTITY|rel:eq(X,add(mul(#,#,#),mul(#,#,#)))|path:multiply>subtract>add|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "machines",
+        "seed": "rc294-keyspace|medium|machines|1"
+      },
+      {
+        "pv": "MACH_H_STOPPAGE_TIME|REVERSE_RECOVER/DURATION",
+        "nd": "task:REVERSE_RECOVER|qty:DURATION|rel:eq(#,sub(mul(#,#,#),mul(#,sub(#,X))))|path:multiply>subtract>divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "machines",
+        "seed": "rc294-keyspace|medium|machines|2"
+      },
+      {
+        "pv": "MACH_H_TWO_TYPES|COMBINE_PARTS/QUANTITY",
+        "nd": "task:COMBINE_PARTS|qty:QUANTITY|rel:eq(X,add(mul(#,#,#),mul(#,#,#)))|path:multiply>add|info:TWO_CONFIGURATIONS|entry:forward",
+        "family": "machines",
+        "seed": "rc294-keyspace|medium|machines|4"
+      },
+      {
+        "pv": "MACH_M_NEW_FAST|COMBINE_PARTS/QUANTITY",
+        "nd": "task:COMBINE_PARTS|qty:QUANTITY|rel:eq(mul(#,#,#,X),mul(#,#,add(#,#)))|path:multiply>divide>add|info:TWO_CONFIGURATIONS|entry:forward",
+        "family": "machines",
+        "seed": "rc294-keyspace|medium|machines|6"
+      },
+      {
+        "pv": "MACH_H_STAGE_UP|COMBINE_PARTS/QUANTITY",
+        "nd": "task:COMBINE_PARTS|qty:QUANTITY|rel:eq(add(mul(#,#,#,#),mul(#,add(mul(#,#,#),mul(#,#,add(#,#))))),mul(#,X))|path:multiply>divide>add>subtract|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "machines",
+        "seed": "rc294-keyspace|medium|machines|11"
+      },
+      {
+        "pv": "MACH_M_SUBSET_UP|COMBINE_PARTS/QUANTITY",
+        "nd": "task:COMBINE_PARTS|qty:QUANTITY|rel:eq(mul(#,X),mul(#,add(mul(#,#,#),mul(#,#,add(#,#)))))|path:divide>add>multiply>subtract|info:TWO_CONFIGURATIONS|entry:forward",
+        "family": "machines",
+        "seed": "rc294-keyspace|medium|machines|14"
+      },
+      {
+        "pv": "MACH_E_REQUIRED|REQUIRED_INPUT/COUNT",
+        "nd": "task:REQUIRED_INPUT|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "machines",
+        "seed": "rc294-keyspace|medium|machines|23"
+      },
+      {
+        "pv": "PROP_H_COMPOUND|SCALE_PROPORTIONALLY/QUANTITY",
+        "nd": "task:SCALE_PROPORTIONALLY|qty:QUANTITY|rel:eq(mul(#,#,add(#,#)),mul(X,mul(#,#)))|path:divide>multiply>add|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "direct_proportion",
+        "seed": "rc294-keyspace|medium|direct_proportion|0"
+      },
+      {
+        "pv": "PROP_H_TWO_ITEM_SYSTEM|DECOMPOSE_COMBINED/MONEY",
+        "nd": "task:DECOMPOSE_COMBINED|arch:TWO_EQUATION_SYSTEM|entry:forward",
+        "family": "direct_proportion",
+        "seed": "rc294-keyspace|medium|direct_proportion|1"
+      },
+      {
+        "pv": "PROP_M_SCALE_ACROSS_HOURS|SCALE_PROPORTIONALLY/QUANTITY",
+        "nd": "task:SCALE_PROPORTIONALLY|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "direct_proportion",
+        "seed": "rc294-keyspace|medium|direct_proportion|2"
+      },
+      {
+        "pv": "PROP_M_UNIT_PRICE_COMPARE|COMPARE_ALTERNATIVES/MONEY",
+        "nd": "task:COMPARE_ALTERNATIVES|arch:TWO_EQUATION_SYSTEM|entry:forward",
+        "family": "direct_proportion",
+        "seed": "rc294-keyspace|medium|direct_proportion|3"
+      },
+      {
+        "pv": "FRAC_M_START_FROM_REMAINDER|REVERSE_RECOVER/MONEY",
+        "nd": "task:REVERSE_RECOVER|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "fractions",
+        "seed": "rc294-keyspace|medium|fractions|0"
+      },
+      {
+        "pv": "FRAC_M_REMAIN_VALUE|FIND_REMAINDER/MONEY",
+        "nd": "task:FIND_REMAINDER|qty:MONEY|rel:eq(mul(#,#,X),mul(#,sub(#,#),sub(#,#)))|path:divide>subtract>ratio|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "fractions",
+        "seed": "rc294-keyspace|medium|fractions|1"
+      },
+      {
+        "pv": "FRAC_M_REMAIN|FIND_REMAINDER/NUMBER",
+        "nd": "task:FIND_REMAINDER|qty:NUMBER|rel:eq(X,mul(sub(#,#),sub(#,#)))|path:divide>subtract>multiply|info:PARTITION_OF_WHOLE|entry:forward",
+        "family": "fractions",
+        "seed": "rc294-keyspace|medium|fractions|2"
+      },
+      {
+        "pv": "FRAC_M_COMPARE_SHARES|COMPARE_ALTERNATIVES/MONEY",
+        "nd": "task:COMPARE_ALTERNATIVES|qty:MONEY|rel:eq(mul(#,X),mul(#,sub(mul(#,#),#)))|path:multiply>divide>subtract|info:PARTITION_OF_WHOLE|entry:forward",
+        "family": "fractions",
+        "seed": "rc294-keyspace|medium|fractions|4"
+      },
+      {
+        "pv": "RATE_M_HOURS_FROM_MINUTE_RATE|REQUIRED_INPUT/DURATION",
+        "nd": "task:REQUIRED_INPUT|qty:DURATION|rel:eq(#,mul(#,#,X))|path:divide|info:DIRECT_GIVENS|entry:forward",
+        "family": "unit_rate",
+        "seed": "rc294-keyspace|medium|unit_rate|0"
+      },
+      {
+        "pv": "RATE_H_TWO_PHASE|COMBINE_PARTS/QUANTITY",
+        "nd": "task:COMBINE_PARTS|qty:QUANTITY|rel:eq(add(mul(#,#,#),mul(#,#,add(#,#))),mul(#,X))|path:multiply>divide>add|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "unit_rate",
+        "seed": "rc294-keyspace|medium|unit_rate|1"
+      },
+      {
+        "pv": "RATE_H_TARGET|REQUIRED_INPUT/DURATION",
+        "nd": "task:REQUIRED_INPUT|qty:DURATION|rel:eq(mul(#,#,#),mul(#,X,add(#,#)))|path:divide>add>multiply|info:BEFORE_AFTER_CHANGE|entry:forward",
+        "family": "unit_rate",
+        "seed": "rc294-keyspace|medium|unit_rate|3"
+      },
+      {
+        "pv": "RATE_M_COMPARE|COMPARE_ALTERNATIVES/RATE",
+        "nd": "task:COMPARE_ALTERNATIVES|arch:TWO_EQUATION_SYSTEM|entry:forward",
+        "family": "unit_rate",
+        "seed": "rc294-keyspace|medium|unit_rate|6"
+      },
+      {
+        "pv": "COMB_H_TEAM_SIZE|DECOMPOSE_COMBINED/COUNT",
+        "nd": "task:DECOMPOSE_COMBINED|qty:COUNT|rel:eq(#,add(mul(#,#,X),mul(#,#,add(#,X))))|path:multiply>add>subtract>divide|info:CONSTRAINT_SET|entry:forward",
+        "family": "combined_rate",
+        "seed": "rc294-keyspace|medium|combined_rate|0"
+      },
+      {
+        "pv": "COMB_M_TOGETHER_SOLO|DECOMPOSE_COMBINED/DURATION",
+        "nd": "task:DECOMPOSE_COMBINED|qty:DURATION|rel:eq(#,add(mul(#,X),mul(#,add(#,#))))|path:multiply>add>subtract>divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "combined_rate",
+        "seed": "rc294-keyspace|medium|combined_rate|1"
+      },
+      {
+        "pv": "COMB_H_STAGED|DECOMPOSE_COMBINED/DURATION",
+        "nd": "task:DECOMPOSE_COMBINED|qty:DURATION|rel:eq(#,add(mul(#,#),mul(#,X),mul(#,add(#,#))))|path:multiply>add>subtract>divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "combined_rate",
+        "seed": "rc294-keyspace|medium|combined_rate|4"
+      },
+      {
+        "pv": "COMB_M_SOLO_THEN|COMBINE_PARTS/DURATION",
+        "nd": "task:COMBINE_PARTS|qty:DURATION|rel:eq(#,add(mul(#,#),mul(X,add(#,#))))|path:multiply>subtract>add>divide|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "combined_rate",
+        "seed": "rc294-keyspace|medium|combined_rate|5"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:small/branched/merging/mid/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|0"
+      },
+      {
+        "pv": "REL_M_CONFIRM|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:small/linear/simple/mid/total|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|1"
+      },
+      {
+        "pv": "REL_M_CHAIN6|LOCATE_IN_ORDER/PERSON",
+        "nd": "task:LOCATE_IN_ORDER|qty:PERSON|rel:order:mid/linear/simple/deep/total|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|2"
+      },
+      {
+        "pv": "REL_M_CONFIRM|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:small/branched/simple/shallow/partial|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|4"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:mid/branched/simple/shallow/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|6"
+      },
+      {
+        "pv": "REL_H_GUARANTEE|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:mid/branched/simple/shallow/partial|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|8"
+      },
+      {
+        "pv": "REL_H_GUARANTEE|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:mid/branched/merging/mid/partial|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|9"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:small/branched/simple/shallow/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|10"
+      },
+      {
+        "pv": "REL_H_GUARANTEE|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:mid/branched/simple/mid/partial|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|12"
+      },
+      {
+        "pv": "REL_M_CONFIRM|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:mid/branched/merging/mid/partial|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|14"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:mid/branched/simple/mid/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|18"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:mid/branched/merging/mid/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|19"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:mid/linear/merging/mid/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|20"
+      },
+      {
+        "pv": "REL_M_CONFIRM|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:mid/branched/merging/shallow/partial|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|29"
+      },
+      {
+        "pv": "REL_H_GUARANTEE|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:mid/branched/merging/shallow/partial|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|30"
+      },
+      {
+        "pv": "REL_M_CONFIRM|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:small/branched/simple/mid/partial|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|35"
+      },
+      {
+        "pv": "REL_M_CONFIRM|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:mid/branched/simple/shallow/partial|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|51"
+      },
+      {
+        "pv": "REL_M_CONFIRM|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:mid/branched/simple/mid/partial|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|52"
+      },
+      {
+        "pv": "REL_M_CONFIRM|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:mid/linear/merging/mid/partial|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|55"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:small/branched/merging/shallow/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|58"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:large/branched/simple/deep/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|59"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:mid/branched/merging/shallow/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|62"
+      },
+      {
+        "pv": "REL_M_CONFIRM|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:small/branched/merging/shallow/partial|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|65"
+      },
+      {
+        "pv": "REL_H_GUARANTEE|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:mid/linear/merging/mid/partial|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|72"
+      },
+      {
+        "pv": "REL_M_CONFIRM|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:small/branched/merging/mid/partial|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|81"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:small/linear/simple/mid/total|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|85"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:small/branched/simple/mid/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|101"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:mid/branched/simple/deep/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|135"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:mid/branched/merging/deep/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|146"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:large/branched/simple/mid/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|191"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:large/branched/merging/deep/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|211"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:large/branched/merging/mid/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|223"
+      },
+      {
+        "pv": "REL_M_CONFIRM|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:small/linear/merging/mid/partial|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|374"
+      },
+      {
+        "pv": "REL_M_CONFIRM|JUDGE_ENTAILMENT/STATEMENT",
+        "nd": "task:JUDGE_ENTAILMENT|qty:STATEMENT|rel:order:mid/linear/simple/deep/total|path:none|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|444"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:mid/linear/simple/deep/total|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|454"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:small/linear/merging/mid/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|623"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:large/branched/merging/shallow/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|925"
+      },
+      {
+        "pv": "REL_M_COUNT|COUNT_SATISFYING/COUNT",
+        "nd": "task:COUNT_SATISFYING|qty:COUNT|rel:order:mid/linear/merging/deep/partial|path:ratio|info:RELATIONAL_STATEMENTS|entry:forward",
+        "family": "relational",
+        "seed": "rc294-keyspace|medium|relational|1309"
+      },
+      {
+        "pv": "CAL_H_CYCLE_MEET|FIND_COINCIDENCE/DATE",
+        "nd": "task:FIND_COINCIDENCE|qty:DATE|rel:eq(X,mod(add(#,#),#))|path:multiply>subtract>ratio|info:TWO_CYCLES|entry:forward",
+        "family": "calendar",
+        "seed": "rc294-keyspace|medium|calendar|0"
+      },
+      {
+        "pv": "CAL_M_DATE_WEEKDAY|FORWARD_COMPUTE/DATE",
+        "nd": "task:FORWARD_COMPUTE|qty:DATE|rel:eq(X,mod(add(#,#),#))|path:subtract>ratio|info:TWO_ENDPOINTS|entry:forward",
+        "family": "calendar",
+        "seed": "rc294-keyspace|medium|calendar|2"
+      },
+      {
+        "pv": "CAL_M_NTH_VISIT|FORWARD_COMPUTE/DATE",
+        "nd": "task:FORWARD_COMPUTE|qty:DATE|rel:eq(X,mod(add(#,mul(#,#)),#))|path:subtract>multiply|info:SINGLE_CYCLE|entry:forward",
+        "family": "calendar",
+        "seed": "rc294-keyspace|medium|calendar|3"
+      },
+      {
+        "pv": "ODD_M_EXTEND|EXTEND_BY_PROPERTY/NUMBER",
+        "nd": "task:EXTEND_BY_PROPERTY|qty:NUMBER|rel:none|path:none|info:SET_EXTENSION|entry:forward",
+        "family": "odd_one_out",
+        "seed": "rc294-keyspace|medium|odd_one_out|0"
+      },
+      {
+        "pv": "ODD_M_PROPERTY|IDENTIFY_RULE/RULE",
+        "nd": "task:IDENTIFY_RULE|qty:RULE|rel:none|path:ratio|info:RULE_CHOICE|entry:forward",
+        "family": "odd_one_out",
+        "seed": "rc294-keyspace|medium|odd_one_out|1"
+      },
+      {
+        "pv": "ODD_H_TRIANGULAR|IDENTIFY_MEMBER/NUMBER",
+        "nd": "task:IDENTIFY_MEMBER|qty:NUMBER|rel:ruleset:TRIANGULAR|path:multiply>divide|info:SET_DISPLAY|entry:forward",
+        "family": "odd_one_out",
+        "seed": "rc294-keyspace|medium|odd_one_out|2"
+      },
+      {
+        "pv": "ODD_H_SQ_MINUS|IDENTIFY_MEMBER/NUMBER",
+        "nd": "task:IDENTIFY_MEMBER|qty:NUMBER|rel:ruleset:SQUARE_MINUS_ONE|path:multiply>add|info:SET_DISPLAY|entry:forward",
+        "family": "odd_one_out",
+        "seed": "rc294-keyspace|medium|odd_one_out|3"
+      },
+      {
+        "pv": "PL_H_TWO_OUTCOMES|DECOMPOSE_COMBINED/MONEY",
+        "nd": "task:DECOMPOSE_COMBINED|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "profit_loss",
+        "seed": "rc294-keyspace|medium|profit_loss|0"
+      },
+      {
+        "pv": "PL_M_DISC_MARK|APPLY_SUCCESSIVE_CHANGE/MONEY",
+        "nd": "task:APPLY_SUCCESSIVE_CHANGE|qty:MONEY|rel:eq(mul(#,X),mul(#,add(#,#),sub(#,#)))|path:multiply>divide>subtract>add|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "profit_loss",
+        "seed": "rc294-keyspace|medium|profit_loss|1"
+      },
+      {
+        "pv": "PL_H_MARKUP_DISCOUNT|REVERSE_RECOVER/MONEY",
+        "nd": "task:REVERSE_RECOVER|arch:FOURTH_PROPORTION|entry:forward",
+        "family": "profit_loss",
+        "seed": "rc294-keyspace|medium|profit_loss|5"
+      },
+      {
+        "pv": "PL_M_TOTAL_COST|MEASURE_CHANGE/PERCENT",
+        "nd": "task:MEASURE_CHANGE|qty:PERCENT|rel:eq(mul(#,sub(#,add(#,#))),mul(X,add(#,#)))|path:add>subtract>multiply>divide|info:PARTITION_OF_WHOLE|entry:forward",
+        "family": "profit_loss",
+        "seed": "rc294-keyspace|medium|profit_loss|12"
+      },
+      {
+        "pv": "PL_H_CHAIN|MEASURE_CHANGE/PERCENT",
+        "nd": "task:MEASURE_CHANGE|qty:PERCENT|rel:eq(mul(#,X),sub(mul(#,#),#))|path:multiply>divide>subtract>add|info:MULTI_STAGE_PROCESS|entry:forward",
+        "family": "profit_loss",
+        "seed": "rc294-keyspace|medium|profit_loss|15"
+      }
+    ]
+  }
+}

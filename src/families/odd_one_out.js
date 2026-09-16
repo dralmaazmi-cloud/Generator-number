@@ -33,7 +33,8 @@ export function generateOddOneOut({difficulty, rng, seed, engineVersion, telemet
     // because the rule is drawn from the most discoverable ones only — a
     // multiple of a small number, a square — and the numbers stay small.
     ['ODD_E_PROPERTY', easySharedProperty],
-    ['ODD_E_EXTEND', easyExtendTheSet]
+    ['ODD_E_EXTEND', easyExtendTheSet],
+    ['ODD_E_COUNT_MATCHING', countMatchingTheRule]
   ], pinTemplate)(ctx);
 }
 
@@ -649,5 +650,57 @@ function easyExtendTheSet(ctx) {
     },
     complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
     textParams: {derivedFromParams: ['joiningNumber'], essentialParams: ['numbers']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: how many of the shown numbers satisfy a STATED property. */
+function countMatchingTheRule(ctx) {
+  const {rng} = ctx;
+  const rule = rng.pick(plainRules());
+  const hits = rng.int(2, 4);
+  const misses = rng.int(2, 3);
+  const matching = valuesFor(rule, rng.int(2, 14), hits);
+  if (!matching) return resampleOdd(ctx, countMatchingTheRule);
+  const others = [];
+  let n = matching[0] + 1;
+  while (others.length < misses && n < 200) {
+    if (!rule.test(n) && !matching.includes(n) && !others.includes(n)) others.push(n);
+    n += rng.int(1, 4);
+  }
+  if (others.length < misses) return resampleOdd(ctx, countMatchingTheRule);
+  const shown = rng.shuffle([...matching, ...others]);
+  const correct = hits;
+  const distractors = usable(ctx, [
+    mk(misses, 'APPLIED_OPERATION_IN_REVERSE', `عدد الأعداد التي لا تحقق الخاصية ${misses}`),
+    mk(shown.length, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `عدد الأعداد كلها ${shown.length}`),
+    mk(hits + 1, 'OFF_BY_ONE_STEP', 'إدخال عدد لا يحقق الخاصية في العد'),
+    mk(hits - 1, 'OFF_BY_ONE_STEP', 'إسقاط عدد يحقق الخاصية من العد'),
+    mk(1, 'STOPPED_AFTER_FIRST_STAGE', 'الاكتفاء بأول عدد يحقق الخاصية'),
+    mk(shown.length - 1, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `كل الأعداد إلا واحدًا`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'ODD_E_COUNT_MATCHING',
+    subskill: 'عدّ الأعداد التي تحقق خاصية معلنة',
+    difficulty: 'easy',
+    question: `كم عددًا من الأعداد الآتية ينطبق عليه أنه ${rule.ar}؟`,
+    displayExpression: shown.join('، '),
+    correct, distractors, format: v => String(v),
+    steps: [
+      `نختبر الخاصية «${rule.ar}» على كل عدد.`,
+      `تحققها الأعداد: ${matching.join('، ')} — أي ${correct}.`
+    ],
+    howToStart: 'اختبر الخاصية عددًا عددًا وعُدّ من يحققها.',
+    remember: 'السؤال عن عدد المحققين، لا عن العدد الشاذ.',
+    fastMethod: 'مرّ على الأعداد مرة واحدة وعُدّ ما يحقق الشرط.',
+    estimatedSteps: 1, conceptTags: ['number-properties', 'counting'],
+    parameters: {numbers: shown, matchingNumbers: matching},
+    commutative: {numberSet: canonicalNumberSet(shown)},
+    orderInsensitive: ['numbers'],
+    oracle: {kind: 'property', mode: 'count', numbers: shown, intendedRuleId: rule.id, expected: correct},
+    askedUnknown: 'countMatchingRule', stageCount: 1,
+    pedagogy: {targetSkill: `COUNT_RULE_${rule.id}`, targetMisconception: 'APPLIED_OPERATION_IN_REVERSE',
+      wrongMethodValue: misses},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {derivedFromParams: ['matchingNumbers'], essentialParams: ['numbers']}
   });
 }
