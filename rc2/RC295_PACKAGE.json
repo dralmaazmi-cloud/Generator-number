@@ -1,0 +1,49 @@
+{
+  "schema": "rc295-package-v1",
+  "note": "The delivery archive and the hashes that identify it. This file is written AFTER the archive is built and is therefore not inside it: a file cannot carry the hash of an archive that contains it. Everything a reviewer needs to verify the ENGINE — the frozen commit and the production bundle hash — is inside the archive, in rc2/FREEZE.json, and verifyFreeze() recomputes the bundle from the extracted tree.",
+  "zip": "RC2_9_5_GENERATOR_READY.zip",
+  "sha256": "c91ef9bd878662300e2e466cd14fef0a0ba28cfd311e260a1b5c34cc43cd5bd0",
+  "bytes": 26469470,
+  "release": "RC2.9.5",
+  "engineVersion": "1.5.5",
+  "frozenCommit": "457bc8e8d020e68ce81f6b1393e1b8d9174527d6",
+  "treeHash": "1d055dba6251789fe39726cf01c5bcd63616f5d8",
+  "productionFileCount": 65,
+  "productionBundleSha256": "3f8988c4b5e1080d41b3bc018ec2277a5a782f5c432eec7db64db41dfc379db1",
+  "tests": 652,
+  "internalGate": {
+    "verdict": "PASS",
+    "conditions": 39,
+    "evaluatedAt": "2026-09-16T08:47:00.460Z",
+    "headCommit": "d39c4e7e0159fc12d4c86d63cf3ff732085396fc"
+  },
+  "baselines": [
+    {
+      "release": "RC2.9.4",
+      "directory": "rc2/baseline/rc294/",
+      "productionFiles": 65,
+      "productionBundleSha256": "c5d6166ee9b14b49aafbe35d44eff4ecdcd7547434e60db534dd43cfff88ff92",
+      "deliveryZipSha256": "085c15d1895468fd76a583edb36e678d2477a50af2bda9e7c4f25ab01932d865"
+    },
+    {
+      "release": "RC2.9.3",
+      "directory": "rc2/baseline/rc293/",
+      "productionFiles": 64,
+      "productionBundleSha256": "f0d4357b5d2cea442618b02f2998497f8c34919e3f55e5b99f831b71b89e97e5",
+      "deliveryZipSha256": "9d6e7b052018047e76cd0e8ebed1d9d5841b29c2a100ebdbc51353309fa03926"
+    },
+    {
+      "release": "RC2.9.2",
+      "directory": "rc2/baseline/rc292/",
+      "productionFiles": 62,
+      "productionBundleSha256": "7c41245cf6b8778cd9a691d22112d7b49c3e28c1414f19a20df814f7fd112364",
+      "deliveryZipSha256": "0f00990c1b4951b119e070244c9a1524631c44a533aa0c4c462d526489b3b745"
+    }
+  ],
+  "verifyFreezeFromExtractedZip": {
+    "intact": true,
+    "changed": 0,
+    "added": 0,
+    "removed": 0
+  }
+}
