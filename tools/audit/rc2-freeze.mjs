@@ -87,18 +87,23 @@ export function freeze() {
   // RC2.9.4 for the same reason again: twenty-nine constructions were added
   // and single-band sittings are planned differently, so RC2.9.3's corpus is a
   // record of sessions this engine would not produce.
-  const rc294 = existsSync('rc2/RC294_DEVELOPMENT_CORPUS.json');
-  const rc293 = !rc294 && existsSync('rc2/RC293_DEVELOPMENT_CORPUS.json');
-  const rc292 = !rc294 && !rc293 && existsSync('rc2/RC292_DEVELOPMENT_CORPUS.json');
-  const rc291 = !rc294 && !rc293 && !rc292 && existsSync('rc2/RC291_DEVELOPMENT_CORPUS.json');
-  const rc29 = !rc294 && !rc293 && !rc292 && !rc291 && existsSync('rc2/RC29_DEVELOPMENT_CORPUS.json');
-  const rc28 = !rc294 && !rc293 && !rc292 && !rc291 && !rc29 && existsSync('rc2/RC28_DEVELOPMENT_CORPUS.json');
-  const rc27 = !rc294 && !rc293 && !rc292 && !rc291 && !rc29 && !rc28 && existsSync('rc2/RC27_DEVELOPMENT_CORPUS.json');
-  const rc24 = !rc294 && !rc293 && !rc292 && !rc291 && !rc29 && !rc28 && !rc27 && existsSync('rc2/RC24_DEVELOPMENT_CORPUS.json');
+  // RC2.9.5 for the same reason again: forty-four EASY constructions were
+  // added and the mix moved to 50/40/10, so RC2.9.4's corpus is a record of
+  // sessions this engine would not produce.
+  const rc295 = existsSync('rc2/RC295_DEVELOPMENT_CORPUS.json');
+  const rc294 = !rc295 && existsSync('rc2/RC294_DEVELOPMENT_CORPUS.json');
+  const rc293 = !rc295 && !rc294 && existsSync('rc2/RC293_DEVELOPMENT_CORPUS.json');
+  const rc292 = !rc295 && !rc294 && !rc293 && existsSync('rc2/RC292_DEVELOPMENT_CORPUS.json');
+  const rc291 = !rc295 && !rc294 && !rc293 && !rc292 && existsSync('rc2/RC291_DEVELOPMENT_CORPUS.json');
+  const rc29 = !rc295 && !rc294 && !rc293 && !rc292 && !rc291 && existsSync('rc2/RC29_DEVELOPMENT_CORPUS.json');
+  const rc28 = !rc295 && !rc294 && !rc293 && !rc292 && !rc291 && !rc29 && existsSync('rc2/RC28_DEVELOPMENT_CORPUS.json');
+  const rc27 = !rc295 && !rc294 && !rc293 && !rc292 && !rc291 && !rc29 && !rc28 && existsSync('rc2/RC27_DEVELOPMENT_CORPUS.json');
+  const rc24 = !rc295 && !rc294 && !rc293 && !rc292 && !rc291 && !rc29 && !rc28 && !rc27 && existsSync('rc2/RC24_DEVELOPMENT_CORPUS.json');
   const rc23 = !rc27 && !rc24 && existsSync('rc2/RC23_DEVELOPMENT_CORPUS.json');
   const rc22 = !rc27 && !rc24 && !rc23 && existsSync('rc2/RC22_DEVELOPMENT_CORPUS.json');
   const rc21 = !rc27 && !rc24 && !rc23 && !rc22 && existsSync('rc2/RC21_DEVELOPMENT_CORPUS.json');
-  const corpusPath = rc294 ? 'rc2/RC294_DEVELOPMENT_CORPUS.json'
+  const corpusPath = rc295 ? 'rc2/RC295_DEVELOPMENT_CORPUS.json'
+    : rc294 ? 'rc2/RC294_DEVELOPMENT_CORPUS.json'
     : rc293 ? 'rc2/RC293_DEVELOPMENT_CORPUS.json'
     : rc292 ? 'rc2/RC292_DEVELOPMENT_CORPUS.json'
     : rc291 ? 'rc2/RC291_DEVELOPMENT_CORPUS.json'
@@ -109,7 +114,8 @@ export function freeze() {
     : rc23 ? 'rc2/RC23_DEVELOPMENT_CORPUS.json'
     : rc22 ? 'rc2/RC22_DEVELOPMENT_CORPUS.json'
     : rc21 ? 'rc2/RC21_DEVELOPMENT_CORPUS.json' : 'rc2/DEVELOPMENT_CORPUS.json';
-  const corpusGzPath = rc294 ? 'rc2/rc294-development-corpus.jsonl.gz'
+  const corpusGzPath = rc295 ? 'rc2/rc295-development-corpus.jsonl.gz'
+    : rc294 ? 'rc2/rc294-development-corpus.jsonl.gz'
     : rc293 ? 'rc2/rc293-development-corpus.jsonl.gz'
     : rc292 ? 'rc2/rc292-development-corpus.jsonl.gz'
     : rc291 ? 'rc2/rc291-development-corpus.jsonl.gz'
