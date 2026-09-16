@@ -416,6 +416,9 @@ export function validateCandidate(base, q) {
   // no claimed operation the derivation lacks, no vocabulary from another
   // family, no «وهي ناتج X» about X itself. A contradiction is a rejection.
   const rationaleVerdict = validateRationales(q);
+  // RC2.9.6 §3.1: the number the learner writes down, and the numbers they read
+  // on the way to it.
+  const decimalVerdict = validateDecimalShape(q);
 
   return mergeVerdicts(
     structuralVerdict,
@@ -429,8 +432,61 @@ export function validateCandidate(base, q) {
     contextVerdict,
     provenanceVerdict,
     feedbackVerdict,
-    rationaleVerdict
+    rationaleVerdict,
+    decimalVerdict
   );
+}
+
+/**
+ * RC2.9.6 §3.1. Awkward numbers, refused at publication rather than counted
+ * afterwards.
+ *
+ * Three rules, and they are not the same rule three times:
+ *
+ *   the KEY may be fractional only where a fraction is a natural thing to say.
+ *     A speed question answered «2.5 ساعة» reads as a quantity. A proportion
+ *     answered «9.6 كيلوجرامًا» reads as a number to copy, and a percentage
+ *     answered «-17.5%» reads as arithmetic that went slightly wrong;
+ *   a fractional key must be a half or a quarter. «2.3 ساعة» is neither;
+ *   nothing PRINTED anywhere — stem, option, step, quick method, reason —
+ *     may carry three decimal places. A printed 1.125 is a number the learner
+ *     has to carry through the next multiplication by hand.
+ *
+ * The templates are constrained so this rarely fires; the gate is here so the
+ * constraint cannot be lost again without the suite saying so. Nothing is
+ * rounded: a rounded key would no longer be the key the oracle checks.
+ */
+const NON_INTEGER_ANSWER_FAMILIES = new Set(['speed', 'unit_rate', 'combined_rate', 'averages']);
+const SAYABLE_FRACTIONS = new Set([0.25, 0.5, 0.75]);
+
+export function validateDecimalShape(q) {
+  const reasons = [];
+  const detail = {};
+  const key = Number(q.metadata?.options_meta?.[q.correct_option]?.value);
+  if (Number.isFinite(key) && !Number.isInteger(key)) {
+    const frac = Number(Math.abs(key % 1).toFixed(4));
+    if (!SAYABLE_FRACTIONS.has(frac)) {
+      reasons.push(REASON.AWKWARD_DECIMAL_ANSWER);
+      detail.awkwardAnswer = key;
+    }
+    if (!NON_INTEGER_ANSWER_FAMILIES.has(q.family)) {
+      reasons.push(REASON.NON_INTEGER_ANSWER_IN_WHOLE_FAMILY);
+      detail.nonIntegerAnswer = {family: q.family, value: key};
+    }
+  }
+  // Every rendered surface, because a learner reads all of them. GIVENS are
+  // included deliberately: «1.5 ساعة» has one decimal place and passes, which
+  // is the point — the rule is about precision, not about decimals.
+  const rendered = [
+    q.question, q.display_expression ?? '',
+    ...Object.values(q.options ?? {}),
+    q.explanation?.how_to_start ?? '', q.explanation?.fast_method ?? '', q.explanation?.remember ?? '',
+    ...(q.explanation?.steps ?? []),
+    ...Object.values(q.explanation?.distractor_analysis ?? {})
+  ].join(' ');
+  const deep = [...String(rendered).matchAll(/\d+\.(\d+)/g)].filter(m => m[1].length >= 3).map(m => m[0]);
+  if (deep.length) { reasons.push(REASON.EXCESSIVE_DECIMAL_PRECISION); detail.deepPrecision = deep.slice(0, 4); }
+  return {valid: reasons.length === 0, reasons, details: detail};
 }
 
 /** RC2.9.4-A1. Every rendered rationale must be consistent with its provenance. */

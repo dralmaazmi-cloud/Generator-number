@@ -882,6 +882,36 @@ export class NumericalQuestionGeneratorEngine {
           });
           continue;
         }
+        // RC2.9.6 §3.4. The same perceptual signature twice inside ONE sitting.
+        //
+        // Measured over 400 sittings per count: 0.50% at ten, 0.75% at twenty,
+        // 4.00% at thirty, never more than twice in a sitting. Only the
+        // ten-question case breaks a gate — the RC2.9.5 rule is no signature
+        // twice in a ten-question sitting and at most twice in a thirty — and
+        // the cause is not the planner. Almost every case is a NAMED ARCHETYPE:
+        // `user_perceptual_signature` drops the quantity and the information
+        // structure for an archetype item, so two genuinely different questions
+        // (a ratio share and a unit-rate scaling, both fourth-proportion, both
+        // asked forward) collapse onto one key at RENDER time, after the plan
+        // has already placed two distinct blueprints.
+        //
+        // The classifier is not reopened — this release may not — so the remedy
+        // is where the collapse becomes visible: a slot declines a candidate
+        // whose signature this sitting already carries, while it still has
+        // retries to spend. Staged, exactly like the sub-idea and streak rules
+        // above: a sitting with nothing else left still delivers rather than
+        // being refused, and the discard is recorded either way.
+        const sittingPerceptual = q.metadata?.user_perceptual_signature ?? null;
+        if (sittingPerceptual
+          && deliveredKeys.some(k => k && k.perceptual === sittingPerceptual)
+          && retry < Math.floor(this.config.diversityAttempts * 2 / 3)) {
+          this.telemetry.sessionDiscard({
+            family: q.family, templateId: q.generator_id,
+            reasonCode: REASON.NOVELTY_DIMENSION_DOMINANCE, seed, attempt: retry + 1,
+            detail: 'in_sitting_perceptual: this sitting already carries this construction'
+          });
+          continue;
+        }
         const hardBreach = blueprints.hardViolation(i, realizedBlueprint);
         if (hardBreach) {
           this.telemetry.sessionDiscard({

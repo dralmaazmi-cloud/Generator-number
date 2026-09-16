@@ -17,7 +17,7 @@
 // Usage: node tools/audit/rc295-rationale-audit.mjs [questions] [out.json]
 
 import Engine from '../../src/index.js';
-import {rationaleProblems, claimedOperations, solutionClaims, FAMILY_NEUTRAL, namesAnOperation, FACTUAL_FALLBACK}
+import {rationaleProblems, claimedOperations, solutionClaims, FAMILY_NEUTRAL, namesAnOperation, FACTUAL_FALLBACK, FACTUAL_FALLBACK_VARIANTS}
   from '../../src/qa/rationale.js';
 
 const [N = '900', OUT = 'rc2/RC295_D1_AUDIT.json'] = process.argv.slice(2);
@@ -79,8 +79,11 @@ const wideNamingOperation = wide.filter(s => s.namesAnOperation ?? s.namesOperat
 // The factual fallback is not a reason: it is what is shown when no reason can
 // be given truthfully. It is reported on its own rather than counted as a
 // family-neutral sentence.
-const undeclared = wide.filter(s => !FAMILY_NEUTRAL.includes(s.sentence) && s.sentence !== FACTUAL_FALLBACK);
-const fallbackUses = rows.filter(r => r.sentence === FACTUAL_FALLBACK).length;
+// RC2.9.6 §3.2. The fallback is now rendered per family, so any of its
+// variants counts as the fallback rather than as an undeclared wide sentence.
+const FALLBACKS = new Set([FACTUAL_FALLBACK, ...Object.values(FACTUAL_FALLBACK_VARIANTS)]);
+const undeclared = wide.filter(s => !FAMILY_NEUTRAL.includes(s.sentence) && !FALLBACKS.has(s.sentence));
+const fallbackUses = rows.filter(r => FALLBACKS.has(r.sentence)).length;
 
 const falseSolutionClaim = rows.filter(r =>
   r.claimedSolution.some(op => !r.solutionOperations.includes(op)));

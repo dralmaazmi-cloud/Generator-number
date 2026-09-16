@@ -1,8 +1,8 @@
 {
   "drawnQuestions": 800,
   "wrongOptions": 4000,
-  "distinctSentences": 274,
-  "sentencesSpanningFourOrMoreFamilies": 13,
+  "distinctSentences": 287,
+  "sentencesSpanningFourOrMoreFamilies": 12,
   "ofThoseNamingAnOperation": 0,
   "ofThoseNotInTheDeclaredNeutralSet": 0,
   "declaredNeutralSet": [
@@ -46,7 +46,7 @@
         "work_time"
       ],
       "familyCount": 15,
-      "uses": 278,
+      "uses": 279,
       "ids": [
         "USED_GIVEN_VALUE_AS_ANSWER"
       ],
@@ -74,42 +74,6 @@
       "uses": 179,
       "ids": [
         "STOPPED_AT_INTERMEDIATE_TOTAL"
-      ],
-      "namesOperation": false
-    },
-    {
-      "sentence": "هذه العملية ليست التي تقتضيها العلاقة بين المعطيات والمطلوب في هذه الخطوة.",
-      "families": [
-        "ages",
-        "averages",
-        "combined_rate",
-        "direct_proportion",
-        "fractions",
-        "machines",
-        "percentages",
-        "profit_loss",
-        "ratios",
-        "relational",
-        "sequences",
-        "speed",
-        "unit_rate",
-        "work_time"
-      ],
-      "familyCount": 14,
-      "uses": 116,
-      "ids": [
-        "MULTIPLIED_INSTEAD_OF_DIVIDED",
-        "SUBTRACTED_INSTEAD_OF_ADDED",
-        "REVERSED_DIRECT_PROPORTION",
-        "ADDED_INSTEAD_OF_SUBTRACTED",
-        "ANSWERED_THE_OTHER_COMPONENT",
-        "ADDED_INSTEAD_OF_SCALING",
-        "MULTIPLIED_COUNTS_INSTEAD_OF_RATE",
-        "ADDED_PERCENTAGES",
-        "ADDED_WHERE_A_DIFFERENCE_BELONGS",
-        "SUBTRACTED_PERCENTAGES",
-        "USED_THE_MIDDLE_MEMBER",
-        "SHIFTED_WRONG_DIRECTION"
       ],
       "namesOperation": false
     },
@@ -243,7 +207,7 @@
         "work_time"
       ],
       "familyCount": 10,
-      "uses": 49,
+      "uses": 50,
       "ids": [
         "MISREAD_THE_STEP"
       ],
@@ -263,7 +227,7 @@
         "unit_rate"
       ],
       "familyCount": 9,
-      "uses": 100,
+      "uses": 101,
       "ids": [
         "SOLVED_ONE_CONDITION_ONLY"
       ],
@@ -283,7 +247,7 @@
         "unit_rate"
       ],
       "familyCount": 9,
-      "uses": 76,
+      "uses": 75,
       "ids": [
         "APPLIED_OPERATION_IN_REVERSE"
       ],
@@ -321,7 +285,7 @@
         "unit_rate"
       ],
       "familyCount": 8,
-      "uses": 48,
+      "uses": 49,
       "ids": [
         "STOPPED_AFTER_FIRST_STAGE"
       ],

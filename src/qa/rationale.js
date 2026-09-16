@@ -292,8 +292,33 @@ export const SITE_VARIANTS = Object.freeze(Object.fromEntries(
   ))])
 ));
 
-/** When the sentence cannot be shown truthfully, the derivation is the rationale. */
-export const FACTUAL_FALLBACK = 'هذه العملية ليست التي تقتضيها العلاقة بين المعطيات والمطلوب في هذه الخطوة.';
+/**
+ * When no diagnostic sentence can be shown truthfully, the derivation is the
+ * rationale and this says only that the operation is not the one the step
+ * needs.
+ *
+ * RC2.9.6 §3.2. It used to be one sentence for every family, and at 116 uses
+ * across 14 families it was the thirteenth sentence over the declared ceiling
+ * of twelve — and the closest thing in the bank to saying nothing. It is now
+ * rendered per family from the same subject table the site sentences use, so
+ * the learner reads which relation the step is about. That adds a DOMAIN, not a
+ * claim: the sentence still asserts nothing about what they did, which is the
+ * whole reason it is the fallback. Making it vaguer to merge it away would have
+ * been the other direction, and the brief forbids it.
+ */
+const FACTUAL_FALLBACK_PATTERN = 'هذه العملية ليست التي تقتضيها العلاقة بين {subject} في هذه الخطوة.';
+
+/** The per-family fallback, built from the same table as the site sentences. */
+export const FACTUAL_FALLBACK_VARIANTS = Object.freeze(Object.fromEntries(
+  Object.entries(FAMILY_SUBJECT).map(([family, subject]) =>
+    [family, FACTUAL_FALLBACK_PATTERN.replace('{subject}', subject)])
+));
+
+/** The family-free wording, kept for a caller with no family in hand. */
+export const FACTUAL_FALLBACK = FACTUAL_FALLBACK_PATTERN.replace('{subject}', 'المعطيات والمطلوب');
+
+/** The fallback a given family shows. */
+export const factualFallbackFor = family => FACTUAL_FALLBACK_VARIANTS[family] ?? FACTUAL_FALLBACK;
 
 /**
  * RC2.9.5 §1.3. «× 1» and «÷ 1» are not operations a learner performed; they
@@ -455,7 +480,7 @@ export function renderRationale({optionText, value, misconceptionId, derivation,
   if (!problems.length) return candidate;
   // The sentence would say something the derivation or the family contradicts:
   // show the derivation and no invented reason.
-  return `${head} ${FACTUAL_FALLBACK}`;
+  return `${head} ${factualFallbackFor(family)}`;
 }
 
 export {numberOf as _numberOf};

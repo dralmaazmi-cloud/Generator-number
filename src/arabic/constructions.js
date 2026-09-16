@@ -101,7 +101,11 @@ const NON_COUNT_FOLLOWERS = {
   // An arithmetic operator SPELLED OUT in a quick method: «100 ناقص مجموع النسب»,
   // «سرعة القارب زائد التيار». The word after the numeral is an operator, so the
   // numeral is an operand and not a counted noun.
-  'ناقص': 'OPERATOR_WORD', 'زائد': 'OPERATOR_WORD', 'ناقصه': 'OPERATOR_WORD'
+  'ناقص': 'OPERATOR_WORD', 'زائد': 'OPERATOR_WORD', 'ناقصه': 'OPERATOR_WORD',
+  // RC2.9.6 §3.3. The integer-path narration: «كل 100 تصبح 120 بعد التغير
+  // الأول»، «اضرب الجزء في 100 أولًا». A verb, a preposition and an adverb —
+  // the numeral before each is an operand, not a counted noun.
+  'تصبح': 'VERB', 'بعد': 'PARTICLE', 'أولًا': 'ORDINAL'
 };
 
 /** Shapes that carry numerals but are not counted-noun constructions at all. */
