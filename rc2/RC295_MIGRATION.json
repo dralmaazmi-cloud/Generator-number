@@ -1,0 +1,313 @@
+{
+  "journeys": 8,
+  "sittingsBeforeTheChange": 2,
+  "sittingsAfterTheChange": 2,
+  "questionsPerSitting": 30,
+  "worstWindowSpanningTheChange": {
+    "flagged": 1,
+    "nd": 0,
+    "cluster": 1,
+    "run": 2,
+    "duplicates": 0
+  },
+  "repeatedStemsAcrossTheChange": 0,
+  "gatesPass": true,
+  "perJourney": [
+    {
+      "journey": 1,
+      "questions": 120,
+      "windows": [
+        {
+          "at": 1,
+          "questionsFromBeforeTheChange": 60,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        },
+        {
+          "at": 11,
+          "questionsFromBeforeTheChange": 50,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        },
+        {
+          "at": 21,
+          "questionsFromBeforeTheChange": 40,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        }
+      ],
+      "repeatedStemsAcrossTheChange": 0
+    },
+    {
+      "journey": 2,
+      "questions": 120,
+      "windows": [
+        {
+          "at": 1,
+          "questionsFromBeforeTheChange": 60,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        },
+        {
+          "at": 11,
+          "questionsFromBeforeTheChange": 50,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        },
+        {
+          "at": 21,
+          "questionsFromBeforeTheChange": 40,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        }
+      ],
+      "repeatedStemsAcrossTheChange": 0
+    },
+    {
+      "journey": 3,
+      "questions": 120,
+      "windows": [
+        {
+          "at": 1,
+          "questionsFromBeforeTheChange": 60,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        },
+        {
+          "at": 11,
+          "questionsFromBeforeTheChange": 50,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        },
+        {
+          "at": 21,
+          "questionsFromBeforeTheChange": 40,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        }
+      ],
+      "repeatedStemsAcrossTheChange": 0
+    },
+    {
+      "journey": 4,
+      "questions": 120,
+      "windows": [
+        {
+          "at": 1,
+          "questionsFromBeforeTheChange": 60,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        },
+        {
+          "at": 11,
+          "questionsFromBeforeTheChange": 50,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        },
+        {
+          "at": 21,
+          "questionsFromBeforeTheChange": 40,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        }
+      ],
+      "repeatedStemsAcrossTheChange": 0
+    },
+    {
+      "journey": 5,
+      "questions": 120,
+      "windows": [
+        {
+          "at": 1,
+          "questionsFromBeforeTheChange": 60,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        },
+        {
+          "at": 11,
+          "questionsFromBeforeTheChange": 50,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        },
+        {
+          "at": 21,
+          "questionsFromBeforeTheChange": 40,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        }
+      ],
+      "repeatedStemsAcrossTheChange": 0
+    },
+    {
+      "journey": 6,
+      "questions": 120,
+      "windows": [
+        {
+          "at": 1,
+          "questionsFromBeforeTheChange": 60,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        },
+        {
+          "at": 11,
+          "questionsFromBeforeTheChange": 50,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        },
+        {
+          "at": 21,
+          "questionsFromBeforeTheChange": 40,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        }
+      ],
+      "repeatedStemsAcrossTheChange": 0
+    },
+    {
+      "journey": 7,
+      "questions": 120,
+      "windows": [
+        {
+          "at": 1,
+          "questionsFromBeforeTheChange": 60,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 2,
+          "duplicates": 0
+        },
+        {
+          "at": 11,
+          "questionsFromBeforeTheChange": 50,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 2,
+          "duplicates": 0
+        },
+        {
+          "at": 21,
+          "questionsFromBeforeTheChange": 40,
+          "pv": 1,
+          "nd": 0,
+          "flagged": 1,
+          "cluster": 1,
+          "run": 2,
+          "duplicates": 0
+        }
+      ],
+      "repeatedStemsAcrossTheChange": 0
+    },
+    {
+      "journey": 8,
+      "questions": 120,
+      "windows": [
+        {
+          "at": 1,
+          "questionsFromBeforeTheChange": 60,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        },
+        {
+          "at": 11,
+          "questionsFromBeforeTheChange": 50,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        },
+        {
+          "at": 21,
+          "questionsFromBeforeTheChange": 40,
+          "pv": 0,
+          "nd": 0,
+          "flagged": 0,
+          "cluster": 1,
+          "run": 1,
+          "duplicates": 0
+        }
+      ],
+      "repeatedStemsAcrossTheChange": 0
+    }
+  ]
+}

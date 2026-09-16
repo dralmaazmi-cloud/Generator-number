@@ -85,11 +85,29 @@ function summarizeReasons(reasons) {
 /** The three bands, in order. Not a practice mode: see generatePractice. */
 const BAND_ORDER = ['easy', 'medium', 'hard'];
 
+/**
+ * RC2.9.5 §6. The mix, and why these three numbers.
+ *
+ *   easy 0.50    fifty easy questions per rolling hundred against an EASY
+ *                matching of 53 distinct (template|task, perceptual) pairs.
+ *                Below the ceiling, so the share forces no repeat on the bank
+ *                as it stands. 0.60 would force at least seven and is deferred
+ *                to a release that first widens EASY to 92.
+ *   medium 0.40  the ten points come off easy and go here, not to hard: the
+ *                MEDIUM matching is 85, far wider than EASY's 53, so every
+ *                point moved from the narrow bank to the wide one relieves
+ *                pressure twice.
+ *   hard 0.10    as asked. Consequence, accepted and stated: a ten-question
+ *                sitting carries one hard item, so the four-attempt minimum
+ *                the analytics need for a claim is never reached for HARD and
+ *                the report does not characterise hard performance.
+ */
 const MIXED_DIFFICULTY_WEIGHTS = [
-  {value:'easy', weight:0.25},
-  {value:'medium', weight:0.60},
-  {value:'hard', weight:0.15}
+  {value:'easy', weight:0.50},
+  {value:'medium', weight:0.40},
+  {value:'hard', weight:0.10}
 ];
+const MIXED_SHARE = Object.freeze(Object.fromEntries(MIXED_DIFFICULTY_WEIGHTS.map(w => [w.value, w.weight])));
 
 export class NumericalQuestionGeneratorEngine {
   constructor(config = {}) {
@@ -1291,7 +1309,12 @@ export class NumericalQuestionGeneratorEngine {
       // The mixed schedule is 25% easy, 15% hard, the rest medium (see
       // _buildDifficultySchedule); the count is bounded by whichever band runs
       // out first at that share.
-      maxCount = Math.min(hardMax, Math.floor(bound('easy') / 0.25), Math.floor(bound('hard') / 0.15), Math.floor(bound('medium') / 0.6));
+      // RC2.9.5 §6. The shares are read from MIXED_DIFFICULTY_WEIGHTS rather
+      // than repeated here, so the ceiling cannot drift from the mix.
+      maxCount = Math.min(hardMax,
+        Math.floor(bound('easy') / MIXED_SHARE.easy),
+        Math.floor(bound('medium') / MIXED_SHARE.medium),
+        Math.floor(bound('hard') / MIXED_SHARE.hard));
     } else maxCount = hardMax; // adaptive draws one question at a time
     return {
       difficulty, families: selectedFamilies, maxCount: Math.max(1, maxCount),
@@ -1456,8 +1479,11 @@ export class NumericalQuestionGeneratorEngine {
     if (difficulty==='adaptive') return Array.from({length:count},()=>this.recommendDifficulty(adaptiveStats||{}));
     if (difficulty!=='mixed') throw new Error(`Unknown difficulty: ${difficulty}`);
 
-    const easy=Math.round(count*0.25);
-    const hard=Math.round(count*0.15);
+    // RC2.9.5 §6. The quota is read from MIXED_DIFFICULTY_WEIGHTS: the shares
+    // were written in two places and only one of them was the schedule, so the
+    // realised split was 26.7/56.7/16.7 whatever the weights said.
+    const easy=Math.round(count*MIXED_SHARE.easy);
+    const hard=Math.round(count*MIXED_SHARE.hard);
     const medium=count-easy-hard;
     const arr=[...Array(easy).fill('easy'),...Array(medium).fill('medium'),...Array(hard).fill('hard')];
     return rng.shuffle(arr);
