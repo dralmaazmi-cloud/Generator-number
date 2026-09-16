@@ -67,6 +67,12 @@ for (const entry of INCLUDE) {
 mkdirSync(join(STAGE, 'rc2'), {recursive: true});
 for (const f of evidenceFiles()) cpSync(join('rc2', f), join(STAGE, 'rc2', f), {recursive: true});
 
+// RC2.9.4 clarification, Part 2. The earlier releases' production bundles, so a
+// reviewer can compare EXPLANATIONS on matched seeds instead of taking this
+// release's word for what changed. Each file is recovered from git and checked
+// against that release's own freeze record before it is written.
+execFileSync('node', ['tools/audit/rc294-baseline-bundle.mjs', join(STAGE, 'rc2', 'baseline')], {stdio: 'inherit'});
+
 // The package must not carry a holdout, and this says so as a check rather
 // than as a claim: the staged tree is searched after it is built.
 const leaked = walk(STAGE).filter(p => SEALED(p.slice(STAGE.length + 1)));
@@ -85,7 +91,8 @@ writeFileSync(join(STAGE, 'RELEASE.json'), JSON.stringify({
   developmentCorpus: freeze.developmentCorpus,
   signoffHoldoutSeed: freeze.holdoutSeed,
   holdoutGenerated: freeze.holdoutGenerated,
-  contains: 'the engine as frozen, its tests, its audit tools and this release\'s evidence',
+  contains: 'the engine as frozen, its tests, its audit tools, this release\'s evidence, and the RC2.9.3 and RC2.9.2 production bundles under rc2/baseline/',
+  baselines: JSON.parse(readFileSync(join(STAGE, 'rc2', 'baseline', 'MANIFEST.json'), 'utf8')).baselines,
   excludes: 'every holdout artifact, sealed or spent, and the delivery packages of earlier releases',
   verify: [
     'npm test                                   # the full suite',

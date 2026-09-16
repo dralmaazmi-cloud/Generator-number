@@ -1,0 +1,234 @@
+{
+  "easy": {
+    "band": "easy",
+    "drawn": 14582,
+    "errors": 0,
+    "templates": 48,
+    "pvKeys": 55,
+    "ndKeys": 47,
+    "edges": 66,
+    "matching": 38,
+    "floorPer100": 62,
+    "floorIfPvOnly": 45,
+    "floorIfNdOnly": 53,
+    "oneToOne": false,
+    "pvKeysWithSeveralNd": 5,
+    "ndKeysWithSeveralPv": 10,
+    "meanPvPerNd": 1.4,
+    "meanNdPerPv": 1.2,
+    "byFamily": [
+      {
+        "family": "sequences",
+        "drawn": 982,
+        "pv": 4,
+        "nd": 13
+      },
+      {
+        "family": "ratios",
+        "drawn": 902,
+        "pv": 2,
+        "nd": 1
+      },
+      {
+        "family": "percentages",
+        "drawn": 905,
+        "pv": 3,
+        "nd": 3
+      },
+      {
+        "family": "averages",
+        "drawn": 903,
+        "pv": 2,
+        "nd": 2
+      },
+      {
+        "family": "ages",
+        "drawn": 901,
+        "pv": 1,
+        "nd": 1
+      },
+      {
+        "family": "speed",
+        "drawn": 902,
+        "pv": 2,
+        "nd": 2
+      },
+      {
+        "family": "work_time",
+        "drawn": 904,
+        "pv": 3,
+        "nd": 3
+      },
+      {
+        "family": "machines",
+        "drawn": 901,
+        "pv": 1,
+        "nd": 1
+      },
+      {
+        "family": "direct_proportion",
+        "drawn": 910,
+        "pv": 8,
+        "nd": 4
+      },
+      {
+        "family": "fractions",
+        "drawn": 924,
+        "pv": 6,
+        "nd": 3
+      },
+      {
+        "family": "unit_rate",
+        "drawn": 913,
+        "pv": 4,
+        "nd": 3
+      },
+      {
+        "family": "combined_rate",
+        "drawn": 903,
+        "pv": 3,
+        "nd": 3
+      },
+      {
+        "family": "relational",
+        "drawn": 902,
+        "pv": 2,
+        "nd": 1
+      },
+      {
+        "family": "calendar",
+        "drawn": 913,
+        "pv": 6,
+        "nd": 5
+      },
+      {
+        "family": "odd_one_out",
+        "drawn": 912,
+        "pv": 5,
+        "nd": 5
+      },
+      {
+        "family": "profit_loss",
+        "drawn": 905,
+        "pv": 3,
+        "nd": 2
+      }
+    ]
+  },
+  "medium": {
+    "band": "medium",
+    "drawn": 15919,
+    "errors": 0,
+    "templates": 77,
+    "pvKeys": 80,
+    "ndKeys": 113,
+    "edges": 122,
+    "matching": 77,
+    "floorPer100": 23,
+    "floorIfPvOnly": 20,
+    "floorIfNdOnly": 0,
+    "oneToOne": false,
+    "pvKeysWithSeveralNd": 11,
+    "ndKeysWithSeveralPv": 9,
+    "meanPvPerNd": 1.08,
+    "meanNdPerPv": 1.52,
+    "byFamily": [
+      {
+        "family": "sequences",
+        "drawn": 971,
+        "pv": 15,
+        "nd": 20
+      },
+      {
+        "family": "ratios",
+        "drawn": 903,
+        "pv": 2,
+        "nd": 3
+      },
+      {
+        "family": "percentages",
+        "drawn": 913,
+        "pv": 5,
+        "nd": 6
+      },
+      {
+        "family": "averages",
+        "drawn": 914,
+        "pv": 6,
+        "nd": 6
+      },
+      {
+        "family": "ages",
+        "drawn": 915,
+        "pv": 9,
+        "nd": 9
+      },
+      {
+        "family": "speed",
+        "drawn": 914,
+        "pv": 6,
+        "nd": 6
+      },
+      {
+        "family": "work_time",
+        "drawn": 922,
+        "pv": 6,
+        "nd": 7
+      },
+      {
+        "family": "machines",
+        "drawn": 924,
+        "pv": 8,
+        "nd": 8
+      },
+      {
+        "family": "direct_proportion",
+        "drawn": 903,
+        "pv": 2,
+        "nd": 2
+      },
+      {
+        "family": "fractions",
+        "drawn": 901,
+        "pv": 1,
+        "nd": 1
+      },
+      {
+        "family": "unit_rate",
+        "drawn": 902,
+        "pv": 2,
+        "nd": 2
+      },
+      {
+        "family": "combined_rate",
+        "drawn": 906,
+        "pv": 4,
+        "nd": 4
+      },
+      {
+        "family": "relational",
+        "drawn": 2210,
+        "pv": 4,
+        "nd": 33
+      },
+      {
+        "family": "calendar",
+        "drawn": 901,
+        "pv": 1,
+        "nd": 1
+      },
+      {
+        "family": "odd_one_out",
+        "drawn": 904,
+        "pv": 4,
+        "nd": 4
+      },
+      {
+        "family": "profit_loss",
+        "drawn": 916,
+        "pv": 5,
+        "nd": 5
+      }
+    ]
+  }
+}

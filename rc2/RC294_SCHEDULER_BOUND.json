@@ -1,0 +1,268 @@
+{
+  "easy": {
+    "band": "easy",
+    "reachable": {
+      "pvKeys": 73,
+      "ndKeys": 66,
+      "pairs": 88,
+      "matching": 53
+    },
+    "unionMatching": 53,
+    "realizedOnlyMatching": 53,
+    "floor": 47,
+    "achievedWorstMean": {
+      "pv": 39.8,
+      "nd": 8.2,
+      "flagged": 48
+    },
+    "achievedWorstMax": 48,
+    "poolOptimalMean": 48,
+    "decomposition": {
+      "floor": 47,
+      "selection": 1,
+      "ordering": 0
+    },
+    "oracle": {
+      "matched": 53,
+      "items": 100,
+      "pv": 43,
+      "nd": 4,
+      "flagged": 47,
+      "cluster": 3,
+      "run": 1,
+      "exactDuplicates": 0,
+      "gates": {
+        "flaggedAtMost8": false,
+        "ndAtMost5": true,
+        "clusterAtMost3": true,
+        "noRunOfThree": true,
+        "noDuplicates": true
+      }
+    },
+    "journeys": [
+      {
+        "label": "j1",
+        "questions": 120,
+        "refusals": 0,
+        "start": 11,
+        "pv": 40,
+        "nd": 8,
+        "flagged": 48,
+        "poolOptimal": 48,
+        "distinctPv": 60,
+        "distinctNd": 61
+      },
+      {
+        "label": "j2",
+        "questions": 120,
+        "refusals": 0,
+        "start": 11,
+        "pv": 40,
+        "nd": 8,
+        "flagged": 48,
+        "poolOptimal": 48,
+        "distinctPv": 60,
+        "distinctNd": 63
+      },
+      {
+        "label": "j3",
+        "questions": 120,
+        "refusals": 0,
+        "start": 21,
+        "pv": 41,
+        "nd": 7,
+        "flagged": 48,
+        "poolOptimal": 48,
+        "distinctPv": 59,
+        "distinctNd": 63
+      },
+      {
+        "label": "j4",
+        "questions": 120,
+        "refusals": 0,
+        "start": 1,
+        "pv": 39,
+        "nd": 9,
+        "flagged": 48,
+        "poolOptimal": 48,
+        "distinctPv": 61,
+        "distinctNd": 61
+      },
+      {
+        "label": "j5",
+        "questions": 120,
+        "refusals": 0,
+        "start": 1,
+        "pv": 41,
+        "nd": 7,
+        "flagged": 48,
+        "poolOptimal": 48,
+        "distinctPv": 59,
+        "distinctNd": 61
+      },
+      {
+        "label": "j6",
+        "questions": 120,
+        "refusals": 0,
+        "start": 1,
+        "pv": 38,
+        "nd": 10,
+        "flagged": 48,
+        "poolOptimal": 48,
+        "distinctPv": 62,
+        "distinctNd": 62
+      }
+    ],
+    "familyMatching": {
+      "sequences": 6,
+      "calendar": 5,
+      "odd_one_out": 5,
+      "averages": 4,
+      "ages": 4,
+      "speed": 4,
+      "machines": 4,
+      "percentages": 3,
+      "fractions": 3,
+      "combined_rate": 3,
+      "relational": 3,
+      "ratios": 2,
+      "work_time": 2,
+      "direct_proportion": 2,
+      "profit_loss": 2,
+      "unit_rate": 1
+    }
+  },
+  "medium": {
+    "band": "medium",
+    "reachable": {
+      "pvKeys": 91,
+      "ndKeys": 121,
+      "pairs": 133,
+      "matching": 85
+    },
+    "unionMatching": 85,
+    "realizedOnlyMatching": 85,
+    "floor": 15,
+    "achievedWorstMean": {
+      "pv": 13.5,
+      "nd": 2,
+      "flagged": 15.5
+    },
+    "achievedWorstMax": 16,
+    "poolOptimalMean": 15.5,
+    "decomposition": {
+      "floor": 15,
+      "selection": 0.5,
+      "ordering": 0
+    },
+    "oracle": {
+      "matched": 85,
+      "items": 100,
+      "pv": 15,
+      "nd": 0,
+      "flagged": 15,
+      "cluster": 3,
+      "run": 1,
+      "exactDuplicates": 0,
+      "gates": {
+        "flaggedAtMost8": false,
+        "ndAtMost5": true,
+        "clusterAtMost3": true,
+        "noRunOfThree": true,
+        "noDuplicates": true
+      }
+    },
+    "journeys": [
+      {
+        "label": "j1",
+        "questions": 120,
+        "refusals": 0,
+        "start": 21,
+        "pv": 15,
+        "nd": 1,
+        "flagged": 16,
+        "poolOptimal": 16,
+        "distinctPv": 85,
+        "distinctNd": 94
+      },
+      {
+        "label": "j2",
+        "questions": 120,
+        "refusals": 0,
+        "start": 21,
+        "pv": 12,
+        "nd": 4,
+        "flagged": 16,
+        "poolOptimal": 16,
+        "distinctPv": 88,
+        "distinctNd": 92
+      },
+      {
+        "label": "j3",
+        "questions": 120,
+        "refusals": 0,
+        "start": 21,
+        "pv": 13,
+        "nd": 3,
+        "flagged": 16,
+        "poolOptimal": 16,
+        "distinctPv": 87,
+        "distinctNd": 93
+      },
+      {
+        "label": "j4",
+        "questions": 120,
+        "refusals": 0,
+        "start": 1,
+        "pv": 13,
+        "nd": 2,
+        "flagged": 15,
+        "poolOptimal": 15,
+        "distinctPv": 87,
+        "distinctNd": 91
+      },
+      {
+        "label": "j5",
+        "questions": 120,
+        "refusals": 0,
+        "start": 1,
+        "pv": 14,
+        "nd": 1,
+        "flagged": 15,
+        "poolOptimal": 15,
+        "distinctPv": 86,
+        "distinctNd": 90
+      },
+      {
+        "label": "j6",
+        "questions": 120,
+        "refusals": 0,
+        "start": 1,
+        "pv": 14,
+        "nd": 1,
+        "flagged": 15,
+        "poolOptimal": 15,
+        "distinctPv": 86,
+        "distinctNd": 90
+      }
+    ],
+    "familyMatching": {
+      "sequences": 15,
+      "ages": 9,
+      "machines": 8,
+      "averages": 6,
+      "speed": 6,
+      "work_time": 6,
+      "ratios": 4,
+      "percentages": 4,
+      "combined_rate": 4,
+      "relational": 4,
+      "odd_one_out": 4,
+      "profit_loss": 3,
+      "direct_proportion": 3,
+      "fractions": 3,
+      "unit_rate": 3,
+      "calendar": 3
+    }
+  }
+}

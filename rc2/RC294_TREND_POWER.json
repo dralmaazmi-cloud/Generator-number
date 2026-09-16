@@ -1,0 +1,410 @@
+{
+  "appearance": {
+    "journeys": 216,
+    "sittings": 756,
+    "tally": {
+      "TREND": 0,
+      "NO_TREND_DETECTED": 1,
+      "INSUFFICIENT_TREND_EVIDENCE": 755
+    },
+    "direction": {
+      "IMPROVING": 0,
+      "DETERIORATING": 0
+    },
+    "trendPct": 0,
+    "medianComparableStrata": 0,
+    "strataDistribution": {
+      "0": 593,
+      "1": 131,
+      "2": 28,
+      "3": 3,
+      "4": 1
+    },
+    "perConfig": [
+      {
+        "difficulty": "mixed",
+        "count": 10,
+        "sittings": 84,
+        "trend": 0,
+        "trendPct": 0,
+        "medianStrata": 0
+      },
+      {
+        "difficulty": "mixed",
+        "count": 20,
+        "sittings": 84,
+        "trend": 0,
+        "trendPct": 0,
+        "medianStrata": 0
+      },
+      {
+        "difficulty": "mixed",
+        "count": 30,
+        "sittings": 84,
+        "trend": 0,
+        "trendPct": 0,
+        "medianStrata": 0
+      },
+      {
+        "difficulty": "easy",
+        "count": 10,
+        "sittings": 84,
+        "trend": 0,
+        "trendPct": 0,
+        "medianStrata": 0
+      },
+      {
+        "difficulty": "easy",
+        "count": 20,
+        "sittings": 84,
+        "trend": 0,
+        "trendPct": 0,
+        "medianStrata": 0
+      },
+      {
+        "difficulty": "easy",
+        "count": 30,
+        "sittings": 84,
+        "trend": 0,
+        "trendPct": 0,
+        "medianStrata": 0
+      },
+      {
+        "difficulty": "medium",
+        "count": 10,
+        "sittings": 84,
+        "trend": 0,
+        "trendPct": 0,
+        "medianStrata": 0
+      },
+      {
+        "difficulty": "medium",
+        "count": 20,
+        "sittings": 84,
+        "trend": 0,
+        "trendPct": 0,
+        "medianStrata": 0
+      },
+      {
+        "difficulty": "medium",
+        "count": 30,
+        "sittings": 84,
+        "trend": 0,
+        "trendPct": 0,
+        "medianStrata": 1
+      }
+    ]
+  },
+  "improvement": [
+    {
+      "count": 20,
+      "effectPoints": 15,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 20,
+      "effectPoints": 20,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 20,
+      "effectPoints": 25,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 20,
+      "effectPoints": 30,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 20,
+      "effectPoints": 40,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 30,
+      "effectPoints": 15,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 30,
+      "effectPoints": 20,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 30,
+      "effectPoints": 25,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 30,
+      "effectPoints": 30,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 30,
+      "effectPoints": 40,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 50,
+      "effectPoints": 15,
+      "sessions": 150,
+      "detected": 3,
+      "detectedPct": 2,
+      "correctDirection": 3,
+      "insufficientPct": 28,
+      "medianStrata": 4
+    },
+    {
+      "count": 50,
+      "effectPoints": 20,
+      "sessions": 150,
+      "detected": 3,
+      "detectedPct": 2,
+      "correctDirection": 3,
+      "insufficientPct": 29.3,
+      "medianStrata": 4
+    },
+    {
+      "count": 50,
+      "effectPoints": 25,
+      "sessions": 150,
+      "detected": 7,
+      "detectedPct": 4.7,
+      "correctDirection": 7,
+      "insufficientPct": 30,
+      "medianStrata": 4
+    },
+    {
+      "count": 50,
+      "effectPoints": 30,
+      "sessions": 150,
+      "detected": 6,
+      "detectedPct": 4,
+      "correctDirection": 6,
+      "insufficientPct": 34,
+      "medianStrata": 4
+    },
+    {
+      "count": 50,
+      "effectPoints": 40,
+      "sessions": 150,
+      "detected": 20,
+      "detectedPct": 13.3,
+      "correctDirection": 20,
+      "insufficientPct": 29.3,
+      "medianStrata": 4
+    }
+  ],
+  "decline": [
+    {
+      "count": 20,
+      "effectPoints": 15,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 20,
+      "effectPoints": 20,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 20,
+      "effectPoints": 25,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 20,
+      "effectPoints": 30,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 20,
+      "effectPoints": 40,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 30,
+      "effectPoints": 15,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 30,
+      "effectPoints": 20,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 30,
+      "effectPoints": 25,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 30,
+      "effectPoints": 30,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 30,
+      "effectPoints": 40,
+      "sessions": 150,
+      "detected": 0,
+      "detectedPct": 0,
+      "correctDirection": 0,
+      "insufficientPct": 100,
+      "medianStrata": 0
+    },
+    {
+      "count": 50,
+      "effectPoints": 15,
+      "sessions": 150,
+      "detected": 7,
+      "detectedPct": 4.7,
+      "correctDirection": 6,
+      "insufficientPct": 30.7,
+      "medianStrata": 4
+    },
+    {
+      "count": 50,
+      "effectPoints": 20,
+      "sessions": 150,
+      "detected": 6,
+      "detectedPct": 4,
+      "correctDirection": 6,
+      "insufficientPct": 28.7,
+      "medianStrata": 4
+    },
+    {
+      "count": 50,
+      "effectPoints": 25,
+      "sessions": 150,
+      "detected": 3,
+      "detectedPct": 2,
+      "correctDirection": 3,
+      "insufficientPct": 27.3,
+      "medianStrata": 4
+    },
+    {
+      "count": 50,
+      "effectPoints": 30,
+      "sessions": 150,
+      "detected": 10,
+      "detectedPct": 6.7,
+      "correctDirection": 10,
+      "insufficientPct": 30,
+      "medianStrata": 4
+    },
+    {
+      "count": 50,
+      "effectPoints": 40,
+      "sessions": 150,
+      "detected": 21,
+      "detectedPct": 14,
+      "correctDirection": 21,
+      "insufficientPct": 32,
+      "medianStrata": 4
+    }
+  ],
+  "thresholds": {
+    "minComparable": 18,
+    "minPerHalf": 8,
+    "minPerStratumHalf": 2,
+    "minDelta": 0.25,
+    "maxP": 0.02,
+    "permutations": 600
+  }
+}
