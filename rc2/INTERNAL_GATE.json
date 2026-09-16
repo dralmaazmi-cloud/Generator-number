@@ -1,9 +1,9 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-16T08:38:48.253Z",
+  "evaluatedAt": "2026-09-16T08:47:00.460Z",
   "engineVersion": "1.5.5",
-  "headCommit": "04fbd646b5cb3f0765993598cab66eded4e8f7f9",
+  "headCommit": "d39c4e7e0159fc12d4c86d63cf3ff732085396fc",
   "branch": "claude/numerical-generator-upgrade-b3fc8s",
   "holdoutSeed": "AUDIT-2026-09-12-B",
   "verdict": "PASS",
