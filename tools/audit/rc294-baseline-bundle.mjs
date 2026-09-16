@@ -21,6 +21,8 @@ const TARGET = process.argv[2];
 if (!TARGET) throw new Error('usage: rc294-baseline-bundle.mjs <target-dir>');
 
 const BASELINES = [
+  // RC2.9.6 §6. The bundle keeps rc292, rc293 and rc294 and adds rc295.
+  {id: 'rc295', release: 'RC2.9.5', freeze: 'rc2/FREEZE.RC2_9_5.json', deliveryZip: 'RC2_9_5_GENERATOR_READY.zip'},
   // RC2.9.5 §9. The bundle keeps rc292 and rc293 and adds rc294, so a reviewer
   // can diff this release against the one it is measured from.
   {id: 'rc294', release: 'RC2.9.4', freeze: 'rc2/FREEZE.RC2_9_4.json', deliveryZip: 'RC2_9_4_GENERATOR_READY.zip'},

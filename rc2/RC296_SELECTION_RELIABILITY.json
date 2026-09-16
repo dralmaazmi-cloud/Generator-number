@@ -1,0 +1,127 @@
+{
+  "schema": "rc296-selection-reliability-v1",
+  "note": "Delivery rate over 120 independent seeds per cell, beside what the UI offers. A cell the UI offers must be at 1.000.",
+  "rows": [
+    {
+      "families": [
+        "ages"
+      ],
+      "count": 5,
+      "seeds": 120,
+      "delivered": 118,
+      "rate": 0.983,
+      "uiOffersThisCount": false,
+      "uiCap": 0
+    },
+    {
+      "families": [
+        "ages"
+      ],
+      "count": 10,
+      "seeds": 120,
+      "delivered": 98,
+      "rate": 0.817,
+      "uiOffersThisCount": false,
+      "uiCap": 0
+    },
+    {
+      "families": [
+        "ratios"
+      ],
+      "count": 10,
+      "seeds": 120,
+      "delivered": 99,
+      "rate": 0.825,
+      "uiOffersThisCount": false,
+      "uiCap": 5
+    },
+    {
+      "families": [
+        "ratios"
+      ],
+      "count": 5,
+      "seeds": 120,
+      "delivered": 120,
+      "rate": 1,
+      "uiOffersThisCount": true,
+      "uiCap": 5
+    },
+    {
+      "families": [
+        "direct_proportion"
+      ],
+      "count": 10,
+      "seeds": 120,
+      "delivered": 53,
+      "rate": 0.442,
+      "uiOffersThisCount": false,
+      "uiCap": 5
+    },
+    {
+      "families": [
+        "direct_proportion"
+      ],
+      "count": 5,
+      "seeds": 120,
+      "delivered": 120,
+      "rate": 1,
+      "uiOffersThisCount": true,
+      "uiCap": 5
+    },
+    {
+      "families": [
+        "relational"
+      ],
+      "count": 5,
+      "seeds": 120,
+      "delivered": 120,
+      "rate": 1,
+      "uiOffersThisCount": true,
+      "uiCap": 5
+    },
+    {
+      "families": [
+        "calendar"
+      ],
+      "count": 5,
+      "seeds": 120,
+      "delivered": 120,
+      "rate": 1,
+      "uiOffersThisCount": true,
+      "uiCap": 5
+    },
+    {
+      "families": [
+        "sequences"
+      ],
+      "count": 14,
+      "seeds": 120,
+      "delivered": 120,
+      "rate": 1,
+      "uiOffersThisCount": true,
+      "uiCap": 14
+    },
+    {
+      "families": [
+        "fractions"
+      ],
+      "count": 5,
+      "seeds": 120,
+      "delivered": 0,
+      "rate": 0,
+      "uiOffersThisCount": false,
+      "uiCap": 0
+    },
+    {
+      "families": [
+        "odd_one_out"
+      ],
+      "count": 5,
+      "seeds": 120,
+      "delivered": 0,
+      "rate": 0,
+      "uiOffersThisCount": false,
+      "uiCap": 0
+    }
+  ]
+}
