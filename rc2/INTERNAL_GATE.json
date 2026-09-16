@@ -1,17 +1,14 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-16T13:38:15.342Z",
+  "evaluatedAt": "2026-09-16T13:49:37.649Z",
   "engineVersion": "1.5.6",
-  "headCommit": "a0f0657bdf709a6117dad29143f4eedf7822cddc",
+  "headCommit": "3b3b8d99f8e9138805852e5196b1ce67e3946a0c",
   "branch": "claude/numerical-generator-upgrade-b3fc8s",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "FAIL",
+  "verdict": "PASS",
   "conditions": 39,
-  "failedConditions": [
-    "SUITE_GREEN",
-    "TREE_CLEAN"
-  ],
+  "failedConditions": [],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -40,10 +37,10 @@
     {
       "id": "SUITE_GREEN",
       "requirement": "The whole test suite passes",
-      "pass": false,
+      "pass": true,
       "detail": {
-        "passed": 628,
-        "failed": 3
+        "passed": 624,
+        "failed": 0
       }
     },
     {
@@ -96,7 +93,6 @@
           "rc2/FREEZE.RC2_9_4.json",
           "rc2/FREEZE.RC2_9_4A.json",
           "rc2/FREEZE.RC2_9_5.json",
-          "rc2/FREEZE.json",
           "rc2/FREEZE_RC2.json",
           "rc2/FREEZE_RC2_1.json",
           "rc2/FREEZE_RC2_2.json",
@@ -587,10 +583,8 @@
     {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": false,
-      "detail": [
-        "M rc2/INTERNAL_GATE.json"
-      ]
+      "pass": true,
+      "detail": "clean"
     }
   ]
 }
