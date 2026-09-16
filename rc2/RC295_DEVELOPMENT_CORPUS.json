@@ -1,14 +1,14 @@
 {
   "schema": "rc2-development-corpus-v1",
   "section": "§22",
-  "generatedAt": "2026-09-16T08:07:17.643Z",
-  "engineVersion": "1.5.4",
+  "generatedAt": "2026-09-16T08:35:17.192Z",
+  "engineVersion": "1.5.5",
   "seeds": [
-    "RC2-DEV-ALPHA",
-    "RC2-DEV-BETA",
-    "RC2-DEV-GAMMA",
-    "RC2-DEV-DELTA",
-    "RC2-DEV-EPSILON"
+    "RC29-DEV-ALEF",
+    "RC29-DEV-BAA",
+    "RC29-DEV-JEEM",
+    "RC29-DEV-DAL",
+    "RC29-DEV-HAA"
   ],
   "holdoutSeedUsed": false,
   "holdoutSeed": "AUDIT-2026-09-12-B",
@@ -24,31 +24,31 @@
       "hard": 3330
     },
     "byFamily": {
-      "profit_loss": 619,
-      "percentages": 655,
-      "combined_rate": 725,
-      "speed": 589,
-      "machines": 698,
-      "direct_proportion": 703,
-      "ratios": 691,
-      "odd_one_out": 435,
-      "averages": 661,
-      "fractions": 408,
-      "unit_rate": 612,
-      "relational": 615,
-      "work_time": 545,
-      "sequences": 675,
-      "calendar": 667,
-      "ages": 702
+      "work_time": 566,
+      "odd_one_out": 364,
+      "relational": 607,
+      "calendar": 694,
+      "machines": 719,
+      "percentages": 644,
+      "unit_rate": 658,
+      "profit_loss": 635,
+      "speed": 597,
+      "averages": 691,
+      "sequences": 654,
+      "direct_proportion": 694,
+      "fractions": 419,
+      "combined_rate": 662,
+      "ages": 680,
+      "ratios": 716
     },
-    "sha256": "b929ebbf7c8a8cc7e2b2f2e0792c89b55cb66386e6b48a48d912f727a08dd46f",
-    "gzipBytes": 1688039
+    "sha256": "c0e26d657a3b4781cd9ac05c0584d086d6d6c476cd5ee96b7dec30a264bc0b37",
+    "gzipBytes": 1682081
   },
   "mathematics": {
     "note": "§20 — the RC1 gains. Any non-zero figure here is an RC2 blocker.",
     "ORACLE_DISAGREEMENT": 0,
     "oracleDisagreementSamples": [],
-    "oracleComparedThroughALabelMap": 117,
+    "oracleComparedThroughALabelMap": 115,
     "postShuffleKeyMismatch": 0,
     "zeroCorrectOption": 0,
     "multipleCorrectOptions": 0,
@@ -56,33 +56,33 @@
     "metaKeyMismatch": 0
   },
   "ambiguity": {
-    "oddOneOutPublished": 435,
+    "oddOneOutPublished": 364,
+    "notAnOutlierTask": 133,
     "verdicts": {
-      "UNRECORDED": 163,
-      "CLEAN": 218,
-      "BORDERLINE": 54
+      "CLEAN": 190,
+      "BORDERLINE": 41
     },
     "publishedAmbiguous": 0,
     "publishedUndiscoverable": 0
   },
   "language": {
-    "constructionsClassified": 106382,
-    "valid": 85030,
-    "exempt": 21352,
+    "constructionsClassified": 106000,
+    "valid": 84947,
+    "exempt": 21053,
     "invalid": 0,
     "unclassified": 0,
     "invalidSamples": []
   },
   "distractors": {
     "wrongOptions": 50000,
-    "answerDerived": 1448,
-    "answerDerivedShare": 0.02896,
+    "answerDerived": 1534,
+    "answerDerivedShare": 0.03068,
     "unattributedAnswerDerived": 0,
     "perQuestionDistribution": {
-      "0": 8967,
-      "1": 651,
-      "2": 349,
-      "3": 33
+      "0": 8897,
+      "1": 718,
+      "2": 339,
+      "3": 46
     },
     "rc1Baseline": {
       "answerDerivedShare": 0.249,
@@ -91,10 +91,10 @@
   },
   "feedback": {
     "verdicts": {
-      "EXACT": 33096,
-      "PROSE": 9762,
-      "ROUNDS_TO_VALUE": 537,
-      "NON_NUMERIC": 6605
+      "PROSE": 9305,
+      "EXACT": 33487,
+      "NON_NUMERIC": 6655,
+      "ROUNDS_TO_VALUE": 553
     },
     "derivationMismatches": 0,
     "questionsWithInapplicableMisconception": 0,
@@ -102,140 +102,140 @@
   },
   "statisticalLeakage": {
     "note": "A 10,000-question corpus spread over ~105 templates gives ~95 draws each, so few clear the sample this statistic needs. The authoritative leakage measurement is tools/audit/rc2-011-answer-space.mjs at 30,000 questions; this is a cross-check.",
-    "distinctAnswersAcrossCorpus": 1995,
-    "corpusModalShare": 0.0101,
+    "distinctAnswersAcrossCorpus": 1987,
+    "corpusModalShare": 0.0102,
     "templatesMeasured": 6,
     "templatesAbove20Points": 0,
     "templatesAbove20PointsOnPointEstimate": 0,
     "templatesAbove15Points": 0,
-    "medianAdvantagePoints": -9,
+    "medianAdvantagePoints": -9.2,
     "worst": [
       {
         "templateId": "MACH_H_MIN_SECOND_TYPE",
-        "n": 261,
+        "n": 239,
         "space": 5,
-        "modal": 0.249,
-        "entropyBits": 2.29,
-        "advantagePoints": 8.2,
-        "advantageLowerBoundPoints": 2.9
+        "modal": 0.243,
+        "entropyBits": 2.31,
+        "advantagePoints": 7.6,
+        "advantageLowerBoundPoints": 2.1
       },
       {
         "templateId": "COMB_H_TWO_PUMPS",
-        "n": 285,
+        "n": 252,
         "space": 14,
-        "modal": 0.147,
-        "entropyBits": 3.48,
-        "advantagePoints": -1.9,
-        "advantageLowerBoundPoints": -6.1
-      },
-      {
-        "templateId": "AGE_H_PAST_FUT",
-        "n": 284,
-        "space": 28,
-        "modal": 0.099,
-        "entropyBits": 4.45,
-        "advantagePoints": -6.8,
-        "advantageLowerBoundPoints": -10.3
+        "modal": 0.163,
+        "entropyBits": 3.41,
+        "advantagePoints": -0.4,
+        "advantageLowerBoundPoints": -5
       },
       {
         "templateId": "PCT_H_TWO_GROUP_CHANGE",
-        "n": 247,
-        "space": 39,
-        "modal": 0.077,
-        "entropyBits": 4.82,
-        "advantagePoints": -9,
-        "advantageLowerBoundPoints": -12.4
+        "n": 246,
+        "space": 41,
+        "modal": 0.093,
+        "entropyBits": 4.89,
+        "advantagePoints": -7.3,
+        "advantageLowerBoundPoints": -11
+      },
+      {
+        "templateId": "AGE_H_PAST_FUT",
+        "n": 280,
+        "space": 28,
+        "modal": 0.075,
+        "entropyBits": 4.64,
+        "advantagePoints": -9.2,
+        "advantageLowerBoundPoints": -12.3
       },
       {
         "templateId": "RATE_H_RATE_FROM_GAP",
-        "n": 201,
-        "space": 109,
-        "modal": 0.04,
-        "entropyBits": 6.46,
-        "advantagePoints": -12.7,
-        "advantageLowerBoundPoints": -15.4
+        "n": 244,
+        "space": 114,
+        "modal": 0.041,
+        "entropyBits": 6.5,
+        "advantagePoints": -12.6,
+        "advantageLowerBoundPoints": -15.1
       },
       {
         "templateId": "AVG_H_OVERLAP",
-        "n": 258,
-        "space": 192,
+        "n": 243,
+        "space": 185,
         "modal": 0.016,
-        "entropyBits": 7.45,
-        "advantagePoints": -15.1,
+        "entropyBits": 7.41,
+        "advantagePoints": -15,
         "advantageLowerBoundPoints": -16.7
       }
     ]
   },
   "difficulty": {
     "declaredVsComputed": {
-      "easy->medium": 1257,
-      "medium->medium": 1262,
-      "hard->hard": 3026,
-      "easy->easy": 2053,
-      "medium->hard": 1705,
-      "medium->easy": 368,
-      "hard->medium": 304,
-      "easy->hard": 25
+      "easy->easy": 1972,
+      "medium->medium": 1280,
+      "hard->hard": 3036,
+      "medium->hard": 1713,
+      "easy->medium": 1322,
+      "easy->hard": 41,
+      "hard->medium": 294,
+      "medium->easy": 342
     },
-    "agreement": 0.6341,
+    "agreement": 0.6288,
     "rc1Agreement": 0.528
   },
   "rejectionTelemetry": {
     "reconciliation": {
-      "proposals": 10656,
-      "accountedFor": 10656,
+      "proposals": 10623,
+      "accountedFor": 10623,
       "balanced": true,
       "difference": 0,
       "breakdown": {
         "published": 10000,
         "samplerFailures": 2,
-        "finalizationFailures": 299,
-        "pipelineRejectedCandidates": 355
+        "finalizationFailures": 278,
+        "pipelineRejectedCandidates": 343
       }
     },
     "byStage": {
-      "proposal": 10656,
+      "proposal": 10623,
+      "family_sampler": 5992,
+      "distractor_filter": 4330,
+      "finalization": 278,
       "published": 10000,
-      "pipeline": 409,
-      "distractor_filter": 4416,
-      "distractor_plausibility": 1498,
-      "family_sampler": 5618,
-      "finalization": 299,
+      "distractor_plausibility": 1448,
+      "pipeline": 393,
       "sampler_failure": 2
     },
     "byReason": {
-      "EXPLANATION_UNSOURCED_VALUE": 169,
-      "DISTRACTOR_IMPOSSIBLE": 4416,
-      "IMPLAUSIBLE_DISTRACTOR_DEMOTED": 1498,
-      "SAMPLER_CONSTRAINT": 5140,
-      "DISTRACTOR_NO_MISCONCEPTION": 299,
-      "AMBIGUOUS_ODD_ONE_OUT": 480,
+      "SAMPLER_CONSTRAINT": 5624,
+      "DISTRACTOR_IMPOSSIBLE": 4330,
+      "DISTRACTOR_NO_MISCONCEPTION": 278,
+      "IMPLAUSIBLE_DISTRACTOR_DEMOTED": 1448,
+      "AMBIGUOUS_ODD_ONE_OUT": 370,
+      "INVALID_ARABIC_NUMBER_UNIT": 44,
       "UNATTRIBUTED_ANSWER_DERIVED_DISTRACTOR": 43,
-      "DEGENERATE_PARAMETERS": 56,
-      "DEGENERATE_WRONG_METHOD_EQUALS_KEY": 94,
-      "INVALID_ARABIC_NUMBER_UNIT": 27,
-      "EXPLANATION_EQUATION_FAILURE": 10,
-      "TEXT_PARAM_MISMATCH": 7,
+      "DEGENERATE_PARAMETERS": 45,
+      "DEGENERATE_WRONG_METHOD_EQUALS_KEY": 88,
+      "EXPLANATION_UNSOURCED_VALUE": 144,
+      "EXPLANATION_EQUATION_FAILURE": 18,
+      "TEXT_PARAM_MISMATCH": 8,
       "FEEDBACK_DERIVATION_MISMATCH": 3
     },
-    "internalResamplesPerProposal": 0.527,
+    "internalResamplesPerProposal": 0.564,
     "exhaustions": 0
   },
   "diversity": {
-    "exactFingerprints": 7424,
-    "semanticFingerprints": 7266,
-    "structuralReasoningSignatures": 391,
-    "exactPerPublished": 0.7424,
-    "semanticCollapseRatio": 0.9787
+    "exactFingerprints": 7472,
+    "semanticFingerprints": 7341,
+    "structuralReasoningSignatures": 403,
+    "exactPerPublished": 0.7472,
+    "semanticCollapseRatio": 0.9825
   },
   "performance": {
-    "meanAttemptsPerPublished": 1.0656,
+    "meanAttemptsPerPublished": 1.0623,
     "p95Attempts": 2,
     "maxAttempts": 4,
-    "latencyP50Ms": 1.19,
-    "latencyP95Ms": 2.03,
-    "latencyP99Ms": 3.12,
-    "wallClockSeconds": 14.9,
-    "questionsPerSecond": 672.5
+    "latencyP50Ms": 1.23,
+    "latencyP95Ms": 2.2,
+    "latencyP99Ms": 3.18,
+    "wallClockSeconds": 15.5,
+    "questionsPerSecond": 645.1
   }
 }

@@ -1,8 +1,8 @@
 {
   "schema": "rc2-development-corpus-v1",
   "section": "§22",
-  "generatedAt": "2026-09-16T08:07:17.643Z",
-  "engineVersion": "1.5.4",
+  "generatedAt": "2026-09-16T08:35:46.138Z",
+  "engineVersion": "1.5.5",
   "seeds": [
     "RC2-DEV-ALPHA",
     "RC2-DEV-BETA",
@@ -57,8 +57,8 @@
   },
   "ambiguity": {
     "oddOneOutPublished": 435,
+    "notAnOutlierTask": 163,
     "verdicts": {
-      "UNRECORDED": 163,
       "CLEAN": 218,
       "BORDERLINE": 54
     },
@@ -232,10 +232,10 @@
     "meanAttemptsPerPublished": 1.0656,
     "p95Attempts": 2,
     "maxAttempts": 4,
-    "latencyP50Ms": 1.19,
-    "latencyP95Ms": 2.03,
-    "latencyP99Ms": 3.12,
-    "wallClockSeconds": 14.9,
-    "questionsPerSecond": 672.5
+    "latencyP50Ms": 1.22,
+    "latencyP95Ms": 2.18,
+    "latencyP99Ms": 3.28,
+    "wallClockSeconds": 15.4,
+    "questionsPerSecond": 648.7
   }
 }

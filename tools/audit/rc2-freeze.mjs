@@ -14,7 +14,7 @@ import {execFileSync} from 'node:child_process';
 import {join} from 'node:path';
 
 import {ENGINE_VERSION} from '../../src/index.js';
-import {DEVELOPMENT_SEEDS, RC21_DEVELOPMENT_SEEDS, RC22_DEVELOPMENT_SEEDS, RC23_DEVELOPMENT_SEEDS, RC24_DEVELOPMENT_SEEDS, RC27_DEVELOPMENT_SEEDS, RC27_SIGNOFF_SEED, RC28_DEVELOPMENT_SEEDS, RC28_SIGNOFF_SEED, RC29_DEVELOPMENT_SEEDS, RC29_SIGNOFF_SEED, RC291_DEVELOPMENT_SEEDS, RC291_SIGNOFF_SEED, RC292_DEVELOPMENT_SEEDS, RC292_SIGNOFF_SEED, RC293_DEVELOPMENT_SEEDS, RC293_SIGNOFF_SEED, RC294_DEVELOPMENT_SEEDS, RC294_SIGNOFF_SEED, RC26_HOLDOUT_SEED, HOLDOUT_SEED} from './rc2-development-corpus.mjs';
+import {DEVELOPMENT_SEEDS, RC21_DEVELOPMENT_SEEDS, RC22_DEVELOPMENT_SEEDS, RC23_DEVELOPMENT_SEEDS, RC24_DEVELOPMENT_SEEDS, RC27_DEVELOPMENT_SEEDS, RC27_SIGNOFF_SEED, RC28_DEVELOPMENT_SEEDS, RC28_SIGNOFF_SEED, RC29_DEVELOPMENT_SEEDS, RC29_SIGNOFF_SEED, RC291_DEVELOPMENT_SEEDS, RC291_SIGNOFF_SEED, RC292_DEVELOPMENT_SEEDS, RC292_SIGNOFF_SEED, RC293_DEVELOPMENT_SEEDS, RC293_SIGNOFF_SEED, RC294_DEVELOPMENT_SEEDS, RC294_SIGNOFF_SEED, RC295_DEVELOPMENT_SEEDS, RC295_SIGNOFF_SEED, RC26_HOLDOUT_SEED, HOLDOUT_SEED} from './rc2-development-corpus.mjs';
 import {HOLDOUT_SEED as RC21_HOLDOUT_SEED} from './rc21-holdout.mjs';
 import {HOLDOUT_SEED as RC22_HOLDOUT_SEED} from './rc22-holdout.mjs';
 import {RC23_SIGNOFF_SEED} from './rc2-internal-gate.mjs';
@@ -151,8 +151,9 @@ export function freeze() {
   // The sign-off seeds, oldest first, each named by one release and spent by
   // that release's freeze. A release spends everything before its own entry.
   const SIGNOFF_CHAIN = [RC27_SIGNOFF_SEED, RC28_SIGNOFF_SEED, RC29_SIGNOFF_SEED,
-    RC291_SIGNOFF_SEED, RC292_SIGNOFF_SEED, RC293_SIGNOFF_SEED, RC294_SIGNOFF_SEED];
-  const chainIndex = rc294 ? 6 : rc293 ? 5 : rc292 ? 4 : rc291 ? 3 : rc29 ? 2 : rc28 ? 1 : rc27 ? 0 : 0;
+    RC291_SIGNOFF_SEED, RC292_SIGNOFF_SEED, RC293_SIGNOFF_SEED, RC294_SIGNOFF_SEED,
+    RC295_SIGNOFF_SEED];
+  const chainIndex = rc295 ? 7 : rc294 ? 6 : rc293 ? 5 : rc292 ? 4 : rc291 ? 3 : rc29 ? 2 : rc28 ? 1 : rc27 ? 0 : 0;
   return {
     schema: 'rc2-freeze-v1',
     supersedes: prior,
@@ -166,13 +167,13 @@ export function freeze() {
     frozenRC1Baseline: matrix.frozenRC1Baseline,
     scopeCommit: matrix.scopeCommit,
     scopeSchema: matrix.scopeSchema,
-    release: rc294 ? 'RC2.9.4' : rc293 ? 'RC2.9.3' : rc292 ? 'RC2.9.2' : rc291 ? 'RC2.9.1' : rc29 ? 'RC2.9' : rc28 ? 'RC2.8' : rc27 ? 'RC2.7' : rc24 ? 'RC2.4' : rc23 ? 'RC2.3' : rc22 ? 'RC2.2' : rc21 ? 'RC2.1' : 'RC2',
-    developmentSeeds: [...(rc294 ? RC294_DEVELOPMENT_SEEDS : rc293 ? RC293_DEVELOPMENT_SEEDS : rc292 ? RC292_DEVELOPMENT_SEEDS : rc291 ? RC291_DEVELOPMENT_SEEDS : rc29 ? RC29_DEVELOPMENT_SEEDS : rc28 ? RC28_DEVELOPMENT_SEEDS : rc27 ? RC27_DEVELOPMENT_SEEDS : rc24 ? RC24_DEVELOPMENT_SEEDS : rc23 ? RC23_DEVELOPMENT_SEEDS : rc22 ? RC22_DEVELOPMENT_SEEDS : rc21 ? RC21_DEVELOPMENT_SEEDS : DEVELOPMENT_SEEDS)],
+    release: rc295 ? 'RC2.9.5' : rc294 ? 'RC2.9.4' : rc293 ? 'RC2.9.3' : rc292 ? 'RC2.9.2' : rc291 ? 'RC2.9.1' : rc29 ? 'RC2.9' : rc28 ? 'RC2.8' : rc27 ? 'RC2.7' : rc24 ? 'RC2.4' : rc23 ? 'RC2.3' : rc22 ? 'RC2.2' : rc21 ? 'RC2.1' : 'RC2',
+    developmentSeeds: [...(rc295 ? RC295_DEVELOPMENT_SEEDS : rc294 ? RC294_DEVELOPMENT_SEEDS : rc293 ? RC293_DEVELOPMENT_SEEDS : rc292 ? RC292_DEVELOPMENT_SEEDS : rc291 ? RC291_DEVELOPMENT_SEEDS : rc29 ? RC29_DEVELOPMENT_SEEDS : rc28 ? RC28_DEVELOPMENT_SEEDS : rc27 ? RC27_DEVELOPMENT_SEEDS : rc24 ? RC24_DEVELOPMENT_SEEDS : rc23 ? RC23_DEVELOPMENT_SEEDS : rc22 ? RC22_DEVELOPMENT_SEEDS : rc21 ? RC21_DEVELOPMENT_SEEDS : DEVELOPMENT_SEEDS)],
     // RC2.3 names its sign-off holdout and does not generate it: the brief
     // withholds the next holdout until the validation report is approved. The
     // freeze is still the state that holdout would be sealed against, and
     // `holdoutGenerated` below says plainly that it has not been.
-    holdoutSeed: rc294 ? RC294_SIGNOFF_SEED : rc293 ? RC293_SIGNOFF_SEED : rc292 ? RC292_SIGNOFF_SEED : rc291 ? RC291_SIGNOFF_SEED : rc29 ? RC29_SIGNOFF_SEED : rc28 ? RC28_SIGNOFF_SEED : rc27 ? RC27_SIGNOFF_SEED : (rc24 || rc23) ? RC23_SIGNOFF_SEED : rc22 ? RC22_HOLDOUT_SEED : rc21 ? RC21_HOLDOUT_SEED : HOLDOUT_SEED,
+    holdoutSeed: rc295 ? RC295_SIGNOFF_SEED : rc294 ? RC294_SIGNOFF_SEED : rc293 ? RC293_SIGNOFF_SEED : rc292 ? RC292_SIGNOFF_SEED : rc291 ? RC291_SIGNOFF_SEED : rc29 ? RC29_SIGNOFF_SEED : rc28 ? RC28_SIGNOFF_SEED : rc27 ? RC27_SIGNOFF_SEED : (rc24 || rc23) ? RC23_SIGNOFF_SEED : rc22 ? RC22_HOLDOUT_SEED : rc21 ? RC21_HOLDOUT_SEED : HOLDOUT_SEED,
     // RC2.8 inherits RC2.7's list unchanged: no holdout was generated between
     // them, so nothing was spent. G — the seed RC2.7 froze against — is spent by
     // being frozen against, and RC2.8 names H instead.

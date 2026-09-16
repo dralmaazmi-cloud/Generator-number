@@ -180,6 +180,19 @@ export const RC294_DEVELOPMENT_SEEDS = RC293_DEVELOPMENT_SEEDS;
 export const RC294_SIGNOFF_SEED = 'AUDIT-2026-09-13-M';
 
 /**
+ * RC2.9.5, on the same seeds again. Forty-four EASY constructions were added
+ * and the mixed band split moved to 50/40/10, so what these seeds draw is not
+ * what RC2.9.4 drew; the corpus on them is the record of this engine.
+ */
+export const RC295_DEVELOPMENT_SEEDS = RC294_DEVELOPMENT_SEEDS;
+
+/**
+ * RC2.9.5 names its sign-off holdout and does not generate it; its brief
+ * forbids generating one. RC2.9.4's M is spent by being frozen against.
+ */
+export const RC295_SIGNOFF_SEED = 'AUDIT-2026-09-13-N';
+
+/**
  * Which release a corpus run belongs to, and where its evidence lands. The RC2.1
  * and RC2.2 corpora were built by calling `build` with a seed list by hand and
  * writing the files by hand, which left no record of how to reproduce them.
@@ -196,7 +209,8 @@ export const RELEASES = Object.freeze({
   rc291: {seeds: RC291_DEVELOPMENT_SEEDS, json: 'rc2/RC291_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc291-development-corpus.jsonl.gz'},
   rc292: {seeds: RC292_DEVELOPMENT_SEEDS, json: 'rc2/RC292_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc292-development-corpus.jsonl.gz'},
   rc293: {seeds: RC293_DEVELOPMENT_SEEDS, json: 'rc2/RC293_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc293-development-corpus.jsonl.gz'},
-  rc294: {seeds: RC294_DEVELOPMENT_SEEDS, json: 'rc2/RC294_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc294-development-corpus.jsonl.gz'}
+  rc294: {seeds: RC294_DEVELOPMENT_SEEDS, json: 'rc2/RC294_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc294-development-corpus.jsonl.gz'},
+  rc295: {seeds: RC295_DEVELOPMENT_SEEDS, json: 'rc2/RC295_DEVELOPMENT_CORPUS.json', gz: 'rc2/rc295-development-corpus.jsonl.gz'}
 });
 
 const BANDS = ['easy', 'medium', 'hard'];
@@ -239,7 +253,7 @@ export async function build({questions = 10000, seeds = DEVELOPMENT_SEEDS} = {})
     multipleCorrectOptions = 0, correctValueMismatch = 0, metaKeyMismatch = 0;
 
   const ambiguityVerdicts = {};
-  let oddOneOutSeen = 0, oddAmbiguous = 0, oddUndiscoverable = 0;
+  let oddOneOutSeen = 0, oddAmbiguous = 0, oddUndiscoverable = 0, oddNotAnOutlierTask = 0;
 
   let arValid = 0, arExempt = 0, arInvalid = 0, arUnclassified = 0;
   const arInvalidSamples = [];
@@ -307,15 +321,29 @@ export async function build({questions = 10000, seeds = DEVELOPMENT_SEEDS} = {})
       }
 
       // --- ambiguity ---------------------------------------------------------
+      // RC2.9.5. The ambiguity check asks ONE question: does more than one rule
+      // nominate a different member of the set as the odd one. It only means
+      // anything where the answer IS a nominated member. Three of this
+      // release's odd_one_out constructions ask something else — how many
+      // members satisfy a stated rule, which rule they all satisfy, which
+      // number extends the set — and for those the key is a count, a rule or a
+      // number that is not in the set at all. Scoring them through this check
+      // read a count of 4 as "the outlier is 4" and reported a competing rule
+      // that no learner is being asked about. They are counted apart instead of
+      // being scored by a test that does not apply to them.
       if (q.family === 'odd_one_out') {
         oddOneOutSeen++;
-        const verdict = q.metadata.ambiguity_verdict ?? 'UNRECORDED';
-        ambiguityVerdicts[verdict] = (ambiguityVerdicts[verdict] || 0) + 1;
-        const nums = q.metadata.parameters?.numbers;
-        if (Array.isArray(nums)) {
-          const a = checkOddOneOutAmbiguity(nums, Number(q.correct_value));
-          if (a.ambiguous) oddAmbiguous++;
-          if (a.undiscoverable) oddUndiscoverable++;
+        if (q.metadata.asked_unknown !== 'outlier') {
+          oddNotAnOutlierTask++;
+        } else {
+          const verdict = q.metadata.ambiguity_verdict ?? 'UNRECORDED';
+          ambiguityVerdicts[verdict] = (ambiguityVerdicts[verdict] || 0) + 1;
+          const nums = q.metadata.parameters?.numbers;
+          if (Array.isArray(nums)) {
+            const a = checkOddOneOutAmbiguity(nums, Number(q.correct_value));
+            if (a.ambiguous) oddAmbiguous++;
+            if (a.undiscoverable) oddUndiscoverable++;
+          }
         }
       }
 
@@ -441,6 +469,10 @@ export async function build({questions = 10000, seeds = DEVELOPMENT_SEEDS} = {})
       },
       ambiguity: {
         oddOneOutPublished: oddOneOutSeen,
+        // Items whose answer is not a nominated outlier: a count, a rule name,
+        // or a number that extends the set. The check below does not apply to
+        // them and does not score them.
+        notAnOutlierTask: oddNotAnOutlierTask,
         verdicts: ambiguityVerdicts,
         publishedAmbiguous: oddAmbiguous,
         publishedUndiscoverable: oddUndiscoverable
