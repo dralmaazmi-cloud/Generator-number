@@ -177,7 +177,7 @@ export function freeze() {
     // RC2.8 inherits RC2.7's list unchanged: no holdout was generated between
     // them, so nothing was spent. G — the seed RC2.7 froze against — is spent by
     // being frozen against, and RC2.8 names H instead.
-    previousHoldouts: (rc294 || rc293 || rc292 || rc291 || rc29 || rc28 || rc27)
+    previousHoldouts: (rc295 || rc294 || rc293 || rc292 || rc291 || rc29 || rc28 || rc27)
       ? [{seed: HOLDOUT_SEED, status: 'FAILED_DIAGNOSTIC_HOLDOUT', reused: false},
          {seed: RC21_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
          {seed: RC22_HOLDOUT_SEED, status: 'REVIEWED_AND_SPENT', reused: false},
