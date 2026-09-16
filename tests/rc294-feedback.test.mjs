@@ -73,18 +73,29 @@ test('A1: the renderer never invents — a claimed operation the derivation lack
   assert.doesNotMatch(r, /طرحت/);
   assert.match(r, /وهي ناتج 30 \+ 5\./);
   assert.match(r, /ليست التي تقتضيها/);
-  // And a truthful site keeps its sentence.
-  const ok = renderRationale({optionText: '19', value: 19, misconceptionId: 'SUBTRACTED_INSTEAD_OF_ADDED', derivation: '25 − 6', family: 'averages', templateId: 'AVG_M_REPLACE'});
-  assert.match(ok, /طرحت حيث يقتضي الحل الجمع/);
+  // And a truthful site keeps its sentence. RC2.9.5 §1.1 renders it per family
+  // and verifies the operation it attributes to the SOLUTION as well as the one
+  // it attributes to the learner.
+  const ok = renderRationale({optionText: '19', value: 19, misconceptionId: 'SUBTRACTED_INSTEAD_OF_ADDED', derivation: '25 − 6', family: 'averages', templateId: 'AVG_M_REPLACE', solutionOperations: ['add', 'divide']});
+  assert.match(ok, /طرحت المقدارين/);
+  assert.match(ok, /القيم ومتوسطها/);
+  // The same sentence at a site whose solution never adds is not shown at all.
+  const unverified = renderRationale({optionText: '19', value: 19, misconceptionId: 'SUBTRACTED_INSTEAD_OF_ADDED', derivation: '25 − 6', family: 'ratios', templateId: 'RAT_E_KNOWN', solutionOperations: ['divide', 'multiply']});
+  assert.match(unverified, /ليست التي تقتضيها/);
+  assert.doesNotMatch(unverified, /تقتضي جمعهما/);
 });
 
 test('A1: a derivation that tidies to the option itself is shown raw, a bare number is not shown', () => {
-  assert.equal(shownDerivation('1 × 4', 4), '1 × 4');
+  // RC2.9.5 §1.3. «× 1» and «÷ 1» are stripped before anything reads the
+  // derivation, so «1 × 4» for the option 4 says nothing and is not shown.
+  assert.equal(shownDerivation('1 × 4', 4), null);
+  assert.equal(shownDerivation('5 ÷ 1', 5), null);
   assert.equal(shownDerivation('8 × 1 ÷ 5', 1.6), '8 ÷ 5');
   assert.equal(shownDerivation('4', 4), null);
   assert.equal(shownDerivation('الكمية المضافة 6', 6), 'الكمية المضافة 6');
   const r = renderRationale({optionText: '4', value: 4, misconceptionId: 'USED_WRONG_SIDE_OF_RATIO', derivation: '1 × 4', family: 'ratios', templateId: 'RAT_M_ADD_SIDE'});
-  assert.match(r, /وهي ناتج 1 × 4\./);
+  assert.doesNotMatch(r, /ناتج 1 × 4/);
+  assert.match(r, /^اخترت 4\./);
   const bare = renderRationale({optionText: '6', value: 6, misconceptionId: 'USED_GIVEN_VALUE_AS_ANSWER', derivation: '6', family: 'ratios', templateId: 'X'});
   assert.equal(bare, 'اخترت 6. أعدت قيمة معطاة في السؤال بدل القيمة المطلوبة.');
 });

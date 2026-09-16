@@ -98,7 +98,8 @@ export function makeOptionSet({
   // RC2.9.4-A1. Where the options are shown, so the rationale can be rendered
   // for this family and template rather than from a family-blind sentence.
   family = null,
-  templateId = null
+  templateId = null,
+  solutionOperations = null
 }) {
   const correctFormatted = format(correct);
   const seenFormatted = new Set([correctFormatted]);
@@ -188,7 +189,7 @@ export function makeOptionSet({
         value: item.value,
         misconceptionId: item.misconceptionId,
         derivation: item.derivation,
-        family, templateId
+        family, templateId, solutionOperations
       });
       // RC2-012: which step of the published solution this error corrupts.
       optionsMeta[letter] = {correct: false, value: item.value, misconceptionId: item.misconceptionId, derivation: item.derivation, reasoningStepAffected: item.reasoningStepAffected};
@@ -264,6 +265,10 @@ export function parseLeadingNumber(text) {
 }
 
 export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
+  // RC2.9.5 §1.1. The solution's own operation profile, read before the options
+  // exist: a rationale that says what THIS question needs is checked against
+  // it while it is being rendered, not rejected after the fact.
+  const operationKinds = deriveOperationProfile(base.explanation?.steps ?? base.steps)?.kinds ?? [];
   const optionSet = makeOptionSet({
     correct: base.correct,
     distractors: base.distractors,
@@ -271,7 +276,8 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
     format: base.format || (v => String(v)),
     preferredCorrectLetter,
     family: base.family,
-    templateId: base.template_id
+    templateId: base.template_id,
+    solutionOperations: operationKinds
   });
 
   const complexity = computeComplexity(base.complexityFactors || {});
@@ -295,7 +301,6 @@ export function finalizeQuestion(base, rng, preferredCorrectLetter = null) {
     ...fingerprintSpec,
     orderInsensitive: base.orderInsensitive
   });
-  const operationKinds = deriveOperationProfile(base.explanation?.steps ?? base.steps)?.kinds ?? [];
   // RC2.7-R1. The scenario-independent identity. See src/qa/core-construction.js:
   // the RC2.6/RC2.7 `construction_signature` had the scenario in it, so every
   // scenario added inflated it without a reader seeing a new question.

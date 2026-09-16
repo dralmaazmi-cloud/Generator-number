@@ -146,6 +146,12 @@ export const VARIANTS = Object.freeze({
 
 /** The catalogue sentences that were sequence-flavoured, made neutral. */
 export const NEUTRAL = Object.freeze({
+  // RC2.9.5 §1.1. Two catalogue sentences that are shown family-wide carried an
+  // operation in them: «مجموع وسيط» and «ولم تضربه في الكمية». Both are the
+  // same slip in any family — stopping before the last step — so the slip is
+  // said and the operation is not.
+  STOPPED_AT_INTERMEDIATE_TOTAL: 'توقفت عند قيمة وسيطة ولم تكمل الخطوة الأخيرة.',
+  STOPPED_AT_UNIT_RATE: 'توقفت عند قيمة الوحدة الواحدة ولم تكمل إلى الكمية المطلوبة.',
   APPLIED_STEP_TWICE: 'طبّقت الخطوة نفسها مرتين بدل مرة واحدة.',
   MISREAD_THE_STEP: 'قرأت مقدار الخطوة خطأً بوحدة واحدة.',
   USED_DIFFERENCE_AS_ANSWER: 'أعطيت مقدار الفرق بين القيمتين بدل القيمة المطلوبة نفسها.',
@@ -157,12 +163,155 @@ export const NEUTRAL = Object.freeze({
   RATE_APPLIED_TO_WRONG_COUNT: 'طبّقت المعدل على عدد وحدات غير الذي يخصه.'
 });
 
+/**
+ * RC2.9.5 §1.1. What a sentence says about the SOLUTION, as opposed to what it
+ * says the learner did. «طرحت حيث يقتضي الحل الجمع» claims two things: that the
+ * learner subtracted (checked against the derivation since RC2.9.4) and that
+ * the solution adds (checked against nothing until now). The second claim is
+ * the one the independent scan found false: it was true of the id in the
+ * abstract and false at the site.
+ */
+export const SOLUTION_CLAIMS = Object.freeze([
+  [/يقتضي الحل الجمع|تقتضي الجمع|تقتضي جمعهما|بدل الجمع|والصواب الجمع|تُجمعان|يُجمعان|هو مجموعهما|على مجموعهما/u, 'add'],
+  [/يقتضي الحل الطرح|تقتضي الطرح|تقتضي الفرق بينهما|هو الفرق بينهما|بدل الطرح|والصواب الطرح|تُطرحان|يُطرحان/u, 'subtract'],
+  [/يقتضي الحل الضرب|تقتضي الضرب|ضرب لا جمع|بدل الضرب|والصواب الضرب|يُضربان|تُضربان|يكبر المطلوب بكبر المعطى|تكبير بمعامل/u, 'multiply'],
+  [/يقتضي الحل القسمة|تقتضي القسمة لا الضرب|تقتضي القسمة|بدل القسمة|بدل استخدام قيمة الوحدة|يمر الحل بقيمة الوحدة/u, 'divide']
+]);
+
+/** The operations a sentence asserts the SOLUTION itself uses. */
+export function solutionClaims(sentence) {
+  const out = new Set();
+  for (const [re, op] of SOLUTION_CLAIMS) if (re.test(String(sentence ?? ''))) out.add(op);
+  return out;
+}
+
+/**
+ * Whether a sentence names an arithmetic operation at all, as a verb the
+ * learner is said to have performed or as the name of the operation the
+ * solution is said to need. A sentence shown across four or more families must
+ * not name one: an operation is a property of the site, not of the id.
+ */
+const OPERATION_NOUNS = /الجمع|الطرح|الضرب|القسمة|جمعها|طرحها|ضربها|قسمتها|تُجمع|تُطرح|تُضرب|تُقسم|يُجمع|يُطرح|يُضرب|يُقسم|بجمع|بطرح|بضرب|بقسمة|قسمة|إضافتها|أضفت|جمعت|طرحت|ضربت|قسمت|قسّمت/u;
+export const namesAnOperation = sentence =>
+  claimedOperations(sentence).size > 0 || solutionClaims(sentence).size > 0 || OPERATION_NOUNS.test(String(sentence ?? ''));
+
+/**
+ * RC2.9.5 §1.1. The DECLARED family-neutral set: the only sentences allowed to
+ * be shown in four or more families. The rule the RC2.9.4 brief stated and did
+ * not enforce is enforced here — a sentence this wide may not name an
+ * operation, because which operation the site needs is a property of the site.
+ * Measured by tools/audit/rc295-rationale-audit.mjs and gated in
+ * tests/rc295-rationale.test.mjs.
+ */
+export const FAMILY_NEUTRAL = Object.freeze([
+  'أعدت قيمة معطاة في السؤال بدل القيمة المطلوبة.',
+  'توقفت عند قيمة وسيطة ولم تكمل الخطوة الأخيرة.',
+  'طبّقت الخطوة نفسها مرتين بدل مرة واحدة.',
+  'زدت أو نقصت خطوة واحدة عن العدد الصحيح من الخطوات.',
+  'أسقطت إحدى المراحل من الحساب.',
+  'أعطيت مقدار الفرق بين القيمتين بدل القيمة المطلوبة نفسها.',
+  'طبّقت العملية في الاتجاه المعاكس.',
+  'توقفت بعد المرحلة الأولى ولم تكمل بقية المراحل المطلوبة.',
+  'قرأت مقدار الخطوة خطأً بوحدة واحدة.',
+  'استخدمت إحدى الحالتين وأهملت الأخرى، والحالتان معًا هما ما يحدد القيمة.',
+  'توقفت عند قيمة الوحدة الواحدة ولم تكمل إلى الكمية المطلوبة.',
+  'طبّقت المعدل على عدد وحدات غير الذي يخصه.'
+]);
+
+
+/**
+ * RC2.9.5 §1.1. The SUBJECT each family's questions are about, in one phrase
+ * that is true of every item in that family. It is the only family-dependent
+ * part of a site sentence: what the learner did is read off the derivation and
+ * what the site needs is read off the solution, so the phrase adds the domain
+ * and never a claim.
+ */
+export const FAMILY_SUBJECT = Object.freeze({
+  ages: 'الأعمار',
+  averages: 'القيم ومتوسطها',
+  calendar: 'الأيام والدورات',
+  combined_rate: 'المعدلات المجتمعة',
+  direct_proportion: 'الكميتين المتناسبتين',
+  fractions: 'أجزاء الكل',
+  machines: 'الآلات وإنتاجها',
+  odd_one_out: 'خصائص العناصر',
+  percentages: 'النسبة وأساسها',
+  profit_loss: 'سعري الشراء والبيع',
+  ratios: 'أجزاء النسبة',
+  relational: 'مواقع الترتيب',
+  sequences: 'حدود المتتالية',
+  speed: 'المسافة والزمن',
+  unit_rate: 'قيمة الوحدة والكمية',
+  work_time: 'العمل والزمن'
+});
+
+/**
+ * RC2.9.5 §1.1. Sentences that must not be shown family-wide.
+ *
+ * The independent scan found thirty sentences shown in four or more families,
+ * nine of them naming an operation. A sentence that names an operation is a
+ * claim about the SITE — this site adds, that one multiplies — and a claim
+ * about the site cannot be carried by a catalogue entry that knows nothing
+ * about the site. Twelve sentences are declared family-neutral (FAMILY_NEUTRAL
+ * above): each describes a slip in the PROCESS — stopping early, applying a
+ * step twice, returning a given — which is the same slip whatever the question
+ * is about, and none names an operation.
+ *
+ * Every id below is the opposite case. Its sentence is rendered per family
+ * from the pattern here, so the learner reads which relation is meant, and the
+ * operation it names is verified twice before it is shown: against the
+ * DERIVATION (what the option's own arithmetic did) and against the SOLUTION's
+ * operation profile (what this question actually needs). An unverifiable claim
+ * is not softened — it is not shown.
+ */
+const SITE_PATTERNS = Object.freeze({
+  SUBTRACTED_INSTEAD_OF_ADDED: 'طرحت المقدارين، والعلاقة بين {subject} في هذه المسألة تقتضي جمعهما.',
+  ADDED_INSTEAD_OF_SUBTRACTED: 'جمعت المقدارين، والعلاقة بين {subject} في هذه المسألة تقتضي الفرق بينهما.',
+  MULTIPLIED_INSTEAD_OF_DIVIDED: 'ضربت القيمتين، والعلاقة بين {subject} هنا تقتضي القسمة لا الضرب.',
+  MULTIPLIED_COUNTS_INSTEAD_OF_RATE: 'ضربت العددين المعطيين ببعضهما، وفي {subject} يمر الحل بقيمة الوحدة الواحدة أولًا.',
+  ADDED_INSTEAD_OF_SCALING: 'جمعت العددين، والعلاقة بين {subject} في هذه المسألة ضرب لا جمع.',
+  REVERSED_DIRECT_PROPORTION: 'عكست اتجاه التناسب بين {subject}: قسمت حيث يكبر المطلوب بكبر المعطى.',
+  SWAPPED_RATE_AND_COUNT: 'بدّلت بين المعدل وعدد الوحدات في {subject}، فدخل كل منهما مكان الآخر.',
+  ADDED_WHERE_A_DIFFERENCE_BELONGS: 'جمعت المقدارين، والمطلوب في {subject} هو الفرق بينهما.',
+  USED_ORIGINAL_TOTAL: 'استخدمت القيمة قبل التغير في {subject}، والمطلوب هو القيمة بعده.',
+  USED_NEW_TOTAL: 'استخدمت القيمة بعد التغير في {subject}، والمطلوب هو القيمة قبله.',
+  TREATED_PERCENT_AS_AMOUNT: 'تعاملت مع النسبة كأنها مقدار جاهز، والنسبة في {subject} تُقاس من أساسها.',
+  SWAPPED_THE_TWO_UNKNOWNS: 'أوجدت المجهول الآخر في {subject} بدل المجهول الذي يسأل عنه السؤال.',
+  USED_ONLY_LAST_STAGE: 'حسبت المرحلة الأخيرة وحدها وأهملت ما سبقها في {subject}.',
+  USED_ONLY_FIRST_RATE: 'استخدمت المعدل الأول وحده على كامل المدة، والمعدل يتغير بين المرحلتين في {subject}.',
+  USED_ONLY_SECOND_RATE: 'استخدمت المعدل الثاني وحده على كامل المدة، والمعدل يتغير بين المرحلتين في {subject}.',
+  ASSUMED_EQUAL_SHARES: 'افترضت تساوي الجزأين في {subject}، والمعطيات لا تقول ذلك.',
+  HALF_DISTANCE_AS_ANSWER: 'أعطيت نصف المقدار المطلوب بدل المقدار الكامل في {subject}.',
+  USED_TOTAL_INSTEAD_OF_REMAINDER: 'استخدمت المقدار الكامل من {subject} بدل الجزء المتبقي منه.'
+});
+
+/** The per-family sentence for every id above, built once. */
+export const SITE_VARIANTS = Object.freeze(Object.fromEntries(
+  Object.entries(SITE_PATTERNS).map(([id, pattern]) => [id, Object.freeze(Object.fromEntries(
+    Object.entries(FAMILY_SUBJECT).map(([family, subject]) => [family, pattern.replace('{subject}', subject)])
+  ))])
+));
+
 /** When the sentence cannot be shown truthfully, the derivation is the rationale. */
 export const FACTUAL_FALLBACK = 'هذه العملية ليست التي تقتضيها العلاقة بين المعطيات والمطلوب في هذه الخطوة.';
 
+/**
+ * RC2.9.5 §1.3. «× 1» and «÷ 1» are not operations a learner performed; they
+ * are an artifact of a derivation written uniformly. RC2.9.3 removed them from
+ * the explanation and RC2.9.4 left them in the derivations, where two effects
+ * followed: «وهي ناتج 5 ÷ 1» was printed, and a sentence claiming «قسمت» was
+ * accepted because the derivation contained a division by one. Both are fixed
+ * at the source: the identity is stripped before anything reads the derivation.
+ */
+export const stripIdentityOperations = derivation => String(derivation ?? '')
+  .replace(/(^|[(=\s])1\s*[×*]\s*/gu, '$1')
+  .replace(/\s*[×*]\s*1(?![\d.])/gu, '')
+  .replace(/\s*[÷/]\s*1(?![\d.])/gu, '')
+  .trim();
+
 /** Operations present in a derivation, by name. */
 export function operationsIn(derivation) {
-  const s = String(derivation ?? '');
+  const s = stripIdentityOperations(derivation);
   const ops = new Set();
   if (/×/.test(s)) ops.add('multiply');
   if (/÷/.test(s)) ops.add('divide');
@@ -197,22 +346,28 @@ export const DERIVATION_VARIANTS = Object.freeze({
     {when: /\(100\s*\+\s*\d+\)/u,
       text: 'طبّقت النسبة على القيمة كزيادة عليها، بينما المطلوب هو مقدار النسبة وحده.'},
     {when: /\+/u,
-      text: 'أضفت الكمية الأصلية إلى الناتج المطلوب، والمطلوب هو ناتج الوضع الجديد وحده.'}
+      text: 'أضفت الكمية الأصلية في {subject} إلى الناتج المطلوب، والمطلوب هو ناتج الوضع الجديد وحده.'}
   ]
 });
 
 export function sentenceFor(misconceptionId, {family, templateId, derivation} = {}) {
+  const subject = FAMILY_SUBJECT[family] ?? 'المعطيات';
+  const fill = text => (text == null ? null : String(text).replace('{subject}', subject));
   const byDerivation = DERIVATION_VARIANTS[misconceptionId];
   if (byDerivation && derivation != null) {
     const hit = byDerivation.find(x => x.when.test(String(derivation)));
-    if (hit) return hit.text;
+    if (hit) return fill(hit.text);
   }
   const v = VARIANTS[misconceptionId];
   if (v) {
-    if (templateId && v[templateId]) return v[templateId];
-    if (family && v[family]) return v[family];
+    if (templateId && v[templateId]) return fill(v[templateId]);
+    if (family && v[family]) return fill(v[family]);
   }
-  return NEUTRAL[misconceptionId] ?? MISCONCEPTIONS[misconceptionId] ?? null;
+  // RC2.9.5 §1.1. An id whose sentence makes a claim about the SITE is rendered
+  // per family rather than once for every family.
+  const site = SITE_VARIANTS[misconceptionId];
+  if (site && family && site[family]) return fill(site[family]);
+  return fill(NEUTRAL[misconceptionId] ?? MISCONCEPTIONS[misconceptionId] ?? null);
 }
 
 /**
@@ -221,7 +376,8 @@ export function sentenceFor(misconceptionId, {family, templateId, derivation} = 
  */
 export function shownDerivation(derivation, value) {
   if (derivation === null || derivation === undefined || String(derivation).trim() === '') return null;
-  const raw = String(derivation);
+  const raw = stripIdentityOperations(derivation);
+  if (raw === '') return null;
   const tidy = tidyArithmetic(raw);
   const hasOp = s => /[×÷+−]|\d\s-\s\d/.test(s);
   const chosen = hasOp(tidy) ? tidy : raw;
@@ -229,6 +385,7 @@ export function shownDerivation(derivation, value) {
     // A bare number: only worth saying if it is not the option itself.
     return Number(chosen) === Number(value) ? null : chosen;
   }
+  if (/^\s*[\d.]+\s*$/.test(raw) && Number(raw) === Number(value)) return null;
   return chosen;
 }
 
@@ -245,8 +402,9 @@ const numberOf = text => {
  * @param {string} o.family
  * @param {number|string} o.value
  * @param {string} [o.optionText]
+ * @param {string[]} [o.solutionOperations] the question's own operation profile
  */
-export function rationaleProblems({text, derivation, family, value, optionText}) {
+export function rationaleProblems({text, derivation, family, value, optionText, solutionOperations}) {
   const problems = [];
   const t = String(text ?? '');
   if (!t.trim()) return ['EMPTY'];
@@ -266,6 +424,15 @@ export function rationaleProblems({text, derivation, family, value, optionText})
   if (ops.size) {
     for (const op of claimedOperations(sentence)) if (!ops.has(op)) problems.push(`OPERATION_CONTRADICTION:${op}`);
   }
+  // 2b. RC2.9.5 §1.1. claims about what THE SOLUTION needs, against what the
+  // solution actually does. This is the check RC2.9.4 did not make: it verified
+  // the operation the sentence attributes to the LEARNER and never the one it
+  // attributes to the question.
+  if (Array.isArray(solutionOperations) && solutionOperations.length) {
+    for (const op of solutionClaims(sentence)) {
+      if (!solutionOperations.includes(op)) problems.push(`SOLUTION_OPERATION_CONTRADICTION:${op}`);
+    }
+  }
   // 3. vocabulary outside its families
   for (const scope of VOCABULARY_SCOPE) {
     if (scope.re.test(sentence) && family && !scope.families.includes(family)) problems.push(`CROSS_FAMILY_VOCABULARY:${scope.re.source.split('|')[0]}`);
@@ -277,13 +444,13 @@ export function rationaleProblems({text, derivation, family, value, optionText})
  * Render the rationale for one wrong option.
  * @returns {string|null} null only when the misconception id is unknown.
  */
-export function renderRationale({optionText, value, misconceptionId, derivation, family, templateId}) {
+export function renderRationale({optionText, value, misconceptionId, derivation, family, templateId, solutionOperations}) {
   if (!isKnownMisconception(misconceptionId)) return null;
   const shown = shownDerivation(derivation, value);
   const head = shown ? `اخترت ${optionText}، وهي ناتج ${shown}.` : `اخترت ${optionText}.`;
   const sentence = sentenceFor(misconceptionId, {family, templateId, derivation});
   const candidate = `${head} ${sentence}`;
-  const problems = rationaleProblems({text: candidate, derivation, family, value, optionText})
+  const problems = rationaleProblems({text: candidate, derivation, family, value, optionText, solutionOperations})
     .filter(p => p !== 'VACUOUS_DERIVATION');
   if (!problems.length) return candidate;
   // The sentence would say something the derivation or the family contradicts:

@@ -1,0 +1,437 @@
+{
+  "label": "rc294-oldmix",
+  "difficulty": "mixed",
+  "step": 10,
+  "gates": {
+    "flagged": 8,
+    "nd": 5,
+    "cluster": 3,
+    "run": 2,
+    "duplicates": 0
+  },
+  "results": [
+    {
+      "difficulty": "mixed",
+      "count": 10,
+      "sittings": 4,
+      "journeys": 8,
+      "journeysDetail": [
+        {
+          "journey": 1,
+          "questions": 40,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 2,
+          "questions": 40,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 3,
+          "questions": 40,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 4,
+          "questions": 40,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 5,
+          "questions": 40,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 6,
+          "questions": 40,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 7,
+          "questions": 40,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 8,
+          "questions": 40,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        }
+      ],
+      "worst": {
+        "pv": 0,
+        "nd": 0,
+        "flagged": 0,
+        "cluster": 0,
+        "run": 0,
+        "duplicates": 0
+      },
+      "sittingWorst": {
+        "maxSignatureRepeat": 1,
+        "maxFamilyTaskRepeat": 1,
+        "duplicates": 0,
+        "medianDistinct": 10,
+        "sittingsWithARepeat": 0,
+        "sittings": 32
+      },
+      "split": {
+        "easy": 30,
+        "medium": 50,
+        "hard": 20,
+        "counts": {
+          "easy": 96,
+          "medium": 160,
+          "hard": 64
+        },
+        "total": 320
+      },
+      "refusals": [],
+      "gatesPass": true
+    },
+    {
+      "difficulty": "mixed",
+      "count": 20,
+      "sittings": 4,
+      "journeys": 8,
+      "journeysDetail": [
+        {
+          "journey": 1,
+          "questions": 80,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 2,
+          "questions": 80,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 3,
+          "questions": 80,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 4,
+          "questions": 80,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 5,
+          "questions": 80,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 6,
+          "questions": 80,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 7,
+          "questions": 80,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 8,
+          "questions": 80,
+          "windows": 0,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 0,
+            "run": 0,
+            "duplicates": 0
+          }
+        }
+      ],
+      "worst": {
+        "pv": 0,
+        "nd": 0,
+        "flagged": 0,
+        "cluster": 0,
+        "run": 0,
+        "duplicates": 0
+      },
+      "sittingWorst": {
+        "maxSignatureRepeat": 1,
+        "maxFamilyTaskRepeat": 2,
+        "duplicates": 0,
+        "medianDistinct": 20,
+        "sittingsWithARepeat": 0,
+        "sittings": 32
+      },
+      "split": {
+        "easy": 25,
+        "medium": 60,
+        "hard": 15,
+        "counts": {
+          "easy": 160,
+          "medium": 384,
+          "hard": 96
+        },
+        "total": 640
+      },
+      "refusals": [],
+      "gatesPass": true
+    },
+    {
+      "difficulty": "mixed",
+      "count": 30,
+      "sittings": 4,
+      "journeys": 8,
+      "journeysDetail": [
+        {
+          "journey": 1,
+          "questions": 120,
+          "windows": 3,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 1,
+            "run": 1,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 2,
+          "questions": 120,
+          "windows": 3,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 1,
+            "run": 1,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 3,
+          "questions": 120,
+          "windows": 3,
+          "worst": {
+            "pv": 1,
+            "nd": 0,
+            "flagged": 1,
+            "cluster": 1,
+            "run": 1,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 4,
+          "questions": 120,
+          "windows": 3,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 1,
+            "run": 1,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 5,
+          "questions": 120,
+          "windows": 3,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 1,
+            "run": 1,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 6,
+          "questions": 120,
+          "windows": 3,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 1,
+            "run": 1,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 7,
+          "questions": 120,
+          "windows": 3,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 1,
+            "run": 1,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 8,
+          "questions": 120,
+          "windows": 3,
+          "worst": {
+            "pv": 0,
+            "nd": 0,
+            "flagged": 0,
+            "cluster": 1,
+            "run": 1,
+            "duplicates": 0
+          }
+        }
+      ],
+      "worst": {
+        "pv": 1,
+        "nd": 0,
+        "flagged": 1,
+        "cluster": 1,
+        "run": 1,
+        "duplicates": 0
+      },
+      "sittingWorst": {
+        "maxSignatureRepeat": 1,
+        "maxFamilyTaskRepeat": 3,
+        "duplicates": 0,
+        "medianDistinct": 30,
+        "sittingsWithARepeat": 0,
+        "sittings": 32
+      },
+      "split": {
+        "easy": 26.7,
+        "medium": 56.7,
+        "hard": 16.7,
+        "counts": {
+          "easy": 256,
+          "medium": 544,
+          "hard": 160
+        },
+        "total": 960
+      },
+      "refusals": [],
+      "gatesPass": true
+    }
+  ]
+}

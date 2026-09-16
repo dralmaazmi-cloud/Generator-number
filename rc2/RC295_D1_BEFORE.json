@@ -1,0 +1,843 @@
+{
+  "drawnQuestions": 800,
+  "wrongOptions": 4000,
+  "distinctSentences": 175,
+  "sentencesSpanningFourOrMoreFamilies": 30,
+  "ofThoseNamingAnOperation": 9,
+  "ofThoseNotInTheDeclaredNeutralSet": 30,
+  "declaredNeutralSet": [],
+  "declaredNeutralSetSize": 0,
+  "declaredNeutralSentencesNamingAnOperation": [],
+  "reasonsNamingAnOperationTheSolutionDoesNotUse": 63,
+  "reasonsContradictingTheirDerivation": 0,
+  "wideSentences": [
+    {
+      "sentence": "أعدت قيمة معطاة في السؤال بدل القيمة المطلوبة.",
+      "families": [
+        "ages",
+        "averages",
+        "calendar",
+        "combined_rate",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "percentages",
+        "profit_loss",
+        "ratios",
+        "relational",
+        "sequences",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 15,
+      "uses": 271,
+      "ids": [
+        "USED_GIVEN_VALUE_AS_ANSWER"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "توقفت عند مجموع وسيط ولم تكمل الخطوة الأخيرة.",
+      "families": [
+        "ages",
+        "averages",
+        "calendar",
+        "combined_rate",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "percentages",
+        "profit_loss",
+        "ratios",
+        "sequences",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 14,
+      "uses": 186,
+      "ids": [
+        "STOPPED_AT_INTERMEDIATE_TOTAL"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "طبّقت الخطوة نفسها مرتين بدل مرة واحدة.",
+      "families": [
+        "ages",
+        "averages",
+        "combined_rate",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "percentages",
+        "profit_loss",
+        "ratios",
+        "relational",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 13,
+      "uses": 220,
+      "ids": [
+        "APPLIED_STEP_TWICE"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "زدت أو نقصت خطوة واحدة عن العدد الصحيح من الخطوات.",
+      "families": [
+        "averages",
+        "calendar",
+        "combined_rate",
+        "direct_proportion",
+        "machines",
+        "ratios",
+        "relational",
+        "sequences",
+        "speed",
+        "unit_rate"
+      ],
+      "familyCount": 10,
+      "uses": 205,
+      "ids": [
+        "OFF_BY_ONE_STEP"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "طرحت حيث يقتضي الحل الجمع.",
+      "families": [
+        "ages",
+        "averages",
+        "combined_rate",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "ratios",
+        "relational",
+        "speed",
+        "work_time"
+      ],
+      "familyCount": 10,
+      "uses": 62,
+      "ids": [
+        "SUBTRACTED_INSTEAD_OF_ADDED"
+      ],
+      "namesOperation": true
+    },
+    {
+      "sentence": "أسقطت إحدى المراحل من الحساب.",
+      "families": [
+        "averages",
+        "combined_rate",
+        "machines",
+        "percentages",
+        "ratios",
+        "sequences",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 9,
+      "uses": 90,
+      "ids": [
+        "MISSED_ONE_STAGE"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "أعطيت مقدار الفرق بين القيمتين بدل القيمة المطلوبة نفسها.",
+      "families": [
+        "averages",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "profit_loss",
+        "ratios",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 9,
+      "uses": 82,
+      "ids": [
+        "USED_DIFFERENCE_AS_ANSWER"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "ضربت العددين المعطيين ببعضهما بدل استخدام قيمة الوحدة.",
+      "families": [
+        "combined_rate",
+        "direct_proportion",
+        "machines",
+        "percentages",
+        "ratios",
+        "relational",
+        "sequences",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 9,
+      "uses": 60,
+      "ids": [
+        "MULTIPLIED_COUNTS_INSTEAD_OF_RATE"
+      ],
+      "namesOperation": true
+    },
+    {
+      "sentence": "طبّقت العملية في الاتجاه المعاكس.",
+      "families": [
+        "ages",
+        "direct_proportion",
+        "fractions",
+        "percentages",
+        "profit_loss",
+        "sequences",
+        "speed",
+        "unit_rate"
+      ],
+      "familyCount": 8,
+      "uses": 79,
+      "ids": [
+        "APPLIED_OPERATION_IN_REVERSE"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "جمعت الفرق بدل الضرب في عامل التكبير.",
+      "families": [
+        "ages",
+        "combined_rate",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "ratios",
+        "speed",
+        "work_time"
+      ],
+      "familyCount": 8,
+      "uses": 68,
+      "ids": [
+        "ADDED_INSTEAD_OF_SCALING"
+      ],
+      "namesOperation": true
+    },
+    {
+      "sentence": "توقفت بعد المرحلة الأولى ولم تكمل بقية المراحل المطلوبة.",
+      "families": [
+        "calendar",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "percentages",
+        "profit_loss",
+        "sequences",
+        "unit_rate"
+      ],
+      "familyCount": 8,
+      "uses": 50,
+      "ids": [
+        "STOPPED_AFTER_FIRST_STAGE"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "ضربت حيث يقتضي الحل القسمة.",
+      "families": [
+        "ages",
+        "combined_rate",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "percentages",
+        "speed",
+        "unit_rate"
+      ],
+      "familyCount": 8,
+      "uses": 47,
+      "ids": [
+        "MULTIPLIED_INSTEAD_OF_DIVIDED"
+      ],
+      "namesOperation": true
+    },
+    {
+      "sentence": "قرأت مقدار الخطوة خطأً بوحدة واحدة.",
+      "families": [
+        "ages",
+        "direct_proportion",
+        "percentages",
+        "profit_loss",
+        "ratios",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 8,
+      "uses": 47,
+      "ids": [
+        "MISREAD_THE_STEP"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "استخدمت إحدى الحالتين وأهملت الأخرى، والحالتان معًا هما ما يحدد القيمة.",
+      "families": [
+        "combined_rate",
+        "direct_proportion",
+        "machines",
+        "percentages",
+        "profit_loss",
+        "speed",
+        "unit_rate"
+      ],
+      "familyCount": 7,
+      "uses": 93,
+      "ids": [
+        "SOLVED_ONE_CONDITION_ONLY"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "توقفت عند معدل الوحدة ولم تضربه في الكمية أو الزمن المطلوب.",
+      "families": [
+        "combined_rate",
+        "direct_proportion",
+        "machines",
+        "percentages",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 7,
+      "uses": 81,
+      "ids": [
+        "STOPPED_AT_UNIT_RATE"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "طبّقت المعدل على عدد وحدات غير الذي يخصه.",
+      "families": [
+        "combined_rate",
+        "direct_proportion",
+        "machines",
+        "ratios",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 7,
+      "uses": 71,
+      "ids": [
+        "RATE_APPLIED_TO_WRONG_COUNT"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "جمعت حيث يقتضي الحل الطرح.",
+      "families": [
+        "ages",
+        "averages",
+        "calendar",
+        "direct_proportion",
+        "profit_loss",
+        "speed"
+      ],
+      "familyCount": 6,
+      "uses": 39,
+      "ids": [
+        "ADDED_INSTEAD_OF_SUBTRACTED"
+      ],
+      "namesOperation": true
+    },
+    {
+      "sentence": "عكست اتجاه التناسب المباشر فقسمت حيث يجب الضرب.",
+      "families": [
+        "direct_proportion",
+        "machines",
+        "percentages",
+        "ratios",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 6,
+      "uses": 30,
+      "ids": [
+        "REVERSED_DIRECT_PROPORTION"
+      ],
+      "namesOperation": true
+    },
+    {
+      "sentence": "تعاملت مع النسبة كأنها مبلغ مباشر.",
+      "families": [
+        "direct_proportion",
+        "percentages",
+        "profit_loss",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 5,
+      "uses": 53,
+      "ids": [
+        "TREATED_PERCENT_AS_AMOUNT"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "أوجدت قيمة المجهول الآخر بدل المجهول المطلوب.",
+      "families": [
+        "combined_rate",
+        "direct_proportion",
+        "machines",
+        "speed",
+        "work_time"
+      ],
+      "familyCount": 5,
+      "uses": 52,
+      "ids": [
+        "SWAPPED_THE_TWO_UNKNOWNS"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "أضفت الكمية الأصلية إلى الناتج المطلوب، والمطلوب هو ناتج الوضع الجديد وحده.",
+      "families": [
+        "direct_proportion",
+        "machines",
+        "percentages",
+        "ratios",
+        "unit_rate"
+      ],
+      "familyCount": 5,
+      "uses": 43,
+      "ids": [
+        "USED_ORIGINAL_TOTAL"
+      ],
+      "namesOperation": true
+    },
+    {
+      "sentence": "استخدمت العدد الجديد بدل العدد الأصلي المطلوب.",
+      "families": [
+        "combined_rate",
+        "percentages",
+        "profit_loss",
+        "ratios",
+        "work_time"
+      ],
+      "familyCount": 5,
+      "uses": 36,
+      "ids": [
+        "USED_NEW_TOTAL"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "استخدمت العدد الأصلي بدل العدد بعد التغيير.",
+      "families": [
+        "fractions",
+        "percentages",
+        "profit_loss",
+        "ratios",
+        "work_time"
+      ],
+      "familyCount": 5,
+      "uses": 18,
+      "ids": [
+        "USED_ORIGINAL_TOTAL"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "حسبت المرحلة الأخيرة وحدها وأهملت ما سبقها.",
+      "families": [
+        "direct_proportion",
+        "machines",
+        "percentages",
+        "profit_loss",
+        "unit_rate"
+      ],
+      "familyCount": 5,
+      "uses": 17,
+      "ids": [
+        "USED_ONLY_LAST_STAGE"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "استخدمت المعدل الأول وحده على كامل المدة.",
+      "families": [
+        "combined_rate",
+        "machines",
+        "speed",
+        "unit_rate"
+      ],
+      "familyCount": 4,
+      "uses": 33,
+      "ids": [
+        "USED_ONLY_FIRST_RATE"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "استخدمت المعدل الثاني وحده على كامل المدة.",
+      "families": [
+        "combined_rate",
+        "machines",
+        "speed",
+        "unit_rate"
+      ],
+      "familyCount": 4,
+      "uses": 27,
+      "ids": [
+        "USED_ONLY_SECOND_RATE"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "افترضت أن الجزأين متساويان، والمعطيات لا تقول ذلك.",
+      "families": [
+        "direct_proportion",
+        "profit_loss",
+        "ratios",
+        "speed"
+      ],
+      "familyCount": 4,
+      "uses": 25,
+      "ids": [
+        "ASSUMED_EQUAL_SHARES"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "أعطيت نصف المقدار المطلوب بدل المقدار الكلي.",
+      "families": [
+        "direct_proportion",
+        "machines",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 4,
+      "uses": 24,
+      "ids": [
+        "HALF_DISTANCE_AS_ANSWER"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "بدّلت بين المعدل وعدد الوحدات في الضرب أو القسمة.",
+      "families": [
+        "averages",
+        "direct_proportion",
+        "speed",
+        "unit_rate"
+      ],
+      "familyCount": 4,
+      "uses": 17,
+      "ids": [
+        "SWAPPED_RATE_AND_COUNT"
+      ],
+      "namesOperation": true
+    },
+    {
+      "sentence": "جمعت مقدارين كان ينبغي أن تطرحهما.",
+      "families": [
+        "direct_proportion",
+        "machines",
+        "relational",
+        "unit_rate"
+      ],
+      "familyCount": 4,
+      "uses": 16,
+      "ids": [
+        "ADDED_WHERE_A_DIFFERENCE_BELONGS"
+      ],
+      "namesOperation": true
+    }
+  ],
+  "falseSolutionClaimExamples": [
+    {
+      "family": "speed",
+      "templateId": "SPD_E_TIME",
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED",
+      "derivation": "120 − 60",
+      "sentence": "طرحت حيث يقتضي الحل الجمع.",
+      "claimedSolutionOperations": [
+        "add"
+      ],
+      "solutionOperations": [
+        "divide"
+      ]
+    },
+    {
+      "family": "speed",
+      "templateId": "SPD_H_CURRENT",
+      "misconceptionId": "ADDED_INSTEAD_OF_SUBTRACTED",
+      "derivation": "30 + 20",
+      "sentence": "جمعت حيث يقتضي الحل الطرح.",
+      "claimedSolutionOperations": [
+        "subtract"
+      ],
+      "solutionOperations": [
+        "divide",
+        "add",
+        "ratio"
+      ]
+    },
+    {
+      "family": "fractions",
+      "templateId": "FRAC_H_4",
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED",
+      "derivation": "240 − 120",
+      "sentence": "طرحت حيث يقتضي الحل الجمع.",
+      "claimedSolutionOperations": [
+        "add"
+      ],
+      "solutionOperations": [
+        "divide"
+      ]
+    },
+    {
+      "family": "speed",
+      "templateId": "SPD_E_SPEED",
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED",
+      "derivation": "175 − 2.5",
+      "sentence": "طرحت حيث يقتضي الحل الجمع.",
+      "claimedSolutionOperations": [
+        "add"
+      ],
+      "solutionOperations": [
+        "divide"
+      ]
+    },
+    {
+      "family": "speed",
+      "templateId": "SPD_H_CURRENT",
+      "misconceptionId": "ADDED_INSTEAD_OF_SUBTRACTED",
+      "derivation": "26 + 22",
+      "sentence": "جمعت حيث يقتضي الحل الطرح.",
+      "claimedSolutionOperations": [
+        "subtract"
+      ],
+      "solutionOperations": [
+        "divide",
+        "add",
+        "ratio"
+      ]
+    },
+    {
+      "family": "work_time",
+      "templateId": "WORK_E_INVERSE",
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED",
+      "derivation": "15 − (6 − 12)",
+      "sentence": "طرحت حيث يقتضي الحل الجمع.",
+      "claimedSolutionOperations": [
+        "add"
+      ],
+      "solutionOperations": [
+        "multiply",
+        "subtract",
+        "divide"
+      ]
+    },
+    {
+      "family": "fractions",
+      "templateId": "FRAC_M_3",
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED",
+      "derivation": "960 − 120",
+      "sentence": "طرحت حيث يقتضي الحل الجمع.",
+      "claimedSolutionOperations": [
+        "add"
+      ],
+      "solutionOperations": [
+        "divide"
+      ]
+    },
+    {
+      "family": "relational",
+      "templateId": "REL_E_GAP_CHAIN",
+      "misconceptionId": "MULTIPLIED_COUNTS_INSTEAD_OF_RATE",
+      "derivation": "3 × 9",
+      "sentence": "ضربت العددين المعطيين ببعضهما بدل استخدام قيمة الوحدة.",
+      "claimedSolutionOperations": [
+        "divide"
+      ],
+      "solutionOperations": [
+        "subtract"
+      ]
+    },
+    {
+      "family": "ages",
+      "templateId": "AGE_E_TIME_SHIFT",
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED",
+      "derivation": "16 + 7 − 3",
+      "sentence": "طرحت حيث يقتضي الحل الجمع.",
+      "claimedSolutionOperations": [
+        "add"
+      ],
+      "solutionOperations": [
+        "subtract",
+        "ratio"
+      ]
+    },
+    {
+      "family": "speed",
+      "templateId": "SPD_E_SPEED",
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED",
+      "derivation": "350 − 5",
+      "sentence": "طرحت حيث يقتضي الحل الجمع.",
+      "claimedSolutionOperations": [
+        "add"
+      ],
+      "solutionOperations": [
+        "divide"
+      ]
+    },
+    {
+      "family": "machines",
+      "templateId": "MACH_E_TIME_FOR_TARGET",
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED",
+      "derivation": "630 ÷ 15 − 6",
+      "sentence": "طرحت حيث يقتضي الحل الجمع.",
+      "claimedSolutionOperations": [
+        "add"
+      ],
+      "solutionOperations": [
+        "multiply",
+        "divide"
+      ]
+    },
+    {
+      "family": "fractions",
+      "templateId": "FRAC_H_4",
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED",
+      "derivation": "960 − 320",
+      "sentence": "طرحت حيث يقتضي الحل الجمع.",
+      "claimedSolutionOperations": [
+        "add"
+      ],
+      "solutionOperations": [
+        "divide"
+      ]
+    },
+    {
+      "family": "combined_rate",
+      "templateId": "COMB_E_OUTPUT",
+      "misconceptionId": "MULTIPLIED_COUNTS_INSTEAD_OF_RATE",
+      "derivation": "15 × 10",
+      "sentence": "ضربت العددين المعطيين ببعضهما بدل استخدام قيمة الوحدة.",
+      "claimedSolutionOperations": [
+        "divide"
+      ],
+      "solutionOperations": [
+        "add",
+        "multiply"
+      ]
+    },
+    {
+      "family": "profit_loss",
+      "templateId": "PL_H_TWO_OUTCOMES",
+      "misconceptionId": "SUBTRACTED_PERCENTAGES",
+      "derivation": "220 × 100 ÷ (30 − 25)",
+      "sentence": "تعاملت مع النسبتين كأنهما تُطرحان مباشرة، والنسب المتتابعة تُطبَّق واحدة بعد الأخرى.",
+      "claimedSolutionOperations": [
+        "subtract"
+      ],
+      "solutionOperations": [
+        "percent",
+        "add",
+        "multiply",
+        "divide"
+      ]
+    },
+    {
+      "family": "averages",
+      "templateId": "AVG_E_REMOVE",
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED",
+      "derivation": "135 − 24",
+      "sentence": "طرحت حيث يقتضي الحل الجمع.",
+      "claimedSolutionOperations": [
+        "add"
+      ],
+      "solutionOperations": [
+        "multiply",
+        "subtract",
+        "divide"
+      ]
+    },
+    {
+      "family": "work_time",
+      "templateId": "WORK_E_INVERSE",
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED",
+      "derivation": "12 − (6 − 4)",
+      "sentence": "طرحت حيث يقتضي الحل الجمع.",
+      "claimedSolutionOperations": [
+        "add"
+      ],
+      "solutionOperations": [
+        "multiply",
+        "subtract",
+        "divide"
+      ]
+    },
+    {
+      "family": "speed",
+      "templateId": "SPD_E_TIME",
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED",
+      "derivation": "150 − 30",
+      "sentence": "طرحت حيث يقتضي الحل الجمع.",
+      "claimedSolutionOperations": [
+        "add"
+      ],
+      "solutionOperations": [
+        "divide"
+      ]
+    },
+    {
+      "family": "work_time",
+      "templateId": "WORK_E_INVERSE",
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED",
+      "derivation": "12 − (10 − 5)",
+      "sentence": "طرحت حيث يقتضي الحل الجمع.",
+      "claimedSolutionOperations": [
+        "add"
+      ],
+      "solutionOperations": [
+        "multiply",
+        "subtract",
+        "divide"
+      ]
+    },
+    {
+      "family": "combined_rate",
+      "templateId": "COMB_E_OUTPUT",
+      "misconceptionId": "MULTIPLIED_COUNTS_INSTEAD_OF_RATE",
+      "derivation": "8 × 12",
+      "sentence": "ضربت العددين المعطيين ببعضهما بدل استخدام قيمة الوحدة.",
+      "claimedSolutionOperations": [
+        "divide"
+      ],
+      "solutionOperations": [
+        "add",
+        "multiply"
+      ]
+    },
+    {
+      "family": "fractions",
+      "templateId": "FRAC_M_3",
+      "misconceptionId": "SUBTRACTED_INSTEAD_OF_ADDED",
+      "derivation": "540 − 90",
+      "sentence": "طرحت حيث يقتضي الحل الجمع.",
+      "claimedSolutionOperations": [
+        "add"
+      ],
+      "solutionOperations": [
+        "divide"
+      ]
+    }
+  ],
+  "derivationContradictionExamples": []
+}

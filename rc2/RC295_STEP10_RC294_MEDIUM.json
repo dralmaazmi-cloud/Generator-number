@@ -1,0 +1,129 @@
+{
+  "label": "rc294-medium",
+  "difficulty": "medium",
+  "step": 10,
+  "gates": {
+    "flagged": 8,
+    "nd": 5,
+    "cluster": 3,
+    "run": 2,
+    "duplicates": 0
+  },
+  "results": [
+    {
+      "difficulty": "medium",
+      "count": 30,
+      "sittings": 4,
+      "journeys": 6,
+      "journeysDetail": [
+        {
+          "journey": 1,
+          "questions": 120,
+          "windows": 3,
+          "worst": {
+            "pv": 14,
+            "nd": 3,
+            "flagged": 16,
+            "cluster": 2,
+            "run": 1,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 2,
+          "questions": 120,
+          "windows": 3,
+          "worst": {
+            "pv": 14,
+            "nd": 3,
+            "flagged": 15,
+            "cluster": 2,
+            "run": 1,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 3,
+          "questions": 120,
+          "windows": 3,
+          "worst": {
+            "pv": 15,
+            "nd": 2,
+            "flagged": 15,
+            "cluster": 2,
+            "run": 2,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 4,
+          "questions": 120,
+          "windows": 3,
+          "worst": {
+            "pv": 15,
+            "nd": 3,
+            "flagged": 16,
+            "cluster": 2,
+            "run": 2,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 5,
+          "questions": 120,
+          "windows": 3,
+          "worst": {
+            "pv": 15,
+            "nd": 2,
+            "flagged": 16,
+            "cluster": 2,
+            "run": 1,
+            "duplicates": 0
+          }
+        },
+        {
+          "journey": 6,
+          "questions": 120,
+          "windows": 3,
+          "worst": {
+            "pv": 14,
+            "nd": 2,
+            "flagged": 16,
+            "cluster": 2,
+            "run": 1,
+            "duplicates": 0
+          }
+        }
+      ],
+      "worst": {
+        "pv": 15,
+        "nd": 3,
+        "flagged": 16,
+        "cluster": 2,
+        "run": 2,
+        "duplicates": 0
+      },
+      "sittingWorst": {
+        "maxSignatureRepeat": 2,
+        "maxFamilyTaskRepeat": 4,
+        "duplicates": 0,
+        "medianDistinct": 30,
+        "sittingsWithARepeat": 6,
+        "sittings": 24
+      },
+      "split": {
+        "easy": 0,
+        "medium": 100,
+        "hard": 0,
+        "counts": {
+          "easy": 0,
+          "medium": 720,
+          "hard": 0
+        },
+        "total": 720
+      },
+      "refusals": [],
+      "gatesPass": false
+    }
+  ]
+}

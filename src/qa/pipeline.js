@@ -428,7 +428,8 @@ export function validateRationales(q) {
   for (const [letter, m] of Object.entries(meta)) {
     if (m.correct) continue;
     const text = q.explanation?.distractor_analysis?.[letter];
-    const problems = rationaleProblems({text, derivation: m.derivation, family: q.family, value: m.value, optionText: q.options?.[letter]});
+    const problems = rationaleProblems({text, derivation: m.derivation, family: q.family, value: m.value,
+      optionText: q.options?.[letter], solutionOperations: q.metadata?.operation_kinds});
     if (problems.length) offenders.push({letter, misconceptionId: m.misconceptionId, problems, text});
   }
   return verdict(offenders.length ? [REASON.RATIONALE_INCONSISTENT] : [], {rationaleOffenders: offenders});
