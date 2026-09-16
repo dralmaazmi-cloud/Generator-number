@@ -82,6 +82,9 @@ function summarizeReasons(reasons) {
   return out;
 }
 
+/** The three bands, in order. Not a practice mode: see generatePractice. */
+const BAND_ORDER = ['easy', 'medium', 'hard'];
+
 const MIXED_DIFFICULTY_WEIGHTS = [
   {value:'easy', weight:0.25},
   {value:'medium', weight:0.60},
@@ -398,6 +401,23 @@ export class NumericalQuestionGeneratorEngine {
    * in a retry loop that cannot terminate.
    */
   generatePractice(options = {}) {
+    // RC2.9.5 §2.2. Single-band practice is gone from the product, and gone
+    // here too rather than only from the screen. A stale saved preference, an
+    // old link or a restored session cannot reach the band path: this refuses
+    // it by name. Measurement is not a product path and says so explicitly —
+    // the band capacity tables, the ALL_HARD coverage conditions of the §23
+    // gate and the historical holdout builders pass `bandSession: true`, and
+    // tests/rc295-single-mode.test.mjs asserts that neither app.js nor
+    // practice-journey.js ever does.
+    const asked = options.difficulty ?? this.config.defaultDifficulty;
+    if (BAND_ORDER.includes(asked) && options.bandSession !== true) {
+      const err = new Error(
+        `single-band practice was removed in RC2.9.5: difficulty '${asked}' is not a practice mode. `
+        + 'Use mixed (50% easy, 40% medium, 10% hard), or generateQuestion for one question at a band.');
+      err.code = 'SINGLE_BAND_PRACTICE_REMOVED';
+      err.requested = asked;
+      throw err;
+    }
     const count = Math.max(1, Math.min(100, Number(options.count ?? this.config.defaultCount)));
     const seed = options.seed ?? makeSeed('NUMSET');
     const rng = new SeededRNG(seed);
@@ -1170,7 +1190,12 @@ export class NumericalQuestionGeneratorEngine {
     // about, and it crosses session boundaries.
     const batchBlueprints = new Map();
     const batchPresentations = new Map();
+    // RC2.9.5 §2.2. A mock batch is measurement — holdout capture, hard
+    // coverage, repetition audits — and its sessions may name a band. It says
+    // so once, here, rather than every caller repeating it; the product never
+    // calls this function.
     const sessions = specs.map((spec, k) => this.generatePractice({
+      bandSession: true,
       ...options.defaults,
       ...spec,
       seed: `${seed}|S${k + 1}`,

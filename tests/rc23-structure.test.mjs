@@ -189,7 +189,7 @@ test('RC2.3-1: the complexity score is kept as evidence, and is not the label', 
 test('RC2.3-2: an ALL_HARD session is built only from HARD_CAPABLE structures', () => {
   const e = new Engine();
   for (let i = 0; i < 4; i++) {
-    const s = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: `RC23-AH-${i}`});
+    const s = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: `RC23-AH-${i}`, bandSession: true});
     assert.equal(s.questions.length, 30);
     for (const q of s.questions) {
       assert.equal(q.difficulty, 'hard', q.generator_id);
@@ -207,7 +207,7 @@ test('RC2.3-2: a band that cannot fill a session is refused up front, by name', 
   // needed to fix it.
   const e = new Engine();
   let err = null;
-  try { e.generatePractice({count: 30, difficulty: 'hard', family: 'sequences', seed: 'RC23-COV'}); }
+  try { e.generatePractice({count: 30, difficulty: 'hard', family: 'sequences', seed: 'RC23-COV', bandSession: true}); }
   catch (caught) { err = caught; }
   assert.ok(err, 'a band that cannot fill a session must refuse');
   assert.equal(err.code, 'INSUFFICIENT_BAND_COVERAGE');
@@ -217,7 +217,7 @@ test('RC2.3-2: a band that cannot fill a session is refused up front, by name', 
   assert.ok(/INSUFFICIENT_BAND_COVERAGE: 30 hard slots need 8 distinct structures/.test(err.message), err.message);
 
   // And the refusal is not blanket: the full pool can still fill one.
-  const ok = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC23-COV-OK'});
+  const ok = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC23-COV-OK', bandSession: true});
   assert.equal(ok.questions.length, 30);
 });
 
@@ -269,7 +269,7 @@ test('RC2.3-5: no template takes more than its share of a session', () => {
       // free to redraw the same idea from another family. A session past the
       // ceiling is refused by name — tests/rc28-blueprints.test.mjs asserts that
       // — and is not filled with reskins, which is the trade this release makes.
-      const s = e.generatePractice({count: band === 'medium' ? 50 : band === 'easy' ? 35 : 30, difficulty: band, family: 'random', seed: `RC23-SHARE-${band}-${i}`});
+      const s = e.generatePractice({count: band === 'medium' ? 50 : band === 'easy' ? 35 : 30, difficulty: band, family: 'random', seed: `RC23-SHARE-${band}-${i}`, bandSession: true});
       const counts = {};
       for (const q of s.questions) counts[q.generator_id] = (counts[q.generator_id] ?? 0) + 1;
       const worst = Math.max(...Object.values(counts));

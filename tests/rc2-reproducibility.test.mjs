@@ -53,10 +53,10 @@ test('RC2-004: replaying the same seed twice on the same engine is identical', (
 });
 
 test('RC2-004: an all-hard session replays identically too', () => {
-  const fresh = new Engine().generatePractice({count: 15, difficulty: 'hard', seed: `${SEED}-HARD`});
+  const fresh = new Engine().generatePractice({count: 15, difficulty: 'hard', seed: `${SEED}-HARD`, bandSession: true});
   const worn = new Engine();
-  worn.generatePractice({count: 25, difficulty: 'hard', seed: 'warm-hard'});
-  const later = worn.generatePractice({count: 15, difficulty: 'hard', seed: `${SEED}-HARD`});
+  worn.generatePractice({count: 25, difficulty: 'hard', seed: 'warm-hard', bandSession: true});
+  const later = worn.generatePractice({count: 15, difficulty: 'hard', seed: `${SEED}-HARD`, bandSession: true});
   assert.deepEqual(strip(later), strip(fresh));
 });
 

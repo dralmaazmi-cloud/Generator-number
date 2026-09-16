@@ -395,7 +395,7 @@ function conditions() {
     const families = new Set(), templates = new Set();
     for (let i = 0; i < 6; i++) {
       let s;
-      try { s = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: `GATE-RC23-AH-${i}`}); }
+      try { s = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: `GATE-RC23-AH-${i}`, bandSession: true}); }
       catch { failed++; continue; }
       for (const q of s.questions) {
         total++; families.add(q.family); templates.add(q.metadata.template_id);
@@ -411,7 +411,7 @@ function conditions() {
     const cov = bandCoverage();
     const e = new Engine();
     let refused = false, named = null;
-    try { e.generatePractice({count: 30, difficulty: 'hard', family: 'sequences', seed: 'GATE-RC23-COV'}); }
+    try { e.generatePractice({count: 30, difficulty: 'hard', family: 'sequences', seed: 'GATE-RC23-COV', bandSession: true}); }
     catch (err) { refused = err.code === 'INSUFFICIENT_BAND_COVERAGE'; named = err.familiesWithout ?? null; }
     return {
       pass: refused && cov.hard.sessionDeliverable,
@@ -449,7 +449,7 @@ function conditions() {
         // RC2.8-3: the single-band ceilings the engine honestly delivers, now
         // that a session is planned over distinct IDEAS rather than rotated over
         // families. Past the ceiling it refuses by name rather than reskinning.
-        const s = e.generatePractice({count: band === 'medium' ? 50 : band === 'easy' ? 35 : 30, difficulty: band, family: 'random', seed: `GATE-RC23-SHARE-${band}-${i}`});
+        const s = e.generatePractice({count: band === 'medium' ? 50 : band === 'easy' ? 35 : 30, difficulty: band, family: 'random', seed: `GATE-RC23-SHARE-${band}-${i}`, bandSession: true});
         const counts = {};
         for (const q of s.questions) counts[q.generator_id] = (counts[q.generator_id] ?? 0) + 1;
         worst = Math.max(worst, ...Object.values(counts));

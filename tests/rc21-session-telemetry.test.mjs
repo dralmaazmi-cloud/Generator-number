@@ -34,6 +34,8 @@ test('RC2.1-1: every published candidate a session sees is delivered or disposit
   for (let i = 1; i <= 5; i++) {
     delivered += e.generatePractice({
       count: i === 5 ? 30 : 50, difficulty: i === 5 ? 'hard' : 'mixed', family: 'random',
+      // RC2.9.5 §2.2. A band session is measurement, and says so.
+      bandSession: i === 5,
       seed: `RC21-TELEM-${i}`
     }).questions.length;
   }
@@ -84,7 +86,7 @@ test('RC2.1-1: no session discard is anonymous', () => {
   // all-easy session near the band ceiling is the shape that still does.
   const narrow = new Engine();
   narrow.resetTelemetry();
-  narrow.generatePractice({count: 35, difficulty: 'easy', family: 'random', seed: 'RC21-NAMED-NARROW'});
+  narrow.generatePractice({count: 35, difficulty: 'easy', family: 'random', seed: 'RC21-NAMED-NARROW', bandSession: true});
   const nt = narrow.getTelemetry();
   assert.ok(nt.sessionDiscards > 0, 'an all-easy session at the ceiling is known to discard');
   assert.equal(named.reduce((a, r) => a + (nt.byReason[r] ?? 0), 0), nt.sessionDiscards,
@@ -154,7 +156,7 @@ test('RC2.1-1: engine-level and session-level cost are reported separately', () 
   // short and candidates are refused.
   const d = new Engine();
   d.resetTelemetry();
-  d.generatePractice({count: 35, difficulty: 'easy', family: 'random', seed: 'RC21-SPLIT-DISCARD'});
+  d.generatePractice({count: 35, difficulty: 'easy', family: 'random', seed: 'RC21-SPLIT-DISCARD', bandSession: true});
   assert.ok((d.getTelemetry().byStage.session_discard ?? 0) > 0,
     'a session that runs short of distinct ideas must record its refusals under their own stage');
 });

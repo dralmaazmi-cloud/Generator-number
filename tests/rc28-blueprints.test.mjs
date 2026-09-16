@@ -90,7 +90,7 @@ test('RC2.8-3: the same seed plans the same session', () => {
 test('RC2.8-3: a request bigger than the pool is refused, not filled with reskins', () => {
   const engine = new Engine();
   assert.throws(
-    () => engine.generatePractice({seed: 'rc28-overask', count: 100, difficulty: 'hard'}),
+    () => engine.generatePractice({seed: 'rc28-overask', count: 100, difficulty: 'hard', bandSession: true}),
     err => err.code === 'INSUFFICIENT_CONSTRUCTION_BREADTH' || err.code === 'INSUFFICIENT_BAND_COVERAGE',
     'a hundred hard slots against thirty-four hard ideas must fail by name'
   );

@@ -83,7 +83,7 @@ function journeyBothClassifiers(band, label, sittings = 4, count = 30) {
   const questions = [];
   let history = null;
   for (let s = 0; s < sittings; s++) {
-    const r = engine.generatePractice({seed: `${label}-s${s + 1}`, count, difficulty: band, diversityHistory: history});
+    const r = engine.generatePractice({seed: `${label}-s${s + 1}`, count, difficulty: band, diversityHistory: history, bandSession: true});
     questions.push(...r.questions); history = r.diversity_history;
   }
   const worst = {a: {pv: 0, nd: 0, flagged: 0}, b: {pv: 0, nd: 0, flagged: 0}};

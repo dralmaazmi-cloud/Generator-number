@@ -156,7 +156,7 @@ test('RC2.2-1: session scheduling never asks a family for a band it lacks', () =
     for (let i = 0; i < 4; i++) {
       // RC2.7-R2: the hard band delivers about thirty-five before the core
       // construction pool runs out, so the fixture asks for thirty.
-      const s = e.generatePractice({count: 30, difficulty: band, family: 'random', seed: `RC22-T-SCHED-${band}-${i}`});
+      const s = e.generatePractice({count: 30, difficulty: band, family: 'random', seed: `RC22-T-SCHED-${band}-${i}`, bandSession: true});
       for (const q of s.questions) {
         assert.ok(FAMILY_MAP[q.family].difficulties.includes(q.difficulty),
           `${q.family} delivered ${q.difficulty}, which the registry does not claim`);

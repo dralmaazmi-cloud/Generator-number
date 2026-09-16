@@ -120,7 +120,7 @@ export function allHard({sessions = 8, count = 50, seedTag = 'RC22-ALLHARD'} = {
   let total = 0, notHard = 0, failed = 0;
   for (let s = 0; s < sessions; s++) {
     let out;
-    try { out = engine.generatePractice({count, difficulty: 'hard', family: 'random', seed: `${seedTag}-${s}`}); }
+    try { out = engine.generatePractice({count, difficulty: 'hard', family: 'random', seed: `${seedTag}-${s}`, bandSession: true}); }
     catch { failed++; continue; }
     for (const q of out.questions) {
       total++;

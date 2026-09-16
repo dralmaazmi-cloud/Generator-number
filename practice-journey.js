@@ -118,9 +118,19 @@ export function clearPracticeJourney(storage) {
  * @param {object}  options  whatever the caller already passes to generatePractice
  * @param {boolean} [continueJourney] false starts a fresh journey for this set
  */
+/**
+ * RC2.9.5 §2.2. The band a caller asks for is IGNORED here, not honoured and
+ * not refused: a saved preference written before this release, an old link or a
+ * restored session can still carry `difficulty: 'easy'`, and a learner who
+ * resumes such a session should get a mixed sitting rather than an error. The
+ * engine refuses a single-band session outright; this is the one place that
+ * rewrites the request instead, and it rewrites it to mixed every time.
+ */
+export const PRACTICE_DIFFICULTY = 'mixed';
+
 export function generatePracticeForJourney({engine, storage, options, continueJourney = true}) {
   const diversityHistory = continueJourney ? loadDiversityHistory(storage) : null;
-  const set = engine.generatePractice({...options, diversityHistory});
+  const set = engine.generatePractice({...options, difficulty: PRACTICE_DIFFICULTY, diversityHistory});
   savePracticeJourney(storage, set.diversity_history);
   return set;
 }

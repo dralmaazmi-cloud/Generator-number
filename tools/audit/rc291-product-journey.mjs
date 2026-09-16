@@ -119,9 +119,10 @@ export async function openApp(page, origin) {
  * back out of the product's own saved-session storage rather than scraped from
  * the DOM, so what is measured is what the product kept.
  */
-export async function playProductSession(page, {seed, count = 50, difficulty = 'mixed', exit = 'save'}) {
+export async function playProductSession(page, {seed, count = 50, exit = 'save'}) {
   await page.evaluate(s => { window.__RC291_SEED__ = s; }, seed);
-  await page.selectOption('#difficulty', difficulty);
+  // RC2.9.5 §2.1. There is no difficulty control to set: every practice session
+  // the product can start is mixed.
   // The count menu offers 5/10/14/20/30 and «مخصص»; fifty is a custom count,
   // which is what a user who wants a fifty-question sitting picks.
   await page.selectOption('#count', 'custom');
@@ -170,7 +171,7 @@ export async function callLog(page) {
 }
 
 /** Everything a reviewer needs about one journey, without an engine call. */
-export async function playProductJourney(browser, origin, {seeds, count = 50, difficulty = 'mixed',
+export async function playProductJourney(browser, origin, {seeds, count = 50,
   reloadBetween = false, clearJourneyBetween = false, exits = ['save', 'save']} = {}) {
   const context = await browser.newContext();
   const page = await context.newPage();
@@ -184,7 +185,7 @@ export async function playProductJourney(browser, origin, {seeds, count = 50, di
   for (const [i, seed] of seeds.entries()) {
     if (i > 0 && clearJourneyBetween) await page.evaluate(k => localStorage.removeItem(k), JOURNEY_KEY);
     if (i > 0 && reloadBetween) await openApp(page, origin);
-    sessions.push(await playProductSession(page, {seed, count, difficulty, exit: exits[i] ?? 'save'}));
+    sessions.push(await playProductSession(page, {seed, count, exit: exits[i] ?? 'save'}));
     calls.push(...await callLog(page));
     await page.evaluate(() => { window.__RC291_CALLS__ = []; });
   }

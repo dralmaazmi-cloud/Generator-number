@@ -57,7 +57,7 @@ const t1 = Date.now();
 
 for (let s = 0; s < HARD_SESSIONS; s++) {
   try {
-    const set = engine.generatePractice({difficulty: 'hard', count: 50, seed: `${SESSION_SEED}|${s}`});
+    const set = engine.generatePractice({difficulty: 'hard', count: 50, seed: `${SESSION_SEED}|${s}`, bandSession: true});
     sessions.write(JSON.stringify({
       session: s,
       seed: set.seed,

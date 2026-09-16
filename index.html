@@ -66,16 +66,15 @@
         </div>
 
         <div class="config-grid">
-          <label class="field">
-            <span>الصعوبة</span>
-            <select id="difficulty">
-              <option value="mixed">مختلط</option>
-              <option value="easy">سهل</option>
-              <option value="medium">متوسط</option>
-              <option value="hard">صعب</option>
-              <option value="adaptive">تكيفي</option>
-            </select>
-          </label>
+          <!-- RC2.9.5 §2.1. The difficulty control is gone. Every practice
+               session is mixed: 50% easy, 40% medium, 10% hard. A single-band
+               session was the worst repetition in the product — about 48
+               repeats in every rolling hundred at EASY — and no setting, query
+               parameter or saved preference reaches that path any more. -->
+          <div class="field" id="mixNote">
+            <span>مستوى الأسئلة</span>
+            <p class="field-help">كل جلسة مختلطة: نصفها أسئلة سهلة، وأربعة من كل عشرة متوسطة، وواحد من كل عشرة صعب.</p>
+          </div>
 
           <label class="field">
             <span>عدد الأسئلة</span>
@@ -121,9 +120,6 @@
           </label>
         </div>
 
-        <div id="adaptiveHint" class="info-strip hidden">
-          <strong>الوضع التكيفي:</strong> يبدأ من المستوى المتوسط ثم يرفع أو يخفض الصعوبة حسب دقة إجاباتك وزمن الحل. متاح في وضع التدريب فقط.
-        </div>
         <div id="examHint" class="info-strip hidden">
           <strong>وضع الامتحان:</strong> لن تظهر الإجابة الصحيحة أو الشرح أثناء الجلسة. تستطيع مراجعة الحلول كاملة بعد الإنهاء.
         </div>
@@ -217,8 +213,6 @@
         <button id="exportPdf" class="primary" type="button">تصدير PDF</button>
         <button id="sameSettings" class="secondary" type="button">جلسة جديدة بنفس الإعدادات</button>
         <button id="practiceMistakes" class="secondary" type="button">تدرب على أخطائي</button>
-        <button id="harderSession" class="secondary" type="button">جلسة أصعب</button>
-        <button id="easierSession" class="secondary" type="button">جلسة أسهل</button>
         <button id="newSession" class="secondary" type="button">إعداد جلسة جديدة</button>
         <details class="advanced-export">
           <summary>خيارات متقدمة</summary>

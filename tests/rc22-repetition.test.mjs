@@ -123,7 +123,7 @@ test('RC2.2-4: a cap the fallback can bypass is not a cap', () => {
   // deliverable, and every breach must be recorded — silence would mean the
   // fallback is ignoring the cap, which is what it used to do.
   const e = new Engine({maxReasoningRepeatsPerSession: 1, maxReasoningRepeatsPerBatch: 1});
-  const s = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC22-T-BYPASS'});
+  const s = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC22-T-BYPASS', bandSession: true});
   assert.equal(s.questions.length, 30, 'the session must still be deliverable');
   const sigs = s.questions.map(q => q.metadata.structural_reasoning_signature);
   const counts = {};

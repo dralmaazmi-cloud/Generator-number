@@ -77,7 +77,10 @@ export function runJourney(engine, {difficulty, count, sittings, seedPrefix}) {
   for (let s = 0; s < sittings; s++) {
     let session;
     try {
-      session = engine.generatePractice({seed: `${seedPrefix}-s${s + 1}`, count, difficulty, diversityHistory: history});
+      // A band here is a MEASUREMENT, never a product path: §2.2 refuses a
+      // single-band session unless the caller says so in as many words.
+      session = engine.generatePractice({seed: `${seedPrefix}-s${s + 1}`, count, difficulty,
+        diversityHistory: history, bandSession: difficulty !== 'mixed'});
     } catch (e) {
       refusals.push({sitting: s + 1, code: e.code ?? String(e.message).slice(0, 70)});
       continue;

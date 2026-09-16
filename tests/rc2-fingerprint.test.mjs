@@ -164,7 +164,7 @@ test('RC2-022/023: no session repeats a semantic instance or a reasoning pattern
 test('RC2-022/023: the same holds for all-hard sessions', {skip: 'superseded by RC2.2-4, same reason: reasoning repetition is capped, not banned.'}, () => {
   const engine = new Engine();
   for (let s = 0; s < 15; s++) {
-    const set = engine.generatePractice({difficulty: 'hard', count: 30, seed: `rc2-hard-${s}`});
+    const set = engine.generatePractice({difficulty: 'hard', count: 30, seed: `rc2-hard-${s}`, bandSession: true});
     const semantic = set.questions.map(q => q.metadata.semantic_fingerprint);
     assert.equal(new Set(semantic).size, semantic.length, `hard session ${s}: a semantic instance repeated`);
     const structural = set.questions.map(q => q.metadata.structural_reasoning_signature).filter(Boolean);

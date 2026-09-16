@@ -50,7 +50,7 @@ export function singleBandJourney(band, {label, sittings = 4, count = 30}) {
   const refusals = [];
   for (let s = 0; s < sittings; s++) {
     try {
-      const session = engine.generatePractice({seed: `${label}-s${s + 1}`, count, difficulty: band, diversityHistory: history});
+      const session = engine.generatePractice({seed: `${label}-s${s + 1}`, count, difficulty: band, diversityHistory: history, bandSession: true});
       questions.push(...session.questions);
       history = session.diversity_history;
     } catch (e) { refusals.push({sitting: s + 1, code: e.code ?? String(e.message).slice(0, 80)}); }

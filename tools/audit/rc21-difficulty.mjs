@@ -130,7 +130,7 @@ export function allHardEvidence({sessions = 8, count = 50, seedTag = 'RC21-ALLHA
   const perTemplate = {};
   let total = 0, notHard = 0;
   for (let s = 0; s < sessions; s++) {
-    const out = engine.generatePractice({count, difficulty: 'hard', family: 'random', seed: `${seedTag}-${s}`});
+    const out = engine.generatePractice({count, difficulty: 'hard', family: 'random', seed: `${seedTag}-${s}`, bandSession: true});
     for (const q of out.questions) {
       total++;
       const band = q.metadata.complexity_band;

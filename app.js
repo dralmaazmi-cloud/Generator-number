@@ -9,6 +9,10 @@ const misconceptionText=id=>MISCONCEPTIONS[id]??id;
 // RC2-021. The UI and the engine ship as one bundle, so they carry one version.
 // A second literal here is exactly the duplication the RC1 audit caught: the
 // pill read v1.2.0 while the engine was 1.3.0.
+// RC2.9.5 §2.1. Mixed is the only practice mode the product can ask for. The
+// engine refuses a single-band session outright (§2.2); this constant is what
+// makes every call site here say the same thing.
+const PRACTICE_DIFFICULTY = 'mixed';
 const STORAGE_KEY = 'numerical_generator_saved_session_v2';
 const STATS_KEY = 'numerical_generator_family_stats_v1';
 const LAST_SETTINGS_KEY = 'numerical_generator_last_settings_v1';
@@ -36,7 +40,7 @@ function escapeHtml(value){
 }
 function makeSeed(prefix='practice'){return `${prefix}-${Date.now().toString(36)}-${Math.floor(Math.random()*1e9).toString(36)}`}
 function nowIso(){return new Date().toISOString()}
-function difficultyAr(d){return d==='easy'?'سهل':d==='medium'?'متوسط':d==='hard'?'صعب':d==='adaptive'?'تكيفي':'مختلط'}
+function difficultyAr(d){return d==='easy'?'سهل':d==='medium'?'متوسط':d==='hard'?'صعب':'مختلط'}
 function modeAr(m){return m==='exam'?'امتحان':'تدريب'}
 function formatClock(seconds){seconds=Math.max(0,Math.floor(seconds||0));return `${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`}
 function clamp(n,min,max){return Math.max(min,Math.min(max,n))}
@@ -87,7 +91,6 @@ async function bootstrap(){
 function bindEvents(){
   $('modeTraining').onclick=()=>setMode('training');
   $('modeExam').onclick=()=>setMode('exam');
-  $('difficulty').onchange=handleDifficultyChange;
   $('count').onchange=()=>{$('customCountWrap').classList.toggle('hidden',$('count').value!=='custom');syncCountCapacity()};
   $('customCount').onchange=syncCountCapacity;
   $('timeMode').onchange=()=>$('customTimeWrap').classList.toggle('hidden',$('timeMode').value!=='custom');
@@ -123,8 +126,6 @@ function bindEvents(){
   $('newSession').onclick=()=>{clearSavedSession();showView('setup')};
   $('sameSettings').onclick=startSameSettingsSession;
   $('practiceMistakes').onclick=startMistakePractice;
-  $('harderSession').onclick=()=>startShiftedDifficultySession(1);
-  $('easierSession').onclick=()=>startShiftedDifficultySession(-1);
   $('reviewAnswers').onclick=toggleReview;
   $('exportPdf').onclick=exportPdfReport;
   $('exportJson').onclick=exportJson;
@@ -273,15 +274,6 @@ function setMode(mode){
   $('modeTraining').classList.toggle('active',mode==='training');
   $('modeExam').classList.toggle('active',mode==='exam');
   $('examHint').classList.toggle('hidden',mode!=='exam');
-  const adaptive=$('difficulty').querySelector('option[value="adaptive"]');
-  adaptive.disabled=mode==='exam';
-  if(mode==='exam' && $('difficulty').value==='adaptive') $('difficulty').value='mixed';
-  handleDifficultyChange();
-}
-function handleDifficultyChange(){
-  const adaptive=$('difficulty').value==='adaptive';
-  $('adaptiveHint').classList.toggle('hidden',!adaptive);
-  if(adaptive&&state.mode==='exam'){$('difficulty').value='mixed';$('adaptiveHint').classList.add('hidden')}
   syncCountCapacity();
 }
 // RC2.9.4-B8. The largest sitting the engine can hold for the chosen difficulty
@@ -293,7 +285,7 @@ function handleDifficultyChange(){
 function sessionCapacity(){
   try{
     if(!state.engine||typeof state.engine.sessionCapacity!=='function') return null;
-    return state.engine.sessionCapacity({difficulty:$('difficulty').value||'mixed',families:[...state.selectedFamilies]});
+    return state.engine.sessionCapacity({difficulty:PRACTICE_DIFFICULTY,families:[...state.selectedFamilies]});
   }catch(err){console.error(err);return null}
 }
 function syncCountCapacity(){
@@ -335,7 +327,7 @@ function currentSettings(){
   return {
     mode:state.mode,
     families:[...state.selectedFamilies],
-    difficulty:$('difficulty').value||'mixed',
+    difficulty:PRACTICE_DIFFICULTY,
     count:getCount(),
     timeLimitSeconds:getTimeLimitSeconds(),
     seed:makeSeed(state.mode==='exam'?'exam':'train')
@@ -353,7 +345,8 @@ function restoreLastSettings(){
       state.selectedFamilies=new Set(s.families.filter(id=>state.families.some(f=>f.id===id)));
       state.familySelectionMode=state.selectedFamilies.size===state.families.length?'mixed':state.selectedFamilies.size===1?`family:${[...state.selectedFamilies][0]}`:'custom';
     }
-    if(['easy','medium','hard','mixed','adaptive'].includes(s.difficulty)) $('difficulty').value=(s.mode==='exam'&&s.difficulty==='adaptive')?'mixed':s.difficulty;
+    // RC2.9.5 §2.3. A saved setting from before this release may name a band.
+    // It is ignored rather than restored: mixed is the only practice mode.
     const presets=['5','10','14','20','30'];
     if(presets.includes(String(s.count))) $('count').value=String(s.count); else {$('count').value='custom';$('customCount').value=String(clamp(Number(s.count||10),1,50));$('customCountWrap').classList.remove('hidden')}
     if(!s.timeLimitSeconds){$('timeMode').value='none'}else{const mins=Math.round(s.timeLimitSeconds/60);if(['5','10','15','20'].includes(String(mins)))$('timeMode').value=String(mins);else{$('timeMode').value='custom';$('customTime').value=String(clamp(mins,1,120));$('customTimeWrap').classList.remove('hidden')}}
@@ -382,17 +375,13 @@ function createSession(settings){
     schema:'generated-practice-session-v2',id:`SESSION-${settings.seed}`,createdAt:nowIso(),startedAt:nowIso(),completedAt:null,finishReason:null,
     settings:{...settings},currentIndex:0,questions:[],responses:[],elapsedSeconds:0,adaptiveHistory:[],summary:null
   };
-  if(settings.difficulty==='adaptive'){
-    base.familySchedule=buildFamilySchedule(settings.families,settings.count,`${settings.seed}|families`);
-    base.letterSchedule=buildLetterSchedule(settings.count,`${settings.seed}|letters`);
-    base.questions.push(generateAdaptiveAtIndex(base,0));
-  }else{
+  {
     // RC2.9.1. Through the journey, never straight at the engine. The engine
     // returns the diversity history a continuing journey needs and the product
     // is what has to keep it; calling generatePractice directly here is the
     // defect this release fixes, and tests/rc291-product-journey.test.mjs
     // asserts that this file has no such call.
-    const set=generatePracticeForJourney({engine:state.engine,storage:localStorage,options:{families:settings.families,difficulty:settings.difficulty,count:settings.count,seed:settings.seed}});
+    const set=generatePracticeForJourney({engine:state.engine,storage:localStorage,options:{families:settings.families,difficulty:PRACTICE_DIFFICULTY,count:settings.count,seed:settings.seed}});
     base.questions=set.questions;base.engineValidation=set.validation;
   }
   base.responses=Array(settings.count).fill(null).map(()=>emptyResponse());
@@ -407,9 +396,6 @@ function buildFamilySchedule(families,count,seed){
   return out;
 }
 function buildLetterSchedule(count,seed){const rng=new state.EngineModule.SeededRNG(seed);const letters=['A','B','C','D','E','F'];return rng.shuffle(Array.from({length:count},(_,i)=>letters[i%6]))}
-function generateAdaptiveAtIndex(session,index){
-  return state.engine.generateAdaptiveQuestion({family:session.familySchedule[index],history:session.adaptiveHistory,seed:`${session.settings.seed}|AQ${index+1}`,preferredCorrectLetter:session.letterSchedule[index]});
-}
 
 function renderCurrentQuestion(){
   const s=state.session;if(!s)return;const i=s.currentIndex;const q=s.questions[i];if(!q)return;
@@ -460,7 +446,6 @@ function checkCurrentAnswer(){
   const selected=$('options').querySelector('input[name="answer"]:checked');
   if(!selected){$('feedback').textContent='اختر إجابة أولًا.';$('feedback').className='feedback bad';return}
   r.selected=selected.value;r.checked=true;r.correct=r.selected===q.correct_option;r.checkedAt=nowIso();recordTimeIfNeeded(r);
-  if(s.settings.difficulty==='adaptive')s.adaptiveHistory.push({correct:r.correct,timeSeconds:r.timeSeconds,difficulty:q.difficulty});
   renderCurrentQuestion();
 }
 function renderFeedbackAndExplanation(q,r){
@@ -495,7 +480,7 @@ function goNextQuestion(){
   if(s.settings.mode==='training'&&!s.responses[i]?.checked)return;
   if(s.settings.mode==='exam')captureExamSelectionAndTime();
   if(i>=s.settings.count-1){requestFinish();return}
-  const nextIndex=i+1;if(s.settings.difficulty==='adaptive'&&!s.questions[nextIndex])s.questions[nextIndex]=generateAdaptiveAtIndex(s,nextIndex);
+  const nextIndex=i+1;
   s.currentIndex=nextIndex;renderCurrentQuestion();
 }
 function requestFinish(){
@@ -578,16 +563,7 @@ function startSameSettingsSession(){
 }
 function startMistakePractice(){
   const old=state.session;if(!old)return;const wrongFamilies=[...new Set(old.questions.filter((q,i)=>!old.responses[i]?.correct).map(q=>q.family))];if(!wrongFamilies.length)return;
-  const count=clamp(Math.max(5,wrongFamilies.length*3),5,20);const settings={mode:'training',families:wrongFamilies,difficulty:'adaptive',count,timeLimitSeconds:null,seed:makeSeed('mistakes')};
-  state.session=createSession(settings);clearSavedSession();state.timedOut=false;showView('session');startTimer();renderCurrentQuestion();
-}
-
-function startShiftedDifficultySession(direction){
-  const old=state.session;if(!old)return;
-  const order=['easy','medium','hard'];let base=old.settings.difficulty;
-  if(!order.includes(base)) base='medium';
-  const next=order[clamp(order.indexOf(base)+direction,0,order.length-1)];
-  const settings={...old.settings,mode:'training',difficulty:next,timeLimitSeconds:null,seed:makeSeed(direction>0?'harder':'easier')};
+  const count=clamp(Math.max(5,wrongFamilies.length*3),5,20);const settings={mode:'training',families:wrongFamilies,difficulty:PRACTICE_DIFFICULTY,count,timeLimitSeconds:null,seed:makeSeed('mistakes')};
   state.session=createSession(settings);clearSavedSession();state.timedOut=false;showView('session');startTimer();renderCurrentQuestion();
 }
 
@@ -617,10 +593,10 @@ function exportPdfReport(){
 
 async function runSmokeModeIfRequested(){
   const qs=new URLSearchParams(location.search);const mode=qs.get('smoke');if(!mode)return;
-  state.mode=mode==='exam'?'exam':'training';setMode(state.mode);state.familySelectionMode='mixed';selectAllFamilies(false);syncFamilySelectionUi();$('difficulty').value=mode==='adaptive'?'adaptive':'mixed';if(state.mode==='exam'&&$('difficulty').value==='adaptive')$('difficulty').value='mixed';$('count').value='5';$('timeMode').value='none';
+  state.mode=mode==='exam'?'exam':'training';setMode(state.mode);state.familySelectionMode='mixed';selectAllFamilies(false);syncFamilySelectionUi();$('count').value='5';$('timeMode').value='none';
   startNewSession();document.documentElement.dataset.smokeSession=state.session?.questions?.length?'pass':'fail';
   if(mode==='result'){
-    for(let i=0;i<state.session.settings.count;i++){const q=state.session.questions[i]||generateAdaptiveAtIndex(state.session,i);state.session.questions[i]=q;state.session.responses[i]={selected:q.correct_option,checked:true,correct:true,timeSeconds:8,checkedAt:nowIso()};if(state.session.settings.difficulty==='adaptive')state.session.adaptiveHistory.push({correct:true,timeSeconds:8,difficulty:q.difficulty})}
+    for(let i=0;i<state.session.settings.count;i++){const q=state.session.questions[i];if(!q)continue;state.session.responses[i]={selected:q.correct_option,checked:true,correct:true,timeSeconds:8,checkedAt:nowIso()}}
     state.session.elapsedSeconds=40;finishSession('smoke');document.documentElement.dataset.smokeResult=state.session.summary?.percentage===100?'pass':'fail';
   }
 }

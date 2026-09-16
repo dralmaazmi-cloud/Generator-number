@@ -69,7 +69,7 @@ export function allHardSessions({sessions = 5, count = 50, seedTag = 'RC24-ACCEP
     } catch { failedSessions = sessions; }
   } else {
     for (let i = 0; i < sessions; i++) {
-      try { produced.push(engine.generatePractice({count, difficulty: 'hard', family: 'random', seed: `${seedTag}-${i}`})); }
+      try { produced.push(engine.generatePractice({count, difficulty: 'hard', family: 'random', seed: `${seedTag}-${i}`, bandSession: true})); }
       catch { failedSessions++; }
     }
   }

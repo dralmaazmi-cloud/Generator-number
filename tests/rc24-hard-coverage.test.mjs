@@ -246,8 +246,8 @@ test('RC2.4: the added templates carry misconception-linked options, not magnitu
 });
 
 test('RC2.4: reproducible, and the same seed replays through both APIs', () => {
-  const a = new Engine().generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC24-REPRO'});
-  const b = new Engine().generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC24-REPRO'});
+  const a = new Engine().generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC24-REPRO', bandSession: true});
+  const b = new Engine().generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC24-REPRO', bandSession: true});
   assert.deepEqual(a.questions.map(q => q.id), b.questions.map(q => q.id));
   assert.deepEqual(a.questions.map(q => q.correct_value), b.questions.map(q => q.correct_value));
   for (const id of newHardTemplates().slice(0, 6)) {
@@ -263,7 +263,7 @@ test('RC2.4: telemetry still reconciles, and hard sessions still cost what they 
   e.resetTelemetry();
   let delivered = 0;
   for (let i = 0; i < 3; i++) {
-    delivered += e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: `RC24-TEL-${i}`}).questions.length;
+    delivered += e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: `RC24-TEL-${i}`, bandSession: true}).questions.length;
   }
   const r = e.getTelemetry().sessionReconciliation;
   assert.equal(r.delivered, delivered);

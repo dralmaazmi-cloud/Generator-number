@@ -187,7 +187,7 @@ test('RC2.7-5: a control relaxed by the fallback is recorded, never silent', () 
   // dimension and its level.
   const e = new Engine();
   let refusal = null;
-  try { e.generatePractice({count: 50, difficulty: 'hard', family: 'random', seed: 'RC27-T-HARD'}); }
+  try { e.generatePractice({count: 50, difficulty: 'hard', family: 'random', seed: 'RC27-T-HARD', bandSession: true}); }
   catch (err) { refusal = err; }
   assert.ok(refusal, 'a fifty-question all-hard session must be refused, not reskinned');
   assert.equal(refusal.code, 'INSUFFICIENT_CONSTRUCTION_BREADTH');
@@ -205,7 +205,7 @@ test('RC2.7-5: a control relaxed by the fallback is recorded, never silent', () 
     `${refusal.delivered} slots from only ${refusal.distinctCoreConstructions} ideas`);
   assert.ok(Array.isArray(refusal.capacity) && refusal.capacity.length,
     'a refusal must say how much material each band of the request actually holds');
-  const s = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC27-T-HARD'});
+  const s = e.generatePractice({count: 30, difficulty: 'hard', family: 'random', seed: 'RC27-T-HARD', bandSession: true});
   const n = s.validation.novelty;
   assert.equal(n.delivered, 30);
   assert.equal(n.core.relaxations, 0, 'a core construction relaxation is forbidden');
