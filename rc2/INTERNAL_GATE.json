@@ -1,18 +1,14 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-16T08:13:42.991Z",
+  "evaluatedAt": "2026-09-16T08:17:14.815Z",
   "engineVersion": "1.5.4",
-  "headCommit": "15f7b0fb462c886ea8edbd5f38ca068e338ebd2f",
+  "headCommit": "0c67b09635d00fafc2ddafd18eb15139b5fb47aa",
   "branch": "claude/numerical-generator-upgrade-b3fc8s",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "FAIL",
+  "verdict": "PASS",
   "conditions": 39,
-  "failedConditions": [
-    "SESSION_TELEMETRY_RECONCILES",
-    "SESSION_PATH_EXERCISED",
-    "STRUCTURE_ADJUDICATION_COMPLETE"
-  ],
+  "failedConditions": [],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -230,16 +226,29 @@
     {
       "id": "SESSION_TELEMETRY_RECONCILES",
       "requirement": "RC2.1-1 — every published candidate a session sees is delivered or dispositioned",
-      "pass": false,
-      "detail": "threw: single-band practice was removed in RC2.9.5: difficulty 'hard' is not a practice mode. Use mixed (50% easy, 40% medium, 10% hard), or generateQuestion for one question at a band."
+      "pass": true,
+      "detail": {
+        "publishedToSessions": 238,
+        "delivered": 230,
+        "sessionDiscards": 8,
+        "accountedFor": 238,
+        "balanced": true,
+        "difference": 0,
+        "byReason": {
+          "NOVELTY_DIMENSION_DOMINANCE": 6,
+          "NOVELTY_MULTI_DIMENSION_SIMILARITY": 2
+        },
+        "anonymous": 0,
+        "note": "published candidates offered to sessions = delivered + every recorded session-level discard"
+      }
     },
     {
       "id": "SESSION_PATH_EXERCISED",
       "requirement": "RC2.1 — generatePractice is exercised, not only generateQuestion",
-      "pass": false,
+      "pass": true,
       "detail": {
-        "questions": 450,
-        "exhausted": 3
+        "questions": 540,
+        "exhausted": 0
       }
     },
     {
@@ -317,7 +326,7 @@
     {
       "id": "STRUCTURE_ADJUDICATION_COMPLETE",
       "requirement": "RC2.3-1 — every template is adjudicated and every adjudication is reachable",
-      "pass": false,
+      "pass": true,
       "detail": {
         "templates": 228,
         "byBand": {
