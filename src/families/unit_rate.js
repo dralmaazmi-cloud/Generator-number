@@ -16,7 +16,12 @@ export function generateUnitRate({difficulty, rng, seed, engineVersion, telemetr
     ['RATE_H_RATE_FROM_GAP', rateFromTimeSaved],
     // RC2.9.4-B3. Two MEDIUM constructions.
     ['RATE_M_COMPARE', rateGap],
-    ['RATE_M_HOURS_FROM_MINUTE_RATE', hoursFromMinuteRate]
+    ['RATE_M_HOURS_FROM_MINUTE_RATE', hoursFromMinuteRate],
+    // RC2.9.5 §4. The unit value itself, a budget turned into a count, and two
+    // packs compared by their unit price.
+    ['RATE_E_UNIT_PRICE', unitPriceFromTotal],
+    ['RATE_E_BUDGET_COUNT', countWithinBudget],
+    ['RATE_E_BETTER_DEAL', cheaperPerUnit]
   ], pinTemplate)(ctx);
 }
 
@@ -563,5 +568,133 @@ function hoursFromMinuteRate(ctx) {
     },
     complexityFactors: {reasoningTransformations: 2, conceptCount: 1, unitConversion: 1, reverseReasoning: 1, stageCount: 2, arithmeticBurden: 2},
     textParams: {essentialParams: ['minuteRate', 'targetVolume']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: the price of one unit, which the band never asked for on its own. */
+function unitPriceFromTotal(ctx) {
+  const {rng} = ctx;
+  const count = rng.pick([4, 5, 6, 8, 12]);
+  const unitPrice = rng.pick([7, 9, 11, 13, 15].filter(v => v !== count));
+  const total = count * unitPrice;
+  const correct = unitPrice;
+  const distractors = usable(ctx, [
+    mk(total, 'USED_GIVEN_VALUE_AS_ANSWER', `المبلغ المعطى ${total}`),
+    mk(count, 'SWAPPED_THE_TWO_UNKNOWNS', `العدد المعطى ${count}`),
+    mk(total * count, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${total} × ${count}`),
+    mk(total - count, 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `${total} − ${count}`),
+    mk(unitPrice + 1, 'OFF_BY_ONE_STEP', `${total} ÷ ${count} + 1`),
+    mk(unitPrice - 1, 'OFF_BY_ONE_STEP', `${total} ÷ ${count} − 1`),
+    mk(total / (count + 1), 'RATE_APPLIED_TO_WRONG_COUNT', `${total} ÷ (${count} + 1)`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx,
+    `في متجر للقرطاسية، اشترى معلم ${u(count, 'book')} بمبلغ ${u(total, 'dirham')}، وجميعها بالسعر نفسه. كم يبلغ سعر الكتاب الواحد؟`);
+  return buildBase(ctx, {
+    templateId: 'RATE_E_UNIT_PRICE',
+    subskill: 'سعر الوحدة الواحدة من مبلغ كلي',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [`سعر الكتاب الواحد = ${total} ÷ ${count} = ${correct}.`],
+    howToStart: 'اقسم المبلغ الكلي على عدد الوحدات.',
+    remember: 'قيمة الوحدة الواحدة هي المبلغ مقسومًا على العدد، لا مضروبًا فيه.',
+    fastMethod: `${total} ÷ ${count}.`,
+    estimatedSteps: 1, conceptTags: ['unit-rate', 'unit-value'],
+    parameters: {itemCount: count, totalPrice: total},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, count), total)]},
+    askedUnknown: 'unitPriceFromTotal', stageCount: 1,
+    pedagogy: {targetSkill: 'UNIT_VALUE', targetMisconception: 'MULTIPLIED_INSTEAD_OF_DIVIDED',
+      wrongMethodValue: total * count},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {essentialParams: ['itemCount', 'totalPrice']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: how many units a budget buys — a count, not a price. */
+function countWithinBudget(ctx) {
+  const {rng} = ctx;
+  const unitPrice = rng.pick([6, 8, 9, 12, 15]);
+  const count = rng.pick([4, 5, 7, 9].filter(v => v !== unitPrice));
+  const budget = unitPrice * count;
+  const correct = count;
+  const distractors = usable(ctx, [
+    mk(budget, 'USED_GIVEN_VALUE_AS_ANSWER', `المبلغ المعطى ${budget}`),
+    mk(unitPrice, 'SWAPPED_THE_TWO_UNKNOWNS', `سعر الوحدة المعطى ${unitPrice}`),
+    mk(budget * unitPrice, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${budget} × ${unitPrice}`),
+    mk(budget - unitPrice, 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `${budget} − ${unitPrice}`),
+    mk(count + 1, 'OFF_BY_ONE_STEP', `${budget} ÷ ${unitPrice} + 1`),
+    mk(count - 1, 'OFF_BY_ONE_STEP', `${budget} ÷ ${unitPrice} − 1`),
+    mk(budget / unitPrice / 2, 'APPLIED_STEP_TWICE', `${budget} ÷ ${unitPrice} ÷ 2`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx,
+    `مع طالب ${u(budget, 'dirham')}، وسعر الكتاب الواحد ${u(unitPrice, 'dirham')}. كم كتابًا يستطيع شراءه بهذا المبلغ كاملًا؟`);
+  return buildBase(ctx, {
+    templateId: 'RATE_E_BUDGET_COUNT',
+    subskill: 'عدد الوحدات التي يشتريها مبلغ معلوم',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('book'),
+    steps: [`عدد الكتب = ${budget} ÷ ${unitPrice} = ${correct}.`],
+    howToStart: 'اقسم المبلغ على سعر الوحدة الواحدة.',
+    remember: 'السؤال عن عدد لا عن سعر، فالقسمة على السعر لا على العدد.',
+    fastMethod: `${budget} ÷ ${unitPrice}.`,
+    estimatedSteps: 1, conceptTags: ['unit-rate', 'count'],
+    parameters: {budget, unitPrice},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, unitPrice), budget)]},
+    askedUnknown: 'countWithinBudget', stageCount: 1,
+    pedagogy: {targetSkill: 'COUNT_FROM_BUDGET', targetMisconception: 'SWAPPED_THE_TWO_UNKNOWNS',
+      wrongMethodValue: unitPrice},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, reverseReasoning: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {essentialParams: ['budget', 'unitPrice']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: which pack is cheaper per unit. */
+function cheaperPerUnit(ctx) {
+  const {rng} = ctx;
+  const aCount = rng.pick([4, 5, 6]);
+  const aUnit = rng.pick([6, 8, 10, 12]);
+  const bCount = rng.pick([3, 8, 10, 12].filter(v => v !== aCount));
+  const bUnit = rng.pick([5, 7, 9, 11, 14].filter(v => v !== aUnit));
+  const aTotal = aCount * aUnit, bTotal = bCount * bUnit;
+  if (aUnit === bUnit || aTotal === bTotal) return resample(ctx, cheaperPerUnit);
+  // Worth asking only when the cheaper PACK is not the cheaper unit.
+  if ((aTotal < bTotal) === (aUnit < bUnit)) return resample(ctx, cheaperPerUnit);
+  const correct = Math.min(aUnit, bUnit);
+  const distractors = usable(ctx, [
+    mk(Math.max(aUnit, bUnit), 'SOLVED_ONE_CONDITION_ONLY', `سعر الوحدة في العرض الآخر ${Math.max(aUnit, bUnit)}`),
+    mk(Math.min(aTotal, bTotal), 'STOPPED_AT_INTERMEDIATE_TOTAL', `أقل مبلغ كلي ${Math.min(aTotal, bTotal)}`),
+    mk((aUnit + bUnit) / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${aUnit} + ${bUnit}) ÷ 2`),
+    mk(Math.abs(aUnit - bUnit), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(aUnit, bUnit)} − ${Math.min(aUnit, bUnit)}`),
+    mk(Math.min(aCount, bCount), 'SWAPPED_THE_TWO_UNKNOWNS', `أقل عدد وحدات ${Math.min(aCount, bCount)}`),
+    mk((aTotal + bTotal) / (aCount + bCount), 'ANSWERED_THE_OTHER_COMPONENT', `(${aTotal} + ${bTotal}) ÷ (${aCount} + ${bCount})`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx,
+    `العرض الأول: ${u(aCount, 'can')} بمبلغ ${u(aTotal, 'dirham')}. العرض الثاني: ${u(bCount, 'can')} بمبلغ ${u(bTotal, 'dirham')}. ما سعر العلبة الواحدة في العرض الأوفر؟`);
+  return buildBase(ctx, {
+    templateId: 'RATE_E_BETTER_DEAL',
+    subskill: 'المقارنة بين عرضين بسعر الوحدة',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `سعر العلبة في العرض الأول = ${aTotal} ÷ ${aCount} = ${aUnit}.`,
+      `سعر العلبة في العرض الثاني = ${bTotal} ÷ ${bCount} = ${bUnit}.`,
+      `الأوفر هو الأقل للوحدة: ${correct}.`
+    ],
+    howToStart: 'انزل بكل عرض إلى سعر الوحدة الواحدة قبل المقارنة.',
+    remember: 'المبلغ الأقل لا يعني الأوفر: العدد يختلف بين العرضين.',
+    fastMethod: 'اقسم كل مبلغ على عدد وحداته ثم قارن.',
+    estimatedSteps: 3, conceptTags: ['unit-rate', 'comparison'],
+    parameters: {firstCount: aCount, firstTotal: aTotal, secondCount: bCount, secondTotal: bTotal},
+    oracle: {kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, correct === aUnit ? aCount : bCount), correct === aUnit ? aTotal : bTotal)]},
+    askedUnknown: 'cheaperUnitPrice', stageCount: 3,
+    pedagogy: {targetSkill: 'COMPARE_UNIT_PRICES', targetMisconception: 'STOPPED_AT_INTERMEDIATE_TOTAL',
+      wrongMethodValue: Math.min(aTotal, bTotal),
+      degenerateWhen: [{when: aUnit === bUnit, note: 'the two unit prices are equal'}]},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 3, arithmeticBurden: 3},
+    textParams: {essentialParams: ['firstCount', 'firstTotal', 'secondCount', 'secondTotal']}
   });
 }

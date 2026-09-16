@@ -183,6 +183,14 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'RC2.5 demotion on the Holdout E blind verdicts. Ratio changed by a transfer. Holdout E: 0 of 2 judged hard (cluster ratio_transfer_or_addition, 0 of 3).'},
 
   // -------------------------------------------------------------- percentages
+  // RC2.9.5 §4. Three EASY jobs: a share read AS a percentage, the whole
+  // recovered from a stated part, and two offers compared by value.
+  PCT_E_SHARE_PERCENT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Part ÷ whole × 100: one relationship, applied once, in the opposite order to PCT_E_OF.'},
+  PCT_E_WHOLE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Down to one per cent and back up to a hundred: the same relationship read backwards.'},
+  PCT_E_WHICH_OFFER: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Two one-step percentages and a comparison; no step depends on the other result.'},
   PCT_E_OF: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'One percentage of one value.'},
   PCT_E_REVERSE_ONE: {band: 'medium', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -204,6 +212,13 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
 
   // ----------------------------------------------------------------- averages
   // RC2.9.4-B2. The definition itself, and one member recovered from the mean.
+  // RC2.9.5 §4. The mean read backwards, twice, and two means compared.
+  AVG_E_TOTAL_FROM_MEAN: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Mean × count, one multiplication, no chain.'},
+  AVG_E_COUNT_FROM_MEAN: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Total ÷ mean, one division, the definition read from its third side.'},
+  AVG_E_COMPARE_MEANS: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Two independent divisions and a comparison; neither depends on the other.'},
   AVG_E_LIST: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'RC2.9.4-B2. Sum the shown members, divide by their count. The definition applied once.'},
   AVG_E_MISSING_VALUE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -312,6 +327,11 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'RC2.5 demotion on the Holdout E blind verdicts. Same distance, two speeds, a stated time difference. Holdout E: 0 of 3 judged hard.'},
 
   // ---------------------------------------------------------------- work_time
+  // RC2.9.5 §4.
+  WORK_E_OUTPUT_IN_DAYS: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Rate × time, one multiplication.'},
+  WORK_E_REMAINING_DAYS: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Subtract what is done, divide by the rate: two steps, neither of them a new relationship.'},
   WORK_E_VOLUME: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Workers scale with the work when time is fixed.'},
   WORK_E_INVERSE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -391,6 +411,13 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'RC2.9.4-B3. The same two complement stages inverted as one composed fraction. One inversion of one composition is routine.'},
   FRAC_M_COMPARE_SHARES: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
     why: 'RC2.9.4-B3. A non-unit share of a whole, its complement, then their difference: three routine steps in sequence.'},
+  // RC2.9.5 §4. Three EASY fraction jobs that are not a chain.
+  FRAC_E_PART_OF: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Divide by the denominator, multiply by the numerator: one relationship.'},
+  FRAC_E_REMAINING_FRACTION: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One part taken, the rest reported: a single complement.'},
+  FRAC_E_COUNT_PARTS: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One division, asked as a count of equal parts.'},
   FRAC_E_2: {band: 'easy', criteria: [], routine: ['REPEATED_OPERATION'],
     why: 'Two successive fractions of one number.'},
   FRAC_M_3: {band: 'easy', criteria: [], routine: ['REPEATED_OPERATION'],
@@ -404,6 +431,13 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'RC2.9.4-B3. Two unit rates from two amount-and-time pairs, then a difference. Two divisions and a subtraction in sequence.'},
   RATE_M_HOURS_FROM_MINUTE_RATE: {band: 'medium', criteria: [], routine: ['FIXED_PIPELINE'],
     why: 'RC2.9.4-B3. Volume ÷ rate gives minutes; minutes ÷ 60 gives hours. Division then conversion, in the stated order.'},
+  // RC2.9.5 §4.
+  RATE_E_UNIT_PRICE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One division: the unit value asked for in its own right.'},
+  RATE_E_BUDGET_COUNT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One division read the other way: a budget turned into a count.'},
+  RATE_E_BETTER_DEAL: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Two independent unit prices and a comparison.'},
   RATE_E_DIRECT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Rate then scale.'},
   RATE_E_TIME: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -420,6 +454,13 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'The unknown rate appears in two different times whose difference is what is given, so nothing divides out; the solver must recognise a product of two numbers a known distance apart and search the factor pairs.'},
 
   // ------------------------------------------------------------ combined_rate
+  // RC2.9.5 §4.
+  COMB_E_SHARE_OF_OUTPUT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One rate × time; the second rate is there to be set aside.'},
+  COMB_E_TIME_FOR_TARGET: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Add two rates, divide the target by the sum: two steps on one relationship.'},
+  COMB_E_ONE_ALONE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One subtraction: the joint rate is the sum, read backwards.'},
   COMB_E_OUTPUT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Rates add, then multiply by time.'},
   COMB_E_THREE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -507,6 +548,13 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Twice a prime; one division away.'},
   ODD_M_CUBES: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Perfect cubes; one familiar list away.'},
+  // RC2.9.5 §4. The same set, two jobs the EASY band did not offer: naming the
+  // rule, and admitting a member to it. The rule is one of the plain ones and
+  // the numbers stay small, so the reading is immediate.
+  ODD_E_PROPERTY: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One salient property, four small numbers: the rule is read off the set rather than derived.'},
+  ODD_E_EXTEND: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. The rule is inferred from three small numbers and applied forward to one candidate.'},
   ODD_M_PROPERTY: {band: 'medium', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'RC2.8-4. The property is not stated and has to be found, but every shown number confirms it, so the search is short. What it adds is the answer class: a property, not a member.'},
   ODD_M_EXTEND: {band: 'medium', criteria: [], routine: ['SINGLE_FORMULA'],
@@ -517,6 +565,13 @@ export const TEMPLATE_STRUCTURE = Object.freeze({
     why: 'Triangular numbers; a second search layer, but a single stated property once found.'},
 
   // -------------------------------------------------------------- profit_loss
+  // RC2.9.5 §4.
+  PL_E_SELL_PRICE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. One percentage and one addition.'},
+  PL_E_COST_FROM_PROFIT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. The same relationship read backwards from the profit amount.'},
+  PL_E_BETTER_SALE: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
+    why: 'RC2.9.5 §4. Two independent percentages and a comparison.'},
   PL_E_PROFIT: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],
     why: 'Difference, then a percentage of the cost.'},
   PL_E_LOSS: {band: 'easy', criteria: [], routine: ['SINGLE_FORMULA'],

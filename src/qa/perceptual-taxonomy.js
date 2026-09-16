@@ -80,6 +80,24 @@ export const TASK_BY_TARGET = Object.freeze({
   valueForTargetAverage: t('REQUIRED_INPUT', 'MEMBER_VALUE'),
   // RC2.9.4-B2.
   meanOfList: t('FORWARD_COMPUTE', 'AVERAGE'),
+  // RC2.9.5 §4.
+  totalFromMean: t('DECOMPOSE_COMBINED', 'QUANTITY'),
+  outputOverDays: t('FORWARD_COMPUTE', 'QUANTITY'),
+  partOfQuantity: t('SHARE_PROPORTIONALLY', 'QUANTITY'),
+  remainingAmountAfterOnePart: t('FIND_REMAINDER', 'QUANTITY'),
+  partCount: t('DECOMPOSE_COMBINED', 'COUNT'),
+  shareOfJointOutput: t('DECOMPOSE_COMBINED', 'QUANTITY'),
+  unitPriceFromTotal: t('DECOMPOSE_COMBINED', 'MONEY'),
+  sellPriceFromRate: t('FORWARD_COMPUTE', 'MONEY'),
+  costFromProfitAmount: t('RECOVER_ORIGINAL', 'MONEY'),
+  largerProfitAmount: t('COMPARE_ALTERNATIVES', 'MONEY'),
+  countWithinBudget: t('REQUIRED_INPUT', 'COUNT'),
+  cheaperUnitPrice: t('COMPARE_ALTERNATIVES', 'MONEY'),
+  timeForJointTarget: t('REQUIRED_INPUT', 'DURATION'),
+  otherRateFromJoint: t('DECOMPOSE_COMBINED', 'RATE'),
+  remainingDays: t('FIND_REMAINDER', 'DURATION'),
+  countFromMean: t('DECOMPOSE_COMBINED', 'COUNT'),
+  higherMean: t('COMPARE_ALTERNATIVES', 'AVERAGE'),
   missingMember: t('DECOMPOSE_COMBINED', 'MEMBER_VALUE'),
 
   // --- speed ----------------------------------------------------------------
@@ -154,6 +172,10 @@ export const TASK_BY_TARGET = Object.freeze({
 
   // --- percentages and profit/loss -----------------------------------------
   percentOfValue: t('FORWARD_COMPUTE', 'QUANTITY'),
+  // RC2.9.5 §4.
+  percentFromParts: t('FORWARD_COMPUTE', 'PERCENT'),
+  wholeFromPercent: t('RECOVER_ORIGINAL', 'QUANTITY'),
+  largerDiscountValue: t('COMPARE_ALTERNATIVES', 'MONEY'),
   originalFromFinal: t('REVERSE_RECOVER', 'MONEY'),
   originalFromTwoChanges: t('REVERSE_RECOVER', 'MONEY'),
   costFromSellPrice: t('REVERSE_RECOVER', 'MONEY'),
@@ -266,6 +288,29 @@ export const TASK_BY_TARGET = Object.freeze({
  * template knows the shape of the situation it is telling.
  */
 export const INFO_STRUCTURE_BY_TEMPLATE = Object.freeze({
+  // RC2.9.5 §5. Layout is a perceptual axis, so the new EASY items say which
+  // layout they use: the setting before the numbers, the given inside the
+  // question sentence, two configurations side by side.
+  PL_E_SELL_PRICE: 'DIRECT_GIVENS',
+  PL_E_COST_FROM_PROFIT: 'GIVEN_INSIDE_THE_QUESTION',
+  PL_E_BETTER_SALE: 'GIVENS_LISTED_THEN_ASK',
+  RATE_E_UNIT_PRICE: 'CONTEXT_THEN_NUMBERS',
+  RATE_E_BUDGET_COUNT: 'GIVEN_INSIDE_THE_QUESTION',
+  RATE_E_BETTER_DEAL: 'TWO_CONFIGURATIONS',
+  COMB_E_SHARE_OF_OUTPUT: 'TWO_CONFIGURATIONS',
+  COMB_E_TIME_FOR_TARGET: 'CONTEXT_THEN_NUMBERS',
+  COMB_E_ONE_ALONE: 'GIVENS_LISTED_THEN_ASK',
+  FRAC_E_PART_OF: 'VALUE_AS_RELATION',
+  FRAC_E_REMAINING_FRACTION: 'REMAINDER_AFTER_PARTS',
+  FRAC_E_COUNT_PARTS: 'PARTITION_OF_WHOLE',
+  WORK_E_OUTPUT_IN_DAYS: 'CONTEXT_THEN_NUMBERS',
+  WORK_E_REMAINING_DAYS: 'REMAINDER_AFTER_PARTS',
+  AVG_E_TOTAL_FROM_MEAN: 'GIVENS_LISTED_THEN_ASK',
+  AVG_E_COUNT_FROM_MEAN: 'GIVEN_INSIDE_THE_QUESTION',
+  AVG_E_COMPARE_MEANS: 'TWO_CONFIGURATIONS',
+  PCT_E_SHARE_PERCENT: 'CONTEXT_THEN_NUMBERS',
+  PCT_E_WHOLE: 'GIVEN_INSIDE_THE_QUESTION',
+  PCT_E_WHICH_OFFER: 'TWO_CONFIGURATIONS',
   // RC2.9-4. Sequences were all one layout — «a run of terms» — and the layout
   // axis is what the scheduler spreads on, so eighteen sequence ideas sat behind
   // three layout slots and a fifty-question session reached about three of them.
@@ -310,6 +355,7 @@ export const INFO_STRUCTURE_BY_TEMPLATE = Object.freeze({
   ODD_M_PRIME2: 'SET_DISPLAY', ODD_M_CUBES: 'SET_DISPLAY', ODD_H_SQ_MINUS: 'SET_DISPLAY',
   ODD_H_TRIANGULAR: 'SET_DISPLAY',
   ODD_M_PROPERTY: 'RULE_CHOICE', ODD_M_EXTEND: 'SET_EXTENSION',
+  ODD_E_PROPERTY: 'RULE_CHOICE', ODD_E_EXTEND: 'SET_EXTENSION',
 
   REL_E_BETWEEN: 'RELATIONAL_STATEMENTS', REL_E_CHAIN: 'RELATIONAL_STATEMENTS',
   REL_M_CHAIN6: 'RELATIONAL_STATEMENTS', REL_M_CONFIRM: 'RELATIONAL_STATEMENTS',

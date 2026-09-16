@@ -15,7 +15,13 @@ export function generatePercentages({difficulty, rng, seed, engineVersion, telem
     ['PCT_M_SUCCESSIVE', successiveChange],
     ['PCT_H_REVERSE_CHAIN', reverseSuccessive],
     ['PCT_H_MIXTURE', mixtureConcentration],
-    ['PCT_H_TWO_GROUP_CHANGE', twoGroupOppositeChange]
+    ['PCT_H_TWO_GROUP_CHANGE', twoGroupOppositeChange],
+    // RC2.9.5 §4-§5. Three EASY jobs the band did not hold: reading a share AS
+    // a percentage, recovering the whole from a stated part, and comparing two
+    // offers. Each changes what is asked and how the givens are laid out.
+    ['PCT_E_SHARE_PERCENT', shareAsPercent],
+    ['PCT_E_WHOLE', wholeFromPart],
+    ['PCT_E_WHICH_OFFER', whichOfferSavesMore]
   ], pinTemplate)(ctx);
 }
 
@@ -628,5 +634,174 @@ function twoGroupOppositeChange(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, stageCount: 3, arithmeticBurden: 5},
     textParams: {essentialParams: ['total', 'risePercent', 'fallPercent', 'newTotal']}
+  });
+}
+
+/**
+ * RC2.9.5 §4. EASY: express a part of a whole AS a percentage.
+ *
+ * PCT_E_OF goes the other way — a percentage of a value — and a solver who can
+ * do one does not automatically do this: the division comes first and the
+ * hundred comes last. Laid out CONTEXT_THEN_NUMBERS: the setting is stated,
+ * then the two counts, then the question.
+ */
+function shareAsPercent(ctx) {
+  const {rng} = ctx;
+  const whole = rng.pick([20, 25, 40, 50, 80, 200]);
+  const pct = rng.pick([10, 20, 25, 40, 60, 75]);
+  const part = whole * pct / 100;
+  if (!Number.isInteger(part) || part === whole) return resample(ctx, shareAsPercent);
+  const scene = rng.pick([
+    {ar: 'في صف من الطلاب', unit: 'student', verb: 'يشاركون في نادي العلوم', pron: 'منهم'},
+    {ar: 'في مكتبة صغيرة', unit: 'book', verb: 'مصنفة في العلوم', pron: 'منها'},
+    {ar: 'في موقف للسيارات', unit: 'car', verb: 'بيضاء اللون', pron: 'منها'}
+  ]);
+  const correct = pct;
+  const distractors = usable(ctx, [
+    mk(part, 'USED_GIVEN_VALUE_AS_ANSWER', `العدد المعطى ${part}`),
+    mk(whole - part, 'TOOK_COMPLEMENT_PERCENT', `${whole} − ${part}`),
+    mk(100 - pct, 'TOOK_COMPLEMENT_PERCENT', `100 − ${pct}`),
+    mk(Math.round(whole / part * 100) / 100, 'REVERSED_DIRECT_PROPORTION', `${whole} ÷ ${part}`),
+    mk(part * 100 / (whole - part), 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${part} × 100 ÷ (${whole} − ${part})`),
+    mk(part / whole, 'MISSED_ONE_STAGE', `${part} ÷ ${whole} — النسبة كجزء من واحد، بلا ضرب في 100`),
+    mk(part * 100 / whole / 2, 'APPLIED_STEP_TWICE', `${part} × 100 ÷ ${whole} ÷ 2`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx,
+    `${scene.ar}، العدد الكلي ${u(whole, scene.unit)}، ${scene.pron} ${u(part, scene.unit)} ${scene.verb}. كم نسبة هذا الجزء من العدد الكلي؟`);
+  return buildBase(ctx, {
+    templateId: 'PCT_E_SHARE_PERCENT',
+    subskill: 'التعبير عن جزء من كل بنسبة مئوية',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: v => `${num(v)}%`,
+    steps: [
+      `الجزء على الكل = ${part} ÷ ${whole} = ${num(part / whole)}.`,
+      `النسبة المئوية = ${num(part / whole)} × 100 = ${correct}%.`
+    ],
+    howToStart: 'اقسم الجزء على الكل أولًا، ثم اضرب في 100.',
+    remember: 'النسبة المئوية = (الجزء ÷ الكل) × 100، والترتيب مهم.',
+    fastMethod: `${part} من ${whole} تعني ${part} ÷ ${whole} ثم × 100.`,
+    estimatedSteps: 2, conceptTags: ['percentage', 'part-of-whole'],
+    parameters: {wholeCount: whole, partCount: part},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, whole), mul(part, 100))]},
+    askedUnknown: 'percentFromParts', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'PART_AS_PERCENT', targetMisconception: 'REVERSED_DIRECT_PROPORTION',
+      wrongMethodValue: Math.round(whole / part * 100) / 100,
+      degenerateWhen: [{when: part === whole, note: 'the part is the whole'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['wholeCount', 'partCount']}
+  });
+}
+
+/**
+ * RC2.9.5 §4. EASY: recover the whole from a part stated as a percentage.
+ *
+ * The direction of inference is reversed — the unknown is the base rather than
+ * the part — and the given sits INSIDE the question sentence rather than in a
+ * setting before it.
+ */
+function wholeFromPart(ctx) {
+  const {rng} = ctx;
+  const pct = rng.pick([10, 20, 25, 40, 50]);
+  const whole = rng.pick([40, 60, 80, 120, 160, 200, 240]);
+  const part = whole * pct / 100;
+  if (!Number.isInteger(part) || part === whole || part === pct) return resample(ctx, wholeFromPart);
+  const correct = whole;
+  const distractors = usable(ctx, [
+    mk(part, 'USED_GIVEN_VALUE_AS_ANSWER', `القيمة المعطاة ${part}`),
+    mk(part * pct / 100, 'REVERSED_DIRECT_PROPORTION', `${part} × ${pct} ÷ 100`),
+    mk(part * 100 / (100 - pct), 'TOOK_COMPLEMENT_PERCENT', `${part} × 100 ÷ (100 − ${pct})`),
+    mk(part + pct, 'TREATED_PERCENT_AS_AMOUNT', `${part} + ${pct}`),
+    mk(part * 2, 'APPLIED_STEP_TWICE', `${part} × 2`),
+    mk(part * 100 / pct / 2, 'APPLIED_STEP_TWICE', `${part} × 100 ÷ ${pct} ÷ 2`),
+    mk(part / pct, 'MISSED_ONE_STAGE', `${part} ÷ ${pct} — قيمة 1% بلا ضرب في 100`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx, `إذا كان ${pct}% من عدد يساوي ${part}، فما هذا العدد؟`);
+  return buildBase(ctx, {
+    templateId: 'PCT_E_WHOLE',
+    subskill: 'إيجاد العدد الكلي من نسبة معلومة منه',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: plain,
+    steps: [
+      `العلاقة: العدد الكلي × ${pct} ÷ 100 = ${part}.`,
+      `العدد الكلي = ${part} × 100 ÷ ${pct} = ${correct}.`
+    ],
+    howToStart: 'اكتب العلاقة كما تقرأها، ثم اعكسها لتصل إلى العدد الكلي.',
+    remember: 'الجزء معلوم والنسبة معلومة، فالكل = الجزء ÷ النسبة × 100.',
+    fastMethod: pct === 50 ? `النصف معلوم، فالعدد ضعف ${part}.` : `${part} × 100 ÷ ${pct}.`,
+    estimatedSteps: 2, conceptTags: ['percentage', 'recover-original'],
+    parameters: {percent: pct, partValue: part},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, pct), mul(part, 100))]},
+    askedUnknown: 'wholeFromPercent', direction: 'reverse', stageCount: 2,
+    pedagogy: {
+      targetSkill: 'WHOLE_FROM_PERCENT', targetMisconception: 'REVERSED_DIRECT_PROPORTION',
+      wrongMethodValue: part * pct / 100,
+      degenerateWhen: [{when: pct === 100, note: 'the part is the whole'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, reverseReasoning: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['percent', 'partValue']}
+  });
+}
+
+/**
+ * RC2.9.5 §4. EASY: compare two offers and say which saves more.
+ *
+ * The job is COMPARE_ALTERNATIVES rather than compute-and-report: both
+ * discounts are computed, and what is asked is the larger saving. The layout is
+ * TWO_CONFIGURATIONS — two shops, one question.
+ */
+function whichOfferSavesMore(ctx) {
+  const {rng} = ctx;
+  const aBase = rng.pick([120, 150, 200, 250, 300]);
+  const aPct = rng.pick([10, 20, 25]);
+  const bBase = rng.pick([80, 90, 140, 180, 220].filter(v => v !== aBase));
+  const bPct = rng.pick([20, 30, 40, 50].filter(v => v !== aPct));
+  const aSave = aBase * aPct / 100;
+  const bSave = bBase * bPct / 100;
+  if (!Number.isInteger(aSave) || !Number.isInteger(bSave) || aSave === bSave) return resample(ctx, whichOfferSavesMore);
+  const correct = Math.max(aSave, bSave);
+  const distractors = usable(ctx, [
+    mk(Math.min(aSave, bSave), 'SOLVED_ONE_CONDITION_ONLY', `${Math.min(aSave, bSave)} — قيمة الخصم الأصغر`),
+    mk(aSave + bSave, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${aSave} + ${bSave}`),
+    mk(Math.abs(aSave - bSave), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(aSave, bSave)} − ${Math.min(aSave, bSave)}`),
+    mk(Math.max(aPct, bPct), 'TREATED_PERCENT_AS_AMOUNT', `النسبة الأكبر ${Math.max(aPct, bPct)}`),
+    mk(aBase * bPct / 100, 'SWAPPED_THE_TWO_UNKNOWNS', `${aBase} × ${bPct} ÷ 100`),
+    mk(bBase * aPct / 100, 'SWAPPED_THE_TWO_UNKNOWNS', `${bBase} × ${aPct} ÷ 100`),
+    mk(Math.max(aBase, bBase) - correct, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${Math.max(aBase, bBase)} − ${correct}`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx,
+    `في المتجر الأول خصم ${aPct}% على سلعة ثمنها ${u(aBase, 'dirham')}، وفي المتجر الثاني خصم ${bPct}% على سلعة ثمنها ${u(bBase, 'dirham')}. ما قيمة الخصم الأكبر بالدرهم؟`);
+  return buildBase(ctx, {
+    templateId: 'PCT_E_WHICH_OFFER',
+    subskill: 'المقارنة بين قيمتي خصم',
+    difficulty: 'easy',
+    question: stem.text,
+    stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `خصم المتجر الأول = ${aBase} × ${aPct} ÷ 100 = ${aSave}.`,
+      `خصم المتجر الثاني = ${bBase} × ${bPct} ÷ 100 = ${bSave}.`,
+      `الأكبر منهما هو ${correct}.`
+    ],
+    howToStart: 'احسب قيمة كل خصم بالدرهم، ثم قارن بين القيمتين لا بين النسبتين.',
+    remember: 'النسبة الأكبر لا تعني خصمًا أكبر: القيمة تعتمد على السعر أيضًا.',
+    fastMethod: 'قيمة الخصم = السعر × النسبة ÷ 100، ثم قارن.',
+    estimatedSteps: 3, conceptTags: ['percentage', 'comparison'],
+    parameters: {firstPrice: aBase, firstPercent: aPct, secondPrice: bBase, secondPercent: bPct},
+    oracle: {kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, 100), correct === aSave ? mul(aBase, aPct) : mul(bBase, bPct))]},
+    askedUnknown: 'largerDiscountValue', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'COMPARE_DISCOUNT_VALUES', targetMisconception: 'TREATED_PERCENT_AS_AMOUNT',
+      wrongMethodValue: Math.max(aPct, bPct),
+      degenerateWhen: [{when: aSave === bSave, note: 'the two discounts are equal'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 3, arithmeticBurden: 3},
+    textParams: {essentialParams: ['firstPrice', 'firstPercent', 'secondPrice', 'secondPercent']}
   });
 }

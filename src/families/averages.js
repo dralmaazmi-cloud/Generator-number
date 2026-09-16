@@ -27,7 +27,13 @@ export function generateAverages({difficulty, rng, seed, engineVersion, telemetr
     ['AVG_H_SPLIT_SIZE', splitGroupSize],
     // RC2.9.4-B2. The definition, and a missing member.
     ['AVG_E_LIST', meanOfList],
-    ['AVG_E_MISSING_VALUE', missingMember]
+    ['AVG_E_MISSING_VALUE', missingMember],
+    // RC2.9.5 §4-§5. The mean read in the other two directions — the total it
+    // implies and the count it implies — and a comparison of two means. Each
+    // asks for a different quantity and lays its givens out differently.
+    ['AVG_E_TOTAL_FROM_MEAN', totalFromMean],
+    ['AVG_E_COUNT_FROM_MEAN', countFromMean],
+    ['AVG_E_COMPARE_MEANS', compareTwoMeans]
   ], pinTemplate)(ctx);
 }
 
@@ -818,5 +824,147 @@ function missingMember(ctx) {
     },
     complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 3},
     textParams: {essentialParams: ['average']}
+  });
+}
+
+/**
+ * RC2.9.5 §4. EASY: the total a mean implies.
+ *
+ * AVG_E_LIST goes from the members to the mean; this goes from the mean to the
+ * total, which is the step every harder average question rests on. Laid out
+ * GIVENS_LISTED_THEN_ASK: the two givens are stated as a list, then the
+ * question.
+ */
+function totalFromMean(ctx) {
+  const {rng} = ctx;
+  const count = rng.pick([4, 5, 6, 8]);
+  const mean = rng.pick([7, 9, 12, 15, 18, 20, 24]);
+  const correct = count * mean;
+  if (correct > 300) return resample(ctx, totalFromMean);
+  const distractors = usable(ctx, [
+    mk(mean, 'USED_GIVEN_VALUE_AS_ANSWER', `المتوسط المعطى ${mean}`),
+    mk(count, 'USED_GIVEN_VALUE_AS_ANSWER', `عدد القيم المعطى ${count}`),
+    mk(mean / count, 'REVERSED_DIRECT_PROPORTION', `${mean} ÷ ${count}`),
+    mk(mean + count, 'TREATED_PERCENT_AS_AMOUNT', `${mean} + ${count}`),
+    mk(mean * (count - 1), 'OFF_BY_ONE_STEP', `${mean} × (${count} − 1)`),
+    mk(mean * (count + 1), 'OFF_BY_ONE_STEP', `${mean} × (${count} + 1)`),
+    mk(mean * count * 2, 'APPLIED_STEP_TWICE', `${mean} × ${count} × 2`)
+  ]);
+  return buildBase(ctx, {
+    templateId: 'AVG_E_TOTAL_FROM_MEAN',
+    subskill: 'إيجاد المجموع من المتوسط وعدد القيم',
+    difficulty: 'easy',
+    question: `المعطيات: ${count} قيم، متوسطها الحسابي ${mean}. المطلوب: مجموع هذه القيم.`,
+    correct, distractors, format: plain,
+    steps: [`المجموع = المتوسط × عدد القيم = ${mean} × ${count} = ${correct}.`],
+    howToStart: 'اقرأ تعريف المتوسط من طرفه الآخر: المجموع = المتوسط × العدد.',
+    remember: 'المتوسط ليس قيمة مستقلة: هو المجموع موزعًا على عدد القيم.',
+    fastMethod: `${mean} × ${count}.`,
+    estimatedSteps: 1, conceptTags: ['average', 'recover-total'],
+    parameters: {valueCount: count, meanValue: mean},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, mul(mean, count))]},
+    askedUnknown: 'totalFromMean', stageCount: 1,
+    pedagogy: {
+      targetSkill: 'TOTAL_FROM_MEAN', targetMisconception: 'REVERSED_DIRECT_PROPORTION',
+      wrongMethodValue: mean / count
+    },
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {essentialParams: ['valueCount', 'meanValue']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: how many values a total and a mean imply. */
+function countFromMean(ctx) {
+  const {rng} = ctx;
+  const count = rng.pick([4, 5, 6, 8, 10]);
+  const mean = rng.pick([6, 8, 11, 14, 16, 21]);
+  const total = count * mean;
+  if (total > 300 || count === mean) return resample(ctx, countFromMean);
+  const correct = count;
+  const distractors = usable(ctx, [
+    mk(mean, 'SWAPPED_THE_TWO_UNKNOWNS', `المتوسط المعطى ${mean}`),
+    mk(total, 'USED_GIVEN_VALUE_AS_ANSWER', `المجموع المعطى ${total}`),
+    mk(total * mean, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${total} × ${mean}`),
+    mk(total - mean, 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `${total} − ${mean}`),
+    mk(count + 1, 'OFF_BY_ONE_STEP', `${total} ÷ ${mean} + 1`),
+    mk(count - 1, 'OFF_BY_ONE_STEP', `${total} ÷ ${mean} − 1`),
+    mk(total / mean / 2, 'APPLIED_STEP_TWICE', `${total} ÷ ${mean} ÷ 2`)
+  ], {maxDecimals: 2});
+  return buildBase(ctx, {
+    templateId: 'AVG_E_COUNT_FROM_MEAN',
+    subskill: 'إيجاد عدد القيم من المجموع والمتوسط',
+    difficulty: 'easy',
+    question: `مجموعة من القيم مجموعها ${total} ومتوسطها الحسابي ${mean}، فكم عدد قيم هذه المجموعة؟`,
+    correct, distractors, format: plain,
+    steps: [`عدد القيم = المجموع ÷ المتوسط = ${total} ÷ ${mean} = ${correct}.`],
+    howToStart: 'المتوسط يقسم المجموع على عدد القيم، فاقسم المجموع على المتوسط.',
+    remember: 'من بين الثلاثة — المجموع والمتوسط والعدد — أي اثنين يعطيان الثالث.',
+    fastMethod: `${total} ÷ ${mean}.`,
+    estimatedSteps: 1, conceptTags: ['average', 'recover-count'],
+    parameters: {totalValue: total, meanValue: mean},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, mean), total)]},
+    askedUnknown: 'countFromMean', stageCount: 1,
+    pedagogy: {
+      targetSkill: 'COUNT_FROM_MEAN', targetMisconception: 'SWAPPED_THE_TWO_UNKNOWNS',
+      wrongMethodValue: mean, degenerateWhen: [{when: count === mean, note: 'count equals the mean'}]
+    },
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, reverseReasoning: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {essentialParams: ['totalValue', 'meanValue']}
+  });
+}
+
+/**
+ * RC2.9.5 §4. EASY: compare two means.
+ *
+ * The job is COMPARE_ALTERNATIVES: two small groups are given by their totals
+ * and sizes, and what is asked is the higher mean — which is not the larger
+ * total, and that is the whole point of the item.
+ */
+function compareTwoMeans(ctx) {
+  const {rng} = ctx;
+  const aCount = rng.pick([4, 5, 6]);
+  const bCount = rng.pick([3, 4, 5, 8].filter(v => v !== aCount));
+  const aMean = rng.pick([8, 10, 12, 15]);
+  const bMean = rng.pick([6, 9, 11, 14, 18].filter(v => v !== aMean));
+  const aTotal = aCount * aMean, bTotal = bCount * bMean;
+  if (aTotal === bTotal || aMean === bMean) return resample(ctx, compareTwoMeans);
+  // The item is only worth asking when the bigger total is not the bigger mean.
+  if ((aTotal > bTotal) === (aMean > bMean)) return resample(ctx, compareTwoMeans);
+  const correct = Math.max(aMean, bMean);
+  const distractors = usable(ctx, [
+    mk(Math.min(aMean, bMean), 'SOLVED_ONE_CONDITION_ONLY', `${Math.min(aMean, bMean)} — متوسط المجموعة الأخرى`),
+    mk(Math.max(aTotal, bTotal), 'STOPPED_AT_INTERMEDIATE_TOTAL', `المجموع الأكبر ${Math.max(aTotal, bTotal)}`),
+    mk((aMean + bMean) / 2, 'USED_ARITHMETIC_MEAN_OF_AVERAGES', `(${aMean} + ${bMean}) ÷ 2`),
+    mk((aTotal + bTotal) / (aCount + bCount), 'ANSWERED_THE_OTHER_COMPONENT', `(${aTotal} + ${bTotal}) ÷ (${aCount} + ${bCount})`),
+    mk(Math.abs(aMean - bMean), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(aMean, bMean)} − ${Math.min(aMean, bMean)}`),
+    mk(Math.max(aCount, bCount), 'SWAPPED_THE_TWO_UNKNOWNS', `عدد أفراد المجموعة الأكبر ${Math.max(aCount, bCount)}`),
+    mk(Math.max(aMean, bMean) * 2, 'APPLIED_STEP_TWICE', `${Math.max(aMean, bMean)} × 2`)
+  ], {maxDecimals: 2});
+  return buildBase(ctx, {
+    templateId: 'AVG_E_COMPARE_MEANS',
+    subskill: 'المقارنة بين متوسطي مجموعتين',
+    difficulty: 'easy',
+    question: `المجموعة الأولى ${aCount} قيم مجموعها ${aTotal}، والمجموعة الثانية ${bCount} قيم مجموعها ${bTotal}. ما المتوسط الأعلى بين المجموعتين؟`,
+    correct, distractors, format: plain,
+    steps: [
+      `متوسط الأولى = ${aTotal} ÷ ${aCount} = ${aMean}.`,
+      `متوسط الثانية = ${bTotal} ÷ ${bCount} = ${bMean}.`,
+      `الأعلى منهما ${correct}.`
+    ],
+    howToStart: 'احسب متوسط كل مجموعة على حدة قبل أن تقارن.',
+    remember: 'المجموع الأكبر لا يعني متوسطًا أعلى: عدد القيم يغيّر النتيجة.',
+    fastMethod: 'قسمة كل مجموع على عدد قيمه، ثم المقارنة.',
+    estimatedSteps: 3, conceptTags: ['average', 'comparison'],
+    parameters: {firstCount: aCount, firstTotal: aTotal, secondCount: bCount, secondTotal: bTotal},
+    oracle: {kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, correct === aMean ? aCount : bCount), correct === aMean ? aTotal : bTotal)]},
+    askedUnknown: 'higherMean', stageCount: 3,
+    pedagogy: {
+      targetSkill: 'COMPARE_MEANS', targetMisconception: 'STOPPED_AT_INTERMEDIATE_TOTAL',
+      wrongMethodValue: Math.max(aTotal, bTotal),
+      degenerateWhen: [{when: aMean === bMean, note: 'the two means are equal'}]
+    },
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 3, arithmeticBurden: 3},
+    textParams: {essentialParams: ['firstCount', 'firstTotal', 'secondCount', 'secondTotal']}
   });
 }

@@ -27,7 +27,13 @@ export function generateOddOneOut({difficulty, rng, seed, engineVersion, telemet
     ['ODD_H_TRIANGULAR', triangularPattern],
     // RC2.8-4. Two jobs over a number set that are not «find the intruder».
     ['ODD_M_PROPERTY', sharedProperty],
-    ['ODD_M_EXTEND', extendTheSet]
+    ['ODD_M_EXTEND', extendTheSet],
+    // RC2.9.5 §4. The same set, two jobs a solver does not do at EASY today:
+    // naming the rule, and admitting a new member to it. Both are EASY here
+    // because the rule is drawn from the most discoverable ones only — a
+    // multiple of a small number, a square — and the numbers stay small.
+    ['ODD_E_PROPERTY', easySharedProperty],
+    ['ODD_E_EXTEND', easyExtendTheSet]
   ], pinTemplate)(ctx);
 }
 
@@ -520,4 +526,128 @@ function extendTheSet(ctx) {
  */
 function resampleOdd(ctx, self) {
   return resample(ctx, self);
+}
+
+/** The rules a solver can name at a glance: salience 1, small numbers. */
+function plainRules() {
+  const PLAIN = new Set(['square', 'mult3', 'mult4', 'mult5', 'mult6']);
+  return approvedRules().filter(r => PLAIN.has(r.id));
+}
+
+/**
+ * RC2.9.5 §4. EASY: name the property the set shares.
+ *
+ * The task is IDENTIFY_RULE rather than IDENTIFY_MEMBER — the solver reads the
+ * set and says what it is, instead of finding what does not fit — and the
+ * information is a RULE_CHOICE rather than a bare set display. The rule is one
+ * of the plain ones and every number is under a hundred, so the reading is
+ * immediate; what makes it a question is that three of the wrong readings hold
+ * for part of the set.
+ */
+function easySharedProperty(ctx) {
+  const {rng} = ctx;
+  const rule = rng.pick(plainRules());
+  const set = valuesFor(rule, rng.int(2, 12), 4);
+  if (!set || set.at(-1) > 99) return resampleOdd(ctx, easySharedProperty);
+  const shared = sharedRulesOf(set);
+  if (shared.length !== 1 || shared[0].id !== rule.id) return resampleOdd(ctx, easySharedProperty);
+  const partial = approvedRules()
+    .filter(r => r.id !== rule.id && !/^digits\d+$/.test(r.id))
+    .map(r => ({rule: r, hits: set.filter(n => r.test(n)).length}))
+    .filter(x => x.hits >= 1 && x.hits < set.length);
+  if (partial.length < 5) return resampleOdd(ctx, easySharedProperty);
+  const chosen = rng.sample(partial, 5);
+  const distractors = usable(ctx, chosen.map(x =>
+    mk(x.rule.ar, 'CHECKED_ONLY_PART_OF_THE_SET',
+      `«${x.rule.ar}» تنطبق على ${x.hits} من أعداد المجموعة فقط`)));
+  return buildBase(ctx, {
+    templateId: 'ODD_E_PROPERTY',
+    subskill: 'تسمية الخاصية المشتركة في مجموعة صغيرة',
+    difficulty: 'easy',
+    question: 'أي خاصية تصحّ على كل أعداد المجموعة الآتية؟',
+    displayExpression: set.join('، '),
+    correct: rule.ar, distractors, format: v => String(v),
+    steps: [
+      `نختبر الخاصية على كل عدد: ${set.map(n => `${n} ✓`).join('، ')}.`,
+      `«${rule.ar}» وحدها تصحّ على الأعداد الأربعة كلها.`
+    ],
+    howToStart: 'اختبر كل خيار على أصغر عدد وأكبر عدد؛ ما يفشل على أحدهما يسقط.',
+    remember: 'الخاصية المشتركة تصحّ على كل عضو، لا على أغلبهم.',
+    fastMethod: 'ابدأ بأبسط خاصية تراها في العدد الأول ثم اختبرها على الباقي.',
+    estimatedSteps: 1, conceptTags: ['number-properties', 'rule-discovery'],
+    parameters: {numbers: set},
+    commutative: {numberSet: canonicalNumberSet(set)},
+    orderInsensitive: ['numbers'],
+    oracle: {kind: 'property', mode: 'shared', numbers: set, intendedRuleId: rule.id},
+    askedUnknown: 'sharedProperty', stageCount: 1,
+    pedagogy: {
+      targetSkill: `NAME_RULE_${rule.id}`, targetMisconception: 'CHECKED_ONLY_PART_OF_THE_SET',
+      wrongMethodValue: chosen[0].rule.ar
+    },
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {essentialParams: ['numbers']}
+  });
+}
+
+/**
+ * RC2.9.5 §4. EASY: admit a new member to the set.
+ *
+ * SET_EXTENSION, and the direction of inference is the opposite of the
+ * intruder question: the rule is inferred from the set and then applied
+ * forward to a candidate, rather than tested against each shown member.
+ */
+function easyExtendTheSet(ctx) {
+  const {rng} = ctx;
+  // A multiple rule cannot carry this job: the arithmetic continuation of a run
+  // of multiples IS the next multiple, so the wrong route and the key coincide.
+  // The rules here grow by a changing step, which is exactly what makes
+  // «continue the last gap» a wrong answer worth offering.
+  const EXTENDABLE = new Set(['square', 'triangular', 'pronic']);
+  const rule = rng.pick(approvedRules().filter(r => EXTENDABLE.has(r.id)));
+  const set = valuesFor(rule, rng.int(2, 10), 4);
+  if (!set || set.at(-1) > 120) return resampleOdd(ctx, easyExtendTheSet);
+  const shared = sharedRulesOf(set);
+  if (shared.length !== 1 || shared[0].id !== rule.id) return resampleOdd(ctx, easyExtendTheSet);
+  const next = valuesFor(rule, set.at(-1) + 1, 1);
+  if (!next) return resampleOdd(ctx, easyExtendTheSet);
+  const correct = next[0];
+  const gap = set.at(-1) - set.at(-2);
+  const near = [set.at(-1) + gap, correct - 1, correct + 1, correct + 2, correct - 2, correct + 3, correct - 3]
+    .filter(v => v > 0 && !rule.test(v) && !set.includes(v));
+  const unique = [...new Set(near)];
+  if (unique.length < 5) return resampleOdd(ctx, easyExtendTheSet);
+  const offered = unique.slice(0, 5);
+  const distractors = usable(ctx, offered.map((v, i) =>
+    mk(v, i === 0 ? 'CONTINUED_THE_SET_ARITHMETICALLY' : 'NEAR_MISS_ON_THE_PROPERTY',
+      i === 0 ? `${set.at(-1)} + ${gap}` : `${v} لا يحقق الخاصية «${rule.ar}»`)));
+  return buildBase(ctx, {
+    templateId: 'ODD_E_EXTEND',
+    subskill: 'ضمّ عدد إلى مجموعة بخاصية واحدة واضحة',
+    difficulty: 'easy',
+    question: 'أعداد المجموعة الآتية تشترك في خاصية واحدة. أي عدد يصلح لضمّه إليها؟',
+    displayExpression: set.join('، '),
+    correct, distractors, format: v => String(v),
+    steps: [
+      `الأعداد الثلاثة كلها تحقق «${rule.ar}».`,
+      `نختبر الخيارات بالخاصية نفسها، فيحققها ${correct} وحده.`
+    ],
+    howToStart: 'سمِّ الخاصية من المجموعة أولًا، ثم اختبر بها الخيارات.',
+    remember: 'الفرق الثابت بين الأعداد لا يعني أن القاعدة جمع؛ اختبر الخاصية نفسها.',
+    fastMethod: `ابحث عن أصغر عدد بعد ${set.at(-1)} يحقق «${rule.ar}».`,
+    estimatedSteps: 1, conceptTags: ['number-properties', 'set-extension'],
+    parameters: {numbers: set, joiningNumber: correct},
+    commutative: {numberSet: canonicalNumberSet(set)},
+    orderInsensitive: ['numbers'],
+    oracle: {kind: 'property', mode: 'extend', numbers: set, intendedRuleId: rule.id,
+      options: [correct, ...offered]},
+    askedUnknown: 'setMember', stageCount: 1,
+    pedagogy: {
+      targetSkill: `EXTEND_BY_RULE_${rule.id}`, targetMisconception: 'CONTINUED_THE_SET_ARITHMETICALLY',
+      wrongMethodValue: set.at(-1) + gap,
+      degenerateWhen: [{when: rule.test(set.at(-1) + gap),
+        note: 'the arithmetic continuation would also satisfy the property'}]
+    },
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {derivedFromParams: ['joiningNumber'], essentialParams: ['numbers']}
+  });
 }

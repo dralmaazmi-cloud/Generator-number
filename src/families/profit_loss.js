@@ -8,6 +8,11 @@ export function generateProfitLoss({difficulty, rng, seed, engineVersion, teleme
   // src/qa/structure.js, so a template cannot sit in a band nobody adjudicated.
   return bandPool(rng, 'profit_loss', difficulty, [
     ['PL_E_PROFIT', simpleProfit],
+    // RC2.9.5 §4. Three EASY jobs: the selling price a profit rate implies, the
+    // cost recovered from a profit amount, and two sales compared.
+    ['PL_E_SELL_PRICE', sellPriceFromProfitRate],
+    ['PL_E_COST_FROM_PROFIT', costFromProfitAmount],
+    ['PL_E_BETTER_SALE', betterSale],
     ['PL_E_LOSS', simpleLoss],
     ['PL_H_REVERSE', reverseSellingPrice],
     ['PL_M_TOTAL_COST', totalCostProfit],
@@ -715,5 +720,138 @@ function remainderMarginToTarget(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, reverseReasoning: 1, stageCount: 3, arithmeticBurden: 6},
     textParams: {essentialParams: ['totalCost', 'soldCost', 'firstPercent', 'targetPercent']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: the selling price a cost and a profit rate imply. */
+function sellPriceFromProfitRate(ctx) {
+  const {rng} = ctx;
+  const cost = rng.pick([80, 120, 150, 200, 240, 300]);
+  const pct = rng.pick([10, 15, 20, 25]);
+  const profit = cost * pct / 100;
+  if (!Number.isInteger(profit)) return resample(ctx, sellPriceFromProfitRate);
+  const correct = cost + profit;
+  const distractors = usable(ctx, [
+    mk(profit, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${cost} × ${pct} ÷ 100`),
+    mk(cost, 'USED_GIVEN_VALUE_AS_ANSWER', `التكلفة المعطاة ${cost}`),
+    mk(cost - profit, 'APPLIED_OPERATION_IN_REVERSE', `${cost} − ${profit}`),
+    mk(cost + pct, 'TREATED_PERCENT_AS_AMOUNT', `${cost} + ${pct}`),
+    mk(cost * pct, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${cost} × ${pct}`),
+    mk(cost + profit * 2, 'APPLIED_STEP_TWICE', `${cost} + ${profit} × 2`),
+    mk(cost / (1 - pct / 100), 'REVERSED_DIRECT_PROPORTION', `${cost} ÷ (100 − ${pct}) × 100`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx, `اشترى تاجر سلعة بمبلغ ${u(cost, 'dirham')} وباعها برِبح ${pct}% من التكلفة. بكم باعها؟`);
+  return buildBase(ctx, {
+    templateId: 'PL_E_SELL_PRICE',
+    subskill: 'سعر البيع من التكلفة ونسبة الربح',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `الربح = ${cost} × ${pct} ÷ 100 = ${profit}.`,
+      `سعر البيع = ${cost} + ${profit} = ${correct}.`
+    ],
+    howToStart: 'احسب مقدار الربح من التكلفة، ثم أضفه إليها.',
+    remember: 'نسبة الربح تُحسب من التكلفة، وسعر البيع = التكلفة + الربح.',
+    fastMethod: `${cost} + (${cost} × ${pct} ÷ 100).`,
+    estimatedSteps: 2, conceptTags: ['profit', 'forward'],
+    parameters: {costPrice: cost, profitPercent: pct},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, 100), mul(cost, 100 + pct))]},
+    askedUnknown: 'sellPriceFromRate', stageCount: 2,
+    pedagogy: {targetSkill: 'SELL_PRICE_FROM_PROFIT', targetMisconception: 'STOPPED_AT_INTERMEDIATE_TOTAL',
+      wrongMethodValue: profit},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['costPrice', 'profitPercent']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: the cost recovered from a profit AMOUNT and its rate. */
+function costFromProfitAmount(ctx) {
+  const {rng} = ctx;
+  const pct = rng.pick([10, 20, 25, 50]);
+  const cost = rng.pick([60, 80, 120, 160, 200, 240]);
+  const profit = cost * pct / 100;
+  if (!Number.isInteger(profit) || profit === cost || profit === pct) return resample(ctx, costFromProfitAmount);
+  const correct = cost;
+  const distractors = usable(ctx, [
+    mk(profit, 'USED_GIVEN_VALUE_AS_ANSWER', `مقدار الربح المعطى ${profit}`),
+    mk(profit * pct / 100, 'REVERSED_DIRECT_PROPORTION', `${profit} × ${pct} ÷ 100`),
+    mk(cost + profit, 'USED_NEW_TOTAL', `${cost} + ${profit}`),
+    mk(profit + pct, 'TREATED_PERCENT_AS_AMOUNT', `${profit} + ${pct}`),
+    mk(profit * 100 / (100 + pct), 'USED_ORIGINAL_TOTAL', `${profit} × 100 ÷ (100 + ${pct})`),
+    mk(correct / 2, 'APPLIED_STEP_TWICE', `${profit} × 100 ÷ ${pct} ÷ 2`),
+    mk(profit / pct, 'MISSED_ONE_STAGE', `${profit} ÷ ${pct}`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx, `باع تاجر سلعة فربح ${u(profit, 'dirham')}، وكان ربحه ${pct}% من التكلفة. كم كانت التكلفة؟`);
+  return buildBase(ctx, {
+    templateId: 'PL_E_COST_FROM_PROFIT',
+    subskill: 'التكلفة من مقدار الربح ونسبته',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `العلاقة: التكلفة × ${pct} ÷ 100 = ${profit}.`,
+      `التكلفة = ${profit} × 100 ÷ ${pct} = ${correct}.`
+    ],
+    howToStart: 'اكتب العلاقة بين الربح والتكلفة، ثم اعكسها.',
+    remember: 'مقدار الربح جزء من التكلفة، فالتكلفة أكبر منه دائمًا.',
+    fastMethod: `${profit} × 100 ÷ ${pct}.`,
+    estimatedSteps: 2, conceptTags: ['profit', 'recover-original'],
+    parameters: {profitAmount: profit, profitPercent: pct},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, pct), mul(profit, 100))]},
+    askedUnknown: 'costFromProfitAmount', direction: 'reverse', stageCount: 2,
+    pedagogy: {targetSkill: 'COST_FROM_PROFIT', targetMisconception: 'REVERSED_DIRECT_PROPORTION',
+      wrongMethodValue: profit * pct / 100},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, reverseReasoning: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['profitAmount', 'profitPercent']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: which of two sales made more money. */
+function betterSale(ctx) {
+  const {rng} = ctx;
+  const aCost = rng.pick([100, 150, 200, 250]);
+  const aPct = rng.pick([10, 20, 30]);
+  const bCost = rng.pick([80, 120, 180, 300].filter(v => v !== aCost));
+  const bPct = rng.pick([15, 25, 40, 50].filter(v => v !== aPct));
+  const aProfit = aCost * aPct / 100, bProfit = bCost * bPct / 100;
+  if (!Number.isInteger(aProfit) || !Number.isInteger(bProfit) || aProfit === bProfit) return resample(ctx, betterSale);
+  if ((aPct > bPct) === (aProfit > bProfit)) return resample(ctx, betterSale);
+  const correct = Math.max(aProfit, bProfit);
+  const distractors = usable(ctx, [
+    mk(Math.min(aProfit, bProfit), 'SOLVED_ONE_CONDITION_ONLY', `ربح الصفقة الأخرى ${Math.min(aProfit, bProfit)}`),
+    mk(aProfit + bProfit, 'STOPPED_AT_INTERMEDIATE_TOTAL', `${aProfit} + ${bProfit}`),
+    mk(Math.max(aPct, bPct), 'TREATED_PERCENT_AS_AMOUNT', `النسبة الأعلى ${Math.max(aPct, bPct)}`),
+    mk(Math.abs(aProfit - bProfit), 'USED_DIFFERENCE_AS_ANSWER', `${Math.max(aProfit, bProfit)} − ${Math.min(aProfit, bProfit)}`),
+    mk(Math.max(aCost, bCost), 'SWAPPED_THE_TWO_UNKNOWNS', `أكبر تكلفة ${Math.max(aCost, bCost)}`),
+    mk(aCost * bPct / 100, 'RATE_APPLIED_TO_WRONG_COUNT', `${aCost} × ${bPct} ÷ 100`),
+    mk(bCost * aPct / 100, 'RATE_APPLIED_TO_WRONG_COUNT', `${bCost} × ${aPct} ÷ 100`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx,
+    `المعطيات: صفقة أولى تكلفتها ${u(aCost, 'dirham')} وربحها ${aPct}%؛ صفقة ثانية تكلفتها ${u(bCost, 'dirham')} وربحها ${bPct}%. المطلوب: أكبر ربح بالدرهم بين الصفقتين.`);
+  return buildBase(ctx, {
+    templateId: 'PL_E_BETTER_SALE',
+    subskill: 'المقارنة بين ربحي صفقتين',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `ربح الأولى = ${aCost} × ${aPct} ÷ 100 = ${aProfit}.`,
+      `ربح الثانية = ${bCost} × ${bPct} ÷ 100 = ${bProfit}.`,
+      `الأكبر منهما ${correct}.`
+    ],
+    howToStart: 'احسب ربح كل صفقة بالدرهم قبل أن تقارن بين النسبتين.',
+    remember: 'النسبة الأعلى لا تعني ربحًا أكبر: التكلفة تغيّر المقدار.',
+    fastMethod: 'التكلفة × النسبة ÷ 100 لكل صفقة، ثم المقارنة.',
+    estimatedSteps: 3, conceptTags: ['profit', 'comparison'],
+    parameters: {firstCost: aCost, firstPercent: aPct, secondCost: bCost, secondPercent: bPct},
+    oracle: {kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, 100), correct === aProfit ? mul(aCost, aPct) : mul(bCost, bPct))]},
+    askedUnknown: 'largerProfitAmount', stageCount: 3,
+    pedagogy: {targetSkill: 'COMPARE_PROFITS', targetMisconception: 'TREATED_PERCENT_AS_AMOUNT',
+      wrongMethodValue: Math.max(aPct, bPct),
+      degenerateWhen: [{when: aProfit === bProfit, note: 'the two profits are equal'}]},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 3, arithmeticBurden: 3},
+    textParams: {essentialParams: ['firstCost', 'firstPercent', 'secondCost', 'secondPercent']}
   });
 }

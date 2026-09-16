@@ -5,7 +5,7 @@ import {PERSONS} from '../compose/entities.js';
 const MALE_NAMES = PERSONS.filter(p => p.g === 'm').map(p => p.w);
 import {structuralBandOf} from '../qa/structure.js';
 
-const FRACTION_TEMPLATE_IDS = ['FRAC_E_2', 'FRAC_M_3', 'FRAC_H_4', 'FRAC_M_REMAIN', 'FRAC_M_REMAIN_VALUE', 'FRAC_M_START_FROM_REMAINDER', 'FRAC_M_COMPARE_SHARES'];
+const FRACTION_TEMPLATE_IDS = ['FRAC_E_2', 'FRAC_M_3', 'FRAC_H_4', 'FRAC_M_REMAIN', 'FRAC_M_REMAIN_VALUE', 'FRAC_M_START_FROM_REMAINDER', 'FRAC_M_COMPARE_SHARES', 'FRAC_E_PART_OF', 'FRAC_E_REMAINING_FRACTION', 'FRAC_E_COUNT_PARTS'];
 const FRACTION_BANDS = new Set(FRACTION_TEMPLATE_IDS.map(structuralBandOf));
 
 const FRACS = [
@@ -53,6 +53,13 @@ export function generateFractions({difficulty, rng, seed, engineVersion, telemet
     FRAC_M_START_FROM_REMAINDER: startFromRemainder, FRAC_M_COMPARE_SHARES: compareShares};
   if (pinTemplate && MEDIUM[pinTemplate]) return MEDIUM[pinTemplate](ctx);
   if (!pinTemplate && difficulty === 'medium') return rng.pick(Object.values(MEDIUM))(ctx);
+  // RC2.9.5 §4. Three EASY constructions that are not a chain of fractions:
+  // one part of a quantity, the fraction that SURVIVES a single taking, and how
+  // many parts of a stated size a quantity holds.
+  const EASY = {FRAC_E_PART_OF: partOfQuantity, FRAC_E_REMAINING_FRACTION: remainingFractionEasy,
+    FRAC_E_COUNT_PARTS: countParts};
+  if (pinTemplate && EASY[pinTemplate]) return EASY[pinTemplate](ctx);
+  if (!pinTemplate && difficulty === 'easy' && rng.bool()) return rng.pick(Object.values(EASY))(ctx);
   // RC2.8-2. Every other template id in this family IS its chain length, so a
   // pin on the id pins the length; everything else still varies with the seed.
   const PIN_LENGTH = {FRAC_E_2: 2, FRAC_M_3: 3, FRAC_H_4: 4};
@@ -520,5 +527,154 @@ function compareShares(ctx) {
     },
     complexityFactors: {reasoningTransformations: 3, conceptCount: 2, stageCount: 2, arithmeticBurden: 3},
     textParams: {essentialParams: ['total']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: one part of a quantity, stated as a relation rather than a numeral. */
+function partOfQuantity(ctx) {
+  const {rng} = ctx;
+  // The fraction is SAID, so only fractions Arabic says in one word or one
+  // construct are used: «ثلث»، «ربع»، «ثلثا»، «ثلاثة أرباع». «2 أسداس» is not
+  // Arabic, and a numeral in front of a fraction word is what produced it.
+  const FRACTIONS = [
+    {n: 1, den: 3, ar: 'ثلث'}, {n: 1, den: 4, ar: 'ربع'}, {n: 1, den: 5, ar: 'خُمس'},
+    {n: 1, den: 6, ar: 'سدس'}, {n: 1, den: 8, ar: 'ثُمن'},
+    {n: 2, den: 3, ar: 'ثُلثا'}, {n: 3, den: 4, ar: 'ثلاثة أرباع'}, {n: 2, den: 5, ar: 'خُمسا'}
+  ];
+  const chosen = rng.pick(FRACTIONS);
+  const den = chosen.den, num_ = chosen.n, said = chosen.ar;
+  const unitCount = rng.pick([12, 18, 24, 30, 36, 40, 48]);
+  if (unitCount % den !== 0) return resample(ctx, partOfQuantity);
+  const one = unitCount / den;
+  const correct = one * num_;
+  if (correct === unitCount) return resample(ctx, partOfQuantity);
+  const distractors = usable(ctx, [
+    mk(one, 'MISSED_ONE_STAGE', `${unitCount} ÷ ${den}`),
+    mk(unitCount - correct, 'ANSWERED_THE_OTHER_COMPONENT', `${unitCount} − ${correct}`),
+    mk(unitCount, 'USED_GIVEN_VALUE_AS_ANSWER', `الكمية المعطاة ${unitCount}`),
+    mk(unitCount * den / num_, 'REVERSED_DIRECT_PROPORTION', `${unitCount} × ${den} ÷ ${num_}`),
+    mk(correct + one, 'OFF_BY_ONE_STEP', `${correct} + ${one}`),
+    mk(correct - one, 'OFF_BY_ONE_STEP', `${correct} − ${one}`),
+    mk(unitCount / (den + num_), 'RATE_APPLIED_TO_WRONG_COUNT', `${unitCount} ÷ (${den} + ${num_})`),
+    mk(one * (num_ + 1), 'OFF_BY_ONE_STEP', `${one} × (${num_} + 1)`),
+    mk(unitCount - one, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `${unitCount} − ${one}`),
+    mk(correct * 2, 'APPLIED_STEP_TWICE', `${correct} × 2`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx, `في مخزن ${u(unitCount, 'box')}. أُخذ ${said} ما فيه. كم صندوقًا أُخذ؟`);
+  return buildBase(ctx, {
+    templateId: 'FRAC_E_PART_OF',
+    subskill: 'حساب جزء كسري من كمية',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('box'),
+    steps: [
+      `الجزء الواحد = ${unitCount} ÷ ${den} = ${one}.`,
+      `المأخوذ = ${one} × ${num_} = ${correct}.`
+    ],
+    howToStart: 'اقسم الكمية على المقام لتعرف الجزء الواحد، ثم اضرب في البسط.',
+    remember: 'الكسر من كمية: قسمة على المقام ثم ضرب في البسط.',
+    fastMethod: `${unitCount} ÷ ${den} × ${num_}.`,
+    estimatedSteps: 2, conceptTags: ['fractions', 'part-of-quantity'],
+    parameters: {quantity: unitCount, denominator: den, numerator: num_},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, den), mul(unitCount, num_))]},
+    askedUnknown: 'partOfQuantity', stageCount: 2,
+    pedagogy: {
+      // With a unit fraction the «stopped at one part» route IS the answer, so
+      // the item measures the complement mistake instead. The target moves
+      // rather than the fraction being banned.
+      targetSkill: 'FRACTION_OF_QUANTITY',
+      targetMisconception: num_ === 1 ? 'ANSWERED_THE_OTHER_COMPONENT' : 'MISSED_ONE_STAGE',
+      wrongMethodValue: num_ === 1 ? unitCount - correct : one,
+      degenerateWhen: [{when: num_ === den, note: 'the part is the whole'}]},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {derivedFromParams: ['denominator', 'numerator'], essentialParams: ['quantity']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: the fraction that SURVIVES one taking — the complement, not the part. */
+function remainingFractionEasy(ctx) {
+  const {rng} = ctx;
+  const den = rng.pick([4, 5, 6, 8, 10]);
+  const num_ = rng.pick([1, 2, 3]).valueOf();
+  if (num_ >= den) return resample(ctx, remainingFractionEasy);
+  const total = den * rng.pick([6, 8, 9, 12]);
+  const taken = total / den * num_;
+  const correct = total - taken;
+  const NAMES = {4: 'ربع', 5: 'خُمس', 6: 'سدس', 8: 'ثُمن', 10: 'عُشر'};
+  const PLURAL = {4: 'أرباع', 5: 'أخماس', 6: 'أسداس', 8: 'أثمان', 10: 'أعشار'};
+  const said = num_ === 1 ? NAMES[den] : `${num_} ${PLURAL[den]}`;
+  const distractors = usable(ctx, [
+    mk(taken, 'ANSWERED_THE_OTHER_COMPONENT', `${total} ÷ ${den} × ${num_}`),
+    mk(total, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `الكمية الكلية ${total}`),
+    mk(total / den, 'MISSED_ONE_STAGE', `${total} ÷ ${den}`),
+    mk(total - total / den, 'OFF_BY_ONE_STEP', `${total} − ${total} ÷ ${den}`),
+    mk(correct + total / den, 'OFF_BY_ONE_STEP', `${correct} + ${total} ÷ ${den}`),
+    mk(correct / 2, 'APPLIED_STEP_TWICE', `${correct} ÷ 2`),
+    mk(total * num_ / den / 2, 'APPLIED_STEP_TWICE', `${total} × ${num_} ÷ ${den} ÷ 2`),
+    mk(total - taken * 2, 'APPLIED_STEP_TWICE', `${total} − ${taken} × 2`),
+    mk(total + taken, 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `${total} + ${taken}`),
+    mk(taken * (den - num_), 'RATE_APPLIED_TO_WRONG_COUNT', `${taken} × (${den} − ${num_})`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx, `عند بائع ${u(total, 'dirham')}. أنفق ${said} هذا المبلغ. كم درهمًا بقي معه؟`);
+  return buildBase(ctx, {
+    templateId: 'FRAC_E_REMAINING_FRACTION',
+    subskill: 'حساب الباقي بعد أخذ جزء كسري واحد',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('dirham'),
+    steps: [
+      `المأخوذ = ${total} ÷ ${den} × ${num_} = ${taken}.`,
+      `الباقي = ${total} − ${taken} = ${correct}.`
+    ],
+    howToStart: 'احسب الجزء المأخوذ أولًا، ثم اطرحه من الكل.',
+    remember: 'السؤال عن الباقي لا عن المأخوذ: الخطوة الأخيرة طرح.',
+    fastMethod: `${total} − (${total} ÷ ${den} × ${num_}).`,
+    estimatedSteps: 2, conceptTags: ['fractions', 'remainder'],
+    parameters: {amount: total, denominator: den, numerator: num_, takenAmount: taken},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, sub(total, taken))]},
+    askedUnknown: 'remainingAmountAfterOnePart', stageCount: 2,
+    pedagogy: {targetSkill: 'COMPLEMENT_OF_A_FRACTION', targetMisconception: 'ANSWERED_THE_OTHER_COMPONENT',
+      wrongMethodValue: taken},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {derivedFromParams: ['takenAmount', 'denominator', 'numerator'], essentialParams: ['amount']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: how many parts of a stated size a quantity holds. */
+function countParts(ctx) {
+  const {rng} = ctx;
+  const partSize = rng.pick([2, 3, 4, 5, 6]);
+  const parts = rng.pick([5, 6, 7, 8, 9, 12]);
+  const total = partSize * parts;
+  if (parts === partSize || total > 80) return resample(ctx, countParts);
+  const correct = parts;
+  const distractors = usable(ctx, [
+    mk(partSize, 'SWAPPED_THE_TWO_UNKNOWNS', `حجم الجزء المعطى ${partSize}`),
+    mk(total, 'USED_GIVEN_VALUE_AS_ANSWER', `الكمية المعطاة ${total}`),
+    mk(total - partSize, 'ADDED_WHERE_A_DIFFERENCE_BELONGS', `${total} − ${partSize}`),
+    mk(parts + 1, 'OFF_BY_ONE_STEP', `${total} ÷ ${partSize} + 1`),
+    mk(parts - 1, 'OFF_BY_ONE_STEP', `${total} ÷ ${partSize} − 1`),
+    mk(total * partSize, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${total} × ${partSize}`),
+    mk(parts / 2, 'APPLIED_STEP_TWICE', `${total} ÷ ${partSize} ÷ 2`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx, `لدى مزارع ${u(total, 'kg')} من التمر، ويعبئها في صناديق يسع كل صندوق ${u(partSize, 'kg')}. كم صندوقًا يحتاج؟`);
+  return buildBase(ctx, {
+    templateId: 'FRAC_E_COUNT_PARTS',
+    subskill: 'عدد الأجزاء المتساوية داخل كمية',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('box'),
+    steps: [`عدد الصناديق = ${total} ÷ ${partSize} = ${correct}.`],
+    howToStart: 'اقسم الكمية الكلية على سعة الصندوق الواحد.',
+    remember: 'عدد الأجزاء = الكمية ÷ حجم الجزء، لا العكس.',
+    fastMethod: `${total} ÷ ${partSize}.`,
+    estimatedSteps: 1, conceptTags: ['fractions', 'partition'],
+    parameters: {quantity: total, partSize},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, partSize), total)]},
+    askedUnknown: 'partCount', stageCount: 1,
+    pedagogy: {targetSkill: 'HOW_MANY_PARTS', targetMisconception: 'SWAPPED_THE_TWO_UNKNOWNS',
+      wrongMethodValue: partSize, degenerateWhen: [{when: parts === partSize, note: 'parts equal the part size'}]},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {essentialParams: ['quantity', 'partSize']}
   });
 }

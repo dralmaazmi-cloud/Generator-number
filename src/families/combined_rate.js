@@ -19,7 +19,13 @@ export function generateCombinedRate({difficulty, rng, seed, engineVersion, tele
     ['COMB_M_SOLO_THEN', soloThenTogether],
     ['COMB_H_STAGED', stagedTarget],
     ['COMB_H_TWO_PUMPS', twoPumpsFromStages],
-    ['COMB_H_TEAM_SIZE', teamSizeFromTotal]
+    ['COMB_H_TEAM_SIZE', teamSizeFromTotal],
+    // RC2.9.5 §4. Three EASY readings of a joint rate the band did not hold:
+    // one partner's share of what was produced, the time a target needs, and
+    // one partner's own rate recovered from the joint one.
+    ['COMB_E_SHARE_OF_OUTPUT', shareOfOutput],
+    ['COMB_E_TIME_FOR_TARGET', timeForTarget],
+    ['COMB_E_ONE_ALONE', oneRateFromJoint]
   ], pinTemplate)(ctx);
 }
 
@@ -562,5 +568,128 @@ function teamSizeFromTotal(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, reverseReasoning: 1, equationSolving: 1, stageCount: 3, arithmeticBurden: 5},
     textParams: {essentialParams: ['ratePerWorker', 'firstHours', 'secondHours', 'totalOutput']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: how much of the joint output one partner made. */
+function shareOfOutput(ctx) {
+  const {rng} = ctx;
+  const aRate = rng.pick([4, 5, 6, 8]);
+  const bRate = rng.pick([3, 7, 9, 10].filter(v => v !== aRate));
+  const hours = rng.pick([3, 4, 5, 6]);
+  const correct = aRate * hours;
+  const joint = (aRate + bRate) * hours;
+  const distractors = usable(ctx, [
+    mk(joint, 'STOPPED_AT_INTERMEDIATE_TOTAL', `(${aRate} + ${bRate}) × ${hours}`),
+    mk(bRate * hours, 'ANSWERED_THE_OTHER_COMPONENT', `${bRate} × ${hours}`),
+    mk(joint / 2, 'ASSUMED_EQUAL_SHARES', `(${aRate} + ${bRate}) × ${hours} ÷ 2`),
+    mk(aRate, 'STOPPED_AT_UNIT_RATE', `المعدل المعطى ${aRate}`),
+    mk(aRate * (hours - 1), 'OFF_BY_ONE_STEP', `${aRate} × (${hours} − 1)`),
+    mk(aRate * (hours + 1), 'OFF_BY_ONE_STEP', `${aRate} × (${hours} + 1)`),
+    mk(joint - correct * 2, 'APPLIED_STEP_TWICE', `${joint} − ${correct} × 2`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx,
+    `تعمل آلتان معًا ${u(hours, 'hour')}. تنتج الأولى ${u(aRate, 'piecePerHour')} وتنتج الثانية ${u(bRate, 'piecePerHour')}. كم قطعة أنتجت الآلة الأولى وحدها؟`);
+  return buildBase(ctx, {
+    templateId: 'COMB_E_SHARE_OF_OUTPUT',
+    subskill: 'نصيب أحد الطرفين من الإنتاج المشترك',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('piece'),
+    steps: [`إنتاج الآلة الأولى = ${aRate} × ${hours} = ${correct}.`],
+    howToStart: 'السؤال عن آلة واحدة، فاضرب معدلها وحدها في الزمن.',
+    remember: 'الإنتاج المشترك لا يلزم لحساب نصيب طرف واحد.',
+    fastMethod: `${aRate} × ${hours}.`,
+    estimatedSteps: 1, conceptTags: ['combined-rate', 'share'],
+    parameters: {firstRate: aRate, secondRate: bRate, hours},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, mul(aRate, hours))]},
+    askedUnknown: 'shareOfJointOutput', stageCount: 1,
+    pedagogy: {targetSkill: 'ONE_PARTNER_OUTPUT', targetMisconception: 'STOPPED_AT_INTERMEDIATE_TOTAL',
+      wrongMethodValue: joint},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {essentialParams: ['firstRate', 'secondRate', 'hours']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: the time a joint rate needs to reach a stated target. */
+function timeForTarget(ctx) {
+  const {rng} = ctx;
+  const aRate = rng.pick([3, 4, 6, 7]);
+  const bRate = rng.pick([2, 5, 8, 9].filter(v => v !== aRate));
+  const together = aRate + bRate;
+  const hours = rng.pick([4, 5, 6, 7, 8]);
+  const target = together * hours;
+  const correct = hours;
+  const distractors = usable(ctx, [
+    mk(target / aRate, 'USED_ONLY_FIRST_RATE', `${target} ÷ ${aRate}`),
+    mk(target / bRate, 'USED_ONLY_SECOND_RATE', `${target} ÷ ${bRate}`),
+    mk(together, 'STOPPED_AT_UNIT_RATE', `${aRate} + ${bRate}`),
+    mk(target, 'USED_GIVEN_VALUE_AS_ANSWER', `الهدف المعطى ${target}`),
+    mk(hours + 1, 'OFF_BY_ONE_STEP', `${target} ÷ ${together} + 1`),
+    mk(hours - 1, 'OFF_BY_ONE_STEP', `${target} ÷ ${together} − 1`),
+    mk(target / together / 2, 'APPLIED_STEP_TWICE', `${target} ÷ ${together} ÷ 2`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx,
+    `في مشغل خياطة تنتج العاملة الأولى ${u(aRate, 'shirtPerHour')} وتنتج الثانية ${u(bRate, 'shirtPerHour')}، وتعملان معًا. كم ساعة يلزمهما لإنتاج ${u(target, 'shirt')}؟`);
+  return buildBase(ctx, {
+    templateId: 'COMB_E_TIME_FOR_TARGET',
+    subskill: 'زمن بلوغ هدف بمعدل مشترك',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('hour'),
+    steps: [
+      `المعدل المشترك = ${aRate} + ${bRate} = ${together}.`,
+      `الزمن = ${target} ÷ ${together} = ${correct}.`
+    ],
+    howToStart: 'اجمع المعدلين أولًا، ثم اقسم الهدف على المجموع.',
+    remember: 'المعدلات المتوازية تُجمع، والزمن يُحسب بعد الجمع لا قبله.',
+    fastMethod: `${target} ÷ (${aRate} + ${bRate}).`,
+    estimatedSteps: 2, conceptTags: ['combined-rate', 'time'],
+    parameters: {firstRate: aRate, secondRate: bRate, targetOutput: target},
+    oracle: {kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, add(aRate, bRate)), target)]},
+    askedUnknown: 'timeForJointTarget', stageCount: 2,
+    pedagogy: {targetSkill: 'JOINT_RATE_TIME', targetMisconception: 'USED_ONLY_FIRST_RATE',
+      wrongMethodValue: target / aRate},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['firstRate', 'secondRate', 'targetOutput']}
+  });
+}
+
+/** RC2.9.5 §4. EASY: one rate recovered from the joint rate and the other. */
+function oneRateFromJoint(ctx) {
+  const {rng} = ctx;
+  const known = rng.pick([4, 5, 6, 7, 9]);
+  const correct = rng.pick([3, 8, 10, 12].filter(v => v !== known));
+  const joint = known + correct;
+  const distractors = usable(ctx, [
+    mk(joint, 'USED_GIVEN_VALUE_AS_ANSWER', `المعدل المشترك المعطى ${joint}`),
+    mk(known, 'ANSWERED_THE_OTHER_COMPONENT', `المعدل المعطى ${known}`),
+    mk(joint / 2, 'ASSUMED_EQUAL_SHARES', `${joint} ÷ 2`),
+    mk(joint * known, 'MULTIPLIED_INSTEAD_OF_DIVIDED', `${joint} × ${known}`),
+    mk(joint / known, 'REVERSED_DIRECT_PROPORTION', `${joint} ÷ ${known}`),
+    mk(correct + 1, 'OFF_BY_ONE_STEP', `${joint} − ${known} + 1`),
+    mk(correct - 1, 'OFF_BY_ONE_STEP', `${joint} − ${known} − 1`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx,
+    `المعطيات: آلتا تعبئة تنتجان معًا ${u(joint, 'bottlePerHour')}؛ الأولى وحدها تنتج ${u(known, 'bottlePerHour')}. المطلوب: معدل الآلة الثانية وحدها.`);
+  return buildBase(ctx, {
+    templateId: 'COMB_E_ONE_ALONE',
+    subskill: 'استخراج معدل آلة من المعدل المشترك',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('bottlePerHour'),
+    steps: [`معدل الثانية = ${joint} − ${known} = ${correct}.`],
+    howToStart: 'المعدل المشترك مجموع المعدلين، فاطرح المعروف منه.',
+    remember: 'ما يُجمع في الاتجاه الأول يُطرح في الاتجاه العكسي.',
+    fastMethod: `${joint} − ${known}.`,
+    estimatedSteps: 1, conceptTags: ['combined-rate', 'decompose'],
+    parameters: {jointRate: joint, knownRate: known},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(add(X, known), joint)]},
+    askedUnknown: 'otherRateFromJoint', stageCount: 1,
+    pedagogy: {targetSkill: 'RATE_FROM_JOINT', targetMisconception: 'ASSUMED_EQUAL_SHARES',
+      wrongMethodValue: joint / 2},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, reverseReasoning: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {essentialParams: ['jointRate', 'knownRate']}
   });
 }

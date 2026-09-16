@@ -17,7 +17,11 @@ export function generateWorkTime({difficulty, rng, seed, engineVersion, telemetr
     ['WORK_H_JOINT_SOLO', jointThenSoloTime],
     ['WORK_H_EXTRA_WORKERS', extraWorkersSaveDays],
     ['WORK_H_THREE_PAIRS', threePairwiseRates],
-    ['WORK_H_SOLO_GAP', pairWithSoloGap]
+    ['WORK_H_SOLO_GAP', pairWithSoloGap],
+    // RC2.9.5 §4. Work seen as an amount produced, and work seen as what is
+    // LEFT — neither of which the EASY band asked for.
+    ['WORK_E_OUTPUT_IN_DAYS', outputInDays],
+    ['WORK_E_REMAINING_DAYS', remainingDays]
   ], pinTemplate)(ctx);
 }
 
@@ -760,5 +764,99 @@ function pairWithSoloGap(ctx) {
     },
     complexityFactors: {reasoningTransformations: 4, conceptCount: 3, equationSolving: 1, conditionCount: 2, reverseReasoning: 1, stageCount: 3, arithmeticBurden: 6},
     textParams: {essentialParams: ['jointDays', 'gapDays']}
+  });
+}
+
+/**
+ * RC2.9.5 §4. EASY: how much is finished in a stated number of days.
+ *
+ * The EASY band asked only for people and days; this asks for the WORK itself,
+ * and the layout puts the setting before the numbers.
+ */
+function outputInDays(ctx) {
+  const {rng} = ctx;
+  const perDay = rng.pick([6, 8, 9, 12, 15]);
+  const days = rng.pick([4, 5, 6, 7]);
+  const correct = perDay * days;
+  const distractors = usable(ctx, [
+    mk(perDay, 'USED_GIVEN_VALUE_AS_ANSWER', `الإنتاج اليومي المعطى ${perDay}`),
+    mk(days, 'USED_GIVEN_VALUE_AS_ANSWER', `عدد الأيام المعطى ${days}`),
+    mk(perDay + days, 'ADDED_INSTEAD_OF_SCALING', `${perDay} + ${days}`),
+    mk(perDay * (days - 1), 'OFF_BY_ONE_STEP', `${perDay} × (${days} − 1)`),
+    mk(perDay * (days + 1), 'OFF_BY_ONE_STEP', `${perDay} × (${days} + 1)`),
+    mk(perDay / days, 'REVERSED_DIRECT_PROPORTION', `${perDay} ÷ ${days}`),
+    mk(perDay * days * 2, 'APPLIED_STEP_TWICE', `${perDay} × ${days} × 2`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx,
+    `في ورشة نجارة ينجز الفريق ${u(perDay, 'piece')} في اليوم الواحد بوتيرة ثابتة. كم قطعة ينجز الفريق في ${u(days, 'day')}؟`);
+  return buildBase(ctx, {
+    templateId: 'WORK_E_OUTPUT_IN_DAYS',
+    subskill: 'حساب الإنتاج خلال عدد من الأيام بمعدل ثابت',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('piece'),
+    steps: [`الإنتاج = المعدل اليومي × عدد الأيام = ${perDay} × ${days} = ${correct}.`],
+    howToStart: 'اضرب ما يُنجز في اليوم في عدد الأيام.',
+    remember: 'المعدل الثابت يعني أن الإنتاج يتناسب طرديًا مع الزمن.',
+    fastMethod: `${perDay} × ${days}.`,
+    estimatedSteps: 1, conceptTags: ['work-rate', 'forward'],
+    parameters: {dailyOutput: perDay, dayCount: days},
+    oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(X, mul(perDay, days))]},
+    askedUnknown: 'outputOverDays', stageCount: 1,
+    pedagogy: {targetSkill: 'RATE_TIMES_TIME', targetMisconception: 'ADDED_INSTEAD_OF_SCALING',
+      wrongMethodValue: perDay + days},
+    complexityFactors: {reasoningTransformations: 1, conceptCount: 1, stageCount: 1, arithmeticBurden: 1},
+    textParams: {essentialParams: ['dailyOutput', 'dayCount']}
+  });
+}
+
+/**
+ * RC2.9.5 §4. EASY: the days that REMAIN.
+ *
+ * FIND_REMAINDER: part of the job is already done and what is asked is what is
+ * left, which is a different reading of the same rate from «how long in all».
+ */
+function remainingDays(ctx) {
+  const {rng} = ctx;
+  const perDay = rng.pick([5, 6, 8, 10]);
+  const totalDays = rng.pick([7, 8, 9, 10, 12]);
+  const donePart = rng.pick([2, 3, 4]).valueOf();
+  if (donePart >= totalDays) return resample(ctx, remainingDays);
+  const total = perDay * totalDays;
+  const done = perDay * donePart;
+  const correct = totalDays - donePart;
+  const distractors = usable(ctx, [
+    mk(totalDays, 'USED_TOTAL_INSTEAD_OF_REMAINDER', `عدد الأيام الكلي ${totalDays}`),
+    mk(donePart, 'USED_ONLY_FIRST_RATE', `عدد الأيام المنقضية ${donePart}`),
+    mk(total - done, 'ANSWERED_THE_OTHER_COMPONENT', `${total} − ${done}`),
+    mk(correct + 1, 'OFF_BY_ONE_STEP', `${totalDays} − ${donePart} + 1`),
+    mk(correct - 1, 'OFF_BY_ONE_STEP', `${totalDays} − ${donePart} − 1`),
+    mk(total / perDay, 'MISSED_ONE_STAGE', `${total} ÷ ${perDay}`),
+    mk(done / perDay, 'MISSED_ONE_STAGE', `${done} ÷ ${perDay}`)
+  ], {maxDecimals: 2});
+  const stem = composeSentences(ctx,
+    `مشروع يحتاج ${u(total, 'piece')} بمعدل ثابت ${u(perDay, 'piece')} في اليوم. أُنجز منه ${u(done, 'piece')}، فكم يومًا بقي لإتمامه؟`);
+  return buildBase(ctx, {
+    templateId: 'WORK_E_REMAINING_DAYS',
+    subskill: 'حساب الأيام المتبقية بعد إنجاز جزء من العمل',
+    difficulty: 'easy',
+    question: stem.text, stemStructure: stem.structure, informationOrder: stem.order,
+    correct, distractors, format: unitFormat('day'),
+    steps: [
+      `المتبقي من العمل = ${total} − ${done} = ${total - done}.`,
+      `الأيام المتبقية = ${total - done} ÷ ${perDay} = ${correct}.`
+    ],
+    howToStart: 'اطرح المنجز من الكل أولًا، ثم اقسم الباقي على المعدل اليومي.',
+    remember: 'السؤال عن المتبقي لا عن الكل: اطرح قبل أن تقسم.',
+    fastMethod: `(${total} − ${done}) ÷ ${perDay}.`,
+    estimatedSteps: 2, conceptTags: ['work-rate', 'remainder'],
+    parameters: {dailyOutput: perDay, totalWork: total, doneWork: done},
+    oracle: {kind: 'constraint', answerKind: 'number',
+      constraints: [eq(mul(X, perDay), sub(total, done))]},
+    askedUnknown: 'remainingDays', stageCount: 2,
+    pedagogy: {targetSkill: 'REMAINING_TIME', targetMisconception: 'USED_TOTAL_INSTEAD_OF_REMAINDER',
+      wrongMethodValue: totalDays},
+    complexityFactors: {reasoningTransformations: 2, conceptCount: 1, stageCount: 2, arithmeticBurden: 2},
+    textParams: {essentialParams: ['dailyOutput', 'totalWork', 'doneWork']}
   });
 }
