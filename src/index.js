@@ -47,7 +47,7 @@ import {generateProfitLoss} from './families/profit_loss.js';
 // records when each identity was last seen rather than that it was seen — and a
 // stored RC2.9.1 history is migrated into it. Callers that only hand the value
 // back are unaffected, which is every caller there is.
-export const ENGINE_VERSION = '1.5.4';
+export const ENGINE_VERSION = '1.5.5';
 
 const GENERATORS = {
   sequences: generateSequences,
