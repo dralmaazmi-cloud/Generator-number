@@ -1,0 +1,63 @@
+{
+  "schema": "rc295-band-split-v1",
+  "declared": [
+    {
+      "value": "easy",
+      "weight": 0.5
+    },
+    {
+      "value": "medium",
+      "weight": 0.4
+    },
+    {
+      "value": "hard",
+      "weight": 0.1
+    }
+  ],
+  "rows": [
+    {
+      "count": 10,
+      "sittings": 120,
+      "delivered": 1200,
+      "easy": 600,
+      "medium": 480,
+      "hard": 120,
+      "easyPct": 50,
+      "mediumPct": 40,
+      "hardPct": 10
+    },
+    {
+      "count": 20,
+      "sittings": 60,
+      "delivered": 1200,
+      "easy": 600,
+      "medium": 480,
+      "hard": 120,
+      "easyPct": 50,
+      "mediumPct": 40,
+      "hardPct": 10
+    },
+    {
+      "count": 30,
+      "sittings": 40,
+      "delivered": 1200,
+      "easy": 600,
+      "medium": 480,
+      "hard": 120,
+      "easyPct": 50,
+      "mediumPct": 40,
+      "hardPct": 10
+    },
+    {
+      "count": 50,
+      "sittings": 24,
+      "delivered": 1200,
+      "easy": 600,
+      "medium": 480,
+      "hard": 120,
+      "easyPct": 50,
+      "mediumPct": 40,
+      "hardPct": 10
+    }
+  ]
+}
