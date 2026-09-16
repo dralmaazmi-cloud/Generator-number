@@ -194,7 +194,10 @@ function conditions() {
         // RC2.7-D: the hard band delivers about thirty-five before the pool of
         // distinct core question ideas runs out, and the core rule is absolute,
         // so an all-hard session is asked for thirty rather than fifty.
-        count: i === 5 ? 30 : 50, difficulty: i === 5 ? 'hard' : 'mixed', family: 'random', seed: `GATE-SESS-${i}`
+        // RC2.9.5 §2. A single-band session is no longer a product mode; the
+        // gate is measurement, so it asks for one in as many words.
+        count: i === 5 ? 30 : 50, difficulty: i === 5 ? 'hard' : 'mixed', bandSession: i === 5,
+        family: 'random', seed: `GATE-SESS-${i}`
       }).questions.length;
     }
     const t = e.getTelemetry();
@@ -216,7 +219,7 @@ function conditions() {
     for (let i = 0; i < 12; i++) {
       try {
         questions += e.generatePractice({count: i % 4 === 3 ? 30 : 50, difficulty: i % 4 === 3 ? 'hard' : 'mixed',
-          family: 'random', seed: `GATE-PATH-${i}`}).questions.length;
+          bandSession: i % 4 === 3, family: 'random', seed: `GATE-PATH-${i}`}).questions.length;
       } catch { exhausted++; }
     }
     // RC2.7-D: nine mixed sessions of fifty and three all-hard of thirty.
@@ -365,7 +368,10 @@ function conditions() {
     // eighteen at EASY across ages, machines, ratios, relational, averages,
     // speed and sequences; eleven at MEDIUM across fractions, calendar, ratios,
     // direct_proportion and unit_rate.
-    return {pass: c.total === 184 && orphans.length === 0,
+    // RC2.9.5: 228. Forty-four constructions, EVERY ONE of them EASY, so the
+    // 50% EASY share of the new mix is met with ideas rather than with repeats.
+    // MEDIUM and HARD are untouched: 88 and 30, exactly as RC2.9.4 left them.
+    return {pass: c.total === 228 && c.byBand.medium === 88 && c.byBand.hard === 30 && orphans.length === 0,
       detail: {templates: c.total, byBand: c.byBand, orphans}};
   });
 
