@@ -131,7 +131,7 @@ function rateThenPercent(ctx) {
   const rate = rng.pick([40, 50, 60, 70]);
   const total = minutes * rate;
   const pct = rng.pick([20, 25, 50]);
-  const {factor, per100, text: factorText} = factorLine(pct, 'up', 'معامل الزيادة');
+  const {factor, text: factorText} = factorLine(pct, 'up', 'معامل الزيادة');
   const newRate = Fraction.from(rate).mul(factor);
   // An equal window would make "apply the percent to the old total" correct,
   // which is exactly the mistake this template exists to catch (Section 10).
@@ -162,7 +162,7 @@ function rateThenPercent(ctx) {
     steps: [
       `المعدل الأصلي في الدقيقة = ${total} ÷ ${minutes} = ${rate}.`,
       factorText,
-      `المعدل الجديد في الدقيقة = ${rate} × ${per100} ÷ 100 = ${newRate.toDecimalString()}.`,
+      `المعدل الجديد في الدقيقة = ${rate} × ${factor.toDecimalString()} = ${newRate.toDecimalString()}.`,
       `الإنتاج خلال ${u(targetMin, 'minute', 'oblique')} = ${newRate.toDecimalString()} × ${targetMin} = ${correct}.`
     ],
     howToStart: 'عدّل معدل الوحدة أولًا ثم طبقه على الزمن الجديد.',
@@ -239,7 +239,7 @@ function rateChangeTarget(ctx) {
   const {rng} = ctx;
   const oldRate = rng.pick([30, 40, 50, 60]);
   const pct = rng.pick([20, 25, 50]);
-  const {factor, per100, text: factorText} = factorLine(pct, 'up', 'معامل التطوير');
+  const {factor, text: factorText} = factorLine(pct, 'up', 'معامل التطوير');
   const newRate = Fraction.from(oldRate).mul(factor);
   if (!newRate.isInteger) return resample(ctx, rateChangeTarget);
   const oldMinutes = rng.pick([6, 8, 10]);
@@ -274,7 +274,7 @@ function rateChangeTarget(ctx) {
     steps: [
       `المعدل الأصلي في الدقيقة = ${initial} ÷ ${oldMinutes} = ${oldRate}.`,
       factorText,
-      `المعدل الجديد في الدقيقة = ${oldRate} × ${per100} ÷ 100 = ${newRateNum}.`,
+      `المعدل الجديد في الدقيقة = ${oldRate} × ${factor.toDecimalString()} = ${newRateNum}.`,
       `الزمن المطلوب بالدقائق = ${target} ÷ ${newRateNum} = ${correct}.`
     ],
     howToStart: 'استخرج المعدل، عدّله، ثم استخدم الهدف الجديد.',
@@ -299,7 +299,7 @@ function twoPhaseRate(ctx) {
   const r1 = rng.pick([20, 25, 30, 40]);
   const h1 = rng.pick([3, 4, 5]);
   const pct = rng.pick([20, 25, 50]);
-  const {factor, per100, text: factorText} = factorLine(pct, 'up', 'معامل الزيادة');
+  const {factor, text: factorText} = factorLine(pct, 'up', 'معامل الزيادة');
   const r2 = Fraction.from(r1).mul(factor);
   if (!r2.isInteger) return resample(ctx, twoPhaseRate);
   const h2 = rng.pick([3, 4, 5].filter(v => v !== h1));
@@ -330,7 +330,7 @@ function twoPhaseRate(ctx) {
     steps: [
       `إنتاج المرحلة الأولى = ${r1} × ${h1} = ${r1 * h1}.`,
       factorText,
-      `المعدل الجديد = ${r1} × ${per100} ÷ 100 = ${r2n}.`,
+      `المعدل الجديد = ${r1} × ${factor.toDecimalString()} = ${r2n}.`,
       `إنتاج المرحلة الثانية = ${r2n} × ${h2} = ${r2n * h2}.`,
       `الإجمالي = ${r1 * h1} + ${r2n * h2} = ${correct}.`
     ],

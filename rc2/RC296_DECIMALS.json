@@ -1,0 +1,197 @@
+{
+  "schema": "rc296-decimals-v1",
+  "sampled": 1840,
+  "nonIntegerAnswers": 12,
+  "nonIntegerRate": 0.00652,
+  "awkwardAnswers": 0,
+  "deepPrecision": 0,
+  "nonIntegerOutsideAllowedFamilies": 0,
+  "allowedFamilies": [
+    "speed",
+    "unit_rate",
+    "combined_rate",
+    "averages"
+  ],
+  "byFamily": [
+    {
+      "family": "speed",
+      "sampled": 120,
+      "nonIntegerAnswers": 9,
+      "awkward": 0,
+      "deep": 0
+    },
+    {
+      "family": "unit_rate",
+      "sampled": 120,
+      "nonIntegerAnswers": 3,
+      "awkward": 0,
+      "deep": 0
+    },
+    {
+      "family": "sequences",
+      "sampled": 120,
+      "nonIntegerAnswers": 0,
+      "awkward": 0,
+      "deep": 0
+    },
+    {
+      "family": "ratios",
+      "sampled": 120,
+      "nonIntegerAnswers": 0,
+      "awkward": 0,
+      "deep": 0
+    },
+    {
+      "family": "percentages",
+      "sampled": 120,
+      "nonIntegerAnswers": 0,
+      "awkward": 0,
+      "deep": 0
+    },
+    {
+      "family": "averages",
+      "sampled": 120,
+      "nonIntegerAnswers": 0,
+      "awkward": 0,
+      "deep": 0
+    },
+    {
+      "family": "ages",
+      "sampled": 120,
+      "nonIntegerAnswers": 0,
+      "awkward": 0,
+      "deep": 0
+    },
+    {
+      "family": "work_time",
+      "sampled": 120,
+      "nonIntegerAnswers": 0,
+      "awkward": 0,
+      "deep": 0
+    },
+    {
+      "family": "machines",
+      "sampled": 120,
+      "nonIntegerAnswers": 0,
+      "awkward": 0,
+      "deep": 0
+    },
+    {
+      "family": "direct_proportion",
+      "sampled": 120,
+      "nonIntegerAnswers": 0,
+      "awkward": 0,
+      "deep": 0
+    },
+    {
+      "family": "fractions",
+      "sampled": 80,
+      "nonIntegerAnswers": 0,
+      "awkward": 0,
+      "deep": 0
+    },
+    {
+      "family": "combined_rate",
+      "sampled": 120,
+      "nonIntegerAnswers": 0,
+      "awkward": 0,
+      "deep": 0
+    },
+    {
+      "family": "relational",
+      "sampled": 120,
+      "nonIntegerAnswers": 0,
+      "awkward": 0,
+      "deep": 0
+    },
+    {
+      "family": "calendar",
+      "sampled": 120,
+      "nonIntegerAnswers": 0,
+      "awkward": 0,
+      "deep": 0
+    },
+    {
+      "family": "odd_one_out",
+      "sampled": 80,
+      "nonIntegerAnswers": 0,
+      "awkward": 0,
+      "deep": 0
+    },
+    {
+      "family": "profit_loss",
+      "sampled": 120,
+      "nonIntegerAnswers": 0,
+      "awkward": 0,
+      "deep": 0
+    }
+  ],
+  "offenders": {
+    "nonIntegerAnswer": [
+      {
+        "family": "speed",
+        "template": "SPD_H_MEET_DELAY",
+        "value": 2.25
+      },
+      {
+        "family": "speed",
+        "template": "SPD_H_CATCH",
+        "value": 4.5
+      },
+      {
+        "family": "speed",
+        "template": "SPD_H_MEET_DELAY",
+        "value": 1.5
+      },
+      {
+        "family": "speed",
+        "template": "SPD_H_CATCH",
+        "value": 4.5
+      },
+      {
+        "family": "speed",
+        "template": "SPD_H_CATCH",
+        "value": 1.5
+      },
+      {
+        "family": "speed",
+        "template": "SPD_H_MEET_DELAY",
+        "value": 1.5
+      },
+      {
+        "family": "speed",
+        "template": "SPD_H_MEET_DELAY",
+        "value": 1.5
+      },
+      {
+        "family": "speed",
+        "template": "SPD_H_CATCH",
+        "value": 1.5
+      },
+      {
+        "family": "speed",
+        "template": "SPD_E_TIME",
+        "value": 3.5
+      },
+      {
+        "family": "unit_rate",
+        "template": "RATE_M_HOURS_FROM_MINUTE_RATE",
+        "value": 2.5
+      },
+      {
+        "family": "unit_rate",
+        "template": "RATE_M_HOURS_FROM_MINUTE_RATE",
+        "value": 1.5
+      },
+      {
+        "family": "unit_rate",
+        "template": "RATE_M_HOURS_FROM_MINUTE_RATE",
+        "value": 1.5
+      }
+    ],
+    "awkwardAnswer": [],
+    "deepPrecision": [],
+    "wrongFamily": []
+  },
+  "byTemplate": []
+}

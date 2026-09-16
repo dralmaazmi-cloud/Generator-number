@@ -1,0 +1,225 @@
+{
+  "schema": "rc296-decimal-operands-v1",
+  "sampled": 2300,
+  "withDecimalOperand": 227,
+  "rate": 0.0987,
+  "target": 0.04,
+  "byTemplate": [
+    {
+      "templateId": "PCT_H_TWO_GROUP_CHANGE",
+      "family": "percentages",
+      "drawn": 50,
+      "withDecimalOperand": 50,
+      "sample": "عدد أفراد القسم الأول = 28 ÷ 0.35 = 80.",
+      "rate": 1
+    },
+    {
+      "templateId": "PROP_H_COMPOUND",
+      "family": "direct_proportion",
+      "drawn": 17,
+      "withDecimalOperand": 17,
+      "sample": "الكمية النهائية = 60 × 1.2 = 72.",
+      "rate": 1
+    },
+    {
+      "templateId": "PCT_H_REVERSE_CHAIN",
+      "family": "percentages",
+      "drawn": 13,
+      "withDecimalOperand": 13,
+      "sample": "المعامل الكلي = 1.2 × 0.9 = 1.08.",
+      "rate": 1
+    },
+    {
+      "templateId": "PCT_H_MIXTURE",
+      "family": "percentages",
+      "drawn": 13,
+      "withDecimalOperand": 13,
+      "sample": "كمية المحلول الأول = 6 ÷ 0.6 = 10.",
+      "rate": 1
+    },
+    {
+      "templateId": "RATE_H_TARGET",
+      "family": "unit_rate",
+      "drawn": 13,
+      "withDecimalOperand": 13,
+      "sample": "المعدل الجديد في الدقيقة = 50 × 1.2 = 60.",
+      "rate": 1
+    },
+    {
+      "templateId": "MACH_M_NEW_FAST",
+      "family": "machines",
+      "drawn": 11,
+      "withDecimalOperand": 11,
+      "sample": "معدل الآلة الجديدة = 16 × 1.5 = 24.",
+      "rate": 1
+    },
+    {
+      "templateId": "PCT_E_OF",
+      "family": "percentages",
+      "drawn": 9,
+      "withDecimalOperand": 9,
+      "sample": "القيمة المطلوبة = 120 × 0.1 = 12.",
+      "rate": 1
+    },
+    {
+      "templateId": "SPD_E_UNIT_MINUTES",
+      "family": "speed",
+      "drawn": 9,
+      "withDecimalOperand": 9,
+      "sample": "المسافة = 78 × 0.5 = 39.",
+      "rate": 1
+    },
+    {
+      "templateId": "RATE_H_TWO_PHASE",
+      "family": "unit_rate",
+      "drawn": 9,
+      "withDecimalOperand": 9,
+      "sample": "المعدل الجديد = 20 × 1.2 = 24.",
+      "rate": 1
+    },
+    {
+      "templateId": "PCT_E_SHARE_PERCENT",
+      "family": "percentages",
+      "drawn": 8,
+      "withDecimalOperand": 8,
+      "sample": "النسبة المئوية = 0.75 × 100 = 75%.",
+      "rate": 1
+    },
+    {
+      "templateId": "PCT_E_REVERSE_ONE",
+      "family": "percentages",
+      "drawn": 8,
+      "withDecimalOperand": 8,
+      "sample": "القيمة النهائية = الأصل × 1.5.",
+      "rate": 1
+    },
+    {
+      "templateId": "SPD_H_CATCH",
+      "family": "speed",
+      "drawn": 11,
+      "withDecimalOperand": 8,
+      "sample": "تقدم أ أثناء التأخير = 60 × 1.5 = 90.",
+      "rate": 0.727
+    },
+    {
+      "templateId": "WORK_H_WORKERS_EFF",
+      "family": "work_time",
+      "drawn": 8,
+      "withDecimalOperand": 8,
+      "sample": "المعدل اليومي المكافئ = 8 × 1.5 = 12.",
+      "rate": 1
+    },
+    {
+      "templateId": "PCT_M_UNIT_PRICE",
+      "family": "percentages",
+      "drawn": 7,
+      "withDecimalOperand": 7,
+      "sample": "السعر الجديد للوحدة = 20 × 1.25 = 25.",
+      "rate": 1
+    },
+    {
+      "templateId": "PCT_M_SUCCESSIVE",
+      "family": "percentages",
+      "drawn": 6,
+      "withDecimalOperand": 6,
+      "sample": null,
+      "rate": 1
+    },
+    {
+      "templateId": "WORK_M_EFF",
+      "family": "work_time",
+      "drawn": 9,
+      "withDecimalOperand": 6,
+      "sample": "الزمن الجديد بالأيام = 18 ÷ 1.2 = 15.",
+      "rate": 0.667
+    },
+    {
+      "templateId": "SPD_E_DISTANCE",
+      "family": "speed",
+      "drawn": 8,
+      "withDecimalOperand": 5,
+      "sample": "المسافة بالكيلومترات = 60 × 1.5 = 90.",
+      "rate": 0.625
+    },
+    {
+      "templateId": "SPD_M_AVG",
+      "family": "speed",
+      "drawn": 14,
+      "withDecimalOperand": 4,
+      "sample": "المسافة الأولى = 70 × 1.5 = 105.",
+      "rate": 0.286
+    },
+    {
+      "templateId": "PROP_M_SCALE_ACROSS_HOURS",
+      "family": "direct_proportion",
+      "drawn": 9,
+      "withDecimalOperand": 4,
+      "sample": "الزمن المطلوب بالدقائق = 1.5 × 60 = 90.",
+      "rate": 0.444
+    },
+    {
+      "templateId": "MACH_M_SUBSET_UP",
+      "family": "machines",
+      "drawn": 3,
+      "withDecimalOperand": 3,
+      "sample": "معدل الآلة المطورة = 20 × 1.25 = 25.",
+      "rate": 1
+    },
+    {
+      "templateId": "MACH_H_STAGE_UP",
+      "family": "machines",
+      "drawn": 3,
+      "withDecimalOperand": 3,
+      "sample": "معدل الآلة المطورة = 20 × 1.25 = 25.",
+      "rate": 1
+    },
+    {
+      "templateId": "PROP_M_FRAC_UNIT",
+      "family": "direct_proportion",
+      "drawn": 6,
+      "withDecimalOperand": 3,
+      "sample": "وزن 15 عنصرًا بالكيلوجرامات = 15 × 0.6 = 9.",
+      "rate": 0.5
+    },
+    {
+      "templateId": "PL_H_MARKUP_DISCOUNT",
+      "family": "profit_loss",
+      "drawn": 3,
+      "withDecimalOperand": 3,
+      "sample": "التكلفة = 15 ÷ 0.05 = 300.",
+      "rate": 1
+    },
+    {
+      "templateId": "SPD_M_TWO_TIME",
+      "family": "speed",
+      "drawn": 4,
+      "withDecimalOperand": 2,
+      "sample": "الزمن بالدقائق = 4.5 × 60 = 270.",
+      "rate": 0.5
+    },
+    {
+      "templateId": "PROP_H_COST_PLUS",
+      "family": "direct_proportion",
+      "drawn": 7,
+      "withDecimalOperand": 2,
+      "sample": "سعر 10 وحدات = 4.5 × 10 = 45.",
+      "rate": 0.286
+    },
+    {
+      "templateId": "RATE_M_PERCENT",
+      "family": "unit_rate",
+      "drawn": 2,
+      "withDecimalOperand": 2,
+      "sample": "المعدل الجديد في الدقيقة = 60 × 1.2 = 72.",
+      "rate": 1
+    },
+    {
+      "templateId": "SPD_H_MEET_DELAY",
+      "family": "speed",
+      "drawn": 4,
+      "withDecimalOperand": 1,
+      "sample": "ما قطعته أ أثناء التأخير = 70 × 1.5 = 105.",
+      "rate": 0.25
+    }
+  ]
+}

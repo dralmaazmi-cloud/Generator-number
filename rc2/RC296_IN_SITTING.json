@@ -1,0 +1,33 @@
+{
+  "schema": "rc296-in-sitting-v1",
+  "sittingsRequested": 400,
+  "rows": [
+    {
+      "count": 10,
+      "sittingsMeasured": 400,
+      "refused": 0,
+      "sittingsWithARepeat": 0,
+      "rate": 0,
+      "repeatedSignatures": [],
+      "examples": []
+    },
+    {
+      "count": 20,
+      "sittingsMeasured": 400,
+      "refused": 0,
+      "sittingsWithARepeat": 0,
+      "rate": 0,
+      "repeatedSignatures": [],
+      "examples": []
+    },
+    {
+      "count": 30,
+      "sittingsMeasured": 400,
+      "refused": 0,
+      "sittingsWithARepeat": 0,
+      "rate": 0,
+      "repeatedSignatures": [],
+      "examples": []
+    }
+  ]
+}

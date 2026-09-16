@@ -561,11 +561,10 @@ function fractionalUnit(ctx) {
   if (!unitW.isExactDecimal || unitW.decimalPlaces > 2) return resample(ctx, fractionalUnit);
   if (unitW.eq(Fraction.from(n))) return resample(ctx, fractionalUnit);
   // RC2.9.6 §3.1. The unit weight is deliberately fractional — that is the
-  // whole point of the construction — but the ANSWER is a weight the learner
-  // writes down, and «9.6 كيلوجرامًا» is a number to copy rather than a
-  // quantity to read. Rather than draw a target and reject it afterwards, the
-  // target is drawn FROM the counts that land on a whole answer, so the
-  // construction keeps its full range instead of thinning out.
+  // construction — but the ANSWER is a weight the learner writes down, and
+  // «9.6 كيلوجرامًا» is a number to copy rather than a quantity to read. The
+  // target is drawn FROM the counts that land on a whole answer rather than
+  // drawn and then rejected, so the construction keeps its full range.
   const targets = [12, 15, 20, 24].filter(v => v !== n && unitW.mul(v).isInteger);
   if (!targets.length) return resample(ctx, fractionalUnit);
   const targetCount = rng.pick(targets);
@@ -635,7 +634,7 @@ function compoundScale(ctx) {
   const s = solve(params, 'scaledOutputPlusReserve');
   if (!s.exactAnswer.isInteger) return resample(ctx, compoundScale);
   const correct = s.answer;
-  const {factor, per100, text: factorText} = factorLine(reservePct, 'up', 'معامل الاحتياط');
+  const {factor, text: factorText} = factorLine(reservePct, 'up', 'معامل الاحتياط');
   const distractors = usable(ctx, [
     mk(scaled.toNumber(), 'STOPPED_AFTER_FIRST_STAGE', `${unitVal.toDecimalString()} × ${targetUnits}`),
     mk(Fraction.from(amount).mul(factor).toNumber(), 'APPLIED_PERCENT_TO_WRONG_TOTAL', `${amount} × ${factor.toDecimalString()}`),
@@ -661,7 +660,7 @@ function compoundScale(ctx) {
       `المادة لكل وحدة بالكيلوجرامات = ${amount} ÷ ${units} = ${unitVal.toDecimalString()}.`,
       `الكمية قبل الاحتياط = ${unitVal.toDecimalString()} × ${targetUnits} = ${scaled.toDecimalString()}.`,
       factorText,
-      `الكمية النهائية = ${scaled.toDecimalString()} × ${per100} ÷ 100 = ${correct}.`
+      `الكمية النهائية = ${scaled.toDecimalString()} × ${factor.toDecimalString()} = ${correct}.`
     ],
     howToStart: 'حل التناسب أولًا ثم طبّق الزيادة الإضافية.',
     remember: 'لا تطبق الاحتياط على الكمية الأصلية إذا كان عدد الوحدات قد تغير.',

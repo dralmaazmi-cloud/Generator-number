@@ -201,7 +201,7 @@ function efficiencyChange(ctx) {
   // short, so the quotient took few values.
   const days = rng.pick([8, 10, 12, 14, 15, 16, 18, 20, 24, 25, 27, 30, 32, 36]);
   const pct = rng.pick([20, 25, 50, 60, 75, 80, 100, 125, 150]);
-  const {factor, per100, text: factorText} = factorLine(pct, 'up', 'معامل الكفاءة');
+  const {factor, text: factorText} = factorLine(pct, 'up', 'معامل الكفاءة');
   const answer = Fraction.from(days).div(factor);
   if (!answer.isInteger) return resample(ctx, efficiencyChange);
   const correct = answer.toNumber();
@@ -226,7 +226,7 @@ function efficiencyChange(ctx) {
     steps: [
       factorText,
       `الزمن يتغير عكسيًا مع الكفاءة.`,
-      `الزمن الجديد بالأيام = ${days} × 100 ÷ ${per100} = ${correct}.`
+      `الزمن الجديد بالأيام = ${days} ÷ ${factor.toDecimalString()} = ${correct}.`
     ],
     howToStart: 'الكفاءة والزمن علاقة عكسية للعمل نفسه.',
     remember: 'زيادة الكفاءة لا تعني طرح النسبة نفسها من الزمن.',
@@ -377,7 +377,7 @@ function workersAndEfficiency(ctx) {
   const left = rng.pick([2, 4]);
   const newW = w - left;
   const pct = rng.pick([20, 25, 50]);
-  const {factor, per100, text: factorText} = factorLine(pct, 'up', 'معامل الكفاءة');
+  const {factor, text: factorText} = factorLine(pct, 'up', 'معامل الكفاءة');
   const effective = Fraction.from(newW).mul(factor);
   const answer = Fraction.from(remain).div(effective);
   if (!answer.isInteger || !effective.isExactDecimal || effective.decimalPlaces > 2) return resample(ctx, workersAndEfficiency);
@@ -407,7 +407,7 @@ function workersAndEfficiency(ctx) {
       `المتبقي = ${total} − ${done} = ${remain}.`,
       `عدد الباقين = ${w} − ${left} = ${newW}.`,
       factorText,
-      `المعدل اليومي المكافئ = ${newW} × ${per100} ÷ 100 = ${effective.toDecimalString()}.`,
+      `المعدل اليومي المكافئ = ${newW} × ${factor.toDecimalString()} = ${effective.toDecimalString()}.`,
       `الأيام الإضافية = ${remain} ÷ ${effective.toDecimalString()} = ${correct}.`
     ],
     howToStart: 'افصل أثر عدد العمال عن أثر الكفاءة، ثم اجمعهما في معدل مكافئ.',

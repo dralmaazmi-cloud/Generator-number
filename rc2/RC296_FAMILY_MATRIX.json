@@ -1,0 +1,1718 @@
+{
+  "schema": "rc296-family-matrix-v1",
+  "attempts": 10,
+  "counts": [
+    5,
+    10,
+    14,
+    20,
+    30
+  ],
+  "singles": [
+    {
+      "families": [
+        "sequences"
+      ],
+      "capacity": 14,
+      "cells": [
+        {
+          "count": 5,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 14,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "speed"
+      ],
+      "capacity": 14,
+      "cells": [
+        {
+          "count": 5,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 14,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "percentages"
+      ],
+      "capacity": 10,
+      "cells": [
+        {
+          "count": 5,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 14,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "averages"
+      ],
+      "capacity": 10,
+      "cells": [
+        {
+          "count": 5,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 14,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "ages"
+      ],
+      "capacity": 0,
+      "cells": [
+        {
+          "count": 5,
+          "offered": false,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 10,
+          "offered": false,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 14,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "work_time"
+      ],
+      "capacity": 10,
+      "cells": [
+        {
+          "count": 5,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 14,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "machines"
+      ],
+      "capacity": 10,
+      "cells": [
+        {
+          "count": 5,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 14,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "unit_rate"
+      ],
+      "capacity": 10,
+      "cells": [
+        {
+          "count": 5,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 14,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "combined_rate"
+      ],
+      "capacity": 10,
+      "cells": [
+        {
+          "count": 5,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 14,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "profit_loss"
+      ],
+      "capacity": 10,
+      "cells": [
+        {
+          "count": 5,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 14,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "ratios"
+      ],
+      "capacity": 5,
+      "cells": [
+        {
+          "count": 5,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 10,
+          "offered": false,
+          "ok": 7,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 3
+          }
+        },
+        {
+          "count": 14,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "direct_proportion"
+      ],
+      "capacity": 5,
+      "cells": [
+        {
+          "count": 5,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 10,
+          "offered": false,
+          "ok": 6,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 4
+          }
+        },
+        {
+          "count": 14,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "relational"
+      ],
+      "capacity": 5,
+      "cells": [
+        {
+          "count": 5,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 10,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 14,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "calendar"
+      ],
+      "capacity": 5,
+      "cells": [
+        {
+          "count": 5,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 10,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 14,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "fractions"
+      ],
+      "capacity": 0,
+      "cells": [
+        {
+          "count": 5,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_BAND_COVERAGE": 10
+          }
+        },
+        {
+          "count": 10,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_BAND_COVERAGE": 10
+          }
+        },
+        {
+          "count": 14,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_BAND_COVERAGE": 10
+          }
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_BAND_COVERAGE": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_BAND_COVERAGE": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "odd_one_out"
+      ],
+      "capacity": 0,
+      "cells": [
+        {
+          "count": 5,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_BAND_COVERAGE": 10
+          }
+        },
+        {
+          "count": 10,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_BAND_COVERAGE": 10
+          }
+        },
+        {
+          "count": 14,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_BAND_COVERAGE": 10
+          }
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_BAND_COVERAGE": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_BAND_COVERAGE": 10
+          }
+        }
+      ]
+    }
+  ],
+  "combinations": [
+    {
+      "families": [
+        "fractions",
+        "odd_one_out"
+      ],
+      "capacity": 0,
+      "cells": [
+        {
+          "count": 10,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_BAND_COVERAGE": 10
+          }
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_BAND_COVERAGE": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_BAND_COVERAGE": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "odd_one_out",
+        "calendar"
+      ],
+      "capacity": 10,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "calendar",
+        "relational"
+      ],
+      "capacity": 14,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "relational",
+        "direct_proportion"
+      ],
+      "capacity": 14,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "direct_proportion",
+        "ages"
+      ],
+      "capacity": 20,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "ages",
+        "ratios"
+      ],
+      "capacity": 20,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "ratios",
+        "fractions"
+      ],
+      "capacity": 14,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 9,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 1
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "fractions",
+        "sequences"
+      ],
+      "capacity": 20,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "odd_one_out",
+        "speed"
+      ],
+      "capacity": 14,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 6,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 4
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "calendar",
+        "percentages"
+      ],
+      "capacity": 20,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "relational",
+        "averages"
+      ],
+      "capacity": 14,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 8,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 2
+          }
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "direct_proportion",
+        "machines"
+      ],
+      "capacity": 20,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "ages",
+        "work_time"
+      ],
+      "capacity": 20,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "ratios",
+        "unit_rate"
+      ],
+      "capacity": 14,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": false,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "sequences",
+        "averages"
+      ],
+      "capacity": 30,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        }
+      ]
+    },
+    {
+      "families": [
+        "speed",
+        "machines"
+      ],
+      "capacity": 20,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "percentages",
+        "work_time"
+      ],
+      "capacity": 20,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "averages",
+        "unit_rate"
+      ],
+      "capacity": 20,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "fractions",
+        "calendar",
+        "sequences"
+      ],
+      "capacity": 30,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        }
+      ]
+    },
+    {
+      "families": [
+        "odd_one_out",
+        "relational",
+        "speed"
+      ],
+      "capacity": 20,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 0,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 10
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "calendar",
+        "direct_proportion",
+        "percentages"
+      ],
+      "capacity": 30,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        }
+      ]
+    },
+    {
+      "families": [
+        "relational",
+        "ages",
+        "averages"
+      ],
+      "capacity": 20,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        }
+      ]
+    },
+    {
+      "families": [
+        "direct_proportion",
+        "ratios",
+        "machines"
+      ],
+      "capacity": 30,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        }
+      ]
+    },
+    {
+      "families": [
+        "ages",
+        "fractions",
+        "work_time"
+      ],
+      "capacity": 20,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": false,
+          "ok": 7,
+          "attempts": 10,
+          "reasons": {
+            "INSUFFICIENT_CONSTRUCTION_BREADTH": 3
+          }
+        }
+      ]
+    },
+    {
+      "families": [
+        "sequences",
+        "speed",
+        "percentages"
+      ],
+      "capacity": 30,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        }
+      ]
+    },
+    {
+      "families": [
+        "speed",
+        "percentages",
+        "averages"
+      ],
+      "capacity": 30,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        }
+      ]
+    },
+    {
+      "families": [
+        "percentages",
+        "averages",
+        "machines"
+      ],
+      "capacity": 30,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        }
+      ]
+    },
+    {
+      "families": [
+        "averages",
+        "machines",
+        "work_time"
+      ],
+      "capacity": 30,
+      "cells": [
+        {
+          "count": 10,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 20,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        },
+        {
+          "count": 30,
+          "offered": true,
+          "ok": 10,
+          "attempts": 10,
+          "reasons": {}
+        }
+      ]
+    }
+  ],
+  "cellsMeasured": 164,
+  "cellsOffered": 79,
+  "offeredThenFailed": []
+}

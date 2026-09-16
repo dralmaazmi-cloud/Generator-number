@@ -346,10 +346,10 @@ function meetingDelayed(ctx) {
   const t = Fraction.from(remaining).div(sA + sB);
   // RC2.9.6 §3.1. One decimal place admitted 1.3, 1.7, 2.3 and 2.4 hours. A
   // learner writes an answer down, and «2.3 ساعة» is a number to copy rather
-  // than a quantity to read. Only the durations a clock actually says are kept:
-  // a whole hour, a half, or a quarter. The parameters are constrained, never
-  // the answer rounded — rounding would make the printed key disagree with the
-  // oracle that checks it.
+  // than a duration to read. Only the durations a clock actually says are kept:
+  // a whole hour, a half, or a quarter. The PARAMETERS are constrained; the
+  // answer is never rounded, because a rounded key stops being the key the
+  // oracle checks.
   if (t.lte(0) || !t.isExactDecimal || t.decimalPlaces > 2) return resample(ctx, meetingDelayed);
   if (!Number.isInteger(t.toNumber() * 4)) return resample(ctx, meetingDelayed);
   const correct = t.toNumber();

@@ -1,0 +1,80 @@
+{
+  "schema": "rc296-frozen-surface-v1",
+  "a": {
+    "root": "/tmp/claude-0/rc295root",
+    "drawn": 10000,
+    "digest": "c1da98c8410f8407d26c15bfdfc89e07c61459c17eb9466e454b1bef8229746e"
+  },
+  "b": {
+    "root": "/home/user/Generator-number",
+    "drawn": 10000,
+    "digest": "fdedb3c6dd7dbb324c565daa19690385d559707b3924953d23fa0058a3fb7fd0"
+  },
+  "identical": 9914,
+  "changed": 86,
+  "renderingMoved": 47,
+  "poolDisplacement": 39,
+  "changedByTemplate": {
+    "PCT_M_SUCCESSIVE": {
+      "seeds": 21,
+      "intended": "3.1 net change constrained to a whole percent"
+    },
+    "PROP_M_FRAC_UNIT": {
+      "seeds": 11,
+      "intended": "3.1 target count drawn from the counts that land on a whole answer"
+    },
+    "PCT_H_REVERSE_CHAIN": {
+      "seeds": 8,
+      "intended": "3.1 printed net factor constrained to two decimal places"
+    },
+    "SPD_H_MEET_DELAY": {
+      "seeds": 7,
+      "intended": "3.1 meeting time constrained to a whole hour, a half or a quarter"
+    }
+  },
+  "templatesChangedOutsideTheIntendedList": [],
+  "samples": [
+    {
+      "seed": "RC29-DEV-ALEF-medium-256",
+      "why": "same template, rendering moved",
+      "a": "PCT_M_SUCCESSIVE",
+      "b": "PCT_M_SUCCESSIVE",
+      "template": "PCT_M_SUCCESSIVE"
+    },
+    {
+      "seed": "RC29-DEV-ALEF-medium-319",
+      "why": "same template, rendering moved",
+      "a": "PCT_M_SUCCESSIVE",
+      "b": "PCT_M_SUCCESSIVE",
+      "template": "PCT_M_SUCCESSIVE"
+    },
+    {
+      "seed": "RC29-DEV-ALEF-medium-331",
+      "why": "same template, rendering moved",
+      "a": "PCT_H_REVERSE_CHAIN",
+      "b": "PCT_H_REVERSE_CHAIN",
+      "template": "PCT_H_REVERSE_CHAIN"
+    },
+    {
+      "seed": "RC29-DEV-ALEF-medium-391",
+      "why": "same template, rendering moved",
+      "a": "PCT_M_SUCCESSIVE",
+      "b": "PCT_M_SUCCESSIVE",
+      "template": "PCT_M_SUCCESSIVE"
+    },
+    {
+      "seed": "RC29-DEV-ALEF-medium-691",
+      "why": "different template",
+      "a": "PL_H_CHAIN",
+      "b": "SEQ_M_INC_DIFF",
+      "template": "SEQ_M_INC_DIFF"
+    },
+    {
+      "seed": "RC29-DEV-ALEF-medium-727",
+      "why": "same template, rendering moved",
+      "a": "SPD_H_MEET_DELAY",
+      "b": "SPD_H_MEET_DELAY",
+      "template": "SPD_H_MEET_DELAY"
+    }
+  ]
+}

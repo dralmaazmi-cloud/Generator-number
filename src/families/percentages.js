@@ -55,19 +55,10 @@ function simplePercent(ctx) {
     stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: plain,
     steps: [
-      // RC2.9.6 §3.3. The integer path. The old narration converted the
-      // percentage to a decimal and multiplied — «300 × 0.3 = 90» — which is
-      // correct and is not how anyone does it in their head under time. Each
-      // line here is one clean equation with whole operands, and no line begins
-      // with a percent sign, because «20% = 8 × 2» reads to the equation
-      // checker as the false claim «20 = 16».
-      ...(pct === 10 ? [`النسبة المطلوبة هي عُشر العدد: ${baseVal} ÷ 10 = ${correct}.`]
-        : pct === 25 ? [`النسبة المطلوبة هي ربع العدد.`, `ربع العدد = ${baseVal} ÷ 4 = ${correct}.`]
-        : pct === 50 ? [`النسبة المطلوبة هي نصف العدد.`, `نصف العدد = ${baseVal} ÷ 2 = ${correct}.`]
-        : [`عُشر العدد = ${baseVal} ÷ 10 = ${baseVal / 10}.`,
-          `وعدد الأعشار المطلوبة ${pct / 10}: ${baseVal / 10} × ${pct / 10} = ${correct}.`])
+      `النسبة كجزء من مئة = ${pct} ÷ 100 = ${num(pct / 100)}.`,
+      `القيمة المطلوبة = ${baseVal} × ${num(pct / 100)} = ${correct}.`
     ],
-    howToStart: 'ابدأ من 10% من العدد — قسمة على عشرة — ثم اضرب في عدد العشرات في النسبة.',
+    howToStart: 'حوّل النسبة إلى جزء من 100 واضرب في القيمة.',
     remember: 'النسبة المئوية من عدد = العدد × النسبة ÷ 100.',
     // RC2-019: a reusable rule first, then this instance.
     fastMethod: pct === 25
@@ -94,7 +85,7 @@ function reverseOneChange(ctx) {
   const pct = rng.pick([20, 25, 50]);
   const inc = rng.bool();
   const original = rng.pick([80, 100, 120, 160, 200, 240, 300, 400]);
-  const {factor, per100, text: factorText} = factorLine(pct, inc ? 'up' : 'down');
+  const {factor, text: factorText} = factorLine(pct, inc ? 'up' : 'down');
   const finalF = Fraction.from(original).mul(factor);
   if (!finalF.isInteger) return resample(ctx, reverseOneChange);
   const final = finalF.toNumber();
@@ -125,8 +116,8 @@ function reverseOneChange(ctx) {
     correct, distractors, format: plain,
     steps: [
       factorText,
-      `كل 100 من الأصل صارت ${per100}، فالقيمة النهائية = الأصل × ${per100} ÷ 100.`,
-      `الأصل = ${final} × 100 ÷ ${per100} = ${correct}.`
+      `القيمة النهائية = الأصل × ${factor.toDecimalString()}.`,
+      `الأصل = ${final} ÷ ${factor.toDecimalString()} = ${correct}.`
     ],
     howToStart: 'حوّل التغير إلى معامل ثم اقسم عليه.',
     remember: 'بعد زيادة أو نقصان، لا تعكس العملية بطرح النسبة نفسها من الرقم النهائي.',
@@ -201,7 +192,7 @@ function successiveChange(ctx) {
     ],
     howToStart: 'طبّق كل نسبة على القيمة الموجودة في تلك اللحظة.',
     remember: 'النسب المتتابعة لا تُجمع ولا تُطرح مباشرة.',
-    fastMethod: `اضرب المعاملين كعددين من مئة: ${f1} × ${f2} ÷ 100، ثم اطرح 100 لتقرأ التغير الصافي.`,
+    fastMethod: `استخدم معاملي التغير: × ${num(f1 / 100)} ثم × ${num(f2 / 100)}.`,
     answerText: `الإجابة الصحيحة: ${format(correct)}.`,
     estimatedSteps: 3, conceptTags: ['percentage', 'successive-change'], parameters: params,
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, 100), sub(mul(f1, f2), 10000))]},
@@ -281,7 +272,7 @@ function unitPriceChange(ctx) {
   const unitPrice = rng.pick({10: [10, 20, 30], 20: [5, 10, 15, 20, 25], 25: [8, 12, 16, 20, 24], 50: [6, 8, 10, 12, 14, 16]}[pct]);
   const total1 = qty1 * unitPrice;
   const qty2 = rng.pick([5, 10, 12, 15].filter(v => v !== qty1));
-  const {factor, per100, text: factorText} = factorLine(pct, 'up', 'معامل الزيادة');
+  const {factor, text: factorText} = factorLine(pct, 'up', 'معامل الزيادة');
   const newUnit = Fraction.from(unitPrice).mul(factor);
   const answer = newUnit.mul(qty2);
   if (!newUnit.isExactDecimal || newUnit.decimalPlaces > 2 || !answer.isExactDecimal || answer.decimalPlaces > 2) return resample(ctx, unitPriceChange);
@@ -311,7 +302,7 @@ function unitPriceChange(ctx) {
     steps: [
       `سعر الوحدة الأصلي = ${total1} ÷ ${qty1} = ${unitPrice}.`,
       factorText,
-      `السعر الجديد للوحدة = ${unitPrice} × ${per100} ÷ 100 = ${newUnit.toDecimalString()}.`,
+      `السعر الجديد للوحدة = ${unitPrice} × ${factor.toDecimalString()} = ${newUnit.toDecimalString()}.`,
       `ثمن ${u(qty2, 'unit')} = ${newUnit.toDecimalString()} × ${qty2} = ${num(correct)}.`
     ],
     howToStart: 'احسب سعر الوحدة أولًا، ثم عدّله بالنسبة المطلوبة.',
@@ -348,8 +339,8 @@ function reverseSuccessive(ctx) {
   const correct = original;
   const netFactor = Fraction.from(f1).mul(f2).div(10000);
   // RC2.9.6 §3.1. The factor is PRINTED in the explanation, and 1.125 is three
-  // decimal places of arithmetic a learner is asked to carry. Two is the most
-  // any printed factor may have.
+  // decimal places of arithmetic a learner is asked to carry by hand. Two is
+  // the most any printed factor may have.
   if (!netFactor.isExactDecimal || netFactor.decimalPlaces > 2) return resample(ctx, reverseSuccessive);
   const params = {finalValue: final, firstPercent: p1, secondPercent: p2};
   const distractors = usable(ctx, [
@@ -373,10 +364,10 @@ function reverseSuccessive(ctx) {
     stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: plain,
     steps: [
-      `الزيادة: كل 100 تصبح 100 + ${p1} = ${f1}.`,
-      `الانخفاض: كل 100 تصبح 100 − ${p2} = ${f2}.`,
-      `كل 100 تصبح ${f1} بعد التغير الأول، ثم ${Math.round(f1 * f2 / 100)} بعد الثاني: ${f1} × ${f2} ÷ 100 = ${Math.round(f1 * f2 / 100)}.`,
-      `الأصل = ${final} × 100 ÷ ${Math.round(f1 * f2 / 100)} = ${correct}.`
+      `معامل الزيادة = (100 + ${p1}) ÷ 100 = ${num(f1 / 100)}.`,
+      `معامل الانخفاض = (100 − ${p2}) ÷ 100 = ${num(f2 / 100)}.`,
+      `المعامل الكلي = ${num(f1 / 100)} × ${num(f2 / 100)} = ${netFactor.toDecimalString()}.`,
+      `الأصل = ${final} ÷ ${netFactor.toDecimalString()} = ${correct}.`
     ],
     howToStart: 'حوّل كل تغير إلى معامل، ثم اعكس حاصل ضرب المعاملين.',
     remember: 'عكس تغيرين متتاليين يتطلب عكس كل المراحل لا طرح النسب.',
@@ -532,8 +523,8 @@ function mixtureConcentration(ctx) {
       `كمية المادة الذائبة في المزيج = ${total} × ${pm} ÷ 100 = ${num(mixAmount)}.`,
       `لو كان المحلولان كلاهما بتركيز ${p2}% لبلغت المادة = ${total} × ${p2} ÷ 100 = ${num(allSecond)}.`,
       `الفارق بين الحالتين = ${num(allSecond)} − ${num(mixAmount)} = ${num(gap)}.`,
-      `كل مئة لتر من المحلول الأول بدل الثاني تقلل المادة بمقدار ${p2} − ${p1} = ${p2 - p1}.`,
-      `كمية المحلول الأول = ${num(gap)} × 100 ÷ ${p2 - p1} = ${correct}.`
+      `كل لتر من المحلول الأول بدل الثاني يقلل المادة بمقدار (${p2} − ${p1}) ÷ 100 = ${num(perLitre)}.`,
+      `كمية المحلول الأول = ${num(gap)} ÷ ${num(perLitre)} = ${correct}.`
     ],
     howToStart: 'ابدأ من افتراض أن الكمية كلها من المحلول الأقوى، ثم استبدل لترًا بلتر حتى يصل التركيز إلى المطلوب.',
     remember: 'تركيز المزيج ليس متوسط التركيزين إلا إذا تساوت الكميتان.',
@@ -625,8 +616,8 @@ function twoGroupOppositeChange(ctx) {
     steps: [
       `لو انخفض العدد كله بنسبة ${fall}% لأصبح المجموع = ${total} − ${total} × ${fall} ÷ 100 = ${num(ifAllFell)}.`,
       `المجموع الفعلي أكبر من ذلك بمقدار ${newTotal} − ${num(ifAllFell)} = ${num(gap)}.`,
-      `كل مئة فرد في القسم الأول بدل الثاني تزيد المجموع بمقدار ${rise} + ${fall} = ${rise + fall}.`,
-      `عدد أفراد القسم الأول = ${num(gap)} × 100 ÷ ${rise + fall} = ${first}.`,
+      `كل فرد في القسم الأول بدل الثاني يزيد المجموع بمقدار (${rise} + ${fall}) ÷ 100 = ${num(perUnit)}.`,
+      `عدد أفراد القسم الأول = ${num(gap)} ÷ ${num(perUnit)} = ${first}.`,
       askSecond
         ? `والمطلوب هو القسم الثاني = ${total} − ${first} = ${correct}.`
         : `وللتأكد: القسم الثاني = ${total} − ${first} = ${second}.`
@@ -695,12 +686,12 @@ function shareAsPercent(ctx) {
     stemStructure: stem.structure, informationOrder: stem.order,
     correct, distractors, format: v => `${num(v)}%`,
     steps: [
-      `النسبة المئوية = الجزء × 100 ÷ الكل = ${part} × 100 ÷ ${whole}.`,
-      `${part} × 100 = ${part * 100}، و${part * 100} ÷ ${whole} = ${correct}%.`
+      `الجزء على الكل = ${part} ÷ ${whole} = ${num(part / whole)}.`,
+      `النسبة المئوية = ${num(part / whole)} × 100 = ${correct}%.`
     ],
-    howToStart: 'اضرب الجزء في 100 أولًا، ثم اقسم على الكل — هكذا تبقى الأعداد صحيحة.',
+    howToStart: 'اقسم الجزء على الكل أولًا، ثم اضرب في 100.',
     remember: 'النسبة المئوية = (الجزء ÷ الكل) × 100، والترتيب مهم.',
-    fastMethod: `النسبة المئوية = الجزء × 100 ÷ الكل — هنا ${part} × 100 ÷ ${whole}.`,
+    fastMethod: `النسبة المئوية = (الجزء ÷ الكل) × 100 — هنا ${part} ÷ ${whole} ثم × 100.`,
     estimatedSteps: 2, conceptTags: ['percentage', 'part-of-whole'],
     parameters: {wholeCount: whole, partCount: part},
     oracle: {kind: 'constraint', answerKind: 'number', constraints: [eq(mul(X, whole), mul(part, 100))]},

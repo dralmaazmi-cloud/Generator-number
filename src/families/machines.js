@@ -152,7 +152,7 @@ function newMachineFaster(ctx) {
   const oldRate = rng.pick([12, 16, 20, 24]);
   const total = machines * hours * oldRate;
   const pct = rng.pick([25, 50]);
-  const {factor, per100, text: factorText} = factorLine(pct, 'up', 'معامل السرعة');
+  const {factor, text: factorText} = factorLine(pct, 'up', 'معامل السرعة');
   const newRate = Fraction.from(oldRate).mul(factor);
   if (!newRate.isInteger) return resample(ctx, newMachineFaster);
   const targetH = rng.pick([2, 3, 4]);
@@ -179,7 +179,7 @@ function newMachineFaster(ctx) {
     steps: [
       `معدل الآلة القديمة في الساعة = ${total} ÷ (${machines} × ${hours}) = ${oldRate}.`,
       factorText,
-      `معدل الآلة الجديدة = ${oldRate} × ${per100} ÷ 100 = ${newRateN}.`,
+      `معدل الآلة الجديدة = ${oldRate} × ${factor.toDecimalString()} = ${newRateN}.`,
       `المعدل معًا في الساعة = ${oldRate} + ${newRateN} = ${oldRate + newRateN}.`,
       `الإنتاج = ${oldRate + newRateN} × ${targetH} = ${correct}.`
     ],
@@ -266,7 +266,7 @@ function subsetUpgrade(ctx) {
   const rate = rng.pick([15, 20, 25]);
   const upgraded = rng.pick([1, 2, 3].filter(v => v < machines));
   const pct = rng.pick([20, 25, 50]);
-  const {factor, per100, text: factorText} = factorLine(pct, 'up', 'معامل التطوير');
+  const {factor, text: factorText} = factorLine(pct, 'up', 'معامل التطوير');
   const newRate = Fraction.from(rate).mul(factor);
   if (!newRate.isInteger) return resample(ctx, subsetUpgrade);
   const newRateN = newRate.toNumber();
@@ -292,7 +292,7 @@ function subsetUpgrade(ctx) {
     correct, distractors, format: unitFormat(sc.out),
     steps: [
       factorText,
-      `معدل الآلة المطورة = ${rate} × ${per100} ÷ 100 = ${newRateN}.`,
+      `معدل الآلة المطورة = ${rate} × ${factor.toDecimalString()} = ${newRateN}.`,
       `المعدل الكلي في الساعة = ${upgraded} × ${newRateN} + (${machines} − ${upgraded}) × ${rate} = ${combined}.`,
       `الإنتاج الكلي = ${combined} × ${hours} = ${correct}.`
     ],
@@ -380,7 +380,7 @@ function stageChange(ctx) {
   const h2 = rng.pick([3, 4, 5].filter(v => v !== h1));
   const upgraded = rng.pick([1, 2].filter(v => v < machines));
   const pct = rng.pick([25, 50]);
-  const {factor, per100, text: factorText} = factorLine(pct, 'up', 'معامل التطوير');
+  const {factor, text: factorText} = factorLine(pct, 'up', 'معامل التطوير');
   const newRate = Fraction.from(rate).mul(factor);
   if (!newRate.isInteger) return resample(ctx, stageChange);
   const newRateN = newRate.toNumber();
@@ -411,7 +411,7 @@ function stageChange(ctx) {
     steps: [
       `إنتاج المرحلة الأولى = ${machines} × ${rate} × ${h1} = ${stage1}.`,
       factorText,
-      `معدل الآلة المطورة = ${rate} × ${per100} ÷ 100 = ${newRateN}.`,
+      `معدل الآلة المطورة = ${rate} × ${factor.toDecimalString()} = ${newRateN}.`,
       `المعدل الكلي بعد التطوير = ${upgraded} × ${newRateN} + (${machines} − ${upgraded}) × ${rate} = ${combined}.`,
       `إنتاج المرحلة الثانية = ${combined} × ${h2} = ${stage2}.`,
       `الإجمالي = ${stage1} + ${stage2} = ${correct}.`

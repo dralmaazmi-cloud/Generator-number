@@ -340,21 +340,8 @@ export function factorLine(pct, direction = 'up', label = 'معامل التغي
   const f = direction === 'up'
     ? Fraction.from(1).add(Fraction.from(pct).div(100))
     : Fraction.from(1).sub(Fraction.from(pct).div(100));
-  // RC2.9.6 §3.3. The factor was narrated as a decimal — «معامل التغير =
-  // 1 + 20 ÷ 100 = 1.2» — and every step after it then multiplied by 1.2. The
-  // arithmetic is right and the results are whole, but this is a timed test
-  // taken in the head, and «كل 100 تصبح 120» is the step a person can actually
-  // carry. `per100` is the same factor as a whole number out of a hundred, so a
-  // caller narrates «× 120 ÷ 100» instead of «× 1.2».
-  //
-  // `factor` itself is UNCHANGED and is still what the distractor derivations
-  // and the oracle use. This release moves narration and nothing else, and
-  // §4.4 proves the keys, options and signatures did not move with it.
-  const per100 = direction === 'up' ? 100 + pct : 100 - pct;
-  const sign = direction === 'up' ? '+' : '−';
-  // The whole-number factor is DERIVED in the line that introduces it, so every
-  // value a later step uses has been sourced where the learner can see it.
-  return {factor: f, per100, text: `${label}: كل 100 تصبح 100 ${sign} ${pct} = ${per100}.`};
+  const sign = direction === 'up' ? '+' : '-';
+  return {factor: f, text: `${label} = 1 ${sign} ${pct} ÷ 100 = ${f.toDecimalString()}.`};
 }
 
 /** Builds the oracle constraint `left == right` from expression trees. */
