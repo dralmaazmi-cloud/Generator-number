@@ -5,9 +5,9 @@
   "questionsPerSitting": 30,
   "worstWindowSpanningTheChange": {
     "flagged": 1,
-    "nd": 0,
-    "cluster": 1,
-    "run": 2,
+    "nd": 1,
+    "cluster": 2,
+    "run": 1,
     "duplicates": 0
   },
   "repeatedStemsAcrossTheChange": 0,
@@ -58,9 +58,9 @@
           "at": 1,
           "questionsFromBeforeTheChange": 60,
           "pv": 0,
-          "nd": 0,
-          "flagged": 0,
-          "cluster": 1,
+          "nd": 1,
+          "flagged": 1,
+          "cluster": 2,
           "run": 1,
           "duplicates": 0
         },
@@ -68,9 +68,9 @@
           "at": 11,
           "questionsFromBeforeTheChange": 50,
           "pv": 0,
-          "nd": 0,
-          "flagged": 0,
-          "cluster": 1,
+          "nd": 1,
+          "flagged": 1,
+          "cluster": 2,
           "run": 1,
           "duplicates": 0
         },
@@ -78,9 +78,9 @@
           "at": 21,
           "questionsFromBeforeTheChange": 40,
           "pv": 0,
-          "nd": 0,
-          "flagged": 0,
-          "cluster": 1,
+          "nd": 1,
+          "flagged": 1,
+          "cluster": 2,
           "run": 1,
           "duplicates": 0
         }
@@ -216,9 +216,9 @@
           "at": 11,
           "questionsFromBeforeTheChange": 50,
           "pv": 0,
-          "nd": 0,
-          "flagged": 0,
-          "cluster": 1,
+          "nd": 1,
+          "flagged": 1,
+          "cluster": 2,
           "run": 1,
           "duplicates": 0
         },
@@ -226,9 +226,9 @@
           "at": 21,
           "questionsFromBeforeTheChange": 40,
           "pv": 0,
-          "nd": 0,
-          "flagged": 0,
-          "cluster": 1,
+          "nd": 1,
+          "flagged": 1,
+          "cluster": 2,
           "run": 1,
           "duplicates": 0
         }
@@ -246,7 +246,7 @@
           "nd": 0,
           "flagged": 0,
           "cluster": 1,
-          "run": 2,
+          "run": 1,
           "duplicates": 0
         },
         {
@@ -256,17 +256,17 @@
           "nd": 0,
           "flagged": 0,
           "cluster": 1,
-          "run": 2,
+          "run": 1,
           "duplicates": 0
         },
         {
           "at": 21,
           "questionsFromBeforeTheChange": 40,
-          "pv": 1,
+          "pv": 0,
           "nd": 0,
-          "flagged": 1,
+          "flagged": 0,
           "cluster": 1,
-          "run": 2,
+          "run": 1,
           "duplicates": 0
         }
       ],

@@ -829,7 +829,7 @@ function betterSale(ctx) {
   ], {maxDecimals: 2});
   const shop = rng.pick(['متجر', 'معرض أثاث', 'محل إلكترونيات', 'بقالة', 'متجر أدوات']);
   const stem = composeSentences(ctx,
-    `في ${shop} صفقة أولى تكلفتها ${u(aCost, 'dirham')} وربحها ${aPct}%، وصفقة ثانية تكلفتها ${u(bCost, 'dirham')} وربحها ${bPct}%. ما أكبر ربح بالدرهم بين الصفقتين؟`);
+    `في ${shop}، صفقة أولى تكلفتها ${u(aCost, 'dirham')} وربحها ${aPct}%، وصفقة ثانية تكلفتها ${u(bCost, 'dirham')} وربحها ${bPct}%. ما أكبر ربح بالدرهم بين الصفقتين؟`);
   return buildBase(ctx, {
     templateId: 'PL_E_BETTER_SALE',
     subskill: 'المقارنة بين ربحي صفقتين',

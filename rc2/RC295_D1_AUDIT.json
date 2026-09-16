@@ -1,0 +1,333 @@
+{
+  "drawnQuestions": 800,
+  "wrongOptions": 4000,
+  "distinctSentences": 274,
+  "sentencesSpanningFourOrMoreFamilies": 13,
+  "ofThoseNamingAnOperation": 0,
+  "ofThoseNotInTheDeclaredNeutralSet": 0,
+  "declaredNeutralSet": [
+    "أعدت قيمة معطاة في السؤال بدل القيمة المطلوبة.",
+    "توقفت عند قيمة وسيطة ولم تكمل الخطوة الأخيرة.",
+    "طبّقت الخطوة نفسها مرتين بدل مرة واحدة.",
+    "زدت أو نقصت خطوة واحدة عن العدد الصحيح من الخطوات.",
+    "أسقطت إحدى المراحل من الحساب.",
+    "أعطيت مقدار الفرق بين القيمتين بدل القيمة المطلوبة نفسها.",
+    "طبّقت العملية في الاتجاه المعاكس.",
+    "توقفت بعد المرحلة الأولى ولم تكمل بقية المراحل المطلوبة.",
+    "قرأت مقدار الخطوة خطأً بوحدة واحدة.",
+    "استخدمت إحدى الحالتين وأهملت الأخرى، والحالتان معًا هما ما يحدد القيمة.",
+    "توقفت عند قيمة الوحدة الواحدة ولم تكمل إلى الكمية المطلوبة.",
+    "طبّقت المعدل على عدد وحدات غير الذي يخصه."
+  ],
+  "declaredNeutralSetSize": 12,
+  "declaredNeutralSentencesNamingAnOperation": [],
+  "factualFallbackUses": 116,
+  "factualFallbackRate": 2.9,
+  "reasonsNamingAnOperationTheSolutionDoesNotUse": 0,
+  "reasonsContradictingTheirDerivation": 0,
+  "wideSentences": [
+    {
+      "sentence": "أعدت قيمة معطاة في السؤال بدل القيمة المطلوبة.",
+      "families": [
+        "ages",
+        "averages",
+        "calendar",
+        "combined_rate",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "percentages",
+        "profit_loss",
+        "ratios",
+        "relational",
+        "sequences",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 15,
+      "uses": 278,
+      "ids": [
+        "USED_GIVEN_VALUE_AS_ANSWER"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "توقفت عند قيمة وسيطة ولم تكمل الخطوة الأخيرة.",
+      "families": [
+        "ages",
+        "averages",
+        "calendar",
+        "combined_rate",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "percentages",
+        "profit_loss",
+        "ratios",
+        "sequences",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 14,
+      "uses": 179,
+      "ids": [
+        "STOPPED_AT_INTERMEDIATE_TOTAL"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "هذه العملية ليست التي تقتضيها العلاقة بين المعطيات والمطلوب في هذه الخطوة.",
+      "families": [
+        "ages",
+        "averages",
+        "combined_rate",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "percentages",
+        "profit_loss",
+        "ratios",
+        "relational",
+        "sequences",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 14,
+      "uses": 116,
+      "ids": [
+        "MULTIPLIED_INSTEAD_OF_DIVIDED",
+        "SUBTRACTED_INSTEAD_OF_ADDED",
+        "REVERSED_DIRECT_PROPORTION",
+        "ADDED_INSTEAD_OF_SUBTRACTED",
+        "ANSWERED_THE_OTHER_COMPONENT",
+        "ADDED_INSTEAD_OF_SCALING",
+        "MULTIPLIED_COUNTS_INSTEAD_OF_RATE",
+        "ADDED_PERCENTAGES",
+        "ADDED_WHERE_A_DIFFERENCE_BELONGS",
+        "SUBTRACTED_PERCENTAGES",
+        "USED_THE_MIDDLE_MEMBER",
+        "SHIFTED_WRONG_DIRECTION"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "زدت أو نقصت خطوة واحدة عن العدد الصحيح من الخطوات.",
+      "families": [
+        "ages",
+        "averages",
+        "calendar",
+        "combined_rate",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "ratios",
+        "relational",
+        "sequences",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 13,
+      "uses": 248,
+      "ids": [
+        "OFF_BY_ONE_STEP"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "طبّقت الخطوة نفسها مرتين بدل مرة واحدة.",
+      "families": [
+        "ages",
+        "averages",
+        "combined_rate",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "percentages",
+        "profit_loss",
+        "ratios",
+        "relational",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 13,
+      "uses": 230,
+      "ids": [
+        "APPLIED_STEP_TWICE"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "أسقطت إحدى المراحل من الحساب.",
+      "families": [
+        "ages",
+        "averages",
+        "combined_rate",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "percentages",
+        "profit_loss",
+        "ratios",
+        "sequences",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 13,
+      "uses": 98,
+      "ids": [
+        "MISSED_ONE_STAGE"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "أعطيت مقدار الفرق بين القيمتين بدل القيمة المطلوبة نفسها.",
+      "families": [
+        "ages",
+        "averages",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "percentages",
+        "profit_loss",
+        "ratios",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 11,
+      "uses": 99,
+      "ids": [
+        "USED_DIFFERENCE_AS_ANSWER"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "طبّقت المعدل على عدد وحدات غير الذي يخصه.",
+      "families": [
+        "combined_rate",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "profit_loss",
+        "ratios",
+        "sequences",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 10,
+      "uses": 78,
+      "ids": [
+        "RATE_APPLIED_TO_WRONG_COUNT"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "قرأت مقدار الخطوة خطأً بوحدة واحدة.",
+      "families": [
+        "ages",
+        "averages",
+        "direct_proportion",
+        "fractions",
+        "percentages",
+        "profit_loss",
+        "ratios",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 10,
+      "uses": 49,
+      "ids": [
+        "MISREAD_THE_STEP"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "استخدمت إحدى الحالتين وأهملت الأخرى، والحالتان معًا هما ما يحدد القيمة.",
+      "families": [
+        "ages",
+        "averages",
+        "combined_rate",
+        "direct_proportion",
+        "machines",
+        "percentages",
+        "profit_loss",
+        "speed",
+        "unit_rate"
+      ],
+      "familyCount": 9,
+      "uses": 100,
+      "ids": [
+        "SOLVED_ONE_CONDITION_ONLY"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "طبّقت العملية في الاتجاه المعاكس.",
+      "families": [
+        "ages",
+        "direct_proportion",
+        "fractions",
+        "percentages",
+        "profit_loss",
+        "relational",
+        "sequences",
+        "speed",
+        "unit_rate"
+      ],
+      "familyCount": 9,
+      "uses": 76,
+      "ids": [
+        "APPLIED_OPERATION_IN_REVERSE"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "توقفت عند قيمة الوحدة الواحدة ولم تكمل إلى الكمية المطلوبة.",
+      "families": [
+        "combined_rate",
+        "direct_proportion",
+        "machines",
+        "percentages",
+        "ratios",
+        "speed",
+        "unit_rate",
+        "work_time"
+      ],
+      "familyCount": 8,
+      "uses": 71,
+      "ids": [
+        "STOPPED_AT_UNIT_RATE"
+      ],
+      "namesOperation": false
+    },
+    {
+      "sentence": "توقفت بعد المرحلة الأولى ولم تكمل بقية المراحل المطلوبة.",
+      "families": [
+        "calendar",
+        "direct_proportion",
+        "fractions",
+        "machines",
+        "percentages",
+        "profit_loss",
+        "sequences",
+        "unit_rate"
+      ],
+      "familyCount": 8,
+      "uses": 48,
+      "ids": [
+        "STOPPED_AFTER_FIRST_STAGE"
+      ],
+      "namesOperation": false
+    }
+  ],
+  "falseSolutionClaimExamples": [],
+  "derivationContradictionExamples": []
+}

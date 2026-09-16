@@ -631,7 +631,7 @@ function timeForTarget(ctx) {
     mk(target / together / 2, 'APPLIED_STEP_TWICE', `${target} ÷ ${together} ÷ 2`)
   ], {maxDecimals: 2});
   const stem = composeSentences(ctx,
-    `في مشغل خياطة تنتج العاملة الأولى ${u(aRate, 'shirtPerHour')} وتنتج الثانية ${u(bRate, 'shirtPerHour')}، وتعملان معًا. كم ساعة يلزمهما لإنتاج ${u(target, 'shirt')}؟`);
+    `في مشغل خياطة، معدل العاملة الأولى ${u(aRate, 'shirtPerHour')} ومعدل الثانية ${u(bRate, 'shirtPerHour')}، وتعملان معًا. كم ساعة يلزمهما لإنتاج ${u(target, 'shirt')}؟`);
   return buildBase(ctx, {
     templateId: 'COMB_E_TIME_FOR_TARGET',
     subskill: 'زمن بلوغ هدف بمعدل مشترك',

@@ -1,0 +1,150 @@
+{
+  "schema": "rc295-key-stability-v1",
+  "a": {
+    "root": "/tmp/claude-0/rc294root",
+    "drawn": 10000,
+    "digest": "d4b2dfda9c69525f829e0ea089a926639cbea10933b37ffec39e0684c41d473e"
+  },
+  "b": {
+    "root": "/home/user/Generator-number",
+    "drawn": 10000,
+    "digest": "c1da98c8410f8407d26c15bfdfc89e07c61459c17eb9466e454b1bef8229746e"
+  },
+  "identical": 7533,
+  "changed": 2467,
+  "attribution": {
+    "NEW_TEMPLATE_DRAWN": 1191,
+    "POOL_SHIFT": 1239,
+    "SAME_TEMPLATE_CHANGED": 37,
+    "AVAILABILITY": 0
+  },
+  "sameTemplateChangedByTemplate": {
+    "FRAC_H_4": 28,
+    "FRAC_M_3": 9
+  },
+  "newTemplateDrawnByTemplate": {
+    "MACH_E_TOTAL_TWO_TYPES": 50,
+    "PL_E_COST_FROM_PROFIT": 43,
+    "FRAC_E_COUNT_PARTS": 40,
+    "COMB_E_TIME_FOR_TARGET": 40,
+    "WORK_E_RATE_FROM_TOTAL": 39,
+    "AGE_E_TOTAL_AFTER": 39,
+    "FRAC_E_REMAINING_FRACTION": 38,
+    "COMB_E_SHARE_OF_OUTPUT": 35,
+    "RATE_E_UNIT_PRICE": 35,
+    "RATE_E_BUDGET_COUNT": 34,
+    "MACH_E_LOST_OUTPUT": 34,
+    "SEQ_E_FIRST_ABOVE": 33,
+    "WORK_E_OUTPUT_IN_DAYS": 33,
+    "SEQ_E_SUM_SHOWN": 32,
+    "RATE_E_BETTER_DEAL": 32,
+    "AGE_E_GAP": 32,
+    "COMB_E_ONE_ALONE": 31,
+    "RAT_E_PART_COUNT": 30,
+    "AVG_E_COUNT_FROM_MEAN": 30,
+    "AVG_E_TOTAL_FROM_MEAN": 30,
+    "PL_E_SELL_PRICE": 29,
+    "RAT_E_COMMON_FACTOR": 28,
+    "RAT_E_SHARE_GAP": 27,
+    "PCT_E_WHICH_OFFER": 27,
+    "REL_E_FALSE_STATEMENT": 27,
+    "WORK_E_REMAINING_DAYS": 26,
+    "PROP_E_TOTAL_TWO_ITEMS": 26,
+    "PL_E_BETTER_SALE": 24,
+    "PCT_E_SHARE_PERCENT": 24,
+    "AVG_E_COMPARE_MEANS": 24,
+    "PCT_E_REMAINING_PERCENT": 23,
+    "PROP_E_UNIT_VALUE": 23,
+    "AVG_E_RANGE": 23,
+    "PCT_E_WHOLE": 22,
+    "CAL_E_BEFORE": 20,
+    "SPD_E_REMAINING": 18,
+    "ODD_E_EXTEND": 18,
+    "FRAC_E_PART_OF": 16,
+    "CAL_E_DAYS_BETWEEN": 15,
+    "SPD_E_TOTAL_TRIP": 14,
+    "ODD_E_PROPERTY": 11,
+    "REL_E_COUNT_BELOW": 7,
+    "SPD_E_COMPARE": 6,
+    "ODD_E_COUNT_MATCHING": 3
+  },
+  "samples": {
+    "NEW_TEMPLATE_DRAWN": [
+      {
+        "seed": "RC29-DEV-ALEF-easy-0",
+        "a": "WORK_E_INVERSE",
+        "b": "WORK_E_REMAINING_DAYS"
+      },
+      {
+        "seed": "RC29-DEV-ALEF-easy-6",
+        "a": "PCT_M_REMAIN",
+        "b": "PCT_E_WHOLE"
+      },
+      {
+        "seed": "RC29-DEV-ALEF-easy-18",
+        "a": "RATE_M_PERCENT",
+        "b": "RATE_E_BUDGET_COUNT"
+      },
+      {
+        "seed": "RC29-DEV-ALEF-easy-27",
+        "a": "REL_E_STATEMENT_TRUE",
+        "b": "SPD_E_REMAINING"
+      },
+      {
+        "seed": "RC29-DEV-ALEF-easy-30",
+        "a": "PCT_M_REMAIN",
+        "b": "PCT_E_REMAINING_PERCENT"
+      }
+    ],
+    "POOL_SHIFT": [
+      {
+        "seed": "RC29-DEV-ALEF-easy-21",
+        "a": "REL_E_STATEMENT_TRUE",
+        "b": "REL_E_GAP_CHAIN"
+      },
+      {
+        "seed": "RC29-DEV-ALEF-easy-33",
+        "a": "AVG_E_ADD",
+        "b": "AVG_E_REMOVE"
+      },
+      {
+        "seed": "RC29-DEV-ALEF-easy-51",
+        "a": "AVG_E_REMOVE",
+        "b": "AVG_E_MISSING_VALUE"
+      },
+      {
+        "seed": "RC29-DEV-ALEF-easy-60",
+        "a": "PL_H_REVERSE",
+        "b": "PL_E_LOSS"
+      },
+      {
+        "seed": "RC29-DEV-ALEF-easy-63",
+        "a": "PCT_M_REMAIN",
+        "b": "REL_E_STATEMENT_TRUE"
+      }
+    ],
+    "SAME_TEMPLATE_CHANGED": [
+      {
+        "seed": "RC29-DEV-ALEF-easy-414",
+        "template": "FRAC_H_4"
+      },
+      {
+        "seed": "RC29-DEV-ALEF-easy-516",
+        "template": "FRAC_H_4"
+      },
+      {
+        "seed": "RC29-DEV-ALEF-easy-579",
+        "template": "FRAC_H_4"
+      },
+      {
+        "seed": "RC29-DEV-ALEF-easy-873",
+        "template": "FRAC_H_4"
+      },
+      {
+        "seed": "RC29-DEV-ALEF-easy-1326",
+        "template": "FRAC_M_3"
+      }
+    ],
+    "AVAILABILITY": []
+  }
+}

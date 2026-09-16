@@ -1491,6 +1491,9 @@ export class NumericalQuestionGeneratorEngine {
 }
 
 export {FAMILY_REGISTRY, FAMILY_MAP};
+// RC2.9.5 §3. The declared mix is exported so an audit can compare it with the
+// realised split rather than restate it.
+export {MIXED_DIFFICULTY_WEIGHTS, MIXED_SHARE};
 export {validateQuestion} from './utils.js';
 export {SeededRNG} from './rng.js';
 

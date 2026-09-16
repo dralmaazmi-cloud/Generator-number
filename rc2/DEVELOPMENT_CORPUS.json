@@ -1,8 +1,8 @@
 {
   "schema": "rc2-development-corpus-v1",
   "section": "§22",
-  "generatedAt": "2026-09-12T11:10:12.263Z",
-  "engineVersion": "1.4.0",
+  "generatedAt": "2026-09-16T08:07:17.643Z",
+  "engineVersion": "1.5.4",
   "seeds": [
     "RC2-DEV-ALPHA",
     "RC2-DEV-BETA",
@@ -17,38 +17,38 @@
     "published": 10000,
     "exhausted": 0,
     "families": 16,
-    "templates": 107,
+    "templates": 228,
     "byBand": {
       "easy": 3335,
       "medium": 3335,
       "hard": 3330
     },
     "byFamily": {
-      "profit_loss": 640,
-      "percentages": 617,
-      "relational": 612,
-      "speed": 583,
-      "ages": 660,
-      "fractions": 616,
-      "ratios": 630,
-      "odd_one_out": 702,
-      "averages": 633,
-      "combined_rate": 612,
-      "work_time": 585,
-      "machines": 649,
-      "sequences": 632,
-      "calendar": 597,
-      "direct_proportion": 633,
-      "unit_rate": 599
+      "profit_loss": 619,
+      "percentages": 655,
+      "combined_rate": 725,
+      "speed": 589,
+      "machines": 698,
+      "direct_proportion": 703,
+      "ratios": 691,
+      "odd_one_out": 435,
+      "averages": 661,
+      "fractions": 408,
+      "unit_rate": 612,
+      "relational": 615,
+      "work_time": 545,
+      "sequences": 675,
+      "calendar": 667,
+      "ages": 702
     },
-    "sha256": "1b75313247a21444e1805840a938c51adc0b6039434c237f89e44ec09ab01a57",
-    "gzipBytes": 1198125
+    "sha256": "b929ebbf7c8a8cc7e2b2f2e0792c89b55cb66386e6b48a48d912f727a08dd46f",
+    "gzipBytes": 1688039
   },
   "mathematics": {
     "note": "§20 — the RC1 gains. Any non-zero figure here is an RC2 blocker.",
     "ORACLE_DISAGREEMENT": 0,
     "oracleDisagreementSamples": [],
-    "oracleComparedThroughALabelMap": 208,
+    "oracleComparedThroughALabelMap": 117,
     "postShuffleKeyMismatch": 0,
     "zeroCorrectOption": 0,
     "multipleCorrectOptions": 0,
@@ -56,32 +56,33 @@
     "metaKeyMismatch": 0
   },
   "ambiguity": {
-    "oddOneOutPublished": 702,
+    "oddOneOutPublished": 435,
     "verdicts": {
-      "CLEAN": 567,
-      "BORDERLINE": 135
+      "UNRECORDED": 163,
+      "CLEAN": 218,
+      "BORDERLINE": 54
     },
     "publishedAmbiguous": 0,
     "publishedUndiscoverable": 0
   },
   "language": {
-    "constructionsClassified": 90271,
-    "valid": 71616,
-    "exempt": 18655,
+    "constructionsClassified": 106382,
+    "valid": 85030,
+    "exempt": 21352,
     "invalid": 0,
     "unclassified": 0,
     "invalidSamples": []
   },
   "distractors": {
     "wrongOptions": 50000,
-    "answerDerived": 1011,
-    "answerDerivedShare": 0.02022,
+    "answerDerived": 1448,
+    "answerDerivedShare": 0.02896,
     "unattributedAnswerDerived": 0,
     "perQuestionDistribution": {
-      "0": 9467,
-      "1": 159,
-      "2": 270,
-      "3": 104
+      "0": 8967,
+      "1": 651,
+      "2": 349,
+      "3": 33
     },
     "rc1Baseline": {
       "answerDerivedShare": 0.249,
@@ -90,168 +91,151 @@
   },
   "feedback": {
     "verdicts": {
-      "EXACT": 33526,
-      "ROUNDS_TO_VALUE": 811,
-      "PROSE": 8578,
-      "NON_NUMERIC": 7085
+      "EXACT": 33096,
+      "PROSE": 9762,
+      "ROUNDS_TO_VALUE": 537,
+      "NON_NUMERIC": 6605
     },
     "derivationMismatches": 0,
     "questionsWithInapplicableMisconception": 0,
     "questionsWithDuplicateDerivation": 0
   },
   "statisticalLeakage": {
-    "distinctAnswersAcrossCorpus": 1182,
-    "corpusModalShare": 0.0118,
-    "templatesMeasured": 107,
+    "note": "A 10,000-question corpus spread over ~105 templates gives ~95 draws each, so few clear the sample this statistic needs. The authoritative leakage measurement is tools/audit/rc2-011-answer-space.mjs at 30,000 questions; this is a cross-check.",
+    "distinctAnswersAcrossCorpus": 1995,
+    "corpusModalShare": 0.0101,
+    "templatesMeasured": 6,
     "templatesAbove20Points": 0,
-    "templatesAbove15Points": 2,
-    "medianAdvantagePoints": -3.6,
+    "templatesAbove20PointsOnPointEstimate": 0,
+    "templatesAbove15Points": 0,
+    "medianAdvantagePoints": -9,
     "worst": [
       {
-        "templateId": "REL_H_POSITION",
-        "n": 114,
-        "space": 16,
-        "modal": 0.351,
-        "entropyBits": 3.42,
-        "advantagePoints": 18.4
+        "templateId": "MACH_H_MIN_SECOND_TYPE",
+        "n": 261,
+        "space": 5,
+        "modal": 0.249,
+        "entropyBits": 2.29,
+        "advantagePoints": 8.2,
+        "advantageLowerBoundPoints": 2.9
       },
       {
-        "templateId": "REL_M_COUNT",
-        "n": 59,
-        "space": 6,
-        "modal": 0.339,
-        "entropyBits": 2.19,
-        "advantagePoints": 17.2
+        "templateId": "COMB_H_TWO_PUMPS",
+        "n": 285,
+        "space": 14,
+        "modal": 0.147,
+        "entropyBits": 3.48,
+        "advantagePoints": -1.9,
+        "advantageLowerBoundPoints": -6.1
       },
       {
-        "templateId": "SPD_H_MEET_DELAY",
-        "n": 54,
-        "space": 15,
-        "modal": 0.296,
-        "entropyBits": 3.31,
-        "advantagePoints": 13
+        "templateId": "AGE_H_PAST_FUT",
+        "n": 284,
+        "space": 28,
+        "modal": 0.099,
+        "entropyBits": 4.45,
+        "advantagePoints": -6.8,
+        "advantageLowerBoundPoints": -10.3
       },
       {
-        "templateId": "PL_H_CHAIN",
-        "n": 103,
-        "space": 7,
-        "modal": 0.272,
-        "entropyBits": 2.64,
-        "advantagePoints": 10.5
+        "templateId": "PCT_H_TWO_GROUP_CHANGE",
+        "n": 247,
+        "space": 39,
+        "modal": 0.077,
+        "entropyBits": 4.82,
+        "advantagePoints": -9,
+        "advantageLowerBoundPoints": -12.4
       },
       {
-        "templateId": "AGE_H_TWO_TIME",
-        "n": 120,
-        "space": 6,
-        "modal": 0.258,
-        "entropyBits": 2.48,
-        "advantagePoints": 9.2
+        "templateId": "RATE_H_RATE_FROM_GAP",
+        "n": 201,
+        "space": 109,
+        "modal": 0.04,
+        "entropyBits": 6.46,
+        "advantagePoints": -12.7,
+        "advantageLowerBoundPoints": -15.4
       },
       {
-        "templateId": "SPD_M_EQUAL_DIST",
-        "n": 72,
-        "space": 12,
-        "modal": 0.25,
-        "entropyBits": 3.19,
-        "advantagePoints": 8.3
-      },
-      {
-        "templateId": "SPD_M_TWO_TIME",
-        "n": 56,
-        "space": 7,
-        "modal": 0.25,
-        "entropyBits": 2.51,
-        "advantagePoints": 8.3
-      },
-      {
-        "templateId": "ODD_M_PRONIC",
-        "n": 71,
-        "space": 9,
-        "modal": 0.239,
-        "entropyBits": 3.01,
-        "advantagePoints": 7.3
-      },
-      {
-        "templateId": "ODD_M_CUBES",
-        "n": 79,
-        "space": 9,
-        "modal": 0.228,
-        "entropyBits": 2.99,
-        "advantagePoints": 6.1
-      },
-      {
-        "templateId": "COMB_E_TIME",
-        "n": 76,
-        "space": 10,
-        "modal": 0.224,
-        "entropyBits": 3.2,
-        "advantagePoints": 5.7
+        "templateId": "AVG_H_OVERLAP",
+        "n": 258,
+        "space": 192,
+        "modal": 0.016,
+        "entropyBits": 7.45,
+        "advantagePoints": -15.1,
+        "advantageLowerBoundPoints": -16.7
       }
     ]
   },
   "difficulty": {
     "declaredVsComputed": {
-      "easy->easy": 2745,
-      "medium->medium": 1735,
-      "hard->hard": 2018,
-      "medium->easy": 700,
-      "medium->hard": 900,
-      "hard->medium": 1017,
-      "hard->easy": 295,
-      "easy->medium": 590
+      "easy->medium": 1257,
+      "medium->medium": 1262,
+      "hard->hard": 3026,
+      "easy->easy": 2053,
+      "medium->hard": 1705,
+      "medium->easy": 368,
+      "hard->medium": 304,
+      "easy->hard": 25
     },
-    "agreement": 0.6498,
+    "agreement": 0.6341,
     "rc1Agreement": 0.528
   },
   "rejectionTelemetry": {
     "reconciliation": {
-      "proposals": 10289,
-      "accountedFor": 10289,
+      "proposals": 10656,
+      "accountedFor": 10656,
       "balanced": true,
       "difference": 0,
       "breakdown": {
         "published": 10000,
-        "samplerFailures": 6,
-        "finalizationFailures": 203,
-        "pipelineRejectedCandidates": 80
+        "samplerFailures": 2,
+        "finalizationFailures": 299,
+        "pipelineRejectedCandidates": 355
       }
     },
     "byStage": {
-      "proposal": 10289,
+      "proposal": 10656,
       "published": 10000,
-      "family_sampler": 10486,
-      "distractor_filter": 6116,
-      "finalization": 203,
-      "pipeline": 80,
-      "sampler_failure": 6
+      "pipeline": 409,
+      "distractor_filter": 4416,
+      "distractor_plausibility": 1498,
+      "family_sampler": 5618,
+      "finalization": 299,
+      "sampler_failure": 2
     },
     "byReason": {
-      "SAMPLER_CONSTRAINT": 9255,
-      "DISTRACTOR_IMPOSSIBLE": 6116,
-      "DISTRACTOR_NO_MISCONCEPTION": 203,
-      "AMBIGUOUS_ODD_ONE_OUT": 1237,
-      "DEGENERATE_WRONG_METHOD_EQUALS_KEY": 60,
-      "DEGENERATE_PARAMETERS": 16,
-      "EXPLANATION_UNSOURCED_VALUE": 4
+      "EXPLANATION_UNSOURCED_VALUE": 169,
+      "DISTRACTOR_IMPOSSIBLE": 4416,
+      "IMPLAUSIBLE_DISTRACTOR_DEMOTED": 1498,
+      "SAMPLER_CONSTRAINT": 5140,
+      "DISTRACTOR_NO_MISCONCEPTION": 299,
+      "AMBIGUOUS_ODD_ONE_OUT": 480,
+      "UNATTRIBUTED_ANSWER_DERIVED_DISTRACTOR": 43,
+      "DEGENERATE_PARAMETERS": 56,
+      "DEGENERATE_WRONG_METHOD_EQUALS_KEY": 94,
+      "INVALID_ARABIC_NUMBER_UNIT": 27,
+      "EXPLANATION_EQUATION_FAILURE": 10,
+      "TEXT_PARAM_MISMATCH": 7,
+      "FEEDBACK_DERIVATION_MISMATCH": 3
     },
-    "internalResamplesPerProposal": 1.019,
+    "internalResamplesPerProposal": 0.527,
     "exhaustions": 0
   },
   "diversity": {
-    "exactFingerprints": 6352,
-    "semanticFingerprints": 5685,
-    "structuralReasoningSignatures": 89,
-    "exactPerPublished": 0.6352,
-    "semanticCollapseRatio": 0.895
+    "exactFingerprints": 7424,
+    "semanticFingerprints": 7266,
+    "structuralReasoningSignatures": 391,
+    "exactPerPublished": 0.7424,
+    "semanticCollapseRatio": 0.9787
   },
   "performance": {
-    "meanAttemptsPerPublished": 1.0289,
-    "p95Attempts": 1,
-    "maxAttempts": 3,
-    "latencyP50Ms": 0.58,
-    "latencyP95Ms": 1.11,
-    "latencyP99Ms": 1.66,
-    "wallClockSeconds": 8,
-    "questionsPerSecond": 1244.2
+    "meanAttemptsPerPublished": 1.0656,
+    "p95Attempts": 2,
+    "maxAttempts": 4,
+    "latencyP50Ms": 1.19,
+    "latencyP95Ms": 2.03,
+    "latencyP99Ms": 3.12,
+    "wallClockSeconds": 14.9,
+    "questionsPerSecond": 672.5
   }
 }

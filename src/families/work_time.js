@@ -837,7 +837,7 @@ function remainingDays(ctx) {
   ], {maxDecimals: 2});
   const site = rng.pick(['ورشة', 'مصنع', 'مطبعة', 'مشتل', 'مشغل خياطة']);
   const stem = composeSentences(ctx,
-    `في ${site} مشروع يحتاج ${u(total, 'piece')} بمعدل ثابت ${u(perDay, 'piece')} في اليوم. أُنجز منه ${u(done, 'piece')}، فكم يومًا بقي لإتمامه؟`);
+    `في ${site}، مشروع يحتاج ${u(total, 'piece')} بمعدل ثابت ${u(perDay, 'piece')} في اليوم. أُنجز منه ${u(done, 'piece')}، فكم يومًا بقي لإتمامه؟`);
   return buildBase(ctx, {
     templateId: 'WORK_E_REMAINING_DAYS',
     subskill: 'حساب الأيام المتبقية بعد إنجاز جزء من العمل',
