@@ -107,6 +107,39 @@ const MIXED_DIFFICULTY_WEIGHTS = [
   {value:'medium', weight:0.40},
   {value:'hard', weight:0.10}
 ];
+/**
+ * RC2.9.6 §2.1. How many independent planner probes a capacity answer must
+ * survive. Six is what took the measured single-family matrix to zero
+ * offered-then-failed cells at ten attempts; fewer let `ratios` back to ten.
+ */
+const CAPACITY_PROBE_SEEDS = Object.freeze(['alef', 'baa', 'jeem', 'dal', 'haa', 'waw']);
+
+/**
+ * RC2.9.6 §2.1. How many more dry sessions a candidate ceiling must survive
+ * before the product is allowed to offer it.
+ *
+ * Six probes were not enough, and the measurement says exactly why. A session
+ * does not fail evenly across counts — it fails at the CEILING and nowhere
+ * else. `ratios` alone delivered 53 of 60 seeds at ten and 60 of 60 at nine;
+ * ages+fractions+work_time delivered 44 of 60 at thirty and 60 of 60 at twenty.
+ * Six probes pass an 88%-count about half the time, so the top rung kept
+ * slipping through and the product kept offering it.
+ *
+ * So a candidate is not accepted on the descent probes alone: it must then
+ * deliver thirty more independent seeds without a single refusal, and the
+ * descent continues if any of them refuses. Thirty takes the chance of
+ * accepting an 88%-count to about one in fifty thousand, and the sharp
+ * transition in the data means the count below is the one that holds.
+ */
+const CAPACITY_CONFIRM_PROBES = 30;
+
+/**
+ * RC2.9.6 §2.3. The smallest sitting the product offers. A selection that
+ * cannot plan this many is not offered at all, and the learner is asked to add
+ * a family rather than being handed a session that fails.
+ */
+const MINIMUM_SITTING = 5;
+
 const MIXED_SHARE = Object.freeze(Object.fromEntries(MIXED_DIFFICULTY_WEIGHTS.map(w => [w.value, w.weight])));
 
 export class NumericalQuestionGeneratorEngine {
@@ -160,6 +193,11 @@ export class NumericalQuestionGeneratorEngine {
       // Section 13-C: a small, non-persistent memory of recent sessions.
       recentFingerprintMemory: config.recentFingerprintMemory ?? 150
     };
+    // RC2.9.6 §2.1. A capacity answer is several dozen planner runs, and the
+    // family selector asks for one on every click. The cache is keyed on the
+    // selection and is only used when there is no journey history, because a
+    // continued journey's capacity depends on what that learner already met.
+    this._capacityCache = new Map();
     this.analytics = new GenerationAnalytics();
     // RC2-003: one telemetry object spanning every rejection stage.
     this.telemetry = new GenerationTelemetry();
@@ -1297,31 +1335,200 @@ export class NumericalQuestionGeneratorEngine {
    *
    * @param {{difficulty?:string, families?:string[]}} options
    */
+  /**
+   * RC2.9.6 §2.1. Can this request actually be served? A DRY RUN of the whole
+   * session, on an engine of its own.
+   *
+   * The first attempt at this modelled only the planner — band schedule,
+   * coverage precheck, `BlueprintScheduler.plan()` — and it was still wrong,
+   * because a session has TWO refusal points and that is only the first:
+   *
+   *   plan time         `blueprintPlan.complete` is false: the slots could not
+   *                     be given distinct ideas at all;
+   *   realization time  the plan completed, but the pool of distinct CORE
+   *                     constructions ran out while rendering it — this is what
+   *                     refused `ratios` at ten on three seeds in five while
+   *                     every plan probe said yes.
+   *
+   * Nothing short of running the session can see both, so the probe runs the
+   * session. That also makes trap 2 unreachable by construction: the number the
+   * product offers is not computed from the planner's inputs, or from template
+   * tallies, or from any restatement of the engine's arithmetic — it is the
+   * engine's own verdict on the request, reached the same way the learner's
+   * click reaches it. The two cannot drift because there is only one of them.
+   *
+   * The probe runs on `_probeEngine`, a private instance built with this
+   * engine's config, so a capacity query never touches this engine's telemetry,
+   * analytics or recent-fingerprint memory. §23's TELEMETRY_RECONCILES would
+   * catch it if it did.
+   */
+  _probeServes({count, families = null, difficulty = 'mixed', seed, diversityHistory = null} = {}) {
+    if (!this._probeEngine) {
+      this._probeEngine = new NumericalQuestionGeneratorEngine(this.config);
+      this._probeEngine._isProbe = true;
+    }
+    try {
+      const set = this._probeEngine.generatePractice({
+        count, families, difficulty, seed, diversityHistory,
+        // A band probe is measurement by definition; mixed never needs it.
+        bandSession: BAND_ORDER.includes(difficulty) || undefined
+      });
+      return {ok: set.questions.length === count, delivered: set.questions.length, reason: null};
+    } catch (e) {
+      return {ok: false, delivered: e.delivered ?? 0, reason: e.code ?? 'GENERATION_FAILED'};
+    } finally {
+      // Nothing a probe did is part of this engine's record, or of its own.
+      this._probeEngine.resetTelemetry?.();
+    }
+  }
+
+  /**
+   * RC2.9.6 §2.1. The largest count this selection serves on EVERY probe seed.
+   *
+   * A session is seeded, so one seed succeeding is not a promise: `ratios`
+   * alone at ten served two seeds in five, which is exactly the shape of the
+   * defect — a capacity that is true on average is a dead end in practice. The
+   * number returned is the largest count that every one of
+   * `CAPACITY_PROBE_SEEDS` delivered in full, and §4.1 then proves the
+   * invariant the product needs — offered implies served — on seeds the probe
+   * never used.
+   */
+  _plannedCeiling({families = null, difficulty = 'mixed', diversityHistory = null,
+    limit = 100, ladder = null, probes = CAPACITY_PROBE_SEEDS} = {}) {
+    const key = `${(families ?? ['*']).slice().sort().join('+')}|${difficulty}|${limit}|${ladder ? ladder.join(',') : 'exact'}`;
+    if (!diversityHistory && this._capacityCache.has(key)) return this._capacityCache.get(key);
+    const runs = (n, tags) => tags.every(tag =>
+      this._probeServes({count: n, families, difficulty, diversityHistory,
+        seed: `RC296-CAP-${key}-${n}-${tag}`}).ok);
+    const descentTags = probes.map((t, i) => `${t}${i}`);
+    const confirmTags = Array.from({length: CAPACITY_CONFIRM_PROBES}, (_, i) => `confirm${i}`);
+    // `ladder` answers the cheap question the product usually asks — which of
+    // these preset sizes may I offer — instead of the expensive one, the exact
+    // ceiling. A ladder answer is always one of the counts the exact answer
+    // would allow, so it can never offer more than the exact one would.
+    const rungs = ladder
+      ? [...new Set(ladder)].filter(n => n >= 1 && n <= Math.min(limit, 100)).sort((a, b) => b - a)
+      : Array.from({length: Math.min(limit, 100)}, (_, i) => Math.min(limit, 100) - i);
+    // Two passes, because the two questions cost very different amounts.
+    // The six cheap probes find the neighbourhood of the ceiling; the thirty
+    // expensive ones decide whether the product may offer it. Confirming only
+    // from the candidate downwards is what keeps this to a second or two
+    // instead of a confirmation round for every count in the range.
+    let best = 0;
+    const from = rungs.findIndex(n => runs(n, descentTags));
+    if (from >= 0) {
+      for (const n of rungs.slice(from)) { if (runs(n, confirmTags)) { best = n; break; } }
+    }
+    if (!diversityHistory) this._capacityCache.set(key, best);
+    return best;
+  }
+
   sessionCapacity(options = {}) {
     const difficulty = options.difficulty ?? 'mixed';
     const selectedFamilies = this._resolveFamilyPool(options);
     const perBand = capacityFor(['easy', 'medium', 'hard'], selectedFamilies);
     const bound = band => perBand.find(c => c.band === band)?.maxSitting ?? 0;
     const hardMax = 100;
-    let maxCount;
-    if (['easy', 'medium', 'hard'].includes(difficulty)) maxCount = Math.min(hardMax, bound(difficulty));
-    else if (difficulty === 'mixed') {
-      // The mixed schedule is 25% easy, 15% hard, the rest medium (see
-      // _buildDifficultySchedule); the count is bounded by whichever band runs
-      // out first at that share.
-      // RC2.9.5 §6. The shares are read from MIXED_DIFFICULTY_WEIGHTS rather
-      // than repeated here, so the ceiling cannot drift from the mix.
-      maxCount = Math.min(hardMax,
-        Math.floor(bound('easy') / MIXED_SHARE.easy),
-        Math.floor(bound('medium') / MIXED_SHARE.medium),
-        Math.floor(bound('hard') / MIXED_SHARE.hard));
-    } else maxCount = hardMax; // adaptive draws one question at a time
+    // RC2.9.6 §2.1. The tally bound is kept — it is what the two refusal
+    // messages quote, and a reviewer comparing them needs it — but it is no
+    // longer the answer. It is an upper bound the planner is asked about, and
+    // the planner's answer is what the product may offer.
+    const tallyBound = ['easy', 'medium', 'hard'].includes(difficulty)
+      ? Math.min(hardMax, bound(difficulty))
+      : difficulty === 'mixed'
+        ? Math.min(hardMax,
+          Math.floor(bound('easy') / MIXED_SHARE.easy),
+          Math.floor(bound('medium') / MIXED_SHARE.medium),
+          Math.floor(bound('hard') / MIXED_SHARE.hard))
+        : hardMax;
+    // `ladder` asks only whether each of a caller's candidate sizes is servable
+    // — what the product needs to enable or disable a preset — instead of
+    // resolving the exact ceiling, which costs a session for every count in
+    // between. Omitted, the exact ceiling is returned as before.
+    const ladder = Array.isArray(options.ladder) && options.ladder.length ? options.ladder : null;
+    const maxCount = difficulty === 'adaptive'
+      ? hardMax // adaptive draws one question at a time; there is no session to probe
+      : this._plannedCeiling({
+        families: selectedFamilies, difficulty, ladder,
+        diversityHistory: options.diversityHistory ?? null,
+        limit: Math.max(1, tallyBound)
+      });
     return {
-      difficulty, families: selectedFamilies, maxCount: Math.max(1, maxCount),
+      difficulty, families: selectedFamilies,
+      maxCount: Math.max(0, maxCount),
+      // What the number is, in as many words, so a caller never has to guess
+      // whether it is a promise or an estimate.
+      basis: difficulty === 'adaptive' ? 'ADAPTIVE_UNBOUNDED'
+        : ladder ? 'SESSION_PROBE_LADDER' : 'SESSION_PROBE_EXACT',
+      ladder,
+      probes: difficulty === 'adaptive' ? 0 : CAPACITY_PROBE_SEEDS.length,
+      tallyBound,
+      // RC2.9.6 §2.3(b). Below this the selection is not offered at all.
+      servesAMinimumSitting: maxCount >= MINIMUM_SITTING,
+      minimumSitting: MINIMUM_SITTING,
       perBand: Object.fromEntries(perBand.map(c => [c.band, {
         blueprints: c.blueprints, reasoningTargets: c.reasoningTargets,
         coreConstructions: c.coreConstructions, constructions: c.constructions, maxSitting: c.maxSitting
       }]))
+    };
+  }
+
+  /**
+   * RC2.9.6 §2.1, the reverse direction: which families can serve `count`?
+   *
+   * Answers three things a caller needs and cannot work out from
+   * `sessionCapacity` alone without querying every subset: which single
+   * families are enough on their own, which are not, and — for a selection
+   * that falls short — the smallest additions that would make it work.
+   *
+   * `suggestionsFor` is what the weakness-targeted mode widens with (§2.4): a
+   * family the learner actually got wrong stays in the selection, and the
+   * engine names what to add beside it rather than refusing the sitting.
+   */
+  familiesFor(options = {}) {
+    const count = Math.max(1, Math.min(100, Number(options.count ?? this.config.defaultCount)));
+    const difficulty = options.difficulty ?? 'mixed';
+    const all = FAMILY_REGISTRY.map(f => f.id);
+    // Every question here is "does this set serve `count`?", never "what is the
+    // ceiling of this set?" — one rung instead of a descent, which is the
+    // difference between a second and a minute. `serves` is still the engine's
+    // own verdict from dry sessions; only the number of questions asked changes.
+    const serves = families => this._plannedCeiling({
+      families, difficulty, ladder: [count],
+      limit: Math.max(1, this.sessionCapacity({families, difficulty, ladder: [count]}).tallyBound)
+    }) >= count;
+    const servesCached = new Map();
+    const servesOnce = families => {
+      const k = families.slice().sort().join('+');
+      if (!servesCached.has(k)) servesCached.set(k, serves(families));
+      return servesCached.get(k);
+    };
+    const alone = all.map(id => ({family: id, serves: servesOnce([id])}));
+    const seed = Array.isArray(options.families) && options.families.length
+      ? this._resolveFamilyPool({families: options.families}) : null;
+    let widened = null;
+    if (seed) {
+      const chosen = [...seed];
+      const added = [];
+      // Try the widest families first — the ones that serve the count alone —
+      // so the usual case is one extra dry session rather than a search over
+      // every candidate. The learner's own families are never dropped: what
+      // they got wrong is the reason for the sitting.
+      const order = [...alone].sort((a, b) => (b.serves === true) - (a.serves === true));
+      while (!servesOnce(chosen) && chosen.length < all.length) {
+        const next = order.map(o => o.family).find(id => !chosen.includes(id) && servesOnce([...chosen, id]))
+          ?? order.map(o => o.family).find(id => !chosen.includes(id));
+        if (!next) break;
+        chosen.push(next); added.push(next);
+        if (servesOnce(chosen)) break;
+      }
+      widened = {requested: seed, families: chosen, added, serves: servesOnce(chosen), count};
+    }
+    return {
+      count, difficulty,
+      sufficientAlone: alone.filter(f => f.serves).map(f => f.family),
+      insufficientAlone: alone.filter(f => !f.serves).map(f => f.family),
+      widened
     };
   }
 

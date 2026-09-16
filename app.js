@@ -25,6 +25,9 @@ const state = {
   families:[],
   selectedFamilies:new Set(),
   familySelectionMode:'mixed',
+  capacityTimer:null,
+  booting:true,
+  engineVersion:null,
   familySelectionSnapshot:null,
   mode:'training',
   session:null,
@@ -54,17 +57,22 @@ async function bootstrap(){
     state.engine=new mod.default();
     state.families=state.engine.listFamilies();
     if(!state.families.length) throw new Error('Family registry is empty');
+    state.engineVersion=mod.ENGINE_VERSION;
     $('engineVersion').textContent=`v${mod.ENGINE_VERSION}`;
     renderFamilyGrid();
     populateFamilySelect();
     restoreLastSettings();
     if(!state.selectedFamilies.size) setFamilySelectionMode('mixed');
     bindEvents();
+    // Boot does not block on the probe: the note goes up, the page paints, and
+    // the start button is enabled by refreshGenerateAvailability when the
+    // answer lands. A first run pays for it once and the cache serves the rest.
     syncCountCapacity();
     refreshSavedSessionCard();
     refreshFavoritesCard();
     refreshWeakHint();
-    $('generate').disabled=false;
+    state.booting=false;
+    refreshGenerateAvailability();
     boot.textContent=`تم تحميل ${state.families.length} عائلة بنجاح`;
     boot.className='boot-status ok';
     setTimeout(()=>boot.classList.add('hidden'),1100);
@@ -92,7 +100,7 @@ function bindEvents(){
   $('modeTraining').onclick=()=>setMode('training');
   $('modeExam').onclick=()=>setMode('exam');
   $('count').onchange=()=>{$('customCountWrap').classList.toggle('hidden',$('count').value!=='custom');syncCountCapacity()};
-  $('customCount').onchange=syncCountCapacity;
+  $('customCount').onchange=()=>syncCountCapacity();
   $('timeMode').onchange=()=>$('customTimeWrap').classList.toggle('hidden',$('timeMode').value!=='custom');
   $('familySelect').onchange=handleFamilySelectChange;
   $('selectAllFamilies').onclick=()=>{selectAllFamilies(false);state.familySelectionMode='custom';syncFamilySelectionUi()};
@@ -165,7 +173,20 @@ function syncFamilySelectionUi(){
     row.classList.toggle('selected',input.checked);
   });
   const count=state.selectedFamilies.size;
-  $('familySelectionNote').textContent=count===state.families.length?'جميع العائلات محددة — سيتم التوزيع بينها بصورة متوازنة.':count===1?'عائلة واحدة محددة.':count>1?`${count} عائلات محددة — سيتم التوزيع بينها بصورة متوازنة.`:'اختر عائلة واحدة على الأقل.';
+  // RC2.9.6 §2.2. The note is written at SELECTION time, from the engine's
+  // capacity for exactly this set, so a set that cannot serve a sitting is
+  // refused here and not at generate time.
+  const ids=[...state.selectedFamilies];
+  const cap=count?sessionCapacity(ids):null;
+  const tooNarrow=count>0&&cap&&cap.servesAMinimumSitting===false;
+  $('familySelectionNote').textContent=
+    !count?'اختر عائلة واحدة على الأقل.'
+    :tooNarrow?narrowSelectionNote(ids)
+    :count===state.families.length?'جميع العائلات محددة — سيتم التوزيع بينها بصورة متوازنة.'
+    :`${count===1?'عائلة واحدة محددة':`${count} عائلات محددة`} — تكفي حتى ${cap?cap.maxCount:'—'} ${cap&&cap.maxCount===1?'سؤال':'سؤالًا'}.`;
+  $('familySelectionNote').classList.toggle('selection-note-limit',!!tooNarrow);
+  const apply=$('applyFamilies');
+  if(apply){apply.disabled=!count||!!tooNarrow;}
   $('familyCompactNote').textContent=familySelectionSummary();
   const select=$('familySelect');
   if(state.familySelectionMode==='mixed')select.value='mixed';
@@ -204,6 +225,15 @@ function closeFamilyModal(){
 }
 function applyFamilyModal(){
   if(!state.selectedFamilies.size){alert('اختر عائلة واحدة على الأقل.');return}
+  // RC2.9.6 §2.2/§2.3(b). A selection that cannot reach the smallest sitting is
+  // not accepted at all — the learner is told which family is the narrow one
+  // and asked to add another, here, rather than being sent to a session that
+  // would refuse.
+  if(!servesAMinimumSitting([...state.selectedFamilies])){
+    $('familySelectionNote').textContent=narrowSelectionNote([...state.selectedFamilies]);
+    $('familySelectionNote').classList.add('selection-note-limit');
+    return;
+  }
   state.familySelectionMode=state.selectedFamilies.size===state.families.length?'mixed':'custom';
   state.familySelectionSnapshot=null;syncFamilySelectionUi();$('familyModal').classList.add('hidden');
   syncCountCapacity();
@@ -257,9 +287,35 @@ function selectWeakFamilies({fromModal=false}={}){
     return;
   }
   const picked=candidates.slice(0,Math.min(4,candidates.length));
-  state.selectedFamilies=new Set(picked.map(x=>x.id));state.familySelectionMode=fromModal?'custom':'weak';syncFamilySelectionUi();
-  $('weakHint').textContent=`تم اختيار ${picked.length} ${picked.length===1?'عائلة':'عائلات'} بناءً على أدلة الجلسات السابقة (${EVIDENCE.minForClaim} أسئلة على الأقل لكل عائلة).`;
+  // RC2.9.6 §2.4. The weakness-targeted mode produces the narrowest sets in the
+  // product — a learner whose only weak family is fractions gets a one-family
+  // selection that cannot serve a sitting at all. It goes through the same
+  // capacity check as any other selection, and when the weak set falls short it
+  // is WIDENED rather than refused: the families the learner got wrong are
+  // always kept, and the engine names what to add beside them.
+  const weak=picked.map(x=>x.id);
+  const wanted=getCount();
+  const widened=widenToServe(weak,wanted);
+  state.selectedFamilies=new Set(widened.families);
+  state.familySelectionMode=fromModal?'custom':'weak';syncFamilySelectionUi();
+  const base=`تم اختيار ${picked.length} ${picked.length===1?'عائلة':'عائلات'} بناءً على أدلة الجلسات السابقة (${EVIDENCE.minForClaim} أسئلة على الأقل لكل عائلة).`;
+  const arOf=id=>state.families.find(f=>f.id===id)?.ar||id;
+  $('weakHint').textContent=widened.added.length
+    ? `${base} وأُضيفت ${widened.added.map(arOf).join(' و')} لتكتمل الجلسة؛ أسئلة نقاط ضعفك تبقى ضمنها.`
+    : base;
   $('weakHint').classList.remove('hidden');
+}
+// RC2.9.6 §2.4. Widen a selection until it serves `wanted`, keeping every
+// family it started with. The engine chooses what to add — `familiesFor` asks
+// which addition buys the most capacity — so the product never has to carry a
+// table of "related" families that would drift from what the engine can do.
+function widenToServe(ids,wanted){
+  try{
+    if(!state.engine||typeof state.engine.familiesFor!=='function') return {families:ids,added:[]};
+    const r=state.engine.familiesFor({count:wanted,difficulty:PRACTICE_DIFFICULTY,families:ids});
+    if(!r.widened) return {families:ids,added:[]};
+    return {families:r.widened.families,added:r.widened.added,serves:r.widened.serves};
+  }catch(err){console.error(err);return {families:ids,added:[]}}
 }
 function refreshWeakHint(){
   const stats=getStoredStats();
@@ -274,7 +330,7 @@ function setMode(mode){
   $('modeTraining').classList.toggle('active',mode==='training');
   $('modeExam').classList.toggle('active',mode==='exam');
   $('examHint').classList.toggle('hidden',mode!=='exam');
-  syncCountCapacity();
+  syncCountCapacity(true);
 }
 // RC2.9.4-B8. The largest sitting the engine can hold for the chosen difficulty
 // and families, read from the engine BEFORE a count is offered. A preset the
@@ -282,14 +338,64 @@ function setMode(mode){
 // the ceiling can never reach the generator. The ceiling is the engine's own
 // arithmetic (distinct reasoning targets and core constructions at the band),
 // not a number the product invents.
-function sessionCapacity(){
+// RC2.9.6 §2.1/§2.2. The ladder is the cheap question: "may I offer these
+// sizes?" — one dry session per rung instead of one per count down to the
+// ceiling. The exact ceiling is only needed when the learner is typing a custom
+// number, so it is only asked for then.
+const COUNT_LADDER=[5,10,14,20,30];
+const CAPACITY_CACHE_KEY='rc2-capacity-cache-v1';
+// RC2.9.6 §2.2. A capacity answer is thirty-six dry sessions, so it is worth
+// keeping. The cache is keyed on the ENGINE VERSION as well as the selection:
+// a new engine has a new key and every stored answer is ignored, which is what
+// stops a cached number outliving the bank it described.
+function capacityCacheRead(){
+  try{
+    const raw=localStorage.getItem(CAPACITY_CACHE_KEY);if(!raw)return {};
+    const c=JSON.parse(raw)||{};
+    return c.engineVersion===state.engineVersion?(c.entries||{}):{};
+  }catch{return {}}
+}
+function capacityCacheWrite(entries){
+  try{localStorage.setItem(CAPACITY_CACHE_KEY,JSON.stringify({engineVersion:state.engineVersion,entries}))}catch{/* private mode */}
+}
+function sessionCapacity(families=null,exact=false){
   try{
     if(!state.engine||typeof state.engine.sessionCapacity!=='function') return null;
-    return state.engine.sessionCapacity({difficulty:PRACTICE_DIFFICULTY,families:[...state.selectedFamilies]});
+    const sel=(families??[...state.selectedFamilies]).slice().sort();
+    const key=`${sel.join('+')}|${exact?'exact':'ladder'}`;
+    const cached=capacityCacheRead();
+    if(Object.prototype.hasOwnProperty.call(cached,key)) return cached[key];
+    const cap=state.engine.sessionCapacity(exact
+      ?{difficulty:PRACTICE_DIFFICULTY,families:sel}
+      :{difficulty:PRACTICE_DIFFICULTY,families:sel,ladder:COUNT_LADDER});
+    // Only the three numbers the product reads are stored, so a cache entry
+    // can never be mistaken for the engine's full answer.
+    const slim={maxCount:cap.maxCount,servesAMinimumSitting:cap.servesAMinimumSitting,minimumSitting:cap.minimumSitting};
+    cached[key]=slim;capacityCacheWrite(cached);
+    return slim;
   }catch(err){console.error(err);return null}
 }
-function syncCountCapacity(){
-  const cap=sessionCapacity();
+// Does this selection reach the smallest sitting the product offers? Answered
+// from the engine's own minimum, never from a number repeated here.
+function servesAMinimumSitting(families){
+  const cap=sessionCapacity(families);
+  return cap?cap.servesAMinimumSitting!==false:true;
+}
+// RC2.9.6 §2.2. A capacity answer is several dry sessions, which is tens to a
+// couple of thousand milliseconds for a selection the cache has not seen. The
+// checkbox must not appear to hang, so the note goes up first and the work runs
+// on the next tick. `immediate` is for boot, the smoke path and the tests,
+// which need the answer before they continue.
+function syncCountCapacity(immediate=false){
+  const hint=$('countCapacityHint');
+  if(!immediate&&hint){hint.textContent='يجري التحقق من سعة هذا الاختيار…';hint.classList.remove('hidden')}
+  clearTimeout(state.capacityTimer);
+  if(immediate){applyCountCapacity();return}
+  state.capacityTimer=setTimeout(applyCountCapacity,0);
+}
+function applyCountCapacity(){
+  const usingCustom=$('count').value==='custom';
+  const cap=sessionCapacity(null,usingCustom);
   const max=cap?Math.max(1,Math.min(50,cap.maxCount)):50;
   state.countCapacity=max;
   const select=$('count');
@@ -309,8 +415,42 @@ function syncCountCapacity(){
   custom.max=String(max);
   if(Number(custom.value)>max) custom.value=String(max);
   const hint=$('countCapacityHint');
-  if(hint){hint.textContent=`الحد الأقصى لعدد الأسئلة في هذا المستوى: ${max}`;hint.classList.remove('hidden')}
+  if(hint){
+    hint.textContent=capacityNote(max);
+    hint.classList.remove('hidden');
+  }
   const small=$('customCountRange');if(small) small.textContent=`1–${max}`;
+  refreshGenerateAvailability();
+}
+// RC2.9.6 §2.2. A limit, not a failure: the sentence says how far the current
+// selection reaches and what widens it. The word «خطأ» is never used, because
+// nothing went wrong — the learner chose a narrow set and the product is saying
+// what that set can serve.
+function capacityNote(max){
+  const n=state.selectedFamilies.size;
+  const all=state.families.length;
+  if(n===0||n===all) return `أقصى عدد للأسئلة في هذه الجلسة: ${max}.`;
+  if(n===1){
+    const ar=state.families.find(f=>f.id===[...state.selectedFamilies][0])?.ar||'هذه العائلة';
+    return `${ar} وحدها تكفي حتى ${max} ${max===1?'سؤال':'سؤالًا'}. اختر عدداً أقل أو أضِف عائلة أخرى.`;
+  }
+  return `هذا الاختيار يكفي حتى ${max} ${max===1?'سؤال':'سؤالًا'}. اختر عدداً أقل أو أضِف عائلة أخرى.`;
+}
+// The start button follows the same number: a selection that cannot serve the
+// smallest sitting is never startable, and says why beside itself.
+function refreshGenerateAvailability(){
+  const btn=$('generate');if(!btn)return;
+  const tooNarrow=state.selectedFamilies.size>0&&!servesAMinimumSitting([...state.selectedFamilies]);
+  btn.disabled=state.booting===true||tooNarrow;
+  const note=$('familySelectionNote');
+  if(tooNarrow&&note){note.textContent=narrowSelectionNote([...state.selectedFamilies]);}
+}
+// RC2.9.6 §2.3(b). Named families, so the learner reads which part of their
+// choice is the narrow one rather than a generic refusal.
+function narrowSelectionNote(ids){
+  const ar=ids.map(id=>state.families.find(f=>f.id===id)?.ar||id);
+  const subject=ar.length===1?`${ar[0]} وحدها لا تكفي`:`${ar.join(' و')} معًا لا تكفيان`;
+  return `${subject} لجلسة كاملة. أضِف عائلة أخرى معها.`;
 }
 
 function getCount(){
@@ -357,10 +497,16 @@ function restoreLastSettings(){
 function startNewSession(){
   try{
     if(!state.selectedFamilies.size){alert('اختر عائلة واحدة على الأقل.');return}
-    syncCountCapacity();
+    // The answer is read on the next line, so it is asked for synchronously.
+    syncCountCapacity(true);
+    // RC2.9.6 §2.3(b). A selection too narrow for the smallest sitting never
+    // reaches the engine; the learner is asked to add a family instead.
+    if(!servesAMinimumSitting([...state.selectedFamilies])){alert(narrowSelectionNote([...state.selectedFamilies]));return}
     const settings=currentSettings();
-    // RC2.9.4-B8. Never ask the engine for a count it cannot hold.
-    if(state.countCapacity&&settings.count>state.countCapacity){alert(`الحد الأقصى لعدد الأسئلة في هذا المستوى هو ${state.countCapacity}.`);return}
+    // RC2.9.4-B8 / RC2.9.6 §2.2. Never ask the engine for a count this
+    // selection cannot hold. The ceiling is the engine's own verdict on dry
+    // sessions, so a count that passes here is a count the engine serves.
+    if(state.countCapacity&&settings.count>state.countCapacity){alert(capacityNote(state.countCapacity));return}
     storeLastSettings(settings);
     state.session=createSession(settings);
     clearSavedSession();
@@ -593,7 +739,7 @@ function exportPdfReport(){
 
 async function runSmokeModeIfRequested(){
   const qs=new URLSearchParams(location.search);const mode=qs.get('smoke');if(!mode)return;
-  state.mode=mode==='exam'?'exam':'training';setMode(state.mode);state.familySelectionMode='mixed';selectAllFamilies(false);syncFamilySelectionUi();$('count').value='5';$('timeMode').value='none';
+  state.mode=mode==='exam'?'exam':'training';setMode(state.mode);state.familySelectionMode='mixed';selectAllFamilies(false);syncFamilySelectionUi();$('count').value='5';$('timeMode').value='none';syncCountCapacity(true);
   startNewSession();document.documentElement.dataset.smokeSession=state.session?.questions?.length?'pass':'fail';
   if(mode==='result'){
     for(let i=0;i<state.session.settings.count;i++){const q=state.session.questions[i];if(!q)continue;state.session.responses[i]={selected:q.correct_option,checked:true,correct:true,timeSeconds:8,checkedAt:nowIso()}}
