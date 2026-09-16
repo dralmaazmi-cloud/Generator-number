@@ -1,14 +1,17 @@
 {
   "schema": "rc2-internal-gate-v1",
   "section": "§23",
-  "evaluatedAt": "2026-09-16T08:47:00.460Z",
-  "engineVersion": "1.5.5",
-  "headCommit": "d39c4e7e0159fc12d4c86d63cf3ff732085396fc",
+  "evaluatedAt": "2026-09-16T13:38:15.342Z",
+  "engineVersion": "1.5.6",
+  "headCommit": "a0f0657bdf709a6117dad29143f4eedf7822cddc",
   "branch": "claude/numerical-generator-upgrade-b3fc8s",
   "holdoutSeed": "AUDIT-2026-09-12-B",
-  "verdict": "PASS",
+  "verdict": "FAIL",
   "conditions": 39,
-  "failedConditions": [],
+  "failedConditions": [
+    "SUITE_GREEN",
+    "TREE_CLEAN"
+  ],
   "checks": [
     {
       "id": "SCOPE_COMPLETE",
@@ -37,10 +40,10 @@
     {
       "id": "SUITE_GREEN",
       "requirement": "The whole test suite passes",
-      "pass": true,
+      "pass": false,
       "detail": {
-        "passed": 610,
-        "failed": 0
+        "passed": 628,
+        "failed": 3
       }
     },
     {
@@ -92,6 +95,8 @@
           "rc2/FREEZE.RC2_9_3.json",
           "rc2/FREEZE.RC2_9_4.json",
           "rc2/FREEZE.RC2_9_4A.json",
+          "rc2/FREEZE.RC2_9_5.json",
+          "rc2/FREEZE.json",
           "rc2/FREEZE_RC2.json",
           "rc2/FREEZE_RC2_1.json",
           "rc2/FREEZE_RC2_2.json",
@@ -117,6 +122,7 @@
           "rc2/RC293_DEVELOPMENT_CORPUS.json",
           "rc2/RC294_DEVELOPMENT_CORPUS.json",
           "rc2/RC295_DEVELOPMENT_CORPUS.json",
+          "rc2/RC296_DEVELOPMENT_CORPUS.json",
           "rc2/RC29_DEVELOPMENT_CORPUS.json",
           "rc2/RC2_IMPLEMENTATION_REPORT.md",
           "rc2/SUPERSEDED_FREEZES.json",
@@ -306,7 +312,7 @@
       "detail": {
         "exactRepeats": 0,
         "semanticRepeats": 0,
-        "reasoningPaths": 196,
+        "reasoningPaths": 199,
         "maxRepetition": 2,
         "cap": 5,
         "breachesRecorded": 0,
@@ -319,7 +325,7 @@
       "pass": true,
       "detail": {
         "wrong": 4500,
-        "linked": 2200,
+        "linked": 2201,
         "share": 0.489,
         "outOfRange": 0
       }
@@ -581,8 +587,10 @@
     {
       "id": "TREE_CLEAN",
       "requirement": "§23 — the candidate is not still moving",
-      "pass": true,
-      "detail": "clean"
+      "pass": false,
+      "detail": [
+        "M rc2/INTERNAL_GATE.json"
+      ]
     }
   ]
 }
